@@ -1,4 +1,8 @@
 const authErrors = {
+  INVALID_LOGIN_CREDENTIALS: {
+    code: 'auth/invalid-credential',
+    message: 'Invalid email or password. Please try again.',
+  },
   CANCELLED_POPUP_REQUEST: {
     code: 'auth/cancelled-popup-request',
     message:
