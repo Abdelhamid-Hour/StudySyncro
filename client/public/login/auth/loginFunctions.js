@@ -34,7 +34,7 @@ const handleUserSignIn = async (auth, user) => {
   // send user data to the server to save it in Firestore
   await sendData('/insert-user-data', { userInfo, csrfToken });
   // Sign out the user because the session is handled by the server
-  signOut(auth);
+  await signOut(auth);
   // Redirect to the main page
   window.location.href = '/main_page';
 };
@@ -47,7 +47,7 @@ const handleUserSignIn = async (auth, user) => {
 const signInWhithProvider = async function (auth, provider) {
   const userCredential = await signInWithPopup(auth, provider);
   const user = userCredential.user;
-  handleUserSignIn(auth, user);
+  await handleUserSignIn(auth, user);
 };
 
 /**
@@ -62,7 +62,7 @@ const InitializeGoogleOneTap = function (auth, errorCallback) {
       const credential = GoogleAuthProvider.credential(response.credential);
       const userCredential = await signInWithCredential(auth, credential);
       const user = userCredential.user;
-      handleUserSignIn(auth, user);
+      await handleUserSignIn(auth, user);
     } catch (error) {
       checkError(error);
       errorCallback(error.message);
@@ -91,7 +91,7 @@ const signInWithFacebookProviderWithPopUp = async function (
   errorCallback
 ) {
   try {
-    signInWhithProvider(auth, fbProvider);
+    await signInWhithProvider(auth, fbProvider);
   } catch (error) {
     checkError(error);
     errorCallback(error.message);
@@ -105,10 +105,8 @@ const signInWithFacebookProviderWithPopUp = async function (
  */
 const signInWithGoogleProviderWithPopUp = async function (auth, errorCallback) {
   try {
-    signInWhithProvider(auth, googleProvider);
+    await signInWhithProvider(auth, googleProvider);
   } catch (error) {
-    console.log(error);
-
     checkError(error);
     errorCallback(error.message);
   }
@@ -139,7 +137,7 @@ const createAuserWithEmailAndPassword = async function (
     await updateProfile(user, {
       displayName: fullName,
     });
-    handleUserSignIn(auth, user);
+    await handleUserSignIn(auth, user);
   } catch (error) {
     checkError(error);
     errorCallback(error.message);
@@ -163,7 +161,7 @@ const signInAuserWithEmailAndPassword = async function (
   try {
     await signInWithEmailAndPassword(auth, email, password);
     await sendIdToken(auth, '/session-login');
-    signOut(auth);
+    await signOut(auth);
     window.location.href = '/main_page';
   } catch (error) {
     checkError(error);
