@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Page</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <form>
+        <input id="firstName" placeholder="First Name" type="text">
+        <input id="lastName" placeholder="Last Name" type="text">
+        <input id="email" placeholder="email" type="email">
+        <input id="password" placeholder="password" type="password">
+        <input style="height: 30px; width: 200px;" id="sign_up" type="submit" value="Sign Up">
+        <input style="height: 30px; width: 200px;" id="sign_in" type="submit" value="Sign In">
+    </form>
+    <div class="providers">
+        <button type="button" id="googleBtn">Sign In with Google</button>
+        <button type="button" id="fbBtn">Sign In with Facebook</button>
+    </div>
+    <script type="module" src="./assets/js/getNodes.js"></script>
+    <script type="module" src="./auth/authApp.js"></script>
+</body>
+</html>

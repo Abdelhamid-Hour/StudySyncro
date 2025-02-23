@@ -1,0 +1,1 @@
+export const signOutBtn = document.getElementById('signOutBtn');
