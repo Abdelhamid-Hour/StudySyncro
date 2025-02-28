@@ -6,49 +6,59 @@ import {
   createAuserWithEmailAndPassword,
   signInAuserWithEmailAndPassword,
 } from './loginFunctions.js';
-import { showErrorMsg } from '../assets/js/domFunctions.js';
+import {
+  showExternalError,
+  inputsEmptying,
+  validatesSignInForm,
+  validatesSignUpForm,
+} from '../assets/js/domFunctions.js';
 
 import {
-  email,
-  password,
-  firstName,
-  lastName,
+  firstNameField as firstName,
+  lastNameField as lastName,
+  signInemailField,
+  signInPasswordField,
+  signUpPasswordField,
+  signUpemailField,
   signUpBtn,
   signInBtn,
   fbBtn,
   googleBtn,
-} from '../assets/js/getNodes.js';
+} from '../assets/js/NodesAndVariables.js';
 
-InitializeGoogleOneTap(auth, showErrorMsg);
-
-signUpBtn.addEventListener('click', (e) => {
-  e.preventDefault();
-  const fullName = `${firstName.value} ${lastName.value}`;
-
-  createAuserWithEmailAndPassword(
-    auth,
-    fullName,
-    email.value,
-    password.value,
-    showErrorMsg
-  );
-});
+// InitializeGoogleOneTap(auth, showExternalError);
 
 signInBtn.addEventListener('click', (e) => {
   e.preventDefault();
-
+  if (!validatesSignInForm()) return;
   signInAuserWithEmailAndPassword(
     auth,
-    email.value,
-    password.value,
-    showErrorMsg
+    signInemailField.value,
+    signInPasswordField.value,
+    showExternalError
   );
+  inputsEmptying();
+});
+signUpBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  if (!validatesSignUpForm()) return;
+  const fullName = `${firstName.value} ${lastName.value}`;
+  createAuserWithEmailAndPassword(
+    auth,
+    fullName,
+    signUpemailField.value,
+    signUpPasswordField.value,
+    showExternalError
+  );
+  inputsEmptying();
 });
 
+
+
 googleBtn.addEventListener('click', () => {
-  signInWithGoogleProviderWithPopUp(auth, showErrorMsg);
+  signInWithGoogleProviderWithPopUp(auth, showExternalError);
 });
 
 fbBtn.addEventListener('click', () => {
-  signInWithFacebookProviderWithPopUp(auth, showErrorMsg);
+  signInWithFacebookProviderWithPopUp(auth, showExternalError);
 });

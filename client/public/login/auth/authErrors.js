@@ -39,7 +39,6 @@ const authErrors = {
       "We couldn't find an account with that email address. Please check your email or create a new account.",
   },
 };
-
 /**
  * Checks the error object and updates the message property
  * @param {Error} error - The error object

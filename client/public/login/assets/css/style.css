@@ -1,0 +1,517 @@
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+:root {
+  --primary-color: #9235e8ff;
+  --secondary-color: #b372ef;
+  --background-color: #eeeff1;
+  /* main color variables */
+  --main-background-color: #dcdee3; /* #e1cef1 */
+  --main-border-color: #cbced5;
+  --main-text-color: #505b74;
+  --main-heading-color: #181b23ff;
+  /* h1 color */
+  --heading-color: #384051;
+  /* buttons color variables */
+  --btn-background-color: var(--primary-color);
+  --btn-text-color: #eceef2ff;
+  --btn-border-color: #a85dedff;
+  --btn-hover-background-color: var(--secondary-color);
+  --btn-hover-text-color: #58208bff;
+  /* buttons height */
+  --btn-height: 2.5rem;
+  /* buttons hover transiotion duration */
+  --btn-hover-tran-duration: 300ms;
+  /* button hover border color */
+  --btn-hover-border-color: var(--btn-border-color);
+  /* inputs colors variables */
+  --inputs-background-color: #dcdee3ff;
+  --inputs-focus-background-color: #eeeff1;
+  --inputs-border-color: var(--primary-color);
+  --inputs-outline-color: var(--primary-color);
+  --inputs-text-color: #58208bff;
+  --inputs-label-color: #485268;
+  --inputs-transition-label-color: #752aba;
+  --inputs-focus-border-color: var(--secondary-color);
+  /* inputs font and border size variables */
+  --inputs-border-size: 2px;
+  --inputs-font-size: 1rem;
+  /* inputs transitions duration variables */
+  --inputs-label-tran-duration: 300ms;
+  --inputs-outline-trans-duration: 300ms;
+  /* inputs icons colors varianles */
+  --inputs-icons-background-color: var(--primary-color);
+  --inputs-icons-color: #eeeff1;
+  --inputs-icons-focus-bc: var(--secondary-color);
+  --inputs-icons-focus-color: var(--primary-color);
+  /* inputs focus transition duration */
+  --inputs-focus-tran-duration: 300ms;
+  /* icons hover transition duration */
+  --icons-focus-tran-duration: 300ms;
+  /* inputs icons size */
+  --inputs-icons-font-size: 1.5rem;
+  /* eye icon variables */
+  --eye-pass-color: var(--primary-color);
+  --eye-trans-duration: 200ms;
+  /* Error styling */
+  --error-color: #eb3b43ff;
+  --error-font-size: small;
+  --error-font-weight: 500;
+  /* external error variables */
+  --error-background-color: rgb(231, 109, 109);
+  --error-border-color: rgb(182, 61, 61);
+  --external-error-text-color: rgb(116, 5, 5);
+  --exclamation-icon-color: rgb(116, 5, 5);
+  --close-icon-color: rgb(116, 5, 5);
+  /* Questions text color */
+  --paragraph-color: #505b74;
+  /* links color */
+  --links-color: #485268;
+  /* link hover color */
+  --links-hover-color: var(--primary-color);
+  /* link hover transition duration */
+  --link-tran-duration: 150ms;
+  /* form gaps */
+  --form-gap: 1rem;
+  /* login swap animation variables */
+  /* use ms not s because the javascript interact with it with ms */
+  --login-swap-animation-duration: 1000ms;
+  /* button width its also preserve space for buttons */
+  --btn-width: 21rem;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Josefin Sans';
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background-color);
+  min-height: 100vh;
+}
+
+/* main login block styling */
+main {
+  width: fit-content;
+  margin: auto;
+  padding: 2rem;
+  color: var(--main-text-color);
+  background-color: var(--main-background-color);
+  box-shadow: 1px 1px 5px 1px #cbced5, 0.5px 0.5px 5px 1px #dcdee3 inset;
+  border: 1px solid var(--main-border-color);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  h1 {
+    color: var(--heading-color);
+    text-align: center;
+  }
+}
+
+/* providers section styling */
+section.provider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* buttons styling */
+button {
+  height: var(--btn-height);
+  color: var(--btn-text-color);
+  border: 1px solid var(--btn-border-color);
+  background-color: var(--btn-background-color);
+  border-radius: 5px;
+  padding: 0.5rem;
+  width: var(--btn-width);
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  cursor: pointer;
+  font-size: medium;
+  transition: all var(--btn-hover-tran-duration);
+
+  &:hover {
+    background-color: var(--btn-hover-background-color);
+    color: var(--btn-hover-text-color);
+    border-color: var(--btn-hover-border-color);
+  }
+  span {
+    width: 60%;
+  }
+  svg {
+    height: 100%;
+    width: fit-content;
+  }
+}
+
+/* custom property for label input animation */
+@property --label-background-color {
+  syntax: '<color>';
+  initial-value: var(--inputs-background-color);
+  inherits: false;
+}
+
+/* forms styling */
+
+section#forms {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: fit-content;
+  gap: var(--form-gap);
+
+  #sign-in-container {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+  }
+  #sign-up-container {
+    position: relative;
+    overflow: hidden;
+    /* the animation classes is in the bottom */
+  }
+
+  & > div {
+    background-color: var(--main-background-color);
+    padding: 1rem 1rem 0;
+    width: 23rem;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--form-gap);
+
+    & > div.user-name-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--form-gap);
+    }
+
+    div[class^='md-'] {
+      outline: 0.2rem solid transparent;
+      display: flex;
+      width: 100%;
+      height: fit-content;
+      border-radius: 7px;
+      border: var(--inputs-border-size) solid var(--inputs-border-color);
+      transition: all var(--inputs-outline-trans-duration) ease-out;
+
+      &:has(input:focus) {
+        outline: 0.2rem solid var(--inputs-outline-color);
+        border-color: var(--inputs-focus-border-color);
+      }
+
+      div:first-child {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 15%;
+        border-start-start-radius: 10px;
+        border-end-start-radius: 7px;
+        background-color: var(--inputs-icons-background-color);
+        border-right: var(--inputs-border-size) solid var(--inputs-border-color);
+        transition: all var(--icons-focus-tran-duration) linear;
+        color: var(--inputs-icons-color);
+        font-size: var(--inputs-icons-font-size);
+
+        /* inputs icons styling */
+        &:has(+ div > input:focus) {
+          background-color: var(--inputs-icons-focus-bc);
+          color: var(--inputs-icons-focus-color);
+          border-right-color: var(--inputs-icons-focus-bc);
+        }
+      }
+
+      /* error text styling */
+
+      & + div {
+        color: var(--error-color);
+        text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
+        font-weight: var(--error-font-weight);
+        font-size: var(--error-font-size);
+        height: 1em;
+        position: relative;
+        top: 0.4rem;
+        padding-bottom: 0.5rem;
+      }
+
+      div[class*='container-label'] {
+        width: 85%;
+        position: relative;
+        border-start-end-radius: 5px;
+        border-end-end-radius: 5px;
+
+        /* inputs styling */
+
+        input {
+          color: var(--inputs-text-color);
+          font-size: var(--inputs-font-size);
+          background-color: var(--inputs-background-color);
+          height: var(--btn-height);
+          width: 100%;
+          border-start-end-radius: 5px;
+          border-end-end-radius: 5px;
+          padding-left: 0.5rem;
+          outline: none;
+          border: none;
+          transition: all var(--inputs-focus-tran-duration) linear;
+          &:focus,
+          &:focus + div > div {
+            background-color: var(--inputs-focus-background-color);
+          }
+        }
+
+        /* eye icon */
+        & > div {
+          position: absolute;
+          top: 50%;
+          right: 0.5rem;
+          translate: 0 -50%;
+          color: var(--eye-pass-color);
+          cursor: pointer;
+        }
+
+        label,
+        a {
+          position: absolute;
+        }
+
+        a {
+          text-decoration: underline;
+          cursor: pointer;
+          top: -1.5rem;
+          right: 0;
+          transition: all var(--link-tran-duration) linear;
+          &:link,
+          &:visited,
+          &:active {
+            color: var(--links-color);
+          }
+          &:hover {
+            color: var(--links-hover-color);
+          }
+        }
+
+        label {
+          top: 50%;
+          left: 1rem;
+          translate: 0 -50%;
+          width: fit-content;
+          height: fit-content;
+          padding-inline: 0.1rem;
+          color: var(--inputs-label-color);
+          background-color: var(--inputs-background-color);
+          transition: all var(--inputs-label-tran-duration) ease-out;
+          cursor: text;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1;
+
+          div {
+            background-color: var(--inputs-background-color);
+            display: inline-flex;
+            height: 50%;
+            width: 100%;
+            border: unset;
+            transition: all var(--inputs-label-tran-duration) ease-out;
+            border-radius: unset;
+            position: absolute;
+            top: 0;
+            z-index: -1;
+          }
+
+          &:has(+ input:focus, + input:not(:placeholder-shown)) {
+            color: var(--inputs-transition-label-color);
+            top: -0.1rem;
+            left: 0.5rem;
+            background-color: var(--inputs-focus-background-color);
+            div {
+              background-color: var(--main-background-color);
+            }
+          }
+          &:has(+ input:not(:focus)) {
+            background-color: var(--inputs-background-color);
+          }
+        }
+      }
+    }
+  }
+
+  p {
+    margin-top: 0.5rem;
+    color: var(--paragraph-color);
+    a {
+      cursor: pointer;
+      text-decoration: underline;
+      transition: all var(--link-tran-duration) linear;
+      &:link,
+      &:visited,
+      &:active {
+        color: var(--links-color);
+      }
+      &:hover {
+        color: var(--links-hover-color);
+      }
+    }
+  }
+}
+
+/* separator styling*/
+
+div.separator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  hr {
+    width: 100%;
+    height: 2px;
+    background-color: var(--main-border-color);
+    margin: 1rem 0;
+  }
+
+  p {
+    position: absolute;
+    background-color: var(--main-background-color);
+    padding-inline: 0.3rem;
+  }
+}
+
+.eye-icon {
+  position: relative;
+  & > .show {
+    scale: 0 1;
+  }
+
+  div {
+    position: absolute;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    translate: 21% 20%;
+    background-color: var(--inputs-background-color);
+    padding-block: 1px;
+    width: 100%;
+    height: fit-content;
+    transform-origin: 0 0;
+    rotate: 45deg;
+    transition: all var(--eye-trans-duration) ease-in-out;
+    float: right;
+
+    hr {
+      background-color: var(--eye-pass-color);
+      height: 2px;
+      border: none;
+      width: 100%;
+    }
+  }
+}
+@property --mask-animation-start {
+  syntax: '<percentage>';
+  initial-value: 0%;
+  inherits: false;
+}
+@property --mask-animation-end {
+  syntax: '<percentage>';
+  initial-value: 0%;
+  inherits: false;
+}
+
+.error {
+  --inputs-border-color: var(--error-color);
+}
+
+@keyframes signUpMaskAnimation {
+  100% {
+    --mask-animation-start: 100%;
+    --mask-animation-end: 110%;
+  }
+}
+
+.external-error {
+  z-index: 10;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  color: var(--external-error-text-color);
+  border: 1px solid var(--error-border-color);
+  border-bottom: none;
+  top: 2rem;
+  right: 1rem;
+  background-color: var(--error-background-color);
+  padding: 20px 30px;
+  overflow-x: hidden;
+  opacity: 0;
+  translate: 60%;
+  text-align: justify;
+  max-width: clamp(20rem, 40%, 30rem);
+  animation: show-external-error 700ms linear forwards,
+  hide-external-error 500ms 10.7s linear forwards;
+  p {
+    padding-right: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    i{
+      color: var(--exclamation-icon-color);
+      font-size: xx-large;
+    }
+  }
+  & > i {
+    color: var(--close-icon-color);
+    font-size: x-large;
+    position: absolute;
+    right: 1rem;
+    cursor: pointer;
+  }
+  div{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    overflow: hidden;
+    hr{
+      border: none;
+      float: left;
+      width: 100%;
+      height: .1rem;
+      background-color: var(--background-color);
+      animation: error-bar-progress 10s .7s linear forwards;
+    }
+  }
+}
+
+@keyframes hide-external-error {
+  to{
+    opacity: 0;
+    translate: 20% 0%;
+  }
+}
+@keyframes show-external-error {
+  80%{
+    scale: 1.01;
+    translate: -3%;
+  }
+  100%{
+    opacity: 1;
+    translate: 0;
+  }
+}
+@keyframes error-bar-progress {
+  to{
+    width: 0%;
+  }
+}
