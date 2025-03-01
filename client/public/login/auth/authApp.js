@@ -11,6 +11,7 @@ import {
   inputsEmptying,
   validatesSignInForm,
   validatesSignUpForm,
+  userNameFormat
 } from '../assets/js/domFunctions.js';
 
 import {
@@ -26,7 +27,7 @@ import {
   googleBtn,
 } from '../assets/js/NodesAndVariables.js';
 
-// InitializeGoogleOneTap(auth, showExternalError);
+InitializeGoogleOneTap(auth, showExternalError);
 
 signInBtn.addEventListener('click', (e) => {
   e.preventDefault();
@@ -42,7 +43,7 @@ signInBtn.addEventListener('click', (e) => {
 signUpBtn.addEventListener('click', (e) => {
   e.preventDefault();
   if (!validatesSignUpForm()) return;
-  const fullName = `${firstName.value} ${lastName.value}`;
+  const fullName = `${userNameFormat(firstName.value)} ${userNameFormat(firstName.value)}`;
   createAuserWithEmailAndPassword(
     auth,
     fullName,

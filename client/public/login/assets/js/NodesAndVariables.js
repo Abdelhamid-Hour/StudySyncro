@@ -18,7 +18,7 @@ export const fbBtn = document.getElementById('fb-sign-in');
 
 export const emailRegex = /^[a-z0-9]+@[a-z0-9]+\.[a-z0-9]+$/;
 export const passwordRegex = /\w{8,}/;
-export const userNameRegex = /^[A-Za-z]{3,15}$/;
+export const userNameRegex = /^[A-Za-z]+( [A-Za-z]+)*$/;
 
 export const signInFormHeight = signInFormContainer.getBoundingClientRect().height;
 export const signUpFormHeight = signUpFormContainer.getBoundingClientRect().height;
@@ -27,7 +27,7 @@ export const stylsheet = document.styleSheets[1];
 
 // get the Login swap animation duration from the stylesheet
 export const animationDuration = parseInt(
-    stylsheet.cssRules[1].cssText
-      .match(/--login-swap-animation-duration: \d{1,10}ms;/i)[0]
-      .split(':')[1]
-  );
+  stylsheet.cssRules[1].cssText
+  .match(/--login-swap-animation-duration: \d{1,10}ms;/i)[0]
+  .split(':')[1]
+);

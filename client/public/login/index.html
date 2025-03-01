@@ -37,10 +37,24 @@
       name="twitter:image"
       content="https://yourwebsite.com/images/login-preview.png"
     />
-    <link rel="canonical" href="https://example.com/current-page" />
+    <!-- Favicon and Theme -->
     <!-- TODO: add an Icon For Website [standard & apple] -->
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <meta name="theme-color" content="#9235e8ff" />
+    <meta name="application-name" content="StudyHype" />
+    <link rel="canonical" href="https://example.com/current-page" />
+    <!-- Performance Optimization -->
+    <link rel="preconnect" href="https://leaning-11c1d-default-rtdb.firebaseio.com">
+    <link rel="dns-prefetch" href="https://leaning-11c1d-default-rtdb.firebaseio.com">
+     <!-- Preloading Critical Resources -->
+    <link rel="preload" href="./assets/css/style.css" as="style" />
+    <link rel="preload" href="./assets/js/NodesAndVariables.js" as="script" />
+    <link rel="preload" href="./assets/js/browserApp.js" as="script" />
+    <link rel="preload" href="./auth/authApp.js" as="script" />
+    <!-- Caching & Security Headers -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
@@ -51,7 +65,10 @@
   <body>
     <main>
       <header>
-        <h1><span>Login to</span> Your Account</h1>
+        <h1>
+          <span>Login to</span>
+          Your Account
+        </h1>
       </header>
       <section id="forms">
         <div id="sign-in-container">
@@ -122,44 +139,48 @@
         <div class="sign-up-container" id="sign-up-container">
           <form id="sign-up-form">
             <div class="user-name-container">
-              <div class="text-container">
-                <div class="md-text-container">
-                  <div>
-                    <i class="bi bi-info-circle-fill"></i>
-                  </div>
-                  <div class="text-container-label">
-                    <label for="first-name">
-                      <div></div>
-                      First Name
-                    </label>
-                    <input
-                      placeholder=""
-                      type="text"
-                      id="first-name"
-                      required
-                    />
+              <div>
+                <div class="text-container">
+                  <div class="md-text-container">
+                    <div>
+                      <i class="bi bi-info-circle-fill"></i>
+                    </div>
+                    <div class="text-container-label">
+                      <label for="first-name">
+                        <div></div>
+                        First Name
+                      </label>
+                      <input
+                        placeholder=""
+                        type="text"
+                        id="first-name"
+                        required
+                      />
+                    </div>
                   </div>
                 </div>
-                <div class="errorContainer">
-                  <span class="error-msg"></span>
+                <div class="text-container">
+                  <div class="md-text-container">
+                    <div>
+                      <i class="bi bi-info-circle-fill"></i>
+                    </div>
+                    <div class="text-container-label">
+                      <label for="last-name">
+                        <div></div>
+                        Last Name
+                      </label>
+                      <input
+                        placeholder=""
+                        type="text"
+                        id="last-name"
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="text-container">
-                <div class="md-text-container">
-                  <div>
-                    <i class="bi bi-info-circle-fill"></i>
-                  </div>
-                  <div class="text-container-label">
-                    <label for="last-name">
-                      <div></div>
-                      Last Name
-                    </label>
-                    <input placeholder="" type="text" id="last-name" required />
-                  </div>
-                </div>
-                <div class="errorContainer">
-                  <span class="error-msg"></span>
-                </div>
+              <div class="errorContainer">
+                <span class="error-msg"></span>
               </div>
             </div>
             <div class="email-container">
@@ -212,7 +233,7 @@
                   </div>
                 </div>
               </div>
-              <div>
+              <div class="errorContainer">
                 <span class="error-msg"></span>
               </div>
             </div>
@@ -242,7 +263,7 @@
                   </div>
                 </div>
               </div>
-              <div>
+              <div class="errorContainer">
                 <span class="error-msg"></span>
               </div>
             </div>
@@ -250,7 +271,7 @@
           </form>
           <p>
             Already have an account?
-            <a id="sign-in-link" >Sign In</a>
+            <a id="sign-in-link">Sign In</a>
           </p>
         </div>
       </section>

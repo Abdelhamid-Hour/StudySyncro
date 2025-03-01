@@ -14,7 +14,7 @@ import {
   passwordRegex,
   emailRegex,
   userNameRegex,
-  animationDuration
+  animationDuration,
 } from './NodesAndVariables.js';
 
 let cssRulesLength = stylsheet.cssRules.length;
@@ -31,11 +31,14 @@ const showExternalError = (message) => {
       <i class="bi bi-exclamation-circle-fill"></i>
       ${message}
     </p>
-    <i onclick="removeErrorBlock(this)" class="bi bi-x"></i>
+    <i class="bi bi-x"></i>
     <div>
       <hr>
     </div>
   `;
+  errorContainer
+    .querySelector('.bi-x')
+    .addEventListener('click', removeErrorBlock);
   document.body.appendChild(errorContainer);
   setTimeout(() => {
     errorContainer.remove();
@@ -129,6 +132,30 @@ const inputsEmptying = () => {
  * @param {Number} targetSignUpFormHeight - The target height for the sign-up form.
  */
 const swapAnimation = (targetSignUpFormHeight) => {
+  // add the z-index based on the signUp form height
+  if (targetSignUpFormHeight === signInFormHeight) {
+    hideErrors(
+      signUpPasswordField,
+      signUpConfirmPasswordField,
+      firstNameField,
+      lastNameField,
+      signUpemailField
+    );
+    signInFormContainer.classList.add('active');
+    signInFormContainer.onanimationstart = () => {
+      signUpFormContainer.style.zIndex = '1';
+      signInFormContainer.onanimationstart = null;
+    };
+  } else {
+    hideErrors(
+      signInPasswordField,
+      signInemailField
+    );
+    signUpFormContainer.onanimationstart = () => {
+      signUpFormContainer.style.zIndex = '2';
+      signUpFormContainer.onanimationstart = null;
+    };
+  }
   // discharging inputs
   inputsEmptying();
   const signUpAnimationRules = getSwapAnimationRule(targetSignUpFormHeight);
@@ -151,19 +178,6 @@ const swapAnimation = (targetSignUpFormHeight) => {
   void signUpFormContainer.offsetWidth;
   signUpFormContainer.classList.add('sign-up-swap-animation');
   signInFormContainer.classList.add('sign-in-swap-animation');
-  // add the z-index based on the signUp form height
-  if (targetSignUpFormHeight === signInFormHeight) {
-    signInFormContainer.classList.add('active');
-    signInFormContainer.onanimationstart = () => {
-      signUpFormContainer.style.zIndex = '1';
-      signInFormContainer.onanimationstart = null;
-    };
-  } else {
-    signUpFormContainer.onanimationstart = () => {
-      signUpFormContainer.style.zIndex = '2';
-      signUpFormContainer.onanimationstart = null;
-    };
-  }
 };
 
 /**
@@ -185,17 +199,34 @@ const throttling = function (TimeInterval, callback) {
   };
 };
 
-export const swapAnimationThrottling = throttling(animationDuration, swapAnimation);
+export const swapAnimationThrottling = throttling(
+  animationDuration,
+  swapAnimation
+);
 const showError = (errorMessage, element) => {
   const container = element.parentElement.parentElement;
-  container.nextElementSibling.innerText = errorMessage;
-  element.parentElement.parentElement.classList.add('error');
+  if ([firstNameField, lastNameField].includes(element)) {
+    signUpFormContainer.querySelector(
+      '.user-name-container .errorContainer'
+    ).firstElementChild.innerHTML = `<span>&#xF333;</span> ${errorMessage}`;
+  } else {
+    container.nextElementSibling.firstElementChild.innerHTML = `<span>&#xF333;</span> ${errorMessage}`;
+  }
+  container.classList.add('error');
   element.focus();
 };
-const hideError = (element) => {
-  const container = element.parentElement.parentElement;
-  container.classList.remove('error');
-  container.nextElementSibling.innerText = '';
+const hideErrors = (...elements) => {
+  elements.forEach((element) => {
+    const container = element.parentElement.parentElement;
+    container.classList.remove('error');
+    if ([firstNameField, lastNameField].includes(element)) {
+      signUpFormContainer.querySelector(
+        '.user-name-container .errorContainer'
+      ).firstElementChild.innerHTML = '';
+    } else {
+      container.nextElementSibling.firstElementChild.innerHTML = '';
+    }
+  });
 };
 const validatesSignInForm = () => {
   const email = signInemailField.value.trim();
@@ -206,18 +237,19 @@ const validatesSignInForm = () => {
       signInPasswordField
     );
   } else {
-    hideError(signInPasswordField);
+    hideErrors(signInPasswordField);
   }
   if (!emailRegex.test(email)) {
     showError('Please enter a valid email', signInemailField);
   } else {
-    hideError(signInemailField);
+    hideErrors(signInemailField);
   }
   if (!emailRegex.test(email) || !passwordRegex.test(password)) {
     return false;
   }
   return true;
 };
+
 const validatesSignUpForm = () => {
   const email = signUpemailField.value.trim();
   const password = signUpPasswordField.value.trim();
@@ -227,7 +259,7 @@ const validatesSignUpForm = () => {
   if (password !== confirmPassword) {
     showError('Passwords do not match', signUpConfirmPasswordField);
   } else {
-    hideError(signUpConfirmPasswordField);
+    hideErrors(signUpConfirmPasswordField);
   }
 
   if (!passwordRegex.test(password)) {
@@ -236,19 +268,19 @@ const validatesSignUpForm = () => {
       signUpPasswordField
     );
   } else {
-    hideError(signUpPasswordField);
+    hideErrors(signUpPasswordField);
   }
 
   if (!emailRegex.test(email)) {
     showError('Please enter a valid email', signUpemailField);
   } else {
-    hideError(signUpemailField);
+    hideErrors(signUpemailField);
   }
 
   if (!userNameRegex.test(lastName)) {
     showError('Last name must be 3-15 characters only letters', lastNameField);
   } else {
-    hideError(lastNameField);
+    hideErrors(lastNameField);
   }
 
   if (!userNameRegex.test(firstName)) {
@@ -256,8 +288,9 @@ const validatesSignUpForm = () => {
       'First name must be 3-15 characters only letters',
       firstNameField
     );
-  } else {
-    hideError(firstNameField);
+  }
+  if (userNameRegex.test(lastName) && userNameRegex.test(firstName)) {
+    hideErrors(firstNameField);
   }
 
   if (
@@ -271,9 +304,92 @@ const validatesSignUpForm = () => {
   }
   return true;
 };
-const removeErrorBlock = (element) => {
-  element.parentElement.remove();
+const removeErrorBlock = function () {
+  this.parentElement.remove();
 };
+
+/**
+ * Generates a function to animate the letters of a word, creating a random letter animation effect.
+ *
+ * This function returns another function that, when called, will animate the letters of a given word.
+ * The animation involves replacing each letter of the word with random characters from a specified set,
+ * creating a dynamic and visually appealing effect. The animation progresses letter by letter until the
+ * entire word is displayed.
+ *
+ * @returns {(word: string, actionCallBack: Function, charactersString: string, animationDuration: number, letterAnimationDuration: number) => void} A function that animates the letters of a word.
+ *
+ * The returned function has the following parameters:
+ *
+ * @param {String} word - The word to animate.
+ * @param {Function} actionCallBack - A callback function that receives the current state of the animated word.
+ * @param {Number} animationDuration - The total duration of the animation in milliseconds.
+ * @param {Number} letterAnimationDuration - The duration between each letter's animation in milliseconds.
+ * @param {String} charactersString - A string of characters to be used in the animation. If not provided, defaults to the alphabet.
+ */
+const getLettersAnimation = () => {
+  let animating = false;
+  let finished = false;
+  let originalWord = '';
+  let wordTarget = '';
+  let letterDuration = 0;
+  let characters = [];
+  const splitString = (string) =>
+    [...new Intl.Segmenter().segment(string)].map((x) => x.segment);
+
+  return function lettersAnimation(
+    word,
+    actionCallBack,
+    animationDuration,
+    letterAnimationDuration,
+    charactersString
+  ) {
+    if (finished) {
+      finished = false;
+      return;
+    }
+    if (!animating) {
+      letterDuration = animationDuration / word.length;
+      originalWord = word;
+      characters = charactersString
+        ? splitString(charactersString)
+        : 'abcdefghijklmnopqrstuvwxyz'.split('');
+      animating = true;
+      const intervalLitterAnimation = setInterval(() => {
+        wordTarget += originalWord[0] || '';
+        originalWord = originalWord.substring(1);
+        if (originalWord === '') {
+          setTimeout(() => {
+            animating = false;
+            finished = true;
+            wordTarget = '';
+          }, letterAnimationDuration + 10);
+          clearInterval(intervalLitterAnimation);
+        }
+      }, letterDuration);
+    }
+
+    let wordArray = originalWord.split('');
+    for (let index = 0; index < originalWord.length; index++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      wordArray[index] = characters[randomIndex];
+    }
+    const printedWord = wordTarget + wordArray.join('');
+    actionCallBack(printedWord);
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        lettersAnimation(...arguments);
+      });
+    }, letterAnimationDuration);
+  };
+};
+
+const lettersAnimation = throttling(animationDuration, getLettersAnimation());
+
+const userNameFormat = (name) => {
+  name = name.toLowerCase();
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
 
 export {
   swapAnimation,
@@ -281,10 +397,15 @@ export {
   inputsEmptying,
   removeErrorBlock,
   getSwapAnimationRule,
-  hideError,
+  hideErrors,
   initializeSignUpForm,
   showError,
   validatesSignInForm,
   validatesSignUpForm,
   showExternalError,
+  lettersAnimation,
+  userNameFormat
 };
+
+// home page style
+// main page style
