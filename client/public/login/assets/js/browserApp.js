@@ -1,15 +1,21 @@
+import { handlEyeIconsClick } from '../../../main_assets/js/domFunctions.js';
 import {
+  hideAvatarSide,
   initializeSignUpForm,
   lettersAnimation,
+  showAvatarSide,
   swapAnimationThrottling,
+  handleFileAndvisuallyShowAvatar
 } from './domFunctions.js';
 import {
-  eyeIcon,
+  eyeIcons,
   signUpLink,
   signInLink,
   signUpFormHeight,
   signInFormHeight,
   animationDuration,
+  avatarContainer,
+  fileinput
 } from './NodesAndVariables.js';
 
 // prevets browser default validation rules
@@ -22,6 +28,7 @@ window.addEventListener('load', () => {
 
 // Event listener for sign-up link click
 signUpLink.addEventListener('click', function () {
+  showAvatarSide();
   lettersAnimation(
     'Create',
     (word) => {
@@ -35,6 +42,7 @@ signUpLink.addEventListener('click', function () {
 
 // Event listener for sign-in link click
 signInLink.addEventListener('click', function () {
+  hideAvatarSide();
   lettersAnimation(
     'Login to',
     (word) => {
@@ -46,14 +54,28 @@ signInLink.addEventListener('click', function () {
   swapAnimationThrottling(signInFormHeight);
 });
 
-// Event listener for eye icon click to toggle password visibility
-eyeIcon.forEach((e) => {
-  e.addEventListener('click', () => {
-    e.lastElementChild.classList.toggle('show');
-    if (e.previousElementSibling.getAttribute('type') === 'password') {
-      e.previousElementSibling.setAttribute('type', 'text');
-    } else {
-      e.previousElementSibling.setAttribute('type', 'password');
-    }
-  });
+// Add EventListener for eye icons click
+handlEyeIconsClick(eyeIcons);
+
+avatarContainer.addEventListener('click', () => {
+  fileinput.click();
 });
+
+fileinput.addEventListener('change', function () {
+  const file = this.files[0];
+  handleFileAndvisuallyShowAvatar(file, this);
+})
+
+document.addEventListener('dragenter', () => {
+  avatarContainer.classList.add('file-drag-start');
+})
+document.addEventListener('drop', (e) => {
+  e.preventDefault();
+  avatarContainer.classList.remove('file-drag-start');
+  handleFileAndvisuallyShowAvatar(e.dataTransfer.files[0]);
+})
+document.addEventListener('dragover', (e) => {
+  e.preventDefault();
+})
+
+

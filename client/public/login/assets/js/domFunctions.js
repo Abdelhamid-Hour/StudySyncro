@@ -15,6 +15,9 @@ import {
   emailRegex,
   userNameRegex,
   animationDuration,
+  avatarAside,
+  avartarSpaceReserver,
+  MAX_FILE_SIZE,
 } from './NodesAndVariables.js';
 
 let cssRulesLength = stylsheet.cssRules.length;
@@ -147,10 +150,7 @@ const swapAnimation = (targetSignUpFormHeight) => {
       signInFormContainer.onanimationstart = null;
     };
   } else {
-    hideErrors(
-      signInPasswordField,
-      signInemailField
-    );
+    hideErrors(signInPasswordField, signInemailField);
     signUpFormContainer.onanimationstart = () => {
       signUpFormContainer.style.zIndex = '2';
       signUpFormContainer.onanimationstart = null;
@@ -213,12 +213,15 @@ const showError = (errorMessage, element) => {
     container.nextElementSibling.firstElementChild.innerHTML = `<span>&#xF333;</span> ${errorMessage}`;
   }
   container.classList.add('error');
+  container.classList.add('error-animation');
   element.focus();
 };
 const hideErrors = (...elements) => {
   elements.forEach((element) => {
     const container = element.parentElement.parentElement;
     container.classList.remove('error');
+    container.classList.remove('error-animation');
+    void container.offsetWidth;
     if ([firstNameField, lastNameField].includes(element)) {
       signUpFormContainer.querySelector(
         '.user-name-container .errorContainer'
@@ -229,6 +232,7 @@ const hideErrors = (...elements) => {
   });
 };
 const validatesSignInForm = () => {
+  hideErrors(signInemailField, signInPasswordField);
   const email = signInemailField.value.trim();
   const password = signInPasswordField.value.trim();
   if (!passwordRegex.test(password)) {
@@ -236,13 +240,9 @@ const validatesSignInForm = () => {
       'The password must be at least 8 characters',
       signInPasswordField
     );
-  } else {
-    hideErrors(signInPasswordField);
   }
   if (!emailRegex.test(email)) {
     showError('Please enter a valid email', signInemailField);
-  } else {
-    hideErrors(signInemailField);
   }
   if (!emailRegex.test(email) || !passwordRegex.test(password)) {
     return false;
@@ -251,6 +251,13 @@ const validatesSignInForm = () => {
 };
 
 const validatesSignUpForm = () => {
+  hideErrors(
+    signUpemailField,
+    signUpPasswordField,
+    signUpConfirmPasswordField,
+    firstNameField,
+    lastNameField
+  );
   const email = signUpemailField.value.trim();
   const password = signUpPasswordField.value.trim();
   const confirmPassword = signUpConfirmPasswordField.value.trim();
@@ -258,8 +265,6 @@ const validatesSignUpForm = () => {
   const lastName = lastNameField.value.trim();
   if (password !== confirmPassword) {
     showError('Passwords do not match', signUpConfirmPasswordField);
-  } else {
-    hideErrors(signUpConfirmPasswordField);
   }
 
   if (!passwordRegex.test(password)) {
@@ -267,20 +272,14 @@ const validatesSignUpForm = () => {
       'The password must be at least 8 characters',
       signUpPasswordField
     );
-  } else {
-    hideErrors(signUpPasswordField);
   }
 
   if (!emailRegex.test(email)) {
     showError('Please enter a valid email', signUpemailField);
-  } else {
-    hideErrors(signUpemailField);
   }
 
   if (!userNameRegex.test(lastName)) {
     showError('Last name must be 3-15 characters only letters', lastNameField);
-  } else {
-    hideErrors(lastNameField);
   }
 
   if (!userNameRegex.test(firstName)) {
@@ -288,9 +287,6 @@ const validatesSignUpForm = () => {
       'First name must be 3-15 characters only letters',
       firstNameField
     );
-  }
-  if (userNameRegex.test(lastName) && userNameRegex.test(firstName)) {
-    hideErrors(firstNameField);
   }
 
   if (
@@ -316,7 +312,7 @@ const removeErrorBlock = function () {
  * creating a dynamic and visually appealing effect. The animation progresses letter by letter until the
  * entire word is displayed.
  *
- * @returns {(word: string, actionCallBack: Function, charactersString: string, animationDuration: number, letterAnimationDuration: number) => void} A function that animates the letters of a word.
+ * @returns {(word: string, actionCallBack: Function, animationDuration: number, letterAnimationDuration: number, charactersString: string) => void} A function that animates the letters of a word.
  *
  * The returned function has the following parameters:
  *
@@ -388,8 +384,41 @@ const lettersAnimation = throttling(animationDuration, getLettersAnimation());
 const userNameFormat = (name) => {
   name = name.toLowerCase();
   return name.charAt(0).toUpperCase() + name.slice(1);
-}
+};
 
+const hideAvatarSide = () => {
+  avatarAside.style.zIndex = '-1';
+  avatarAside.classList.remove('hidden');
+  avartarSpaceReserver.classList.remove('hidden');
+  avatarAside.querySelector('img').src = './assets/images/user.png';
+};
+
+const showAvatarSide = () => {
+  avatarAside.classList.add('hidden');
+  avartarSpaceReserver.classList.add('hidden');
+  setTimeout(() => {
+    avatarAside.style.zIndex = 'auto';
+  }, animationDuration);
+};
+
+const handleFileAndvisuallyShowAvatar = (file, inputFile) => {
+  if (file) {
+    const sizeKB = file.size / 1024;
+    if (sizeKB > MAX_FILE_SIZE) {
+      avatarAside.querySelector(
+        '.error'
+      ).innerHTML = `<span>&#xF333;</span>File size exceeds the limit of ${MAX_FILE_SIZE}.`;
+      if (inputFile) inputFile.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    avatarAside.querySelector('.error').innerHTML = '';
+    reader.readAsDataURL(file);
+    reader.onloadend = function () {
+      avatarAside.querySelector('img').src = reader.result;
+    };
+  }
+};
 
 export {
   swapAnimation,
@@ -404,7 +433,10 @@ export {
   validatesSignUpForm,
   showExternalError,
   lettersAnimation,
-  userNameFormat
+  userNameFormat,
+  hideAvatarSide,
+  showAvatarSide,
+  handleFileAndvisuallyShowAvatar,
 };
 
 // home page style

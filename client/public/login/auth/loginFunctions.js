@@ -7,6 +7,7 @@ import {
   updateProfile,
   FacebookAuthProvider,
   signOut,
+  sendPasswordResetEmail
 } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
 import { checkError } from './authErrors.js';
 import { sendData, getCookie, sendIdToken } from './fetch.js';
