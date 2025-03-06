@@ -1,6 +1,4 @@
-import { handlEyeIconsClick, handlResetPassword } from "../../../main_assets/js/domFunctions.js";
-import { eyeIcons, resetPasswordBtn } from "./variables.js";
+import { handlEyeIconsClick } from "../../../main_assets/js/domFunctions.js";
+import { eyeIcons } from "./variables.js";
 
 handlEyeIconsClick(eyeIcons);
-
-resetPasswordBtn.addEventListener("click", handlResetPassword);

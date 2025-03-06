@@ -1,2 +1,8 @@
-import { verifyPasswordResetCode,  } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
+import { resetPasswordBtn } from '../assets/js/variables.js';
+import {
+  verifyOobCode,
+  resetPassword,
+} from './authFunctions.js';
 
+window.addEventListener('DOMContentLoaded', verifyOobCode);
+resetPasswordBtn.addEventListener('click', resetPassword);

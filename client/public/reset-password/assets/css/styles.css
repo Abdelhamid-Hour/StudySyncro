@@ -22,20 +22,30 @@ main {
   flex-direction: column;
   text-align: center;
   gap: var(--form-gap);
-  width: 30rem;
+  width: fit-content;
   border-radius: 10px;
   padding: 2rem;
   color: var(--container-text-color);
   box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
   border: 1px solid var(--container-border-color);
-  h2{
+  h2 {
     color: var(--heading-color);
+  }
+  .error-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--form-gap);
+    color: var(--error-block-text-color);
+    h2 {
+      color: var(--error-block-heading-color);
+    }
   }
 }
 
 form {
   display: flex;
   flex-direction: column;
+  width: 25rem;
   gap: var(--form-gap);
   div[class^='md-'] {
     outline: 0.2rem solid transparent;
@@ -232,10 +242,30 @@ form {
   }
 }
 
+.error-animation {
+  animation: error-input 150ms linear 2;
+}
+
+@keyframes error-input {
+  25% {
+    translate: 1%;
+  }
+  75% {
+    translate: -1%;
+  }
+  100% {
+    translate: 0;
+  }
+}
+
+.error {
+  --inputs-border-color: var(--error-color);
+}
+
 @media screen and (max-width: 485px) {
-  main{
+  main {
     height: 100vh;
-    width: 100vw ;
+    width: 100vw;
     border-radius: unset;
     justify-content: center;
   }

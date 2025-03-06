@@ -7,10 +7,10 @@ import {
   updateProfile,
   FacebookAuthProvider,
   signOut,
-  sendPasswordResetEmail,
 } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
 import { checkError } from './authErrors.js';
 import { sendData, getCookie, sendIdToken } from './fetch.js';
+import { redirectTo } from '../../main_assets/js/domFunctions.js';
 
 const googleProvider = new GoogleAuthProvider();
 const fbProvider = new FacebookAuthProvider();
@@ -37,7 +37,7 @@ const handleUserSignIn = async (auth, user) => {
   // Sign out the user because the session is handled by the server
   await signOut(auth);
   // Redirect to the main page
-  window.location.href = '/main_page';
+  redirectTo('/main_page');
 };
 
 /**
@@ -174,7 +174,7 @@ const signInAuserWithEmailAndPassword = async function (
     callback('Signed in successfully', false);
     await sendIdToken(auth, '/session-login');
     await signOut(auth);
-    window.location.href = '/main_page';
+    redirectTo('/main_page');
   } catch (error) {
     checkError(error);
     callback(error.message, true);

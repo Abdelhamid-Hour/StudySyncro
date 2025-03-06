@@ -20,11 +20,11 @@ export const avatarAside = document.querySelector('aside');
 export const avartarSpaceReserver = document.getElementById('space-reserver');
 export const avatarContainer = document.getElementById('avatar-container');
 export const fileinput = avatarContainer.querySelector('input');
+export const forgotPasswordLink = signInFormContainer.querySelector('#forgot-password');
 export const MAX_FILE_SIZE = 200;
 
 
 export const emailRegex = /^[a-z0-9]+@[a-z0-9]+\.[a-z0-9]+$/;
-export const passwordRegex = /[\w.-]{8,}/;
 export const userNameRegex = /^[A-Za-z]+( [A-Za-z]+)*$/;
 
 export const signInFormHeight = signInFormContainer.getBoundingClientRect().height;

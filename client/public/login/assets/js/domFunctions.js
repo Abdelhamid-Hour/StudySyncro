@@ -1,3 +1,4 @@
+import { passwordRegex } from '../../../main_assets/js/variables.js';
 import {
   stylsheet,
   signInemailField,
@@ -11,7 +12,6 @@ import {
   signUpFormHeight,
   signUpFormContainer,
   signInFormContainer,
-  passwordRegex,
   emailRegex,
   userNameRegex,
   animationDuration,
@@ -178,19 +178,6 @@ export const swapAnimationThrottling = throttling(
   animationDuration,
   swapAnimation
 );
-const showError = (errorMessage, element) => {
-  const container = element.parentElement.parentElement;
-  if ([firstNameField, lastNameField].includes(element)) {
-    signUpFormContainer.querySelector(
-      '.user-name-container .errorContainer'
-    ).firstElementChild.innerHTML = `<span>&#xF333;</span> ${errorMessage}`;
-  } else {
-    container.nextElementSibling.firstElementChild.innerHTML = `<span>&#xF333;</span> ${errorMessage}`;
-  }
-  container.classList.add('error');
-  container.classList.add('error-animation');
-  element.focus();
-};
 const hideErrors = (...elements) => {
   elements.forEach((element) => {
     const container = element.parentElement.parentElement;
@@ -206,6 +193,20 @@ const hideErrors = (...elements) => {
     }
   });
 };
+const showError = (errorMessage, element) => {
+  const container = element.parentElement.parentElement;
+  if ([firstNameField, lastNameField].includes(element)) {
+    signUpFormContainer.querySelector(
+      '.user-name-container .errorContainer'
+    ).firstElementChild.innerHTML = `<span>&#xF333;</span> ${errorMessage}`;
+  } else {
+    container.nextElementSibling.firstElementChild.innerHTML = `<span>&#xF333;</span> ${errorMessage}`;
+  }
+  container.classList.add('error');
+  container.classList.add('error-animation');
+  element.focus();
+};
+
 const validatesSignInForm = () => {
   hideErrors(signInemailField, signInPasswordField);
   const email = signInemailField.value.trim();
@@ -224,6 +225,16 @@ const validatesSignInForm = () => {
   }
   return true;
 };
+
+const verifyEmail = () => {
+  hideErrors(signInemailField);
+  const email = signInemailField.value.trim();
+  if (!emailRegex.test(email)) {
+    showError('Please enter a valid email', signInemailField);
+    return false;
+  }
+  return true;
+}
 
 const validatesSignUpForm = () => {
   hideErrors(
@@ -372,7 +383,6 @@ const showAvatarSide = () => {
     avatarAside.style.zIndex = 'auto';
   }, animationDuration);
 };
-
 const handleFileAndvisuallyShowAvatar = (file, inputFile) => {
   if (file) {
     const sizeKB = file.size / 1024;
@@ -397,7 +407,6 @@ export {
   throttling,
   inputsEmptying,
   getSwapAnimationRule,
-  hideErrors,
   initializeSignUpForm,
   showError,
   validatesSignInForm,
@@ -407,6 +416,7 @@ export {
   hideAvatarSide,
   showAvatarSide,
   handleFileAndvisuallyShowAvatar,
+  verifyEmail
 };
 
 // home page style

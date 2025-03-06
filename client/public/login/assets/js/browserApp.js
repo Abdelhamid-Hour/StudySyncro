@@ -5,7 +5,7 @@ import {
   lettersAnimation,
   showAvatarSide,
   swapAnimationThrottling,
-  handleFileAndvisuallyShowAvatar
+  handleFileAndvisuallyShowAvatar,
 } from './domFunctions.js';
 import {
   eyeIcons,
@@ -15,7 +15,7 @@ import {
   signInFormHeight,
   animationDuration,
   avatarContainer,
-  fileinput
+  fileinput,
 } from './NodesAndVariables.js';
 
 // prevets browser default validation rules
@@ -64,11 +64,11 @@ avatarContainer.addEventListener('click', () => {
 fileinput.addEventListener('change', function () {
   const file = this.files[0];
   handleFileAndvisuallyShowAvatar(file, this);
-})
+});
 
 document.addEventListener('dragenter', () => {
   avatarContainer.classList.add('file-drag-start');
-})
+});
 // document.addEventListener('dragleave', () => {
 //   avatarContainer.classList.remove('file-drag-start');
 // })
@@ -76,9 +76,7 @@ document.addEventListener('drop', (e) => {
   e.preventDefault();
   avatarContainer.classList.remove('file-drag-start');
   handleFileAndvisuallyShowAvatar(e.dataTransfer.files[0]);
-})
+});
 document.addEventListener('dragover', (e) => {
   e.preventDefault();
-})
-
-
+});

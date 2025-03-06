@@ -12,6 +12,10 @@ export const handlEyeIconsClick = (eyeIcons) => {
   });
 };
 
+export const redirectTo = (url) => {
+  location.href = url;
+};
+
 export const removeBlock = function () {
   this.parentElement.remove();
 };

@@ -56,7 +56,8 @@
   /* external error variables */
   --error-block-background-color: rgb(231, 109, 109);
   --error-block-border-color: rgb(182, 61, 61);
-  --error-block-text-color: rgb(116, 5, 5);
+  --error-block-heading-color: rgb(116, 5, 5);
+  --error-block-text-color: rgb(151, 23, 23);
   --exclamation-error-icon-color: rgb(116, 5, 5);
   --close-error-icon-color: rgb(116, 5, 5);
   /* external success variables */

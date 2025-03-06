@@ -39,11 +39,7 @@
       href="../main_assets/css/variables_and_fonts.css"
       as="style"
     />
-    <link
-      rel="preload"
-      href="../main_assets/css/styles.css"
-      as="style"
-    />
+    <link rel="preload" href="../main_assets/css/styles.css" as="style" />
     <link rel="preload" href="./assets/css/styles.css" as="style" />
     <!-- Stylesheets -->
     <link rel="stylesheet" href="../main_assets/css/variables_and_fonts.css" />
@@ -70,7 +66,7 @@
               <i class="bi bi-lock-fill"></i>
             </div>
             <div class="password-container-label">
-              <label for="sign-up-password">
+              <label for="password">
                 <div></div>
                 New Password
               </label>
@@ -78,7 +74,7 @@
                 placeholder=""
                 type="password"
                 class="password"
-                id="sign-up-password"
+                id="password"
                 required
                 autocomplete="off"
               />
@@ -128,5 +124,6 @@
       </form>
     </main>
     <script type="module" src="./assets/js/browserApp.js"></script>
+    <script type="module" src="./auth/auth.js"></script>
   </body>
 </html>

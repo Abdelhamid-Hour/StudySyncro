@@ -12,6 +12,7 @@ import {
   validatesSignInForm,
   validatesSignUpForm,
   userNameFormat,
+  verifyEmail,
 } from '../assets/js/domFunctions.js';
 import {
   firstNameField as firstName,
@@ -25,6 +26,7 @@ import {
   fbBtn,
   googleBtn,
   formsContainer,
+  forgotPasswordLink,
 } from '../assets/js/NodesAndVariables.js';
 import { showMessageBlock } from '../../main_assets/js/domFunctions.js';
 
@@ -40,8 +42,6 @@ formsContainer.addEventListener('keyup', (e) => {
   }
 });
 signInBtn.addEventListener('click', async () => {
-  // const p = await sendPasswordResetEmail(auth, signInemailField.value);
-  //   console.log(p);
   if (!validatesSignInForm()) return;
   signInAuserWithEmailAndPassword(
     auth,
@@ -54,7 +54,7 @@ signInBtn.addEventListener('click', async () => {
 signUpBtn.addEventListener('click', () => {
   if (!validatesSignUpForm()) return;
   const fullName = `${userNameFormat(firstName.value)} ${userNameFormat(
-    firstName.value
+    lastName.value
   )}`;
   createAuserWithEmailAndPassword(
     auth,
@@ -72,4 +72,16 @@ googleBtn.addEventListener('click', () => {
 
 fbBtn.addEventListener('click', () => {
   signInWithFacebookProviderWithPopUp(auth, showMessageBlock);
+});
+forgotPasswordLink.addEventListener('click', async () => {
+  try {
+    if (!verifyEmail()) {
+      return;
+    }
+    await sendPasswordResetEmail(auth, signInemailField.value);
+    showMessageBlock('If this email is registered, you will receive a password reset link.', false);
+    signInPasswordField.value = '';
+  } catch (error) {
+    showMessageBlock(error.message, true);
+  }
 });

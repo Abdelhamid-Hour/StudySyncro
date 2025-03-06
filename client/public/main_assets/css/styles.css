@@ -1,43 +1,38 @@
-::selection{
+::selection {
   color: white;
   background-color: var(--secondary-color);
 }
-.messages-blocks-wrapper{
+.messages-blocks-wrapper {
   z-index: 10;
   position: fixed;
   top: 2rem;
   right: 1rem;
   display: flex;
   flex-direction: column;
+  align-items: end;
+  width: fit-content;
   gap: 1rem;
-  transition: all 300ms linear;
 }
 
 .error-block,
 .success-block {
-  z-index: 10;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 10px;
-  color: var(--error-block-text-color);
+  color: var(--error-block-heading-color);
   border: 1px solid var(--error-block-border-color);
   border-bottom: none;
   background-color: var(--error-block-background-color);
-  background-image: radial-gradient(
-    circle,
-    rgba(226, 156, 156, 0.384) 1px,
-    transparent 1px
-  );
-  background-size: 0.5rem 0.5rem;
   box-shadow: 1px 1px 5px rgba(128, 128, 128, 0.486),
     1px 1px 3px rgba(255, 255, 255, 0.582) inset;
   padding: 20px 30px;
   overflow-x: hidden;
   opacity: 0;
+  max-width: clamp(20rem, 40vw, 30rem);
   translate: 60%;
   text-align: justify;
-  max-width: clamp(20rem, 40%, 30rem);
   animation: show-block 700ms linear forwards,
     hide-block 500ms 10.7s linear forwards;
   &.success-block {

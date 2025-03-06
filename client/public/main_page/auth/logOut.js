@@ -1,10 +1,12 @@
+import { redirectTo } from "../../main_assets/js/domFunctions.js";
+
 const logOut = async (url) => {
     try {
         await fetch(url, {
             method: 'POST',
             credentials: 'include',
         });
-        window.location.href = '/login';
+        redirectTo('/login');
     } catch (error) {
         console.log(error.message);
     }

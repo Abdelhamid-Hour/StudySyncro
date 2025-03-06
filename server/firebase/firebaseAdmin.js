@@ -5,5 +5,4 @@ admin.initializeApp({
   databaseURL: 'https://leaning-11c1d-default-rtdb.firebaseio.com',
 });
 const db = admin.firestore();
-
 module.exports = { db, admin };
