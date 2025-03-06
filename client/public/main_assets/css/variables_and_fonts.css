@@ -1,6 +1,8 @@
 :root {
-  --primary-color: #458eff;
-  --secondary-color: #086bff;
+  /* --primary-color: #458eff;
+  --secondary-color: #086bff; */
+  --primary-color: #1e77fd;
+  --secondary-color: #005be4;
   --background-color: #cfd0f3;
   /* login color variables */
   --container-background-color: #dcdee3; /* #e1cef1 */
@@ -24,7 +26,8 @@
   --inputs-background-color: #dcdee3ff;
   --inputs-focus-background-color: #eeeff1;
   --inputs-border-color: var(--primary-color);
-  --inputs-outline-color: var(--primary-color);
+  /* --inputs-outline-color: var(--primary-color); */
+  --inputs-outline-color: #3284ffa9;
   --inputs-text-color: var(--secondary-color);
   --inputs-label-color: #485268;
   --inputs-transition-label-color: var(--primary-color);
