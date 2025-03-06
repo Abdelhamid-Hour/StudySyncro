@@ -23,31 +23,6 @@ import {
 let cssRulesLength = stylsheet.cssRules.length;
 
 /**
- * Adds two numbers together.
- * @param {string} message - The message to show in the DOM.
- */
-const showExternalError = (message) => {
-  const errorContainer = document.createElement('div');
-  errorContainer.className = 'external-error';
-  errorContainer.innerHTML = `
-    <p>
-      <i class="bi bi-exclamation-circle-fill"></i>
-      ${message}
-    </p>
-    <i class="bi bi-x"></i>
-    <div>
-      <hr>
-    </div>
-  `;
-  errorContainer
-    .querySelector('.bi-x')
-    .addEventListener('click', removeErrorBlock);
-  document.body.appendChild(errorContainer);
-  setTimeout(() => {
-    errorContainer.remove();
-  }, 11200);
-};
-/**
  * Generates the CSS rules for the swap animation.
  * @param {Number} targetSignUpFormHeight - The target height for the sign-up form.
  * @returns {Object} The initial rule and the class keyframe rule of the animation.
@@ -300,9 +275,6 @@ const validatesSignUpForm = () => {
   }
   return true;
 };
-const removeErrorBlock = function () {
-  this.parentElement.remove();
-};
 
 /**
  * Generates a function to animate the letters of a word, creating a random letter animation effect.
@@ -424,14 +396,12 @@ export {
   swapAnimation,
   throttling,
   inputsEmptying,
-  removeErrorBlock,
   getSwapAnimationRule,
   hideErrors,
   initializeSignUpForm,
   showError,
   validatesSignInForm,
   validatesSignUpForm,
-  showExternalError,
   lettersAnimation,
   userNameFormat,
   hideAvatarSide,

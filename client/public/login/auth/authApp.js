@@ -8,13 +8,11 @@ import {
   signInAuserWithEmailAndPassword,
 } from './loginFunctions.js';
 import {
-  showExternalError,
   inputsEmptying,
   validatesSignInForm,
   validatesSignUpForm,
   userNameFormat,
 } from '../assets/js/domFunctions.js';
-
 import {
   firstNameField as firstName,
   lastNameField as lastName,
@@ -28,8 +26,9 @@ import {
   googleBtn,
   formsContainer,
 } from '../assets/js/NodesAndVariables.js';
+import { showMessageBlock } from '../../main_assets/js/domFunctions.js';
 
-InitializeGoogleOneTap(auth, showExternalError);
+InitializeGoogleOneTap(auth, showMessageBlock);
 
 formsContainer.addEventListener('keyup', (e) => {
   if (e.key === 'Enter') {
@@ -41,16 +40,16 @@ formsContainer.addEventListener('keyup', (e) => {
   }
 });
 signInBtn.addEventListener('click', async () => {
-  const p = await sendPasswordResetEmail(auth, signInemailField.value);
-    console.log(p);
-  // if (!validatesSignInForm()) return;
-  // signInAuserWithEmailAndPassword(
-  //   auth,
-  //   signInemailField.value,
-  //   signInPasswordField.value,
-  //   showExternalError
-  // );
-  // inputsEmptying();
+  // const p = await sendPasswordResetEmail(auth, signInemailField.value);
+  //   console.log(p);
+  if (!validatesSignInForm()) return;
+  signInAuserWithEmailAndPassword(
+    auth,
+    signInemailField.value,
+    signInPasswordField.value,
+    showMessageBlock
+  );
+  inputsEmptying();
 });
 signUpBtn.addEventListener('click', () => {
   if (!validatesSignUpForm()) return;
@@ -62,15 +61,15 @@ signUpBtn.addEventListener('click', () => {
     fullName,
     signUpemailField.value,
     signUpPasswordField.value,
-    showExternalError
+    showMessageBlock
   );
   inputsEmptying();
 });
 
 googleBtn.addEventListener('click', () => {
-  signInWithGoogleProviderWithPopUp(auth, showExternalError);
+  signInWithGoogleProviderWithPopUp(auth, showMessageBlock);
 });
 
 fbBtn.addEventListener('click', () => {
-  signInWithFacebookProviderWithPopUp(auth, showExternalError);
+  signInWithFacebookProviderWithPopUp(auth, showMessageBlock);
 });

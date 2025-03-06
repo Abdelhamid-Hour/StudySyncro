@@ -20,8 +20,6 @@ body {
   justify-content: center;
   align-items: center;
   background-color: var(--background-color);
-  background-image: radial-gradient(circle, gray 1px, transparent 1px);
-  background-size: 1rem 1rem;
   min-height: 100vh;
 }
 
@@ -30,18 +28,22 @@ main {
   display: flex;
   height: fit-content;
   justify-content: center;
-  width: 90vw;
-  
+  width: 100%;
+
   #space-reserver {
     position: relative;
     width: 0;
     max-width: 28rem;
-    padding: 2rem;
     transition: all var(--login-swap-animation-duration) linear;
     z-index: -2;
 
     &.hidden {
+      padding: 2rem;
       width: 50%;
+      & + div {
+        border-start-start-radius: unset !important;
+        border-end-start-radius: unset !important;
+      }
     }
   }
 }
@@ -49,34 +51,36 @@ main {
 #login-form {
   position: relative;
   max-width: 28rem;
-  flex-basis: 50%;
-  flex-shrink: 2;
+  width: fit-content;
   padding: 2rem;
   color: var(--container-text-color);
   background-color: var(--container-background-color);
-  box-shadow: 1px 1px 5px 1px #cbced5, 0.5px 0.5px 5px 1px #dcdee3 inset;
+  box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
   border: 1px solid var(--container-border-color);
   border-start-end-radius: 5px;
-  border-end-end-radius: 5px;
+  border-radius: 5px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 1rem;
 
   aside {
     --aside-background-color: #cbcdd3;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: center;
+    gap: 2rem;
     align-items: center;
     background-color: var(--aside-background-color);
     width: 100%;
     height: 100%;
     border: 1px solid var(--container-border-color);
+    border-right: unset;
     padding: 2rem;
     border-start-start-radius: 5px;
     border-end-start-radius: 5px;
-    box-shadow: 0px 1px 5px 1px #cbced5, 0.5px 0.5px 5px 1px #dcdee3 inset,
-      -1px 0px 5px 1px #2e2e2e4f inset;
+    box-shadow: 0px 2px 3px 1px #82848644, 0px -2px 3px 1px #d3d3d357 inset,
+      -1px 0px 3px 1px #82848644 inset;
     overflow: hidden;
     position: absolute;
     top: 0;
@@ -85,7 +89,7 @@ main {
     translate: 0%;
     transition: all var(--login-swap-animation-duration) linear;
 
-    span{
+    span {
       margin-top: -2rem;
       color: var(--error-color);
       display: flex;
@@ -100,7 +104,7 @@ main {
       display: flex;
       flex-direction: column;
       gap: 1rem;
-      p{
+      p {
         text-align: justify;
       }
     }
@@ -125,7 +129,8 @@ main {
       transition: all 200ms ease-in-out;
       gap: 1.5rem;
 
-      &:hover, &.file-drag-start {
+      &:hover,
+      &.file-drag-start {
         background-color: rgba(53, 51, 51, 0.637);
         svg {
           opacity: 1;
@@ -221,6 +226,7 @@ button {
     width: 60%;
   }
   svg {
+    filter: drop-shadow(0px 0px 1px rgba(19, 19, 19, 0.418));
     height: 100%;
     width: fit-content;
   }
@@ -292,8 +298,7 @@ section#forms {
 
     & > div.user-name-container {
       display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
+      flex-direction: column;
       width: 100%;
       i {
         font-size: calc(var(--inputs-icons-font-size) / 1.5);
@@ -423,7 +428,7 @@ section#forms {
           & > .show {
             scale: 0 1;
           }
-        
+
           div {
             position: absolute;
             top: 0;
@@ -439,7 +444,7 @@ section#forms {
             rotate: 45deg;
             transition: all var(--eye-trans-duration) ease-in-out;
             float: right;
-        
+
             hr {
               background-color: var(--eye-pass-color);
               height: 2px;
@@ -515,7 +520,6 @@ div.separator {
   }
 }
 
-
 @property --mask-animation-start {
   syntax: '<percentage>';
   initial-value: 0%;
@@ -554,99 +558,77 @@ div.separator {
   }
 }
 
-.external-error {
-  z-index: 10;
-  position: fixed;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  color: var(--external-error-text-color);
-  border: 1px solid var(--external-border-color);
-  border-bottom: none;
-  top: 2rem;
-  right: 1rem;
-  background-color: var(--external-background-color);
-  background-image: radial-gradient(
-    circle,
-    rgba(226, 156, 156, 0.384) 1px,
-    transparent 1px
-  );
-  background-size: 0.5rem 0.5rem;
-  box-shadow: 1px 1px 5px rgba(128, 128, 128, 0.486),
-    1px 1px 3px rgba(255, 255, 255, 0.582) inset;
-  padding: 20px 30px;
-  overflow-x: hidden;
-  opacity: 0;
-  translate: 60%;
-  text-align: justify;
-  max-width: clamp(20rem, 40%, 30rem);
-  animation: show-external-error 700ms linear forwards,
-    hide-external-error 500ms 10.7s linear forwards;
-  p {
-    padding-right: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    i {
-      color: var(--exclamation-icon-color);
-      font-size: xx-large;
+@media screen and (max-width: 900px) {
+  #login-form {
+    padding-inline: 1rem;
+  }
+  #space-reserver.hidden {
+    & + div {
+      height: 100vh;
+      flex-basis: 50%;
     }
   }
-  & > i {
-    color: var(--close-icon-color);
-    font-size: x-large;
-    position: absolute;
-    right: 1rem;
-    cursor: pointer;
-  }
-  div {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    overflow: hidden;
-    hr {
-      border: none;
-      float: left;
-      width: 100%;
-      height: 0.1rem;
-      background-color: var(--background-color);
-      animation: error-bar-progress 10s 0.7s linear forwards;
+  button {
+    span {
+      width: 80%;
     }
   }
 }
-
-@keyframes hide-external-error {
-  to {
-    opacity: 0;
-    translate: 20% 0%;
-  }
-}
-@keyframes show-external-error {
-  80% {
-    scale: 1.01;
-    translate: -3%;
-  }
-  100% {
-    opacity: 1;
-    translate: 0;
-  }
-}
-@keyframes error-bar-progress {
-  to {
-    width: 0%;
-  }
-}
-
-/* @media screen and (max-width: 780px) {
+@media screen and (max-width: 720px) {
   main {
     flex-direction: column;
     align-items: center;
-    justify-content: unset;
+    height: 100vh;
+    width: 100%;
 
+    &:has( > div.hidden){
+      height: auto;
+    }
     #space-reserver {
-      display: none;
+      width: 100%;
+      height: 0;
+
+      &.hidden {
+        width: 100%;
+        height: 28.5rem;
+        & + div {
+          max-width: unset;
+          width: 100%;
+          border-radius: unset;
+          box-shadow: 0px 0px 5px 3px #797a7c77;
+          border-start-start-radius: unset;
+          border-start-end-radius: unset;
+        }
+      }
+    }
+    #login-form {
+      height: 100%;
+      max-width: unset;
+      width: 100%;
+      aside {
+        height: 28.5rem;
+        box-shadow: 0px 0px 3px 3px #82848644, 0px -1px 3px 1px #82848644 inset;
+        border-radius: unset;
+        border-right: 1px solid var(--container-border-color);
+        border-bottom: unset;
+        &.hidden {
+          translate: 0 -100%;
+        }
+      }
+      div.user-name-container {
+        & > div:first-child {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          gap: calc(var(--form-gap) / 2) !important;
+          & > div{
+            flex-basis: 50%;
+          }
+        }
+      }
+      #sign-up-container{
+        width: 100%;
+      }
     }
   }
-} */
+}

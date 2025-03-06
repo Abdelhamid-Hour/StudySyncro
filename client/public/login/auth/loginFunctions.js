@@ -7,7 +7,7 @@ import {
   updateProfile,
   FacebookAuthProvider,
   signOut,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
 } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
 import { checkError } from './authErrors.js';
 import { sendData, getCookie, sendIdToken } from './fetch.js';
@@ -45,8 +45,9 @@ const handleUserSignIn = async (auth, user) => {
  * @param {Auth} auth
  * @param {Provider} provider
  */
-const signInWhithProvider = async function (auth, provider) {
+const signInWhithProvider = async function (auth, provider, callback) {
   const userCredential = await signInWithPopup(auth, provider);
+  callback('Signed in successfully', false);
   const user = userCredential.user;
   await handleUserSignIn(auth, user);
 };
@@ -54,19 +55,22 @@ const signInWhithProvider = async function (auth, provider) {
 /**
  * Initialize Google One Tap Sign-In API
  * @param {Auth} auth - The Auth instance.
- * @param {ErrorCallback} errorCallback - The Error callback function.
+ * @param {Callback} callback - The callback function that handles the result of the sign-in process. It takes two parameters:
+ * first param: message string and
+ * second param: boolean indicating if there was an error..
  */
-const InitializeGoogleOneTap = function (auth, errorCallback) {
+const InitializeGoogleOneTap = function (auth, callback) {
   const handleCredentialResponse = async function (response) {
     try {
       // Convert Google credential to Firebase credential
       const credential = GoogleAuthProvider.credential(response.credential);
       const userCredential = await signInWithCredential(auth, credential);
       const user = userCredential.user;
+      callback('Signed in successfully', false);
       await handleUserSignIn(auth, user);
     } catch (error) {
       checkError(error);
-      errorCallback(error.message);
+      callback(error.message, true);
     }
   };
 
@@ -85,31 +89,32 @@ const showGoogleOneTap = function () {
 /**
  * Sign In with Facebook using a popup
  * @param {Auth} auth - The Auth instance.
- * @param {ErrorCallback} errorCallback - The Error callback function.
+ * @param {Callback} callback - The callback function that handles the result of the sign-in process. It takes two parameters:
+ * first param: message string and
+ * second param: boolean indicating if there was an error..
  */
-const signInWithFacebookProviderWithPopUp = async function (
-  auth,
-  errorCallback
-) {
+const signInWithFacebookProviderWithPopUp = async function (auth, callback) {
   try {
-    await signInWhithProvider(auth, fbProvider);
+    await signInWhithProvider(auth, fbProvider, callback);
   } catch (error) {
     checkError(error);
-    errorCallback(error.message);
+    callback(error.message, true);
   }
 };
 
 /**
  * Sign In with Google using a popup
  * @param {Auth} auth - The Auth instance.
- * @param {ErrorCallback} errorCallback - The Error callback function.
+ * @param {Callback} callback - The callback function that handles the result of the sign-in process. It takes two parameters:
+ * first param: message string and
+ * second param: boolean indicating if there was an error..
  */
-const signInWithGoogleProviderWithPopUp = async function (auth, errorCallback) {
+const signInWithGoogleProviderWithPopUp = async function (auth, callback) {
   try {
-    await signInWhithProvider(auth, googleProvider);
+    await signInWhithProvider(auth, googleProvider, callback);
   } catch (error) {
     checkError(error);
-    errorCallback(error.message);
+    callback(error.message, true);
   }
 };
 
@@ -119,14 +124,16 @@ const signInWithGoogleProviderWithPopUp = async function (auth, errorCallback) {
  * @param {String} fullName - The full name of the user
  * @param {String} email - The email of the user
  * @param {String} password - The password of the user
- * @param {ErrorCallback} errorCallback - The Error callback function
+ * @param {Callback} callback - The callback function that handles the result of the sign-in process. It takes two parameters:
+ * first param: message string and
+ * second param: boolean indicating if there was an error.
  */
 const createAuserWithEmailAndPassword = async function (
   auth,
   fullName,
   email,
   password,
-  errorCallback
+  callback
 ) {
   try {
     const userCredential = await createUserWithEmailAndPassword(
@@ -134,6 +141,7 @@ const createAuserWithEmailAndPassword = async function (
       email,
       password
     );
+    callback('User account created successfully', false);
     const user = userCredential.user;
     await updateProfile(user, {
       displayName: fullName,
@@ -141,7 +149,7 @@ const createAuserWithEmailAndPassword = async function (
     await handleUserSignIn(auth, user);
   } catch (error) {
     checkError(error);
-    errorCallback(error.message);
+    callback(error.message, true);
   }
 };
 
@@ -151,22 +159,25 @@ const createAuserWithEmailAndPassword = async function (
  * @param {String} fullName - The full name
  * @param {String} email - The email
  * @param {String} password - The password
- * @param {ErrorCallback} errorCallback - The Error callback function
+ * @param {Callback} callback - The callback function that handles the result of the sign-in process. It takes two parameters:
+ * first param: message string and
+ * second param: boolean indicating if there was an error.
  */
 const signInAuserWithEmailAndPassword = async function (
   auth,
   email,
   password,
-  errorCallback
+  callback
 ) {
   try {
     await signInWithEmailAndPassword(auth, email, password);
+    callback('Signed in successfully', false);
     await sendIdToken(auth, '/session-login');
     await signOut(auth);
     window.location.href = '/main_page';
   } catch (error) {
     checkError(error);
-    errorCallback(error.message);
+    callback(error.message, true);
   }
 };
 

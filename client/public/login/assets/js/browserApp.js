@@ -69,6 +69,9 @@ fileinput.addEventListener('change', function () {
 document.addEventListener('dragenter', () => {
   avatarContainer.classList.add('file-drag-start');
 })
+// document.addEventListener('dragleave', () => {
+//   avatarContainer.classList.remove('file-drag-start');
+// })
 document.addEventListener('drop', (e) => {
   e.preventDefault();
   avatarContainer.classList.remove('file-drag-start');

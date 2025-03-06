@@ -1,33 +1,33 @@
 :root {
-  --primary-color: #9235e8ff;
-  --secondary-color: #b372ef;
-  --background-color: #eeeff1;
+  --primary-color: #458eff;
+  --secondary-color: #086bff;
+  --background-color: #cfd0f3;
   /* login color variables */
   --container-background-color: #dcdee3; /* #e1cef1 */
   --container-border-color: #cbced5;
   --container-text-color: #505b74;
   /* h1 color */
-  --heading-color: #384051;
+  --heading-color: var(--secondary-color);
   /* buttons color variables */
   --btn-background-color: var(--primary-color);
   --btn-text-color: #eceef2ff;
-  --btn-border-color: #a85dedff;
-  --btn-hover-background-color: var(--secondary-color);
-  --btn-hover-text-color: #58208bff;
+  --btn-border-color: var(--secondary-color);
   /* buttons height */
   --btn-height: 2.5rem;
   /* buttons hover transiotion duration */
   --btn-hover-tran-duration: 300ms;
   /* button hover border color */
-  --btn-hover-border-color: var(--btn-border-color);
+  --btn-hover-border-color: var(--primary-color);
+  --btn-hover-background-color: var(--secondary-color);
+  --btn-hover-text-color: white;
   /* inputs colors variables */
   --inputs-background-color: #dcdee3ff;
   --inputs-focus-background-color: #eeeff1;
   --inputs-border-color: var(--primary-color);
   --inputs-outline-color: var(--primary-color);
-  --inputs-text-color: #58208bff;
+  --inputs-text-color: var(--secondary-color);
   --inputs-label-color: #485268;
-  --inputs-transition-label-color: #752aba;
+  --inputs-transition-label-color: var(--primary-color);
   --inputs-focus-border-color: var(--secondary-color);
   /* inputs font and border size variables */
   --inputs-border-size: 2px;
@@ -37,9 +37,9 @@
   --inputs-outline-trans-duration: 300ms;
   /* inputs icons colors varianles */
   --inputs-icons-background-color: var(--primary-color);
-  --inputs-icons-color: #eeeff1;
+  --inputs-icons-color: white;
   --inputs-icons-focus-bc: var(--secondary-color);
-  --inputs-icons-focus-color: var(--primary-color);
+  --inputs-icons-focus-color: white;
   /* inputs focus transition duration */
   --inputs-focus-tran-duration: 300ms;
   /* icons hover transition duration */
@@ -54,11 +54,17 @@
   --error-font-size: small;
   --error-font-weight: 500;
   /* external error variables */
-  --external-background-color: rgb(231, 109, 109);
-  --external-border-color: rgb(182, 61, 61);
-  --external-error-text-color: rgb(116, 5, 5);
-  --exclamation-icon-color: rgb(116, 5, 5);
-  --close-icon-color: rgb(116, 5, 5);
+  --error-block-background-color: rgb(231, 109, 109);
+  --error-block-border-color: rgb(182, 61, 61);
+  --error-block-text-color: rgb(116, 5, 5);
+  --exclamation-error-icon-color: rgb(116, 5, 5);
+  --close-error-icon-color: rgb(116, 5, 5);
+  /* external success variables */
+  --success-block-background-color: rgb(109, 231, 109);
+  --success-block-border-color: rgb(71, 182, 61);
+  --success-block-error-text-color: rgb(18, 116, 5);
+  --success-icon-color: rgb(18, 116, 5);
+  --close-success-icon-color: rgb(18, 116, 5);
   /* links color */
   --links-color: #485268;
   /* link hover color */

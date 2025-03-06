@@ -30,7 +30,7 @@ export const userNameRegex = /^[A-Za-z]+( [A-Za-z]+)*$/;
 export const signInFormHeight = signInFormContainer.getBoundingClientRect().height;
 export const signUpFormHeight = signUpFormContainer.getBoundingClientRect().height;
 // get the first external styles
-export const stylsheet = document.styleSheets[3];
+export const stylsheet = document.styleSheets[4];
 
 // get the Login swap animation duration from the stylesheet
 export const animationDuration = parseInt(
@@ -38,4 +38,3 @@ export const animationDuration = parseInt(
   .match(/--login-swap-animation-duration: \d{1,10}ms;/i)[0]
   .split(':')[1]
 );
-

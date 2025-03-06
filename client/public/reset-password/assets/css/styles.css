@@ -13,8 +13,6 @@ body {
   justify-content: center;
   align-items: center;
   background-color: var(--background-color);
-  background-image: radial-gradient(circle, gray 1px, transparent 1px);
-  background-size: 1rem 1rem;
   min-height: 100vh;
 }
 
@@ -24,13 +22,15 @@ main {
   flex-direction: column;
   text-align: center;
   gap: var(--form-gap);
-  width: 40%;
+  width: 30rem;
   border-radius: 10px;
-  max-width: 28rem;
   padding: 2rem;
   color: var(--container-text-color);
-  box-shadow: 1px 1px 5px 1px #cbced5, 0.5px 0.5px 5px 1px #dcdee3 inset;
+  box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
   border: 1px solid var(--container-border-color);
+  h2{
+    color: var(--heading-color);
+  }
 }
 
 form {
@@ -229,5 +229,14 @@ form {
       height: 100%;
       width: fit-content;
     }
+  }
+}
+
+@media screen and (max-width: 485px) {
+  main{
+    height: 100vh;
+    width: 100vw ;
+    border-radius: unset;
+    justify-content: center;
   }
 }
