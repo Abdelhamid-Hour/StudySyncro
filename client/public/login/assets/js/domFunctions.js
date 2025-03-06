@@ -307,7 +307,6 @@ const validatesSignUpForm = () => {
  */
 const getLettersAnimation = () => {
   let animating = false;
-  let finished = false;
   let originalWord = '';
   let wordTarget = '';
   let letterDuration = 0;
@@ -322,8 +321,9 @@ const getLettersAnimation = () => {
     letterAnimationDuration,
     charactersString
   ) {
-    if (finished) {
-      finished = false;
+    if (word === wordTarget) {
+      wordTarget = '';
+      animating = false;
       return;
     }
     if (!animating) {
@@ -337,11 +337,6 @@ const getLettersAnimation = () => {
         wordTarget += originalWord[0] || '';
         originalWord = originalWord.substring(1);
         if (originalWord === '') {
-          setTimeout(() => {
-            animating = false;
-            finished = true;
-            wordTarget = '';
-          }, letterAnimationDuration + 10);
           clearInterval(intervalLitterAnimation);
         }
       }, letterDuration);
@@ -356,6 +351,7 @@ const getLettersAnimation = () => {
     actionCallBack(printedWord);
     setTimeout(() => {
       requestAnimationFrame(() => {
+        arguments[0] = printedWord;
         lettersAnimation(...arguments);
       });
     }, letterAnimationDuration);
