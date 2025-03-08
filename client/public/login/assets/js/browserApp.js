@@ -98,3 +98,8 @@ document.addEventListener('drop', (e) => {
 document.addEventListener('dragover', (e) => {
   e.preventDefault();
 });
+
+
+
+// todo: add event listener for inputs blur
+// adjust the avatare side on mobile
