@@ -186,7 +186,7 @@ const hideErrors = (...elements) => {
     void container.offsetWidth;
     if ([firstNameField, lastNameField].includes(element)) {
       signUpFormContainer.querySelector(
-        '.user-name-container .errorContainer'
+        '.user-name-container .error-container'
       ).firstElementChild.innerHTML = '';
     } else {
       container.nextElementSibling.firstElementChild.innerHTML = '';
@@ -195,12 +195,13 @@ const hideErrors = (...elements) => {
 };
 const showError = (errorMessage, element) => {
   const container = element.parentElement.parentElement;
+  const errorIcon = '<i class="bi bi-exclamation-circle"></i>';
   if ([firstNameField, lastNameField].includes(element)) {
     signUpFormContainer.querySelector(
-      '.user-name-container .errorContainer'
-    ).firstElementChild.innerHTML = `<span>&#xF333;</span> ${errorMessage}`;
+      '.user-name-container .error-container'
+    ).firstElementChild.innerHTML = `${errorIcon} ${errorMessage}`;
   } else {
-    container.nextElementSibling.firstElementChild.innerHTML = `<span>&#xF333;</span> ${errorMessage}`;
+    container.nextElementSibling.firstElementChild.innerHTML = `${errorIcon} ${errorMessage}`;
   }
   container.classList.add('error');
   container.classList.add('error-animation');
@@ -234,7 +235,7 @@ const verifyEmail = () => {
     return false;
   }
   return true;
-}
+};
 
 const validatesSignUpForm = () => {
   hideErrors(
@@ -367,26 +368,33 @@ const userNameFormat = (name) => {
 
 const hideAvatarSide = () => {
   avatarAside.style.zIndex = '-1';
-  avatarAside.classList.remove('hidden');
-  avartarSpaceReserver.classList.remove('hidden');
+  avatarAside.classList.remove('shown');
+  avartarSpaceReserver.classList.remove('shown');
   avatarAside.querySelector('img').src = './assets/images/user.png';
+  setTimeout(() => {
+    avatarAside.querySelector('div').style.display = 'none';
+  }, animationDuration);
 };
 
 const showAvatarSide = () => {
-  avatarAside.classList.add('hidden');
-  avartarSpaceReserver.classList.add('hidden');
+  avatarAside.querySelector('div').style.display = 'flex';
+  avatarAside.classList.add('shown');
+  avartarSpaceReserver.classList.add('shown');
   setTimeout(() => {
     avatarAside.style.zIndex = 'auto';
   }, animationDuration);
+};
+
+const showAvatarError = (message) => {
+  avatarAside.querySelector(
+    '.error'
+  ).innerHTML = `<i class="bi bi-exclamation-circle"></i>${message}`;
 };
 const handleFileAndvisuallyShowAvatar = (file, inputFile) => {
   if (file) {
     const sizeKB = file.size / 1024;
     if (sizeKB > MAX_FILE_SIZE) {
-      avatarAside.querySelector(
-        '.error'
-      ).innerHTML = `<span>&#xF333;</span>File size exceeds the limit of ${MAX_FILE_SIZE}.`;
-      if (inputFile) inputFile.value = '';
+      showAvatarError(`File size exceeds the limit of ${MAX_FILE_SIZE}.`);
       return;
     }
     const reader = new FileReader();
@@ -412,7 +420,8 @@ export {
   hideAvatarSide,
   showAvatarSide,
   handleFileAndvisuallyShowAvatar,
-  verifyEmail
+  verifyEmail,
+  showAvatarError,
 };
 
 // home page style

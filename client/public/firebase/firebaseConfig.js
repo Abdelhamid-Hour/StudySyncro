@@ -17,12 +17,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 (async function setAuthPersistence() {
-  try {
     await setPersistence(auth, inMemoryPersistence);
     console.log('Auth persistence set');
-  } catch (error) {
-    console.log(error);
-  }
 })();
 export { auth };
 

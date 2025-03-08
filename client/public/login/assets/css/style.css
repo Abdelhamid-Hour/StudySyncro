@@ -37,7 +37,7 @@ main {
     transition: all var(--login-swap-animation-duration) linear;
     z-index: -2;
 
-    &.hidden {
+    &.shown {
       padding: 2rem;
       width: 50%;
       & + div {
@@ -83,23 +83,12 @@ main {
       -1px 0px 3px 1px #82848644 inset;
     overflow: hidden;
     position: absolute;
+    pointer-events: auto;
     top: 0;
     right: 0;
     z-index: -1;
     translate: 0%;
     transition: all var(--login-swap-animation-duration) linear;
-
-    span {
-      margin-top: -2rem;
-      color: var(--error-color);
-      display: flex;
-      align-items: flex-end;
-      span {
-        margin-top: 0;
-        margin-right: 0.2rem;
-        font-family: 'Bootstrap-icons';
-      }
-    }
     section {
       display: flex;
       flex-direction: column;
@@ -109,8 +98,9 @@ main {
       }
     }
 
-    &.hidden {
+    &.shown {
       translate: -100%;
+      pointer-events: auto;
     }
 
     #avatar-container {
@@ -132,17 +122,31 @@ main {
       &:hover,
       &.file-drag-start {
         background-color: rgba(53, 51, 51, 0.637);
-        svg {
-          opacity: 1;
+        & svg {
+          /* I added !important to override the SVG style because 
+          it has higher priority than the style applied with the 
+          selector & > div:first-child */
+          opacity: 1 !important;
           #arrow {
-            translate: 0 0%;
+            translate: 0 0% !important;
           }
         }
         img {
           filter: brightness(50%);
         }
       }
-      & > div {
+
+      span {
+        position: absolute;
+        bottom: -1rem;
+        translate: 0 100%;
+        color: var(--error-color);
+        display: flex;
+        line-height: 1.2rem;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      & > div:first-child {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -176,18 +180,18 @@ main {
           }
         }
       }
+      & > div.text {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
 
+        p:first-child {
+          font-weight: bold;
+        }
+      }
       input {
         display: none;
-      }
-
-      p {
-        text-align: center;
-        font-weight: bold;
-      }
-      button {
-        padding: 20px;
-        width: fit-content;
       }
     }
   }
@@ -459,7 +463,7 @@ section#forms {
 
   /* error text styling */
 
-  .errorContainer {
+  .error-container {
     color: var(--error-color);
     text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
     font-weight: var(--error-font-weight);
@@ -471,10 +475,9 @@ section#forms {
     & > span {
       display: flex;
       align-items: flex-end;
-      span {
+      i {
+        font-size: var(--error-font-size) !important;
         margin-right: 0.2rem;
-        font-family: 'Bootstrap-icons';
-        color: var(--error-color);
       }
     }
   }
@@ -549,6 +552,7 @@ div.separator {
 
 .error {
   --inputs-border-color: var(--error-color);
+  --inputs-icons-background-color: var(--error-color);
 }
 
 @keyframes signUpMaskAnimation {
@@ -562,7 +566,7 @@ div.separator {
   #login-form {
     padding-inline: 1rem;
   }
-  #space-reserver.hidden {
+  #space-reserver.shown {
     & + div {
       height: 100vh;
       flex-basis: 50%;
@@ -581,14 +585,14 @@ div.separator {
     height: 100vh;
     width: 100%;
 
-    &:has( > div.hidden){
+    &:has(> div.shown) {
       height: auto;
     }
     #space-reserver {
       width: 100%;
       height: 0;
 
-      &.hidden {
+      &.shown {
         width: 100%;
         height: 28.5rem;
         & + div {
@@ -611,7 +615,7 @@ div.separator {
         border-radius: unset;
         border-right: 1px solid var(--container-border-color);
         border-bottom: unset;
-        &.hidden {
+        &.shown {
           translate: 0 -100%;
         }
       }
@@ -621,12 +625,12 @@ div.separator {
           display: flex;
           flex-direction: row;
           gap: calc(var(--form-gap) / 2) !important;
-          & > div{
+          & > div {
             flex-basis: 50%;
           }
         }
       }
-      #sign-up-container{
+      #sign-up-container {
         width: 100%;
       }
     }

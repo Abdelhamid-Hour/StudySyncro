@@ -30,7 +30,7 @@
   --inputs-outline-color: #3284ffa9;
   --inputs-text-color: var(--secondary-color);
   --inputs-label-color: #485268;
-  --inputs-transition-label-color: var(--primary-color);
+  --inputs-transition-label-color: var(--secondary-color);
   --inputs-focus-border-color: var(--secondary-color);
   /* inputs font and border size variables */
   --inputs-border-size: 2px;
