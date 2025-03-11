@@ -37,7 +37,7 @@ signUpLink.addEventListener('click', function () {
       document.querySelector('h1 > span').innerText = `${word}`;
     },
     animationDuration,
-    50
+    20
   );
   swapAnimationThrottling(signUpFormHeight);
 });

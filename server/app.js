@@ -19,6 +19,9 @@ app.use('/', loginRouter, mainPageRouter);
 // Serve the static files
 app.use(express.static(path.join(__dirname, '../client/public')));
 
+app.post('/', (req, res)=>{
+  req.body
+})
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
