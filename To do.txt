@@ -1,0 +1,10 @@
+// index and optimize website for searche engines
+// handel inputs [hashiing and encode special chars]
+// add metadata and metadata handler to the login page
+// use post css to generate the css files
+// make caracters limit for titles of sessions , groups, quizzes
+// attach quiz as task feature
+// delete and edit task 
+// add enter key listner for msg sending
+// limite the timer to max is 24 hrs
+// impklement on time complete message
