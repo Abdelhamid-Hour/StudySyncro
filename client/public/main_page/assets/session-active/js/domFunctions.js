@@ -1,3 +1,5 @@
+import { expandDescriptionBtn } from "./getNodes.js";
+
 export const handelTaskDetailsBtn = (e) => {
   if (e.target.closest('.task-down-icon')) {
     const task = e.target.closest('[class$="-task"], .show-task-details');
@@ -19,7 +21,11 @@ export const handelTaskBtns = (className, scroll) => {
 };
 
 export const expandAndShrinkDescription = (e) => {
+  console.log(expandDescriptionBtn);
+  
   const btn = e.currentTarget;
+  console.log("cur", btn);
+  
   if (btn.classList.toggle('expanded')) {
     btn.parentElement.nextElementSibling.style.webkitLineClamp = 'unset';
   } else {

@@ -58,16 +58,18 @@ export const initCloseOverlayListner = (
 ) => {
   document.addEventListener('click', (e) => {
     ClassListOverLays.forEach((className) => {
-      const overlay = document.querySelector(`.${className}`).classList.contains("open-overlay");
-      console.log(overlay, document.querySelector(`.${className}`));
-      
+      const overlay = document.querySelector(`.${className}`);
+      if (!overlay) {
+        return;
+      }
+      const isOverlay = overlay.classList.contains('open-overlay');
       const ignore = OverlayContainer[className].find((cls) =>
       {
         return e.target.closest(`.${cls}`)
       }
       );
     
-      if (overlay && !ignore) {
+      if (isOverlay && !ignore) {
         document.querySelector(`.${className}`).classList.remove("open-overlay");
       }
     });
