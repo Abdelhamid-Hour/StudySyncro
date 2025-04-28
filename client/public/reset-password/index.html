@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reset Your Password</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Prevent indexing for security -->
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- SEO & Page Information -->
+    <meta name="title" content="Reset Your Password - StudyHive" />
+    <meta
+      name="description"
+      content="Reset your password securely for your StudyHive account. Enter your email to receive a reset link."
+    />
+    <meta name="author" content="StudyHive Team" />
+
+    <!-- Favicon -->
+    <!-- TODO: adjust the link of icon image -->
+    <link rel="icon" type="image/png" href="https://example.com/favicon.png" />
+    <link
+      rel="apple-touch-icon"
+      href="https://example.com/apple-touch-icon.png"
+    />
+    <!-- Preloading Critical Resources -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      as="style"
+    />
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      as="style"
+    />
+    <link
+      rel="preload"
+      href="../main_assets/css/variables_and_fonts.css"
+      as="style"
+    />
+    <link rel="preload" href="../main_assets/css/styles.css" as="style" />
+    <link rel="preload" href="./assets/css/styles.css" as="style" />
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../main_assets/css/variables_and_fonts.css" />
+    <link rel="stylesheet" href="../main_assets/css/styles.css" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <!-- font -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    />
+    <!-- Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body>
+    <main>
+      <h2>Reset Your Password</h2>
+      <form>
+        <div class="password-container">
+          <div class="md-password-container">
+            <div>
+              <i class="bi bi-lock-fill"></i>
+            </div>
+            <div class="password-container-label">
+              <label for="password">
+                <div></div>
+                New Password
+              </label>
+              <input
+                placeholder=""
+                type="password"
+                class="password"
+                id="password"
+                required
+                autocomplete="off"
+              />
+              <div class="eye-icon">
+                <i class="bi bi-eye-fill"></i>
+                <div>
+                  <hr />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="error-container">
+            <span class="error-msg"></span>
+          </div>
+        </div>
+        <div class="password-container">
+          <div class="md-password-container">
+            <div>
+              <i class="bi bi-lock-fill"></i>
+            </div>
+            <div class="password-container-label">
+              <label for="confirm-password">
+                <div></div>
+                Confirm Password
+              </label>
+              <input
+                placeholder=""
+                type="password"
+                class="password"
+                id="confirm-password"
+                required
+                autocomplete="off"
+              />
+              <div class="eye-icon">
+                <i class="bi bi-eye-fill"></i>
+                <div>
+                  <hr />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="error-container">
+            <span class="error-msg"></span>
+          </div>
+        </div>
+        <button id="reset-password-btn" type="button">Reset Password</button>
+      </form>
+    </main>
+    <script type="module" src="./assets/js/browserApp.js"></script>
+    <script type="module" src="./auth/auth.js"></script>
+  </body>
+</html>

@@ -1,0 +1,272 @@
+:root {
+  --form-gap: 1rem;
+}
+* {
+  box-sizing: border-box;
+  font-family: 'Josefin Sans';
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background-color);
+  min-height: 100vh;
+}
+
+main {
+  background-color: var(--container-background-color);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: var(--form-gap);
+  width: fit-content;
+  border-radius: 10px;
+  padding: 2rem;
+  color: var(--primary-text-color);
+  box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+  border: 1px solid var(--container-border-color);
+  h2 {
+    color: var(--heading-color);
+  }
+  .error-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--form-gap);
+    color: var(--error-block-text-color);
+    h2 {
+      color: var(--error-block-heading-color);
+    }
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 25rem;
+  gap: var(--form-gap);
+  div[class^='md-'] {
+    outline: 0.2rem solid transparent;
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    border-radius: 7px;
+    border: var(--inputs-border-size) solid var(--inputs-border-color);
+    transition: all var(--inputs-outline-trans-duration) ease-out;
+
+    &:has(input:focus) {
+      outline: 0.2rem solid var(--inputs-outline-color);
+      border-color: var(--inputs-focus-border-color);
+    }
+
+    div:first-child {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 15%;
+      border-start-start-radius: 10px;
+      border-end-start-radius: 7px;
+      background-color: var(--inputs-icons-background-color);
+      border-right: var(--inputs-border-size) solid var(--inputs-border-color);
+      transition: all var(--icons-focus-tran-duration) linear;
+      color: var(--inputs-icons-color);
+      font-size: var(--inputs-icons-font-size);
+
+      /* inputs icons styling */
+      &:has(+ div > input:focus) {
+        background-color: var(--inputs-icons-focus-bc);
+        color: var(--inputs-icons-focus-color);
+        border-right-color: var(--inputs-icons-focus-bc);
+      }
+    }
+
+    div[class*='container-label'] {
+      width: 85%;
+      position: relative;
+      border-start-end-radius: 5px;
+      border-end-end-radius: 5px;
+
+      /* inputs styling */
+
+      input {
+        color: var(--inputs-text-color);
+        font-size: var(--inputs-font-size);
+        background-color: var(--inputs-background-color);
+        height: var(--btn-height);
+        width: 100%;
+        border-start-end-radius: 5px;
+        border-end-end-radius: 5px;
+        padding-left: 0.5rem;
+        outline: none;
+        border: none;
+        transition: all var(--inputs-focus-tran-duration) linear;
+        &:focus,
+        &:focus + div > div {
+          background-color: var(--inputs-focus-background-color);
+        }
+      }
+
+      /* eye icon */
+      & > div {
+        position: absolute;
+        top: 50%;
+        right: 0.5rem;
+        translate: 0 -50%;
+        color: var(--eye-pass-color);
+        cursor: pointer;
+      }
+
+      label {
+        position: absolute;
+        user-select: none;
+        top: 50%;
+        left: 1rem;
+        translate: 0 -50%;
+        width: fit-content;
+        height: fit-content;
+        padding-inline: 0.1rem;
+        color: var(--inputs-label-color);
+        background-color: var(--inputs-background-color);
+        transition: all var(--inputs-label-tran-duration) ease-out;
+        cursor: text;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+
+        div {
+          background-color: var(--inputs-background-color);
+          display: inline-flex;
+          height: 50%;
+          width: 100%;
+          border: unset;
+          transition: all var(--inputs-label-tran-duration) ease-out;
+          border-radius: unset;
+          position: absolute;
+          top: 0;
+          z-index: -1;
+        }
+
+        &:has(+ input:focus, + input:not(:placeholder-shown)) {
+          color: var(--inputs-transition-label-color);
+          top: -0.1rem;
+          left: 0.5rem;
+          background-color: var(--inputs-focus-background-color);
+          div {
+            background-color: var(--container-background-color);
+          }
+        }
+        &:has(+ input:not(:focus)) {
+          background-color: var(--inputs-background-color);
+        }
+      }
+      .eye-icon {
+        & > .show {
+          scale: 0 1;
+        }
+
+        div {
+          position: absolute;
+          top: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          translate: 21% 20%;
+          background-color: var(--inputs-background-color);
+          padding-block: 1px;
+          width: 100%;
+          height: fit-content;
+          transform-origin: 0 0;
+          rotate: 45deg;
+          transition: all var(--eye-trans-duration) ease-in-out;
+          float: right;
+
+          hr {
+            background-color: var(--eye-pass-color);
+            height: 2px;
+            border: none;
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+  .errorContainer {
+    color: var(--error-color);
+    text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
+    font-weight: var(--error-font-weight);
+    font-size: var(--error-font-size);
+    height: 1em;
+    position: relative;
+    top: 0.4rem;
+    padding-bottom: 0.5rem;
+    & > span {
+      display: flex;
+      align-items: flex-end;
+    }
+  }
+  /* buttons styling */
+  button {
+    height: var(--btn-height);
+    color: var(--btn-text-color);
+    border: 1px solid var(--btn-border-color);
+    background-color: var(--btn-background-color);
+    border-radius: 5px;
+    padding: 0.5rem;
+    width: var(--btn-width);
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    cursor: pointer;
+    font-size: medium;
+    transition: all var(--btn-hover-tran-duration);
+    box-shadow: 1px 1px 3px rgba(245, 245, 245, 0.445) inset;
+    &:hover {
+      background-color: var(--btn-hover-background-color);
+      color: var(--btn-hover-text-color);
+      border-color: var(--btn-hover-border-color);
+      font-weight: 700;
+    }
+    &:active {
+      box-shadow: 1px 1px 5px #3b3b3b inset;
+    }
+    span {
+      width: 60%;
+    }
+    svg {
+      height: 100%;
+      width: fit-content;
+    }
+  }
+}
+
+.error-animation {
+  animation: error-input 150ms linear 2;
+}
+
+@keyframes error-input {
+  25% {
+    translate: 1%;
+  }
+  75% {
+    translate: -1%;
+  }
+  100% {
+    translate: 0;
+  }
+}
+
+.error {
+  --inputs-border-color: var(--error-color);
+}
+
+@media screen and (max-width: 485px) {
+  main {
+    height: 100vh;
+    width: 100vw;
+    border-radius: unset;
+    justify-content: center;
+  }
+}

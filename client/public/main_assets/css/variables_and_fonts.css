@@ -1,0 +1,83 @@
+:root {
+  --primary-color: #1e77fd;
+  --background-color: #ebebeb;
+  /* dark_mode colors: */
+
+  /* --background-color: #1a1a1a;
+  --container-background-color: #242424; 
+  --container-border-color: #818181;
+  --primary-text-color: #dbdbdb; 
+  --btn-background-color: #2c2c2c; */
+
+  /* login color variables */
+  --container-background-color: #fafafa;
+  --container-border-color: #cbced5;
+  --primary-text-color: black;
+  /* h1 color */
+  --heading-color: var(--primary-color);
+  /* buttons color variables */
+  --btn-background-color: #fdfdfd;
+  --btn-text-color: var(--primary-text-color);
+  --btn-border-color: var(--container-border-color);
+  /* buttons height */
+  --btn-height: 2.5rem;
+  /* buttons hover transiotion duration */
+  --btn-hover-tran-duration: 300ms;
+  /* button hover border color */
+  --btn-hover-border-color: var(--primary-color);
+  --btn-hover-background-color: var(--primary-color);
+  --btn-hover-text-color: #fafafa;
+  /* inputs colors variables */
+  --inputs-background-color: var(--container-background-color);
+  --inputs-focus-background-color: var(--background-color);
+  --inputs-border-color: var(--container-border-color);
+  /* --inputs-outline-color: var(--primary-color); */
+  --inputs-outline-color: #3284ffa9;
+  --inputs-text-color: var(--btn-text-color);
+  --inputs-label-color: var(--primary-text-color);
+  --inputs-transition-label-color: var(--primary-color);
+  --inputs-focus-border-color: var(--primary-color);
+  /* inputs font and border size variables */
+  --inputs-border-size: 1px;
+  --inputs-font-size: 1rem;
+  /* inputs transitions duration variables */
+  --inputs-label-tran-duration: 300ms;
+  --inputs-outline-trans-duration: 300ms;
+  /* inputs icons colors varianles */
+  --inputs-icons-background-color: var(--background-color);
+  --inputs-icons-color: var(--primary-color);
+  --inputs-icons-focus-bc: var(--primary-color);
+  --inputs-icons-focus-color: var(--container-background-color);
+  /* inputs focus transition duration */
+  --inputs-focus-tran-duration: 300ms;
+  /* icons hover transition duration */
+  --icons-focus-tran-duration: 300ms;
+  /* inputs icons size */
+  --inputs-icons-font-size: 1.5rem;
+  /* eye icon variables */
+  --eye-pass-color: var(--primary-color);
+  --eye-trans-duration: 200ms;
+  /* Error styling */
+  --error-color: #eb3b43ff;
+  --error-font-size: small;
+  --error-font-weight: 500;
+  /* external error variables */
+  --error-block-background-color: rgb(231, 109, 109);
+  --error-block-border-color: rgb(182, 61, 61);
+  --error-block-heading-color: rgb(116, 5, 5);
+  --error-block-text-color: rgb(151, 23, 23);
+  --exclamation-error-icon-color: rgb(116, 5, 5);
+  --close-error-icon-color: rgb(116, 5, 5);
+  /* external success variables */
+  --success-block-background-color: rgb(109, 231, 109);
+  --success-block-border-color: rgb(71, 182, 61);
+  --success-block-text-color: rgb(18, 116, 5);
+  --success-icon-color: rgb(18, 116, 5);
+  --close-success-icon-color: rgb(18, 116, 5);
+  /* links color */
+  --links-color: #485268;
+  /* link hover color */
+  --links-hover-color: var(--primary-color);
+  /* link hover transition duration */
+  --link-tran-duration: 150ms;
+}
