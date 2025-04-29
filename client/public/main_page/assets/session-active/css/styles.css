@@ -275,8 +275,6 @@
         scroll-behavior: smooth;
 
         & > div[class*='task'] {
-          /* scroll-snap-align: start; */
-          /* scroll-padding-top: calc(var(--primary-gap) / 2); */
           display: flex;
           flex-direction: column;
           gap: calc(var(--primary-gap) / 2);
@@ -313,6 +311,11 @@
             background-color: var(--btn-background-color);
             border-radius: var(--primary-radius);
             border: var(--primary-border-style);
+
+            &.quiz-task-box {
+              border-color: var(--primary-color);
+              border-right: 0.4rem solid var(--primary-color);
+            }
 
             button {
               background-color: transparent;
