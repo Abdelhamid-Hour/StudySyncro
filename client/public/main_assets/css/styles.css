@@ -9,44 +9,11 @@ body {
   min-height: 100vh;
 }
 
-#tooltip {
-  box-shadow: 0 0 5px gray;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: fixed;
-  font-size: small;
-  height: 1.8rem;
-  width: fit-content;
-  white-space: nowrap;
-  z-index: 9999;
-  background-color: var(--tooltip-background-color);
-  padding: calc(var(--primary-gap) / 2);
-  border-radius: var(--primary-radius);
-  color: var(--tooltip-text-color);
-  transition: opacity var(--primary-transition-style),
-    visibility var(--primary-transition-style);
-  translate: 0 -130%;
-  opacity: 0;
-  visibility: hidden;
-  &.show {
-    opacity: 1;
-    visibility: visible;
-  }
-  &:before {
-    content: '';
-    position: absolute;
-    border-top: 0.4rem solid var(--primary-color);
-    border-left: 0.4rem solid transparent;
-    border-right: 0.4rem solid transparent;
-    bottom: -0.3rem;
-  }
-}
-
 ::selection {
   color: white;
   background-color: var(--primary-color);
 }
+
 button {
   cursor: pointer;
   transition: var(--primary-transition-style);

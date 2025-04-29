@@ -13,6 +13,7 @@
   --container-background-color: #fafafa;
   --container-border-color: #cbced5;
   --primary-text-color: black;
+  --secondary-text-color: #575757;
   /* h1 color */
   --heading-color: var(--primary-color);
   /* buttons color variables */
@@ -81,3 +82,5 @@
   /* link hover transition duration */
   --link-tran-duration: 150ms;
 }
+
+

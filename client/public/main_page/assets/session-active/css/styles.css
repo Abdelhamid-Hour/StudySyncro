@@ -31,7 +31,7 @@
 }
 .session,
 .quiz {
-  [class*="-container"] {
+  [class*='-container'] {
     background-color: var(--btn-background-color);
     border-radius: var(--primary-radius);
     border: var(--primary-border-style);
@@ -45,9 +45,9 @@
       height: 1.1994rem;
       overflow: hidden;
     }
-    [class*="-label"] {
+    [class*='-label'] {
       user-select: none;
-      color: var(--primary-text-color);
+      color: var(--secondary-text-color);
       font-size: 0.9rem;
     }
   }
@@ -70,7 +70,7 @@
         margin-top: 0.2rem;
       }
     }
-    div.joined-count {
+    div.joined-count-content {
       padding-inline: 0;
       justify-content: center;
     }
@@ -87,7 +87,7 @@
     flex-wrap: wrap;
     justify-content: space-between;
     align-content: space-evenly;
-    gap: calc(var(--primary-gap)/2);
+    gap: calc(var(--primary-gap) / 2);
   }
 
   .session-description-container {
@@ -95,6 +95,7 @@
     padding-top: unset !important;
     height: fit-content;
     max-height: 5.8rem;
+    width: 100%;
     overflow: hidden;
     transition: all 0.3s;
     scrollbar-width: 5px;
@@ -211,7 +212,7 @@
 .tasks {
   grid-area: tasks;
   flex: 1 1 auto;
-  max-height: calc(50% - var(--primary-gap) / 2); 
+  max-height: calc(50% - var(--primary-gap) / 2);
   transition: var(--primary-transition-style);
   overflow: hidden;
 
@@ -228,7 +229,7 @@
       border: var(--primary-border-style);
       border-radius: var(--primary-radius);
     }
-    & > div[class*="tasks"] {
+    & > div[class*='tasks'] {
       position: relative;
       height: 100%;
       width: calc(50% - 2px - var(--primary-gap) / 2);
@@ -273,7 +274,7 @@
         scroll-padding-top: 0.1rem;
         scroll-behavior: smooth;
 
-        & > div[class*="task"] {
+        & > div[class*='task'] {
           /* scroll-snap-align: start; */
           /* scroll-padding-top: calc(var(--primary-gap) / 2); */
           display: flex;
@@ -301,7 +302,7 @@
             scrollbar-width: none;
             overflow-y: auto;
           }
-          & div[class*="task-box"] {
+          & div[class*='task-box'] {
             position: relative;
             scroll-snap-align: start;
             display: flex;
@@ -328,7 +329,7 @@
             button.task-down-icon {
               transition: var(--primary-transition-style);
             }
-            &.ongoing-task-box {
+            &.ongoing-task-box.first {
               border-left: 0.4rem solid var(--success-block-border-color);
             }
 
@@ -377,12 +378,12 @@
               align-items: center;
               justify-content: center;
               font-weight: bold;
-              font-size: var(--medium-font-size);
+              font-size: var(--small-font-size);
               border-right: var(--primary-border-style);
             }
             span.duration {
               flex-basis: 15%;
-              font-size: var(--medium-font-size);
+              font-size: var(--small-font-size);
               text-align: center;
             }
             span.title {
@@ -434,7 +435,7 @@
             position: absolute;
             bottom: 0;
             left: 0;
-            max-height: 0.8rem;
+            max-height: 0.5rem;
             width: 100%;
             padding: initial;
             .progress {
@@ -487,12 +488,13 @@
     }
   }
   .timer {
-    --timer-width: 5.5rem;
+    --timer-width: calc(50% - var(--primary-gap) / 2);
     --timer-height: 7rem;
     --timer-gap-height: 1.5rem;
     --timer-gap-width: 0.5rem;
-    --timer-b-radius: 10px;
+    --timer-b-radius: 0.6rem;
     --gap-border: 0.5px solid #7b7b7b;
+    justify-content: space-evenly;
     header {
       & > div:last-child {
         max-width: 80%;
@@ -545,9 +547,10 @@
       }
     }
     .timer-container {
+      user-select: none;
       perspective: 700px;
-      max-height: calc(100% - var(--primary-gap) * 0.8 - 1.8125rem);
-      flex-basis: calc(100% - var(--primary-gap) * 0.8 - 1.8125rem);
+      max-height: 65%;
+      flex-basis: 65%;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -556,7 +559,10 @@
       .flip-container {
         position: relative;
         display: flex;
+        align-items: center;
         gap: var(--primary-gap);
+        flex: 0 0 22%;
+        height: 100%;
 
         .label {
           font-weight: bold;
@@ -576,7 +582,7 @@
 
         &::after,
         &::before {
-          content: "";
+          content: '';
           width: 1rem;
           height: 1rem;
           border-radius: 25%;
@@ -586,11 +592,13 @@
       }
 
       .flip-digit {
+        --digit-separator-color:  #1f1f1fd5;
         perspective: 700px;
         position: relative;
         height: var(--timer-height);
         flex-basis: var(--timer-width);
         min-width: var(--timer-width);
+        max-height: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -608,24 +616,27 @@
           justify-content: center;
           align-items: center;
           overflow: hidden;
-          background-color: var(--primary-color);
           box-shadow: 0px 0px 4px 0px #004dc1 inset;
         }
         .flip-face {
           position: relative;
+          background-color: var(--primary-color);
+          display: flex;
+          align-items: center;
+          justify-content: center;
           span {
-            font-size: 6rem;
+            font-size: 550%;
             font-weight: bold;
             color: white;
           }
 
           &::after {
-            content: "";
+            content: '';
             position: absolute;
             height: 2px;
             width: calc(100% - 1rem);
             border: none;
-            background-image: linear-gradient(to bottom, transparent, #001431);
+            background-image: linear-gradient(to bottom, transparent, var(--digit-separator-color));
             z-index: 1;
           }
           .flip-gap-left,
@@ -660,7 +671,7 @@
           border-start-end-radius: var(--timer-b-radius);
           border-start-start-radius: var(--timer-b-radius);
           span {
-            translate: 0 24%;
+            translate: 0 25%;
           }
           &::after {
             bottom: 0;
@@ -687,6 +698,7 @@
           max-height: 50%;
           flex-basis: 50%;
           align-items: center;
+          justify-content: center;
           transform-origin: 100% 100%;
           position: absolute;
           display: block;
@@ -701,7 +713,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: var(--primary-color);
             box-shadow: 0px 0px 4px 0px #004dc1 inset;
           }
           .flip-face-top-front-back {
@@ -735,10 +746,10 @@
           border-end-start-radius: var(--timer-b-radius);
           &::after {
             top: 0;
-            background-image: linear-gradient(to top, transparent, #001431);
+            background-image: linear-gradient(to top, transparent,  var(--digit-separator-color));
           }
           span {
-            translate: 0 -24%;
+            translate: 0 -25%;
           }
           .flip-gap-left,
           .flip-gap-right {
@@ -756,19 +767,7 @@
   max-height: calc(50% - var(--primary-gap) / 2);
   gap: initial !important;
   position: relative;
-  header {
-    position: relative;
-    &::after {
-      background-color: var(--container-background-color);
-      position: absolute;
-      z-index: 1;
-      content: "";
-      width: 100%;
-      height: var(--primary-gap);
-      bottom: -0.8rem;
-      mask-image: linear-gradient(to bottom, white, transparent);
-    }
-  }
+
   .chat-messages {
     padding: calc(var(--primary-gap) / 2);
     padding-bottom: calc(2.1875rem + var(--primary-gap));
@@ -853,7 +852,7 @@
           );
         }
         &::before {
-          content: "";
+          content: '';
           position: absolute;
           height: 100%;
           width: 100%;
@@ -947,10 +946,9 @@
     label {
       cursor: pointer;
       font-size: var(--medium-font-size);
-      padding: calc(var(--primary-gap) / 3);
+      padding-inline: calc(var(--primary-gap) / 3);
       background-color: transparent;
       transition: var(--primary-transition-style);
-      height: 100%;
       border: none;
       i {
         color: var(--primary-text-color);
@@ -965,7 +963,7 @@
       position: absolute;
       right: calc(var(--primary-gap) / 2);
       height: fit-content;
-      bottom: calc(var(--primary-gap) / 3);
+      bottom: calc(var(--primary-gap) / 2);
     }
     div.icons {
       display: flex;
@@ -974,17 +972,19 @@
       width: 5.2002rem;
       position: absolute;
       left: calc(var(--primary-gap) / 2);
-      bottom: calc(var(--primary-gap) / 6);
+      bottom: calc(var(--primary-gap) / 2);
       transition: var(--primary-transition-style);
       input {
         visibility: hidden;
+        width: 0;
+        height: 0;
       }
     }
   }
 }
 
 @property --top-ffront-shadow-color {
-  syntax: "<color>";
+  syntax: '<color>';
   initial-value: #1e77fd;
   inherits: false;
 }
@@ -1007,22 +1007,34 @@
   }
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 13px;
+@media (min-width: 500px) and (max-width: 900px) {
+  html{
+    font-size: medium;
   }
-}
-
-/* For laptops like your 14" */
-@media (min-width: 1024px) {
-  html {
-    font-size: 12px; /* 💬 this is your magic size */
+  main {
+    overflow: auto;
+    scrollbar-width: 0;
   }
-}
-
-/* For big desktops */
-@media (min-width: 1440px) {
-  html {
-    font-size: 14px; /* slightly bigger */
+  .overview-active-session {
+    height: fit-content;
+    flex-direction: column;
+    & > div {
+      width: 100%;
+    }
+    .timer-quiz-container{
+      flex-basis: auto;
+    }
+    .tasks, .chat, .quiz{
+      height: 30rem;
+      max-height: 30rem;
+    }
+    .timer {
+      --timer-height: 8rem;
+      --timer-width: 5rem;
+      flex-basis: 15rem;
+      .flip-face span{
+          font-size: 6rem !important;
+      }
+    }
   }
 }

@@ -61,10 +61,10 @@
         </div> -->
       </div>
       <!-- ? Overview -->
-      <!-- <div class="greeting-msg">
+      <div class="greeting-msg">
         <h2>Hello Abdelhamid Hour 👋</h2>
         <p>Have a good day !</p>
-      </div> -->
+      </div>
       <!-- search and filter panel for groups -->
       <!-- ? <div class="search-container">
         <div class="search">
@@ -318,7 +318,7 @@
                 <label class="start-time-label">Start</label>
                 <div class="content">
                   <i class="bi bi-clock-fill"></i>
-                  <span class="time">14 : 30</span>
+                  <span class="start-time">14 : 30</span>
                 </div>
               </div>
 
@@ -326,7 +326,7 @@
                 <label class="end-time-label">End</label>
                 <div class="content">
                   <i class="bi bi-clock-fill"></i>
-                  <span class="time">15 : 45</span>
+                  <span class="end-time">15 : 45</span>
                 </div>
               </div>
               <div class="group-name-container">
@@ -337,31 +337,31 @@
                 <label class="left-label">Left</label>
                 <div class="content">
                   <i class="bi bi-clock-fill"></i>
-                  <span class="time">45m</span>
+                  <span class="time-left">45m</span>
                 </div>
               </div>
               <div class="elapsed-time-container small-container">
                 <label class="elapsed-time-label">Elapsed</label>
                 <div class="content">
                   <i class="bi bi-clock-fill"></i>
-                  <span class="time">45m</span>
+                  <span class="elapsed-time">45m</span>
                 </div>
               </div>
               <div class="quiz-title-container">
-                <label class="quiz-name-label">Quiz title</label>
-                <div class="quiz-name">Workshop Javascript Master</div>
+                <label class="quiz-title-label">Quiz title</label>
+                <div class="quiz-title">Workshop Javascript Master</div>
               </div>
               <div class="duration-container small-container">
                 <label class="duration-label">Duration</label>
                 <div class="content">
                   <i class="bi bi-clock-fill"></i>
-                  <span class="time">45m</span>
+                  <span class="duration">45m</span>
                 </div>
               </div>
               <div class="joined-count-container small-container">
                 <label class="joined-count-label">Joined Count</label>
-                <div class="joined-count">
-                  <span class="time">60 Members</span>
+                <div class="joined-count-content">
+                  <span class="joined-count">60 Members</span>
                 </div>
               </div>
               <div class="session-description-container">
@@ -410,7 +410,7 @@
                   <div class="btns">
                     <button
                       type="button"
-                      data-tooltip="Scroll-To-Top"
+                      data-tooltip="Scroll To Top"
                       class="exclude-btn scroll-to-top has-tooltip"
                     >
                       <i class="bi bi-arrow-up-short"></i>
@@ -424,9 +424,9 @@
                     </button>
                   </div>
                 </header>
-                <div class="tasks-list">
+                <div class="tasks-list ongoing-tasks-list">
                   <div class="ongoing-task">
-                    <div class="ongoing-task-box">
+                    <div data-tooltip="Active Task" class="ongoing-task-box first has-tooltip">
                       <div class="counter">
                         <span>01</span>
                       </div>
@@ -714,7 +714,7 @@
                   <div class="btns">
                     <button
                       type="button"
-                      data-tooltip="Scroll-To-Top"
+                      data-tooltip="Scroll To Top"
                       class="exclude-btn scroll-to-top has-tooltip"
                     >
                       <i class="bi bi-arrow-up-short"></i>
@@ -728,7 +728,7 @@
                     </button>
                   </div>
                 </header>
-                <div class="tasks-list">
+                <div class="tasks-list completed-tasks-list">
                   <div class="completed-task">
                     <div class="completed-task-box">
                       <span class="title">Prepare Workshop Materiadl</span>
@@ -1223,8 +1223,8 @@
               </header>
               <div class="quiz-details">
                 <div class="quiz-title-container">
-                  <label class="quiz-name-label">Quiz title</label>
-                  <div class="quiz-name">Workshop Javascript Master</div>
+                  <label class="quiz-title-label">Quiz title</label>
+                  <div class="quiz-title">Workshop Javascript Master</div>
                 </div>
                 <div class="questions-container small-container">
                   <label class="questions-label">Questions</label>
@@ -1236,13 +1236,13 @@
                   <label class="start-in-label">Start In</label>
                   <div class="content">
                     <i class="bi bi-clock-fill"></i>
-                    <span class="time">45m</span>
+                    <span class="start-time">45m</span>
                   </div>
                 </div>
                 <div class="submitted-container small-container">
                   <label class="submitted-label">Submitted</label>
                   <div class="submitted">
-                    <span>6 of 12 Questions</span>
+                    <span class="submitted-count">6 of 12 Questions</span>
                     <div class="progress-back">
                       <div class="progress"></div>
                     </div>
