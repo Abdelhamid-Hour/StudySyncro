@@ -595,7 +595,7 @@
       }
 
       .flip-digit {
-        --digit-separator-color:  #1f1f1fd5;
+        --digit-separator-color: #1f1f1fd5;
         perspective: 700px;
         position: relative;
         height: var(--timer-height);
@@ -639,7 +639,11 @@
             height: 2px;
             width: calc(100% - 1rem);
             border: none;
-            background-image: linear-gradient(to bottom, transparent, var(--digit-separator-color));
+            background-image: linear-gradient(
+              to bottom,
+              transparent,
+              var(--digit-separator-color)
+            );
             z-index: 1;
           }
           .flip-gap-left,
@@ -749,7 +753,11 @@
           border-end-start-radius: var(--timer-b-radius);
           &::after {
             top: 0;
-            background-image: linear-gradient(to top, transparent,  var(--digit-separator-color));
+            background-image: linear-gradient(
+              to top,
+              transparent,
+              var(--digit-separator-color)
+            );
           }
           span {
             translate: 0 -25%;
@@ -782,6 +790,16 @@
     flex-basis: calc(100% - 1.8125rem - var(--primary-gap));
     scrollbar-width: none;
 
+    img {
+      display: block;
+      width: 10rem;
+      border-radius: var(--primary-radius);
+      box-shadow: var(--primary-shadow);
+      float: right;
+    }
+    .message-sent img {
+      align-self: flex-end;
+    }
     .message-received,
     .message-sent {
       max-width: 70%;
@@ -789,15 +807,15 @@
       .avatar {
         font-size: var(--xx-large-font-size);
       }
+
       .messages {
         display: flex;
         flex-direction: column;
         gap: calc(var(--primary-gap) / 6);
 
-        & p {
-          display: flex;
-
-          span {
+        & > div {
+          width: fit-content;
+          span.date {
             font-size: var(--small-font-size);
             align-self: flex-end;
             bottom: calc(var(--primary-gap) / 3);
@@ -810,13 +828,17 @@
         border: var(--primary-border-style);
         border-radius: var(--primary-radius);
         padding: calc(var(--primary-gap) / 2);
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--primary-gap) / 3);
         &.message-received-text {
           background-color: var(--btn-background-color);
-          margin-left: calc(var(--primary-gap) / 2);
+          margin-left: calc(var(--primary-gap) / 2 + 0.0625rem);
         }
         &.message-sent-text {
           background-color: var(--primary-color);
-          margin-right: calc(var(--primary-gap) / 2);
+          margin-right: calc(var(--primary-gap) / 2 + 0.0625rem);
+          align-self: flex-end;
         }
       }
       .first-message-sent-text,
@@ -888,7 +910,7 @@
           left: -1px;
         }
         .username {
-          font-size: var(--medium-font-size);
+          font-size: var(--small-font-size);
           font-weight: bold;
           color: var(--primary-color);
         }
@@ -1011,7 +1033,7 @@
 }
 
 @media (min-width: 500px) and (max-width: 900px) {
-  html{
+  html {
     font-size: medium;
   }
   main {
@@ -1024,10 +1046,12 @@
     & > div {
       width: 100%;
     }
-    .timer-quiz-container{
+    .timer-quiz-container {
       flex-basis: auto;
     }
-    .tasks, .chat, .quiz{
+    .tasks,
+    .chat,
+    .quiz {
       height: 30rem;
       max-height: 30rem;
     }
@@ -1035,8 +1059,8 @@
       --timer-height: 8rem;
       --timer-width: 5rem;
       flex-basis: 15rem;
-      .flip-face span{
-          font-size: 6rem !important;
+      .flip-face span {
+        font-size: 6rem !important;
       }
     }
   }

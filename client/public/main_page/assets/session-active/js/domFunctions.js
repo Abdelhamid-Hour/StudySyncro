@@ -3,14 +3,14 @@ import {
   QUIZSELECTORS,
   SESSIONSSELECTORS,
   TASKSSELECTORS,
-} from "./getNodes.js";
+} from './getNodes.js';
 
 export const handelTaskDetailsBtn = (e) => {
-  if (e.target.closest(".task-down-icon")) {
+  if (e.target.closest('.task-down-icon')) {
     const task = e.target.closest('[class$="-task"], .show-task-details');
 
     if (task) {
-      task.classList.toggle("show-task-details");
+      task.classList.toggle('show-task-details');
     }
   }
 };
@@ -21,18 +21,18 @@ export const handelTaskBtns = (className, scroll) => {
     return taskListElement.scroll(0, 0);
   }
   for (const element of taskListElement.children) {
-    element.classList.remove("show-task-details");
+    element.classList.remove('show-task-details');
   }
 };
 
 export const expandAndShrinkDescription = (e) => {
   const btn = e.currentTarget;
 
-  if (btn.classList.toggle("expanded")) {
-    btn.parentElement.nextElementSibling.style.webkitLineClamp = "unset";
+  if (btn.classList.toggle('expanded')) {
+    btn.parentElement.nextElementSibling.style.webkitLineClamp = 'unset';
   } else {
     setTimeout(() => {
-      btn.parentElement.nextElementSibling.style.webkitLineClamp = "3";
+      btn.parentElement.nextElementSibling.style.webkitLineClamp = '3';
       btn.parentElement.nextElementSibling.scroll(0, 0);
     }, 300);
   }
@@ -51,13 +51,13 @@ export class FlipTimer {
       const delay = remainingTime % 1000 || 1000;
       const seconds = (Math.floor(remainingTime / 1000) % 60)
         .toString()
-        .padStart(2, "0");
+        .padStart(2, '0');
       const minutes = (Math.floor(remainingTime / 1000 / 60) % 60)
         .toString()
-        .padStart(2, "0");
+        .padStart(2, '0');
       const hours = Math.floor(remainingTime / 1000 / 60 / 60)
         .toString()
-        .padStart(2, "0");
+        .padStart(2, '0');
 
       this.onUpdate({ hours, minutes, seconds });
 
@@ -72,9 +72,9 @@ export class FlipTimer {
   }
 
   onUpdate({ hours, minutes, seconds }) {
-    this.handleUnitChange("hours", hours);
-    this.handleUnitChange("minutes", minutes);
-    this.handleUnitChange("seconds", seconds);
+    this.handleUnitChange('hours', hours);
+    this.handleUnitChange('minutes', minutes);
+    this.handleUnitChange('seconds', seconds);
 
     // store for next time
     this.prev = { hours, minutes, seconds };
@@ -82,7 +82,7 @@ export class FlipTimer {
 
   handleUnitChange(unit, newDigits) {
     const oldDigits = this.prev[unit];
-    const sides = ["left", "right"];
+    const sides = ['left', 'right'];
 
     sides.forEach((side, idx) => {
       if (newDigits[idx] !== oldDigits[idx]) {
@@ -95,7 +95,7 @@ export class FlipTimer {
     this.initDigits();
     this.endTime = Date.now() + minutes * 60 * 1000;
     this._timer = null;
-    this.prev = { hours: "00", minutes: "00", seconds: "00" };
+    this.prev = { hours: '00', minutes: '00', seconds: '00' };
     this.tick();
   }
 
@@ -105,8 +105,8 @@ export class FlipTimer {
       minutes: { left: null, right: null },
       seconds: { left: null, right: null },
     };
-    ["hours", "minutes", "seconds"].forEach((unit) => {
-      ["left", "right"].forEach((side) => {
+    ['hours', 'minutes', 'seconds'].forEach((unit) => {
+      ['left', 'right'].forEach((side) => {
         this.digits[unit][side] = {
           topContainer: document.querySelector(
             `.flip-${unit}-${side}-digit .flip-top-container`
@@ -129,52 +129,50 @@ export class FlipTimer {
   }
 
   initEventListener() {
-    document.addEventListener("animationend", this.eventListner);
+    document.addEventListener('animationend', this.eventListner);
   }
 
   // event listner
   eventListner(e) {
     const flipContainer = e.target;
-    if (flipContainer.matches(".flip-top-container")) {
+    if (flipContainer.matches('.flip-top-container')) {
       const bottomSpan = flipContainer
-        .closest(".flip-digit")
-        .querySelector(".flip-face-bottom span");
+        .closest('.flip-digit')
+        .querySelector('.flip-face-bottom span');
       const topFrontFontText = flipContainer
-        .closest(".flip-digit")
-        .querySelector(".flip-face-top-front-front span");
+        .closest('.flip-digit')
+        .querySelector('.flip-face-top-front-front span');
       const number = bottomSpan.dataset.nextDigit;
       bottomSpan.textContent = number;
       topFrontFontText.textContent = number;
-      flipContainer.classList.remove("flip");
+      flipContainer.classList.remove('flip');
     }
   }
 
   flip(number, unit, side) {
     this.digits[unit][side].topFrontBackText.textContent = number;
     this.digits[unit][side].topBackText.textContent = number;
-    this.digits[unit][side].topContainer.classList.add("flip");
+    this.digits[unit][side].topContainer.classList.add('flip');
     this.digits[unit][side].bottomSpan.dataset.nextDigit = number;
   }
 
   onComplete() {
-    removeEventListener("animationend", this.eventListner);
+    removeEventListener('animationend', this.eventListner);
   }
 }
 
 export class Task {
-  constructor({ title, description, duration, quiz = false }) {
+  constructor({ title, description, duration }) {
     this.title = title;
     this.description = description;
     this.duration = duration;
-    this.quiz = quiz;
   }
 }
 
-export class Quiz {
-  constructor({ title, questionsCount, duration }) {
-    this.title = title;
+export class Quiz extends Task {
+  constructor({ title, description, duration, questionsCount }) {
+    super({ title, description, duration });
     this.questionsCount = questionsCount;
-    this.duration = duration;
     this.elapsedTime = document.querySelector(QUIZSELECTORS.startTime);
     this.submittedQuestionsCount = document.querySelector(
       QUIZSELECTORS.submittedCount
@@ -190,7 +188,7 @@ export class Quiz {
     questionsCount.textContent = `${this.questionsCount} Questions`;
     this.elapsedTime.textContent = quizElapsedTime;
     this.submittedQuestionsCount.textContent = `0 of ${this.questionsCount} Quetions`;
-    this.score.textContent = "____";
+    this.score.textContent = '____';
   }
 
   updateElapsedTime(quizElapsedTime) {
@@ -210,18 +208,12 @@ export class Quiz {
 }
 
 export class Session {
-  constructor({
-    name,
-    groupName,
-    quizTitle,
-    startDate,
-    description,
-  }) {
+  constructor({ name, groupName, startDate, description, isAdmin = false }) {
     this.name = name;
     this.groupName = groupName;
-    this.quizTitle = quizTitle;
     this.startDate = startDate;
     this.description = description;
+    this.isAdmin = isAdmin;
   }
 
   displaySessionInfo() {
@@ -232,20 +224,33 @@ export class Session {
     const endTime = document.querySelector(SESSIONSSELECTORS.endTime);
     const description = document.querySelector(SESSIONSSELECTORS.description);
     const duration = document.querySelector(SESSIONSSELECTORS.duration);
+    const roleBadge = document.querySelector(SESSIONSSELECTORS.badges.role);
+    const quizBadge = document.querySelector(SESSIONSSELECTORS.badges.quiz);
 
     sessionName.textContent = this.name;
     groupName.textContent = this.groupName;
-    quizTitle.textContent = this.quizTitle;
+    quizTitle.textContent = this.quiz
+      ? `${this.quiz.title}`
+      : 'No Quiz Added To The Session';
     startTime.textContent = this.formatHoursMinutes(this.startDate);
     description.textContent = this.description;
-    duration.textContent = this.duration + "m";
+    duration.textContent = this.duration + 'm';
     endTime.textContent = this.formatHoursMinutes(this.endTime);
+    if (this.quiz) {
+      quizBadge.textContent = 'Quiz';
+      quizBadge.parentElement.className = 'badge quiz-badge';
+    }
+    if (this.isAdmin) {
+      roleBadge.textContent = 'Host';
+      roleBadge.previousElementSibling.className = 'bi bi-person-fill-gear';
+      roleBadge.parentElement.className = 'badge host-badge';
+    }
   }
 
   formatHoursMinutes(TimeOrDate) {
     const date = new Date(TimeOrDate);
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${hours} : ${minutes}`;
   }
 
@@ -267,15 +272,15 @@ export class Session {
         this.tasks[0].duration ===
           Math.floor(timeLeft / 1000 / 60) -
             Array.from(
-              this.completedTasksContainer.querySelectorAll("span.duration")
+              this.completedTasksContainer.querySelectorAll('span.duration')
             ).reduce((acc, span) => {
               return (acc += parseInt(span.textContent));
             }, 0);
 
       if (firstTaskIsComplete) {
         this.addToCompletedTasks();
-        if(this.tasks.find(t => t.quiz))
-        this.quiz.updateElapsedTime(this.calculateQuizElapsedTime());
+        if (this.quiz)
+          this.quiz.updateElapsedTime(this.calculateQuizElapsedTime());
       }
 
       this._timer = setTimeout(() => this.tick(), delay);
@@ -285,8 +290,14 @@ export class Session {
   }
 
   initTimer() {
-    this.duration = this.tasks.reduce((acc, task)=> acc += task.duration, 0)
+    this.duration = this.tasks.reduce((acc, task) => (acc += task.duration), 0);
     this.endTime = Date.now() + this.duration * 60 * 1000;
+    console.log(
+      this.tasks.reduce((acc, task) => {
+        return (acc += task.duration);
+      }, 0)
+    );
+
     this._timer = null;
     this.tick();
   }
@@ -294,12 +305,12 @@ export class Session {
   millisecondsToHMFormat(time) {
     const hours = Math.floor(time / (1000 * 60 * 60))
       .toString()
-      .padStart(2, "0");
+      .padStart(2, '0');
     const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60))
       .toString()
-      .padStart(2, "0");
+      .padStart(2, '0');
 
-    return hours === "00" ? `${minutes}m` : `${hours}h ${minutes}m`;
+    return hours === '00' ? `${minutes}m` : `${hours}h ${minutes}m`;
   }
 
   displayDurations({ timeLeft, elapsedTime }) {
@@ -314,22 +325,22 @@ export class Session {
 
   displayOngoingTasks() {
     this.tasks.forEach((task, index) => {
-      const taskContainer = document.createElement("div");
-      taskContainer.className = "ongoing-task";
+      const taskContainer = document.createElement('div');
+      taskContainer.className = 'ongoing-task';
       taskContainer.innerHTML = `
         <div ${
           index === 0
             ? 'data-tooltip="Active Task"'
             : task.quiz
             ? 'data-tooltip="Quiz"'
-            : ""
-        } class="ongoing-task-box ${task.quiz ? "quiz-task-box" : ""} ${
-        index === 0 ? "first has-tooltip" : task.quiz ? "has-tooltip" : ""
+            : ''
+        } class="ongoing-task-box ${task.quiz ? 'quiz-task-box' : ''} ${
+        index === 0 ? 'first has-tooltip' : task.quiz ? 'has-tooltip' : ''
       }">
           <div class="counter">
             <span>${(index + 1)
               .toString()
-              .padStart(this.tasks.length.toString().length, "0")}</span>
+              .padStart(this.tasks.length.toString().length, '0')}</span>
           </div>
           <span class="title">${task.title}</span>
           <span class="duration">${this.millisecondsToHMFormat(
@@ -358,14 +369,14 @@ export class Session {
     this.ongoingTasksContainer.firstElementChild.remove();
     const nextTask = this.ongoingTasksContainer.firstElementChild;
     if (nextTask) {
-      nextTask.firstElementChild.setAttribute("data-tooltip", "Active Task");
-      nextTask.firstElementChild.classList.add("first", "has-tooltip");
+      nextTask.firstElementChild.setAttribute('data-tooltip', 'Active Task');
+      nextTask.firstElementChild.classList.add('first', 'has-tooltip');
     }
 
     const task = this.tasks.shift();
 
-    const taskContainer = document.createElement("div");
-    taskContainer.className = "completed-task";
+    const taskContainer = document.createElement('div');
+    taskContainer.className = 'completed-task';
     taskContainer.innerHTML = `
         <div class="completed-task-box"> 
           <span class="title">${task.title}</span>
@@ -385,7 +396,7 @@ export class Session {
 
   setTasks(
     tasks = [
-      new Task({ title: "", description: "", duration: 0, completed: false }),
+      new Task({ title: '', description: '', duration: 0, completed: false }),
     ]
   ) {
     this.ongoingTasksContainer = document.querySelector(
@@ -394,29 +405,23 @@ export class Session {
     this.completedTasksContainer = document.querySelector(
       TASKSSELECTORS.completedTasksList
     );
-    this.ongoingTasksContainer.innerHTML = "";
-    this.completedTasksContainer.innerHTML = "";
+    this.ongoingTasksContainer.innerHTML = '';
+    this.completedTasksContainer.innerHTML = '';
     this.tasks = tasks;
     return this;
   }
 
-  setQuiz(questionsCount) {
-    const quizTask = this.tasks.find((t) => t.quiz);
-    this.quiz = new Quiz({
-      title: quizTask.title,
-      duration: quizTask.duration,
-      questionsCount: questionsCount,
-    });
-    return this;
+  initQuiz() {
+    this.quiz = this.tasks.find((task) => task instanceof Quiz) || null;
   }
 
   calculateQuizElapsedTime() {
     let quizPassed = false;
     const quizElapsedTime = this.tasks.reduce((acc, task) => {
-      if (task.quiz) {
+      if (task instanceof Quiz) {
         quizPassed = true;
       }
-      if (!task.quiz && !quizPassed) {
+      if (!quizPassed) {
         return (acc += task.duration);
       }
       return acc;
@@ -424,49 +429,35 @@ export class Session {
     return this.millisecondsToHMFormat(quizElapsedTime * 60 * 1000);
   }
 
+  sendMessage({ message, file }) {
+    
+  }
+
   startSession() {
+    this.initQuiz();
     this.initTimer();
     this.displaySessionInfo();
     this.displayOngoingTasks();
-    this.quiz.displayQuizInfo(this.calculateQuizElapsedTime());
+    if (this.quiz) {
+      this.quiz.displayQuizInfo(this.calculateQuizElapsedTime());
+    }
     this.TIMER = new FlipTimer(this.duration);
   }
 }
 
-const session = new Session({
-  name: "New Session",
-  groupName: "Group Name",
-  quizTitle: "Quiz Title",
+new Session({
+  name: 'New Session',
+  groupName: 'Group Name',
   startDate: new Date().toISOString(),
-  description: "This is a sample session description."
+  description: 'This is a sample session description.',
+  isAdmin: true,
 })
   .setTasks([
-    new Task({
-      title: "Task 1",
-      description: "Description for Task 1",
-      duration: 1,
-    }),
-    new Task({
-      title: "Task 1",
-      description: "Description for Task 1",
-      duration: 1,
-    }),
-    new Task({
-      title: "Task 1",
-      description: "Description for Task 1",
-      duration: 1,
-    }),
-    new Task({
-      title: "Task 1",
-      description: "Description for Task 1",
-      duration: 1,
-      quiz: true,
-    }),
-    new Task({
-      title: "Task 1",
-      description: "Description for Task 1",
-      duration: 1,
+    new Quiz({
+      title: 'Make a shawr And Pray',
+      description: 'Description for Task 1',
+      duration: 0.05,
+      questionsCount: 12,
     }),
   ])
-  .setQuiz(12)
   .startSession();

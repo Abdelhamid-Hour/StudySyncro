@@ -24,7 +24,9 @@ export const SESSIONSSELECTORS = {
   joinedCount: '.joined-count',
   duration: '.duration',
   description: '.session-description',
+  badges: {quiz: '.session .badges span:first-child span', role: '.session .badges span:last-child span'},
 };
+
 
 export const TASKSSELECTORS = {
   completedTasksList: '.completed-tasks-list',

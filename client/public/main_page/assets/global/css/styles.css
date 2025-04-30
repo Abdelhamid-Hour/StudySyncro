@@ -93,7 +93,15 @@ i {
   }
 }
 
-.in-progress-badge {
+.no-quiz-badge {
+  background-color: var(--no-quiz-badge-bg);
+  color: var(--no-quiz-badge-color);
+  i {
+    color: var(--no-quiz-badge-color);
+  }
+}
+
+.in-progress-badge, .host-badge {
   background-color: var(--host-badge-bg);
   color: var(--host-badge-color);
   i {
@@ -249,7 +257,7 @@ i {
         font-size: var(--medium-font-size);
         font-weight: bold;
       }
-      span:last-child{
+      span:last-child {
         font-size: var(--small-font-size);
       }
     }
@@ -293,7 +301,7 @@ i {
     justify-content: space-evenly;
     font-size: var(--xx-large-font-size);
     transition: var(--primary-transition-style);
-    gap: .1rem;
+    gap: 0.1rem;
   }
 
   .side-bar-icons {
@@ -355,7 +363,6 @@ main {
   overflow: hidden;
 }
 
-
 #tooltip {
   box-shadow: 0 0 5px gray;
   display: flex;
@@ -390,12 +397,11 @@ main {
   }
 }
 
-
 @media (min-width: 500px) and (max-width: 900px) {
   html {
     font-size: 10px;
   }
-  .profile-container{
+  .profile-container {
     max-width: 70% !important;
   }
 }
