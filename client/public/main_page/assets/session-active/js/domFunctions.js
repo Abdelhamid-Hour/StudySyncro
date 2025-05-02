@@ -1,9 +1,18 @@
 import {
-  expandDescriptionBtn,
+  fileInput,
+  FileTypes,
+  imageInput,
+  inputChatContainer,
+  inputMessage,
+  messagesContainer,
   QUIZSELECTORS,
+  selectedFiles,
   SESSIONSSELECTORS,
   TASKSSELECTORS,
 } from './getNodes.js';
+
+import { formatHoursMinutes } from '../../global/js/domFunctions.js';
+import { showMessageBlock } from '../../../../main_assets/js/domFunctions.js';
 
 export const handelTaskDetailsBtn = (e) => {
   if (e.target.closest('.task-down-icon')) {
@@ -39,8 +48,8 @@ export const expandAndShrinkDescription = (e) => {
 };
 
 export class FlipTimer {
-  constructor(minutes) {
-    this.initTimer(minutes);
+  constructor(duration) {
+    this.initTimer(duration);
     this.initEventListener();
   }
   tick() {
@@ -91,9 +100,9 @@ export class FlipTimer {
     });
   }
 
-  initTimer(minutes) {
+  initTimer(duration) {
     this.initDigits();
-    this.endTime = Date.now() + minutes * 60 * 1000;
+    this.endTime = Date.now() + duration;
     this._timer = null;
     this.prev = { hours: '00', minutes: '00', seconds: '00' };
     this.tick();
@@ -201,9 +210,14 @@ export class Quiz extends Task {
     }%`;
   }
 
-  setQuizResult({ submittedQuestionsCount }) {
+  setQuizResult(submittedQuestionsCount) {
     this.score.textContent = this.calculateScore(submittedQuestionsCount);
     this.submittedQuestionsCount.textContent = `${submittedQuestionsCount} of ${this.questionsCount} Quetions`;
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.innerHTML = `<i class="bi bi-question-circle"></i>
+    <span>View Details</span>`;
+    document.querySelector(QUIZSELECTORS.quizFooter).append(button);
   }
 }
 
@@ -232,10 +246,10 @@ export class Session {
     quizTitle.textContent = this.quiz
       ? `${this.quiz.title}`
       : 'No Quiz Added To The Session';
-    startTime.textContent = this.formatHoursMinutes(this.startDate);
+    startTime.textContent = formatHoursMinutes(this.startDate);
     description.textContent = this.description;
     duration.textContent = this.duration + 'm';
-    endTime.textContent = this.formatHoursMinutes(this.endTime);
+    endTime.textContent = formatHoursMinutes(this.endTime);
     if (this.quiz) {
       quizBadge.textContent = 'Quiz';
       quizBadge.parentElement.className = 'badge quiz-badge';
@@ -247,16 +261,10 @@ export class Session {
     }
   }
 
-  formatHoursMinutes(TimeOrDate) {
-    const date = new Date(TimeOrDate);
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${hours} : ${minutes}`;
-  }
-
   tick() {
     const now = Date.now();
     const remainingTime = this.endTime - now;
+
     const delay = remainingTime % (60 * 1000) || 1000 * 60;
 
     if (remainingTime > 0) {
@@ -291,13 +299,9 @@ export class Session {
 
   initTimer() {
     this.duration = this.tasks.reduce((acc, task) => (acc += task.duration), 0);
-    this.endTime = Date.now() + this.duration * 60 * 1000;
-    console.log(
-      this.tasks.reduce((acc, task) => {
-        return (acc += task.duration);
-      }, 0)
-    );
-
+    this.endTime =
+      new Date(this.startDate).getTime() + this.duration * 60 * 1000;
+    this.TIMER = new FlipTimer(this.endTime - Date.now());
     this._timer = null;
     this.tick();
   }
@@ -429,9 +433,7 @@ export class Session {
     return this.millisecondsToHMFormat(quizElapsedTime * 60 * 1000);
   }
 
-  sendMessage({ message, file }) {
-    
-  }
+  sendMessage({ message, file }) {}
 
   startSession() {
     this.initQuiz();
@@ -442,22 +444,349 @@ export class Session {
       this.quiz.displayQuizInfo(this.calculateQuizElapsedTime());
     }
     this.TIMER = new FlipTimer(this.duration);
+    return this;
+  }
+
+  setQuizResult(submittedCount) {
+    if (this.quiz) {
+      this.quiz.setQuizResult(submittedCount);
+    }
   }
 }
 
-new Session({
-  name: 'New Session',
-  groupName: 'Group Name',
-  startDate: new Date().toISOString(),
-  description: 'This is a sample session description.',
-  isAdmin: true,
-})
-  .setTasks([
-    new Quiz({
-      title: 'Make a shawr And Pray',
-      description: 'Description for Task 1',
-      duration: 0.05,
-      questionsCount: 12,
-    }),
-  ])
-  .startSession();
+export class ChatMessage {
+  constructor(
+    text,
+    attachments = [],
+    isSender,
+    avatarSrc,
+    senderName,
+    timestamp,
+    chatContainer
+  ) {
+    this.text = text;
+    this.attachments = attachments;
+    this.isSender = isSender;
+    this.avatarSrc = avatarSrc;
+    this.senderName = senderName;
+    this.timestamp = timestamp;
+    this.chatContainer = chatContainer;
+  }
+
+  renderMessage() {
+    if (this.attachments.length > 0) {
+      this.renderAttachments();
+    }
+    if (this.text) {
+      this.renderTextMessage();
+    }
+    this.scrollToBottom();
+  }
+
+  scrollToBottom() {
+    const scrollHeight = this.chatContainer.scrollHeight;
+    this.chatContainer.scrollTo(0, scrollHeight);
+  }
+
+  appendToChat(messageBubble) {
+    if (this.isFirstMessage()) {
+      const messageContainer = this.createMessageContainer(messageBubble);
+      this.chatContainer.append(messageContainer);
+    } else {
+      const messageWrapper = this.createMessageWrapper(messageBubble, false);
+      this.chatContainer.lastElementChild
+        .querySelector('.messages')
+        .append(messageWrapper);
+    }
+  }
+
+  renderAttachments() {
+    const renderers = {
+      image: (img) => this.createImageTemplate(img.src, img.name),
+      video: (vid) => this.createVideoTemplate(vid.src),
+      document: (doc) =>
+        this.createFilePreviewTemplate(
+          doc.name,
+          this.formatFileSize(doc.size),
+          'bi bi-file-earmark-text'
+        ),
+    };
+    this.attachments.forEach((attachment) => {
+      const kind = FileTypes.IMAGE.includes(attachment.type)
+        ? 'image'
+        : FileTypes.VIDEO.includes(attachment.type)
+        ? 'video'
+        : 'document';
+      this.appendToChat(renderers[kind](attachment));
+    });
+  }
+
+  renderTextMessage() {
+    const messageBubble = this.createMessageBubble(this.text);
+    this.appendToChat(messageBubble);
+  }
+
+  formatFileSize(sizeInBytes) {
+    if (sizeInBytes < 1024) {
+      return `${sizeInBytes} bytes`;
+    }
+    const kb = sizeInBytes / 1024;
+    if (kb < 1024) {
+      return `${kb.toFixed(2)} KB`;
+    }
+    const mb = kb / 1024;
+    if (mb < 1024) {
+      return `${mb.toFixed(2)} MB`;
+    }
+  }
+
+  isFirstMessage() {
+    const lastMessage = this.chatContainer.lastElementChild;
+    if (!lastMessage) return true;
+    const lastUser = lastMessage.querySelector('.username')?.textContent;
+    return lastUser ? lastUser !== this.senderName : !this.isSender;
+  }
+
+  createFilePreviewTemplate(fileName, fileSize, iconClass) {
+    const filePreview = document.createElement('div');
+    filePreview.className = 'file-preview';
+
+    const fileThumbnail = document.createElement('div');
+    fileThumbnail.className = 'file-thumbnail';
+    const icon = document.createElement('i');
+    icon.className = iconClass;
+    fileThumbnail.appendChild(icon);
+
+    const fileDetails = document.createElement('div');
+    fileDetails.className = 'file-details';
+    const fileNameSpan = document.createElement('span');
+    fileNameSpan.className = 'file-name';
+    fileNameSpan.textContent = fileName;
+    const fileSizeSpan = document.createElement('span');
+    fileSizeSpan.className = 'file-size';
+    fileSizeSpan.textContent = fileSize;
+    fileDetails.append(fileNameSpan, fileSizeSpan);
+
+    const downloadButton = document.createElement('button');
+    downloadButton.type = 'button';
+    downloadButton.className = 'download-btn';
+    const downloadIcon = document.createElement('i');
+    downloadIcon.className = 'bi bi-download';
+    downloadButton.appendChild(downloadIcon);
+
+    filePreview.append(fileThumbnail, fileDetails, downloadButton);
+    return filePreview;
+  }
+
+  createImageTemplate(src, alt) {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = alt;
+    return img;
+  }
+
+  createVideoTemplate(src) {
+    const video = document.createElement('video');
+    video.src = src;
+    video.controls = true;
+    return video;
+  }
+
+  createMessageBubble(text) {
+    const p = document.createElement('p');
+    p.textContent = text;
+    return p;
+  }
+
+  createMessageWrapper(messageBubble, isFirstMessage) {
+    const messageWrapper = document.createElement('div');
+    messageWrapper.className = `${isFirstMessage ? 'first-' : ''}message-${
+      this.isSender ? 'sent' : 'received'
+    }-text`;
+
+    if (!this.isSender && isFirstMessage) {
+      const usernameSpan = document.createElement('span');
+      usernameSpan.className = 'username';
+      usernameSpan.textContent = this.senderName;
+      messageWrapper.appendChild(usernameSpan);
+    }
+
+    messageWrapper.appendChild(messageBubble);
+
+    const dateSpan = document.createElement('span');
+    dateSpan.className = 'date';
+    dateSpan.textContent = formatHoursMinutes(this.timestamp);
+    messageWrapper.appendChild(dateSpan);
+
+    return messageWrapper;
+  }
+
+  createMessageContainer(messageBubble) {
+    const messageContainer = document.createElement('div');
+    messageContainer.className = `message-${
+      this.isSender ? 'sent' : 'received'
+    }`;
+
+    if (!this.isSender) {
+      const avatarDiv = document.createElement('div');
+      avatarDiv.className = 'avatar';
+      if (this.avatarSrc) {
+        const avatarImg = document.createElement('img');
+        avatarImg.src = this.avatarSrc;
+        avatarImg.alt = 'User Avatar';
+        avatarDiv.appendChild(avatarImg);
+      } else {
+        const avatarIcon = document.createElement('i');
+        avatarIcon.className = 'bi bi-person-circle';
+        avatarDiv.appendChild(avatarIcon);
+      }
+      messageContainer.appendChild(avatarDiv);
+    }
+
+    const messagesDiv = document.createElement('div');
+    messagesDiv.className = 'messages';
+    messagesDiv.appendChild(this.createMessageWrapper(messageBubble, true));
+    messageContainer.appendChild(messagesDiv);
+
+    return messageContainer;
+  }
+}
+
+export const clearChatInputs = () => {
+  inputMessage.value = '';
+  fileInput.value = '';
+  imageInput.value = '';
+  selectedFiles.items.clear()
+  const filesView = document.querySelector('.files-view');
+  if (filesView) {
+    filesView.remove()
+  }
+};
+
+export const handleFiles = (files) => {
+  for (const f of Array.from(files)) {
+    if (selectedFiles.items.length >= 5) {
+      return showMessageBlock('You can only upload a maximum of 5 files', true);
+    }
+    const isSupportedType = Object.values(FileTypes).find((types) =>
+      types.includes(f.type)
+    );
+    if (!isSupportedType) {
+      showMessageBlock('Invalid file type. Please select other file.', true);
+      continue;
+    }
+    selectedFiles.items.add(f);
+    displayFile(f);
+  }
+};
+
+export const displayFile = async (file) => {
+  let filesView = document.querySelector('.files-view');
+  if (!filesView) {
+    filesView = document.createElement('div');
+    filesView.className = 'files-view';
+    inputChatContainer.append(filesView);
+    filesView.addEventListener('click', (e) => {
+      const btn = e.target.closest('.remove-file-btn');
+      if (e.target.closest('.remove-file-btn')) {
+        const targetFileName = btn.previousElementSibling.dataset.fileName;
+        const fileIndex = Array.from(selectedFiles.items).findIndex((f) => {
+          return f.getAsFile().name === targetFileName;
+        });
+
+        selectedFiles.items.remove(fileIndex);
+        btn.parentElement.remove();
+      }
+      if (!selectedFiles.items.length) {
+        filesView.remove();
+      }
+    });
+  }
+
+  const closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'exclude-btn remove-file-btn';
+  const closIcon = document.createElement('i');
+  closIcon.className = 'bi bi-x-circle-fill';
+  closeBtn.append(closIcon);
+
+  if (FileTypes.IMAGE.includes(file.type)) {
+    const imgContainer = document.createElement('div');
+    imgContainer.className = 'img-preview';
+    const img = document.createElement('img');
+    img.dataset.fileName = file.name;
+    const r = new FileReader();
+    r.readAsDataURL(file);
+    const imgUrl = await new Promise((res, rej) => {
+      r.onload = () => {
+        return res(r.result);
+      };
+      r.onerror = () => {
+        return rej(r.error);
+      };
+    });
+    img.src = imgUrl;
+    img.alt = file.name;
+    imgContainer.append(img, closeBtn);
+    filesView.append(imgContainer);
+  } else {
+    const filePreview = document.createElement('div');
+    filePreview.className = 'file';
+    const typeBadge = document.createElement('span');
+    typeBadge.className = 'badge badge-type';
+    typeBadge.textContent = file.name.split('.')[1].toUpperCase();
+    const fileName = document.createElement('span');
+    fileName.className = 'file-name';
+    fileName.textContent = file.name;
+    fileName.dataset.fileName = file.name;
+
+    filePreview.append(typeBadge, fileName, closeBtn);
+    filesView.append(filePreview);
+  }
+};
+
+export const handleChatInput = async () => {
+  const files = [];
+
+  // Handle image input
+  if (selectedFiles.items.length) {
+    const filePromises = Array.from(selectedFiles.items).map(async (f) => {
+      const file = f.getAsFile();
+      if (FileTypes.IMAGE.includes(file.type)) {
+        try {
+          const reader = new FileReader();
+          const imageDataUrl = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(reader.error);
+            reader.readAsDataURL(file);
+          });
+
+          file.src = imageDataUrl;
+        } catch (error) {
+          console.error('Error reading image file:', error);
+        }
+      }
+      return file;
+    });
+
+    // Wait for all file processing to complete
+    const processedFiles = await Promise.all(filePromises);
+    files.push(...processedFiles);
+  }
+
+  // Check if there is a message or files to send
+  const inputValue = inputMessage.value.trim();
+  if (inputValue || files.length > 0) {
+    new ChatMessage(
+      inputValue,
+      files,
+      true,
+      '',
+      '',
+      new Date(),
+      messagesContainer
+    ).renderMessage();
+
+    clearChatInputs();
+  }
+};

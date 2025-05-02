@@ -8,3 +8,4 @@
 // add enter key listner for msg sending
 // limite the timer to max is 24 hrs
 // impklement on time complete message
+// display messages in chat from the last to the first
