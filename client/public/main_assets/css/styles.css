@@ -29,7 +29,7 @@ a {
   }
 }
 
-button:not(.exclude-btn), a.button {
+button:not(.exclude-btn), .button {
   position: relative;
   box-shadow: 1px 1px 0px var(--btn-border-color);
   height: var(--btn-height);

@@ -1,3 +1,4 @@
+import { throttling } from '../../../main_assets/js/domFunctions.js';
 import { passwordRegex, userNameRegex, emailRegex } from '../../../main_assets/js/variables.js';
 import {
   stylsheet,
@@ -151,25 +152,6 @@ const swapAnimation = (targetSignUpFormHeight) => {
   void signUpFormContainer.offsetWidth;
   signUpFormContainer.classList.add('sign-up-swap-animation');
   signInFormContainer.classList.add('sign-in-swap-animation');
-};
-
-/**
- * Throttles a function to prevent it from being called too frequently.
- * @param {Number} TimeInterval - The time interval in milliseconds to wait before executing the callback function again.
- * @param {Function} callback - The function to be executed after the specified time interval.
- * @returns {Function} - The throttled function.
- */
-const throttling = function (TimeInterval, callback) {
-  let inAction = false;
-  return function (...args) {
-    if (!inAction) {
-      inAction = true;
-      callback.apply(this, args);
-      setTimeout(() => {
-        inAction = false;
-      }, TimeInterval);
-    }
-  };
 };
 
 export const swapAnimationThrottling = throttling(
@@ -406,7 +388,6 @@ const handleFileAndvisuallyShowAvatar = (file, inputFile) => {
 
 export {
   swapAnimation,
-  throttling,
   inputsEmptying,
   getSwapAnimationRule,
   initializeSignUpForm,

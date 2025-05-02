@@ -12,6 +12,25 @@ export const handlEyeIconsClick = (eyeIcons) => {
   });
 };
 
+/**
+ * Throttles a function to prevent it from being called too frequently.
+ * @param {Number} TimeInterval - The time interval in milliseconds to wait before executing the callback function again.
+ * @param {Function} callback - The function to be executed after the specified time interval.
+ * @returns {Function} - The throttled function.
+ */
+export const throttling = function (TimeInterval, callback) {
+  let inAction = false;
+  return function (...args) {
+    if (!inAction) {
+      inAction = true;
+      callback.apply(this, args);
+      setTimeout(() => {
+        inAction = false;
+      }, TimeInterval);
+    }
+  };
+};
+
 export const redirectTo = (url) => {
   location.href = url;
 };

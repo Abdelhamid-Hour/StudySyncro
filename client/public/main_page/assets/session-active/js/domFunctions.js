@@ -7,19 +7,27 @@ import {
   messagesContainer,
   QUIZSELECTORS,
   selectedFiles,
+  sendBtn,
   SESSIONSSELECTORS,
   TASKSSELECTORS,
-} from './getNodes.js';
+} from "./getNodes.js";
 
-import { formatHoursMinutes } from '../../global/js/domFunctions.js';
-import { showMessageBlock } from '../../../../main_assets/js/domFunctions.js';
+import {
+  formatHoursMinutes,
+  resetTooltip,
+  showTooltip,
+} from "../../global/js/domFunctions.js";
+import {
+  showMessageBlock,
+  throttling,
+} from "../../../../main_assets/js/domFunctions.js";
 
 export const handelTaskDetailsBtn = (e) => {
-  if (e.target.closest('.task-down-icon')) {
+  if (e.target.closest(".task-down-icon")) {
     const task = e.target.closest('[class$="-task"], .show-task-details');
 
     if (task) {
-      task.classList.toggle('show-task-details');
+      task.classList.toggle("show-task-details");
     }
   }
 };
@@ -30,18 +38,18 @@ export const handelTaskBtns = (className, scroll) => {
     return taskListElement.scroll(0, 0);
   }
   for (const element of taskListElement.children) {
-    element.classList.remove('show-task-details');
+    element.classList.remove("show-task-details");
   }
 };
 
 export const expandAndShrinkDescription = (e) => {
   const btn = e.currentTarget;
 
-  if (btn.classList.toggle('expanded')) {
-    btn.parentElement.nextElementSibling.style.webkitLineClamp = 'unset';
+  if (btn.classList.toggle("expanded")) {
+    btn.parentElement.nextElementSibling.style.webkitLineClamp = "unset";
   } else {
     setTimeout(() => {
-      btn.parentElement.nextElementSibling.style.webkitLineClamp = '3';
+      btn.parentElement.nextElementSibling.style.webkitLineClamp = "3";
       btn.parentElement.nextElementSibling.scroll(0, 0);
     }, 300);
   }
@@ -60,13 +68,13 @@ export class FlipTimer {
       const delay = remainingTime % 1000 || 1000;
       const seconds = (Math.floor(remainingTime / 1000) % 60)
         .toString()
-        .padStart(2, '0');
+        .padStart(2, "0");
       const minutes = (Math.floor(remainingTime / 1000 / 60) % 60)
         .toString()
-        .padStart(2, '0');
+        .padStart(2, "0");
       const hours = Math.floor(remainingTime / 1000 / 60 / 60)
         .toString()
-        .padStart(2, '0');
+        .padStart(2, "0");
 
       this.onUpdate({ hours, minutes, seconds });
 
@@ -81,9 +89,9 @@ export class FlipTimer {
   }
 
   onUpdate({ hours, minutes, seconds }) {
-    this.handleUnitChange('hours', hours);
-    this.handleUnitChange('minutes', minutes);
-    this.handleUnitChange('seconds', seconds);
+    this.handleUnitChange("hours", hours);
+    this.handleUnitChange("minutes", minutes);
+    this.handleUnitChange("seconds", seconds);
 
     // store for next time
     this.prev = { hours, minutes, seconds };
@@ -91,7 +99,7 @@ export class FlipTimer {
 
   handleUnitChange(unit, newDigits) {
     const oldDigits = this.prev[unit];
-    const sides = ['left', 'right'];
+    const sides = ["left", "right"];
 
     sides.forEach((side, idx) => {
       if (newDigits[idx] !== oldDigits[idx]) {
@@ -104,7 +112,7 @@ export class FlipTimer {
     this.initDigits();
     this.endTime = Date.now() + duration;
     this._timer = null;
-    this.prev = { hours: '00', minutes: '00', seconds: '00' };
+    this.prev = { hours: "00", minutes: "00", seconds: "00" };
     this.tick();
   }
 
@@ -114,8 +122,8 @@ export class FlipTimer {
       minutes: { left: null, right: null },
       seconds: { left: null, right: null },
     };
-    ['hours', 'minutes', 'seconds'].forEach((unit) => {
-      ['left', 'right'].forEach((side) => {
+    ["hours", "minutes", "seconds"].forEach((unit) => {
+      ["left", "right"].forEach((side) => {
         this.digits[unit][side] = {
           topContainer: document.querySelector(
             `.flip-${unit}-${side}-digit .flip-top-container`
@@ -138,35 +146,35 @@ export class FlipTimer {
   }
 
   initEventListener() {
-    document.addEventListener('animationend', this.eventListner);
+    document.addEventListener("animationend", this.eventListner);
   }
 
   // event listner
   eventListner(e) {
     const flipContainer = e.target;
-    if (flipContainer.matches('.flip-top-container')) {
+    if (flipContainer.matches(".flip-top-container")) {
       const bottomSpan = flipContainer
-        .closest('.flip-digit')
-        .querySelector('.flip-face-bottom span');
+        .closest(".flip-digit")
+        .querySelector(".flip-face-bottom span");
       const topFrontFontText = flipContainer
-        .closest('.flip-digit')
-        .querySelector('.flip-face-top-front-front span');
+        .closest(".flip-digit")
+        .querySelector(".flip-face-top-front-front span");
       const number = bottomSpan.dataset.nextDigit;
       bottomSpan.textContent = number;
       topFrontFontText.textContent = number;
-      flipContainer.classList.remove('flip');
+      flipContainer.classList.remove("flip");
     }
   }
 
   flip(number, unit, side) {
     this.digits[unit][side].topFrontBackText.textContent = number;
     this.digits[unit][side].topBackText.textContent = number;
-    this.digits[unit][side].topContainer.classList.add('flip');
+    this.digits[unit][side].topContainer.classList.add("flip");
     this.digits[unit][side].bottomSpan.dataset.nextDigit = number;
   }
 
   onComplete() {
-    removeEventListener('animationend', this.eventListner);
+    removeEventListener("animationend", this.eventListner);
   }
 }
 
@@ -197,7 +205,7 @@ export class Quiz extends Task {
     questionsCount.textContent = `${this.questionsCount} Questions`;
     this.elapsedTime.textContent = quizElapsedTime;
     this.submittedQuestionsCount.textContent = `0 of ${this.questionsCount} Quetions`;
-    this.score.textContent = '____';
+    this.score.textContent = "____";
   }
 
   updateElapsedTime(quizElapsedTime) {
@@ -213,8 +221,8 @@ export class Quiz extends Task {
   setQuizResult(submittedQuestionsCount) {
     this.score.textContent = this.calculateScore(submittedQuestionsCount);
     this.submittedQuestionsCount.textContent = `${submittedQuestionsCount} of ${this.questionsCount} Quetions`;
-    const button = document.createElement('button');
-    button.type = 'button';
+    const button = document.createElement("button");
+    button.type = "button";
     button.innerHTML = `<i class="bi bi-question-circle"></i>
     <span>View Details</span>`;
     document.querySelector(QUIZSELECTORS.quizFooter).append(button);
@@ -245,19 +253,19 @@ export class Session {
     groupName.textContent = this.groupName;
     quizTitle.textContent = this.quiz
       ? `${this.quiz.title}`
-      : 'No Quiz Added To The Session';
+      : "No Quiz Added To The Session";
     startTime.textContent = formatHoursMinutes(this.startDate);
     description.textContent = this.description;
-    duration.textContent = this.duration + 'm';
+    duration.textContent = this.duration + "m";
     endTime.textContent = formatHoursMinutes(this.endTime);
     if (this.quiz) {
-      quizBadge.textContent = 'Quiz';
-      quizBadge.parentElement.className = 'badge quiz-badge';
+      quizBadge.textContent = "Quiz";
+      quizBadge.parentElement.className = "badge quiz-badge";
     }
     if (this.isAdmin) {
-      roleBadge.textContent = 'Host';
-      roleBadge.previousElementSibling.className = 'bi bi-person-fill-gear';
-      roleBadge.parentElement.className = 'badge host-badge';
+      roleBadge.textContent = "Host";
+      roleBadge.previousElementSibling.className = "bi bi-person-fill-gear";
+      roleBadge.parentElement.className = "badge host-badge";
     }
   }
 
@@ -280,7 +288,7 @@ export class Session {
         this.tasks[0].duration ===
           Math.floor(timeLeft / 1000 / 60) -
             Array.from(
-              this.completedTasksContainer.querySelectorAll('span.duration')
+              this.completedTasksContainer.querySelectorAll("span.duration")
             ).reduce((acc, span) => {
               return (acc += parseInt(span.textContent));
             }, 0);
@@ -309,12 +317,12 @@ export class Session {
   millisecondsToHMFormat(time) {
     const hours = Math.floor(time / (1000 * 60 * 60))
       .toString()
-      .padStart(2, '0');
+      .padStart(2, "0");
     const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60))
       .toString()
-      .padStart(2, '0');
+      .padStart(2, "0");
 
-    return hours === '00' ? `${minutes}m` : `${hours}h ${minutes}m`;
+    return hours === "00" ? `${minutes}m` : `${hours}h ${minutes}m`;
   }
 
   displayDurations({ timeLeft, elapsedTime }) {
@@ -329,22 +337,22 @@ export class Session {
 
   displayOngoingTasks() {
     this.tasks.forEach((task, index) => {
-      const taskContainer = document.createElement('div');
-      taskContainer.className = 'ongoing-task';
+      const taskContainer = document.createElement("div");
+      taskContainer.className = "ongoing-task";
       taskContainer.innerHTML = `
         <div ${
           index === 0
             ? 'data-tooltip="Active Task"'
             : task.quiz
             ? 'data-tooltip="Quiz"'
-            : ''
-        } class="ongoing-task-box ${task.quiz ? 'quiz-task-box' : ''} ${
-        index === 0 ? 'first has-tooltip' : task.quiz ? 'has-tooltip' : ''
+            : ""
+        } class="ongoing-task-box ${task.quiz ? "quiz-task-box" : ""} ${
+        index === 0 ? "first has-tooltip" : task.quiz ? "has-tooltip" : ""
       }">
           <div class="counter">
             <span>${(index + 1)
               .toString()
-              .padStart(this.tasks.length.toString().length, '0')}</span>
+              .padStart(this.tasks.length.toString().length, "0")}</span>
           </div>
           <span class="title">${task.title}</span>
           <span class="duration">${this.millisecondsToHMFormat(
@@ -373,14 +381,14 @@ export class Session {
     this.ongoingTasksContainer.firstElementChild.remove();
     const nextTask = this.ongoingTasksContainer.firstElementChild;
     if (nextTask) {
-      nextTask.firstElementChild.setAttribute('data-tooltip', 'Active Task');
-      nextTask.firstElementChild.classList.add('first', 'has-tooltip');
+      nextTask.firstElementChild.setAttribute("data-tooltip", "Active Task");
+      nextTask.firstElementChild.classList.add("first", "has-tooltip");
     }
 
     const task = this.tasks.shift();
 
-    const taskContainer = document.createElement('div');
-    taskContainer.className = 'completed-task';
+    const taskContainer = document.createElement("div");
+    taskContainer.className = "completed-task";
     taskContainer.innerHTML = `
         <div class="completed-task-box"> 
           <span class="title">${task.title}</span>
@@ -400,7 +408,7 @@ export class Session {
 
   setTasks(
     tasks = [
-      new Task({ title: '', description: '', duration: 0, completed: false }),
+      new Task({ title: "", description: "", duration: 0, completed: false }),
     ]
   ) {
     this.ongoingTasksContainer = document.querySelector(
@@ -409,8 +417,8 @@ export class Session {
     this.completedTasksContainer = document.querySelector(
       TASKSSELECTORS.completedTasksList
     );
-    this.ongoingTasksContainer.innerHTML = '';
-    this.completedTasksContainer.innerHTML = '';
+    this.ongoingTasksContainer.innerHTML = "";
+    this.completedTasksContainer.innerHTML = "";
     this.tasks = tasks;
     return this;
   }
@@ -462,7 +470,8 @@ export class ChatMessage {
     avatarSrc,
     senderName,
     timestamp,
-    chatContainer
+    chatContainer,
+    downloadURL
   ) {
     this.text = text;
     this.attachments = attachments;
@@ -471,6 +480,7 @@ export class ChatMessage {
     this.senderName = senderName;
     this.timestamp = timestamp;
     this.chatContainer = chatContainer;
+    this.downloadURL = downloadURL;
   }
 
   renderMessage() {
@@ -495,7 +505,7 @@ export class ChatMessage {
     } else {
       const messageWrapper = this.createMessageWrapper(messageBubble, false);
       this.chatContainer.lastElementChild
-        .querySelector('.messages')
+        .querySelector(".messages")
         .append(messageWrapper);
     }
   }
@@ -508,15 +518,15 @@ export class ChatMessage {
         this.createFilePreviewTemplate(
           doc.name,
           this.formatFileSize(doc.size),
-          'bi bi-file-earmark-text'
+          "bi bi-file-earmark-text"
         ),
     };
     this.attachments.forEach((attachment) => {
       const kind = FileTypes.IMAGE.includes(attachment.type)
-        ? 'image'
+        ? "image"
         : FileTypes.VIDEO.includes(attachment.type)
-        ? 'video'
-        : 'document';
+        ? "video"
+        : "document";
       this.appendToChat(renderers[kind](attachment));
     });
   }
@@ -543,78 +553,109 @@ export class ChatMessage {
   isFirstMessage() {
     const lastMessage = this.chatContainer.lastElementChild;
     if (!lastMessage) return true;
-    const lastUser = lastMessage.querySelector('.username')?.textContent;
+    const lastUser = lastMessage.querySelector(".username")?.textContent;
     return lastUser ? lastUser !== this.senderName : !this.isSender;
   }
 
   createFilePreviewTemplate(fileName, fileSize, iconClass) {
-    const filePreview = document.createElement('div');
-    filePreview.className = 'file-preview';
+    const filePreview = document.createElement("div");
+    filePreview.className = "file-preview";
 
-    const fileThumbnail = document.createElement('div');
-    fileThumbnail.className = 'file-thumbnail';
-    const icon = document.createElement('i');
+    const fileThumbnail = document.createElement("div");
+    fileThumbnail.className = "file-thumbnail";
+    const icon = document.createElement("i");
     icon.className = iconClass;
     fileThumbnail.appendChild(icon);
 
-    const fileDetails = document.createElement('div');
-    fileDetails.className = 'file-details';
-    const fileNameSpan = document.createElement('span');
-    fileNameSpan.className = 'file-name';
+    const fileDetails = document.createElement("div");
+    fileDetails.className = "file-details";
+    const fileNameSpan = document.createElement("span");
+    fileNameSpan.className = "file-name";
     fileNameSpan.textContent = fileName;
-    const fileSizeSpan = document.createElement('span');
-    fileSizeSpan.className = 'file-size';
+    const fileSizeSpan = document.createElement("span");
+    fileSizeSpan.className = "file-size";
     fileSizeSpan.textContent = fileSize;
     fileDetails.append(fileNameSpan, fileSizeSpan);
 
-    const downloadButton = document.createElement('button');
-    downloadButton.type = 'button';
-    downloadButton.className = 'download-btn';
-    const downloadIcon = document.createElement('i');
-    downloadIcon.className = 'bi bi-download';
-    downloadButton.appendChild(downloadIcon);
+    const downloadLinkBtn = document.createElement("a");
+    downloadLinkBtn.className = "download-btn button";
+    // ! downloadLinkBtn.href = URL; the download URL from fire storage
+    // ! downloadLinkBtn.download = fileName; // the file name to be downloaded
+    const downloadIcon = document.createElement("i");
+    downloadIcon.className = "bi bi-download";
+    downloadLinkBtn.appendChild(downloadIcon);
 
-    filePreview.append(fileThumbnail, fileDetails, downloadButton);
+    filePreview.append(fileThumbnail, fileDetails, downloadLinkBtn);
     return filePreview;
   }
 
   createImageTemplate(src, alt) {
-    const img = document.createElement('img');
+    const imgContainer = document.createElement("div");
+    imgContainer.className = "media-preview";
+    const downloadLinkBtn = document.createElement("a");
+    downloadLinkBtn.className = "download-btn button";
+    // ! downloadLinkBtn.href = URL; the download URL from fire storage
+    // ! downloadLinkBtn.download = fileName; // the file name to be downloaded
+    const downloadIcon = document.createElement("i");
+    downloadIcon.className = "bi bi-download";
+    downloadLinkBtn.append(downloadIcon);
+    const img = document.createElement("img");
     img.src = src;
     img.alt = alt;
-    return img;
+
+    imgContainer.append(img, downloadLinkBtn);
+    return imgContainer;
+  }
+// !!!!! Complate this
+  createMediaTemplate(src, alt, type) {
+    const mediaContainer = document.createElement("div");
+    mediaContainer.className = "media-preview";
+    const downloadLinkBtn = document.createElement("a");
+    downloadLinkBtn.className = "download-btn button";
+    // ! downloadLinkBtn.href = URL; the download URL from fire storage
+    // ! downloadLinkBtn.download = fileName; // the file name to be downloaded
+    const downloadIcon = document.createElement("i");
+    downloadIcon.className = "bi bi-download";
+    downloadLinkBtn.append(downloadIcon);
+    const mediaElement = document.createElement(type);
+    mediaElement.src = src;
+    if (type === "img") {
+      mediaElement.alt = alt;
+    }
+    mediaContainer.append(mediaElement, downloadLinkBtn);
+    return mediaContainer;
   }
 
   createVideoTemplate(src) {
-    const video = document.createElement('video');
+    const video = document.createElement("video");
     video.src = src;
     video.controls = true;
     return video;
   }
 
   createMessageBubble(text) {
-    const p = document.createElement('p');
+    const p = document.createElement("p");
     p.textContent = text;
     return p;
   }
 
   createMessageWrapper(messageBubble, isFirstMessage) {
-    const messageWrapper = document.createElement('div');
-    messageWrapper.className = `${isFirstMessage ? 'first-' : ''}message-${
-      this.isSender ? 'sent' : 'received'
+    const messageWrapper = document.createElement("div");
+    messageWrapper.className = `${isFirstMessage ? "first-" : ""}message-${
+      this.isSender ? "sent" : "received"
     }-text`;
 
     if (!this.isSender && isFirstMessage) {
-      const usernameSpan = document.createElement('span');
-      usernameSpan.className = 'username';
+      const usernameSpan = document.createElement("span");
+      usernameSpan.className = "username";
       usernameSpan.textContent = this.senderName;
       messageWrapper.appendChild(usernameSpan);
     }
 
     messageWrapper.appendChild(messageBubble);
 
-    const dateSpan = document.createElement('span');
-    dateSpan.className = 'date';
+    const dateSpan = document.createElement("span");
+    dateSpan.className = "date";
     dateSpan.textContent = formatHoursMinutes(this.timestamp);
     messageWrapper.appendChild(dateSpan);
 
@@ -622,29 +663,29 @@ export class ChatMessage {
   }
 
   createMessageContainer(messageBubble) {
-    const messageContainer = document.createElement('div');
+    const messageContainer = document.createElement("div");
     messageContainer.className = `message-${
-      this.isSender ? 'sent' : 'received'
+      this.isSender ? "sent" : "received"
     }`;
 
     if (!this.isSender) {
-      const avatarDiv = document.createElement('div');
-      avatarDiv.className = 'avatar';
+      const avatarDiv = document.createElement("div");
+      avatarDiv.className = "avatar";
       if (this.avatarSrc) {
-        const avatarImg = document.createElement('img');
+        const avatarImg = document.createElement("img");
         avatarImg.src = this.avatarSrc;
-        avatarImg.alt = 'User Avatar';
+        avatarImg.alt = "User Avatar";
         avatarDiv.appendChild(avatarImg);
       } else {
-        const avatarIcon = document.createElement('i');
-        avatarIcon.className = 'bi bi-person-circle';
+        const avatarIcon = document.createElement("i");
+        avatarIcon.className = "bi bi-person-circle";
         avatarDiv.appendChild(avatarIcon);
       }
       messageContainer.appendChild(avatarDiv);
     }
 
-    const messagesDiv = document.createElement('div');
-    messagesDiv.className = 'messages';
+    const messagesDiv = document.createElement("div");
+    messagesDiv.className = "messages";
     messagesDiv.appendChild(this.createMessageWrapper(messageBubble, true));
     messageContainer.appendChild(messagesDiv);
 
@@ -653,26 +694,26 @@ export class ChatMessage {
 }
 
 export const clearChatInputs = () => {
-  inputMessage.value = '';
-  fileInput.value = '';
-  imageInput.value = '';
-  selectedFiles.items.clear()
-  const filesView = document.querySelector('.files-view');
+  inputMessage.value = "";
+  fileInput.value = "";
+  imageInput.value = "";
+  selectedFiles.items.clear();
+  const filesView = document.querySelector(".files-view");
   if (filesView) {
-    filesView.remove()
+    filesView.remove();
   }
 };
 
 export const handleFiles = (files) => {
   for (const f of Array.from(files)) {
     if (selectedFiles.items.length >= 5) {
-      return showMessageBlock('You can only upload a maximum of 5 files', true);
+      return showMessageBlock("You can only upload a maximum of 5 files", true);
     }
     const isSupportedType = Object.values(FileTypes).find((types) =>
       types.includes(f.type)
     );
     if (!isSupportedType) {
-      showMessageBlock('Invalid file type. Please select other file.', true);
+      showMessageBlock("Invalid file type. Please select other file.", true);
       continue;
     }
     selectedFiles.items.add(f);
@@ -681,14 +722,14 @@ export const handleFiles = (files) => {
 };
 
 export const displayFile = async (file) => {
-  let filesView = document.querySelector('.files-view');
+  let filesView = document.querySelector(".files-view");
   if (!filesView) {
-    filesView = document.createElement('div');
-    filesView.className = 'files-view';
+    filesView = document.createElement("div");
+    filesView.className = "files-view";
     inputChatContainer.append(filesView);
-    filesView.addEventListener('click', (e) => {
-      const btn = e.target.closest('.remove-file-btn');
-      if (e.target.closest('.remove-file-btn')) {
+    filesView.addEventListener("click", (e) => {
+      const btn = e.target.closest(".remove-file-btn");
+      if (e.target.closest(".remove-file-btn")) {
         const targetFileName = btn.previousElementSibling.dataset.fileName;
         const fileIndex = Array.from(selectedFiles.items).findIndex((f) => {
           return f.getAsFile().name === targetFileName;
@@ -703,17 +744,17 @@ export const displayFile = async (file) => {
     });
   }
 
-  const closeBtn = document.createElement('button');
-  closeBtn.type = 'button';
-  closeBtn.className = 'exclude-btn remove-file-btn';
-  const closIcon = document.createElement('i');
-  closIcon.className = 'bi bi-x-circle-fill';
+  const closeBtn = document.createElement("button");
+  closeBtn.type = "button";
+  closeBtn.className = "exclude-btn remove-file-btn";
+  const closIcon = document.createElement("i");
+  closIcon.className = "bi bi-x-circle-fill";
   closeBtn.append(closIcon);
 
   if (FileTypes.IMAGE.includes(file.type)) {
-    const imgContainer = document.createElement('div');
-    imgContainer.className = 'img-preview';
-    const img = document.createElement('img');
+    const imgContainer = document.createElement("div");
+    imgContainer.className = "img-preview";
+    const img = document.createElement("img");
     img.dataset.fileName = file.name;
     const r = new FileReader();
     r.readAsDataURL(file);
@@ -730,13 +771,13 @@ export const displayFile = async (file) => {
     imgContainer.append(img, closeBtn);
     filesView.append(imgContainer);
   } else {
-    const filePreview = document.createElement('div');
-    filePreview.className = 'file';
-    const typeBadge = document.createElement('span');
-    typeBadge.className = 'badge badge-type';
-    typeBadge.textContent = file.name.split('.')[1].toUpperCase();
-    const fileName = document.createElement('span');
-    fileName.className = 'file-name';
+    const filePreview = document.createElement("div");
+    filePreview.className = "file";
+    const typeBadge = document.createElement("span");
+    typeBadge.className = "badge badge-type";
+    typeBadge.textContent = file.name.split(".")[1].toUpperCase();
+    const fileName = document.createElement("span");
+    fileName.className = "file-name";
     fileName.textContent = file.name;
     fileName.dataset.fileName = file.name;
 
@@ -763,7 +804,7 @@ export const handleChatInput = async () => {
 
           file.src = imageDataUrl;
         } catch (error) {
-          console.error('Error reading image file:', error);
+          console.error("Error reading image file:", error);
         }
       }
       return file;
@@ -781,12 +822,63 @@ export const handleChatInput = async () => {
       inputValue,
       files,
       true,
-      '',
-      '',
+      "",
+      "",
       new Date(),
       messagesContainer
     ).renderMessage();
 
     clearChatInputs();
   }
+};
+
+export const handleDragEnter = (e) => {
+  // ? relatedTarget will reference the element that the drag operation
+  // ? is leaving as it enters a new element.
+  if (e.relatedTarget === null) {
+    const dropArea = document.createElement("div");
+    dropArea.className = "drop-area";
+    const icon = document.createElement("i");
+    icon.className = "bi bi-plus-circle";
+    const text = document.createElement("span");
+    text.textContent = "Drop files here to add to your message.";
+    dropArea.append(icon, text);
+    inputChatContainer.append(dropArea);
+    setTimeout(() => {
+      inputChatContainer.classList.add("drop-start");
+    }, 0);
+  }
+};
+
+const showEnterTooltip = throttling(3000, function () {
+  this.dataset.tooltip = "To add a new line, press Ctrl + Enter";
+  this.classList.add("has-tooltip");
+  showTooltip(inputMessage);
+  setTimeout(() => {
+    delete this.dataset.tooltip;
+    this.classList.remove("has-tooltip");
+    resetTooltip();
+  }, 2000);
+});
+
+export const handleEnterKeyWithTooltip = function () {
+  let clickCount = 0;
+  return function (e) {
+    if (e.key === "Enter" && !e.ctrlKey) {
+      e.preventDefault();
+      sendBtn.click();
+      clickCount++;
+    }
+
+    if (e.key === "Enter" && e.ctrlKey) {
+      e.preventDefault();
+      this.value += "\n";
+      this.scrollTop = this.scrollHeight;
+    }
+
+    if (clickCount >= 5) {
+      showEnterTooltip.call(this);
+      clickCount = 0;
+    }
+  };
 };
