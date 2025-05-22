@@ -71,9 +71,7 @@
     />
     <link rel="preload" href="../main_assets/css/styles.css" as="style" />
     <link rel="preload" href="./assets/css/style.css" as="style" />
-    <link rel="preload" href="./assets/js/NodesAndVariables.js" as="script" />
-    <link rel="preload" href="./assets/js/browserApp.js" as="script" />
-    <link rel="preload" href="./auth/authApp.js" as="script" />
+    <link rel="modulepreload" href="./assets/js/main.js" as="script" crossorigin="anonymous"/>
     <!-- Caching & Security Headers -->
     <meta
       http-equiv="Cache-Control"
@@ -427,8 +425,6 @@
       </div>
     </main>
     <!-- don't forgot to adjust the script tag -->
-    <script type="module" src="./assets/js/NodesAndVariables.js"></script>
-    <script type="module" src="./assets/js/browserApp.js"></script>
-    <script type="module" src="./auth/authApp.js"></script>
+    <script type="module" src="./assets/js/main.js" crossorigin="anonymous"></script>
   </body>
 </html>

@@ -7,37 +7,56 @@ const verifySessionCookie = async function (req) {
   const decodedClaims = await admin
     .auth()
     .verifySessionCookie(sessionCookie, true);
-  req.user = decodedClaims;
+  const userDoc = await admin
+    .firestore()
+    .collection('users')
+    .doc(decodedClaims.uid)
+    .get();
+
+  req.user = {
+    uid: decodedClaims.uid,
+    ...userDoc.data(),
+  };
 };
 
-const verifySessionCookieWithRedirect = async function (req, res, next) {
+const redirectIfAuthenticated = async (req, res, next) => {
   try {
     await verifySessionCookie(req);
-    if (req.path.includes('/login')) return res.status(200).redirect('/main_page');
+    return res.redirect('/app/home');
+  } catch (error) {
+    return next();
+  }
+};
+//
+const requireAuthForPages = async (req, res, next) => {
+  
+  const isFetch = req.headers['x-requested-with'] === 'fetch';
+  try {
+    if (isFetch) verifyCSRFToken(req);
+    await verifySessionCookie(req);
     return next();
   } catch (error) {
     clearCookies(res, ['session', 'SECRET', 'csrfToken']);
-    if (req.path.includes('/login')) return next();
-    console.log(error.message);
-    return res.status(401).redirect('/login');
+    if (isFetch) return res.status(401).json({ message: 'Unauthorized' });
+    return res.redirect('/login');
   }
 };
 
-const verifySessionCookieWithoutRedirect = async function (req, res, next) {
+const requireAuthForAPI = async (req, res, next) => {
   try {
-    await verifySessionCookie(req);
     verifyCSRFToken(req);
+    await verifySessionCookie(req);
     return next();
   } catch (error) {
-    console.log(error.message);
     clearCookies(res, ['session', 'SECRET', 'csrfToken']);
     return res.status(401).json({ message: 'Unauthorized' });
   }
 };
 
 module.exports = {
-  verifySessionCookieWithRedirect,
-  verifySessionCookieWithoutRedirect,
+  redirectIfAuthenticated,
+  requireAuthForPages,
+  requireAuthForAPI,
 };
 
 /**

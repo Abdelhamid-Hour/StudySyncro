@@ -1,0 +1,56 @@
+<div class="members-view demandes-view fade-in-template">
+  <header>
+    <div class="users-search demandes-search">
+      <div class="search-icon-container">
+        <i class="bi bi-person-fill"></i>
+      </div>
+      <label
+        data-tooltip="Filter By Date"
+        class="date-label should-fill has-tooltip"
+      >
+        <i class="bi bi-calendar"></i>
+        <input type="date" id="date-input" />
+      </label>
+      <input
+        type="search"
+        id="search"
+        placeholder="Search By Member Name or UID"
+        autocomplete="username"
+      />
+    </div>
+    <button
+      type="button"
+      data-tooltip="Sort Demandes"
+      class="exclude-btn sort-btn has-tooltip"
+    >
+      <i class="bi bi-sort-down"></i>
+    </button>
+  </header>
+  <div class="members-list demandes-list">
+    <% demandes.forEach((demande) => { %>
+    <div data-user-id="<%= demande.userId %>" class="demande">
+      <div class="avatar">
+        <% if (demande.photoURL) { %>
+        <img src="<%= demande.photoURL %>" alt="avatar" />
+        <% } else { %>
+        <h4><%= demande.fullName.charAt(0).toUpperCase() %></h4>
+        <% } %>
+      </div>
+      <div class="username-container">
+        <span class="username"><%= demande.fullName %></span>
+        <span class="request-date"><%= demande.demandeDate %></span>
+      </div>
+      <div class="action-btns">
+        <button type="button" class="red-btn reject-btn small-btn">
+          <i class="bi bi-x-circle"></i>
+          Reject
+        </button>
+        <button type="button" class="green-btn accept-btn small-btn">
+          <i class="bi bi-check-circle"></i>
+          Accept
+        </button>
+      </div>
+    </div>
+    <% }); %>
+  </div>
+</div>

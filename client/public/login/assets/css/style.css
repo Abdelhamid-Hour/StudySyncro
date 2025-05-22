@@ -143,7 +143,6 @@ main {
       span {
         color: var(--error-color);
         text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
-        font-weight: var(--error-font-weight);
         font-size: var(--error-font-size);
         position: absolute;
         bottom: -1rem;
@@ -466,7 +465,6 @@ section#forms {
   .error-container {
     color: var(--error-color);
     text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
-    font-weight: var(--error-font-weight);
     font-size: var(--error-font-size);
     height: 1em;
     position: relative;
@@ -532,22 +530,6 @@ div.separator {
   syntax: '<percentage>';
   initial-value: 0%;
   inherits: false;
-}
-
-.error-animation {
-  animation: error-input 150ms linear 2;
-}
-
-@keyframes error-input {
-  25% {
-    translate: 1%;
-  }
-  75% {
-    translate: -1%;
-  }
-  100% {
-    translate: 0;
-  }
 }
 
 .error {

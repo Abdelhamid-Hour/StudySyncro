@@ -1,0 +1,270 @@
+.group-card {
+  cursor: pointer;
+}
+
+.top-side-bar .create-group-btn {
+  margin-left: auto;
+  margin-right: var(--primary-gap);
+}
+
+.create-group-overlay,
+.create-session-overlay {
+  display: flex;
+  flex-direction: column;
+  gap: var(--primary-gap);
+  border: var(--primary-border-style);
+  height: fit-content;
+  width: 30rem;
+  margin: auto;
+  padding-bottom: var(--primary-gap);
+  background-color: var(--container-background-color);
+  border-radius: var(--primary-radius);
+
+  & > header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: var(--primary-gap);
+    border-bottom: var(--primary-border-style);
+
+    button {
+      position: absolute;
+      right: var(--primary-gap);
+      border-radius: 0.2rem;
+
+      &:hover {
+        background-color: var(--btn-background-color);
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .create-task-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--primary-gap);
+  }
+
+  .tasks-header {
+    display: flex;
+    padding-inline: var(--primary-gap);
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: calc(var(--primary-gap) / 2);
+  }
+
+  .tasks-list {
+    padding-inline: var(--primary-gap);
+    height: 15rem;
+  }
+
+  .create-btn,
+  .buttons > button {
+    font-weight: bold;
+    width: 7rem;
+    align-self: flex-end;
+  }
+  .add-task-btn {
+    font-weight: bold;
+  }
+  .buttons {
+    padding-inline: var(--primary-gap);
+    display: flex;
+    gap: var(--primary-gap);
+    align-self: flex-end;
+  }
+
+  form {
+    padding-inline: var(--primary-gap);
+    display: flex;
+    flex-direction: column;
+    gap: var(--primary-gap);
+
+    /* Chrome, Safari, Edge, Opera */
+    input[type='number']::-webkit-outer-spin-button,
+    input[type='number']::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Firefox */
+    input[type='number'] {
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    .select-trigger {
+      padding: 0;
+      padding-inline-end: 0.3rem;
+      padding-inline-start: 0.1rem;
+      align-content: center;
+    }
+
+    .open-select-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(var(--primary-gap) / 2);
+      color: #757575;
+      font-size: var(--small-font-size);
+    }
+
+    .open-select-btn {
+      .subject-value {
+        text-align: start;
+        flex: 0 0 90%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      &:hover {
+        background-color: var(--btn-background-color);
+      }
+    }
+
+    .group-level-field,
+    .group-visibility-field {
+      position: relative;
+
+      .switch-btn {
+        position: absolute;
+        right: var(--primary-gap);
+        border-radius: 0.2rem;
+        padding: calc(var(--primary-gap) / 2);
+        transition: background-color var(--btn-hover-tran-duration);
+        &:hover {
+          background-color: var(--btn-background-color);
+        }
+      }
+
+
+      .show-in-search-label {
+        font-size: var(--small-font-size);
+        position: absolute;
+        bottom: -1.5rem;
+      }
+    }
+
+    .dual-container:has(.show-in-search-label) {
+      margin-bottom: 1.2rem;
+    }
+
+    .field-container:has(textarea) {
+      textarea {
+        resize: vertical;
+        min-height: 5rem;
+        max-height: 14rem;
+        margin-left: initial;
+      }
+
+      .chars-limit {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        font-size: var(--small-font-size);
+        color: var(--secondary-text-color);
+        padding: calc(var(--primary-gap) / 2);
+      }
+
+      .field-icon-container {
+        position: absolute;
+        bottom: 0;
+        right: 0.2rem;
+        padding: calc(var(--primary-gap) / 2);
+      }
+    }
+  }
+}
+
+.create-session-overlay {
+  .progress {
+    --progress-width: 80%;
+    position: relative;
+
+    &:has(input#progress-start-text) {
+      .progress-indecator-container::before {
+        background-color: var(--primary-color);
+      }
+    }
+    &:has(input#progress-end-text:checked) {
+      .progress-indecator-container {
+        &::after {
+          background-color: var(--primary-color);
+          transition: background-color var(--primary-transition-style) 0.8s;
+        }
+        .progress-indecator {
+          width: 100%;
+        }
+      }
+      .progress-end-text {
+        color: var(--primary-color);
+        font-weight: 500;
+      }
+      .progress-start-text {
+        text-decoration: line-through;
+      }
+    }
+
+    .progress-indecator-container {
+      position: relative;
+      height: 0.15rem;
+      width: var(--progress-width);
+      margin: auto;
+      margin-bottom: calc(var(--primary-gap) / 2);
+      background-color: var(--btn-border-color);
+
+      .progress-indecator {
+        height: 100%;
+        width: 50%;
+        border-radius: 0.2rem;
+        background-color: var(--primary-color);
+        float: left;
+        transition: width 1s;
+      }
+
+      &::after,
+      &::before {
+        content: '';
+        position: absolute;
+        width: 0.5rem;
+        aspect-ratio: 1/1;
+        background-color: var(--btn-border-color);
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 50%;
+      }
+      &::before {
+        left: 0;
+      }
+
+      &::after {
+        right: 0;
+        transition: background-color var(--primary-transition-style);
+      }
+    }
+
+    .progress-text {
+      font-size: var(--small-font-size);
+      display: flex;
+      justify-content: space-between;
+      margin: auto;
+      width: var(--progress-width);
+
+      input[type='checkbox'] {
+        visibility: hidden;
+        width: 0;
+        height: 0;
+        display: none;
+      }
+
+      .progress-start-text {
+        translate: -45% 0;
+        color: var(--primary-color);
+        font-weight: 500;
+      }
+      .progress-end-text {
+        translate: 45% 0;
+      }
+    }
+  }
+}

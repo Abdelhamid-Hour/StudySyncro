@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Preloading Critical Resources -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <link
+    rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    as="style"
+    />
+    <link
+    rel="preload"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      as="style"
+      />
+    <link rel="preload" href="/app/assets/global/css/styles.css" as="style" />
+    <link
+    data-dynamic=""
+    rel="preload"
+    href="/app/assets<%- resourcesRoute %>css/styles.css"
+    as="style"
+    />
+    <link rel="preload" href="/main_assets/css/styles.css" as="style" />
+    <link
+    rel="preload"
+    href="/main_assets/css/variables_and_fonts.css"
+    as="style"
+    />
+    <link
+    rel="modulepreload"
+    href="/app/assets/global/js/main.js"
+    as="script"
+    crossorigin="anonymous"
+    />
+    <link
+    data-dynamic=""
+    rel="modulepreload"
+    href="/app/assets<%- resourcesRoute %>js/main.js"
+    as="script"
+    crossorigin="anonymous"
+    />
+    <% sharedStyles?.forEach(style => { %>
+      <%- style.styleTag %>
+      <%- style.preloadLink %>
+    <% }) %>
+      <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="/app/assets/global/css/styles.css" />
+    <link data-dynamic="" rel="stylesheet" href="/app/assets<%- resourcesRoute %>css/styles.css" />
+    <link rel="stylesheet" href="/main_assets/css/styles.css" />
+    <link rel="stylesheet" href="/main_assets/css/variables_and_fonts.css" />
+    <title>Home</title>
+  </head>
+  
+  <body>
+    <aside class="top-side-bar">
+      <div class="top-sidebar-header">
+        <h2 class="sidebar-title">
+          <%- resourcesRoute.includes("/home/") 
+            ? "Home" 
+            : ['/groups/my/', '/groups/available/'].includes(resourcesRoute) 
+            ? 'Groups' 
+            : resourcesRoute === '/quizzes/' 
+            ? 'Quizzes' 
+            : resourcesRoute === '/groups/my/group-chat/' 
+            ? `<a href="/app/groups/my" class="back-link"><i class="bi bi-chevron-left"></i>Group Chat</a>`
+            : '' %>
+        </h2>
+        <!-- ? Navigation for Groups -->
+        <% if (['/groups/my/', '/groups/available/'].includes(resourcesRoute)) { %>
+        <div class="navigation-tabs">
+          <a
+            href="/app/groups/my"
+            class="tab my-groups-tab<% if (resourcesRoute === "/groups/my/") { %> active-tab<% } %> exclude-btn"
+          >
+            My Groups
+          </a>
+          <a
+            href="/app/groups/available"
+            class="tab available-groups-tab<% if (resourcesRoute === "/groups/available/") { %> active-tab<% } %> exclude-btn"
+          >
+            Available Groups
+          </a>
+        </div>
+        <% } %>
+      </div>
+      <div class="top-side-bar-middele">
+      <% if (resourcesRoute.includes("/home/")) { %>
+      <div class="greeting-msg fade-in-template">
+        <h2>Hello Abdelhamid Hour 👋</h2>
+        <p>Have a good day !</p>
+      </div>
+      <% } else if (['/quizzes/', '/groups/my/', '/groups/available/'].includes(resourcesRoute)) { %>
+      <div class="search-container fade-in-template">
+        <div class="main-search">
+          <div class="search-icon-container">
+            <i class="bi bi-search"></i>
+          </div>
+          <input type="search" id="search" placeholder="Search By Group Name | UID | Subject" />
+        </div>
+        <div class="filter-container">
+          <button type="button" class="exclude-btn filter-button should-fill">
+            <i class="bi bi-funnel"></i>
+          </button>
+            <div  class="filter-panel overlay group-filter-panel">
+            <% if (['/quizzes/', '/groups/my/', '/groups/available/'].includes(resourcesRoute)) { %>
+            <% if (resourcesRoute === '/groups/my/') { %>
+              <section class="filter-section">
+              <h4 class="filter-title">Role</h4>
+              <div class="filter-option">
+                <!-- From Uiverse.io by SelfMadeSystem --> 
+                <label class="container">
+                <input type="checkbox" id="admin" />
+                <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                </svg>
+                </label>
+                <label for="admin">
+                <i class="bi bi-person-gear"></i>
+                Admin
+                </label>
+              </div>
+              <div class="filter-option">
+                <label class="container">
+                <input type="checkbox" id="member" />
+                <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                </svg>
+                </label>
+                <label for="member">
+                <i class="bi bi-person"></i>
+                Member
+                </label>
+              </div>
+              </section>
+              <% } %>
+              <section class="filter-section">
+              <h4 class="filter-title">Visibility</h4>
+              <div class="filter-option">
+                <label class="container">
+                <input type="checkbox" id="private" />
+                <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                </svg>
+                </label>
+                <label for="private">
+                <i class="bi bi-lock"></i>
+                Private
+                </label>
+              </div>
+              <div class="filter-option">
+                <label class="container">
+                <input type="checkbox" id="public" />
+                <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                </svg>
+                </label>
+                <label for="public">
+                <i class="bi bi-eye"></i>
+                Public
+                </label>
+              </div>
+              </section>
+              <section class="filter-section">
+              <h4 class="filter-title">Level</h4>
+              <div class="filter-option">
+                <label class="container">
+                <input type="checkbox" id="advanced" />
+                <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                </svg>
+                </label>
+                <label for="advanced">
+                <i class="bi bi-graph-up"></i>
+                Advanced
+                </label>
+              </div>
+              <div class="filter-option">
+                <label class="container">
+                <input type="checkbox" id="intermediate" />
+                <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                </svg>
+                </label>
+                <label for="intermediate">
+                <i class="bi bi-bar-chart"></i>
+                Intermediate
+                </label>
+              </div>
+              <div class="filter-option">
+                <label class="container">
+                <input type="checkbox" id="beginner" />
+                <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                </svg>
+                </label>
+                <label for="beginner">
+                <i class="bi bi-lightbulb"></i>
+                Beginner
+                </label>
+              </div>
+              </section>
+            <% } %>
+            </div>
+        </div>
+      </div>
+      <% } else if (resourcesRoute === '/groups/my/group-chat/') { %>
+        <h1 class="group-name fade-in-template"><%= groupName %></h1>
+      <% } %>
+      </div>
+      <% if (resourcesRoute === '/groups/my/') { %>
+      <button type="button" class="create-group-btn">
+        <i class="bi bi-plus-circle"></i>
+        <span>Create Group</span>
+      </button>
+      <% } %>
+      <div class="profile-container">
+        <button type="button" class="profile-btn exclude-btn should-fill">
+          <div class="avatar">
+            <% if (user.photoURL) { %>
+              <img
+                src="<%= user.photoURL %>"
+                alt="avatar"
+              />
+            <% } else { %>
+              <h4><%= user.fullName.charAt(0).toUpperCase() %></h4>
+            <% } %>
+          </div>
+          <div class="profile-info">
+            <span><%= user.fullName %></span>
+            <span><%= user.email %></span>
+          </div>
+          <i class="bi bi-caret-down drop-down-icon"></i>
+        </button>
+        <ul class="profile-drop-down-menu overlay">
+          <li class="account should-fill">
+            <a href="/settings">
+              <i class="bi bi-person"></i>
+              Account
+            </a>
+          </li>
+          <li class="groups should-fill">
+            <a href="/groups">
+              <i class="bi bi-people"></i>
+              My Groups
+            </a>
+          </li>
+          <li class="quizzes should-fill">
+            <a href="/quizzes">
+              <i class="bi bi-clipboard-check"></i>
+              My Quizzes
+            </a>
+          </li>
+          <li class="logout-button-li account">
+            <button type="button" id="logout-button" class="red-btn">
+              <i class="bi bi-box-arrow-in-left"></i>
+              Logout
+            </button>
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <aside class="left-side-bar">
+      <div class="logo-container">
+        <i class="bi bi-box-fill"></i>
+        <h6 class="should-hide">StudyHype</h6>
+      </div>
+      <div class="side-bar-icons">
+        <div class="top-side-bar-icons">
+          <a href="/app/home" class="nav-link should-fill<% if (resourcesRoute.includes("/home/")) { %> active<% } %> ">
+            <i class="bi bi-house"></i>
+            <h3 class="should-hide">OverView</h3>
+          </a>
+          <a
+            href="/app/groups/my"
+            class="nav-link should-fill<% if (resourcesRoute.includes("/groups/")) { %> active<% } %>"
+          >
+            <i class="bi bi-people"></i>
+            <h3 class="should-hide">Groups</h3>
+          </a>
+          <a href="/app/quizzes" class="nav-link should-fill<% if (resourcesRoute === "/quizzes/") { %> active<% } %>">
+            <i class="bi bi-clipboard-check"></i>
+            <h3 class="should-hide">Quizzes</h3>
+          </a>
+        </div>
+        <div class="bottom-side-bar-icons">
+          <button class="exclude-btn toggle-container nav-btn">
+            <i class="bi bi-toggle-off"></i>
+          </button>
+          <button
+            class="exclude-btn notification-container should-fill nav-btn"
+          >
+            <i class="bi bi-bell"></i>
+          </button>
+          <button class="exclude-btn open-close-side-bar-btn nav-btn">
+            <div>
+              <i class="bi bi-chevron-left"></i>
+            <svg
+              viewBox="0 0 1.7251844 4.052049"
+              version="1.1">
+            <sodipodi:namedview
+            id="namedview1"
+            pagecolor="#ffffff"
+            bordercolor="#000000"
+            borderopacity="0.25" /><g
+            inkscape:groupmode="layer"
+            id="layer1"
+            transform="translate(-1.2540744,-0.09064213)"><g
+              transform="matrix(0.52333911,0,0,0.52333911,1.3779505,2.0848581)"><path
+                d="M 2.5299976,-3.8105617 H 0.29309067 c -0.29209289679,0 -0.5297938,0.2377008 -0.5297938,0.5297937 v 6.6830961 c 0,0.2920928 0.23770090321,0.5297937 0.5297938,0.5297937 H 2.5299976 c 0.2920929,0 0.5297935,-0.2377009 0.5297935,-0.5297937 V -3.280768 c 0,-0.2920929 -0.2377006,-0.5297937 -0.5297935,-0.5297937 z M 0.45481747,3.2995645 c -0.097482,0 -0.1765979,-0.079116 -0.1765979,-0.1765979 0,-0.097482 0.079116,-0.1765979 0.1765979,-0.1765979 0.097482,0 0.17659792,0.079116 0.17659792,0.1765979 0,0.097482 -0.0791159,0.1765979 -0.17659792,0.1765979 z m 0,-4.9027821 c -0.097482,0 -0.1765979,-0.079116 -0.1765979,-0.1765979 0,-0.097482 0.079116,-0.1765979 0.1765979,-0.1765979 0.097482,0 0.17659792,0.079116 0.17659792,0.1765979 0,0.097482 -0.0791159,0.1765979 -0.17659792,0.1765979 z m 0,-0.7063916 c -0.097482,0 -0.1765979,-0.079116 -0.1765979,-0.176598 0,-0.097482 0.079116,-0.1765979 0.1765979,-0.1765979 0.097482,0 0.17659792,0.079116 0.17659792,0.1765979 0,0.097482 -0.0791159,0.176598 -0.17659792,0.176598 z m 0,-0.7063917 c -0.097482,0 -0.1765979,-0.079116 -0.1765979,-0.1765979 0,-0.097482 0.079116,-0.1765979 0.1765979,-0.1765979 0.097482,0 0.17659792,0.079116 0.17659792,0.1765979 0,0.097482 -0.0791159,0.1765979 -0.17659792,0.1765979 z M 2.3682952,3.2995645 h -1.324818 c -0.0975999,0 -0.17659796,-0.078998 -0.17659796,-0.1765979 0,-0.0976 0.0789981,-0.1765979 0.17659796,-0.1765979 h 1.324818 c 0.0976,0 0.1765979,0.078998 0.1765979,0.1765979 0,0.0976 -0.078998,0.1765979 -0.1765979,0.1765979 z m 8.255e-4,-4.9027821 H 1.0434772 c -0.0975999,0 -0.17659796,-0.078998 -0.17659796,-0.1765979 0,-0.0976 0.0789981,-0.1765979 0.17659796,-0.1765979 h 1.3256435 c 0.0976,0 0.1765979,0.078998 0.1765979,0.1765979 0,0.0976 -0.078998,0.1765979 -0.1765979,0.1765979 z m 0,-0.7063916 H 1.0434772 c -0.0975999,0 -0.17659796,-0.078998 -0.17659796,-0.176598 0,-0.0976 0.0789981,-0.1765979 0.17659796,-0.1765979 h 1.3256435 c 0.0976,0 0.1765979,0.078998 0.1765979,0.1765979 0,0.0976 -0.078998,0.176598 -0.1765979,0.176598 z m 0,-0.7063917 H 1.0434772 c -0.0975999,0 -0.17659796,-0.078998 -0.17659796,-0.1765979 0,-0.0976 0.0789981,-0.1765979 0.17659796,-0.1765979 h 1.3256435 c 0.0976,0 0.1765979,0.078998 0.1765979,0.1765979 0,0.0976 -0.078998,0.1765979 -0.1765979,0.1765979 z"
+                style="stroke-width:0.117732" /></g></g></svg>
+                
+            </div>
+          </button>
+          <a
+            href="/app/settings"
+            class="settings-container nav-link should-fill<% if (resourcesRoute === "/settings/") { %> active<% } %>"
+          >
+            <i class="bi bi-gear"></i>
+          </a>
+        </div>
+      </div>
+    </aside>
+    <main><%- content %></main>
+    <div id="hover-tooltip" class="tooltip" role="tooltip"></div>
+    <div id="global-tooltip" class="tooltip" role="tooltip"></div>
+    <script
+      type="module"
+      src="/app/assets/global/js/main.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      data-dynamic=""
+      type="module"
+      src="/app/assets<%- resourcesRoute %>js/main.js"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

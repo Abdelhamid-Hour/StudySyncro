@@ -1,0 +1,208 @@
+<div class="group-info fade-in-template">
+  <div class="group-name-info-box info-box">
+    <button type="button" class="exclude-btn edit-btn action-btn should-fill">
+      <i class="bi bi-pencil"></i>
+      Edit
+    </button>
+    <div class="group-name-container info-container">
+      <span class="label">
+        <span class="group-info-icon icon-box">
+          <i class="bi bi-people-fill"></i>
+          <i class="bi bi-info-circle"></i>
+        </span>
+        Group Name
+      </span>
+      <span class="group-name-value value content"><%= groupName %></span>
+    </div>
+  </div>
+  <div class="group-description-info-box info-box">
+    <button type="button" class="exclude-btn edit-btn action-btn should-fill">
+      <i class="bi bi-pencil"></i>
+      Edit
+    </button>
+    <div class="group-description-container info-container">
+      <span class="label">
+        <span class="group-description-icon icon-box">
+          <i class="bi bi-people-fill"></i>
+          <i class="bi bi-info-circle"></i>
+        </span>
+        Group Description
+      </span>
+      <p
+        data-tooltip="<%= groupDescription %>"
+        class="group-description-value value has-tooltip"
+      >
+        <%= groupDescription %>
+      </p>
+    </div>
+  </div>
+  <div class="subject-level dual-box">
+    <div class="subject-info-box info-box">
+      <button type="button" class="exclude-btn edit-btn action-btn should-fill">
+        <i class="bi bi-pencil"></i>
+        Edit
+      </button>
+      <div class="subject-container info-container">
+        <span class="label">
+          <span class="subject-icon icon-box">
+            <i class="bi bi-journal-text"></i>
+          </span>
+          Subject
+        </span>
+        <span class="subject-value value content"><%= subject %></span>
+      </div>
+    </div>
+    <div class="level-info-box info-box">
+      <button type="button" class="exclude-btn edit-btn action-btn should-fill">
+        <i class="bi bi-pencil"></i>
+        Edit
+      </button>
+      <div class="level-container info-container">
+        <span class="label">
+          <span class="level-icon icon-box">
+            <i class="bi bi-graph-up"></i>
+          </span>
+          Level
+        </span>
+        <span class="level-value value content"><%= level %></span>
+      </div>
+    </div>
+  </div>
+  <div class="visibility-max-members dual-box">
+    <div class="visibility-info-box info-box">
+      <button type="button" class="exclude-btn edit-btn action-btn should-fill">
+        <i class="bi bi-pencil"></i>
+        Edit
+      </button>
+      <div class="visibility-container info-container">
+        <span class="label">
+          <span class="visibility-icon icon-box">
+            <i class="bi bi-eye-fill"></i>
+          </span>
+          Visibility
+        </span>
+        <span class="visibility-value value content"><%= visibility %></span>
+      </div>
+      <% if (visibility === 'Private') { %>
+      <label class="show-in-search-label container">
+        <input type="checkbox" id="show-in-search-input" <%= showInSearch ?
+        'checked' : '' %> disabled />
+        <svg viewBox="0 0 64 64" height="2em" width="2em">
+          <path
+            d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+            pathLength="575.0541381835938"
+            class="path"
+          ></path>
+        </svg>
+        Show in Search Results
+      </label>
+      <% } %>
+    </div>
+    <div class="max-members-info-box info-box">
+      <button type="button" class="exclude-btn edit-btn action-btn should-fill">
+        <i class="bi bi-pencil"></i>
+        Edit
+      </button>
+      <div class="max-members-container info-container">
+        <span class="label">
+          <span class="max-members-icon icon-box">
+            <i class="bi bi-person-plus-fill"></i>
+          </span>
+          Max Members
+        </span>
+        <span class="max-members-value value content"><%= maxMembers %></span>
+      </div>
+    </div>
+  </div>
+  <div class="creation-date-admin dual-box">
+    <div class="creation-date-info-box info-box">
+      <div class="creation-date-container info-container">
+        <span class="label">
+          <span class="creation-date-icon icon-box">
+            <i class="bi bi-calendar"></i>
+          </span>
+          Creation date
+        </span>
+        <span class="creation-date-value value content">
+          <%= creationDate %>
+        </span>
+      </div>
+    </div>
+    <div class="admin-info-box info-box">
+      <div class="admin-container info-container">
+        <span class="label">
+          <span class="admin-icon icon-box">
+            <i class="bi bi-person-fill-gear"></i>
+          </span>
+          Admin
+        </span>
+        <span class="admin-value value content">
+          <div class="avatar">
+            <% if (Admin.photoURL) { %>
+            <img
+              src="<%= Admin.photoURL %>"
+              alt="avatar"
+              height="70%"
+              width="10%"
+            />
+            <% } else { %>
+            <h2><%= Admin.fullName.charAt(0).toUpperCase() %></h2>
+            <% } %>
+          </div>
+          <%= Admin.fullName %>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="members info-box">
+    <div class="members-container info-container">
+      <span class="label">
+        <span class="members-icon icon-box">
+          <i class="bi bi-people-fill"></i>
+        </span>
+        Members
+        <span class="count badge simple-badge"><%= members.length %></span>
+        <% if (isAdmin) { %>
+        <button
+          type="button"
+          class="exclude-btn manage-members-btn action-btn orange-btn"
+        >
+          <i class="bi bi-person-gear"></i>
+          Manage
+        </button>
+        <% } else { %>
+        <button type="button" class="exclude-btn view-all-btn action-btn">
+          <i class="bi bi-fullscreen"></i>
+          View All
+        </button>
+        <% } %>
+      </span>
+      <div class="members-list">
+        <% members.forEach( (member) => { %>
+        <div class="member">
+          <div class="avatar">
+            <% if (member.photoURL) { %>
+            <img src="<%= member.photoURL %>" alt="avatar" />
+            <% } else { %>
+            <h4><%= member.fullName.charAt(0).toUpperCase() %></h4>
+            <% } %>
+          </div>
+          <span><%= member.fullName %></span>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+  <div class="action-btns">
+    <button type="button" class="red-btn remove-group-btn">
+      <i class="bi bi-trash3"></i>
+      <% if (isAdmin) { %> Remove Group <% } else { %> Leave Group <% } %>
+    </button>
+    <% if (isAdmin) { %>
+    <button type="button" class="demandes-btn">
+      <i class="bi bi-question-circle"></i>
+      Domandes (12)
+    </button>
+    <% } %>
+  </div>
+</div>

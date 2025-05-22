@@ -1,0 +1,27 @@
+export const signOutBtn = document.getElementById('logout-button');
+
+export const activeIcon = document.querySelector('.active');
+export const profileBtn = document.querySelector('.profile-btn');
+export const closeLeftSideBarIcon = document.querySelector(
+  '.open-close-side-bar-btn'
+);
+export const topSideBarHeader = document.querySelector('.top-sidebar-header');
+export const topSideBarMiddle = document.querySelector('.top-side-bar-middele');
+export const hoverTooltip = document.getElementById('hover-tooltip');
+export const globalTooltip = document.getElementById('global-tooltip');
+export const mainContainer = document.querySelector('main');
+const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
+export let boxRowCount;
+export const boxTotalCount = 12;
+
+function calculateBoxCounts() {
+  boxRowCount = Math.floor(
+    (mainContainer.clientWidth + 0.8 * rem) / (24.8 * rem)
+  );
+}
+
+// Initial calculation
+calculateBoxCounts();
+
+// Recalculate on window resize
+window.addEventListener('resize', calculateBoxCounts);

@@ -196,7 +196,6 @@ form {
   .errorContainer {
     color: var(--error-color);
     text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
-    font-weight: var(--error-font-weight);
     font-size: var(--error-font-size);
     height: 1em;
     position: relative;

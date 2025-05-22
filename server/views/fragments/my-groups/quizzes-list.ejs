@@ -1,0 +1,96 @@
+<div class="quizzes-view fade-in-template">
+  <header>
+    <div class="quizzes-search">
+      <div class="search-icon-container">
+        <i class="bi bi-clipboard-check-fill"></i>
+      </div>
+      <label
+        data-tooltip="Filter By Date"
+        class="date-label should-fill has-tooltip"
+      >
+        <i class="bi bi-calendar"></i>
+        <input type="date" id="date-input" />
+      </label>
+      <input
+        type="search"
+        id="search"
+        placeholder="Search By Member Name or UID"
+        autocomplete="username"
+      />
+    </div>
+    <button
+      type="button"
+      data-tooltip="Sort Quizzes"
+      class="exclude-btn sort-btn has-tooltip"
+    >
+      <i class="bi bi-sort-down"></i>
+    </button>
+  </header>
+  <div class="quizzes-list">
+    <% quizzes.forEach( (quiz) => { %>
+    <div class="quiz-card" data-quiz-id="<%= quiz.quizId %>">
+      <div class="quiz-title-container info-container">
+        <label class="quiz-title-label">
+          <span class="icon-box">
+            <i class="bi bi-question-circle"></i>
+          </span>
+          Quiz title
+        </label>
+        <div class="quiz-title content"><%= quiz.quizTitle %></div>
+      </div>
+      <div class="session-name-container info-container">
+        <label class="session-name-label">
+          <span class="icon-box">
+            <i class="bi bi-clock-history"></i>
+            <i class="bi bi-info-circle"></i>
+          </span>
+          Session name
+        </label>
+        <div class="session-name content"><%= quiz.sessionName %></div>
+      </div>
+      <div class="questions-container info-container small-container">
+        <label class="questions-label">
+          <span class="icon-box">
+            <i class="bi bi-question-circle"></i>
+          </span>
+          Questions
+        </label>
+        <div class="questions content">
+          <span><%= quiz.questionsCount %></span>
+        </div>
+      </div>
+      <div class="quiz-date-container info-container small-container">
+        <label class="quiz-date-label">
+          <span class="icon-box">
+            <i class="bi bi-calendar-event"></i>
+          </span>
+          Quiz Date
+        </label>
+        <div class="quiz-date content">
+          <span><%= quiz.quizDate %></span>
+        </div>
+      </div>
+      <div class="action-btns">
+        <button
+          type="button"
+          class="<%= isAdmin ? 'view-members-results-btn' : 'view-quiz-result-btn' %> should-fill"
+        >
+          <i class="bi bi-eye"></i>
+          View <%= isAdmin ? 'Results' : 'Result' %>
+        </button>
+        <% if (isAdmin) { %>
+        <button type="button" class="edit-quiz-btn">
+          <i class="bi bi-pencil-square"></i>
+          Edit
+        </button>
+        <% } else { %>
+        <button type="button" class="restart-quiz-btn">
+          <i class="bi bi-arrow-repeat"></i>
+          Retake
+        </button>
+        <% } %>
+      </div>
+    </div>
+    <% }); %>
+  </div>
+</div>

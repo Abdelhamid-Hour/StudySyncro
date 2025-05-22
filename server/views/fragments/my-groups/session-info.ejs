@@ -1,0 +1,170 @@
+<div class="session-info fade-in-template">
+  <!-- Session Name -->
+  <div class="session-name-info-box info-box">
+    <div class="session-name-container info-container">
+      <span class="label">
+        <span class="session-info-icon icon-box">
+          <i class="bi bi-clock-history"></i>
+        </span>
+        Session Name
+      </span>
+      <span class="session-name-value value content"><%= sessionName %></span>
+    </div>
+  </div>
+
+  <!-- Description -->
+  <div class="session-description-info-box info-box">
+    <div class="session-description-container info-container">
+      <span class="label">
+        <span class="session-description-icon icon-box">
+          <i class="bi bi-journal-text"></i>
+        </span>
+        Description
+      </span>
+      <p
+        class="session-description-value value has-tooltip"
+        data-tooltip="<%= sessionDescription %>"
+      >
+        <%= sessionDescription %>
+      </p>
+    </div>
+  </div>
+
+  <!-- Quiz -->
+  <div class="quiz-info-box info-box">
+    <div class="quiz-container info-container">
+      <span class="label">
+        <span class="quiz-icon icon-box">
+          <i class="bi bi-question-circle"></i>
+        </span>
+        Quiz
+      </span>
+      <span class="quiz-value value content"><%= quizTitle %></span>
+    </div>
+  </div>
+
+  <!-- Timing Metrics -->
+  <div class="timing-metrics dual-box">
+    <div class="start-info-box info-box">
+      <div class="start-container info-container">
+        <span class="label">
+          <span class="start-icon icon-box">
+            <i class="bi bi-play-circle"></i>
+          </span>
+          Start
+        </span>
+        <span class="start-value value content"><%= startTime %></span>
+      </div>
+    </div>
+    <div class="end-info-box info-box">
+      <div class="end-container info-container">
+        <span class="label">
+          <span class="end-icon icon-box">
+            <i class="bi bi-stopwatch"></i>
+          </span>
+          End
+        </span>
+        <span class="end-value value content"><%= endTime %></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="timing-metrics dual-box">
+    <div class="duration-info-box info-box">
+      <div class="duration-container info-container">
+        <span class="label">
+          <span class="duration-icon icon-box">
+            <i class="bi bi-clock"></i>
+          </span>
+          Duration
+        </span>
+        <span class="duration-value value content">
+          <%= duration %>
+        </span>
+      </div>
+    </div>
+    <div class="joined-count-info-box info-box">
+      <div class="joined-count-container info-container">
+        <span class="label">
+          <span class="joined-count-icon icon-box">
+            <i class="bi bi-people-fill"></i>
+          </span>
+          Joined Count
+        </span>
+        <span class="joined-count-value value content">
+          <%= joinedCount %> Members
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="session-tasks info-box">
+    <div class="info-container">
+    <span class="label">
+      <span class="joined-count-icon icon-box">
+        <i class="bi bi-ui-checks"></i>
+      </span>
+      Tasks
+      <div class="action-btns">
+        <button
+          type="button"
+          data-tooltip="Scroll To Top"
+          class="exclude-btn scroll-to-top has-tooltip tasks-btn action-btn"
+        >
+          <i class="bi bi-arrow-up-short"></i>
+        </button>
+        <button
+          type="button"
+          data-tooltip="Collapse All"
+          class="exclude-btn collapse-all has-tooltip tasks-btn action-btn"
+        >
+          <i class="bi bi-arrows-expand"></i>
+        </button>
+      </div>
+    </span>
+    <!-- ongoing tasks list is just for get the same style as in the active page -->
+    <div class="tasks-list">
+      <%_ tasks.map((task, index) => { %>
+          <div class="ongoing-task">
+            <div <%- task instanceof Quiz 
+            ? 'data-tooltip="Quiz"' 
+            : '' %> class="ongoing-task-box<%= task instanceof Quiz ? ' has-tooltip quiz-task-box' : '' %>">
+              <div class="counter">
+                <span>
+                  <%= (index + 1) .toString()
+                  .padStart(tasks.length.toString().length, '0') %>
+                </span>
+              </div>
+              <span class="title"><%= task.title %></span>
+              <span class="duration"><%= millisecondsToHMFormat( task.durationInMins * 60 * 1000 ) _%>
+              </span>
+              <div class="icons">
+                <button type="button" data-tooltip="Show Details" class="task-down-icon exclude-btn should-fill has-tooltip">
+                  <i class="bi bi-caret-down"></i>
+                </button>
+              </div>
+            </div>
+            <div class="task-details">
+              <h5>Title:</h5>
+              <p><%= task.title %></p>
+              <h5>Details:</h5>
+              <%=task.description _%>
+            </div>
+          </div>
+          <% }) %>
+      </div>
+    </div>
+  </div>
+  <div class="action-btns">
+    <% if (isJoined) { %>
+    <button type="button" class="red-btn should-fill">
+      <i class="bi bi-x-circle"></i>
+      Cancel Session
+    </button>
+    <% } else { %>
+    <button type="button" class="green-btn should-fill blue-btn">
+      <i class="bi bi-check-circle"></i>
+      Join Session
+    </button>
+    <% } %>
+  </div>
+</div>

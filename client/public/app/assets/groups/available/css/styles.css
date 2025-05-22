@@ -1,0 +1,40 @@
+.group-card {
+  .loader-container {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity var(--primary-transition-style);
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  .pending-text,
+  .view-group-link {
+    transition: opacity var(--primary-transition-style),
+      color var(--primary-transition-style);
+    @starting-style {
+      opacity: 0;
+    }
+  }
+  .view-group-link {
+    span {
+      text-decoration: underline;
+    }
+    &:hover {
+      color: var(--primary-color);
+      span {
+        text-decoration: none;
+      }
+    }
+  }
+  .pending-text {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: calc(var(--primary-gap) / 2);
+    color: var(--orange-color);
+  }
+}

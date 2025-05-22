@@ -27,3 +27,12 @@ git remote -v // remote dir
 git branch // branch name
 
 
+
+
+
+
+
+<!-- <%# // Decide at render time which partial to pull in %> 
+<% const partial = joined ? 'homeActive' : 'homeInactive'; %>
+<%- include(partial, data) %> -->
+

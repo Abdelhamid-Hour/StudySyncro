@@ -1,0 +1,106 @@
+<div class="overlay-model session-overlay" data-id="<%= session.id %>">
+  <button type="button" class="exclude-btn close-session-overlay should-fill">
+    <i class="bi bi-x-circle"></i>
+  </button>
+  <div class="session-overlay-content">
+    <header class="overlay-header">
+      <div class="group-name-wrapper">
+        <span class="badge blue-badge">
+          <i class="bi bi-book-fill"></i>
+          <%= session.groupName %>
+        </span>
+      </div>
+      <div>
+        <h2 class="session-name"><%= session.name %><span class="badge simple-badge users-count"><%= session.joinedCount %> Joined User</span></h2>
+        
+      </div>
+      <p class="session-description"><%= session.description %></p>
+      <div class="session-info">
+        <span class="badge green-badge start-badge">
+          Started: <%= session.startTime %>
+        </span>
+        <span class="badge orange-badge end-badge">
+          Ends: <%= session.endTime %>
+        </span>
+        <span class="badge blue-badge duration-badge">
+          Duration: <%= session.duration %>
+        </span>
+      </div>
+    </header>
+    <% if (session.quiz) { %>
+    <div class="quiz">
+      <h2>
+        <i class="bi bi-clipboard2-check-fill"></i>
+        Session Quiz
+      </h2>
+      <div class="quiz-info">
+        <h3 class="quiz-title"><%= session.quiz.title %></h3>
+        <span class="questions-count badge blue-badge">
+          <%= session.quiz.questionsCount %>
+          <span>Questions</span>
+        </span>
+        <span class="start-time badge<%= session.quiz.status === 'Finished' ? ' orange-badge' : session.quiz.status === 'Ongoing' ? 'green-badge' : ' gray-badge'%>">
+          <i class="bi bi-clock-fill"></i>
+          <%= session.quiz.status  %>
+        </span>
+      </div>
+    </div>
+    <% } %>
+    <div class="session-tasks">
+      <header>
+        <h2 class="title"><i class="bi bi-ui-checks"></i>Tasks</h2>
+        <div class="btns">
+          <button
+            type="button"
+            data-tooltip="Scroll To Top"
+            class="exclude-btn scroll-to-top has-tooltip"
+          >
+            <i class="bi bi-arrow-up-short"></i>
+          </button>
+          <button
+            type="button"
+            data-tooltip="Collapse All"
+            class="exclude-btn collapse-all has-tooltip"
+          >
+            <i class="bi bi-arrows-expand"></i>
+          </button>
+        </div>
+      </header>
+      <!-- ongoing tasks list is just for get the same style as in the active page -->
+      <div class="tasks-list">
+        <%_ session.tasks.map((task, index) => { %>
+            <div class="ongoing-task">
+              <div <%- task instanceof Quiz 
+              ? 'data-tooltip="Quiz"' 
+              : '' %> class="ongoing-task-box<%= task instanceof Quiz ? ' has-tooltip quiz-task-box' : '' %>">
+                <div class="counter">
+                  <span>
+                    <%= (index + 1) .toString()
+                    .padStart(session.tasks.length.toString().length, '0') %>
+                  </span>
+                </div>
+                <span class="title"><%= task.title %></span>
+                <span class="duration"><%= session.millisecondsToHMFormat( task.durationInMins * 60 * 1000 ) _%>
+                </span>
+                <div class="icons">
+                  <button type="button" data-tooltip="Show Details" class="task-down-icon exclude-btn should-fill has-tooltip">
+                    <i class="bi bi-caret-down"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="task-details">
+                <h5>Title:</h5>
+                <p><%= task.title %></p>
+                <h5>Details:</h5>
+                <%=task.description _%>
+              </div>
+            </div>
+            <% }) %>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="join-session blue-btn">
+    <i class="bi bi-box-arrow-in-right"></i>
+    Join Session
+  </button>
+</div>

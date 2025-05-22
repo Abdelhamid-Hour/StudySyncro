@@ -9,3 +9,65 @@
 // limite the timer to max is 24 hrs
 // impklement on time complete message
 // display messages in chat from the last to the first
+// redirect /home to /home active or inactive
+// solve consol warnings
+// add the next and active task in the timer header functionality
+// add loading animation to the login page
+// update the opacity 1 !important classes in global home styles for prevent screen fliqer
+// add spinners loding (view session details, navigation)
+// built the search
+// make the loading boxes and the quizzes/groups number dynamic 
+// solve caching problem in virtual routing by add initXXXX functions for every page
+// change level avatars colors
+// add delete message feature
+// solve picture height problem in chat messages
+// add caching feature for routing like for groups list
+// add custom date picker
+// solve message login delay
+// add name to dom event listners arrow funcs
+
+
+
+ Group Cards
+Subject (Matière)
+Dropdown or tag-based multi-select so users can pick one or more subjects.
+
+Level
+(e.g. “1ère année”, “2ème année”, etc.)
+
+Visibility
+Public / Private toggle.
+
+Status
+Active / Inactive (or “Session started”, “Session upcoming”).
+
+Max Members
+Range slider (e.g. show only groups with 5–20 members).
+
+Date Created
+Date-picker range (or presets: Today, Last week, Last month).
+
+User Role in Group
+(Admin vs Member vs Not yet joined)
+
+2. Quizzes
+Subject
+Multi-select tags.
+
+Creator
+Filter by teacher name.
+
+Difficulty
+(Easy / Medium / Hard / Custom scale).
+
+Date Created
+Date-picker range or quick presets.
+
+Status
+Draft / Published / Archived.
+
+Due Date
+Upcoming / Expired / No due date.
+
+Number of Questions
+Range slider.

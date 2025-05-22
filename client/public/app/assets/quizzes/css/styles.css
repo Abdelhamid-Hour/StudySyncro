@@ -1,0 +1,47 @@
+.quizzes-list {
+  grid-auto-rows: 13.5rem;
+}
+
+.quiz-card {
+  background-color: var(--btn-background-color);
+  border-radius: var(--primary-radius);
+  padding: var(--primary-gap);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: space-between;
+  gap: var(--primary-gap);
+  border: var(--primary-border-style);
+  transition: box-shadow var(--primary-transition-style),
+    border-color var(--primary-transition-style);
+
+  &:hover {
+    box-shadow: var(--primary-hover-shadow);
+    border-color: var(--primary-color);
+  }
+
+  .quiz-title-container {
+    flex: 1 0 auto;
+  }
+
+  .shared-in-container {
+    flex: 1 0 calc(50% - var(--primary-gap) / 2);
+
+    .content {
+      font-size: var(--small-font-size);
+    }
+  }
+
+  .subject-container {
+    flex: 1 0 calc(50% - var(--primary-gap) / 2);
+  }
+
+  .questions-count-container {
+    flex: 0 1 content;
+  }
+
+  .edit-quiz-btn {
+    margin-left: auto;
+    gap: calc(var(--primary-gap) / 2);
+  }
+}

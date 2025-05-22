@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Preloading Critical Resources -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      as="style"
+    />
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      as="style"
+    />
+    <link
+      rel="preload"
+      href="../main_assets/css/variables_and_fonts.css"
+      as="style"
+    />
+    <link rel="preload" href="../main_assets/css/styles.css" as="style" />
+    <link rel="preload" href="./assets/global/css/styles.css" as="style" />
+    <link
+      rel="preload"
+      href="./assets/groups/my/group-chat/css/styles.css"
+      as="style"
+    />
+    <link
+      rel="modulepreload"
+      href="./assets/global/js/main.js"
+      as="script"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="modulepreload"
+      href="./assets/groups/my/js/main.js"
+      as="script"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/global/css/styles.css" />
+    <link rel="stylesheet" href="../main_assets/css/styles.css" />
+    <link rel="stylesheet" href="../main_assets/css/variables_and_fonts.css" />
+    <link rel="stylesheet" href="./assets/shared/fields/css/styles.css" />
+    <link rel="stylesheet" href="./assets/groups/my/css/styles.css" />
+    <link rel="stylesheet" href="./assets/shared/tasks/css/styles.css" />
+
+    <title>Home Page</title>
+  </head>
+  <body>
+    <aside class="top-side-bar">
+      <div class="top-sidebar-header">
+        <h2 class="sidebar-title">Overview</h2>
+        <!-- ? Navigation for Groups -->
+        <!-- <div class="navigation-tabs">
+          <button
+            type="button"
+            class="tab my-groups-tab active-tab exclude-btn"
+          >
+            My Groups
+          </button>
+          <button type="button" class="tab available-groups-tab exclude-btn">
+            Available Groups
+          </button>
+        </div> -->
+      </div>
+      <!-- ? Overview -->
+      <div class="greeting-msg">
+        <h2>Hello Abdelhamid Hour 👋</h2>
+        <p>Have a good day !</p>
+      </div>
+      <!-- search and filter panel for groups -->
+      <!-- ? <div class="search-container">
+        <div class="search">
+          <div class="search-icon-container">
+            <i class="bi bi-search"></i>
+          </div>
+          <input type="search" id="search" placeholder="Search By Grourp Name" />
+        </div>
+        <div class="filter-container">
+          <button type="button" class="exclude-btn filter-button should-fill">
+            <i class="bi bi-funnel"></i>
+          </button>
+          <div class="filter-panel overlay user-group-filter-panel">
+            <section class="filter-section">
+              <h4 class="filter-title">Role</h4>
+              <div class="filter-option">
+                <input type="checkbox" id="admin" />
+                <label for="admin">
+                  <i class="bi bi-person-gear"></i>
+                  Admin
+                </label>
+              </div>
+              <div class="filter-option">
+                <input type="checkbox" id="member" />
+                <label for="member">
+                  <i class="bi bi-person"></i>
+                  Member
+                </label>
+              </div>
+            </section>
+            <section class="filter-section">
+              <h4 class="filter-title">Visibility</h4>
+              <div class="filter-option">
+                <input type="checkbox" id="private" />
+                <label for="private">
+                  <i class="bi bi-lock"></i>
+                  Private
+                </label>
+              </div>
+              <div class="filter-option">
+                <input type="checkbox" id="public" />
+                <label for="public">
+                  <i class="bi bi-eye"></i>
+                  Public
+                </label>
+              </div>
+            </section>
+            <section class="filter-section">
+              <h4 class="filter-title">Level</h4>
+              <div class="filter-option">
+                <input type="checkbox" id="advanced" />
+                <label for="advanced">
+                  <i class="bi bi-graph-up"></i>
+                  Advanced
+                </label>
+              </div>
+              <div class="filter-option">
+                <input type="checkbox" id="intermediate" />
+                <label for="intermediate">
+                  <i class="bi bi-bar-chart"></i>
+                  Intermediate
+                </label>
+              </div>
+              <div class="filter-option">
+                <input type="checkbox" id="beginner" />
+                <label for="beginner">
+                  <i class="bi bi-lightbulb"></i>
+                  Beginner
+                </label>
+              </div>
+            </section>
+            <section class="filter-section">
+              <h4 class="filter-title">Search By</h4>
+              <div class="filter-option">
+                <input type="radio" name="search-by" id="group-name" />
+                <label for="group-name">
+                  <i class="bi bi-fonts"></i>
+                  Group Name
+                </label>
+              </div>
+              <div class="filter-option">
+                <input type="radio" name="search-by" id="subject" />
+                <label for="subject">
+                  <i class="bi bi-book"></i>
+                  Subject
+                </label>
+              </div>
+            </section>
+          </div>
+          <div class="filter-panel overlay group-filter-panel">
+            <section class="filter-section">
+              <h4 class="filter-title">Visibility</h4>
+              <div class="filter-option">
+                <input type="checkbox" id="private" />
+                <label for="private">
+                  <i class="bi bi-incognito"></i>
+                  Private
+                </label>
+              </div>
+              <div class="filter-option">
+                <input type="checkbox" id="public" />
+                <label for="public">
+                  <i class="bi bi-eye"></i>
+                  Public
+                </label>
+              </div>
+            </section>
+            <section class="filter-section">
+              <h4 class="filter-title">Level</h4>
+              <div class="filter-option">
+                <input type="checkbox" id="advanced" />
+                <label for="advanced">
+                  <i class="bi bi-graph-up"></i>
+                  Advanced
+                </label>
+              </div>
+              <div class="filter-option">
+                <input type="checkbox" id="intermediate" />
+                <label for="intermediate">
+                  <i class="bi bi-bar-chart"></i>
+                  Intermediate
+                </label>
+              </div>
+              <div class="filter-option">
+                <input type="checkbox" id="beginner" />
+                <label for="beginner">
+                  <i class="bi bi-lightbulb"></i>
+                  Beginner
+                </label>
+              </div>
+            </section>
+            <section class="filter-section">
+              <h4 class="filter-title">Search By</h4>
+              <div class="filter-option">
+                <input type="radio" name="search-by" id="group-name" />
+                <label for="group-name">
+                  <i class="bi bi-fonts"></i>
+                  Group Name
+                </label>
+              </div>
+              <div class="filter-option">
+                <input type="radio" name="search-by" id="subject" />
+                <label for="subject">
+                  <i class="bi bi-book"></i>
+                  Subject
+                </label>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div> -->
+      <div class="profile-container">
+        <button type="button" class="profile-btn exclude-btn should-fill">
+          <i class="bi bi-person-circle exclude-icon"></i>
+          <div class="profile-info">
+            <span>Abdelhamid Hour</span>
+            <span>hourabdelhamid403@gmail.com</span>
+          </div>
+          <i class="bi bi-caret-down"></i>
+        </button>
+        <ul class="profile-select-menu overlay">
+          <li class="account should-fill">
+            <a href="/settings">
+              <i class="bi bi-person"></i>
+              Account
+            </a>
+          </li>
+          <li class="groups should-fill">
+            <a href="/groups">
+              <i class="bi bi-people"></i>
+              My Groups
+            </a>
+          </li>
+          <li class="quizzes should-fill">
+            <a href="quizzes">
+              <i class="bi bi-clipboard-check"></i>
+              My Quizzes
+            </a>
+          </li>
+          <li class="logout-button-li account">
+            <button type="button" id="logout-button" class="red-btn">
+              <i class="bi bi-box-arrow-in-left"></i>
+              Logout
+            </button>
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <aside class="left-side-bar">
+      <div class="logo-container">
+        <i class="bi bi-box-fill"></i>
+        <h6 class="should-hide">StudyHype</h6>
+      </div>
+      <div class="side-bar-icons">
+        <div class="top-side-bar-icons">
+          <div class="should-fill">
+            <i class="bi bi-house"></i>
+            <h3 class="should-hide">OverView</h3>
+          </div>
+          <div class="should-fill active">
+            <i class="bi bi-people"></i>
+            <h3 class="should-hide">Groups</h3>
+          </div>
+          <div class="should-fill">
+            <i class="bi bi-clipboard-check"></i>
+            <h3 class="should-hide">Quizzes</h3>
+          </div>
+        </div>
+        <div class="bottom-side-bar-icons">
+          <div class="toggle-container">
+            <i class="bi bi-toggle-off"></i>
+          </div>
+          <div class="notification-container should-fill">
+            <i class="bi bi-bell"></i>
+          </div>
+          <div class="open-close-side-bar-btn">
+            <i class="bi bi-layout-sidebar"></i>
+          </div>
+          <div class="settings-container should-fill">
+            <i class="bi bi-gear"></i>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <main>
+      <!-- <div class="create-session-overlay">
+        <header>
+          <h2>Create New Session</h2>
+          <button type="button" class="exclude-btn close-session-overlay">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </header>
+        <div class="progress">
+          <div class="progress-indecator-container">
+            <div class="progress-indecator"></div>
+          </div>
+          <div class="progress-text">
+            <label class="progress-start-text">
+              <input type="checkbox" id="progress-start-text" />
+              Informations
+            </label>
+            <label class="progress-end-text">
+              <input type="checkbox" id="progress-end-text" checked />
+              Tasks
+            </label>
+          </div>
+        </div>
+        <div class="create-session-form">
+          <form>
+            <div class="field-container session-name-field">
+              <div class="field-icon-container">
+                <span class="icon-box">
+                  <i class="bi bi-clock-history"></i>
+                  <i class="bi bi-info-circle"></i>
+                </span>
+              </div>
+              <input
+                type="text"
+                required
+                id="session-name"
+                name="session-name"
+                class="input"
+                placeholder="Name"
+              />
+            </div>
+
+            <div class="field-container session-description-field">
+              <div class="field-icon-container">
+                <span class="icon-box">
+                  <i class="bi bi-clock-history"></i>
+                  <i class="bi bi-info-circle"></i>
+                </span>
+              </div>
+              <textarea
+                required
+                id="session-description"
+                name="session-description"
+                class="input"
+                placeholder="Description"
+                maxlength="500"
+              ></textarea>
+              <span class="chars-limit">0/500</span>
+            </div>
+
+            <div class="dual-container">
+              <div class="field-container session-duration-field">
+                <div class="field-icon-container">
+                  <i class="bi bi-clock"></i>
+                </div>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  class="input"
+                  id="session-duration"
+                  name="session-duration"
+                  placeholder="Total Duration (minutes)"
+                />
+              </div>
+              <div class="field-container session-quiz-field">
+                <div class="field-icon-container">
+                  <i class="bi bi-clipboard-check"></i>
+                </div>
+                <div class="select-trigger input">
+                  <button type="button" class="exclude-btn open-select-btn">
+                    <span class="quiz-value">Quiz Title (Optional)</span>
+                    <input type="hidden" name="session-quiz" value="" />
+                    <i class="bi bi-chevron-down"></i>
+                  </button>
+                </div>
+                <div
+                  class="select-menu session-quiz-select-menu drop-down-menu overlay"
+                >
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="blue-btn next-btn">Next</button>
+          </form>
+        </div>
+      </div> -->
+
+      <div class="create-session-overlay">
+        <header>
+          <h2>Create New Session</h2>
+          <button type="button" class="exclude-btn close-session-overlay">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </header>
+        <div class="progress">
+          <div class="progress-indecator-container">
+            <div class="progress-indecator"></div>
+          </div>
+          <div class="progress-text">
+            <label class="progress-start-text">
+              <input type="checkbox" id="progress-start-text" />
+              Informations
+            </label>
+            <label class="progress-end-text">
+              <input type="checkbox" id="progress-end-text" checked />
+              Tasks
+            </label>
+          </div>
+        </div>
+        <div class="create-session-form">
+          <div class="create-task-container">
+            <header class="tasks-header">
+              <h3>Create Task</h3>
+              <button
+                type="button"
+                class="gray-btn small-btn cancel-task-creation"
+              >
+                Cancell
+              </button>
+            </header>
+            <div class="tasks-list">
+              <div class="ongoing-task task-container">
+                <div class="ongoing-task-box">
+                  <div class="counter">
+                    <span>01</span>
+                  </div>
+                  <span class="title">Task Title</span>
+                  <span class="duration">1h 20m</span>
+                  <div class="icons">
+                    <button type="button" class="menu exclude-btn">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </button>
+                    <button
+                      type="button"
+                      data-tooltip="Show Details"
+                      class="task-down-icon exclude-btn should-fill has-tooltip"
+                    >
+                      <i class="bi bi-caret-down"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="task-details">
+                  <h5>Title:</h5>
+                  <p>Task Tile</p>
+                  <h5>Details:</h5>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam
+                  eius excepturi provident nisi aliquid fugit ad sit qui
+                  necessitatibus porro!
+                </div>
+              </div>
+              <div class="ongoing-task task-container">
+                <div class="ongoing-task-box">
+                  <div class="counter">
+                    <span>01</span>
+                  </div>
+                  <span class="title">Task Title</span>
+                  <span class="duration">1h 20m</span>
+                  <div class="icons">
+                    <button type="button" class="menu exclude-btn">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </button>
+                    <button
+                      type="button"
+                      data-tooltip="Show Details"
+                      class="task-down-icon exclude-btn should-fill has-tooltip"
+                    >
+                      <i class="bi bi-caret-down"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="task-details">
+                  <h5>Title:</h5>
+                  <p>Task Tile</p>
+                  <h5>Details:</h5>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam
+                  eius excepturi provident nisi aliquid fugit ad sit qui
+                  necessitatibus porro!
+                </div>
+              </div>
+              <div class="ongoing-task task-container">
+                <div class="ongoing-task-box">
+                  <div class="counter">
+                    <span>01</span>
+                  </div>
+                  <span class="title">Task Title</span>
+                  <span class="duration">1h 20m</span>
+                  <div class="icons">
+                    <button type="button" class="menu exclude-btn">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </button>
+                    <button
+                      type="button"
+                      data-tooltip="Show Details"
+                      class="task-down-icon exclude-btn should-fill has-tooltip"
+                    >
+                      <i class="bi bi-caret-down"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="task-details">
+                  <h5>Title:</h5>
+                  <p>Task Tile</p>
+                  <h5>Details:</h5>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam
+                  eius excepturi provident nisi aliquid fugit ad sit qui
+                  necessitatibus porro!
+                </div>
+              </div>
+              <div class="ongoing-task task-container">
+                <div class="ongoing-task-box">
+                  <div class="counter">
+                    <span>01</span>
+                  </div>
+                  <span class="title">Task Title</span>
+                  <span class="duration">1h 20m</span>
+                  <div class="icons">
+                    <button type="button" class="menu exclude-btn">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </button>
+                    <button
+                      type="button"
+                      data-tooltip="Show Details"
+                      class="task-down-icon exclude-btn should-fill has-tooltip"
+                    >
+                      <i class="bi bi-caret-down"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="task-details">
+                  <h5>Title:</h5>
+                  <p>Task Tile</p>
+                  <h5>Details:</h5>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam
+                  eius excepturi provident nisi aliquid fugit ad sit qui
+                  necessitatibus porro!
+                </div>
+              </div>
+              <div class="ongoing-task task-container">
+                <div class="ongoing-task-box">
+                  <div class="counter">
+                    <span>01</span>
+                  </div>
+                  <span class="title">Task Title</span>
+                  <span class="duration">1h 20m</span>
+                  <div class="icons">
+                    <button type="button" class="menu exclude-btn">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </button>
+                    <button
+                      type="button"
+                      data-tooltip="Show Details"
+                      class="task-down-icon exclude-btn should-fill has-tooltip"
+                    >
+                      <i class="bi bi-caret-down"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="task-details">
+                  <h5>Title:</h5>
+                  <p>Task Tile</p>
+                  <h5>Details:</h5>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam
+                  eius excepturi provident nisi aliquid fugit ad sit qui
+                  necessitatibus porro!
+                </div>
+              </div>
+              <div class="ongoing-task task-container">
+                <div class="ongoing-task-box">
+                  <div class="counter">
+                    <span>01</span>
+                  </div>
+                  <span class="title">Task Title</span>
+                  <span class="duration">1h 20m</span>
+                  <div class="icons">
+                    <button type="button" class="menu exclude-btn">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </button>
+                    <button
+                      type="button"
+                      data-tooltip="Show Details"
+                      class="task-down-icon exclude-btn should-fill has-tooltip"
+                    >
+                      <i class="bi bi-caret-down"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="task-details">
+                  <h5>Title:</h5>
+                  <p>Task Tile</p>
+                  <h5>Details:</h5>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam
+                  eius excepturi provident nisi aliquid fugit ad sit qui
+                  necessitatibus porro!
+                </div>
+              </div>
+              <div class="ongoing-task task-container">
+                <div class="ongoing-task-box">
+                  <div class="counter">
+                    <span>01</span>
+                  </div>
+                  <span class="title">Task Title</span>
+                  <span class="duration">1h 20m</span>
+                  <div class="icons">
+                    <button type="button" class="menu exclude-btn">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </button>
+                    <button
+                      type="button"
+                      data-tooltip="Show Details"
+                      class="task-down-icon exclude-btn should-fill has-tooltip"
+                    >
+                      <i class="bi bi-caret-down"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="task-details">
+                  <h5>Title:</h5>
+                  <p>Task Tile</p>
+                  <h5>Details:</h5>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam
+                  eius excepturi provident nisi aliquid fugit ad sit qui
+                  necessitatibus porro!
+                </div>
+              </div>
+              <div class="ongoing-task task-container">
+                <div class="ongoing-task-box">
+                  <div class="counter">
+                    <span>01</span>
+                  </div>
+                  <span class="title">Task Title</span>
+                  <span class="duration">1h 20m</span>
+                  <div class="icons">
+                    <button type="button" class="menu exclude-btn">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </button>
+                    <button
+                      type="button"
+                      data-tooltip="Show Details"
+                      class="task-down-icon exclude-btn should-fill has-tooltip"
+                    >
+                      <i class="bi bi-caret-down"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="task-details">
+                  <h5>Title:</h5>
+                  <p>Task Tile</p>
+                  <h5>Details:</h5>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam
+                  eius excepturi provident nisi aliquid fugit ad sit qui
+                  necessitatibus porro!
+                </div>
+              </div>
+              <div class="ongoing-task task-container">
+                <div class="ongoing-task-box">
+                  <div class="counter">
+                    <span>01</span>
+                  </div>
+                  <span class="title">Task Title</span>
+                  <span class="duration">1h 20m</span>
+                  <div class="icons">
+                    <button type="button" class="menu exclude-btn">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </button>
+                    <button
+                      type="button"
+                      data-tooltip="Show Details"
+                      class="task-down-icon exclude-btn should-fill has-tooltip"
+                    >
+                      <i class="bi bi-caret-down"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="task-details">
+                  <h5>Title:</h5>
+                  <p>Task Tile</p>
+                  <h5>Details:</h5>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam
+                  eius excepturi provident nisi aliquid fugit ad sit qui
+                  necessitatibus porro!
+                </div>
+              </div>
+            </div>
+            <!-- <form id="form">
+              <div class="field-container task-title-field">
+                <div class="field-icon-container">
+                  <span class="icon-box">
+                    <i class="bi bi-ui-checks"></i>
+                    <i class="bi bi-info-circle"></i>
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  required
+                  id="task-title"
+                  name="task-title"
+                  class="input"
+                  placeholder="Task Title"
+                />
+              </div>
+
+              <div class="field-container task-description-field">
+                <div class="field-icon-container">
+                  <span class="icon-box">
+                    <i class="bi bi-ui-checks"></i>
+                    <i class="bi bi-info-circle"></i>
+                  </span>
+                </div>
+                <textarea
+                  required
+                  id="task-description"
+                  name="task-description"
+                  class="input"
+                  placeholder="Description"
+                  maxlength="500"
+                ></textarea>
+                <span class="chars-limit">0/500</span>
+              </div>
+
+              <div class="dual-container">
+                <div class="field-container task-duration-field">
+                  <div class="field-icon-container">
+                    <i class="bi bi-clock"></i>
+                  </div>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    class="input"
+                    id="task-duration"
+                    name="task-duration"
+                    placeholder="Total Duration (minutes)"
+                  />
+                </div>
+                <button type="button" class="blue-btn add-task-btn">
+                  <i class="bi bi-plus-lg"></i>
+                  Add New Task
+                </button>
+              </div>
+
+            </form> -->
+            <div class="buttons">
+              <button type="button" class="grey-btn back-btn gray-btn">
+                Back
+              </button>
+              <button form="" type="submit" class="blue-btn finish-btn">
+                Finish
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="create-group-overlay">
+        <header>
+          <h2>Create New Group</h2>
+          <button type="button" class="exclude-btn close-group-overlay">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </header>
+        <div class="create-group-form">
+          <form>
+            <div class="field-container group-name-field">
+              <div class="field-icon-container">
+                <span class="icon-box">
+                  <i class="bi bi-people"></i>
+                  <i class="bi bi-info-circle"></i>
+                </span>
+              </div>
+              <input
+                type="text"
+                required
+                id="group-name"
+                name="group-name"
+                class="input"
+                placeholder="Group Name"
+              />
+            </div>
+            <div class="field-container group-description-field">
+              <div class="field-icon-container">
+                <span class="icon-box">
+                  <i class="bi bi-people-fill"></i>
+                  <i class="bi bi-info-circle"></i>
+                </span>
+              </div>
+              <textarea
+                required
+                id="group-description"
+                name="group-description"
+                class="input"
+                placeholder="Describe your group (e.g. purpose, topics, goals)"
+              ></textarea>
+              <span class="chars-limit">0/500</span>
+            </div>
+            <div class="dual-container">
+              <div class="field-container group-subject-field">
+                <div class="field-icon-container">
+                  <i class="bi bi-journal-text"></i>
+                </div>
+                <div class="select-trigger input">
+                  <button type="button" class="exclude-btn open-select-btn">
+                    <span class="subject-value">Subject</span>
+                    <input type="hidden" name="sebject" value="" />
+                    <i class="bi bi-chevron-down"></i>
+                  </button>
+                </div>
+                <div
+                  class="select-menu group-subject-select-menu drop-down-menu overlay"
+                ></div>
+              </div>
+              <div class="field-container group-level-field">
+                <div class="field-icon-container">
+                  <i class="bi bi-graph-up"></i>
+                </div>
+                <span class="level-input input">
+                  Level
+                  <input type="hidden" name="level" value="" />
+                  <button
+                    type="button"
+                    data-tooltip=""
+                    class="exclude-btn switch-btn has-tooltip"
+                  >
+                    <i class="bi bi-arrow-left-right"></i>
+                  </button>
+                </span>
+              </div>
+            </div>
+            <div class="dual-container">
+              <div class="field-container group-max-members-field">
+                <div class="field-icon-container">
+                  <i class="bi bi-lock"></i>
+                </div>
+                <input
+                  required
+                  type="number"
+                  min="1"
+                  max="1000"
+                  class="input"
+                  placeholder="Max Members"
+                  name="max-members"
+                />
+              </div>
+              <div class="field-container group-visibility-field">
+                <div class="field-icon-container">
+                  <i class="bi bi-eye"></i>
+                </div>
+                <span class="visibility-input input">
+                  Visibility
+                  <input type="hidden" name="visibility" value="" />
+                  <button
+                    type="button"
+                    data-tooltip=""
+                    class="exclude-btn switch-btn has-tooltip"
+                  >
+                    <i class="bi bi-arrow-left-right"></i>
+                  </button>
+                </span>
+                <label class="show-in-search-label container">
+                  <input type="checkbox" id="show-in-search-input" checked="">
+                  <svg viewBox="0 0 64 64" height="2em" width="2em">
+                    <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+                  </svg>
+                  Show in Search Results
+                </label>
+              </div>
+            </div>
+            <button type="submit" class="blue-btn create-btn">Create</button>
+          </form>
+        </div>
+      </div>
+      <!-- <div class="group-container">
+        <aside class="group-left-side-bar">
+          <aside class="top-bar">
+            <h2 class="side-bar-title">
+              Quizzes
+              <span class="badge simple-badge">112</span>
+            </h2>
+          </aside>
+          <div class="left-side-bar-content">
+            <div class="members-view">
+              <header>
+                <div class="members-search users-search">
+                  <div class="search-icon-container">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <input
+                    type="search"
+                    id="search"
+                    placeholder="Search By Member Name or UID"
+                  />
+                </div>
+                <button type="button" class="add-member-btn">
+                  <i class="bi bi-plus"></i>
+                  Add
+                </button>
+              </header>
+              <div class="members-list">
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/22" />
+                  </div>
+                  <span class="username">
+                    Abdelhamid Hour Abdelhamid Hour Abdelhamid Hour
+                  </span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/23" />
+                  </div>
+                  <span class="username">Sara Smith</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/24" />
+                  </div>
+                  <span class="username">John Doe</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/25" />
+                  </div>
+                  <span class="username">Emily Clark</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/22" />
+                  </div>
+                  <span class="username">
+                    Abdelhamid Hour Abdelhamid Hour Abdelhamid Hour
+                  </span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/23" />
+                  </div>
+                  <span class="username">Sara Smith</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/24" />
+                  </div>
+                  <span class="username">John Doe</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/25" />
+                  </div>
+                  <span class="username">Emily Clark</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/22" />
+                  </div>
+                  <span class="username">
+                    Abdelhamid Hour Abdelhamid Hour Abdelhamid Hour
+                  </span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/23" />
+                  </div>
+                  <span class="username">Sara Smith</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/24" />
+                  </div>
+                  <span class="username">John Doe</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/25" />
+                  </div>
+                  <span class="username">Emily Clark</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/22" />
+                  </div>
+                  <span class="username">
+                    Abdelhamid Hour Abdelhamid Hour Abdelhamid Hour
+                  </span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/23" />
+                  </div>
+                  <span class="username">Sara Smith</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/24" />
+                  </div>
+                  <span class="username">John Doe</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/25" />
+                  </div>
+                  <span class="username">Emily Clark</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/22" />
+                  </div>
+                  <span class="username">
+                    Abdelhamid Hour Abdelhamid Hour Abdelhamid Hour
+                  </span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/23" />
+                  </div>
+                  <span class="username">Sara Smith</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/24" />
+                  </div>
+                  <span class="username">John Doe</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+                <div class="member">
+                  <div class="avatar">
+                    <img src="https://avatar.iran.liara.run/public/25" />
+                  </div>
+                  <span class="username">Emily Clark</span>
+                  <div class="action-btns">
+                    <button type="button" class="red-btn kick-btn small-btn">
+                      <i class="bi bi-person-dash"></i>
+                      Kick
+                    </button>
+                    <button
+                      type="button"
+                      class="orange-btn move-admin-role-btn small-btn"
+                    >
+                      <i class="bi bi-person-gear"></i>
+                      Transfer Admin
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </aside>
+        <div class="chat-container">
+          <div class="top-bar">
+            <!-- inffo bootstrap icon -->
+      <!-- <button
+              data-tooltip="Show Group Details"
+              type="button"
+              class="exclude-btn show-info-btn has-tooltip"
+            >
+              <i class="bi bi-info-circle"></i>
+            </button>
+            <h2 class="title">Real Time Chat</h2>
+            <span class="session-active-badge badge green-badge">
+              Active Session
+            </span>
+            <div>
+                <button type="button" class="exclude-btn menu-btn">
+                <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <div class="drop-down-menu overlay open-overlay">
+                <div class="drop-down-group">
+                  <div class="drop-down-group-label">Group Actions</div>
+                  <hr class="separator">
+                  <button type="button" class="drop-down-item exclude-btn" data-action="view-info">
+                  <i class="bi bi-info-circle"></i>
+                  View Info
+                  </button>
+                  <button type="button" class="drop-down-item exclude-btn" data-action="view-session-info">
+                  <i class="bi bi-clock-history"></i>
+                  View Session Info
+                  </button>
+                  <button type="button" class="drop-down-item exclude-btn" data-action="view-quizzes">
+                  <i class="bi bi-clipboard-check"></i>
+                  View Quizzes
+                  </button>
+                  <button type="button" class="drop-down-item exclude-btn" data-action="create-session">
+                  <i class="bi bi-plus-circle"></i>
+                  Create Session
+                  </button>
+                  <button type="button" class="drop-down-item exclude-btn" data-action="invite-members">
+                  <i class="bi bi-person-plus"></i>
+                  Invite Members
+                  </button>
+                  <button type="button" class="drop-down-item exclude-btn" data-action="manage-members">
+                  <i class="bi bi-people"></i>
+                  Manage Members
+                  </button>
+                  <button type="button" class="drop-down-item exclude-btn" data-action="copy-invite-link">
+                  <i class="bi bi-link-45deg"></i>
+                  Copy Invite Link
+                  </button>
+                  <button type="button" class="drop-down-item exclude-btn red-btn" data-action="leave-group">
+                  <i class="bi bi-box-arrow-left"></i>
+                  Leave Group
+                  </button>
+                </div>
+                </div>
+            </div>
+          </div>
+          <div class="chat-messages"></div>
+          <div class="input-message-container">
+            <div class="icons">
+              <label for="image-upload" class="should-fill">
+                <i class="bi bi-image"></i>
+              </label>
+              <label for="file-upload">
+                <i class="bi bi-paperclip"></i>
+              </label>
+              <div class="emoji-picker">
+                <button
+                  type="button"
+                  class="exclude-btn should-fill emoji-button"
+                >
+                  <i class="bi bi-emoji-smile"></i>
+                </button>
+                <div class="emoji-list overlay">
+                  <div class="categories">
+                    <a data-section-id="recent" class="recent should-fill">
+                      <i class="bi bi-clock"></i>
+                    </a>
+                    <a data-section-id="people" class="should-fill">
+                      <i class="bi bi-emoji-smile"></i>
+                    </a>
+                    <a data-section-id="animals_nature" class="should-fill">
+                      <i class="bi bi-tree"></i>
+                    </a>
+                    <a data-section-id="food_drink" class="should-fill">
+                      <i class="bi bi-cup"></i>
+                    </a>
+                    <a data-section-id="activity" class="should-fill">
+                      <i class="bi bi-calendar"></i>
+                    </a>
+                    <a data-section-id="objects" class="should-fill">
+                      <i class="bi bi-box"></i>
+                    </a>
+                    <a data-section-id="symbols" class="should-fill">
+                      <i class="bi bi-heart"></i>
+                    </a>
+                    <a data-section-id="travel_places" class="should-fill">
+                      <i class="bi bi-geo-alt"></i>
+                    </a>
+                    <a data-section-id="flags" class="should-fill">
+                      <i class="bi bi-flag"></i>
+                    </a>
+                  </div>
+                  <div class="emoji-search-container">
+                    <div class="search-icon-container">
+                      <i class="bi bi-search"></i>
+                    </div>
+                    <input
+                      type="search"
+                      placeholder="Search for emoji"
+                      id="emojis-search-input"
+                      class="emojis-search-input"
+                    />
+                  </div>
+                  <div class="emojies-sections">
+                    <section id="recent">
+                      <h5>Recent</h5>
+                      <div class="recent-emojies"></div>
+                    </section>
+                    <section id="people">
+                      <h5>People</h5>
+                      <div class="people-emojies"></div>
+                    </section>
+                    <section id="animals_nature">
+                      <h5>Animals &amp; Nature</h5>
+                      <div class="animals-nature-emojies"></div>
+                    </section>
+                    <section id="food_drink">
+                      <h5>Food &amp; Drink</h5>
+                      <div class="food-drink-emojies"></div>
+                    </section>
+                    <section id="activity">
+                      <h5>Activity</h5>
+                      <div class="activity-emojies"></div>
+                    </section>
+                    <section id="objects">
+                      <h5>Objects</h5>
+                      <div class="objects-emojies"></div>
+                    </section>
+                    <section id="symbols">
+                      <h5>Symbols</h5>
+                      <div class="symbols-emojies"></div>
+                    </section>
+                    <section id="travel_places">
+                      <h5>Travel &amp; Places</h5>
+                      <div class="travel-places-emojies"></div>
+                    </section>
+                    <section id="flags">
+                      <h5>Flags</h5>
+                      <div class="flags-emojies"></div>
+                    </section>
+                  </div>
+                  <div id="search-result"></div>
+                </div>
+              </div>
+              <input
+                type="file"
+                id="image-upload"
+                class="file-input"
+                accept="
+              image/png,
+              image/jpeg,
+              image/jpg,
+              image/gif,
+              video/mp4,
+              "
+                multiple=""
+              />
+              <input
+                multiple=""
+                type="file"
+                class="file-input"
+                id="file-upload"
+                accept=".pdf,
+                .mp3,
+                .doc,
+                .docx,
+                .xls,
+                .xlsx,
+                .ppt,
+                .pptx,
+                .txt,
+                .rar"
+              />
+            </div>
+            <textarea
+              placeholder="Type a message"
+              class="input-message"
+              id="input-message"
+            ></textarea>
+            <button type="button" class="send-btn exclude-btn should-fill">
+              <i class="bi bi-send"></i>
+            </button>
+          </div>
+        </div>
+      </div> -->
+    </main>
+    <div id="hover-tooltip" class="tooltip" role="tooltip"></div>
+    <div id="global-tooltip" class="tooltip" role="tooltip"></div>
+    <script
+      type="module"
+      src="./assets/global/js/main.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      type="module"
+      src="./assets/groups/my/js/main.js"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
