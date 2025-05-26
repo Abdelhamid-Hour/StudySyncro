@@ -1,5 +1,5 @@
-<div class="overlay-model session-overlay" data-id="<%= session.id %>">
-  <button type="button" class="exclude-btn close-session-overlay should-fill">
+<div class="overlay-model session-view-overlay" data-id="<%= session.id %>">
+  <button type="button" class="exclude-btn close-session-view-overlay should-fill">
     <i class="bi bi-x-circle"></i>
   </button>
   <div class="session-overlay-content">
@@ -69,10 +69,10 @@
       <!-- ongoing tasks list is just for get the same style as in the active page -->
       <div class="tasks-list">
         <%_ session.tasks.map((task, index) => { %>
-            <div class="ongoing-task">
+            <div class="task-wrapper ">
               <div <%- task instanceof Quiz 
               ? 'data-tooltip="Quiz"' 
-              : '' %> class="ongoing-task-box<%= task instanceof Quiz ? ' has-tooltip quiz-task-box' : '' %>">
+              : '' %> class="task-box<%= task instanceof Quiz ? ' has-tooltip quiz-task-box' : '' %>">
                 <div class="counter">
                   <span>
                     <%= (index + 1) .toString()

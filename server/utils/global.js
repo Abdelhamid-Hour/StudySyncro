@@ -28,10 +28,10 @@ const pathNames = {
 
 const formatHoursMinutes = (TimeOrDate) => {
   const date = new Date(TimeOrDate);
-  return date.toLocaleString('en-US', {
-    timeZone: 'UTC',
+  return date.toLocaleString([], {
     hour: '2-digit',
     minute: '2-digit',
+    hour12: false,
   });
 };
 

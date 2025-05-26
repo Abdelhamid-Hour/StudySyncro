@@ -124,10 +124,10 @@
     <!-- ongoing tasks list is just for get the same style as in the active page -->
     <div class="tasks-list">
       <%_ tasks.map((task, index) => { %>
-          <div class="ongoing-task">
+          <div class="task-wrapper">
             <div <%- task instanceof Quiz 
             ? 'data-tooltip="Quiz"' 
-            : '' %> class="ongoing-task-box<%= task instanceof Quiz ? ' has-tooltip quiz-task-box' : '' %>">
+            : '' %> class="task-box<%= task instanceof Quiz ? ' has-tooltip quiz-task-box' : '' %>">
               <div class="counter">
                 <span>
                   <%= (index + 1) .toString()

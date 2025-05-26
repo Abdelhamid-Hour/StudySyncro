@@ -49,7 +49,6 @@
     border-radius: var(--primary-radius);
     border-start-start-radius: initial;
     border: var(--primary-border-style);
-    z-index: 1;
     font-size: calc(var(--small-font-size) * 1.1);
 
     .filter-title {

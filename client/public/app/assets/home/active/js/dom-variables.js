@@ -1,11 +1,12 @@
 export let expandDescriptionBtn,
   SESSIONSSELECTORS,
   TASKSSELECTORS,
+  chatContainer,
   QUIZSELECTORS;
 
 export const initDomVariables = () => {
   expandDescriptionBtn = document.querySelector('.expande-desc-btn');
-
+  chatContainer = document.querySelector('.chat-container');
 
   SESSIONSSELECTORS = {
     name: '.session-name',
@@ -27,7 +28,7 @@ export const initDomVariables = () => {
   TASKSSELECTORS = {
     completedTasksList: '.completed-tasks-list',
     ongoingTasksList: '.ongoing-tasks-list',
-    ongoingTask: '.ongoing-task',
+    ongoingTask: '.task-wrapper ',
     taskTitle: '.title',
     taskDuration: '.duration',
     taskDetails: '.task-details',

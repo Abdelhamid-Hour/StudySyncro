@@ -9,7 +9,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  border: var(--primary-border-style);
+  border: 1px solid var(--inputs-border-color);
   border-radius: var(--primary-radius);
   background-color: var(--inputs-background-color);
   outline: 0.15rem solid transparent;
@@ -17,9 +17,13 @@
   transition: border-color var(--primary-transition-style),
     outline-color var(--primary-transition-style);
 
-  &:focus-within {
-    border-color: var(--inputs-outline-color);
+  &:focus-within,
+  &:hover {
     outline-color: var(--inputs-outline-color);
+    border-color: var(--inputs-outline-color);
+  }
+
+  &:focus-within {
     background-color: var(--inputs-focus-background-color);
 
     &:has(textarea) i {
@@ -38,13 +42,13 @@
   }
 
   i {
-    color: var(--secondary-text-color);
+    color: var(--inputs-icons-color);
   }
 
   .icon-box {
     position: relative;
     &:has(i + i) {
-      translate: -.1rem .1rem;
+      translate: -0.1rem 0.1rem;
     }
     .bi-info-circle {
       position: absolute;
@@ -62,7 +66,7 @@
     background-color: var(--inputs-icons-background-color);
     border-start-start-radius: 10px;
     border-end-start-radius: 7px;
-    border-right: var(--primary-border-style);
+    border-right: 1px solid var(--inputs-border-color);
     display: flex;
     align-items: center;
     justify-content: center;

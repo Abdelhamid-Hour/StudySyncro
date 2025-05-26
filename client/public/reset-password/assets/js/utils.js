@@ -12,7 +12,7 @@ export const clearInputFields = () => {
 const hideErrors = (...elements) => {
   elements.forEach((element) => {
     const container = element.parentElement.parentElement;
-    container.classList.remove('error');
+    container.classList.remove('error-input');
     container.classList.remove('error-animation');
     void container.offsetWidth;
     container.nextElementSibling.firstElementChild.innerHTML = '';
@@ -22,7 +22,7 @@ const hideErrors = (...elements) => {
 export const showError = (errorMessage, element) => {
   const container = element.parentElement.parentElement;
   container.nextElementSibling.firstElementChild.innerHTML = `<span>&#xF333;</span> ${errorMessage}`;
-  container.classList.add('error');
+  container.classList.add('error-input');
   container.classList.add('error-animation');
   element.focus();
 };

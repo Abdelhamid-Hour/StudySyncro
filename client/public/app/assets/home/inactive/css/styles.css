@@ -230,7 +230,7 @@
   }
 }
 
-.session-overlay {
+session-view-overlay {
   min-width: 30rem;
   max-height: 80%;
   display: flex;
@@ -271,7 +271,7 @@
     display: flex;
   }
 
-  .close-session-overlay {
+  .close-session-view-overlay {
     width: fit-content;
     align-self: flex-end;
   }
@@ -347,7 +347,7 @@
     span.title {
       flex-basis: 65%;
     }
-    
+
     div.icons {
       flex-basis: initial !important;
     }

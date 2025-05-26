@@ -262,6 +262,7 @@ section#forms {
       position: relative;
       a {
         position: absolute;
+        font-size: small;
         text-decoration: underline;
         cursor: pointer;
         top: -1.3rem;
@@ -425,6 +426,7 @@ section#forms {
           }
           &:has(+ input:not(:focus)) {
             background-color: var(--inputs-background-color);
+            color: var(--inputs-label-color);
           }
         }
         .eye-icon {
@@ -530,12 +532,6 @@ div.separator {
   syntax: '<percentage>';
   initial-value: 0%;
   inherits: false;
-}
-
-.error {
-  --inputs-border-color: var(--error-color);
-  --inputs-icons-background-color: var(--error-color);
-  --inputs-icons-color: #f2f2f2;
 }
 
 @keyframes signUpMaskAnimation {

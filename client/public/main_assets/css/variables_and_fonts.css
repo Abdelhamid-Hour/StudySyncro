@@ -55,7 +55,7 @@
   --inputs-outline-trans-duration: 300ms;
   /* inputs icons colors varianles */
   --inputs-icons-background-color: var(--background-color);
-  --inputs-icons-color: var(--primary-color);
+  --inputs-icons-color: var(--secondary-text-color);
   --inputs-icons-focus-bc: var(--primary-color);
   --inputs-icons-focus-color: var(--container-background-color);
   /* inputs focus transition duration */

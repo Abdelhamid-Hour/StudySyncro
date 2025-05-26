@@ -83,13 +83,13 @@
         <div class="navigation-tabs">
           <a
             href="/app/groups/my"
-            class="tab my-groups-tab<% if (resourcesRoute === "/groups/my/") { %> active-tab<% } %> exclude-btn"
+            class="tab my-groups-tab<% if (resourcesRoute === "/groups/my/") { %> active<% } %> exclude-btn"
           >
             My Groups
           </a>
           <a
             href="/app/groups/available"
-            class="tab available-groups-tab<% if (resourcesRoute === "/groups/available/") { %> active-tab<% } %> exclude-btn"
+            class="tab available-groups-tab<% if (resourcesRoute === "/groups/available/") { %> active<% } %> exclude-btn"
           >
             Available Groups
           </a>
@@ -111,7 +111,7 @@
           <input type="search" id="search" placeholder="Search By Group Name | UID | Subject" />
         </div>
         <div class="filter-container">
-          <button type="button" class="exclude-btn filter-button should-fill">
+          <button type="button" class="exclude-btn filter-button open-drop-down-btn should-fill">
             <i class="bi bi-funnel"></i>
           </button>
             <div  class="filter-panel overlay group-filter-panel">
@@ -255,7 +255,7 @@
       </button>
       <% } %>
       <div class="profile-container">
-        <button type="button" class="profile-btn exclude-btn should-fill">
+        <button type="button" class="profile-btn open-drop-down-btn exclude-btn should-fill">
           <div class="avatar">
             <% if (user.photoURL) { %>
               <img
@@ -274,25 +274,25 @@
         </button>
         <ul class="profile-drop-down-menu overlay">
           <li class="account should-fill">
-            <a href="/settings">
+            <a href="/app/settings" class="drop-down-item">
               <i class="bi bi-person"></i>
               Account
             </a>
           </li>
           <li class="groups should-fill">
-            <a href="/groups">
+            <a href="/app/groups/my" class="drop-down-item">
               <i class="bi bi-people"></i>
               My Groups
             </a>
           </li>
           <li class="quizzes should-fill">
-            <a href="/quizzes">
+            <a href="/app/quizzes" class="drop-down-item">
               <i class="bi bi-clipboard-check"></i>
               My Quizzes
             </a>
           </li>
           <li class="logout-button-li account">
-            <button type="button" id="logout-button" class="red-btn">
+            <button type="button" id="logout-button" class="red-btn drop-down-item">
               <i class="bi bi-box-arrow-in-left"></i>
               Logout
             </button>
@@ -308,18 +308,18 @@
       <div class="side-bar-icons">
         <div class="top-side-bar-icons">
           <a href="/app/home" class="nav-link should-fill<% if (resourcesRoute.includes("/home/")) { %> active<% } %> ">
-            <i class="bi bi-house"></i>
+            <i class="bi bi-house<%_ if (resourcesRoute.includes("/home/")) { %>-fill<% } %>"></i>
             <h3 class="should-hide">OverView</h3>
           </a>
           <a
             href="/app/groups/my"
             class="nav-link should-fill<% if (resourcesRoute.includes("/groups/")) { %> active<% } %>"
           >
-            <i class="bi bi-people"></i>
+            <i class="bi bi-people<%_ if (resourcesRoute.includes("/groups/")) { %>-fill<% } %>"></i>
             <h3 class="should-hide">Groups</h3>
           </a>
           <a href="/app/quizzes" class="nav-link should-fill<% if (resourcesRoute === "/quizzes/") { %> active<% } %>">
-            <i class="bi bi-clipboard-check"></i>
+            <i class="bi bi-clipboard-check<%_ if (resourcesRoute === "/quizzes/") { %>-fill<% } %>"></i>
             <h3 class="should-hide">Quizzes</h3>
           </a>
         </div>
@@ -356,7 +356,7 @@
             href="/app/settings"
             class="settings-container nav-link should-fill<% if (resourcesRoute === "/settings/") { %> active<% } %>"
           >
-            <i class="bi bi-gear"></i>
+            <i class="bi bi-gear<%_ if (resourcesRoute === "/settings/") { %>-fill<% } _%>"></i>
           </a>
         </div>
       </div>

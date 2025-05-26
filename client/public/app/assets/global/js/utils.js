@@ -1,4 +1,5 @@
 import {
+  globalTooltip,
   hoverTooltip,
   mainContainer,
   topSideBarHeader,
@@ -6,10 +7,11 @@ import {
 } from './dom-variables.js';
 import { fetchTemplate } from '../../../../main_assets/js/utils.js';
 import { showMessageBlock } from '../../../../main_assets/js/utils.js';
-import { groupInfo } from '../../groups/my/group-chat/js/utils.js';
-import { groupLeftSideBarContent } from '../../groups/my/group-chat/js/dom-variables.js';
+import { initAndDiplayErrorTooltip } from '../../shared/chat/js/utils.js';
 
-export const getDebounceFunc = (callback, TimeInterval) => {
+let isRouting = false;
+
+export function getDebounceFunc(callback, TimeInterval) {
   let timer;
   return function (...args) {
     clearTimeout(timer);
@@ -17,7 +19,7 @@ export const getDebounceFunc = (callback, TimeInterval) => {
       callback.apply(this, args);
     }, TimeInterval);
   };
-};
+}
 
 export const handelIconsHover = (e, addFill) => {
   const target = e.target.closest('.should-fill:not(.active)');
@@ -28,6 +30,17 @@ export const handelIconsHover = (e, addFill) => {
   }
 };
 
+export const millisecondsToHMFormat = (time) => {
+  const hours = Math.floor(time / (1000 * 60 * 60))
+    .toString()
+    .padStart(2, '0');
+  const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60))
+    .toString()
+    .padStart(2, '0');
+
+  return hours === '00' ? `${minutes}m` : `${hours}h ${minutes}m`;
+};
+
 export const closeAndOpenLeftSideBar = () => {
   const shouldHideElements = document.querySelectorAll('.should-hide');
 
@@ -35,15 +48,12 @@ export const closeAndOpenLeftSideBar = () => {
     element.classList.toggle('hidden');
   });
 };
-export const openOverlay = function (
-  e,
-  BtnByOverlay = [{ buttonClassName: null, overlay: null }]
-) {
-  BtnByOverlay.forEach((pair) => {
-    if (e.target.closest(`.${pair.buttonClassName}`)) {
-      toggleClass([pair.overlay], 'open-overlay');
-    }
-  });
+export const openOverlayHandler = function (e) {
+  const button = e.target.closest('.open-drop-down-btn');
+  if (button) {
+    const overlay = button.parentElement.querySelector('.overlay');
+    overlay.classList.add('open-overlay');
+  }
 };
 export const toggleClass = (array, className) => {
   array.forEach((e) => {
@@ -70,53 +80,43 @@ const getIconClassName = (icon) => {
   return IconClass;
 };
 
-export const initActiveIcon = (IconContainer) => {
-  const icon = IconContainer.firstElementChild;
-  const IconClass = getIconClassName(icon);
-  icon.classList.remove(`${IconClass}`);
-  icon.classList.add(`${IconClass}-fill`);
+// this is for mouse down
+export const handleOverlayClose = (event) => {
+  const overlayToClose = document.querySelector('.open-overlay');
+  const clickedElement = event.target.closest(`.open-overlay`);
+  if (!clickedElement && overlayToClose) {
+    overlayToClose.classList.remove('open-overlay');
+  }
 };
 
-const handleCloseOverlay = (e, ClassListOverLays, OverlayContainer) => {
-  ClassListOverLays.forEach((className) => {
-    const overlay = document.querySelector(`.${className}`);
-    if (!overlay) {
-      return;
-    }
-    const isOverlay = overlay.classList.contains('open-overlay');
-    const ignore = OverlayContainer[className].find((cls) => {
-      return e.target.closest(`.${cls}`);
-    });
-
-    if (isOverlay && !ignore) {
-      document.querySelector(`.${className}`).classList.remove('open-overlay');
-    }
-  });
+/// this is click
+export const handleOverlayClick = (event, includeClasses = []) => {
+  let clickedElement = null;
+  const includeSelector = includeClasses.length
+    ? `.${includeClasses.join(', .')}`
+    : '';
+  const overlayToClose = event.target.closest(`.open-overlay`);
+  if (includeSelector) {
+    clickedElement = event.target.closest(includeSelector);
+  }
+  if (clickedElement && overlayToClose) {
+    overlayToClose.classList.remove('open-overlay');
+  }
 };
 
 export const formatHoursMinutes = (TimeOrDate) => {
   const date = new Date(TimeOrDate);
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  return `${hours}:${minutes}`;
-};
-
-export const initCloseOverlayListner = (
-  ClassListOverLays = [],
-  OverlayContainer = { 1: [] }
-) => {
-  document.addEventListener('click', (e) =>
-  {
-    console.log('click');
-    
-    handleCloseOverlay(e, ClassListOverLays, OverlayContainer);
-  }
-  );
+  // Use toLocaleTimeString for local time, 2-digit hour/minute, 24-hour format
+  return date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
 };
 
 let tooltipTimer = null;
 
-export const resetTooltip = (tooltip) => {
+export const resetTooltip = (tooltip, target) => {
   tooltip.classList.remove('show');
   if (tooltipTimer) {
     clearTimeout(tooltipTimer);
@@ -124,12 +124,21 @@ export const resetTooltip = (tooltip) => {
   tooltipTimer = setTimeout(() => {
     tooltip.style.left = 0 + 'px';
     tooltip.style.top = 0 + 'px';
+    tooltip.className = 'tooltip';
+    if (target) {
+      target.dataset.tooltip = '';
+      target.classList.remove('error-animation');
+    }
   }, 300);
 };
 
-export const showTooltip = (tooltipTarget, tooltip) => {
+export const showTooltip = (tooltipTarget, tooltip, message, error) => {
   if (tooltipTimer) {
     clearTimeout(tooltipTimer);
+  }
+
+  if (message) {
+    tooltipTarget.dataset.tooltip = message;
   }
   const positionInfo = tooltipTarget.getBoundingClientRect();
   tooltip.textContent = tooltipTarget.getAttribute('data-tooltip');
@@ -139,6 +148,9 @@ export const showTooltip = (tooltipTarget, tooltip) => {
     parseFloat(positionInfo.width) / 2
   }px) -130%`;
   tooltip.classList.add('show');
+  if (error) {
+    tooltip.classList.add('error-tooltip');
+  }
 };
 
 export const tooltipSetup = () => {
@@ -166,16 +178,21 @@ export const tooltipSetup = () => {
 
 const SHARED_STYLES_MAP = {
   '/home/inactive': ['/tasks'],
-  '/home/active': ['/tasks', '/my-groups-active-session'],
+  '/home/active': ['/tasks', '/chat'],
   '/quizzes': ['/quizzes-groups'],
   '/groups/my': [
     '/groups-my-available',
     '/quizzes-groups',
-    '/my-groups-active-session',
     '/fields',
     '/tasks',
+    '/group-and-session-forms',
   ],
-  '/groups/my/group-chat': ['/my-groups-active-session', '/tasks', '/fields'],
+  '/groups/my/group-chat': [
+    '/chat',
+    '/tasks',
+    '/fields',
+    '/group-and-session-forms',
+  ],
   '/groups/available': ['/groups-my-available', '/quizzes-groups'],
 };
 
@@ -307,7 +324,8 @@ const createSearchContainer = () => {
 
   const filterButton = document.createElement('button');
   filterButton.type = 'button';
-  filterButton.className = 'exclude-btn filter-button should-fill';
+  filterButton.className =
+    'exclude-btn filter-button open-drop-down-btn should-fill';
 
   const filterIcon = document.createElement('i');
   filterIcon.className = 'bi bi-funnel';
@@ -331,7 +349,7 @@ const createGroupsTabs = () => {
 
   const myGroupsTab = document.createElement('a');
   myGroupsTab.href = '/app/groups/my';
-  myGroupsTab.className = 'tab my-groups-tab active-tab exclude-btn';
+  myGroupsTab.className = 'tab my-groups-tab active exclude-btn';
   myGroupsTab.textContent = 'My Groups';
 
   const availableGroupsTab = document.createElement('a');
@@ -475,53 +493,102 @@ export const updateMain = async (path, isTabLinks) => {
     setSharedStylesResources(pathName);
     if (!isTabLinks)
       updateTopSideBar(pathName.includes('/home') ? '/home' : pathName);
+    isRouting = false;
   } catch (error) {
     console.error(error);
     showMessageBlock(error.message, true);
   }
 };
 
-const toggleActiveLink = (e, isTabLinks = false) => {
-  const activeClass = isTabLinks ? 'active-tab' : 'active';
-  const clickedLinkClass = isTabLinks ? '.navigation-tabs' : '.side-bar-icons';
-  const clickedLink = e.target.closest(`${clickedLinkClass} a`);
-  if (clickedLink) {
-    const activeLink = document.querySelector(
-      `${clickedLinkClass} a.${activeClass}`
-    );
-    if (activeLink && activeLink !== clickedLink) {
-      activeLink.classList.remove(activeClass);
-      if (!isTabLinks) {
-        animateFillIcon(activeLink.querySelector('i'), false);
-      }
+const toggleActiveLink = (pathName) => {
+  const activeLinks = document.querySelectorAll('.active');
+  activeLinks.forEach((link) => {
+    link.classList.remove('active');
+    const icon = link.querySelector('i');
+    if (icon) {
+      animateFillIcon(icon, false);
     }
-    clickedLink.classList.add(activeClass);
+  });
+  let className = '';
+  switch (true) {
+    case pathName.includes('/app/home'):
+      className = '[href="/app/home"]';
+      break;
+    case pathName.includes('/app/groups/my'):
+      className = '[href="/app/groups/my"]';
+      break;
+    case pathName.includes('/app/groups/available'):
+      className = '[href="/app/groups/available"]';
+      break;
+    case pathName.includes('/app/quizzes'):
+      className = '[href="/app/quizzes"]';
+      break;
+    case pathName.includes('/app/settings'):
+      className = '[href="/app/settings"]';
+      break;
   }
+
+  const links = document.querySelectorAll(className);
+  if (links.length) {
+    toggleClass(links, 'active');
+    links.forEach((link) => {
+      const icon = link.querySelector('i');
+      if (icon) {
+        animateFillIcon(icon, true);
+      }
+    });
+  }
+};
+
+export const showErrorTooltip = (error, input) => {
+  const inputContainer = input.closest('.field-container');
+  initAndDiplayErrorTooltip(inputContainer, error);
+};
+
+export const clearTooltipWithTimeOut = getDebounceFunc((input) => {
+  resetTooltip(globalTooltip, input);
+}, 2000);
+
+export const handleRoutingClick = (event) => {
+  if (isRouting) {
+    event.preventDefault(); // Prevent default action (like link navigation)
+    event.stopPropagation(); // Optional: stop event from bubbling up
+  }
+};
+
+const clearOverlaysModals = () => {
+  const overlaysModals = document.querySelectorAll('.backdrop');
+  overlaysModals.forEach((oM) => {
+    oM.remove();
+  });
 };
 
 export const handleNavigation = (e, linksClasses) => {
   const link = e.target.closest(linksClasses.join(', '));
+  const tabLink = e.target.closest('.navigation-tabs a');
   if (link) {
     e.preventDefault();
-    const pathname = new URL(link.href).pathname;
-    if (pathname !== location.pathname) {
-      updateMain(pathname, link.matches('.navigation-tabs a'));
-      history.pushState(null, '', pathname);
-      toggleActiveLink(e);
+    const pathName = new URL(link.href).pathname;
+    if (pathName !== location.pathname) {
+      isRouting = true;
+      toggleActiveLink(pathName);
+      updateMain(pathName, Boolean(tabLink));
+      resetTooltip(hoverTooltip);
+      history.pushState(null, '', pathName);
+      clearOverlaysModals();
     }
-  }
 
-  if (e.target.closest('.navigation-tabs')) {
-    toggleActiveLink(e, true);
-    document.querySelector('.filter-panel').replaceWith(createFilterPanel());
-    // remove Group create Btn if the link is available groups
-    if (e.target.closest('.available-groups-tab')) {
-      removeCreateGroupBtn();
-    } else {
-      const groupCreateBtn = document.querySelector('.create-group-btn');
-      if (!groupCreateBtn) {
-        const createGroupBtn = createGroupCreateBtn();
-        topSideBarMiddle.after(createGroupBtn);
+    if (tabLink) {
+      toggleActiveLink(pathName);
+      document.querySelector('.filter-panel').replaceWith(createFilterPanel());
+      if (e.target.closest('.available-groups-tab')) {
+        removeCreateGroupBtn();
+      } else {
+        const groupCreateBtn = document.querySelector('.create-group-btn');
+        if (!groupCreateBtn) {
+          const createGroupBtn = createGroupCreateBtn();
+          topSideBarMiddle.after(createGroupBtn);
+        }
       }
     }
   }
@@ -653,6 +720,7 @@ export const createFilterPanel = () => {
 };
 
 export const openOverlayModal = async (
+  overlayModalCustomClassName,
   closeBtnClasses = [],
   loadContentCallback,
   afterLoadCallback
@@ -661,14 +729,17 @@ export const openOverlayModal = async (
   backdrop.className = 'backdrop';
   backdrop.innerHTML = getLoader();
   document.body.appendChild(backdrop);
-  console.log(closeBtnClasses, loadContentCallback, afterLoadCallback);
 
   try {
     const overlayContent = await loadContentCallback();
     if (overlayContent) {
       backdrop.innerHTML = overlayContent;
       closeBtnClasses.forEach((c) => {
-        backdrop.querySelector(c).addEventListener('click', closeOverlayModal);
+        backdrop
+          .querySelector(c)
+          .addEventListener('click', () =>
+            closeOverlayModal(overlayModalCustomClassName)
+          );
       });
 
       if (afterLoadCallback) {
@@ -681,13 +752,17 @@ export const openOverlayModal = async (
   }
 };
 
-export const closeOverlayModal = () => {
-  const backdrop = document.querySelector('.backdrop');
-  backdrop.classList.add('fade-out');
-  backdrop.firstElementChild.classList.add('fade-out');
-  setTimeout(() => {
-    backdrop.remove();
-  }, 300);
+export const closeOverlayModal = (overlayModalClassName) => {
+  const backdrop = document.querySelector(
+    `.backdrop:has(.${overlayModalClassName})`
+  );
+  if (backdrop) {
+    backdrop.classList.add('fade-out');
+    backdrop.firstElementChild.classList.add('fade-out');
+    setTimeout(() => {
+      backdrop.remove();
+    }, 300);
+  }
 };
 
 export const getLoader = () => {
@@ -758,6 +833,7 @@ export const showConfirmationBox = async (
 ) => {
   const promise = new Promise((res, rej) => {
     openOverlayModal(
+      'confirmation-box',
       ['.confirmation-box-btn-cancel', '.confirmation-box-btn-confirm'],
       () => {
         const confirmationBox = createConfirmationBox(

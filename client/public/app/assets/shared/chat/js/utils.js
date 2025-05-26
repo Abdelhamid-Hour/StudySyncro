@@ -1,11 +1,11 @@
 import { emojiCategories } from './emoji-list.js';
 
 import {
+  clearTooltipWithTimeOut,
   formatHoursMinutes,
+  getDebounceFunc,
   resetTooltip,
   showTooltip,
-  initCloseOverlayListner,
-  openOverlay,
 } from '../../../global/js/utils.js';
 
 import {
@@ -30,6 +30,8 @@ let inputMessage,
   emojiButton,
   emojiList,
   emojiesSearch,
+  dragLeaveTimer,
+  chatContainer,
   emojiesSearchResultContainer;
 
 const initDOMVariables = () => {
@@ -43,6 +45,7 @@ const initDOMVariables = () => {
   emojiList = document.querySelector('.emoji-list');
   emojiesSearch = document.querySelector('.emojis-search-input');
   emojiesSearchResultContainer = document.querySelector('#search-result');
+  chatContainer = document.querySelector('.chat-container');
 };
 
 const initializeEmojiPicker = (emojiList) => {
@@ -566,7 +569,10 @@ const handleChatInput = async () => {
 const handleDragEnter = (e) => {
   // ? relatedTarget will reference the element that the drag operation
   // ? is leaving as it enters a new element.
-  if (e.relatedTarget === null) {
+  if (dragLeaveTimer) {
+    clearTimeout(dragLeaveTimer);
+  }
+  if (!document.querySelector('.drop-area')) {
     const dropArea = document.createElement('div');
     dropArea.className = 'drop-area';
     const icon = document.createElement('i');
@@ -575,24 +581,25 @@ const handleDragEnter = (e) => {
     text.textContent = 'Drop files here to add to your message.';
     dropArea.append(icon, text);
     inputChatContainer.append(dropArea);
-    setTimeout(() => {
-      inputChatContainer.classList.add('drop-start');
-    }, 0);
   }
+  setTimeout(() => {
+    inputChatContainer.classList.add('drop-start');
+  }, 0);
 };
 
-const showEnterTooltip = throttling(3000, function () {
-  this.dataset.tooltip = 'To add a new line, press Ctrl + Enter';
-  this.classList.add('has-tooltip');
-  showTooltip(inputMessage, globalTooltip);
-  setTimeout(() => {
-    delete this.dataset.tooltip;
-    this.classList.remove('has-tooltip');
-    resetTooltip(globalTooltip);
-  }, 2000);
-});
+const showEnterTooltip = (target) => {
+  showTooltip(target, globalTooltip, 'To add a new line, press Ctrl + Enter');
+  clearTooltipWithTimeOut(target);
+};
 
-const handleEnterKeyWithTooltip = function () {
+export const initAndDiplayErrorTooltip = (inputContainer, message) => {
+  inputContainer.querySelector('.input, input')?.focus();
+  inputContainer.classList.add('error-input', 'error-animation');
+  showTooltip(inputContainer, globalTooltip, message, true);
+  clearTooltipWithTimeOut(inputContainer);
+};
+
+export const handleEnterKeyWithTooltip = (function () {
   let clickCount = 0;
   return function (e) {
     if (e.key === 'Enter' && !e.ctrlKey) {
@@ -608,11 +615,11 @@ const handleEnterKeyWithTooltip = function () {
     }
 
     if (clickCount >= 5) {
-      showEnterTooltip.call(this);
+      showEnterTooltip(inputMessage);
       clickCount = 0;
     }
   };
-};
+})();
 
 const togglePlay = (playButton, audio) => {
   const icon = playButton.querySelector('i');
@@ -728,7 +735,7 @@ const handleDrop = (e) => {
   e.preventDefault();
   inputChatContainer.classList.remove('drop-start');
   setTimeout(() => {
-    document.querySelector('.drop-area').remove();
+    document.querySelector('.drop-area')?.remove();
   }, 300);
   const files = e.dataTransfer.files;
   if (files.length) {
@@ -737,27 +744,28 @@ const handleDrop = (e) => {
 };
 
 const handleDragLeave = (e) => {
-  if (e.relatedTarget === null) {
+  console.log('e.relatedTarget', e.relatedTarget);
+
+  if (e.relatedTarget?.matches(':not(.chat-container *)')) {
     inputChatContainer.classList.remove('drop-start');
-    setTimeout(() => {
-      document.querySelector('.drop-area').remove();
+    dragLeaveTimer = setTimeout(() => {
+      document.querySelector('.drop-area')?.remove();
     }, 300);
   }
 };
 
 export const iniChatMessageInput = () => {
-
   initDOMVariables();
 
-  document.addEventListener('dragenter', handleDragEnter);
+  chatContainer.addEventListener('dragenter', handleDragEnter);
 
-  document.addEventListener('dragleave', handleDragLeave);
+  chatContainer.addEventListener('dragleave', handleDragLeave);
 
   document.addEventListener('drop', handleDrop);
 
   sendBtn.addEventListener('click', handleChatInput);
 
-  inputMessage.addEventListener('keydown', handleEnterKeyWithTooltip());
+  inputMessage.addEventListener('keydown', handleEnterKeyWithTooltip);
 
   fileInput.addEventListener('change', () => {
     if (fileInput.files.length) {
@@ -789,5 +797,4 @@ export const iniChatMessageInput = () => {
   emojiesSearch.addEventListener('input', (e) => {
     handleEmojisSearch(e, emojiesSearchResultContainer);
   });
-  
 };

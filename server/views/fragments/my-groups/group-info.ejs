@@ -194,9 +194,9 @@
     </div>
   </div>
   <div class="action-btns">
-    <button type="button" class="red-btn remove-group-btn">
+    <button type="button" class="red-btn<%= isAdmin ? ' remove' : ' leave'  _%>-group-btn">
       <i class="bi bi-trash3"></i>
-      <% if (isAdmin) { %> Remove Group <% } else { %> Leave Group <% } %>
+      <%= isAdmin ? 'Remove ' : 'Leave '  _%> Group
     </button>
     <% if (isAdmin) { %>
     <button type="button" class="demandes-btn">

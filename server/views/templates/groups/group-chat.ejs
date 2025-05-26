@@ -5,8 +5,11 @@
         <span class="badge simple-badge"></span>
       </h2>
     </aside>
-    <div data-group-id="<%= groupId %>" data-group-name="<%= groupName %>" class="left-side-bar-content">
-    </div>
+    <div
+      data-group-id="<%= groupId %>"
+      data-group-name="<%= groupName %>"
+      class="left-side-bar-content"
+    ></div>
   </aside>
   <div class="chat-container">
     <div class="top-bar">
@@ -19,15 +22,29 @@
         <i class="bi bi-info-circle"></i>
       </button>
       <h2 class="title">Real Time Chat</h2>
+      <% if (sessionActive) { %>
       <span class="session-active-badge badge green-badge">Active Session</span>
+      <% } else if(isAdmin) { %>
+      <button type="button" class="small-btn create-session-btn">
+        <i class="bi bi-plus-circle"></i>
+        Create Session
+      </button>
+      <% } %>
+
       <div>
-        <button type="button" class="exclude-btn group-chat-menu-btn">
+        <button
+          type="button"
+          class="exclude-btn group-chat-menu-btn open-drop-down-btn"
+        >
           <i class="bi bi-three-dots-vertical"></i>
         </button>
         <div class="drop-down-menu group-chat-menu-btn-drop-down-menu overlay">
           <div class="drop-down-group">
-            <div class="drop-down-group-label">Group Actions<hr class="separator" /></div>
-            
+            <div class="drop-down-group-label">
+              Group Actions
+              <hr class="separator" />
+            </div>
+
             <button
               type="button"
               class="drop-down-item exclude-btn group-info-menu-btn"
@@ -38,53 +55,38 @@
             <button
               type="button"
               class="drop-down-item exclude-btn quizzes-list-menu-btn"
-              
             >
               <i class="bi bi-clipboard-check"></i>
               View Quizzes
             </button>
             <% if (sessionActive) { %>
-              <button
-                type="button"
-                class="drop-down-item exclude-btn session-info-menu-btn"
-              >
-                <i class="bi bi-clock-history"></i>
-                View Session Info
-              </button>
-            <% } else if (isAdmin) { %>
-              <button
-                type="button"
-                class="drop-down-item exclude-btn create-session-menu-btn"
-                
-              >
-                <i class="bi bi-plus-circle"></i>
-                Create Session
-              </button>
+            <button
+              type="button"
+              class="drop-down-item exclude-btn session-info-menu-btn"
+            >
+              <i class="bi bi-clock-history"></i>
+              View Session Info
+            </button>
+            <% } %> <% if (isAdmin) { %>
+            <button type="button" class="drop-down-item exclude-btn">
+              <i class="bi bi-person-plus"></i>
+              Invite Members
+            </button>
+            <button
+              type="button"
+              class="drop-down-item manage-demanes-menu-btn exclude-btn"
+            >
+              <i class="bi bi-list-check"></i>
+              Manage Demandes
+            </button>
             <% } %>
-            <% if (isAdmin) { %>
-              <button
-                type="button"
-                class="drop-down-item exclude-btn"
-                
-              >
-                <i class="bi bi-person-plus"></i>
-                Invite Members
-              </button>
-                <button
-                type="button"
-                class="drop-down-item manage-demanes-menu-btn exclude-btn"
-                >
-                <i class="bi bi-list-check"></i>
-                Manage Demandes
-                </button>
-              <% } %>
-              <button
-                type="button"
-                class="drop-down-item exclude-btn members-list-menu-btn"
-              >
-                <i class="bi bi-people"></i>
-                <%= isAdmin ? 'Manage' : 'View' %> Members
-              </button>
+            <button
+              type="button"
+              class="drop-down-item exclude-btn members-list-menu-btn"
+            >
+              <i class="bi bi-people"></i>
+              <%= isAdmin ? 'Manage' : 'View' %> Members
+            </button>
             <button
               type="button"
               class="drop-down-item exclude-btn copy-uid-menu-btn"
@@ -93,21 +95,21 @@
               Copy Group UID
             </button>
             <% if (isAdmin) { %>
-              <button
-                type="button"
-                class="drop-down-item exclude-btn red-btn remove-group-menu-btn"
-              >
-                <i class="bi bi-trash3"></i>
-                Remove Group
-              </button>
+            <button
+              type="button"
+              class="drop-down-item exclude-btn red-btn remove-group-menu-btn"
+            >
+              <i class="bi bi-trash3"></i>
+              Remove Group
+            </button>
             <% } else { %>
-              <button
-                type="button"
-                class="drop-down-item exclude-btn red-btn leave-group-menu-btn"
-              >
-                <i class="bi bi-box-arrow-left"></i>
-                Leave Group
-              </button>
+            <button
+              type="button"
+              class="drop-down-item exclude-btn red-btn leave-group-menu-btn"
+            >
+              <i class="bi bi-box-arrow-left"></i>
+              Leave Group
+            </button>
             <% } %>
           </div>
         </div>
@@ -123,7 +125,10 @@
           <i class="bi bi-paperclip"></i>
         </label>
         <div class="emoji-picker">
-          <button type="button" class="exclude-btn should-fill emoji-button">
+          <button
+            type="button"
+            class="exclude-btn should-fill emoji-button open-drop-down-btn"
+          >
             <i class="bi bi-emoji-smile"></i>
           </button>
           <div class="emoji-list overlay">

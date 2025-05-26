@@ -1,4 +1,10 @@
-const { Task, Quiz, formatHoursMinutes, millisecondsToHMFormat, pathNames } = require("./global");
+const {
+  Task,
+  Quiz,
+  formatHoursMinutes,
+  millisecondsToHMFormat,
+  pathNames,
+} = require('./global');
 
 const getCurrentSession = (userId) => {
   // ! firestore query for if the user is join to any session
@@ -44,7 +50,7 @@ const getCurrentSession = (userId) => {
     groupName: 'Frontend Developers',
     joinedCount: 25,
     tasks: tasks,
-    isAdmin: false,
+    isAdmin: true,
     quiz: tasks.filter((task) => task instanceof Quiz)[0],
     formatHoursMinutes: formatHoursMinutes,
     millisecondsToHMFormat: millisecondsToHMFormat,

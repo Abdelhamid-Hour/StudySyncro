@@ -25,6 +25,16 @@ textarea {
   animation: error-input 150ms linear 2;
 }
 
+.error-input {
+  --inputs-border-color: var(--error-color);
+  --inputs-icons-background-color: var(--error-color);
+  --inputs-icons-color: #f2f2f2;
+  --inputs-icons-focus-bc: var(--error-color);
+  --inputs-outline-color: var(--error-background-color);
+  --inputs-focus-border-color: var(--error-color);
+  --inputs-transition-label-color: var(--error-color);
+}
+
 @keyframes error-input {
   25% {
     translate: 1%;

@@ -9,13 +9,14 @@ export const handleSessionDetailsBtn = async (e) => {
   const viewDetailsBtn = e.target.closest('.view-details');
   if (viewDetailsBtn) {
     openOverlayModal(
-      ['.close-session-overlay'],
+      'session-view-overlay',
+      ['.close-session-view-overlay'],
       async () => {
         const sessionId = viewDetailsBtn.getAttribute('data-session-id');
         const { overlay } = await fetchData('/session-details/' + sessionId);
         return overlay;
       },
-      () => handletTasksListners()
+      () => handletTasksListners('session-tasks')
     );
   }
 };

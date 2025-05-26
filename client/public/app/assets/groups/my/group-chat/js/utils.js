@@ -3,24 +3,44 @@ import {
   showMessageBlock,
 } from '../../../../../../main_assets/js/utils.js';
 import {
+  DESCRIPTION_MAX_LENGTH,
+  DESCRIPTION_MIN_LENGTH,
   globalTooltip,
   hoverTooltip,
+  MAX_MEMBERS,
+  MIN_MEMBERS,
+  NAME_TITLE_MAX_LENGTH,
+  NAME_TITLE_MIN_LENGTH,
+  SESSION_MAX_DURATION,
+  SESSION_MIN_DURATION,
 } from '../../../../global/js/dom-variables.js';
 import {
   getLoader,
-  showTooltip,
   resetTooltip,
-  getDebounceFunc,
   showConfirmationBox,
+  openOverlayModal,
+  millisecondsToHMFormat,
+  showErrorTooltip,
 } from '../../../../global/js/utils.js';
 import {
-  groupLeftSideBar,
   levelValues,
-  showInfoBtn,
-  subjectMenuObject,
-  groupInfoElementsMap,
-  maxMembersLimit,
   visibilityValues,
+} from '../../../../shared/group-and-session-forms/js/dom-variables.js';
+import {
+  countCharsTextarea,
+  handleFormSubmit,
+  setUpSubjectSelectMenu,
+  setUpSwitchBtn,
+} from '../../../../shared/group-and-session-forms/js/utils.js';
+import { initAndDiplayErrorTooltip } from '../../../../shared/chat/js/utils.js';
+import {
+  handletTasksListners,
+  Task,
+} from '../../../../shared/tasks/js/utils.js';
+import {
+  groupLeftSideBar,
+  showInfoBtn,
+  groupInfoElementsMap,
   groupLeftSideBarContent,
   groupLeftSideBarTitle,
 } from './dom-variables.js';
@@ -35,194 +55,23 @@ export const handleLeavingGroup = async () => {
   );
 };
 
+export const handleGroupInfo = async () => {
+  await openGroupLeftSideBar('/group-info');
+  const removeGroupBtn = document.querySelector('.remove-group-btn');
+  if (removeGroupBtn) {
+    removeGroupBtn.addEventListener('click', handleRemoveGroup);
+  } else {
+    document
+      .querySelector('.leave-group-btn')
+      .addEventListener('click', handleLeavingGroup);
+  }
+};
+
 export const handleShowInfoBtnClick = async () => {
   if (groupLeftSideBar.classList.contains('close')) {
-    await openGroupLeftSideBar('/group-info');
-    setUpRemoveGroupBtn('.remove-group-btn');
+    handleGroupInfo();
   } else {
     closeGroupLeftSideBar();
-  }
-};
-
-export const checkSubject = (subject) => {
-  for (const [, subjects] of Object.entries(subjectMenuObject)) {
-    if (subjects.includes(subject)) {
-      return true;
-    }
-  }
-  return false;
-};
-
-export const setUpSubjectSelectMenu = (container, selectMenuClassName) => {
-  const selectMenu = container.querySelector(`.${selectMenuClassName}`);
-  if (!selectMenu) return;
-
-  selectMenu.innerHTML = createSubjectSelectMenu();
-  const searchInput = selectMenu.querySelector('.select-search input');
-  const selectButtonValue = container.querySelector('.subject-value');
-  const otherSubjectInput = selectMenu.querySelector('.other-subject-input');
-
-  // Debounced search input handler
-  searchInput.addEventListener('input', (e) => {
-    getDebounceFunc(handleSubjectSearchInput, 200)(e, selectMenu);
-  });
-
-  // Handle subject selection from the list
-  selectMenu.addEventListener('click', (e) =>
-    HandleSubjectSelection(e, selectButtonValue)
-  );
-
-  // Handle custom subject input
-  otherSubjectInput.addEventListener('keydown', (e) =>
-    handleOtherSubjectInputKeydown(e, selectButtonValue, selectMenu)
-  );
-};
-
-const HandleSubjectSelection = (e, selectButtonValue) => {
-  const selectedItem = e.target.closest('.select-item');
-  if (!selectedItem) return;
-
-  if (!selectButtonValue.style.color) {
-    selectButtonValue.style.color = 'var(--primary-text-color)';
-  }
-
-  const selectedValue = selectedItem.dataset.value;
-  if (checkSubject(selectedValue)) {
-    setSubjectValue(selectButtonValue, selectedValue);
-  } else {
-    showMessageBlock(
-      'Please select a valid subject from the list or specify a new one.',
-      true
-    );
-  }
-};
-
-export const createSubjectSelectMenu = () => {
-  let html = `
-    <div class="select-search">
-      <input id="select-search" type="search" />
-    </div>
-  `;
-
-  Object.entries(subjectMenuObject).forEach(
-    ([group, subjects], groupIdx, arr) => {
-      html += createSubjectSelectMenuGroup(group, subjects);
-
-      // Add separator between groups except after the last group
-      if (groupIdx < arr.length - 1) {
-        html += `<hr class="separator">`;
-      }
-    }
-  );
-
-  return html;
-};
-
-const createSubjectSelectMenuGroup = (group, subjects) => {
-  let groupHtml = `<div class="select-group drop-down-group">`;
-  groupHtml += `<div class="select-group-label drop-down-group-label">${group}</div>`;
-  groupHtml += `<hr class="separator">`;
-
-  if (group === 'Other') {
-    groupHtml += `<input type="text" id="other-subject-input" class="other-subject-input" placeholder="${subjects[0]}" />`;
-  } else {
-    groupHtml += subjects
-      .map(
-        (subject) =>
-          `<div class="select-item drop-down-item" data-value="${subject}">${subject}</div>`
-      )
-      .join('');
-  }
-
-  groupHtml += `</div>`;
-  return groupHtml;
-};
-
-export const handleOtherSubjectInputKeydown = (
-  e,
-  selectButtonValue,
-  selectMenu
-) => {
-  if (e.key === 'Enter') {
-    const selectedValue = toCapitalizeFirstLetter(e.currentTarget.value.trim());
-    if (selectedValue.length > 1 && selectedValue.length <= 50) {
-      console.log('heeee');
-
-      setSubjectValue(selectButtonValue, selectedValue);
-      clearOtherSubjectInput(e.currentTarget, selectMenu);
-      removeErrorMessage();
-    } else {
-      showSubjectInputError(e.currentTarget);
-    }
-  }
-};
-
-const setSubjectValue = (selectButtonValue, value) => {
-  selectButtonValue.textContent = value;
-  if (selectButtonValue.nextElementSibling.matches('input[type="hidden"]')) {
-    selectButtonValue.nextElementSibling.value = value;
-  } else {
-    selectButtonValue.dataset.value = value;
-  }
-};
-
-const clearOtherSubjectInput = (input, selectMenu) => {
-  input.value = '';
-  selectMenu.classList.remove('open-overlay');
-};
-
-const removeErrorMessage = () => {
-  const errorMessage = document.querySelector('.error-message');
-  if (errorMessage) {
-    errorMessage.remove();
-  }
-};
-
-const showSubjectInputError = (input) => {
-  let errorMessage = document.querySelector('.error-message');
-  if (!errorMessage) {
-    errorMessage = document.createElement('p');
-    errorMessage.className = 'error-message';
-    errorMessage.textContent =
-      'Please enter a valid subject name (2-50 characters).';
-    input.before(errorMessage);
-    input.scrollIntoView({ block: 'nearest' });
-  }
-};
-
-export const toCapitalizeFirstLetter = (str) => {
-  return str
-    .trim()
-    .split(' ')
-    .map((word) => {
-      return word.slice(0, 1).toUpperCase() + word.slice(1);
-    })
-    .join(' ');
-};
-
-export const handleSubjectSearchInput = (e, selectMenu) => {
-  const searchValue = e.target.value.trim().toLowerCase();
-  const items = document.querySelectorAll(
-    '.group-subject-select-menu .select-item'
-  );
-  items.forEach((item) => {
-    const itemText = item.textContent.toLowerCase();
-    if (itemText.includes(searchValue)) {
-      // Highlight the matched text
-      const regex = new RegExp(`(${searchValue})`, 'gi');
-      item.innerHTML = item.textContent.replace(regex, '<mark>$1</mark>');
-
-      // Add margin so the item is not hidden behind the search bar
-      const searchRect = e.target.getBoundingClientRect();
-      const margin = searchRect.height + 8; // 8px extra margin
-      selectMenu.scrollTop = item.offsetTop - margin;
-      return;
-    } else {
-      item.innerHTML = item.textContent;
-    }
-  });
-  if (!searchValue) {
-    selectMenu.scrollTo(0, 0);
   }
 };
 
@@ -261,92 +110,712 @@ export const openGroupLeftSideBar = async (route) => {
   }
 };
 
+const getSessionCreationOverlay = () => {
+  const sessionOverlay = `
+        <div class="create-session-overlay overlay-model">
+        <header>
+          <h2>Create New Session</h2>
+          <button type="button" class="exclude-btn close-session-creation-overlay">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </header>
+        <div class="progress">
+          <div class="progress-indecator-container">
+            <div class="progress-indecator"></div>
+          </div>
+          <div class="progress-text">
+            <label class="progress-start-text">
+              <input type="checkbox" id="progress-start-text" />
+              Informations
+            </label>
+            <label class="progress-end-text">
+              <input type="checkbox" id="progress-end-text" />
+              Tasks
+            </label>
+          </div>
+        </div>
+        ${getSessionForm()}
+      </div>
+  `;
+
+  return sessionOverlay;
+};
+const getSessionForm = (name, description, quiz) => {
+  let quizTitle = '';
+  let quizId = '';
+  if (quiz) {
+    // If quiz is provided, destructure its properties safely
+    quizTitle = quiz.quiz?.title || '';
+    quizId = quiz.id || '';
+  }
+  const wrapper = document.createElement('div');
+  wrapper.className = 'create-session-form';
+  wrapper.innerHTML = `
+    <form novalidate>
+      <div class="field-container session-name-field">
+        <div class="field-icon-container">
+          <span class="icon-box">
+            <i class="bi bi-clock-history"></i>
+            <i class="bi bi-info-circle"></i>
+          </span>
+        </div>
+        <input
+          type="text"
+          required
+          id="session-name"
+          name="session-name"
+          minlength="${NAME_TITLE_MIN_LENGTH}"
+          maxlength="${NAME_TITLE_MAX_LENGTH}"
+          class="input"
+          placeholder="Name"
+        />
+      </div>
+
+      <div class="field-container session-description-field">
+        <div class="field-icon-container">
+          <span class="icon-box">
+            <i class="bi bi-clock-history"></i>
+            <i class="bi bi-info-circle"></i>
+          </span>
+        </div>
+        <textarea
+          required
+          id="session-description"
+          name="session-description"
+          class="input"
+          placeholder="Description"
+          maxlength="${DESCRIPTION_MAX_LENGTH}"
+          minlength="${DESCRIPTION_MIN_LENGTH}"
+        ></textarea>
+        <span class="chars-limit">0/${DESCRIPTION_MAX_LENGTH}</span>
+      </div>
+
+      <div class="field-container session-quiz-field">
+        <div class="field-icon-container">
+          <i class="bi bi-clipboard-check"></i>
+        </div>
+        <div class="select-trigger input">
+          <button type="button" class="exclude-btn open-drop-down-btn">
+            <span class="quiz-value">Quiz Title (Optional)</span>
+            <input type="hidden" name="session-quiz" value="" />
+            <input type="hidden" name="session-quiz-id" value="" />
+            <i class="bi bi-chevron-down"></i>
+          </button>
+          <div class="select-menu session-quiz-select-menu drop-down-menu overlay">
+            <div class="select-search">
+              <input id="select-search" type="search">
+            </div>
+            <div class="select-group drop-down-group">
+              <div class="select-group-label drop-down-group-label">Fundamental Sciences</div>
+              <hr class="separator">
+              <div class="select-item drop-down-item" data-value="Mathematics">Mathematics</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="blue-btn next-btn">Next</button>
+    </form>
+  `;
+
+  // Set values using textContent
+  wrapper.querySelector('#session-name').setAttribute('value', name || '');
+
+  wrapper.querySelector('#session-description').textContent = description || '';
+
+  wrapper.querySelector('.chars-limit').textContent = `${
+    description?.length || 0
+  }/${DESCRIPTION_MAX_LENGTH}`;
+
+  const quizValueEl = wrapper.querySelector('.quiz-value');
+  quizValueEl.textContent = quizTitle ? quizTitle : 'Quiz Title (Optional)';
+  wrapper
+    .querySelector('input[name="session-quiz"]')
+    .setAttribute('value', quizId || '');
+
+  return wrapper.outerHTML;
+};
+
+export const handleSessionCreateClick = () => {
+  const sessionStore = {
+    sessionData: {
+      sessionName: '',
+      sessionDescription: '',
+      sessionQuiz: null,
+      tasks: [],
+    },
+    taskToEdit: {
+      task: null,
+      index: '',
+      addQuiz: false,
+    },
+  };
+
+  openOverlayModal(
+    'create-session-overlay',
+    ['.close-session-creation-overlay'],
+    getSessionCreationOverlay,
+    (backdropElement) => setUpSessionForm(backdropElement, sessionStore)
+  );
+};
+
+const setUpSwapBtn = (btnClassName, targetClassName, wrapper, sessionStore) => {
+  wrapper.querySelector(`.${btnClassName}`)?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (btnClassName === 'back-btn') {
+      // Reset taskToEdit when going back
+      sessionStore.taskToEdit = null;
+    }
+    swapSessionOverlayContent(targetClassName, wrapper, sessionStore);
+  });
+};
+
+// task form
+const getTaskButtonLabel = (task, addQuiz) => {
+  if (addQuiz) {
+    return 'Add Quiz';
+  }
+  if (task?.isQuiz) {
+    return 'Update Quiz';
+  }
+  return task ? 'Update Task' : 'Add Task';
+};
+
+const getTaskForm = (task, addQuiz) => {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'create-task-form';
+  wrapper.innerHTML = `
+    <header class="tasks-header">
+      <h3>${
+        addQuiz
+          ? 'Add Quiz Task Details'
+          : task?.isQuiz
+          ? 'Edit Quiz Task'
+          : task
+          ? 'Edit Task'
+          : 'Create Task'
+      }</h3>
+      ${
+        addQuiz
+          ? ''
+          : `<button type="button" class="gray-btn small-btn cancel-task-creation">
+        Cancel
+      </button>`
+      }
+    </header>
+    <form novalidate id="form">
+      <div class="field-container task-title-field">
+        <div class="field-icon-container">
+          <span class="icon-box">
+            <i class="bi bi-ui-checks"></i>
+            <i class="bi bi-info-circle"></i>
+          </span>
+        </div>
+        <input
+          type="text"
+          required
+          id="task-title"
+          name="task-title"
+          minlength="${NAME_TITLE_MIN_LENGTH}"
+          maxlength="${NAME_TITLE_MAX_LENGTH}"
+          class="input"
+          placeholder="Task Title"
+        />
+      </div>
+
+      <div class="field-container task-description-field">
+        <div class="field-icon-container">
+          <span class="icon-box">
+            <i class="bi bi-ui-checks"></i>
+            <i class="bi bi-info-circle"></i>
+          </span>
+        </div>
+        <textarea
+          required
+          id="task-description"
+          name="task-description"
+          class="input"
+          placeholder="Description"
+          maxlength="${DESCRIPTION_MAX_LENGTH}"
+          minlength="${DESCRIPTION_MIN_LENGTH}"
+        ></textarea>
+        <span class="chars-limit">0/${DESCRIPTION_MAX_LENGTH}</span>
+      </div>
+
+      <div class="dual-container">
+        <div class="field-container task-duration-field">
+          <div class="field-icon-container">
+            <i class="bi bi-clock"></i>
+          </div>
+          <input
+            type="number"
+            required
+            min="1"
+            class="input"
+            id="task-duration"
+            name="task-duration"
+            placeholder="Total Duration (minutes)"
+          />
+        </div>
+        <button type="submit" class="blue-btn add-task-btn">
+          ${
+            addQuiz
+              ? `<i class="bi bi-plus-lg"></i>`
+              : task
+              ? `<i class="bi bi-pencil"></i>`
+              : `<i class="bi bi-plus-lg"></i>`
+          }
+          ${getTaskButtonLabel(task, addQuiz)}
+        </button>
+      </div>
+    </form>
+  `;
+
+  wrapper.querySelector('#task-title').setAttribute('value', task?.title || '');
+  wrapper.querySelector('#task-description').textContent =
+    task?.description || '';
+  wrapper.querySelector('.chars-limit').textContent = `${
+    task?.description?.length || 0
+  }/${DESCRIPTION_MAX_LENGTH}`;
+  wrapper
+    .querySelector('#task-duration')
+    .setAttribute('value', task?.durationInMins || '');
+
+  return wrapper.outerHTML;
+};
+
+const checkTextFieldValidity = (title, description) => {
+  if (!title.value) {
+    showErrorTooltip('Please enter a title', title.closest('.field-container'));
+    return false;
+  } else if (
+    title.value.length < NAME_TITLE_MIN_LENGTH ||
+    title.value.length > NAME_TITLE_MAX_LENGTH
+  ) {
+    showErrorTooltip(
+      `Title should be between ${NAME_TITLE_MIN_LENGTH} and ${NAME_TITLE_MAX_LENGTH} characters`,
+      title.closest('.field-container')
+    );
+    return false;
+  } else {
+    title.closest('.field-container').classList.remove('error-input');
+    resetTooltip(globalTooltip);
+  }
+
+  if (!description.value) {
+    showErrorTooltip(
+      'Please enter a description',
+      description.closest('.field-container')
+    );
+    return false;
+  } else if (
+    description.value.length < DESCRIPTION_MIN_LENGTH ||
+    description.value.length > DESCRIPTION_MAX_LENGTH
+  ) {
+    showErrorTooltip(
+      `Description should be between ${DESCRIPTION_MIN_LENGTH} and ${DESCRIPTION_MAX_LENGTH} characters`,
+      description.closest('.field-container')
+    );
+    return false;
+  } else {
+    description.closest('.field-container').classList.remove('error-input');
+    resetTooltip(globalTooltip);
+  }
+
+  return true;
+};
+
+const checkTaskFormValidity = (form) => {
+  const title = form.querySelector('#task-title');
+  const description = form.querySelector('#task-description');
+  const duration = form.querySelector('#task-duration');
+
+  if (!checkTextFieldValidity(title, description)) {
+    return false;
+  }
+
+  if (
+    !duration.value ||
+    isNaN(duration.value) ||
+    Number(duration.value) < SESSION_MIN_DURATION ||
+    Number(duration.value) > SESSION_MAX_DURATION
+  ) {
+    showErrorTooltip(
+      `Task duration should be a number between ${SESSION_MIN_DURATION} and ${SESSION_MAX_DURATION} minutes`,
+      duration.closest('.field-container')
+    );
+    return false;
+  } else {
+    duration.closest('.field-container').classList.remove('error-input');
+    resetTooltip(globalTooltip);
+  }
+
+  return true;
+};
+
+const createTaskElement = (task, idx) => {
+  const durationStr = millisecondsToHMFormat(task.durationInMins * 60 * 1000);
+
+  const taskContainer = document.createElement('div');
+  taskContainer.className = 'task-wrapper ';
+  taskContainer.dataset.taskId = idx; // Store index as task ID for easy access
+  taskContainer.draggable = true;
+  taskContainer.innerHTML = `
+      <div ${task.isQuiz ? 'data-tooltip="Quiz"' : ''} class="task-box ${
+    task.isQuiz ? 'quiz-task-box has-tooltip' : ''
+  }">
+        <div class="counter">
+          <span></span>
+        </div>
+        <span class="title"></span>
+        <span class="duration"></span>
+        <div class="icons">
+          <button type="button" class="task-menu-btn open-drop-down-btn exclude-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <button
+            type="button"
+            data-tooltip="Show Details"
+            class="task-down-icon exclude-btn should-fill has-tooltip"
+          >
+            <i class="bi bi-caret-down"></i>
+          </button>
+          <div class="task-options drop-down-menu overlay">
+            <button type="button" class="exclude-btn select-item drop-down-item small-btn edit-task-btn">
+              <i class="bi bi-pencil"></i>
+              Edit
+            </button>
+            <button type="button" class="exclude-btn select-item drop-down-item small-btn red-btn remove-task-btn">
+              <i class="bi bi-trash"></i>
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="task-details">
+        <h5>Title:</h5>
+        <p class="task-title"></p>
+        <h5>Details:</h5>
+        <p class="task-desc"></p>
+      </div>
+    `;
+
+  // Set textContent for safety
+  taskContainer.querySelector('.counter span').textContent = String(
+    idx + 1
+  ).padStart(2, '0');
+  taskContainer.querySelector('.title').textContent = task.title || '';
+  taskContainer.querySelector('.duration').textContent = durationStr;
+  taskContainer.querySelector('.task-title').textContent = task.title || '';
+  taskContainer.querySelector('.task-desc').textContent =
+    task.description || '';
+
+  return taskContainer;
+};
+// the tasks list
+const getTasksList = (tasksArray = []) => {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'tasks-list';
+
+  tasksArray.forEach((task, idx) => {
+    wrapper.appendChild(createTaskElement(task, idx));
+  });
+
+  return wrapper;
+};
+
+// innerWrapper for tasks List
+const getTasksListContainer = (
+  tasksArray = []
+) => `<div class="tasks-list-container">
+        <header class="tasks-header">
+          <h3>Tasks List</h3>
+          <div class="btns">
+              <button
+                type="button"
+                data-tooltip="Scroll To Top"
+                class="exclude-btn scroll-to-top has-tooltip">
+                <i class="bi bi-arrow-up-short"></i>
+              </button>
+              <button
+                type="button"
+                data-tooltip="Collapse All"
+                class="exclude-btn collapse-all has-tooltip">
+                <i class="bi bi-arrows-expand"></i>
+              </button>
+          </div>
+          <button type="button" class="small-btn create-task-btn">
+            <i class="bi bi-plus-lg"></i>
+            Add Task
+          </button>
+        </header>
+        ${getTasksList(tasksArray).outerHTML}
+      </div>`;
+
+const setUpSessionForm = (wrapper, sessionStore) => {
+  const sessionData = sessionStore.sessionData;
+  wrapper.querySelector('#progress-end-text').checked = false;
+  wrapper
+    .querySelector('textarea')
+    .addEventListener('input', countCharsTextarea);
+  const form = wrapper.querySelector('form');
+  handleFormSubmit(
+    form,
+    () => checkSessionFormValidity(form),
+    (data) => {
+      sessionData.sessionName = data['session-name'];
+      sessionData.sessionDescription = data['session-description'];
+      data['session-quiz-title'] = 'Quiz Title'; // ? For test
+      data['session-quiz-id'] = '12345'; // ? For test
+      if (
+        data['session-quiz-title'] &&
+        data['session-quiz-id'] &&
+        (data['session-quiz-id'] !== sessionData.sessionQuiz?.id ||
+          !sessionData.sessionQuiz?.quiz.description ||
+          !sessionData.sessionQuiz?.quiz.durationInMins)
+      ) {
+        // Create a new Task instance for the quiz
+        sessionData.sessionQuiz = {
+          quiz: new Task({
+            title: data['session-quiz-title'],
+            description: '',
+            durationInMins: 0,
+            isQuiz: true,
+          }),
+          id: data['session-quiz-id'],
+        };
+
+        // If a quiz already exists, replace it; otherwise, add the new quiz
+        const quizIndex = sessionData.tasks.findIndex((task) => task.isQuiz);
+        if (quizIndex !== -1) {
+          sessionData.tasks[quizIndex] = sessionData.sessionQuiz.quiz;
+        } else {
+          sessionData.tasks.push(sessionData.sessionQuiz.quiz);
+        }
+        // Set the task to edit for the quiz
+        sessionStore.taskToEdit = {
+          task: sessionData.sessionQuiz.quiz,
+          index: quizIndex !== -1 ? quizIndex : 0,
+          addQuiz: true,
+        };
+
+        wrapper.querySelector('.create-session-form').outerHTML =
+          getTasksContainer();
+        wrapper.querySelector('#progress-end-text').checked = true;
+        setUpSwapBtn('back-btn', 'create-session-form', wrapper, sessionStore);
+        // Swap to the task creation form with the quiz data to add desc and duration
+        swapSessionOverlayContent('create-task-form', wrapper, sessionStore);
+        return;
+      } else if (!data['session-quiz-title'] && !data['session-quiz-id']) {
+        // If the quiz is not selected, just set the sessionQuiz to null
+        sessionData.sessionQuiz = null;
+      }
+
+      swapSessionOverlayContent('create-task-container', wrapper, sessionStore);
+    }
+  );
+};
+
+const checkSessionFormValidity = (form) => {
+  // get inputs
+  const name = form.querySelector('#session-name');
+  const description = form.querySelector('#session-description');
+  const quiz = form.querySelector('input[name="session-quiz"]');
+  const quizValue = form.querySelector('.quiz-value');
+
+  // check name and description
+  if (!checkTextFieldValidity(name, description)) {
+    return false;
+  }
+  return true;
+};
+
+const setUpTaskContainer = (wrapper, sessionStore) => {
+  wrapper.querySelector('#progress-end-text').checked = true;
+  setUpSwapBtn('back-btn', 'create-session-form', wrapper, sessionStore);
+  setUpTasksList(wrapper, sessionStore);
+};
+
+const setUpTasksList = (wrapper, sessionStore) => {
+  const sessionData = sessionStore.sessionData;
+  setUpSwapBtn('create-task-btn', 'create-task-form', wrapper, sessionStore);
+  const tasksList = wrapper.querySelector('.tasks-list');
+  tasksList.addEventListener('click', async (e) => {
+    const editBtn = e.target.closest('.edit-task-btn');
+    const removeBtn = e.target.closest('.remove-task-btn');
+    if (editBtn) {
+      const taskId = editBtn.closest('.task-wrapper ').dataset.taskId;
+      sessionStore.taskToEdit = {
+        task: sessionData.tasks[taskId],
+        index: taskId,
+      };
+      swapSessionOverlayContent('create-task-form', wrapper, sessionStore);
+    } else if (removeBtn) {
+      const taskId = removeBtn.closest('.task-wrapper ').dataset.taskId;
+      const isQuizTask = sessionData.tasks[taskId].isQuiz;
+      if (isQuizTask) {
+        const res = await showConfirmationBox(
+          'exclamation',
+          'Remove Quiz',
+          'Are you sure you want to remove the quiz?',
+          'Cancel',
+          'Remove Quiz'
+        );
+        if (res) {
+          sessionData.sessionQuiz = null; // Remove the quiz from session data
+          sessionData.tasks.splice(taskId, 1);
+        } else {
+          return; // If user cancels, do nothing
+        }
+      } else {
+        sessionData.tasks.splice(taskId, 1);
+      }
+      tasksList.innerHTML = getTasksList(sessionData.tasks).innerHTML;
+    }
+  });
+  handletTasksListners('tasks-list-container');
+};
+// wrapper of the tasks swap
+const getTasksContainer = (
+  tasksArray = []
+) => `<div class="create-task-container">
+        ${getTasksListContainer(tasksArray)}
+        <div class="buttons">
+          <button type="button" class="grey-btn back-btn gray-btn">
+            Back
+          </button>
+          <button form="" type="submit" class="blue-btn finish-btn">
+            Finish
+          </button>
+        </div>
+      </div>`;
+
+// Helper to handle cancel task creation
+const handleCancelTaskCreation = (wrapper, sessionStore) => {
+  setUpSwapBtn(
+    'cancel-task-creation',
+    'tasks-list-container',
+    wrapper,
+    sessionStore
+  );
+  wrapper
+    .querySelector('.cancel-task-creation')
+    ?.addEventListener('click', () => {
+      sessionStore.taskToEdit = null; // Reset after editing
+    });
+};
+
+const updateTask = (sessionStore, data) => {
+  const taskIndex = sessionStore.taskToEdit.index;
+  sessionStore.sessionData.tasks[taskIndex] = new Task({
+    title: data['task-title'],
+    description: data['task-description'],
+    durationInMins: data['task-duration'],
+    isQuiz: sessionStore.taskToEdit.task.isQuiz,
+  });
+  if (sessionStore.taskToEdit.addQuiz) {
+    // If the task is a quiz, update the sessionQuiz as well
+    sessionStore.sessionData.sessionQuiz.quiz =
+      sessionStore.sessionData.tasks[taskIndex];
+  }
+  sessionStore.taskToEdit = null;
+};
+
+const addTask = (sessionData, data) => {
+  const task = new Task({
+    title: data['task-title'],
+    description: data['task-description'],
+    durationInMins: data['task-duration'],
+    isQuiz: false,
+  });
+  sessionData.tasks.push(task);
+};
+
+// Helper to handle form submission for task form
+const handleTaskFormSubmission = (form, wrapper, sessionStore) => {
+  handleFormSubmit(
+    form,
+    () => checkTaskFormValidity(form),
+    (data) => {
+      if (sessionStore.taskToEdit) {
+        updateTask(sessionStore, data);
+      } else {
+        addTask(sessionStore.sessionData, data);
+      }
+      swapSessionOverlayContent('tasks-list-container', wrapper, sessionStore);
+    }
+  );
+};
+
+const setUpTaskForm = (wrapper, sessionStore) => {
+  handleCancelTaskCreation(wrapper, sessionStore);
+  wrapper
+    .querySelector('textarea')
+    .addEventListener('input', countCharsTextarea);
+  const form = wrapper.querySelector('form');
+  handleTaskFormSubmission(form, wrapper, sessionStore);
+};
+const configs = {
+  'create-session-form': {
+    getHtml: (sessionStore) =>
+      getSessionForm(
+        sessionStore.sessionData.sessionName,
+        sessionStore.sessionData.sessionDescription,
+        sessionStore.sessionData.sessionQuiz
+      ),
+    replaceClass: 'create-task-container',
+    setup: (wrapper, sessionStore) => setUpSessionForm(wrapper, sessionStore),
+  },
+  'create-task-container': {
+    getHtml: (sessionStore) =>
+      getTasksContainer(sessionStore.sessionData.tasks),
+    replaceClass: 'create-session-form',
+    setup: (wrapper, sessionStore) => setUpTaskContainer(wrapper, sessionStore),
+  },
+  'tasks-list-container': {
+    getHtml: (sessionStore) =>
+      getTasksListContainer(sessionStore.sessionData.tasks),
+    replaceClass: 'create-task-form',
+    setup: (wrapper, sessionStore) => setUpTasksList(wrapper, sessionStore),
+  },
+  'create-task-form': {
+    getHtml: (sessionStore) =>
+      getTaskForm(
+        sessionStore.taskToEdit?.task,
+        sessionStore.taskToEdit?.addQuiz
+      ),
+    replaceClass: 'tasks-list-container',
+    setup: (wrapper, sessionStore) => setUpTaskForm(wrapper, sessionStore),
+  },
+};
+const swapSessionOverlayContent = (targetClassName, wrapper, sessionStore) => {
+  const config = configs[targetClassName];
+  if (!config) {
+    throw new Error(
+      `swapSessionOverlayContent: Unknown class name "${targetClassName}"`
+    );
+  }
+
+  const oldEl = wrapper.querySelector(`.${config.replaceClass}`);
+  if (!oldEl) {
+    console.warn(`Element to replace ".${config.replaceClass}" not found`);
+    return;
+  }
+
+  // Swap out the HTML
+  oldEl.outerHTML = config.getHtml(sessionStore);
+  // Run any additional setup (event hooks, button wiring, etc.)
+  config.setup(wrapper, sessionStore);
+};
+
 export const closeGroupLeftSideBar = () => {
   groupLeftSideBar.classList.add('close');
   showInfoBtn
     .querySelector('i')
     .classList.replace('bi-x-circle', 'bi-info-circle');
   showInfoBtn.setAttribute('data-tooltip', 'Show group info');
-};
-
-const createShowInSearchLabel = () => {
-  const showInSearchLabel = document.createElement('label');
-  showInSearchLabel.className = 'show-in-search-label container';
-  showInSearchLabel.innerHTML = `
-              <input type="checkbox" id="show-in-search">
-                <svg viewBox="0 0 64 64" height="2em" width="2em">
-                <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
-              </svg>
-              Show in Search Results
-            `;
-  return showInSearchLabel;
-};
-
-export const setUpSwitchBtn = (wrapper) => {
-  const btn = wrapper.querySelector('.switch-btn');
-  if (btn) {
-    const validValues = wrapper.querySelector('.visibility-input')
-      ? visibilityValues
-      : levelValues;
-    const valueElement = wrapper.querySelector('.input');
-
-    const updateTooltip = (nextIndex) => {
-      const nextValue = validValues[nextIndex];
-      btn.setAttribute('data-tooltip', `Switch to ${nextValue}`);
-      hoverTooltip.textContent = `Switch to ${nextValue}`;
-    };
-
-    // Set initial tooltip
-    const currentValue = valueElement.nextElementSibling?.matches(
-      'input[type="hidden"]'
-    )
-      ? valueElement.nextElementSibling.value
-      : valueElement.dataset.value;
-    const currentIndex = validValues.indexOf(currentValue);
-    if (currentIndex !== -1) {
-      updateTooltip((currentIndex + 1) % validValues.length);
-    } else {
-      console.error('Invalid value:', currentValue);
-    }
-
-    const cycleRadioSelection = () => {
-      const currentValue = valueElement.nextElementSibling?.matches(
-        'input[type="hidden"]'
-      )
-        ? valueElement.nextElementSibling.value
-        : valueElement.dataset.value;
-      const checkedIndex = validValues.indexOf(currentValue);
-
-      if (checkedIndex !== -1) {
-        const newIndex = (checkedIndex + 1) % validValues.length;
-        valueElement.textContent = validValues[newIndex];
-        if (wrapper.querySelector('.visibility-input')) {
-          if (validValues[newIndex] === 'Private') {
-            // Create the label element for "Show in Search Results"
-            const showInSearchLabel = createShowInSearchLabel();
-            wrapper.appendChild(showInSearchLabel);
-          } else {
-            const showInSearchLabel = wrapper.querySelector(
-              '.show-in-search-label'
-            );
-            if (showInSearchLabel) {
-              showInSearchLabel.remove();
-            }
-          }
-        }
-        if (valueElement.nextElementSibling?.matches('input[type="hidden"]')) {
-          valueElement.nextElementSibling.value = validValues[newIndex];
-        } else {
-          valueElement.dataset.value = validValues[newIndex];
-        }
-        updateTooltip((newIndex + 1) % validValues.length);
-      } else {
-        console.error('Invalid value:', currentValue);
-      }
-    };
-
-    btn.addEventListener('click', cycleRadioSelection);
-  }
 };
 
 const dashedToCamelCase = (value) => {
@@ -361,9 +830,7 @@ const swapMode = (infoBox, modeFuncName, updatedValue, showInSearchValue) => {
     ? updatedValue
     : groupInfo[dashedToCamelCase(editBoxClass.split('-info-box')[0])];
   const showInSearchInput =
-    showInSearchValue !== null
-      ? showInSearchValue
-      : null
+    showInSearchValue !== null ? showInSearchValue : null;
   const infoBoxClone = infoBox.cloneNode();
 
   infoBoxClone.innerHTML = groupInfoElementsMap[editBoxClass][modeFuncName](
@@ -398,17 +865,14 @@ export const setUpDatePicker = () => {
   };
 };
 
-export const setUpRemoveGroupBtn = (BtnClassName) => {
-  const removeGroupBtn = document.querySelector(BtnClassName);
-  removeGroupBtn?.addEventListener('click', () => {
-    showConfirmationBox(
-      'exclamation',
-      'Remove group',
-      'Are you sure you want to remove this group?',
-      'Cancel',
-      'Remove'
-    );
-  });
+export const handleRemoveGroup = async () => {
+  const res = await showConfirmationBox(
+    'exclamation',
+    'Remove group',
+    'Are you sure you want to remove this group?',
+    'Cancel',
+    'Remove'
+  );
 };
 
 export const handleDemandesBtn = async (e) => {
@@ -493,13 +957,10 @@ const handleSaveBtn = (saveBtn) => {
     swapMode(infoBox, 'getViewMode');
     return;
   }
-
   const isValid = checkValidity(input, CONDITIONS);
 
-  if (!isValid) {
-    infoWrapper.classList.add('error');
-  } else {
-    infoWrapper.classList.remove('error');
+  if (isValid) {
+    infoWrapper.classList.remove('error-input');
     handleSaveAction(
       input,
       infoBox,
@@ -539,9 +1000,10 @@ const handleSaveAction = async (
     const updatedValue = CONDITIONS.isInputElement
       ? input.value
       : input.dataset.value;
-    const showInSearchValue = CONDITIONS.isVisbilityBox && input.dataset.value === 'Private'
-      ? showInSearchInput.checked
-      : null;
+    const showInSearchValue =
+      CONDITIONS.isVisbilityBox && input.dataset.value === 'Private'
+        ? showInSearchInput.checked
+        : null;
 
     swapMode(infoBox, 'getViewMode', updatedValue, showInSearchValue);
     showMessageBlock('Group info updated successfully', false);
@@ -550,21 +1012,16 @@ const handleSaveAction = async (
   }
 };
 
-const initAndDiplayTooltip = (input, message) => {
-  input.dataset.tooltip = message;
-  showTooltip(input, globalTooltip);
-  setTimeout(() => {
-    resetTooltip(globalTooltip);
-    input.dataset.tooltip = '';
-  }, 2000);
-};
-
 const validateMaxMembers = (input, value) => {
   const maxMembers = parseInt(value);
-  if (isNaN(maxMembers) || maxMembers < 2 || maxMembers > maxMembersLimit) {
-    initAndDiplayTooltip(
-      input,
-      'Max members should be a number between 1 and 1000'
+  if (
+    isNaN(maxMembers) ||
+    maxMembers < MIN_MEMBERS ||
+    maxMembers > MAX_MEMBERS
+  ) {
+    initAndDiplayErrorTooltip(
+      input.closest('.info-edit-wrapper'),
+      `Max members should be a number between ${MIN_MEMBERS} and ${MAX_MEMBERS}`
     );
     return false;
   }
@@ -572,10 +1029,13 @@ const validateMaxMembers = (input, value) => {
 };
 
 const validateGroupName = (input, value) => {
-  if (value.length < 5 || value.length > 50) {
-    initAndDiplayTooltip(
-      input,
-      'Group name should be between 5 and 50 characters'
+  if (
+    value.length < NAME_TITLE_MIN_LENGTH ||
+    value.length > NAME_TITLE_MAX_LENGTH
+  ) {
+    initAndDiplayErrorTooltip(
+      input.closest('.info-edit-wrapper'),
+      `Group name should be between ${NAME_TITLE_MIN_LENGTH} and ${NAME_TITLE_MAX_LENGTH} characters`
     );
     return false;
   }
@@ -583,16 +1043,13 @@ const validateGroupName = (input, value) => {
 };
 
 const validateGroupDescription = (input, value) => {
-  if (value.length < 30) {
-    initAndDiplayTooltip(
-      input,
-      'Group description should be at least 30 characters'
-    );
-    return false;
-  }else if (value.length > 500) {
-    initAndDiplayTooltip(
-      input,
-      'Group description should be less than 500 characters'
+  if (
+    value.length < DESCRIPTION_MIN_LENGTH ||
+    value.length > DESCRIPTION_MAX_LENGTH
+  ) {
+    initAndDiplayErrorTooltip(
+      input.closest('.info-edit-wrapper'),
+      `Group description should be between ${DESCRIPTION_MIN_LENGTH} and ${DESCRIPTION_MAX_LENGTH} characters`
     );
     return false;
   }
@@ -602,14 +1059,14 @@ const validateGroupDescription = (input, value) => {
 const checkValidity = (input, CONDITIONS) => {
   if (CONDITIONS.isInputElement) {
     const value = input.value.trim();
-    if (value) {
-      if (CONDITIONS.isMaxMembersBox) {
-        return validateMaxMembers(input, value);
-      } else if (CONDITIONS.isGroupNameBox) {
-        return validateGroupName(input, value);
-      } else {
-        return validateGroupDescription(input, value);
-      }
+    if (CONDITIONS.isMaxMembersBox) {
+      return validateMaxMembers(input, value);
+    }
+    if (CONDITIONS.isGroupNameBox) {
+      return validateGroupName(input, value);
+    }
+    if (CONDITIONS.isGroupDescriptionBox) {
+      return validateGroupDescription(input, value);
     }
     return false;
   } else if (CONDITIONS.isVisbilityBox) {
@@ -623,7 +1080,10 @@ const checkValidity = (input, CONDITIONS) => {
 
 const checkRadioValidity = (input, valideValues) => {
   if (!valideValues.includes(input.dataset.value)) {
-    initAndDiplayTooltip(input, 'Please select a valid option');
+    initAndDiplayErrorTooltip(
+      input.closest('.info-edit-wrapper'),
+      'Please select a valid option'
+    );
     return false;
   }
 

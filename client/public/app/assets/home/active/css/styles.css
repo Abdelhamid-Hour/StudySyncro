@@ -170,7 +170,8 @@
       border-radius: var(--primary-radius);
     }
     /* ongoing and completed Tasks */
-    .ongoing-tasks, .completed-tasks {
+    .ongoing-tasks,
+    .completed-tasks {
       /* other styles in shared folder */
       width: calc(50% - 2px - var(--primary-gap) / 2);
 
@@ -188,8 +189,7 @@
 
       & > div.tasks-list {
         & > div[class*='task'] div[class*='task-box'] {
-
-          &.ongoing-task-box.first {
+          &.task-box.first {
             border-left: 0.4rem solid var(--success-block-border-color);
           }
 
@@ -199,7 +199,6 @@
               text-decoration: line-through;
             }
           }
-
         }
       }
     }
@@ -592,7 +591,7 @@
   .chat-messages {
     position: relative;
     flex-basis: calc(100% - 1.8125rem - var(--primary-gap));
-    /* other styles is in shared folder "my-groups-active-session"  */
+    /* other styles is in shared folder "chat"  */
   }
 }
 

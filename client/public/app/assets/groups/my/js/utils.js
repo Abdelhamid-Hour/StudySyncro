@@ -1,6 +1,27 @@
-import { globalTooltip } from '../../../global/js/dom-variables';
-import { showTooltip } from '../../../global/js/utils';
-import { levelValues, visibilityValues } from '../group-chat/js/dom-variables';
+import {
+  DESCRIPTION_MAX_LENGTH,
+  DESCRIPTION_MIN_LENGTH,
+  globalTooltip,
+  MAX_MEMBERS,
+  MIN_MEMBERS,
+  NAME_TITLE_MAX_LENGTH,
+  NAME_TITLE_MIN_LENGTH,
+} from '../../../global/js/dom-variables.js';
+import {
+  openOverlayModal,
+  resetTooltip,
+  showErrorTooltip,
+} from '../../../global/js/utils.js';
+import {
+  levelValues,
+  visibilityValues,
+} from '../../../shared/group-and-session-forms/js/dom-variables.js';
+import {
+  countCharsTextarea,
+  handleFormSubmit,
+  setUpSubjectSelectMenu,
+  setUpSwitchBtn,
+} from '../../../shared/group-and-session-forms/js/utils.js';
 
 export const getGroupOverlay = () => `
 <div class="create-group-overlay overlay-model">
@@ -11,7 +32,7 @@ export const getGroupOverlay = () => `
         </button>
     </header>
     <div class="create-group-form">
-        <form>
+        <form novalidate autocomplete="off" id="create-group-form">
             <div class="field-container group-name-field">
                 <div class="field-icon-container">
                     <span class="icon-box">
@@ -21,9 +42,10 @@ export const getGroupOverlay = () => `
                 </div>
                 <input
                     type="text"
-                    
                     id="group-name"
                     name="group-name"
+                    minlength="${NAME_TITLE_MIN_LENGTH}"
+                    maxlength="${NAME_TITLE_MAX_LENGTH}"
                     class="input"
                     placeholder="Group Name"
                 />
@@ -40,9 +62,11 @@ export const getGroupOverlay = () => `
                     id="group-description"
                     name="group-description"
                     class="input"
+                    maxlength="${DESCRIPTION_MAX_LENGTH}"
+                    minlength="${DESCRIPTION_MIN_LENGTH}"
                     placeholder="Describe your group (e.g. purpose, topics, goals)"
                 ></textarea>
-                <span class="chars-limit">0/500</span>
+                <span class="chars-limit">0/${DESCRIPTION_MAX_LENGTH}</span>
             </div>
             <div class="dual-container">
                 <div class="field-container group-subject-field">
@@ -50,15 +74,15 @@ export const getGroupOverlay = () => `
                         <i class="bi bi-journal-text"></i>
                     </div>
                     <div class="select-trigger input">
-                        <button type="button" class="exclude-btn open-select-btn">
+                        <button type="button" class="exclude-btn open-drop-down-btn">
                             <span class="subject-value">Subject</span>
                             <input type="hidden" name="sebject" value="" />
                             <i class="bi bi-chevron-down"></i>
                         </button>
+                        <div
+                            class="select-menu group-subject-select-menu drop-down-menu overlay"
+                        ></div>
                     </div>
-                    <div
-                        class="select-menu group-subject-select-menu drop-down-menu overlay"
-                    ></div>
                 </div>
                 <div class="field-container group-level-field">
                     <div class="field-icon-container">
@@ -83,8 +107,6 @@ export const getGroupOverlay = () => `
                     <input
                         
                         type="number"
-                        min="1"
-                        max="1000"
                         class="input"
                         placeholder="Max Members"
                         name="max-members"
@@ -111,16 +133,9 @@ export const getGroupOverlay = () => `
 </div>
 `;
 
-const chechGroupValues = ({
-  groupName,
-  description,
-  subject,
-  level,
-  maxMembers,
-  visibility,
-}) => {
-  let error = ''
-  let input = null
+const chechGroupValues = (inputs) => {
+  const { groupName, description, subject, level, maxMembers, visibility } =
+    inputs;
   const groupNameValue = groupName?.value ?? '';
   const descriptionValue = description?.value ?? '';
   const subjectValue = subject?.value ?? '';
@@ -129,40 +144,122 @@ const chechGroupValues = ({
   const visibilityValue = visibility?.value ?? '';
 
   if (!groupNameValue.trim()) {
-    input = groupName;
-    error = 'Group name is required.';
-  } else if (groupNameValue.length > 50) {
-    input = groupName;
-    error = 'Group name must be less than 50 characters.';
-  } else if (!descriptionValue.trim()) {
-    input = description;
-    error = 'Description is required.';
-  } else if (descriptionValue.length > 500) {
-    input = description;
-    error = 'Description must be less than 500 characters.';
-  } else if (!subjectValue.trim()) {
-    input = subject;
-    error = 'Subject is required.';
-  } else if (!levelValues.includes(levelValue)) {
-    input = level;
-    error = 'Level is not valid.';
+    showErrorTooltip('Group name is required.', groupName);
+    return false;
   } else if (
+    groupNameValue.length < NAME_TITLE_MIN_LENGTH ||
+    groupNameValue.length > NAME_TITLE_MAX_LENGTH
+  ) {
+    showErrorTooltip(
+      `Group name must be between ${NAME_TITLE_MIN_LENGTH} and ${NAME_TITLE_MAX_LENGTH} characters.`,
+      groupName
+    );
+    return false;
+  } else {
+    groupName.closest('.field-container').classList.remove('error-input');
+    resetTooltip(globalTooltip);
+  }
+
+  if (!descriptionValue.trim()) {
+    showErrorTooltip('Description is required.', description);
+    return false;
+  } else if (
+    descriptionValue.length < DESCRIPTION_MIN_LENGTH ||
+    descriptionValue.length > DESCRIPTION_MAX_LENGTH
+  ) {
+    showErrorTooltip(
+      `Description must be between ${DESCRIPTION_MIN_LENGTH} and ${DESCRIPTION_MAX_LENGTH} characters.`,
+      description
+    );
+    return false;
+  } else {
+    description.closest('.field-container').classList.remove('error-input');
+    resetTooltip(globalTooltip);
+  }
+
+  if (!subjectValue.trim()) {
+    showErrorTooltip('Subject is required.', subject);
+    return false;
+  } else {
+    subject.closest('.field-container').classList.remove('error-input');
+    resetTooltip(globalTooltip);
+  }
+
+  if (!levelValues.includes(levelValue)) {
+    showErrorTooltip('Level is not valid.', level);
+    return false;
+  } else {
+    level.closest('.field-container').classList.remove('error-input');
+    resetTooltip(globalTooltip);
+  }
+
+  if (
     isNaN(Number(maxMembersValue)) ||
     Number(maxMembersValue) < 2 ||
     Number(maxMembersValue) > 1000
   ) {
-    input = maxMembers;
-    error = 'Max members must be a number between 2 and 1000.';
-  } else if (!visibilityValues.includes(visibilityValue)) {
-    input = visibility;
-    error = 'Visibility is not valid.';
-  }
-// !! complateuuuuuu
-  if (error) {
-    input?.focus();
-    input.classList.add('');
-    showTooltip(input, globalTooltip);
+    showErrorTooltip(
+      `Max members must be a number between ${MIN_MEMBERS} and ${MAX_MEMBERS}.`,
+      maxMembers
+    );
     return false;
+  } else {
+    maxMembers.closest('.field-container').classList.remove('error-input');
+    resetTooltip(globalTooltip);
+  }
+
+  if (!visibilityValues.includes(visibilityValue)) {
+    showErrorTooltip('Visibility is not valid.', visibility);
+    return false;
+  } else {
+    visibility.closest('.field-container').classList.remove('error-input');
+    resetTooltip(globalTooltip);
   }
   return true;
+};
+
+export const handleGroupCreateClick = () => {
+  openOverlayModal(
+    'create-group-overlay',
+    ['.close-group-overlay'],
+    getGroupOverlay,
+    setUpGroupOverlay
+  );
+};
+
+const setUpGroupOverlay = (backdropElement) => {
+  setUpSubjectSelectMenu(
+    backdropElement.querySelector('.group-subject-field'),
+    'group-subject-select-menu'
+  );
+  const visibilityField = backdropElement.querySelector(
+    '.group-visibility-field'
+  );
+  const levelField = backdropElement.querySelector('.group-level-field');
+  setUpSwitchBtn(visibilityField);
+  setUpSwitchBtn(levelField);
+  initGroupForm();
+};
+
+export const initGroupForm = () => {
+  const form = document.getElementById('create-group-form');
+  const groupName = form.querySelector('.group-name-field input');
+  const description = form.querySelector('.group-description-field textarea');
+  const subject = form.querySelector('.group-subject-field input');
+  const level = form.querySelector('.group-level-field input');
+  const maxMembers = form.querySelector('.group-max-members-field input');
+  const visibility = form.querySelector('.group-visibility-field input');
+
+  description.addEventListener('input', countCharsTextarea);
+
+  handleFormSubmit(form, () =>
+    chechGroupValues({
+      groupName,
+      description,
+      subject,
+      level,
+      maxMembers,
+      visibility,
+    })
+  );
 };

@@ -160,6 +160,7 @@ form {
         }
         &:has(+ input:not(:focus)) {
           background-color: var(--inputs-background-color);
+          color: var(--inputs-label-color);
         }
       }
       .eye-icon {
@@ -238,22 +239,6 @@ form {
       height: 100%;
       width: fit-content;
     }
-  }
-}
-
-.error-animation {
-  animation: error-input 150ms linear 2;
-}
-
-@keyframes error-input {
-  25% {
-    translate: 1%;
-  }
-  75% {
-    translate: -1%;
-  }
-  100% {
-    translate: 0;
   }
 }
 

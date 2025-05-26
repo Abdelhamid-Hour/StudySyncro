@@ -132,10 +132,10 @@
             </div>
           </header>
           <div class="tasks-list ongoing-tasks-list">
-            <div class="ongoing-task">
+            <div class="task-wrapper">
               <div
                 data-tooltip="Active Task"
-                class="ongoing-task-box first has-tooltip"
+                class="task-box first has-tooltip"
               >
                 <div class="counter">
                   <span>01</span>
@@ -143,7 +143,7 @@
                 <span class="title">Prepare Workshop Materiadl</span>
                 <span class="duration">30m</span>
                 <div class="icons">
-                  <button type="button" class="menu exclude-btn">
+                  <button type="button" class="task-menu-btn exclude-btn">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -169,15 +169,15 @@
                 </ul>
               </div>
             </div>
-            <div class="ongoing-task">
-              <div class="ongoing-task-box quiz-task-box">
+            <div class="task-wrapper">
+              <div class="task-box quiz-task-box">
                 <div class="counter">
                   <span>01</span>
                 </div>
                 <span class="title">Prepare Workshop Materiadl</span>
                 <span class="duration">30m</span>
                 <div class="icons">
-                  <button type="button" class="menu exclude-btn">
+                  <button type="button" class="task-menu-btn exclude-btn">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -203,15 +203,15 @@
                 </ul>
               </div>
             </div>
-            <div class="ongoing-task">
-              <div class="ongoing-task-box">
+            <div class="task-wrapper">
+              <div class="task-box">
                 <div class="counter">
                   <span>01</span>
                 </div>
                 <span class="title">Prepare Workshop Materiadl</span>
                 <span class="duration">30m</span>
                 <div class="icons">
-                  <button type="button" class="menu exclude-btn">
+                  <button type="button" class="task-menu-btn exclude-btn">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -237,15 +237,15 @@
                 </ul>
               </div>
             </div>
-            <div class="ongoing-task">
-              <div class="ongoing-task-box">
+            <div class="task-wrapper">
+              <div class="task-box">
                 <div class="counter">
                   <span>01</span>
                 </div>
                 <span class="title">Prepare Workshop Materiadl</span>
                 <span class="duration">30m</span>
                 <div class="icons">
-                  <button type="button" class="menu exclude-btn">
+                  <button type="button" class="task-menu-btn exclude-btn">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -271,15 +271,15 @@
                 </ul>
               </div>
             </div>
-            <div class="ongoing-task">
-              <div class="ongoing-task-box">
+            <div class="task-wrapper">
+              <div class="task-box">
                 <div class="counter">
                   <span>01</span>
                 </div>
                 <span class="title">Prepare Workshop Materiadl</span>
                 <span class="duration">30m</span>
                 <div class="icons">
-                  <button type="button" class="menu exclude-btn">
+                  <button type="button" class="task-menu-btn exclude-btn">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -305,15 +305,15 @@
                 </ul>
               </div>
             </div>
-            <div class="ongoing-task">
-              <div class="ongoing-task-box">
+            <div class="task-wrapper">
+              <div class="task-box">
                 <div class="counter">
                   <span>01</span>
                 </div>
                 <span class="title">Prepare Workshop Materiadl</span>
                 <span class="duration">30m</span>
                 <div class="icons">
-                  <button type="button" class="menu exclude-btn">
+                  <button type="button" class="task-menu-btn exclude-btn">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -339,15 +339,15 @@
                 </ul>
               </div>
             </div>
-            <div class="ongoing-task">
-              <div class="ongoing-task-box">
+            <div class="task-wrapper">
+              <div class="task-box">
                 <div class="counter">
                   <span>01</span>
                 </div>
                 <span class="title">Prepare Workshop Materiadl</span>
                 <span class="duration">30m</span>
                 <div class="icons">
-                  <button type="button" class="menu exclude-btn">
+                  <button type="button" class="task-menu-btn exclude-btn">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -373,15 +373,15 @@
                 </ul>
               </div>
             </div>
-            <div class="ongoing-task">
-              <div class="ongoing-task-box">
+            <div class="task-wrapper">
+              <div class="task-box">
                 <div class="counter">
                   <span>01</span>
                 </div>
                 <span class="title">Prepare Workshop Materiadl</span>
                 <span class="duration">30m</span>
                 <div class="icons">
-                  <button type="button" class="menu exclude-btn">
+                  <button type="button" class="task-menu-btn exclude-btn">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -965,7 +965,10 @@
             <i class="bi bi-paperclip"></i>
           </label>
           <div class="emoji-picker">
-            <button type="button" class="exclude-btn should-fill emoji-button">
+            <button
+              type="button"
+              class="exclude-btn should-fill emoji-button open-drop-down-btn"
+            >
               <i class="bi bi-emoji-smile"></i>
             </button>
             <div class="emoji-list overlay">
@@ -1080,7 +1083,11 @@
             .rar"
           />
         </div>
-        <textarea placeholder="Type a message" id="input-message" class="input-message"></textarea>
+        <textarea
+          placeholder="Type a message"
+          id="input-message"
+          class="input-message"
+        ></textarea>
         <button type="button" class="send-btn exclude-btn should-fill">
           <i class="bi bi-send"></i>
         </button>

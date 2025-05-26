@@ -8,16 +8,22 @@ const { fetchHomeData } = require('./home');
 
 const SHARED_STYLES_MAP = {
   '/home/inactive': ['/tasks'],
-  '/home/active': ['/tasks', '/my-groups-active-session'],
+  '/home/active': ['/tasks', '/chat'],
   '/quizzes': ['/quizzes-groups'],
   '/groups/my': [
     '/groups-my-available',
     '/quizzes-groups',
-    '/my-groups-active-session',
+    '/chat',
     '/fields',
     '/tasks',
+    '/group-and-session-forms',
   ],
-  '/groups/my/group-chat': ['/my-groups-active-session', '/tasks', '/fields'],
+  '/groups/my/group-chat': [
+    '/chat',
+    '/tasks',
+    '/fields',
+    '/group-and-session-forms',
+  ],
   '/groups/available': ['/groups-my-available', '/quizzes-groups'],
 };
 

@@ -39,8 +39,8 @@ const getGroupChatContext = (groupId) => {
   return {
     groupId: groupId,
     groupName: 'Awesome Study Group',
-    isAdmin: false,
-    sessionActive: true,
+    isAdmin: true,
+    sessionActive: false,
   };
 };
 
@@ -48,7 +48,7 @@ const getGroupChatContext = (groupId) => {
 
 const getGroupInfoContext = () => {
   return {
-    groupName: 'Awesome Study Group',
+    groupName: '<h1>Awesome Study Group</h1>',
     groupDescription:
       'A group for collaborative learning and sharing knowledge.',
     subject: 'Mathematics',
@@ -79,13 +79,13 @@ const getGroupInfoContext = () => {
         photoURL: 'https://avatar.iran.liara.run/public/9',
       },
     ],
-    isAdmin: false,
+    isAdmin: true,
   };
 };
 
 const getSessionInfoContext = () => {
   return {
-    isAdmin: false,
+    isAdmin: true,
     isJoined: true,
     sessionName: 'Session Name',
     sessionDescription: 'Session Description',
@@ -122,7 +122,7 @@ const getSessionInfoContext = () => {
 
 const getMembersListContext = () => {
   return {
-    isAdmin: false,
+    isAdmin: true,
     count: 20,
     members: [
       {
@@ -220,7 +220,7 @@ const getMembersListContext = () => {
 const getQuizzesListContext = () => {
   return {
     count: 4,
-    isAdmin: false,
+    isAdmin: true,
     quizzes: [
       {
         quizId: 101,
@@ -257,7 +257,7 @@ const getQuizzesListContext = () => {
 const getDemandesListContext = () => {
   return {
     count: 3,
-    isAdmin: false,
+    isAdmin: true,
     demandes: [
       {
         userId: 1,

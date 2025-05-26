@@ -1,6 +1,4 @@
-export const signOutBtn = document.getElementById('logout-button');
-
-export const activeIcon = document.querySelector('.active');
+export const signOutBtn = document.getElementById('logout-button')
 export const profileBtn = document.querySelector('.profile-btn');
 export const closeLeftSideBarIcon = document.querySelector(
   '.open-close-side-bar-btn'
@@ -13,6 +11,14 @@ export const mainContainer = document.querySelector('main');
 const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 export let boxRowCount;
 export const boxTotalCount = 12;
+export const DESCRIPTION_MAX_LENGTH = 1000;
+export const DESCRIPTION_MIN_LENGTH = 10;
+export const NAME_TITLE_MAX_LENGTH = 50;
+export const NAME_TITLE_MIN_LENGTH = 3;
+export const SESSION_MIN_DURATION = 10; // in minutes
+export const SESSION_MAX_DURATION = 1440;
+export const MAX_MEMBERS = 1000;
+export const MIN_MEMBERS = 2;
 
 function calculateBoxCounts() {
   boxRowCount = Math.floor(

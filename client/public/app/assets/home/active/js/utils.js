@@ -1,3 +1,5 @@
+import { millisecondsToHMFormat } from '../../../global/js/utils.js';
+import { Task } from '../../../shared/tasks/js/utils.js';
 import {
   QUIZSELECTORS,
   SESSIONSSELECTORS,
@@ -140,14 +142,6 @@ export class FlipTimer {
   }
 }
 
-export class Task {
-  constructor({ title, description, durationInMins }) {
-    this.title = title;
-    this.description = description;
-    this.durationInMins = durationInMins;
-  }
-}
-
 export class Quiz extends Task {
   constructor({ UID, title, description, durationInMins, questionsCount }) {
     super({ title, description, durationInMins });
@@ -258,21 +252,9 @@ export class Session {
     this.tick();
   }
 
-  millisecondsToHMFormat(time) {
-    const hours = Math.floor(time / (1000 * 60 * 60))
-      .toString()
-      .padStart(2, '0');
-    const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60))
-      .toString()
-      .padStart(2, '0');
-
-    return hours === '00' ? `${minutes}m` : `${hours}h ${minutes}m`;
-  }
-
   displayDurations({ timeLeft, elapsedTime }) {
-    this.timeLeftElement.textContent = this.millisecondsToHMFormat(timeLeft);
-    this.elapsedTimeElement.textContent =
-      this.millisecondsToHMFormat(elapsedTime);
+    this.timeLeftElement.textContent = millisecondsToHMFormat(timeLeft);
+    this.elapsedTimeElement.textContent = millisecondsToHMFormat(elapsedTime);
   }
 
   addToCompletedTasks() {
@@ -293,7 +275,7 @@ export class Session {
     taskContainer.innerHTML = `
         <div class="completed-task-box"> 
           <span class="title">${task.title}</span>
-          <span class="duration">${this.millisecondsToHMFormat(
+          <span class="duration">${millisecondsToHMFormat(
             task.durationInMins * 60 * 1000
           )}</span>
             <button type="button" data-tooltip="Show Details" class="task-down-icon exclude-btn should-fill has-tooltip">
@@ -324,7 +306,7 @@ export class Session {
       TASKSSELECTORS.completedTasksList
     );
     const tasksElements =
-      this.ongoingTasksContainer.querySelectorAll('.ongoing-task');
+      this.ongoingTasksContainer.querySelectorAll('.task-wrapper ');
     const tasks = Array.from(tasksElements).map((task) => {
       return task.firstElementChild.className.includes('quiz-task-box')
         ? new Quiz({
@@ -385,7 +367,7 @@ export class Session {
       return acc;
     }, 0);
 
-    return this.millisecondsToHMFormat(quizElapsedTime * 60 * 1000);
+    return millisecondsToHMFormat(quizElapsedTime * 60 * 1000);
   }
 
   // !! implement this method

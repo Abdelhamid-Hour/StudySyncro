@@ -165,7 +165,7 @@ export const swapAnimationThrottling = throttling(
 const hideErrors = (...elements) => {
   elements.forEach((element) => {
     const container = element.parentElement.parentElement;
-    container.classList.remove('error');
+    container.classList.remove('error-input');
     container.classList.remove('error-animation');
     void container.offsetWidth;
     if ([firstNameField, lastNameField].includes(element)) {
@@ -187,7 +187,7 @@ const showError = (errorMessage, element) => {
   } else {
     container.nextElementSibling.firstElementChild.innerHTML = `${errorIcon} ${errorMessage}`;
   }
-  container.classList.add('error');
+  container.classList.add('error-input');
   container.classList.add('error-animation');
   element.focus();
 };
