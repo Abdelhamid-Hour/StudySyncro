@@ -9,21 +9,15 @@ const { fetchHomeData } = require('./home');
 const SHARED_STYLES_MAP = {
   '/home/inactive': ['/tasks'],
   '/home/active': ['/tasks', '/chat'],
-  '/quizzes': ['/quizzes-groups'],
+  '/quizzes': ['/quizzes-groups', '/fields', '/forms'],
   '/groups/my': [
     '/groups-my-available',
     '/quizzes-groups',
-    '/chat',
     '/fields',
     '/tasks',
-    '/group-and-session-forms',
+    '/forms',
   ],
-  '/groups/my/group-chat': [
-    '/chat',
-    '/tasks',
-    '/fields',
-    '/group-and-session-forms',
-  ],
+  '/groups/my/group-chat': ['/chat', '/tasks', '/fields', '/forms'],
   '/groups/available': ['/groups-my-available', '/quizzes-groups'],
 };
 
@@ -99,14 +93,13 @@ const renderFragmentOrLayout = (
   const isFetch = req.headers?.['x-requested-with'] === 'fetch'; // should I add it in front end
 
   return res.render(template, templateContext, (err, htmlFragment) => {
-    // !!!! Error handling
     if (err) {
       console.error('Error rendering template:', err);
       return res
         .status(500)
         .send('An error occurred while rendering the page.');
     }
-    // !!!
+
     if (isFetch)
       return res
         .status(200)

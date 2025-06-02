@@ -1,5 +1,5 @@
-const { getGroupChatContext } = require("../utils/groups");
-const { fetchData, renderFragmentOrLayout } = require("../utils/routing");
+const { getGroupChatContext } = require('../utils/groups');
+const { fetchData, renderFragmentOrLayout } = require('../utils/routing');
 
 const handleRoutes = (req, res) => {
   const templateContext = fetchData(req.path);
@@ -37,7 +37,21 @@ const handleGroupChatRoute = (req, res) => {
   );
 };
 
+const handleQuizEditRoute = (req, res) => {
+  const templateContext = { quizTitle: 'Quiz Title' }; // Replace with actual logic to get group chat context
+
+  renderFragmentOrLayout(
+    'templates/quizzes/quiz-editor',
+    templateContext,
+    '/quizzes/quiz-editor',
+    req,
+    res,
+    { quizTitle: templateContext.quizTitle }
+  );
+};
+
 module.exports = {
   handleRoutes,
   handleGroupChatRoute,
+  handleQuizEditRoute,
 };

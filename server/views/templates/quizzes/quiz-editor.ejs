@@ -1,0 +1,461 @@
+<div data-quiz-title="<%= quizTitle %>" class="quiz-editor fade-in-template">
+  <section class="questions-panel">
+    <header class="questions-header">
+      <h4 class="panel-title">
+        Questions
+        <span class="count badge simple-badge">2</span>
+      </h4>
+      <button
+        type="button"
+        class="add-question-btn exclude-btn should-fill"
+        data-tooltip="Add Question"
+      >
+        <i class="bi bi-plus-circle"></i>
+      </button>
+    </header>
+    <div class="questions-list">
+      <div class="question">
+        <div class="drop-target"></div>
+        <a draggable="false" href="#1748748771009" class="question-card">
+          <header class="question-card-header">
+            <h4>
+              <span class="icon-box">
+                <i class="bi bi-patch-question"></i>
+              </span>
+              <span class="question-count counter">Question 1</span>
+            </h4>
+            <button
+              type="button"
+              class="exclude-btn drag-handle has-tooltip"
+              data-tooltip="Drag to Reorder"
+            >
+              <i class="drag-icon"></i>
+            </button>
+          </header>
+          <p class="question-text">Which company developed JavaScript?</p>
+          <footer class="question-card-footer">
+            <span class="choices-count">2 Choices</span>
+            <button
+              type="button"
+              class="delete-question-btn exclude-btn has-tooltip"
+              data-tooltip="Delete Question"
+            >
+              <i class="bi bi-trash3"></i>
+            </button>
+          </footer>
+        </a>
+        <div class="drop-target"></div>
+      </div>
+      <div class="question">
+        <a draggable="false" href="#1748748785502" class="question-card">
+          <header class="question-card-header">
+            <h4>
+              <span class="icon-box">
+                <i class="bi bi-patch-question"></i>
+              </span>
+              <span class="question-count counter">Question 2</span>
+            </h4>
+            <button
+              type="button"
+              class="exclude-btn drag-handle has-tooltip"
+              data-tooltip="Drag to Reorder"
+            >
+              <i class="drag-icon"></i>
+            </button>
+          </header>
+          <p class="question-text">
+            What is the output of 2 + 2 in JavaScript?
+          </p>
+          <footer class="question-card-footer">
+            <span class="choices-count">2 Choices</span>
+            <button
+              type="button"
+              class="delete-question-btn exclude-btn has-tooltip"
+              data-tooltip="Delete Question"
+            >
+              <i class="bi bi-trash3"></i>
+            </button>
+          </footer>
+        </a>
+        <div class="drop-target"></div>
+      </div>
+    </div>
+  </section>
+  <section class="question-editor-panel">
+    <header class="editor-header">
+      <div class="subject">
+        <div class="container">
+          <span class="subject-label label">
+            <span class="icon-box">
+              <i class="bi bi-book"></i>
+            </span>
+            Subject:
+          </span>
+          <span class="subject-value value">JavaScript</span>
+          <button
+            class="exclude-btn edit-subject-btn has-tooltip"
+            data-tooltip="Edit Subject"
+            type="button"
+          >
+            <i class="bi bi-pencil-square"></i>
+          </button>
+        </div>
+      </div>
+      <div class="title">
+        <div class="container">
+          <h4 class="title-text"><%= quizTitle %></h4>
+          <button
+            class="exclude-btn edit-title-btn has-tooltip"
+            data-tooltip="Edit Title"
+            type="button"
+          >
+            <i class="bi bi-pencil-square"></i>
+          </button>
+        </div>
+      </div>
+      <span class="shared-in">
+        <span class="shared-in-label label">
+          <span class="icon-box">
+            <i class="bi bi-people"></i>
+          </span>
+          Shared In:
+        </span>
+        <span class="groups-count value">
+          <span class="count badge simple-badge">0</span>
+          Group
+        </span>
+        <span class="sessions-count value">
+          <span class="count badge simple-badge">0</span>
+          Session
+        </span>
+      </span>
+    </header>
+    <div class="questions-list">
+      <div class="question-editor-box" id="1748748785502">
+        <header class="question-header">
+          <h4>
+            <span class="icon-box">
+              <i class="bi bi-patch-question"></i>
+            </span>
+            <span class="question-count counter">Question 2</span>
+          </h4>
+          <button
+            type="button"
+            class="delete-question-btn exclude-btn has-tooltip"
+            data-tooltip="Delete Choice"
+          >
+            <i class="bi bi-trash3"></i>
+          </button>
+        </header>
+        <textarea
+          class="question-input input"
+          placeholder="Enter question text here..."
+          id="question-text"
+          style="height: 45px"
+        >
+Which company developed JavaScript?</textarea
+        >
+        <div class="choices-section">
+          <h5 class="choices-title section-title">
+            <span class="icon-box">
+              <i class="bi bi-list-ol"></i>
+            </span>
+            Choices
+          </h5>
+          <div class="choices-list">
+            <div data-choice-id="0" class="choice">
+              <span class="choice-label">A</span>
+              <input
+                type="text"
+                class="choice-input input"
+                placeholder="Enter choice A"
+                value="Microsoft"
+              />
+              <button
+                type="button"
+                class="delete-choice-btn exclude-btn has-tooltip"
+                data-tooltip="Delete Choice"
+              >
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+            <div data-choice-id="1" class="choice correct-answer">
+              <span class="choice-label">B</span>
+              <input
+                type="text"
+                class="choice-input input"
+                placeholder="Enter choice B"
+                value="Netscape"
+              />
+              <button
+                type="button"
+                class="delete-choice-btn exclude-btn has-tooltip"
+                data-tooltip="Delete Choice"
+              >
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+          </div>
+          <button type="button" class="add-choice-btn small-btn">
+            <i class="bi bi-plus-circle"></i>
+            Add Choice
+          </button>
+          <hr />
+          <h5 class="correct-answer-title section-title">
+            <span class="icon-box">
+              <i class="bi bi-check-circle"></i>
+            </span>
+            Correct Answer
+          </h5>
+          <div class="correct-answer-select">
+            <div class="icon-box">
+              <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="select-trigger input">
+              <button type="button" class="exclude-btn open-drop-down-btn">
+                <span class="correct-answer-value">B</span>
+                <input type="hidden" name="correct-answer" value="1" />
+                <i class="bi bi-chevron-down"></i>
+              </button>
+              <div
+                class="select-menu group-subject-select-menu drop-down-menu overlay"
+              >
+                <label class="drop-down-item">
+                  <input
+                    type="radio"
+                    name="correct-answer"
+                    value="0"
+                    checked=""
+                  />
+                  A
+                </label>
+                <label class="drop-down-item">
+                  <input type="radio" name="correct-answer" value="1" checked />
+                  B
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="question-editor-box" id="1748748785502">
+        <header class="question-header">
+          <h4>
+            <span class="icon-box">
+              <i class="bi bi-patch-question"></i>
+            </span>
+            <span class="question-count counter">Question 2</span>
+          </h4>
+          <button
+            type="button"
+            class="delete-question-btn exclude-btn has-tooltip"
+            data-tooltip="Delete Choice"
+          >
+            <i class="bi bi-trash3"></i>
+          </button>
+        </header>
+        <textarea
+          class="question-input input"
+          placeholder="Enter question text here..."
+          id="question-text"
+          style="height: 45px"
+        >
+Which company developed JavaScript?</textarea
+        >
+        <div class="choices-section">
+          <h5 class="choices-title section-title">
+            <span class="icon-box">
+              <i class="bi bi-list-ol"></i>
+            </span>
+            Choices
+          </h5>
+          <div class="choices-list">
+            <div data-choice-id="0" class="choice">
+              <span class="choice-label">A</span>
+              <input
+                type="text"
+                class="choice-input input"
+                placeholder="Enter choice A"
+                value="Microsoft"
+              />
+              <button
+                type="button"
+                class="delete-choice-btn exclude-btn has-tooltip"
+                data-tooltip="Delete Choice"
+              >
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+            <div data-choice-id="1" class="choice correct-answer">
+              <span class="choice-label">B</span>
+              <input
+                type="text"
+                class="choice-input input"
+                placeholder="Enter choice B"
+                value="Netscape"
+              />
+              <button
+                type="button"
+                class="delete-choice-btn exclude-btn has-tooltip"
+                data-tooltip="Delete Choice"
+              >
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+          </div>
+          <button type="button" class="add-choice-btn small-btn">
+            <i class="bi bi-plus-circle"></i>
+            Add Choice
+          </button>
+          <hr />
+          <h5 class="correct-answer-title section-title">
+            <span class="icon-box">
+              <i class="bi bi-check-circle"></i>
+            </span>
+            Correct Answer
+          </h5>
+          <div class="correct-answer-select">
+            <div class="icon-box">
+              <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="select-trigger input">
+              <button type="button" class="exclude-btn open-drop-down-btn">
+                <span class="correct-answer-value">B</span>
+                <input type="hidden" name="correct-answer" value="1" />
+                <i class="bi bi-chevron-down"></i>
+              </button>
+              <div
+                class="select-menu group-subject-select-menu drop-down-menu overlay"
+              >
+                <label class="drop-down-item">
+                  <input
+                    type="radio"
+                    name="correct-answer"
+                    value="0"
+                    checked=""
+                  />
+                  A
+                </label>
+                <label class="drop-down-item">
+                  <input type="radio" name="correct-answer" value="1" checked />
+                  B
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="question-editor-box" id="1748748785502">
+        <header class="question-header">
+          <h4>
+            <span class="icon-box">
+              <i class="bi bi-patch-question"></i>
+            </span>
+            <span class="question-count counter">Question 2</span>
+          </h4>
+          <button
+            type="button"
+            class="delete-question-btn exclude-btn has-tooltip"
+            data-tooltip="Delete Choice"
+          >
+            <i class="bi bi-trash3"></i>
+          </button>
+        </header>
+        <textarea
+          class="question-input input"
+          placeholder="Enter question text here..."
+          id="question-text"
+          style="height: 45px"
+        >
+Which company developed JavaScript?</textarea
+        >
+        <div class="choices-section">
+          <h5 class="choices-title section-title">
+            <span class="icon-box">
+              <i class="bi bi-list-ol"></i>
+            </span>
+            Choices
+          </h5>
+          <div class="choices-list">
+            <div data-choice-id="0" class="choice">
+              <span class="choice-label">A</span>
+              <input
+                type="text"
+                class="choice-input input"
+                placeholder="Enter choice A"
+                value="Microsoft"
+              />
+              <button
+                type="button"
+                class="delete-choice-btn exclude-btn has-tooltip"
+                data-tooltip="Delete Choice"
+              >
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+            <div data-choice-id="1" class="choice correct-answer">
+              <span class="choice-label">B</span>
+              <input
+                type="text"
+                class="choice-input input"
+                placeholder="Enter choice B"
+                value="Netscape"
+              />
+              <button
+                type="button"
+                class="delete-choice-btn exclude-btn has-tooltip"
+                data-tooltip="Delete Choice"
+              >
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+          </div>
+          <button type="button" class="add-choice-btn small-btn">
+            <i class="bi bi-plus-circle"></i>
+            Add Choice
+          </button>
+          <hr />
+          <h5 class="correct-answer-title section-title">
+            <span class="icon-box">
+              <i class="bi bi-check-circle"></i>
+            </span>
+            Correct Answer
+          </h5>
+          <div class="correct-answer-select">
+            <div class="icon-box">
+              <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="select-trigger input">
+              <button type="button" class="exclude-btn open-drop-down-btn">
+                <span class="correct-answer-value">B</span>
+                <input type="hidden" name="correct-answer" value="1" />
+                <i class="bi bi-chevron-down"></i>
+              </button>
+              <div
+                class="select-menu group-subject-select-menu drop-down-menu overlay"
+              >
+                <label class="drop-down-item">
+                  <input
+                    type="radio"
+                    name="correct-answer"
+                    value="0"
+                    checked=""
+                  />
+                  A
+                </label>
+                <label class="drop-down-item">
+                  <input type="radio" name="correct-answer" value="1" checked />
+                  B
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="exclude-btn add-question-btn">
+        <i class="bi bi-plus-circle"></i>
+        <hr />
+      </button>
+    </div>
+  </section>
+</div>

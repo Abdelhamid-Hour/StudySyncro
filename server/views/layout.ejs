@@ -75,7 +75,9 @@
             : resourcesRoute === '/quizzes/' 
             ? 'Quizzes' 
             : resourcesRoute === '/groups/my/group-chat/' 
-            ? `<a href="/app/groups/my" class="back-link"><i class="bi bi-chevron-left"></i>Group Chat</a>`
+            ? `<a href="/app/groups/my"><i class="bi bi-caret-left-fill"></i>Group Chat</a>`
+            : resourcesRoute === '/quizzes/quiz-editor/' 
+            ? `<a href="/app/quizzes"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>`
             : '' %>
         </h2>
         <!-- ? Navigation for Groups -->
@@ -245,59 +247,79 @@
         </div>
       </div>
       <% } else if (resourcesRoute === '/groups/my/group-chat/') { %>
-        <h1 class="group-name fade-in-template"><%= groupName %></h1>
+        <h1 class="fade-in-template"><%= groupName %></h1>
+      <% } else if (resourcesRoute === '/quizzes/quiz-editor/') { %>
+        <h1 class="fade-in-template"><%= quizTitle %></h1>
       <% } %>
       </div>
-      <% if (resourcesRoute === '/groups/my/') { %>
-      <button type="button" class="create-group-btn">
-        <i class="bi bi-plus-circle"></i>
-        <span>Create Group</span>
-      </button>
-      <% } %>
-      <div class="profile-container">
-        <button type="button" class="profile-btn open-drop-down-btn exclude-btn should-fill">
-          <div class="avatar">
-            <% if (user.photoURL) { %>
-              <img
-                src="<%= user.photoURL %>"
-                alt="avatar"
-              />
-            <% } else { %>
-              <h4><%= user.fullName.charAt(0).toUpperCase() %></h4>
-            <% } %>
-          </div>
-          <div class="profile-info">
-            <span><%= user.fullName %></span>
-            <span><%= user.email %></span>
-          </div>
-          <i class="bi bi-caret-down drop-down-icon"></i>
+      <div class="top-side-bar-footer">
+        <% if (resourcesRoute === '/groups/my/') { %>
+        <button type="button" class="create-group-btn">
+          <i class="bi bi-plus-circle"></i>
+          <span>Create Group</span>
         </button>
-        <ul class="profile-drop-down-menu overlay">
-          <li class="account should-fill">
-            <a href="/app/settings" class="drop-down-item">
-              <i class="bi bi-person"></i>
-              Account
-            </a>
-          </li>
-          <li class="groups should-fill">
-            <a href="/app/groups/my" class="drop-down-item">
-              <i class="bi bi-people"></i>
-              My Groups
-            </a>
-          </li>
-          <li class="quizzes should-fill">
-            <a href="/app/quizzes" class="drop-down-item">
-              <i class="bi bi-clipboard-check"></i>
-              My Quizzes
-            </a>
-          </li>
-          <li class="logout-button-li account">
-            <button type="button" id="logout-button" class="red-btn drop-down-item">
-              <i class="bi bi-box-arrow-in-left"></i>
-              Logout
-            </button>
-          </li>
-        </ul>
+        <% } else if (resourcesRoute === '/quizzes/quiz-editor/') { %>
+        <div class="quiz-action-btns">
+          <button type="button" class="preview-btn should-fill">
+            <i class="bi bi-play"></i>
+            <span>Preview</span>
+          </button>
+          <button type="button" class="save-quiz-btn should-fill blue-btn">
+            <i class="bi bi-floppy"></i>
+            <span>Save</span>
+          </button>
+        </div>
+        <% } else if (resourcesRoute === '/quizzes/') { %>
+        <button type="button" class="create-quiz-btn">
+          <i class="bi bi-plus-circle"></i>
+          <span>Create Quiz</span>
+        </button>
+        <% } %>
+        <div class="profile-container">
+          <button type="button" class="profile-btn open-drop-down-btn exclude-btn should-fill">
+            <div class="avatar">
+              <% if (user.photoURL) { %>
+                <img
+                  src="<%= user.photoURL %>"
+                  alt="avatar"
+                />
+              <% } else { %>
+                <h4><%= user.fullName.charAt(0).toUpperCase() %></h4>
+              <% } %>
+            </div>
+            <div class="profile-info">
+              <span><%= user.fullName %></span>
+              <span><%= user.email %></span>
+            </div>
+            <i class="bi bi-caret-down drop-down-icon"></i>
+          </button>
+          <ul class="profile-drop-down-menu overlay">
+            <li class="account should-fill">
+              <a href="/app/settings" class="drop-down-item">
+                <i class="bi bi-person"></i>
+                Account
+              </a>
+            </li>
+            <li class="groups should-fill">
+              <a href="/app/groups/my" class="drop-down-item">
+                <i class="bi bi-people"></i>
+                My Groups
+              </a>
+            </li>
+            <li class="quizzes should-fill">
+              <a href="/app/quizzes" class="drop-down-item">
+                <i class="bi bi-clipboard-check"></i>
+                My Quizzes
+              </a>
+            </li>
+            <li class="logout-button-li account">
+              <button type="button" id="logout-button" class="red-btn drop-down-item">
+                <i class="bi bi-box-arrow-in-left"></i>
+                Logout
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
     </aside>
     <aside class="left-side-bar">
@@ -318,8 +340,8 @@
             <i class="bi bi-people<%_ if (resourcesRoute.includes("/groups/")) { %>-fill<% } %>"></i>
             <h3 class="should-hide">Groups</h3>
           </a>
-          <a href="/app/quizzes" class="nav-link should-fill<% if (resourcesRoute === "/quizzes/") { %> active<% } %>">
-            <i class="bi bi-clipboard-check<%_ if (resourcesRoute === "/quizzes/") { %>-fill<% } %>"></i>
+          <a href="/app/quizzes" class="nav-link should-fill<% if (resourcesRoute.includes("/quizzes/")) { %> active<% } %>">
+            <i class="bi bi-clipboard-check<% if (resourcesRoute.includes("/quizzes/")) { %>-fill<% } %>"></i>
             <h3 class="should-hide">Quizzes</h3>
           </a>
         </div>
