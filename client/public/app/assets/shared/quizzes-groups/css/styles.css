@@ -10,11 +10,6 @@
   padding: 0.4rem;
 }
 
-.top-side-bar-middele {
-  max-width: 30%;
-  margin: auto;
-}
-
 .search-container {
   display: flex;
   gap: var(--primary-gap);

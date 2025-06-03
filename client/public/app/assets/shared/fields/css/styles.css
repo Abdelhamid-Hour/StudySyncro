@@ -2,10 +2,14 @@
   display: grid;
   grid-template-columns: repeat(2, calc(50% - var(--primary-gap) / 2));
   gap: var(--primary-gap);
+
+  &:has(.group-subject-field) {
+    z-index: 4;
+  }
 }
 
 .field-container {
-  z-index: 0;
+  z-index: 2;
   position: relative;
   display: flex;
   align-items: center;
@@ -47,9 +51,6 @@
 
   .icon-box {
     position: relative;
-    &:has(i + i) {
-      translate: -0.1rem 0.1rem;
-    }
     .bi-info-circle {
       position: absolute;
       font-size: var(--x-small-font-size);

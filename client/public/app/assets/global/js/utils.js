@@ -2,6 +2,7 @@ import {
   globalTooltip,
   hoverTooltip,
   mainContainer,
+  topSideBarFooter,
   topSideBarHeader,
   topSideBarMiddle,
 } from './dom-variables.js';
@@ -52,7 +53,7 @@ export const openOverlayHandler = function (e) {
   const button = e.target.closest('.open-drop-down-btn');
   if (button) {
     const overlay = button.parentElement.querySelector('.overlay');
-    overlay.classList.add('open-overlay');
+    overlay.classList.toggle('open-overlay');
   }
 };
 export const toggleClass = (array, className) => {
@@ -83,7 +84,9 @@ const getIconClassName = (icon) => {
 // this is for mouse down
 export const handleOverlayClose = (event) => {
   const overlayToClose = document.querySelector('.open-overlay');
-  const clickedElement = event.target.closest(`.open-overlay`);
+  const clickedElement = event.target.closest(
+    `.open-overlay, .open-drop-down-btn`
+  );
   if (!clickedElement && overlayToClose) {
     overlayToClose.classList.remove('open-overlay');
   }
@@ -136,7 +139,6 @@ export const showTooltip = (tooltipTarget, tooltip, message, error) => {
   if (tooltipTimer) {
     clearTimeout(tooltipTimer);
   }
-
   if (message) {
     tooltipTarget.dataset.tooltip = message;
   }
@@ -144,9 +146,17 @@ export const showTooltip = (tooltipTarget, tooltip, message, error) => {
   tooltip.textContent = tooltipTarget.getAttribute('data-tooltip');
   tooltip.style.left = positionInfo.left + 'px';
   tooltip.style.top = positionInfo.top + 'px';
-  tooltip.style.translate = `calc(-50% + ${
-    parseFloat(positionInfo.width) / 2
-  }px) -130%`;
+  // hadle if the tooltip is too clise to the right edge of the screen
+  if (positionInfo.left + tooltip.offsetWidth > window.innerWidth) {
+    tooltip.classList.add('from-left');
+    tooltip.style.translate = `calc(-100% - 0.5rem) calc(50% - ${
+      parseFloat(positionInfo.height) / 2
+    }px)`;
+  } else {
+    tooltip.style.translate = `calc(-50% + ${
+      parseFloat(positionInfo.width) / 2
+    }px) -130%`;
+  }
   tooltip.classList.add('show');
   if (error) {
     tooltip.classList.add('error-tooltip');
@@ -178,22 +188,24 @@ export const tooltipSetup = () => {
 
 const SHARED_STYLES_MAP = {
   '/home/inactive': ['/tasks'],
-  '/home/active': ['/tasks', '/chat'],
-  '/quizzes': ['/quizzes-groups'],
+  '/home/active': ['/tasks', '/chat', '/quiz-result'],
+  '/quizzes': ['/quizzes-groups', '/fields', '/forms'],
   '/groups/my': [
     '/groups-my-available',
     '/quizzes-groups',
     '/fields',
     '/tasks',
-    '/group-and-session-forms',
+    '/forms',
   ],
   '/groups/my/group-chat': [
     '/chat',
     '/tasks',
     '/fields',
-    '/group-and-session-forms',
+    '/forms',
+    '/quiz-result',
   ],
   '/groups/available': ['/groups-my-available', '/quizzes-groups'],
+  '/quiz-play': ['/quiz-result'],
 };
 
 const setSharedStylesResources = (pathName) => {
@@ -256,7 +268,7 @@ const setScriptRoute = async (pathName, thisNav) => {
     module.init?.();
   } catch (error) {
     console.error(error);
-    showMessageBlock(error.message, true);
+    showMessageBlock(error.message, 'error');
   }
 };
 
@@ -349,12 +361,13 @@ const createGroupsTabs = () => {
 
   const myGroupsTab = document.createElement('a');
   myGroupsTab.href = '/app/groups/my';
-  myGroupsTab.className = 'tab my-groups-tab active exclude-btn';
+  myGroupsTab.className = 'tab route-link my-groups-tab active exclude-btn';
   myGroupsTab.textContent = 'My Groups';
 
   const availableGroupsTab = document.createElement('a');
   availableGroupsTab.href = '/app/groups/available';
-  availableGroupsTab.className = 'tab available-groups-tab exclude-btn';
+  availableGroupsTab.className =
+    'tab route-link available-groups-tab exclude-btn';
   availableGroupsTab.textContent = 'Available Groups';
 
   navigationTabs.appendChild(myGroupsTab);
@@ -365,28 +378,42 @@ const createGroupsTabs = () => {
 
 const setGroupTitle = () => {
   const groupName = document.createElement('h1');
-  groupName.className = 'group-name fade-in-template';
+  groupName.className = 'fade-in-template';
   const groupLeftSideBarContent = document.querySelector(
     '.left-side-bar-content'
   );
-  groupName.textContent = groupLeftSideBarContent.dataset.groupName;
+  groupName.textContent = groupLeftSideBarContent?.dataset.groupName;
   return groupName;
 };
+const setQuizTitle = () => {
+  const quizTitle = document.createElement('h1');
+  quizTitle.className = 'fade-in-template';
+  const quizEditor = document.querySelector('.quiz-editor');
+  quizTitle.textContent = quizEditor?.dataset.quizTitle;
+  return quizTitle;
+};
 
-const createGroupCreateBtn = () => {
+const createCreateBtn = (quiz) => {
   const createGroupBtn = document.createElement('button');
   createGroupBtn.type = 'button';
-  createGroupBtn.className = 'create-group-btn';
+  createGroupBtn.className = quiz ? 'create-quiz-btn' : 'create-group-btn';
 
-  const icon = document.createElement('i');
-  icon.className = 'bi bi-plus-circle';
-
-  const span = document.createElement('span');
-  span.textContent = 'Create Group';
-
-  createGroupBtn.appendChild(icon);
-  createGroupBtn.appendChild(span);
+  createGroupBtn.innerHTML = `
+    <i class="bi bi-plus-circle"></i>
+    <span>Create ${quiz ? 'Quiz' : 'Group'}</span>
+  `;
   return createGroupBtn;
+};
+
+const createSaveQuizBtn = () => {
+  const saveQuizBtn = document.createElement('button');
+  saveQuizBtn.className = 'save-quiz-btn should-fill blue-btn';
+  saveQuizBtn.type = 'button';
+  saveQuizBtn.innerHTML = `
+  <i class="bi bi-floppy"></i>
+  <span>Save</span>
+  `;
+  return saveQuizBtn;
 };
 
 const pageConfig = {
@@ -398,8 +425,8 @@ const pageConfig = {
     title: 'Groups',
     middle: () => createSearchContainer(),
     additional: () => {
-      const createGroupBtn = createGroupCreateBtn();
-      topSideBarMiddle.after(createGroupBtn);
+      const createGroupBtn = createCreateBtn();
+      topSideBarFooter.prepend(createGroupBtn);
     },
   },
   '/groups/available': {
@@ -409,6 +436,10 @@ const pageConfig = {
   '/quizzes': {
     title: 'Quizzes',
     middle: () => createSearchContainer(),
+    additional: () => {
+      const createQuizBtn = createCreateBtn(true);
+      topSideBarFooter.prepend(createQuizBtn);
+    },
   },
   '/settings': {
     title: 'Settings',
@@ -416,16 +447,32 @@ const pageConfig = {
   },
   '/groups/my/group-chat': {
     title:
-      '<a href="/app/groups/my" class="back-link"><i class="bi bi-chevron-left"></i>Group Chat</a>',
+      '<a href="/app/groups/my"><i class="bi bi-caret-left-fill"></i>Group Chat</a>',
     middle: setGroupTitle,
+  },
+  '/quizzes/quiz-editor': {
+    title:
+      '<a href="/app/quizzes"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>',
+    middle: setQuizTitle,
+    additional: () => {
+      const saveQuizBtn = createSaveQuizBtn();
+      topSideBarFooter.prepend(saveQuizBtn);
+    },
   },
 };
 
-const removeCreateGroupBtn = () => {
-  const createGroupBtn = document.querySelector('.create-group-btn');
-  if (createGroupBtn) {
-    createGroupBtn.remove();
-  }
+const removeCreateBtns = () => {
+  const createBtns = document.querySelectorAll(
+    '.create-quiz-btn, .create-group-btn'
+  );
+  createBtns.forEach((btn) => {
+    btn.remove();
+  });
+};
+
+const removeSaveQuizBtn = () => {
+  const saveQuizBtn = document.querySelector('.save-quiz-btn');
+  saveQuizBtn?.remove();
 };
 
 const updateTopSideBar = (pathName) => {
@@ -452,8 +499,9 @@ const updateTopSideBar = (pathName) => {
     if (container) container.appendChild(panel);
   }
 
-  // remove create group button if not on groups page
-  removeCreateGroupBtn();
+  removeCreateBtns();
+
+  removeSaveQuizBtn();
 
   // 5) ONLY groups get tabs
   const isGroups = ['/groups/my', '/groups/available'].includes(pathName);
@@ -496,7 +544,7 @@ export const updateMain = async (path, isTabLinks) => {
     isRouting = false;
   } catch (error) {
     console.error(error);
-    showMessageBlock(error.message, true);
+    showMessageBlock(error.message, 'error');
   }
 };
 
@@ -505,7 +553,8 @@ const toggleActiveLink = (pathName) => {
   activeLinks.forEach((link) => {
     link.classList.remove('active');
     const icon = link.querySelector('i');
-    if (icon) {
+    const isSideBarLink = link.closest('.side-bar-icons');
+    if (icon && isSideBarLink) {
       animateFillIcon(icon, false);
     }
   });
@@ -533,15 +582,21 @@ const toggleActiveLink = (pathName) => {
     toggleClass(links, 'active');
     links.forEach((link) => {
       const icon = link.querySelector('i');
-      if (icon) {
+      const isSideBarLink = link.closest('.side-bar-icons');
+      if (icon && isSideBarLink) {
         animateFillIcon(icon, true);
       }
     });
   }
 };
 
-export const showErrorTooltip = (error, input) => {
-  const inputContainer = input.closest('.field-container');
+export const showErrorTooltip = (error, input, parentClassName) => {
+  let inputContainer = null;
+  if (parentClassName) {
+    inputContainer = input.closest(`.${parentClassName}`);
+  } else {
+    inputContainer = input.closest('.field-container, .choice');
+  }
   initAndDiplayErrorTooltip(inputContainer, error);
 };
 
@@ -563,8 +618,8 @@ const clearOverlaysModals = () => {
   });
 };
 
-export const handleNavigation = (e, linksClasses) => {
-  const link = e.target.closest(linksClasses.join(', '));
+export const handleNavigation = (e) => {
+  const link = e.target.closest('a.route-link');
   const tabLink = e.target.closest('.navigation-tabs a');
   if (link) {
     e.preventDefault();

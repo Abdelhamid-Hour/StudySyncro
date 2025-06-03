@@ -1,12 +1,3 @@
 .group-card {
   cursor: pointer;
 }
-
-.top-side-bar .create-group-btn {
-  margin-left: auto;
-  margin-right: var(--primary-gap);
-}
-
-.create-group-overlay .group-subject-select-menu {
-  padding-top: 0;
-}

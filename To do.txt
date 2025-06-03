@@ -25,8 +25,12 @@
 // add custom date picker
 // solve message login delay
 // add name to dom event listners arrow funcs
-
-
+// add time counter in the session creation
+// add passed time in each qquestion
+// built the 404 page (with Animated vercton in icon8)
+// try to improve the drag and drop feature like for the mouse out while dragging !
+// Verify any data attr that it data sent from the front end
+// remove the imoji skeleton
 
  Group Cards
 Subject (Matière)

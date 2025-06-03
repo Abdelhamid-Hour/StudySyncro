@@ -21,8 +21,10 @@
       display: flex;
 
       button {
+        border-radius: .2rem;
         &:hover {
           color: var(--primary-color);
+          background-color: var(--btn-background-color);
         }
       }
     }

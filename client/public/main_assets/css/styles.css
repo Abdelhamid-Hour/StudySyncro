@@ -107,7 +107,7 @@ button:has(> i[class*='bi']) {
 }
 
 button:not(.exclude-btn),
-.button {
+.button:not(.exclude-btn) {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   -webkit-transform-style: preserve-3d;
@@ -233,7 +233,8 @@ button:not(.exclude-btn),
 }
 
 .error-block,
-.success-block {
+.success-block,
+.info-block {
   position: relative;
   display: flex;
   justify-content: center;
@@ -258,6 +259,28 @@ button:not(.exclude-btn),
     hr {
       background-color: var(--success-block-border-color) !important;
     }
+    p i {
+      color: var(--success-icon-color);
+    }
+    & > i {
+      color: var(--close-success-icon-color);
+    }
+  }
+  &.info-block {
+    color: var(--info-block-text-color);
+    border: 1px solid var(--info-block-border-color);
+    background-color: var(--info-block-background-color);
+
+    hr {
+      background-color: var(--info-block-border-color) !important;
+    }
+    p i {
+      color: var(--info-icon-color);
+    }
+
+    & > i {
+      color: var(--close-info-icon-color);
+    }
   }
   p {
     padding-right: 2rem;
@@ -270,11 +293,6 @@ button:not(.exclude-btn),
       font-size: xx-large;
     }
   }
-  &.success-block p {
-    i {
-      color: var(--success-icon-color);
-    }
-  }
   & > i {
     color: var(--close-error-icon-color);
     font-size: x-large;
@@ -282,9 +300,6 @@ button:not(.exclude-btn),
     top: 0.5rem;
     right: 0.5rem;
     cursor: pointer;
-  }
-  &.success-block > i {
-    color: var(--close-success-icon-color);
   }
   div {
     position: absolute;

@@ -1,5 +1,6 @@
 .create-group-overlay,
-.create-session-overlay {
+.create-session-overlay,
+.create-quiz-overlay {
   display: flex;
   flex-direction: column;
   gap: var(--primary-gap);
@@ -16,8 +17,12 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    padding: calc(var(--primary-gap) / 2);
+    padding: var(--primary-gap);
     border-bottom: var(--primary-border-style);
+
+    h3 {
+      color: var(--primary-color);
+    }
 
     button {
       position: absolute;
@@ -31,40 +36,11 @@
     }
   }
 
-  .create-task-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--primary-gap);
-  }
-
-  .tasks-header {
-    display: flex;
-    padding-inline: var(--primary-gap);
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: calc(var(--primary-gap) / 2);
-  }
-
-  .tasks-list {
-    padding-inline: var(--primary-gap);
-    padding-block: calc(var(--primary-gap) / 2);
-    height: 15rem;
-  }
-
   .create-btn,
   .next-btn,
   .buttons > button {
     font-weight: bold;
-    width: 7rem;
-    align-self: flex-end;
-  }
-  .add-task-btn {
-    font-weight: bold;
-  }
-  .buttons {
-    padding-inline: var(--primary-gap);
-    display: flex;
-    gap: var(--primary-gap);
+    width: 100%;
     align-self: flex-end;
   }
 

@@ -12,7 +12,7 @@
     backface-visibility: hidden;
   }
   .group-left-side-bar,
-  .chat-container .top-bar {
+  .chat .top-bar {
     button:hover {
       background-color: var(--btn-background-color);
     }
@@ -325,10 +325,6 @@
 
           &.subject-container.info-edit-wrapper {
             position: relative;
-
-            .drop-down-menu {
-              padding-block-start: 0;
-            }
           }
 
           .value {
@@ -539,7 +535,7 @@
     }
   }
 
-  .chat-container {
+  .chat {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -624,38 +620,37 @@
     }
   }
 
+  .create-task-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--primary-gap);
+  }
+
+  .tasks-header {
+    display: flex;
+    padding-inline: var(--primary-gap);
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: calc(var(--primary-gap) / 2);
+  }
+
+  .add-task-btn {
+    font-weight: bold;
+  }
+
+  .buttons {
+    padding-inline: var(--primary-gap);
+    display: grid;
+    gap: var(--primary-gap);
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .tasks-list {
     gap: initial;
     position: relative;
-
-    & .drop-target {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: calc(var(--primary-gap) / 2);
-      transition: height var(--primary-transition-style);
-      border-radius: var(--primary-radius);
-
-      &::after {
-        content: '';
-        transition: height var(--primary-transition-style),
-          background-color var(--primary-transition-style);
-        background-color: transparent;
-        border-radius: var(--primary-radius);
-        display: block;
-        width: 100%;
-        height: 0;
-      }
-
-      &.drag-over {
-        height: calc(var(--primary-gap) / 2 + 2.8125rem);
-
-        &::after {
-          background-color: var(--btn-background-color);
-          height: 2.8125rem;
-        }
-      }
-    }
+    padding-inline: var(--primary-gap);
+    padding-block: calc(var(--primary-gap) / 2);
+    height: 15rem;
   }
 
   .task-wrapper {
@@ -688,6 +683,17 @@
         background-color: var(--btn-border-color);
         position: absolute;
         right: 0;
+      }
+    }
+  }
+
+  .task.dragging .task-box {
+    border-color: var(--primary-color);
+    box-shadow: var(--primary-hover-shadow);
+
+    .drag-handle {
+      &::after {
+        background-color: var(--primary-color);
       }
     }
   }

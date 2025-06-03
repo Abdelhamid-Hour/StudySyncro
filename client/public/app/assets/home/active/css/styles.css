@@ -183,7 +183,7 @@
         }
 
         h3.completed {
-          color: var(--greencolor);
+          color: var(--green-color);
         }
       }
 
@@ -337,12 +337,12 @@
             font-weight: 600;
           }
           &.active-task-container {
-            background-color: var(--greenbg);
-            color: var(--greencolor);
+            background-color: var(--green-bg);
+            color: var(--green-color);
           }
           &.next-task-container {
-            background-color: var(--bluebg);
-            color: var(--bluecolor);
+            background-color: var(--blue-bg);
+            color: var(--blue-color);
           }
           &.up-next-container {
             align-items: center;

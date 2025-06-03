@@ -25,13 +25,13 @@ import {
 import {
   levelValues,
   visibilityValues,
-} from '../../../../shared/group-and-session-forms/js/dom-variables.js';
+} from '../../../../shared/forms/js/dom-variables.js';
 import {
   countCharsTextarea,
   handleFormSubmit,
   setUpSubjectSelectMenu,
   setUpSwitchBtn,
-} from '../../../../shared/group-and-session-forms/js/utils.js';
+} from '../../../../shared/forms/js/utils.js';
 import { initAndDiplayErrorTooltip } from '../../../../shared/chat/js/utils.js';
 import {
   handletTasksListners,
@@ -87,7 +87,7 @@ export const openGroupLeftSideBar = async (route) => {
   showInfoBtn.setAttribute('data-tooltip', 'Close group info');
 
   try {
-    const groupId = groupLeftSideBarContent.dataset.groupId;
+    const groupId = groupLeftSideBarContent?.dataset.groupId;
     const { template, title, count, info } = await fetchData(
       `${route}/${groupId}`
     );
@@ -106,7 +106,7 @@ export const openGroupLeftSideBar = async (route) => {
     }
   } catch (error) {
     console.log(error);
-    showMessageBlock(error.message, true);
+    showMessageBlock(error.message, 'error');
   }
 };
 
@@ -114,7 +114,7 @@ const getSessionCreationOverlay = () => {
   const sessionOverlay = `
         <div class="create-session-overlay overlay-model">
         <header>
-          <h2>Create New Session</h2>
+          <h3>Create New Session</h3>
           <button type="button" class="exclude-btn close-session-creation-overlay">
             <i class="bi bi-x-lg"></i>
           </button>
@@ -646,14 +646,14 @@ const setUpTasksList = (wrapper, sessionStore) => {
     const editBtn = e.target.closest('.edit-task-btn');
     const removeBtn = e.target.closest('.remove-task-btn');
     if (editBtn) {
-      const taskId = editBtn.closest('.task-wrapper ').dataset.taskId;
+      const taskId = editBtn.closest('.task-wrapper ')?.dataset.taskId;
       sessionStore.taskToEdit = {
         task: sessionData.tasks[taskId],
         index: taskId,
       };
       swapSessionOverlayContent('create-task-form', wrapper, sessionStore);
     } else if (removeBtn) {
-      const taskId = removeBtn.closest('.task-wrapper ').dataset.taskId;
+      const taskId = removeBtn.closest('.task-wrapper ')?.dataset.taskId;
       const isQuizTask = sessionData.tasks[taskId].isQuiz;
       if (isQuizTask) {
         const res = await showConfirmationBox(
@@ -826,9 +826,12 @@ const swapMode = (infoBox, modeFuncName, updatedValue, showInSearchValue) => {
   const editBoxClass = infoBox.className
     .split(' ')
     .find((c) => c.includes('-info-box'));
-  const value = updatedValue
-    ? updatedValue
-    : groupInfo[dashedToCamelCase(editBoxClass.split('-info-box')[0])];
+  if (updatedValue) {
+    groupInfo[dashedToCamelCase(editBoxClass.split('-info-box')[0])] =
+      updatedValue;
+  }
+  const value =
+    groupInfo[dashedToCamelCase(editBoxClass.split('-info-box')[0])];
   const showInSearchInput =
     showInSearchValue !== null ? showInSearchValue : null;
   const infoBoxClone = infoBox.cloneNode();
@@ -839,7 +842,7 @@ const swapMode = (infoBox, modeFuncName, updatedValue, showInSearchValue) => {
   );
   if (modeFuncName === 'getEditMode') {
     if (editBoxClass === 'subject-info-box') {
-      setUpSubjectSelectMenu(infoBoxClone, 'group-subject-select-menu');
+      setUpSubjectSelectMenu(infoBoxClone);
     }
     if (['visibility-info-box', 'level-info-box'].includes(editBoxClass)) {
       setUpSwitchBtn(infoBoxClone);
@@ -913,9 +916,9 @@ const isValueUnchanged = (
   if (CONDITIONS.isInputElement) {
     return input.value === oldValue;
   } else {
-    const valueUnchanged = input.dataset.value === oldValue;
+    const valueUnchanged = input?.dataset.value === oldValue;
     const showInSearchUnchanged =
-      CONDITIONS.isVisbilityBox && input.dataset.value === 'Private'
+      CONDITIONS.isVisbilityBox && input?.dataset.value === 'Private'
         ? showInSearchInput.checked === oldValueShowInSearchInput
         : true;
     return valueUnchanged && showInSearchUnchanged;
@@ -999,16 +1002,16 @@ const handleSaveAction = async (
     await updateGroupInfo(input, infoBox, CONDITIONS);
     const updatedValue = CONDITIONS.isInputElement
       ? input.value
-      : input.dataset.value;
+      : input?.dataset.value;
     const showInSearchValue =
-      CONDITIONS.isVisbilityBox && input.dataset.value === 'Private'
+      CONDITIONS.isVisbilityBox && input?.dataset.value === 'Private'
         ? showInSearchInput.checked
         : null;
 
     swapMode(infoBox, 'getViewMode', updatedValue, showInSearchValue);
-    showMessageBlock('Group info updated successfully', false);
+    showMessageBlock('Group info updated successfully', 'success');
   } catch (error) {
-    showMessageBlock(error.message, true);
+    showMessageBlock(error.message, 'error');
   }
 };
 
@@ -1079,7 +1082,7 @@ const checkValidity = (input, CONDITIONS) => {
 };
 
 const checkRadioValidity = (input, valideValues) => {
-  if (!valideValues.includes(input.dataset.value)) {
+  if (!valideValues.includes(input?.dataset.value)) {
     initAndDiplayErrorTooltip(
       input.closest('.info-edit-wrapper'),
       'Please select a valid option'

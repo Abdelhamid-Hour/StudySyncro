@@ -13,21 +13,23 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: var(--primary-border-style);
   border-radius: var(--primary-radius);
-  padding: calc(var(--primary-gap) / 3);
+  padding: calc(var(--primary-gap) / 4);
   background-color: var(--background-color);
 
   .tab {
     flex-basis: 50%;
     padding: calc(var(--primary-gap) / 2);
     text-align: center;
-    border-radius: var(--primary-radius);
+    border-radius: 0.2rem;
     cursor: pointer;
+
+    &:hover:not(.active) {
+      background-color: var(--btn-background-color);
+    }
   }
   .active {
     background-color: var(--primary-color);
-    font-weight: bold;
     color: white;
     border: 1px solid var(--info-border-color);
   }
@@ -43,7 +45,8 @@
   padding: var(--primary-gap);
   gap: calc(var(--primary-gap) / 2);
   border: var(--primary-border-style);
-  transition: box-shadow var(--primary-transition-style), border-color var(--primary-transition-style);
+  transition: box-shadow var(--primary-transition-style),
+    border-color var(--primary-transition-style);
 
   &:hover {
     box-shadow: var(--primary-hover-shadow);
@@ -71,7 +74,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  
+
   .avatars {
     display: flex;
     .avatar,
@@ -124,7 +127,7 @@
   .loading-title {
     height: 100%;
     width: 50%;
-    background-color: gray ;
+    background-color: gray;
   }
   .loading-description {
     display: flex;
@@ -132,7 +135,7 @@
     gap: calc(var(--primary-gap) / 2);
     & > div {
       height: 1rem;
-      background-color: gray ;
+      background-color: gray;
     }
     div:last-child {
       width: 50%;
@@ -146,12 +149,12 @@
   }
   .subject-value,
   .level-value {
-    background-color: gray ;
+    background-color: gray;
     display: inline-block;
     width: 5rem;
     height: 1.2188rem;
   }
-  .avatar{
+  .avatar {
     background-color: gray !important;
   }
 }

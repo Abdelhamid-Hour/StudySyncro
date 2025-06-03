@@ -61,7 +61,7 @@ export const createLoadingCard = (userGroup) => {
 export const getcreateGroupCardFunc = (userGroup) => {
   return (group) => {
     const groupCard = document.createElement('div');
-    groupCard.className = 'group-card';
+    groupCard.className = 'group-card route-link';
     groupCard.dataset.id = group.id;
     const groupLevel = `<span class="level-value badge ${
       group.level === 'Intermediate'

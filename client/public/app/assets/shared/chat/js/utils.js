@@ -45,7 +45,7 @@ const initDOMVariables = () => {
   emojiList = document.querySelector('.emoji-list');
   emojiesSearch = document.querySelector('.emojis-search-input');
   emojiesSearchResultContainer = document.querySelector('#search-result');
-  chatContainer = document.querySelector('.chat-container');
+  chatContainer = document.querySelector('.chat');
 };
 
 const initializeEmojiPicker = (emojiList) => {
@@ -440,13 +440,13 @@ const clearChatInputs = () => {
 const handleFiles = (files) => {
   for (const f of Array.from(files)) {
     if (selectedFiles.items.length >= 5) {
-      return showMessageBlock('You can only upload a maximum of 5 files', true);
+      return showMessageBlock('You can only upload a maximum of 5 files', 'error');
     }
     const isSupportedType = Object.values(FileTypes).find((types) =>
       types.includes(f.type)
     );
     if (!isSupportedType) {
-      showMessageBlock('Invalid file type. Please select other file.', true);
+      showMessageBlock('Invalid file type. Please select other file.', 'error');
       continue;
     }
     selectedFiles.items.add(f);
@@ -463,7 +463,7 @@ const displayFile = async (file) => {
     filesView.addEventListener('click', (e) => {
       const btn = e.target.closest('.remove-file-btn');
       if (e.target.closest('.remove-file-btn')) {
-        const targetFileName = btn.previousElementSibling.dataset.fileName;
+        const targetFileName = btn.previousElementSibling?.dataset.fileName;
         const fileIndex = Array.from(selectedFiles.items).findIndex((f) => {
           return f.getAsFile().name === targetFileName;
         });
@@ -746,7 +746,7 @@ const handleDrop = (e) => {
 const handleDragLeave = (e) => {
   console.log('e.relatedTarget', e.relatedTarget);
 
-  if (e.relatedTarget?.matches(':not(.chat-container *)')) {
+  if (e.relatedTarget?.matches(':not(.chat *)')) {
     inputChatContainer.classList.remove('drop-start');
     dragLeaveTimer = setTimeout(() => {
       document.querySelector('.drop-area')?.remove();

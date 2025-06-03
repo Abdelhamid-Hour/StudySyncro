@@ -1,12 +1,10 @@
 export let expandDescriptionBtn,
   SESSIONSSELECTORS,
   TASKSSELECTORS,
-  chatContainer,
   QUIZSELECTORS;
 
 export const initDomVariables = () => {
   expandDescriptionBtn = document.querySelector('.expande-desc-btn');
-  chatContainer = document.querySelector('.chat-container');
 
   SESSIONSSELECTORS = {
     name: '.session-name',

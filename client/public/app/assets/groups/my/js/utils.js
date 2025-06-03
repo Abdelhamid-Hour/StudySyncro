@@ -15,18 +15,18 @@ import {
 import {
   levelValues,
   visibilityValues,
-} from '../../../shared/group-and-session-forms/js/dom-variables.js';
+} from '../../../shared/forms/js/dom-variables.js';
 import {
   countCharsTextarea,
   handleFormSubmit,
   setUpSubjectSelectMenu,
   setUpSwitchBtn,
-} from '../../../shared/group-and-session-forms/js/utils.js';
+} from '../../../shared/forms/js/utils.js';
 
 export const getGroupOverlay = () => `
 <div class="create-group-overlay overlay-model">
     <header>
-        <h2>Create New Group</h2>
+        <h3>Create New Group</h3>
         <button type="button" class="exclude-btn close-group-overlay">
             <i class="bi bi-x-lg"></i>
         </button>
@@ -229,8 +229,7 @@ export const handleGroupCreateClick = () => {
 
 const setUpGroupOverlay = (backdropElement) => {
   setUpSubjectSelectMenu(
-    backdropElement.querySelector('.group-subject-field'),
-    'group-subject-select-menu'
+    backdropElement.querySelector('.group-subject-field')
   );
   const visibilityField = backdropElement.querySelector(
     '.group-visibility-field'

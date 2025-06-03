@@ -44,7 +44,7 @@ export const removeBlock = function () {
  * @param {String} message - The message to show in the DOM.
  * @param {Boolean} error - Indicates if the message is an error (true) or success (false).
  */
-export const showMessageBlock = (message, error) => {
+export const showMessageBlock = (message, type) => {
   let messagesBlocksWrapper = document.querySelector(
     '.messages-blocks-wrapper'
   );
@@ -54,10 +54,10 @@ export const showMessageBlock = (message, error) => {
     document.body.appendChild(messagesBlocksWrapper);
   }
   const msgBlock = document.createElement('div');
-  msgBlock.className = `${error ? 'error' : 'success'}-block`;
+  msgBlock.className = `${type}-block`;
   msgBlock.innerHTML = `
     <p>
-      <i class="bi bi-${error ? 'exclamation' : 'check'}-circle-fill"></i>
+      <i class="bi bi-${type === 'error' ? 'exclamation' : type === 'info' ? 'info' : 'check'}-circle-fill"></i>
       <span>${message}</span>
     </p>
     <i class="bi bi-x"></i>

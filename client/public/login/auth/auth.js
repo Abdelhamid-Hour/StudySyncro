@@ -81,10 +81,10 @@ forgotPasswordLink.addEventListener('click', async () => {
     await sendPasswordResetEmail(auth, signInemailField.value);
     showMessageBlock(
       'If this email is registered, you will receive a password reset link.',
-      false
+      'success'
     );
     signInPasswordField.value = '';
   } catch (error) {
-    showMessageBlock(error.message, true);
+    showMessageBlock(error.message, 'error');
   }
 });

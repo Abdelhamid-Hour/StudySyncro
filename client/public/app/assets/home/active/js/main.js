@@ -1,6 +1,5 @@
 import { expandAndShrinkDescription, Session } from './utils.js';
 import {
-  chatContainer,
   expandDescriptionBtn,
   initDomVariables,
 } from './dom-variables.js';
@@ -11,7 +10,7 @@ export const init = () => {
   initDomVariables();
 
   expandDescriptionBtn.addEventListener('click', expandAndShrinkDescription);
-
+  
   handletTasksListners('completed-tasks', 'ongoing-tasks');
 
   new Session().startSession();

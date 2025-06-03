@@ -5,6 +5,7 @@ export const closeLeftSideBarIcon = document.querySelector(
 );
 export const topSideBarHeader = document.querySelector('.top-sidebar-header');
 export const topSideBarMiddle = document.querySelector('.top-side-bar-middele');
+export const topSideBarFooter = document.querySelector('.top-side-bar-footer');
 export const hoverTooltip = document.getElementById('hover-tooltip');
 export const globalTooltip = document.getElementById('global-tooltip');
 export const mainContainer = document.querySelector('main');
@@ -19,6 +20,9 @@ export const SESSION_MIN_DURATION = 10; // in minutes
 export const SESSION_MAX_DURATION = 1440;
 export const MAX_MEMBERS = 1000;
 export const MIN_MEMBERS = 2;
+export const QUESTION_TEXT_MAX_LENGTH = 500;
+export const QUESTION_TEXT_MIN_LENGTH = 10;
+export const CHOICE_TEXT_MAX_LENGTH = 200;
 
 function calculateBoxCounts() {
   boxRowCount = Math.floor(

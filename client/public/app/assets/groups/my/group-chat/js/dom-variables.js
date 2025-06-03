@@ -7,7 +7,6 @@ import {
 
 export let groupLeftSideBar,
   showInfoBtn,
-  chatContainer,
   groupLeftSideBarContent,
   groupLeftSideBarTitle,
   groupInfoElementsMap,
@@ -450,5 +449,4 @@ export const initDomVariables = () => {
   createSessionBtn = document.querySelector('.create-session-btn');
   groupLeftSideBarContent = document.querySelector('.left-side-bar-content');
   groupLeftSideBarTitle = groupLeftSideBar.querySelector('.side-bar-title');
-  chatContainer = document.querySelector('.chat-container');
 };

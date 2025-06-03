@@ -19,7 +19,7 @@ export const handleJoinGroupClick = async (joinGroupBtn) => {
   if (!result) return;
 
   const groupCard = joinGroupBtn.closest('.group-card');
-  const groupId = groupCard.dataset.id;
+  const groupId = groupCard?.dataset.id;
   const groupTitle = groupCard.querySelector('.group-title').textContent;
   const groupFooter = groupCard.querySelector('.group-footer');
 
@@ -35,7 +35,7 @@ export const handleJoinGroupClick = async (joinGroupBtn) => {
   );
 
   const successMessage = getSuccessMessage(status, groupTitle);
-  showMessageBlock(successMessage, false);
+  showMessageBlock(successMessage, 'success');
 };
 
 const createLoaderDiv = () => {
@@ -47,14 +47,14 @@ const createLoaderDiv = () => {
 
 const simulateJoinGroupRequest = (groupCard) => {
   return new Promise((resolve) => {
-    setTimeout(() => {      
+    setTimeout(() => {
       resolve({
         status:
-          groupCard.querySelector('header .badge').textContent.trim() === 'Private'
+          groupCard.querySelector('header .badge').textContent.trim() ===
+          'Private'
             ? 'requested'
             : 'joined',
       });
-
     }, 1000);
   });
 };

@@ -32,11 +32,11 @@ export const resetPassword = async () => {
   try {
     await confirmPasswordReset(auth, oobCode, passwordField.value);
     clearInputFields();
-    showMessageBlock('Password reset successful', false);
+    showMessageBlock('Password reset successful', 'success');
     setTimeout(() => {
       redirectTo('/login');
     }, 1500);
   } catch (error) {
-    showMessageBlock(error.message, true);
+    showMessageBlock(error.message, 'error');
   }
 };

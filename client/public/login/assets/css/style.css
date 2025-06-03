@@ -375,13 +375,41 @@ section#forms {
         }
 
         /* eye icon */
-        & > div {
+        .eye-icon {
           position: absolute;
           top: 50%;
           right: 0.5rem;
           translate: 0 -50%;
           color: var(--eye-pass-color);
           cursor: pointer;
+
+          & > .show {
+            scale: 0 1;
+          }
+
+          div {
+            position: absolute;
+            top: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            translate: 25% 70%;
+            background-color: var(--inputs-background-color);
+            padding-block: 1px;
+            width: 100%;
+            height: fit-content;
+            transform-origin: 0 0;
+            rotate: 45deg;
+            transition: all var(--eye-trans-duration) ease-in-out;
+            float: right;
+
+            hr {
+              background-color: var(--eye-pass-color);
+              height: 2px;
+              border: none;
+              width: 100%;
+            }
+          }
         }
 
         label {
@@ -427,35 +455,6 @@ section#forms {
           &:has(+ input:not(:focus)) {
             background-color: var(--inputs-background-color);
             color: var(--inputs-label-color);
-          }
-        }
-        .eye-icon {
-          & > .show {
-            scale: 0 1;
-          }
-
-          div {
-            position: absolute;
-            top: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            translate: 25% 70%;
-            background-color: var(--inputs-background-color);
-            padding-block: 1px;
-            width: 100%;
-            height: fit-content;
-            transform-origin: 0 0;
-            rotate: 45deg;
-            transition: all var(--eye-trans-duration) ease-in-out;
-            float: right;
-
-            hr {
-              background-color: var(--eye-pass-color);
-              height: 2px;
-              border: none;
-              width: 100%;
-            }
           }
         }
       }

@@ -123,7 +123,7 @@ export class FlipTimer {
       const topFrontFontText = flipContainer
         .closest('.flip-digit')
         .querySelector('.flip-face-top-front-front span');
-      const number = bottomSpan.dataset.nextDigit;
+      const number = bottomSpan?.dataset.nextDigit;
       bottomSpan.textContent = number;
       topFrontFontText.textContent = number;
       flipContainer.classList.remove('flip');
@@ -178,11 +178,11 @@ export class Session {
   constructor() {
     this.startDate = document.querySelector(
       SESSIONSSELECTORS.startDate
-    ).dataset.startDate;
+    )?.dataset.startDate;
     // !? you can change htis method with queryselecctor for the durationInMins element
     this.durationInMins = document.querySelector(
       SESSIONSSELECTORS.durationInMins
-    ).dataset.durationInMins;
+    )?.dataset.durationInMins;
     this.initVariables();
     this.initTime();
     this.timerDuration =
@@ -314,13 +314,13 @@ export class Session {
             description: task.querySelector(TASKSSELECTORS.taskDetails)
               .textContent,
             durationInMins: parseInt(
-              task.querySelector(TASKSSELECTORS.taskDuration).dataset
+              task.querySelector(TASKSSELECTORS.taskDuration)?.dataset
                 .durationInMins
             ),
             questionsCount: parseInt(
               document.querySelector(QUIZSELECTORS.questions).textContent
             ),
-            UID: document.querySelector(QUIZSELECTORS.quizTitle).dataset
+            UID: document.querySelector(QUIZSELECTORS.quizTitle)?.dataset
               .quizUid,
           })
         : new Task({
@@ -328,7 +328,7 @@ export class Session {
             description: task.querySelector(TASKSSELECTORS.taskDetails)
               .textContent,
             durationInMins: parseInt(
-              task.querySelector(TASKSSELECTORS.taskDuration).dataset
+              task.querySelector(TASKSSELECTORS.taskDuration)?.dataset
                 .durationInMins
             ),
           });

@@ -82,10 +82,17 @@
   --close-error-icon-color: rgb(116, 5, 5);
   /* external success variables */
   --success-block-background-color: var(--container-background-color);
-  --success-block-border-color: rgb(18, 151, 0)	;
+  --success-block-border-color: rgb(18, 151, 0);
   --success-block-text-color: rgb(18, 151, 0);
   --success-icon-color: rgb(18, 151, 0);
   --close-success-icon-color: rgb(18, 116, 5);
+
+  /* external info variables */
+  --info-block-background-color: var(--container-background-color);
+  --info-block-border-color: #1e77fd;
+  --info-block-text-color: #1e77fd;
+  --info-icon-color: #1e77fd;
+  --close-info-icon-color: #1451a3;
   /* links color */
   --links-color: #485268;
   /* link hover color */

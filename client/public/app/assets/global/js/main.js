@@ -24,21 +24,14 @@ document.addEventListener('mouseout', (e) => handelIconsHover(e, false));
 
 document.addEventListener('click', (e) => {
   openOverlayHandler(e);
-  handleOverlayClick(e, ['drop-down-item']);
+  handleOverlayClick(e, ['drop-down-item', 'open-drop-down-btn']);
 });
 
 document.addEventListener('mousedown', handleOverlayClose);
 
 document.addEventListener('click', handleRoutingClick, true);
 
-document.addEventListener('click', (e) => {
-  handleNavigation(e, [
-    '.side-bar-icons a',
-    '.navigation-tabs a',
-    '.profile-container a',
-    'a.group-card',
-  ]);
-});
+document.addEventListener('click', handleNavigation);
 
 window.addEventListener('popstate', () => {
   updateMain(location.pathname);

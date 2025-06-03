@@ -1,15 +1,11 @@
 import { showMessageBlock } from '../../../../../main_assets/js/utils.js';
 import {
   DESCRIPTION_MAX_LENGTH,
-  globalTooltip,
   hoverTooltip,
 } from '../../../global/js/dom-variables.js';
 import {
   getDebounceFunc,
-  resetTooltip,
-  showTooltip,
 } from '../../../global/js/utils.js';
-import { handleEnterKeyWithTooltip } from '../../chat/js/utils.js';
 import {
   levelValues,
   subjectMenuObject,
@@ -25,8 +21,8 @@ export const checkSubject = (subject) => {
   return false;
 };
 
-export const setUpSubjectSelectMenu = (container, selectMenuClassName) => {
-  const selectMenu = container.querySelector(`.${selectMenuClassName}`);
+export const setUpSubjectSelectMenu = (container) => {
+  const selectMenu = container.querySelector(`.select-menu`);
   if (!selectMenu) return;
 
   selectMenu.innerHTML = createSubjectSelectMenu();
@@ -58,13 +54,13 @@ const HandleSubjectSelection = (e, selectButtonValue) => {
     selectButtonValue.style.color = 'var(--primary-text-color)';
   }
 
-  const selectedValue = selectedItem.dataset.value;
+  const selectedValue = selectedItem?.dataset.value;
   if (checkSubject(selectedValue)) {
     setSubjectValue(selectButtonValue, selectedValue);
   } else {
     showMessageBlock(
       'Please select a valid subject from the list or specify a new one.',
-      true
+      'error'
     );
   }
 };
@@ -110,7 +106,7 @@ const createSubjectSelectMenuGroup = (group, subjects) => {
   return groupHtml;
 };
 
-export const handleOtherSubjectInputKeydown = (
+const handleOtherSubjectInputKeydown = (
   e,
   selectButtonValue,
   selectMenu
@@ -232,7 +228,7 @@ export const setUpSwitchBtn = (wrapper) => {
       'input[type="hidden"]'
     )
       ? valueElement.nextElementSibling.value
-      : valueElement.dataset.value;
+      : valueElement?.dataset.value;
     const currentIndex = validValues.indexOf(currentValue);
     if (currentIndex !== -1) {
       updateTooltip((currentIndex + 1) % validValues.length);
@@ -245,7 +241,7 @@ export const setUpSwitchBtn = (wrapper) => {
         'input[type="hidden"]'
       )
         ? valueElement.nextElementSibling.value
-        : valueElement.dataset.value;
+        : valueElement?.dataset.value;
       const checkedIndex = validValues.indexOf(currentValue);
 
       if (checkedIndex !== -1) {
@@ -291,6 +287,7 @@ export const countCharsTextarea = (e) => {
 // Generic form validation handler
 const handleFormSubmission = (e, form, validateFn, onSuccess) => {
   e.preventDefault();
+  
   if (validateFn()) {
     console.log('Form submitted successfully');
     const formData = new FormData(form);
@@ -306,7 +303,6 @@ export const handleFormSubmit = (form, validateFn, onSuccess) => {
       handleFormSubmission(e, form, validateFn, onSuccess);
     }
   });
-
   form.addEventListener('submit', (e) => {
     handleFormSubmission(e, form, validateFn, onSuccess);
   });
