@@ -1,0 +1,68 @@
+<div class="quiz-view">
+  <a class="button close-btn exclude-btn has-tooltip" data-tooltip="Close">
+    <i class="bi bi-x-lg"></i>
+  </a>
+  <div class="questions-view">
+    <header class="quiz-header">
+      <div class="timer">
+        <span class="time-left">
+          <span class="icon-box"><i class="bi bi-stopwatch-fill"></i></span>
+          Time Left :
+        </span>
+        <div class="timer-digits">
+          <span class="hours key-hint">00</span>
+          <span>:</span>
+          <span class="minutes key-hint">50</span>
+          <span>:</span>
+          <span class="seconds key-hint">30</span>
+        </div>
+      </div>
+      <h3 class="quiz-title"><%= quizTitle %></h3>
+    </header>
+    <div class="question-view">
+      <header class="question-view-header">
+        <h4>
+          <span class="icon-box">
+            <i class="bi bi-patch-question"></i>
+          </span>
+          <span class="question-count counter">
+            Question
+            <span class="current-question-number">1</span>
+            of <%= totalQuestions %>
+          </span>
+        </h4>
+        <button type="button" class="gray-btn skip-btn">Skip</button>
+      </header>
+      <div class="question-body">
+        <h4><%= firstQuestion.text %></h4>
+        <div class="question-choices">
+          <span class="select-answer-label">Select the correct Answer</span>
+          <div class="choices-list">
+            <% firstQuestion.choices.forEach(function(choice, idx) { %>
+              <label class="choice">
+                <input type="radio" value="<%= idx %>" name="choice" />
+                <span class="choice-label"><%= String.fromCharCode(65 + idx) %></span>
+                <span class="choice-text"><%= choice %></span>
+              </label>
+            <% }); %>
+          </div>
+        </div>
+      </div>
+      <footer class="question-actions-row">
+        <div class="prev action">
+          <button class="prev-btn gray-btn">Previous</button>
+          <span>Or Press</span>
+          <i class="left-key icon"></i>
+        </div>
+        <div class="next action">
+          <span>Press</span>
+          <i class="right-key icon"></i>
+          <span>Or</span>
+          <i class="enter-key icon"></i>
+          <button class="next-btn blue-btn">Next</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.0/lottie.min.js"></script>

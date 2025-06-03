@@ -12,7 +12,6 @@ const handleRoutes = (req, res) => {
       ? '/quizzes/quizzes-list'
       : pathName
   }`;
-
   return renderFragmentOrLayout(
     template,
     req.path === '/home' ? templateContext.templateContext : templateContext,
@@ -50,8 +49,30 @@ const handleQuizEditRoute = (req, res) => {
   );
 };
 
+const handleQuizPlayRoute = (req, res) => {
+  const templateContext = {
+    firstQuestion: {
+      id: 'q1',
+      text: 'What is the capital of Morocco?',
+      choices: ['Casablanca', 'Marrakesh', 'Fez', 'Rabat'],
+      correctAnswerIndex: 3, // Rabat
+    },
+    totalQuestions: 10,
+    quizTitle: 'Geography Quiz',
+  }; // Replace with actual logic to get group chat context
+
+  renderFragmentOrLayout(
+    'templates/quiz-play',
+    templateContext,
+    '/quiz-play',
+    req,
+    res
+  );
+};
+
 module.exports = {
   handleRoutes,
   handleGroupChatRoute,
   handleQuizEditRoute,
+  handleQuizPlayRoute,
 };

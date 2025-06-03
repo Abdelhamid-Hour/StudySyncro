@@ -85,13 +85,13 @@
         <div class="navigation-tabs">
           <a
             href="/app/groups/my"
-            class="tab my-groups-tab<% if (resourcesRoute === "/groups/my/") { %> active<% } %> exclude-btn"
+            class="tab route-link my-groups-tab<% if (resourcesRoute === "/groups/my/") { %> active<% } %> exclude-btn"
           >
             My Groups
           </a>
           <a
             href="/app/groups/available"
-            class="tab available-groups-tab<% if (resourcesRoute === "/groups/available/") { %> active<% } %> exclude-btn"
+            class="tab route-link available-groups-tab<% if (resourcesRoute === "/groups/available/") { %> active<% } %> exclude-btn"
           >
             Available Groups
           </a>
@@ -259,16 +259,10 @@
           <span>Create Group</span>
         </button>
         <% } else if (resourcesRoute === '/quizzes/quiz-editor/') { %>
-        <div class="quiz-action-btns">
-          <button type="button" class="preview-btn should-fill">
-            <i class="bi bi-play"></i>
-            <span>Preview</span>
-          </button>
-          <button type="button" class="save-quiz-btn should-fill blue-btn">
-            <i class="bi bi-floppy"></i>
-            <span>Save</span>
-          </button>
-        </div>
+        <button type="button" class="save-quiz-btn should-fill blue-btn">
+          <i class="bi bi-floppy"></i>
+          <span>Save</span>
+        </button>
         <% } else if (resourcesRoute === '/quizzes/') { %>
         <button type="button" class="create-quiz-btn">
           <i class="bi bi-plus-circle"></i>
@@ -295,19 +289,19 @@
           </button>
           <ul class="profile-drop-down-menu overlay">
             <li class="account should-fill">
-              <a href="/app/settings" class="drop-down-item">
+              <a href="/app/settings" class="drop-down-item route-link">
                 <i class="bi bi-person"></i>
                 Account
               </a>
             </li>
             <li class="groups should-fill">
-              <a href="/app/groups/my" class="drop-down-item">
+              <a href="/app/groups/my" class="drop-down-item route-link">
                 <i class="bi bi-people"></i>
                 My Groups
               </a>
             </li>
             <li class="quizzes should-fill">
-              <a href="/app/quizzes" class="drop-down-item">
+              <a href="/app/quizzes" class="drop-down-item route-link">
                 <i class="bi bi-clipboard-check"></i>
                 My Quizzes
               </a>
@@ -329,18 +323,18 @@
       </div>
       <div class="side-bar-icons">
         <div class="top-side-bar-icons">
-          <a href="/app/home" class="nav-link should-fill<% if (resourcesRoute.includes("/home/")) { %> active<% } %> ">
+          <a href="/app/home" class="nav-link route-link should-fill<% if (resourcesRoute.includes("/home/")) { %> active<% } %> ">
             <i class="bi bi-house<%_ if (resourcesRoute.includes("/home/")) { %>-fill<% } %>"></i>
             <h3 class="should-hide">OverView</h3>
           </a>
           <a
             href="/app/groups/my"
-            class="nav-link should-fill<% if (resourcesRoute.includes("/groups/")) { %> active<% } %>"
+            class="nav-link route-link should-fill<% if (resourcesRoute.includes("/groups/")) { %> active<% } %>"
           >
             <i class="bi bi-people<%_ if (resourcesRoute.includes("/groups/")) { %>-fill<% } %>"></i>
             <h3 class="should-hide">Groups</h3>
           </a>
-          <a href="/app/quizzes" class="nav-link should-fill<% if (resourcesRoute.includes("/quizzes/")) { %> active<% } %>">
+          <a href="/app/quizzes" class="nav-link route-link should-fill<% if (resourcesRoute.includes("/quizzes/")) { %> active<% } %>">
             <i class="bi bi-clipboard-check<% if (resourcesRoute.includes("/quizzes/")) { %>-fill<% } %>"></i>
             <h3 class="should-hide">Quizzes</h3>
           </a>
@@ -376,7 +370,7 @@
           </button>
           <a
             href="/app/settings"
-            class="settings-container nav-link should-fill<% if (resourcesRoute === "/settings/") { %> active<% } %>"
+            class="settings-container nav-link route-link should-fill<% if (resourcesRoute === "/settings/") { %> active<% } %>"
           >
             <i class="bi bi-gear<%_ if (resourcesRoute === "/settings/") { %>-fill<% } _%>"></i>
           </a>

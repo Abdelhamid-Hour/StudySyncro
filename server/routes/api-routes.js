@@ -2,7 +2,7 @@ const express = require('express');
 const { createNewUser } = require('../controllers/auth-controllers');
 const { setSessionDetails } = require('../middleware/home');
 const { sendSessionDetails } = require('../controllers/home');
-const { getUserGroupsHandler, getAvailableGroupsHandler, groupFragmentHandler } = require('../controllers/groups');
+const { getUserGroupsHandler, getAvailableGroupsHandler, groupFragmentHandler, getQuizQuestionsHandler } = require('../controllers/groups');
 const { generateTemplateContext } = require('../middleware/groups');
 
 const apiRouter = express.Router();
@@ -15,6 +15,7 @@ apiRouter.get('/user-groups', getUserGroupsHandler);
 
 apiRouter.get('/available-groups', getAvailableGroupsHandler);
 
+apiRouter.get('/quiz-questions', getQuizQuestionsHandler);
 // ? Group Fragment Routes: Send Group Left Sidebar Content
 
 [

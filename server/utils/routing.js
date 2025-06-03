@@ -8,7 +8,7 @@ const { fetchHomeData } = require('./home');
 
 const SHARED_STYLES_MAP = {
   '/home/inactive': ['/tasks'],
-  '/home/active': ['/tasks', '/chat'],
+  '/home/active': ['/tasks', '/chat', '/quiz-result'],
   '/quizzes': ['/quizzes-groups', '/fields', '/forms'],
   '/groups/my': [
     '/groups-my-available',
@@ -17,8 +17,15 @@ const SHARED_STYLES_MAP = {
     '/tasks',
     '/forms',
   ],
-  '/groups/my/group-chat': ['/chat', '/tasks', '/fields', '/forms'],
+  '/groups/my/group-chat': [
+    '/chat',
+    '/tasks',
+    '/fields',
+    '/forms',
+    '/quiz-result',
+  ],
   '/groups/available': ['/groups-my-available', '/quizzes-groups'],
+  '/quiz-play': ['/quiz-result'],
 };
 
 const setSharedStylesResources = (pathName) => {

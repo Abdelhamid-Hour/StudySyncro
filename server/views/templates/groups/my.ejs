@@ -1,6 +1,6 @@
 <div data-next-last-id="<%= nextLastId %>" class="main-content groups-list fade-in-template">
   <% cards.forEach(group => { %>
-  <a href="/app/groups/my/<%- group.id %>/chat" class="group-card" data-id="<%= group.id %>">
+  <a href="/app/groups/my/<%- group.id %>/chat" class="group-card route-link" data-id="<%= group.id %>">
     <header>
       <span
         class="badge <%= group.isPublic ? 'public-badge' : 'private-badge' %>"
