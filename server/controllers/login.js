@@ -52,6 +52,8 @@ const createSession = async function (req, res) {
   try {
     const secret = await tokens.secret();
     const csrfToken = tokens.create(secret);
+    console.log(csrfToken + '  login route')
+    console.log(secret + " secret login")
     res.cookie('SECRET', secret, options);
     res.cookie('csrfToken', csrfToken, {
       secure: true,

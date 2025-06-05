@@ -1,7 +1,7 @@
 import { auth } from '../../firebase/firebaseConfig.js';
 import { sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
 import {
-  InitializeGoogleOneTap,
+ // InitializeGoogleOneTap,
   signInWithFacebookProviderWithPopUp,
   signInWithGoogleProviderWithPopUp,
   createAuserWithEmailAndPassword,
@@ -30,7 +30,7 @@ import {
 } from '../assets/js/NodesAndVariables.js';
 import { showMessageBlock } from '../../main_assets/js/domFunctions.js';
 
-InitializeGoogleOneTap(auth, showMessageBlock);
+//InitializeGoogleOneTap(auth, showMessageBlock);
 
 formsContainer.addEventListener('keyup', (e) => {
   if (e.key === 'Enter') {
@@ -83,5 +83,6 @@ forgotPasswordLink.addEventListener('click', async () => {
     signInPasswordField.value = '';
   } catch (error) {
     showMessageBlock(error.message, true);
+    console.log(error)
   }
 });

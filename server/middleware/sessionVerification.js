@@ -11,13 +11,16 @@ const verifySessionCookie = async function (req) {
 };
 
 const verifySessionCookieWithRedirect = async function (req, res, next) {
-  try {
+  try {    
+    console.log("daz hna")
+    if(req.path.includes(''))
+
     await verifySessionCookie(req);
     if (req.path.includes('/login')) return res.status(200).redirect('/main_page');
     return next();
   } catch (error) {
     clearCookies(res, ['session', 'SECRET', 'csrfToken']);
-    if (req.path.includes('/login')) return next();
+    if (/login|main_assets|firebase/g.test(req.path)) return next();
     console.log(error.message);
     return res.status(401).redirect('/login');
   }
@@ -40,7 +43,4 @@ module.exports = {
   verifySessionCookieWithoutRedirect,
 };
 
-/**
- * home page : passed no veriifiication
- * login page:
- */
+

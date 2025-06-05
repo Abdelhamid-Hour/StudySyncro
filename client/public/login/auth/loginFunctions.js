@@ -9,7 +9,7 @@ import {
   signOut,
 } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
 import { checkError } from './authErrors.js';
-import { sendData, getCookie, sendIdToken } from './fetch.js';
+import { sendData, getCookie, sendIdToken } from '../../main_assets/js/fetch.js';
 import { redirectTo } from '../../main_assets/js/domFunctions.js';
 
 const googleProvider = new GoogleAuthProvider();
@@ -59,7 +59,7 @@ const signInWhithProvider = async function (auth, provider, callback) {
  * first param: message string and
  * second param: boolean indicating if there was an error..
  */
-const InitializeGoogleOneTap = function (auth, callback) {
+/*const InitializeGoogleOneTap = function (auth, callback) {
   const handleCredentialResponse = async function (response) {
     try {
       // Convert Google credential to Firebase credential
@@ -81,7 +81,7 @@ const InitializeGoogleOneTap = function (auth, callback) {
     cancel_on_tap_outside: false,
   });
 };
-
+*/
 const showGoogleOneTap = function () {
   google.accounts.id.prompt();
 };
@@ -176,13 +176,14 @@ const signInAuserWithEmailAndPassword = async function (
     await signOut(auth);
     redirectTo('/main_page');
   } catch (error) {
+    console.log(error)
     checkError(error);
     callback(error.message, true);
   }
 };
 
 export {
-  InitializeGoogleOneTap,
+  //InitializeGoogleOneTap,
   showGoogleOneTap,
   signInWithFacebookProviderWithPopUp,
   signInWithGoogleProviderWithPopUp,

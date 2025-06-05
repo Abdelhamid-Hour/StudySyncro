@@ -5,6 +5,7 @@
  * @param {Object} data - The data to send
  */
 export const sendData = async function (url, data) {
+  console.log(data)
   const response = await fetch(url, {
     method: 'POST',
     body: JSON.stringify(data),
@@ -16,6 +17,7 @@ export const sendData = async function (url, data) {
   if (!response.ok) {
     const responseData = await response.json();
     const error = new Error(responseData.message);
+    console.error(error)
     error.data = responseData;
     throw error;
   }
