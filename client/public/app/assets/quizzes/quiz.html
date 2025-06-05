@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../../../main_assets/css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="../../../main_assets/css/variables_and_fonts.css"
+    />
+    <link rel="stylesheet" href="../shared/quiz/css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="../global/css/styles.css" />
+    <link rel="stylesheet" href="../shared/quiz-result/css/styles.css" />
+  </head>
+  <body>
+    <div class="backdrop">
+      <div class="overlay-model quiz-result-overlay">
+        <header class="quiz-result-header">
+          <span class="finished-date">Finished: June 10, 2024</span>
+          •
+          <span class="finished-time">14:35</span>
+          •
+          <span class="questions-count">
+            <span class="icon-box">
+              <i class="bi bi-patch-question"></i>
+            </span>
+            15 Questions
+          </span>
+          <button type="button" class="exclude-btn close-overlay-btn">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </header>
+        <h3 class="quiz-title">JavaScript Basics Quiz</h3>
+        <div class="answered">
+          <span class="answered-title">Answered :</span>
+          <span class="answered-count">12/15 Questions</span>
+          •
+          <span class="answered-percent">80%</span>
+        </div>
+        <div class="questions-rects">
+          <a href="#question-1" class="status-rect correct">1</a>
+          <a href="#question-2" class="status-rect correct">2</a>
+          <a href="#question-3" class="status-rect incorrect">3</a>
+          <a href="#question-4" class="status-rect skipped">4</a>
+          <a href="#question-5" class="status-rect correct">5</a>
+          <a href="#question-6" class="status-rect correct">6</a>
+          <a href="#question-7" class="status-rect correct">7</a>
+          <a href="#question-8" class="status-rect incorrect">8</a>
+          <a href="#question-9" class="status-rect skipped">9</a>
+          <a href="#question-10" class="status-rect correct">10</a>
+          <a href="#question-11" class="status-rect correct">11</a>
+          <a href="#question-12" class="status-rect skipped">12</a>
+        </div>
+        <div class="analytics">
+          <div class="analytics-item">
+            <span class="title">
+              <span class="green-rect rect"></span>
+              Correct :
+            </span>
+            <span class="questions-count">8/12 Questions</span>
+            •
+            <span class="percent">67%</span>
+          </div>
+          <div class="analytics-item">
+            <span class="title">
+              <span class="gray-rect rect"></span>
+              Skipped :
+            </span>
+            <span class="questions-count">3/12 Questions</span>
+            •
+            <span class="percent">25%</span>
+          </div>
+          <div class="analytics-item">
+            <span class="title">
+              <span class="red-rect rect"></span>
+              Incorrect :
+            </span>
+            <span class="questions-count">1/12 Questions</span>
+            •
+            <span class="percent">8%</span>
+          </div>
+        </div>
+        <div class="questions-list">
+          <div class="question-card" id="question-1">
+            <header class="question-card-header">
+              <span class="question-number">
+                <i class="bi bi-patch-question"></i>
+                Question 1
+              </span>
+              •
+              <span class="question-status">
+                <span class="green-rect rect"></span>
+                Correct
+              </span>
+              <label type="button" class="exclude-btn open-btn button">
+                <i class="bi bi-chevron-down"></i>
+                <input type="checkbox" id="drop-down" />
+              </label>
+            </header>
+            <p class="question-text">
+              What is the output of
+              <code>console.log(typeof null)</code>
+              in JavaScript?
+            </p>
+            <div class="choices-list">
+              <label class="choice correct-answer">
+                <span class="choice-label">A</span>
+                <span class="choice-text">Casablanca</span>
+              </label>
+
+              <label class="choice">
+                <span class="choice-label">B</span>
+                <span class="choice-text">Marrakesh</span>
+              </label>
+
+              <label class="choice">
+                <span class="choice-label">C</span>
+                <span class="choice-text">Fez</span>
+              </label>
+
+              <label class="choice">
+                <span class="choice-label">D</span>
+                <span class="choice-text">Rabat</span>
+              </label>
+            </div>
+            <footer class="question-card-footer">
+              <span class="choices-count">4 Choices</span>
+            </footer>
+          </div>
+          <div class="question-card" id="question-2">
+            <header class="question-card-header">
+              <span class="question-number">
+                <i class="bi bi-patch-question"></i>
+                Question 2
+              </span>
+              •
+              <span class="question-status">
+                <span class="green-rect rect"></span>
+                Correct
+              </span>
+              <label type="button" class="exclude-btn open-btn button">
+                <i class="bi bi-chevron-down"></i>
+                <input type="checkbox" id="drop-down" />
+              </label>
+            </header>
+            <p class="question-text">
+              Which keyword is used to declare a constant in JavaScript?
+            </p>
+            <div class="choices-list">
+              <label class="choice">
+                <span class="choice-label">A</span>
+                <span class="choice-text">Casablanca</span>
+              </label>
+
+              <label class="choice">
+                <span class="choice-label">B</span>
+                <span class="choice-text">Marrakesh</span>
+              </label>
+
+              <label class="choice correct-answer">
+                <span class="choice-label">C</span>
+                <span class="choice-text">Fez</span>
+              </label>
+
+              <label class="choice">
+                <span class="choice-label">D</span>
+                <span class="choice-text">Rabat</span>
+              </label>
+            </div>
+            <footer class="question-card-footer">
+              <span class="choices-count">3 Choices</span>
+            </footer>
+          </div>
+          <div class="question-card" id="question-3">
+            <header class="question-card-header">
+              <span class="question-number">
+                <i class="bi bi-patch-question"></i>
+                Question 3
+              </span>
+              •
+              <span class="question-status">
+                <span class="red-rect rect"></span>
+                Incorrect
+              </span>
+              <label type="button" class="exclude-btn open-btn button">
+                <i class="bi bi-chevron-down"></i>
+                <input type="checkbox" id="drop-down" />
+              </label>
+            </header>
+            <p class="question-text">
+              What does the
+              <code>===</code>
+              operator do in JavaScript?
+            </p>
+            <div class="choices-list">
+              <label class="choice correct-answer">
+                <span class="choice-label">A</span>
+                <span class="choice-text">Casablanca</span>
+              </label>
+
+              <label class="choice incorrect-answer">
+                <span class="choice-label">B</span>
+                <span class="choice-text">Marrakesh</span>
+              </label>
+
+              <label class="choice">
+                <span class="choice-label">C</span>
+                <span class="choice-text">Fez</span>
+              </label>
+
+              <label class="choice">
+                <span class="choice-label">D</span>
+                <span class="choice-text">Rabat</span>
+              </label>
+            </div>
+            <footer class="question-card-footer">
+              <span class="choices-count">4 Choices</span>
+            </footer>
+          </div>
+          <div class="question-card" id="question-4">
+            <header class="question-card-header">
+              <span class="question-number">
+                <i class="bi bi-patch-question"></i>
+                Question 4
+              </span>
+              •
+              <span class="question-status">
+                <span class="gray-rect rect"></span>
+                Skipped
+              </span>
+              <label type="button" class="exclude-btn open-btn button">
+                <i class="bi bi-chevron-down"></i>
+                <input type="checkbox" id="drop-down" />
+              </label>
+            </header>
+            <p class="question-text">
+              Which method converts a JSON string into a JavaScript object?
+            </p>
+            <div class="choices-list">
+              <label class="choice">
+                <span class="choice-label">A</span>
+                <span class="choice-text">Casablanca</span>
+              </label>
+
+              <label class="choice correct-answer">
+                <span class="choice-label">B</span>
+                <span class="choice-text">Marrakesh</span>
+              </label>
+
+              <label class="choice">
+                <span class="choice-label">C</span>
+                <span class="choice-text">Fez</span>
+              </label>
+
+              <label class="choice">
+                <span class="choice-label">D</span>
+                <span class="choice-text">Rabat</span>
+              </label>
+            </div>
+            <footer class="question-card-footer">
+              <span class="choices-count">3 Choices</span>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="../shared/quiz/js/main.js"></script>
+  </body>
+</html>

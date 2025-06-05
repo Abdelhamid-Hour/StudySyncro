@@ -26,7 +26,7 @@
     <!-- Preloading Critical Resources -->
     <link
       rel="preload"
-      href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
       as="style"
     />
     <link
@@ -41,6 +41,12 @@
     />
     <link rel="preload" href="../main_assets/css/styles.css" as="style" />
     <link rel="preload" href="./assets/css/styles.css" as="style" />
+    <link
+      rel="modulepreload"
+      href="./assets/js/main.js"
+      as="script"
+      crossorigin="anonymous"
+    />
     <!-- Stylesheets -->
     <link rel="stylesheet" href="../main_assets/css/variables_and_fonts.css" />
     <link rel="stylesheet" href="../main_assets/css/styles.css" />
@@ -48,7 +54,7 @@
     <!-- font -->
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
     />
     <!-- Icons -->
     <link
@@ -123,7 +129,10 @@
         <button id="reset-password-btn" type="button">Reset Password</button>
       </form>
     </main>
-    <script type="module" src="./assets/js/browserApp.js"></script>
-    <script type="module" src="./auth/auth.js"></script>
+    <script
+      type="module"
+      src="./assets/js/main.js"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

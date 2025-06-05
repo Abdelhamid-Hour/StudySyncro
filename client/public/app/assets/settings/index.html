@@ -1,0 +1,295 @@
+<div class="settings-wrapper">
+  <div class="settings-content">
+    <header class="settings-header">
+      <h2>My Account</h2>
+      <div class="tabs">
+        <label class="exclude-btn active tab profile-tab">
+          <input type="radio" name="tab" class="profile" checked />
+          Personal Info
+        </label>
+        <label class="exclude-btn tab email-tab">
+          <input type="radio" name="tab" class="email" />
+          Email Address
+        </label>
+        <label class="exclude-btn tab password-tab">
+          <input type="radio" name="tab" class="password" />
+          Password
+        </label>
+        <label class="exclude-btn tab delete-account-tab">
+          <input type="radio" name="tab" class="delete-account" />
+          Close Account
+        </label>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- Personal Info -->
+      <div class="profile-tab-content tab-content">
+        <header>
+          <h3>Personal Details</h3>
+          <span>Keep your information up to date.</span>
+        </header>
+        <form class="profile-form">
+          <div class="avatar-wrapper">
+            <div class="avatar">
+              <i class="bi bi-person-circle"></i>
+            </div>
+            <span class="caption">Upload a JPG, PNG, or GIF (Max 1MB).</span>
+          </div>
+          <div class="info-fields">
+            <div class="fields">
+              <label for="full-name">Full Name</label>
+              <div class="field-container full-name-field">
+                <div class="field-icon-container">
+                  <span class="icon-box">
+                    <i class="bi bi-person"></i>
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  id="full-name"
+                  name="full-name"
+                  class="input"
+                  value="Abdelhamid Hour"
+                  placeholder="Enter your full name"
+                  readonly
+                />
+              </div>
+
+              <label for="uid">User ID</label>
+              <div class="field-container uid-field">
+                <div class="field-icon-container">
+                  <span class="icon-box">
+                    <i class="bi bi-fingerprint"></i>
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  id="uid"
+                  name="uid"
+                  class="input"
+                  value="OiKJBajiosoOIPEqqu3"
+                  disabled
+                />
+              </div>
+            </div>
+
+            <button type="button" class="blue-btn modify-btn">
+              <i class="bi bi-pencil"></i>
+              Update Details
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Email Address -->
+      <div class="email-tab-content tab-content">
+        <header>
+          <h3>Change Email</h3>
+          <span>Switch to a new email address.</span>
+        </header>
+        <form class="email-form">
+          <div class="email-field-container">
+            <label for="email">Current Email</label>
+            <div class="field-container email-field">
+              <div class="field-icon-container">
+                <span class="icon-box">
+                  <i class="bi bi-envelope"></i>
+                </span>
+              </div>
+              <input
+                type="text"
+                id="email"
+                name="email"
+                class="input"
+                value="hourabdelhamid403@gmail.com"
+                placeholder="Current email"
+                readonly
+              />
+            </div>
+            <span class="caption">Email currently on file.</span>
+          </div>
+
+          <div class="password-ckeck-fields">
+            <label for="new-email">New Email</label>
+            <div class="field-container new-email-field">
+              <div class="field-icon-container">
+                <span class="icon-box">
+                  <i class="bi bi-envelope"></i>
+                </span>
+              </div>
+              <input
+                type="text"
+                id="new-email"
+                name="new-email"
+                class="input"
+                placeholder="Enter new email"
+              />
+            </div>
+
+            <label for="password">Current Password</label>
+            <div class="field-container password-field">
+              <div class="field-icon-container">
+                <span class="icon-box">
+                  <i class="bi bi-lock"></i>
+                </span>
+              </div>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="input"
+                placeholder="Enter your password"
+              />
+              <label class="eye-icon">
+                <input type="checkbox" />
+                <i class="bi bi-eye-fill"></i>
+                <div><hr /></div>
+              </label>
+            </div>
+          </div>
+
+          <button class="blue-btn modify-btn">
+            <i class="bi bi-pencil"></i>
+            Update Email
+          </button>
+        </form>
+      </div>
+
+      <!-- Password -->
+      <div class="password-tab-content tab-content">
+        <header>
+          <h3>Change Password</h3>
+          <span>Choose a strong, new password.</span>
+        </header>
+        <form class="password-form">
+          <label for="current-password">Current Password</label>
+          <div class="field-container current-password-field">
+            <div class="field-icon-container">
+              <span class="icon-box">
+                <i class="bi bi-lock"></i>
+              </span>
+            </div>
+            <input
+              type="password"
+              id="current-password"
+              name="current-password"
+              class="input"
+              placeholder="Current password"
+            />
+            <label class="eye-icon">
+              <input type="checkbox" />
+              <i class="bi bi-eye-fill"></i>
+              <div><hr /></div>
+            </label>
+          </div>
+
+          <label for="new-password">New Password</label>
+          <div class="field-container new-password-field">
+            <div class="field-icon-container">
+              <span class="icon-box">
+                <i class="bi bi-lock"></i>
+              </span>
+            </div>
+            <input
+              type="password"
+              id="new-password"
+              name="new-password"
+              class="input"
+              placeholder="New password"
+            />
+            <label class="eye-icon">
+              <input type="checkbox" />
+              <i class="bi bi-eye-fill"></i>
+              <div><hr /></div>
+            </label>
+          </div>
+
+          <label for="confirm-password">Confirm Password</label>
+          <div class="field-container confirm-password-field">
+            <div class="field-icon-container">
+              <span class="icon-box">
+                <i class="bi bi-lock"></i>
+              </span>
+            </div>
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirm-password"
+              class="input"
+              placeholder="Confirm password"
+            />
+            <label class="eye-icon">
+              <input type="checkbox" />
+              <i class="bi bi-eye-fill"></i>
+              <div><hr /></div>
+            </label>
+          </div>
+
+          <button type="button" class="modify-btn blue-btn">
+            <i class="bi bi-pencil"></i>
+            Update Password
+          </button>
+        </form>
+      </div>
+
+      <!-- Close Account -->
+      <div class="delete-account-tab-content tab-content">
+        <header>
+          <h3>Close Account</h3>
+          <span>All your data will be permanently deleted.</span>
+        </header>
+        <div class="warning-block">
+          <h4>
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            Warning: Irreversible Action
+          </h4>
+          <span>
+            Once you close your account, there is no way to recover your data.
+          </span>
+        </div>
+        <form class="delete-account-form">
+          <div class="password-field-container">
+            <label for="password">Password</label>
+            <div class="field-container password-field">
+              <div class="field-icon-container">
+                <span class="icon-box">
+                  <i class="bi bi-lock"></i>
+                </span>
+              </div>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="input"
+                placeholder="Confirm your password"
+              />
+              <label class="eye-icon">
+                <input type="checkbox" />
+                <i class="bi bi-eye-fill"></i>
+                <div><hr /></div>
+              </label>
+            </div>
+
+            <label class="container">
+              <input type="checkbox" id="confirmation" />
+              <svg viewBox="0 0 64 64" height="2em" width="2em">
+                <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                ></path>
+              </svg>
+              I understand this cannot be undone.
+            </label>
+          </div>
+
+          <button type="submit" class="red-btn delete-account-btn">
+            <i class="bi bi-trash3"></i>
+            Close Account
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

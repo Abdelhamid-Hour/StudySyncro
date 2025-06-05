@@ -56,7 +56,7 @@
     <!-- Preloading Critical Resources -->
     <link
       rel="preload"
-      href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
       as="style"
     />
     <link
@@ -71,9 +71,7 @@
     />
     <link rel="preload" href="../main_assets/css/styles.css" as="style" />
     <link rel="preload" href="./assets/css/style.css" as="style" />
-    <link rel="preload" href="./assets/js/NodesAndVariables.js" as="script" />
-    <link rel="preload" href="./assets/js/browserApp.js" as="script" />
-    <link rel="preload" href="./auth/authApp.js" as="script" />
+    <link rel="modulepreload" href="./assets/js/main.js" as="script" crossorigin="anonymous"/>
     <!-- Caching & Security Headers -->
     <meta
       http-equiv="Cache-Control"
@@ -83,8 +81,8 @@
     <!-- Google One Tap Script -->
     <script async defer src="https://accounts.google.com/gsi/client"></script>
     <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap"
     />
     <link
       rel="stylesheet"
@@ -427,8 +425,6 @@
       </div>
     </main>
     <!-- don't forgot to adjust the script tag -->
-    <script type="module" src="./assets/js/NodesAndVariables.js"></script>
-    <script type="module" src="./assets/js/browserApp.js"></script>
-    <script type="module" src="./auth/authApp.js"></script>
+    <script type="module" src="./assets/js/main.js" crossorigin="anonymous"></script>
   </body>
 </html>

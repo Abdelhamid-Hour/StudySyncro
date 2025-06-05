@@ -1,15 +1,33 @@
 :root {
   --primary-color: #1e77fd;
-  --background-color: #ebebeb;
-  /* login color variables */
-  --container-background-color: #fafafa; /* #e1cef1 */
+  /* DARK MODE colors: */
+
+  --background-color: #1a1a1a;
+   --container-background-color: #242424; 
+   --container-border-color: #818181;
+   --primary-text-color: #dbdbdb; 
+   --btn-background-color: #2c2c2c;
+   --secondary-text-color: #c8c8c8;
+     --active-tab-bg: var(--btn-background-color);
+  --tab-hover-bg: var(--btn-background-color);
+   --primary-shadow-color: transparent;
+
+  /* LIGHT MODE colors: */
+
+  /* --background-color: #ebebeb;
+  --container-background-color: #fafafa;
   --container-border-color: #cbced5;
-  --container-text-color: #636363;
+  --primary-text-color: black;
+  --btn-background-color: #fdfdfd;
+  --secondary-text-color: #575757;
+  --primary-shadow-color: rgba(195, 195, 195, 0.58);
+  --active-tab-bg: var(--btn-background-color);
+  --tab-hover-bg: var(--background-color); */
+  
   /* h1 color */
   --heading-color: var(--primary-color);
   /* buttons color variables */
-  --btn-background-color: #fdfdfd;
-  --btn-text-color: black;
+  --btn-text-color: var(--primary-text-color);
   --btn-border-color: var(--container-border-color);
   /* buttons height */
   --btn-height: 2.5rem;
@@ -18,7 +36,7 @@
   /* button hover border color */
   --btn-hover-border-color: var(--primary-color);
   --btn-hover-background-color: var(--primary-color);
-  --btn-hover-text-color: var(--btn-text-color);
+  --btn-hover-text-color: var(--primary-text-color);
   /* inputs colors variables */
   --inputs-background-color: var(--container-background-color);
   --inputs-focus-background-color: var(--background-color);
@@ -26,7 +44,7 @@
   /* --inputs-outline-color: var(--primary-color); */
   --inputs-outline-color: #3284ffa9;
   --inputs-text-color: var(--btn-text-color);
-  --inputs-label-color: #485268;
+  --inputs-label-color: var(--primary-text-color);
   --inputs-transition-label-color: var(--primary-color);
   --inputs-focus-border-color: var(--primary-color);
   /* inputs font and border size variables */
@@ -36,8 +54,8 @@
   --inputs-label-tran-duration: 300ms;
   --inputs-outline-trans-duration: 300ms;
   /* inputs icons colors varianles */
-  --inputs-icons-background-color: #f2f2f2;
-  --inputs-icons-color: var(--primary-color);
+  --inputs-icons-background-color: var(--background-color);
+  --inputs-icons-color: var(--secondary-text-color);
   --inputs-icons-focus-bc: var(--primary-color);
   --inputs-icons-focus-color: var(--container-background-color);
   /* inputs focus transition duration */
@@ -51,25 +69,41 @@
   --eye-trans-duration: 200ms;
   /* Error styling */
   --error-color: #eb3b43ff;
+  --error-border-color: rgb(182, 61, 61);
+  --error-background-color: rgb(182, 61, 61);
   --error-font-size: small;
   --error-font-weight: 500;
   /* external error variables */
   --error-block-background-color: rgb(231, 109, 109);
-  --error-block-border-color: rgb(182, 61, 61);
+  --error-block-border-color: var(--error-border-color);
   --error-block-heading-color: rgb(116, 5, 5);
   --error-block-text-color: rgb(151, 23, 23);
   --exclamation-error-icon-color: rgb(116, 5, 5);
   --close-error-icon-color: rgb(116, 5, 5);
   /* external success variables */
-  --success-block-background-color: rgb(109, 231, 109);
-  --success-block-border-color: rgb(71, 182, 61);
-  --success-block-error-text-color: rgb(18, 116, 5);
-  --success-icon-color: rgb(18, 116, 5);
+  --success-block-background-color: var(--container-background-color);
+  --success-block-border-color: rgb(18, 151, 0);
+  --success-block-text-color: rgb(18, 151, 0);
+  --success-icon-color: rgb(18, 151, 0);
   --close-success-icon-color: rgb(18, 116, 5);
+
+  /* external info variables */
+  --info-block-background-color: var(--container-background-color);
+  --info-block-border-color: #1e77fd;
+  --info-block-text-color: #1e77fd;
+  --info-icon-color: #1e77fd;
+  --close-info-icon-color: #1451a3;
   /* links color */
   --links-color: #485268;
   /* link hover color */
   --links-hover-color: var(--primary-color);
   /* link hover transition duration */
   --link-tran-duration: 150ms;
+
+  --loading-color-dark: rgb(75, 75, 75);
+  --loading-color-light: rgba(238, 238, 238, 0.823);
+  --primary-gap: 0.8rem;
+  --primary-radius: 5px;
+  --disabled-text-color: var(--btn-border-color);
+  --disabled-background-color: var(--btn-background-color);
 }

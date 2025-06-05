@@ -1,0 +1,256 @@
+<div class="group-container fade-in-template">
+  <aside class="group-left-side-bar close">
+    <aside class="top-bar">
+      <h2 class="side-bar-title">
+        <span class="badge simple-badge"></span>
+      </h2>
+    </aside>
+    <div
+      data-group-id="<%= groupId %>"
+      data-group-name="<%= groupName %>"
+      class="left-side-bar-content"
+    ></div>
+  </aside>
+  <div class="chat">
+    <div class="top-bar">
+      <!-- inffo bootstrap icon -->
+      <button
+        data-tooltip="Show Group Details"
+        type="button"
+        class="exclude-btn show-info-btn has-tooltip"
+      >
+        <i class="bi bi-info-circle"></i>
+      </button>
+      <h2 class="title">Real Time Chat</h2>
+      <% if (sessionActive) { %>
+      <span class="session-active-badge badge green-badge">Active Session</span>
+      <% } else if(isAdmin) { %>
+      <button type="button" class="small-btn create-session-btn">
+        <i class="bi bi-plus-circle"></i>
+        Create Session
+      </button>
+      <% } %>
+
+      <div>
+        <button
+          type="button"
+          class="exclude-btn group-chat-menu-btn open-drop-down-btn"
+        >
+          <i class="bi bi-three-dots-vertical"></i>
+        </button>
+        <div class="drop-down-menu group-chat-menu-btn-drop-down-menu overlay">
+          <div class="drop-down-group">
+            <div class="drop-down-group-label">
+              Group Actions
+              <hr class="separator" />
+            </div>
+
+            <button
+              type="button"
+              class="drop-down-item exclude-btn group-info-menu-btn"
+            >
+              <i class="bi bi-info-circle"></i>
+              View Group Info
+            </button>
+            <button
+              type="button"
+              class="drop-down-item exclude-btn quizzes-list-menu-btn"
+            >
+              <i class="bi bi-clipboard-check"></i>
+              View Quizzes
+            </button>
+            <% if (sessionActive) { %>
+            <button
+              type="button"
+              class="drop-down-item exclude-btn session-info-menu-btn"
+            >
+              <i class="bi bi-clock-history"></i>
+              View Session Info
+            </button>
+            <% } %> <% if (isAdmin) { %>
+            <button type="button" class="drop-down-item exclude-btn">
+              <i class="bi bi-person-plus"></i>
+              Invite Members
+            </button>
+            <button
+              type="button"
+              class="drop-down-item manage-demanes-menu-btn exclude-btn"
+            >
+              <i class="bi bi-list-check"></i>
+              Manage Demandes
+            </button>
+            <% } %>
+            <button
+              type="button"
+              class="drop-down-item exclude-btn members-list-menu-btn"
+            >
+              <i class="bi bi-people"></i>
+              <%= isAdmin ? 'Manage' : 'View' %> Members
+            </button>
+            <button
+              type="button"
+              class="drop-down-item exclude-btn copy-uid-menu-btn"
+            >
+              <i class="bi bi-link-45deg"></i>
+              Copy Group UID
+            </button>
+            <% if (isAdmin) { %>
+            <button
+              type="button"
+              class="drop-down-item exclude-btn red-btn remove-group-menu-btn"
+            >
+              <i class="bi bi-trash3"></i>
+              Remove Group
+            </button>
+            <% } else { %>
+            <button
+              type="button"
+              class="drop-down-item exclude-btn red-btn leave-group-menu-btn"
+            >
+              <i class="bi bi-box-arrow-left"></i>
+              Leave Group
+            </button>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chat-messages"></div>
+    <div class="input-message-container">
+      <div class="icons">
+        <label for="image-upload" class="should-fill">
+          <i class="bi bi-image"></i>
+        </label>
+        <label for="file-upload">
+          <i class="bi bi-paperclip"></i>
+        </label>
+        <div class="emoji-picker">
+          <button
+            type="button"
+            class="exclude-btn should-fill emoji-button open-drop-down-btn"
+          >
+            <i class="bi bi-emoji-smile"></i>
+          </button>
+          <div class="emoji-list overlay">
+            <div class="categories">
+              <a data-section-id="recent" class="recent should-fill">
+                <i class="bi bi-clock"></i>
+              </a>
+              <a data-section-id="people" class="should-fill">
+                <i class="bi bi-emoji-smile"></i>
+              </a>
+              <a data-section-id="animals_nature" class="should-fill">
+                <i class="bi bi-tree"></i>
+              </a>
+              <a data-section-id="food_drink" class="should-fill">
+                <i class="bi bi-cup"></i>
+              </a>
+              <a data-section-id="activity" class="should-fill">
+                <i class="bi bi-calendar"></i>
+              </a>
+              <a data-section-id="objects" class="should-fill">
+                <i class="bi bi-box"></i>
+              </a>
+              <a data-section-id="symbols" class="should-fill">
+                <i class="bi bi-heart"></i>
+              </a>
+              <a data-section-id="travel_places" class="should-fill">
+                <i class="bi bi-geo-alt"></i>
+              </a>
+              <a data-section-id="flags" class="should-fill">
+                <i class="bi bi-flag"></i>
+              </a>
+            </div>
+            <div class="emoji-search-container">
+              <div class="search-icon-container">
+                <i class="bi bi-search"></i>
+              </div>
+              <input
+                type="search"
+                placeholder="Search for emoji"
+                id="emojis-search-input"
+                class="emojis-search-input"
+              />
+            </div>
+            <div class="emojies-sections">
+              <section id="recent">
+                <h5>Recent</h5>
+                <div class="recent-emojies"></div>
+              </section>
+              <section id="people">
+                <h5>People</h5>
+                <div class="people-emojies"></div>
+              </section>
+              <section id="animals_nature">
+                <h5>Animals &amp; Nature</h5>
+                <div class="animals-nature-emojies"></div>
+              </section>
+              <section id="food_drink">
+                <h5>Food &amp; Drink</h5>
+                <div class="food-drink-emojies"></div>
+              </section>
+              <section id="activity">
+                <h5>Activity</h5>
+                <div class="activity-emojies"></div>
+              </section>
+              <section id="objects">
+                <h5>Objects</h5>
+                <div class="objects-emojies"></div>
+              </section>
+              <section id="symbols">
+                <h5>Symbols</h5>
+                <div class="symbols-emojies"></div>
+              </section>
+              <section id="travel_places">
+                <h5>Travel &amp; Places</h5>
+                <div class="travel-places-emojies"></div>
+              </section>
+              <section id="flags">
+                <h5>Flags</h5>
+                <div class="flags-emojies"></div>
+              </section>
+            </div>
+            <div id="search-result"></div>
+          </div>
+        </div>
+        <input
+          type="file"
+          id="image-upload"
+          class="file-input"
+          accept="
+          image/png,
+          image/jpeg,
+          image/jpg,
+          image/gif,
+          video/mp4,
+          "
+          multiple=""
+        />
+        <input
+          multiple=""
+          type="file"
+          class="file-input"
+          id="file-upload"
+          accept=".pdf,
+            .mp3,
+            .doc,
+            .docx,
+            .xls,
+            .xlsx,
+            .ppt,
+            .pptx,
+            .txt,
+            .rar"
+        />
+      </div>
+      <textarea
+        placeholder="Type a message"
+        class="input-message"
+        id="input-message"
+      ></textarea>
+      <button type="button" class="send-btn exclude-btn should-fill">
+        <i class="bi bi-send"></i>
+      </button>
+    </div>
+  </div>
+</div>
