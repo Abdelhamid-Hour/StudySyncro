@@ -1,14 +1,44 @@
-const { getUserGroups, getAvailableGroups } = require('../utils/groups');
+const { getUserGroups } = require("../utils/groups");
+const {
+  getJoinedGroups,
+  getAvailableGroups,
+} = require("../utils/firebase-utils/group");
 
-const getUserGroupsHandler = (req, res) => {
-  const { nextLastId, count } = req.query;
-  const data = getUserGroups(nextLastId, parseInt(count));
+const getUserGroupsHandler = async (req, res) => {
+  const { lastVisible, count } = req.query;
+  const data = await getJoinedGroups(
+    req.user.uid,
+    {
+      level: [],
+      visibility: [],
+      available: false,
+      role: [],
+      searchTerm: "",
+      searchBy: "",
+    },
+    parseInt(count, 10),
+    lastVisible
+  );
+  console.log("User groups data:", data);
+
   return res.json(data);
 };
 
-const getAvailableGroupsHandler = (req, res) => {
-  const { nextLastId, count } = req.query;
-  const data = getAvailableGroups(nextLastId, parseInt(count));
+const getAvailableGroupsHandler = async (req, res) => {
+  const { lastVisible, count } = req.query;
+  const data = await getAvailableGroups(
+    req.user.uid,
+    {
+      level: [],
+      visibility: [],
+      available: false,
+      role: [],
+      searchTerm: "",
+      searchBy: "",
+    },
+    parseInt(count, 10),
+    lastVisible
+  );
   return res.json(data);
 };
 
@@ -22,9 +52,9 @@ const groupFragmentHandler =
       },
       (err, template) => {
         if (err) {
-          console.error('Error rendering template:', err);
+          console.error("Error rendering template:", err);
           return res.status(500).json({
-            message: 'Failed to load group info. Please try again later.',
+            message: "Failed to load group info. Please try again later.",
           });
         }
 
@@ -33,7 +63,7 @@ const groupFragmentHandler =
           response.count = res.context.count;
         }
 
-        if (route === '/group-info') {
+        if (route === "/group-info") {
           response.info = {
             ...res.context,
           };
@@ -48,67 +78,67 @@ const getQuizQuestionsHandler = (req, res) => {
   return res.json({
     questions: [
       {
-        id: 'q1',
-        text: 'What is the capital of Morocco?',
-        choices: ['Casablanca', 'Marrakesh', 'Fez', 'Rabat'],
+        id: "q1",
+        text: "What is the capital of Morocco?",
+        choices: ["Casablanca", "Marrakesh", "Fez", "Rabat"],
         correctAnswerIndex: 3, // Rabat
       },
       {
-        id: 'q2',
-        text: 'How many planets are there in the solar system?',
-        choices: ['7', '8', '9', '10'],
+        id: "q2",
+        text: "How many planets are there in the solar system?",
+        choices: ["7", "8", "9", "10"],
         correctAnswerIndex: 1, // 8
       },
       {
-        id: 'q3',
-        text: 'What is the result of 9 × 6?',
-        choices: ['54', '56', '59', '60'],
+        id: "q3",
+        text: "What is the result of 9 × 6?",
+        choices: ["54", "56", "59", "60"],
         correctAnswerIndex: 0, // 54
       },
       {
-        id: 'q4',
-        text: 'Who invented the electric light bulb?',
-        choices: ['Einstein', 'Edison', 'Newton', 'Beethoven'],
+        id: "q4",
+        text: "Who invented the electric light bulb?",
+        choices: ["Einstein", "Edison", "Newton", "Beethoven"],
         correctAnswerIndex: 1, // Edison
       },
       {
-        id: 'q5',
-        text: 'What is 100 minus 47?',
-        choices: ['52', '53', '54', '55'],
+        id: "q5",
+        text: "What is 100 minus 47?",
+        choices: ["52", "53", "54", "55"],
         correctAnswerIndex: 1, // 53
       },
       {
-        id: 'q6',
-        text: 'Which of these animals cannot fly?',
-        choices: ['Eagle', 'Ostrich', 'Bat', 'Pigeon'],
+        id: "q6",
+        text: "Which of these animals cannot fly?",
+        choices: ["Eagle", "Ostrich", "Bat", "Pigeon"],
         correctAnswerIndex: 1, // Ostrich
       },
       {
-        id: 'q7',
-        text: 'How many minutes are there in one hour?',
-        choices: ['60', '100', '45', '90'],
+        id: "q7",
+        text: "How many minutes are there in one hour?",
+        choices: ["60", "100", "45", "90"],
         correctAnswerIndex: 0, // 60
       },
       {
-        id: 'q8',
-        text: 'What is the sum of 11 and 22?',
-        choices: ['31', '32', '33', '34'],
+        id: "q8",
+        text: "What is the sum of 11 and 22?",
+        choices: ["31", "32", "33", "34"],
         correctAnswerIndex: 2, // 33
       },
       {
-        id: 'q9',
-        text: 'What is the official language of Morocco?',
-        choices: ['French', 'Tamazight', 'Arabic', 'English'],
+        id: "q9",
+        text: "What is the official language of Morocco?",
+        choices: ["French", "Tamazight", "Arabic", "English"],
         correctAnswerIndex: 2, // Arabic
       },
       {
-        id: 'q10',
-        text: 'Which continent is Egypt located in?',
-        choices: ['Asia', 'Europe', 'Africa', 'South America'],
+        id: "q10",
+        text: "Which continent is Egypt located in?",
+        choices: ["Asia", "Europe", "Africa", "South America"],
         correctAnswerIndex: 2, // Africa
       },
     ],
-    id: 'vghtyiTYivuyRXtiYUvTYX',
+    id: "vghtyiTYivuyRXtiYUvTYX",
     duration: 20, // Duration in minutes
   });
 };

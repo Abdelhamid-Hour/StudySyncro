@@ -1,10 +1,10 @@
-<div data-next-last-id="<%= nextLastId %>" class="main-content groups-list fade-in-template">
+<div data-last-visible="<%= lastVisible || '' %>" class="main-content groups-list fade-in-template">
   <% cards.forEach(group => { %>
   <div class="group-card route-link" data-id="<%= group.id %>">
     <header>
       <span
         class="badge <%= group.isPublic ? 'public-badge' : 'private-badge' %>"
-      ><%= group.isPublic ? 'Public' : 'Private' %></span>
+      ><%=  group.visibility === "Public" ? 'Public' : 'Private' %></span>
       <span
         class="level-value badge <%= group.level === 'Intermediate' ? 'blue-badge' : group.level === 'Advanced' ? 'orange-badge' : 'gray-badge' %>"
       >
@@ -12,7 +12,7 @@
       </span>
     </header>
     <div class="group-meta">
-      <h3 class="group-title"><%= group.title %></h3>
+      <h3 class="group-title"><%= group.groupName %></h3>
       <span class="subject-value badge simple-badge"><%= group.subject %></span>
     </div>
     <div
@@ -23,14 +23,23 @@
     </div>
     <footer class="group-footer">
       <div class="avatars">
-        <% group.avatars.forEach(avatar => { %>
-        <div class="avatar"><img src="<%= avatar %>" /></div>
+        <% group.avatars.forEach(({photoURL, fullName}) => { %>
+          <div class="avatar">
+          <% if (photoURL) { %>
+            <img
+              src="<%= photoURL %>"
+              alt="avatar"
+            />
+          <% } else { %>
+            <h4><%= fullName.charAt(0).toUpperCase() %></h4>
+          <% } %>
+        </div>
         <% }); %> <% if (group.extraMembersCount > 0) { %>
         <div class="member-count">+<%= group.extraMembersCount %></div>
         <% } %>
       </div>
       <button class="btn-join">
-        <% if (group.isPublic) { %>
+        <% if ( group.visibility === "Public") { %>
           <i class="bi bi-send"></i> Join Now
         <% } else { %>
           <i class="bi bi-lock"></i> Request to Join

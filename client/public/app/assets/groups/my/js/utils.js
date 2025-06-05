@@ -1,3 +1,4 @@
+import { fetchData, sendData, showMessageBlock } from '../../../../../main_assets/js/utils.js';
 import {
   DESCRIPTION_MAX_LENGTH,
   DESCRIPTION_MIN_LENGTH,
@@ -11,6 +12,7 @@ import {
   openOverlayModal,
   resetTooltip,
   showErrorTooltip,
+  navigateTo
 } from '../../../global/js/utils.js';
 import {
   levelValues,
@@ -76,7 +78,7 @@ export const getGroupOverlay = () => `
                     <div class="select-trigger input">
                         <button type="button" class="exclude-btn open-drop-down-btn">
                             <span class="subject-value">Subject</span>
-                            <input type="hidden" name="sebject" value="" />
+                            <input type="hidden" name="subject" value="" />
                             <i class="bi bi-chevron-down"></i>
                         </button>
                         <div
@@ -251,6 +253,16 @@ export const initGroupForm = () => {
       level,
       maxMembers,
       visibility,
-    })
+    }),
+    async(groupData)=>{
+
+      try {
+      await sendData("/api/create-group" , {groupData})
+      showMessageBlock("groupe created successfully", "success")
+      } catch (error) {
+        console.error(error)
+        showMessageBlock("something went wrong" , "error")
+      }
+    }
   );
 };

@@ -192,25 +192,6 @@ router.post("/ajouterMembre", verifySessionCookieWithoutRedirect, async (req, re
  * Sends a request to join a group
  * groupId in URL parameter
  */
-router.post("/sendRequest/:groupId", verifySessionCookieWithoutRedirect, async (req, res) => {
-    const groupId = req.params.groupId;
-    const result = await sendRequest(groupId, req.user);
-
-    if (result === 0) {
-        res.status(400).json({message: "Le groupe est plein"});
-    } else if (result === 2) {
-        res.status(400).json({message: "Vous êtes déjà membre de ce groupe"});
-    } else if (result === 1) {
-        res.status(400).json({message: "Vous avez déjà envoyé une demande"});
-    } else if (result === 3) {
-        res.status(400).json({message: "Groupe non trouvé"});
-    } else if(result === true) {
-        res.status(200).json({message: "Demande envoyée avec succès"});
-    }
-    else{
-        res.status(500).json({message : "internal error"})
-    }
-});
 
 /**
  * POST /acceptRequest

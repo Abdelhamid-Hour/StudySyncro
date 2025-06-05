@@ -1,6 +1,6 @@
 
  const {FieldValue} = require("firebase-admin/firestore")
- const {db} = require('../firebase/firebaseAdmin')
+ const {db} = require('../../firebase/firebaseAdmin')
 
  export const createSession = async(sessionData)=>{
     try {
@@ -9,7 +9,7 @@
         if(sessionData){
            const docRef =  await sessionRef.add(sessionData)
             await groupRef.update({
-                curentSession = docRef.id
+                curentSession : docRef.id
             })
             return true 
         }

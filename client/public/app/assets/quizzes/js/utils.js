@@ -8,6 +8,7 @@ import {
   openOverlayModal,
   resetTooltip,
   showErrorTooltip,
+  navigateTo
 } from '../../global/js/utils.js';
 import {
   handleFormSubmit,
@@ -41,12 +42,7 @@ export const initQuizForm = () => {
       }),
     () => {
       showMessageBlock('Quiz created successfully.', 'success');
-      const quizEditorLink = document.createElement('a');
-      quizEditorLink.href = '/app/quizzes/12/edit'; // add the correct id or path
-      quizEditorLink.className = 'route-link';
-      quizEditorLink.style.display = 'none';
-      form.appendChild(quizEditorLink);
-      quizEditorLink.click();
+      navigateTo('/quizzes/12/edit')
     }
   );
 };
@@ -116,7 +112,7 @@ const getQuizOverlay = () => `<div class="create-quiz-overlay">
             <div class="select-trigger input">
               <button type="button" class="exclude-btn open-drop-down-btn">
                 <span class="subject-value">Subject</span>
-                <input type="hidden" name="sebject" value="" />
+                <input type="hidden" name="subject" value="" />
                 <i class="bi bi-chevron-down"></i>
               </button>
               <div

@@ -1,19 +1,19 @@
-import { showMessageBlock } from '../../../../main_assets/js/utils.js';
+import { showMessageBlock } from "../../../../main_assets/js/utils.js";
 import {
   emailRegex,
   passwordRegex,
   userNameRegex,
-} from '../../../../main_assets/js/variables.js';
+} from "../../../../main_assets/js/variables.js";
 import {
   avatarMaxSize,
   globalTooltip,
   profileAllowedFileTypes,
-} from '../../global/js/dom-variables.js';
+} from "../../global/js/dom-variables.js";
 import {
   getLoader,
   resetTooltip,
   showErrorTooltip,
-} from '../../global/js/utils.js';
+} from "../../global/js/utils.js";
 import {
   avatarCaption,
   avatarHover,
@@ -32,16 +32,16 @@ import {
   passwordModifyBtn,
   passwordDeleteInput,
   deleteAccountConfirmation,
-} from './dom-variables.js';
+} from "./dom-variables.js";
 let isEditMode = false;
 
 export const handlEyeIconsClick = (eyeIcon) => {
-  const isChecked = eyeIcon.querySelector('input').checked;
+  const isChecked = eyeIcon.querySelector("input").checked;
   const input = eyeIcon.previousElementSibling;
   if (isChecked) {
-    input.setAttribute('type', 'text');
+    input.setAttribute("type", "text");
   } else {
-    input.setAttribute('type', 'password');
+    input.setAttribute("type", "password");
   }
 };
 
@@ -49,9 +49,9 @@ const enableProfilEditMode = () => {
   isEditMode = true;
   fullNameInput.readOnly = false;
   avatarInput.disabled = false;
-  avatarHover.classList.remove('hidden');
+  avatarHover.classList.remove("hidden");
   fullNameInput.focus();
-  avatarCaption.classList.remove('hidden');
+  avatarCaption.classList.remove("hidden");
   profileModifyBtn.innerHTML = `
       <i class="bi bi-floppy"></i>
       Save Changes
@@ -62,8 +62,8 @@ const disableProfileMode = () => {
   fullNameInput.readOnly = true;
   isEditMode = false;
   avatarInput.disabled = true;
-  avatarCaption.classList.add('hidden');
-  avatarHover.classList.add('hidden');
+  avatarCaption.classList.add("hidden");
+  avatarHover.classList.add("hidden");
   profileModifyBtn.innerHTML = `
       <i class="bi bi-pencil"></i >
       Modify Profile
@@ -77,7 +77,7 @@ const checkValidation = () => {
   const avatarFile = avatarInput.files[0];
 
   if (!fullName) {
-    showErrorTooltip('Full name cannot be empty.', fullNameInput);
+    showErrorTooltip("Full name cannot be empty.", fullNameInput);
     return false;
   } else if (
     fullName.length < 6 ||
@@ -85,30 +85,30 @@ const checkValidation = () => {
     !userNameRegex.test(fullName)
   ) {
     showErrorTooltip(
-      'Full name must be between 6 and 50 characters and can only contain letters, numbers, spaces, and underscores.',
+      "Full name must be between 6 and 50 characters and can only contain letters, numbers, spaces, and underscores.",
       fullNameInput
     );
     return false;
   } else {
-    resetTooltip(globalTooltip, fullNameInput.closest('.field-container'));
+    resetTooltip(globalTooltip, fullNameInput.closest(".field-container"));
   }
 
   if (avatarFile && !profileAllowedFileTypes.includes(avatarFile.type)) {
     showErrorTooltip(
-      'Invalid file type. Allowed types: JPEG, PNG, GIF, WEBP.',
+      "Invalid file type. Allowed types: JPEG, PNG, GIF, WEBP.",
       avatarInput,
-      'avatar'
+      "avatar"
     );
     return false;
   } else if (avatarFile && avatarFile.size > avatarMaxSize) {
     showErrorTooltip(
       `File size exceeds ${avatarMaxSize / (1024 * 1024)} MB.`,
       avatarInput,
-      'avatar'
+      "avatar"
     );
     return false;
   } else {
-    resetTooltip(globalTooltip, avatarInput.closest('.avatar'));
+    resetTooltip(globalTooltip, avatarInput.closest(".avatar"));
   }
 
   return true;
@@ -126,16 +126,16 @@ const saveProfileChanges = async () => {
     // Simulate a save operation (replace with real API call if needed)
     await new Promise((resolve) => setTimeout(resolve, 1000));
     disableProfileMode();
-    showMessageBlock('Changes saved successfully!', 'success');
+    showMessageBlock("Changes saved successfully!", "success");
   } catch (error) {
-    console.error('Error saving changes:', error);
+    console.error("Error saving changes:", error);
     profileModifyBtn.innerHTML = `
         <i class="bi bi-floppy"></i>
         Save Changes
       `;
     showMessageBlock(
-      'An error occurred while saving changes. Please try again.',
-      'error'
+      "An error occurred while saving changes. Please try again.",
+      "error"
     );
   }
 };
@@ -143,15 +143,15 @@ const saveProfileChanges = async () => {
 const enableEmailEditMode = () => {
   currentEmailInput.readOnly = false;
   isEditMode = true;
-  passwordCheckContainer.classList.remove('hidden');
-  const cancelBtn = document.createElement('button');
-  cancelBtn.className = 'gray-btn cancel-btn';
+  passwordCheckContainer.classList.remove("hidden");
+  const cancelBtn = document.createElement("button");
+  cancelBtn.className = "gray-btn cancel-btn";
   cancelBtn.innerHTML = `
         <i class="bi bi-x-lg"></i>
         Cancel
       `;
   emailModifyBtn.before(cancelBtn);
-  cancelBtn.addEventListener('click', (e) => disableEmailEditMode());
+  cancelBtn.addEventListener("click", (e) => disableEmailEditMode());
   currentEmailInput.focus();
   emailModifyBtn.innerHTML = `
         <i class="bi bi-floppy"></i>
@@ -160,20 +160,20 @@ const enableEmailEditMode = () => {
 };
 
 const clearEmailInputs = () => {
-  newEmailInput.value = '';
-  passwordEmailInput.value = '';
+  newEmailInput.value = "";
+  passwordEmailInput.value = "";
 };
 
 const disableEmailEditMode = () => {
   isEditMode = false;
   currentEmailInput.readOnly = true;
-  passwordCheckContainer.classList.add('hidden');
+  passwordCheckContainer.classList.add("hidden");
   emailModifyBtn.innerHTML = `
           <i class="bi bi-pencil"></i>
           Modify Email
         `;
   emailModifyBtn.disabled = false;
-  emailBtnsCantainer.querySelector('.cancel-btn')?.remove();
+  emailBtnsCantainer.querySelector(".cancel-btn")?.remove();
   clearEmailInputs();
   resetTooltip(globalTooltip);
 };
@@ -184,43 +184,43 @@ const checkEmailValidation = () => {
   const password = passwordEmailInput.value.trim();
 
   if (!currentEmail) {
-    showErrorTooltip('Current email cannot be empty.', currentEmailInput);
+    showErrorTooltip("Current email cannot be empty.", currentEmailInput);
     return false;
   } else if (!emailRegex.test(currentEmail)) {
-    showErrorTooltip('Invalid current email format.', currentEmailInput);
+    showErrorTooltip("Invalid current email format.", currentEmailInput);
     return false;
   } else {
-    resetTooltip(globalTooltip, currentEmailInput.closest('.field-container'));
+    resetTooltip(globalTooltip, currentEmailInput.closest(".field-container"));
   }
 
   if (!newEmail) {
-    showErrorTooltip('New email cannot be empty.', newEmailInput);
+    showErrorTooltip("New email cannot be empty.", newEmailInput);
     return false;
   }
   if (!emailRegex.test(newEmail)) {
-    showErrorTooltip('Invalid new email format.', newEmailInput);
+    showErrorTooltip("Invalid new email format.", newEmailInput);
     return false;
   } else {
-    resetTooltip(globalTooltip, newEmailInput.closest('.field-container'));
+    resetTooltip(globalTooltip, newEmailInput.closest(".field-container"));
   }
 
   if (!password) {
-    showErrorTooltip('Password cannot be empty.', passwordEmailInput);
+    showErrorTooltip("Password cannot be empty.", passwordEmailInput);
     return false;
   } else if (!passwordRegex.test(password)) {
     showErrorTooltip(
-      'Password must be between 8 and 16 characters and can include letters, numbers, and special characters.',
+      "Password must be between 8 and 16 characters and can include letters, numbers, and special characters.",
       passwordEmailInput
     );
     return false;
   } else {
-    resetTooltip(globalTooltip, passwordEmailInput.closest('.field-container'));
+    resetTooltip(globalTooltip, passwordEmailInput.closest(".field-container"));
   }
   return true;
 };
 
 export const handleSettingsWrapperClick = (e) => {
-  const tab = e.target.closest('.tab');
+  const tab = e.target.closest(".tab");
   if (tab) {
     isEditMode = false;
     disableEmailEditMode();
@@ -228,7 +228,7 @@ export const handleSettingsWrapperClick = (e) => {
     clearPasswordFields();
   }
 
-  const eyeIcon = e.target.closest('.eye-icon');
+  const eyeIcon = e.target.closest(".eye-icon");
   if (eyeIcon) handlEyeIconsClick(eyeIcon);
 };
 
@@ -260,16 +260,16 @@ const saveEmailChanges = async () => {
     // Simulate a save operation (replace with real API call if needed)
     await new Promise((resolve) => setTimeout(resolve, 1000));
     disableEmailEditMode();
-    showMessageBlock('Email updated successfully!', 'success');
+    showMessageBlock("Email updated successfully!", "success");
   } catch (error) {
-    console.error('Error updating email:', error);
+    console.error("Error updating email:", error);
     emailModifyBtn.innerHTML = `
         <i class="bi bi-floppy"></i>
         Save Changes
       `;
     showMessageBlock(
-      'An error occurred while updating email. Please try again.',
-      'error'
+      "An error occurred while updating email. Please try again.",
+      "error"
     );
   }
 };
@@ -280,53 +280,53 @@ const checkPasswordFields = () => {
   const confirmPassword = confirmPasswordInput.value.trim();
 
   if (!currentPassword) {
-    showErrorTooltip('Current password is required.', currentPasswordInput);
+    showErrorTooltip("Current password is required.", currentPasswordInput);
     return false;
   } else if (!passwordRegex.test(currentPassword)) {
     showErrorTooltip(
-      'New password must be between 8 and 16 characters long.',
+      "New password must be between 8 and 16 characters long.",
       currentPasswordInput
     );
     return false;
   } else {
     resetTooltip(
       globalTooltip,
-      currentPasswordInput.closest('.field-container')
+      currentPasswordInput.closest(".field-container")
     );
   }
 
   if (!newPassword) {
-    showErrorTooltip('New password is required.', newPasswordInput);
+    showErrorTooltip("New password is required.", newPasswordInput);
     return false;
   } else if (!passwordRegex.test(newPassword)) {
     showErrorTooltip(
-      'New password must be between 8 and 16 characters long.',
+      "New password must be between 8 and 16 characters long.",
       newPasswordInput
     );
     return false;
   } else {
-    resetTooltip(globalTooltip, newPasswordInput.closest('.field-container'));
+    resetTooltip(globalTooltip, newPasswordInput.closest(".field-container"));
   }
 
   if (!confirmPassword) {
-    showErrorTooltip('Confirm password is required.', confirmPasswordInput);
+    showErrorTooltip("Confirm password is required.", confirmPasswordInput);
     return false;
   } else if (!passwordRegex.test(confirmPassword)) {
     showErrorTooltip(
-      'Confirm password must be between 8 and 16 characters long.',
+      "Confirm password must be between 8 and 16 characters long.",
       confirmPasswordInput
     );
     return false;
   } else if (newPassword !== confirmPassword) {
     showErrorTooltip(
-      'New password and confirm password do not match.',
+      "New password and confirm password do not match.",
       confirmPasswordInput
     );
     return false;
   } else {
     resetTooltip(
       globalTooltip,
-      confirmPasswordInput.closest('.field-container')
+      confirmPasswordInput.closest(".field-container")
     );
   }
 
@@ -334,9 +334,9 @@ const checkPasswordFields = () => {
 };
 
 const clearPasswordFields = () => {
-  currentPasswordInput.value = '';
-  newPasswordInput.value = '';
-  confirmPasswordInput.value = '';
+  currentPasswordInput.value = "";
+  newPasswordInput.value = "";
+  confirmPasswordInput.value = "";
 };
 
 const savePasswordChange = async (
@@ -350,13 +350,13 @@ const savePasswordChange = async (
   try {
     await simulatePasswordChange(currentPassword, newPassword, confirmPassword);
     clearPasswordFields();
-    showMessageBlock('Password changed successfully!', 'success');
+    showMessageBlock("Password changed successfully!", "success");
   } catch (error) {
     showMessageBlock(
-      'Error changing password. Please try again later.',
-      'error'
+      "Error changing password. Please try again later.",
+      "error"
     );
-    console.error('Error changing password:', error);
+    console.error("Error changing password:", error);
   } finally {
     resetPasswordModifyBtn();
     passwordModifyBtn.disabled = false;
@@ -396,49 +396,45 @@ const checkDeleteInputsValidity = () => {
 
   if (!passwordDelete) {
     showErrorTooltip(
-      'Password is required to delete account.',
+      "Password is required to delete account.",
       passwordDeleteInput
     );
     return false;
   } else if (!passwordRegex.test(passwordDelete)) {
     showErrorTooltip(
-      'Password must be between 8 and 16 characters long.',
+      "Password must be between 8 and 16 characters long.",
       passwordDeleteInput
     );
     return false;
   } else {
     resetTooltip(
       globalTooltip,
-      passwordDeleteInput.closest('.field-container')
+      passwordDeleteInput.closest(".field-container")
     );
   }
 
   if (!isConfirme) {
     showErrorTooltip(
-      'You must confirm account deletion.',
+      "You must confirm account deletion.",
       deleteAccountConfirmation,
-      'confirmation-input'
+      "confirmation-input"
     );
     return false;
   } else {
-    resetTooltip(
-      globalTooltip,
-      deleteAccountConfirmation
-    );
+    resetTooltip(globalTooltip, deleteAccountConfirmation);
   }
 
   return true;
 };
 
 export const handleCloseAccountBtn = () => {
-  debugger
   if (!checkDeleteInputsValidity()) return;
 
   const passwordDelete = passwordDeleteInput.value.trim();
   // simmulate password check
-  if (passwordDelete !== 'correctPassword') {
+  if (passwordDelete !== "correctPassword") {
     showErrorTooltip(
-      'Incorrect password. Please try again.',
+      "Incorrect password. Please try again.",
       passwordDeleteInput
     );
     return;
@@ -448,15 +444,15 @@ export const handleCloseAccountBtn = () => {
   try {
     // Simulate an API call to delete the account
     setTimeout(() => {
-      showMessageBlock('Account deleted successfully!', 'success');
+      showMessageBlock("Account deleted successfully!", "success");
       // Redirect to home or login page
-      window.location.href = '/login';
+      window.location.href = "/login";
     }, 1000);
   } catch (error) {
-    console.error('Error deleting account:', error);
+    console.error("Error deleting account:", error);
     showMessageBlock(
-      'An error occurred while deleting the account. Please try again.',
-      'error'
+      "An error occurred while deleting the account. Please try again.",
+      "error"
     );
   }
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 const authRouter = express.Router();
-const { createSession, logOut } = require('../controllers/auth-controllers');
+const { createSession, logOut } = require('../controllers/auth');
 const {
   redirectIfAuthenticated,
 } = require('../middleware/sessionVerification');

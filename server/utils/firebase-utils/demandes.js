@@ -1,37 +1,34 @@
 const { FieldValue } = require("firebase-admin/firestore");
-const { db } = require("../firebase/firebaseAdmin");
+const { db } = require("../../firebase/firebaseAdmin");
 
 const ajouterMembre = async (groupId, userId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
+    console.log("userIs", userId);
     const userRef = db.collection("users").doc(userId);
     const userSnap = await userRef.get();
     const groupSnap = await groupRef.get();
     console.log(userSnap, "user data from the database");
     // Check if group exists, user exists, and user is not already a member
-    if (!groupSnap.exists || !userSnap.exists) {
-      console.log("Group or user not found");
-      return false;
+    if (!groupSnap.exists) {
+      return { message: "Group  does not exist", success: false };
+    } else if (!userSnap.exists) {
+      return { message: "User does not exist", success: false };
     }
     const group = groupSnap.data();
     // Ensure membres is always an array
-    group.membres = Array.isArray(group.membres) ? group.membres : [];
-    const maxMembre = group.membres.length >= group.nombre_max_membres;
+    const maxMembre = group.members.length >= group.maxMembers;
     if (maxMembre) {
-      console.log("le groupe est plein");
-      return false;
+      return { message: "Group is full", success: false };
     }
-ù
     const userData = userSnap.data();
 
-
-    const isAlreadyMember = group.membres.some(
+    const isAlreadyMember = group.members.some(
       (membre) => membre.uid === userId
     );
 
     if (isAlreadyMember) {
-      console.log("User is already a member");
-      return false;
+      return { message: "You are already a member", success: false };
     }
 
     // Add user to group members
@@ -46,30 +43,40 @@ const ajouterMembre = async (groupId, userId) => {
     });
 
     console.log("Member added successfully");
-    return true;
+    return {
+      message: "Joined the group successfully",
+      status: "joined",
+      success: true,
+    };
   } catch (error) {
     console.error("Error in ajouterMembre function:", error);
-    return false;
+    return { message: "Internal sever error", success: false };
   }
 };
-
 
 const sendRequest = async (groupId, userData) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
     const groupSnap = await groupRef.get();
-
+    const data = groupSnap.data();
     if (groupSnap.exists) {
       const group = groupSnap.data();
-      if (group.nombre_max_membres <= group.membres.length) {
-        return 0;
+
+      if (group.maxMembers <= group.members.length) {
+        return {
+          message: "Can't send request the group is full",
+          success: false,
+        };
       } else if (
-        group.demandes.some((demande) => demande.uid === userData.uid)
+        group.requests.some((demande) => demande.uid === userData.uid)
       ) {
-        return 1;
-      } else if (group.membres.some((membre) => membre.uid === userData.uid)) {
-        return 2;
-      } else {
+        return { message: "You have already sent a request", success: false };
+      } else if (group.members.some((membre) => membre.uid === userData.uid)) {
+        return {
+          message: "You are already a member ",
+          success: false,
+        };
+      } else if (data.showInSearch) {
         await groupRef.update({
           demandes: FieldValue.arrayUnion({
             uid: userData.uid,
@@ -78,10 +85,18 @@ const sendRequest = async (groupId, userData) => {
             photoURL: userData.picture || "here//goes//a//photo//url",
           }),
         });
-        return true;
+        return {
+          message: "Can't send request the group is full",
+          status: "requested",
+          success: true,
+        };
+      } else {
       }
     } else {
-      return 3;
+      return {
+        message: "Group does not exists",
+        success: false,
+      };
     }
   } catch (error) {
     console.log(error.message);
@@ -89,6 +104,30 @@ const sendRequest = async (groupId, userData) => {
   }
 };
 
+const joinGroup = async (groupId, userId) => {
+  try {
+    const ref = db.collection("groups").doc(groupId);
+    const snaphsot = await ref.get();
+
+    if (snaphsot.exists) {
+      const group = snaphsot.data();
+
+      if (group.visibility === "Public") {
+        return (result = await ajouterMembre(groupId, userId));
+      } else if (group.showInSearch && group.visibility === "Private") {
+        return (result = await sendRequest(groupId, userId));
+      }
+    } else {
+      return {
+        message: "Group does not exist",
+        success: false,
+      };
+    }
+  } catch (error) {
+    console.error(error);
+    return { message: "Internal server error", success: false };
+  }
+};
 const acceptRequest = async (groupId, requestId) => {
   try {
     const group = await getGroupByID(groupId);
@@ -143,8 +182,6 @@ const rejectRequest = async (groupId, requestId) => {
   }
 };
 
-
-
 const getMembres = async (groupId) => {
   try {
     const group = await getGroupByID(groupId);
@@ -177,5 +214,10 @@ const kickMember = async (groupId, userId) => {
   }
 };
 
-
-module.exports = {kickMember , sendRequest , acceptRequest , rejectRequest , getMembres , ajouterMembre}
+module.exports = {
+  kickMember,
+  acceptRequest,
+  rejectRequest,
+  getMembres,
+  joinGroup,
+};

@@ -1,6 +1,6 @@
 
  const {FieldValue} = require("firebase-admin/firestore")
- const {db} = require('../firebase/firebaseAdmin')
+ const {db} = require('../../firebase/firebaseAdmin')
 const { getTaches } = require("./tache")
 const {getAllGroups} = require("./group")
  // examen gestion *
@@ -218,10 +218,10 @@ const modifieExamen =async(propertie , value , examenId)=>{
 
         if(taches.length > 0){
         taches.forEach(tache=>async()=>{
-            if(tache.title  === examId && tache.status != "active"){
+            if(tache.isQuizz && tache.status != "active"){
                 return ;
             }
-            else if(tache.title === examId && tache.status == "active"){
+            else if(tache.isQuizz === examId && tache.status == "active"){
                 const questions = await getQuestions(examId)
                 if(questions.length > 0){
                     return questions

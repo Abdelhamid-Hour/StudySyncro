@@ -1,5 +1,5 @@
 const { FieldValue } = require("firebase-admin/firestore");
-const { db } = require("../firebase/firebaseAdmin");
+const { db } = require("../../firebase/firebaseAdmin");
 
 const ajouterQuestion = async (question) => {
   try {

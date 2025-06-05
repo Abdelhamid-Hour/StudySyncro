@@ -17,7 +17,7 @@ export const metaInfoEl = {
       wrapper.innerHTML = `<div class="select-trigger input">
             <button type="button" class="exclude-btn open-drop-down-btn">
               <span class="subject-value"></span>
-              <input type="hidden" name="sebject" value="" />
+              <input type="hidden" name="subject" value="" />
               <i class="bi bi-chevron-down"></i>
             </button>
             <div class="select-menu drop-down-menu overlay"></div>
@@ -32,7 +32,7 @@ export const metaInfoEl = {
 
       wrapper.querySelector('.subject-value').textContent = value;
       wrapper
-        .querySelector('input[name="sebject"]')
+        .querySelector('input[name="subject"]')
         .setAttribute('value', value);
       return wrapper;
     },

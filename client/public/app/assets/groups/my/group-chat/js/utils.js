@@ -23,6 +23,7 @@ import {
   openOverlayModal,
   millisecondsToHMFormat,
   showErrorTooltip,
+  dashedToCamelCase,
 } from '../../../../global/js/utils.js';
 import {
   levelValues,
@@ -901,9 +902,7 @@ export const closeGroupLeftSideBar = () => {
   showInfoBtn.setAttribute('data-tooltip', 'Show group info');
 };
 
-const dashedToCamelCase = (value) => {
-  return value.replace(/-([a-z])/g, (_, l) => l.toUpperCase());
-};
+
 
 const swapMode = (infoBox, modeFuncName, updatedValue, showInSearchValue) => {
   const editBoxClass = infoBox.className

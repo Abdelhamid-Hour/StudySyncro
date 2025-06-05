@@ -1,11 +1,11 @@
 import {
   fetchData,
   showMessageBlock,
-} from '../../../../../main_assets/js/utils.js';
+} from "../../../../../main_assets/js/utils.js";
 import {
   boxRowCount,
   boxTotalCount,
-} from '../../../global/js/dom-variables.js';
+} from "../../../global/js/dom-variables.js";
 
 export class Loader {
   constructor(container, rootMargin, createCard, endPoint) {
@@ -14,10 +14,10 @@ export class Loader {
     this.container = container;
     this.rootMargin = rootMargin;
     this.createCard = createCard;
-    // get the nextLastId from the container's data attribute
-    this.nextLastId = this.container?.dataset.nextLastId;
+    // get the lastVisible from the container's data attribute
+    this.lastVisible = this.container?.dataset.lastVisible;
     // remove the data attribute from the container
-    this.container.removeAttribute('data-next-last-id');
+    this.container.removeAttribute("data-next-last-id");
     this.endPoint = endPoint;
   }
 
@@ -28,7 +28,7 @@ export class Loader {
           if (
             entry.isIntersecting &&
             !this.loading &&
-            this.nextLastId !== null
+            this.lastVisible !== null
           ) {
             this.loadMore();
           }
@@ -50,7 +50,7 @@ export class Loader {
     for (let i = 0; i < loadersCount; i++) {
       if (i === 0) {
         const firstLoader = loadingBox.cloneNode(true);
-        firstLoader.classList.add('first-loading-card');
+        firstLoader.classList.add("first-loading-card");
         frag.appendChild(firstLoader);
         continue;
       }
@@ -58,18 +58,18 @@ export class Loader {
       frag.appendChild(loader);
     }
     this.container.appendChild(frag);
-    this.sentinel = document.querySelector('.first-loading-card');
+    this.sentinel = document.querySelector(".first-loading-card");
   }
 
   async loadMore() {
     this.loading = true;
 
-    const endPoint = `${this.endPoint}?nextLastId=${this.nextLastId}&count=${boxTotalCount}`;
+    const endPoint = `${this.endPoint}?lastVisible=${this.lastVisible}&count=${boxTotalCount}`;
 
     try {
-      const { cards, nextLastId } = await fetchData(endPoint);
+      const { cards, lastVisible } = await fetchData(endPoint);
 
-      this.nextLastId = nextLastId;
+      this.lastVisible = lastVisible;
 
       const frag = document.createDocumentFragment();
       cards.forEach((item) => {
@@ -79,16 +79,16 @@ export class Loader {
       // insert the new cards before the last loader
       this.sentinel.before(frag);
 
-      if (!nextLastId) {
+      if (!lastVisible) {
         this.io.unobserve(this.sentinel);
         clearLoadersBoxes();
       }
     } catch (error) {
-      console.error('Error loading more items:', error);
+      console.error("Error loading more items:", error);
       // Optionally, you can show an error message to the user
       showMessageBlock(
-        'Error loading more items. Please try again later.',
-        'error'
+        "Error loading more items. Please try again later.",
+        "error"
       );
     }
 
@@ -97,7 +97,7 @@ export class Loader {
 }
 
 const clearLoadersBoxes = () => {
-  const loaders = document.querySelectorAll('.loading-card');
+  const loaders = document.querySelectorAll(".loading-card");
   loaders.forEach((loader) => {
     loader.remove();
   });

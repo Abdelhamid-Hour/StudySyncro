@@ -1,6 +1,6 @@
 
  const {FieldValue} = require("firebase-admin/firestore")
- const {db} = require('../firebase/firebaseAdmin')
+ const {db} = require('../../firebase/firebaseAdmin')
  const  tacheRef = db.collection("tache")
 
   const createTach = async(tacheData)=>{

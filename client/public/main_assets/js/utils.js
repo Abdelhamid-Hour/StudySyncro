@@ -45,7 +45,6 @@ export const removeBlock = function () {
  * @param {Boolean} error - Indicates if the message is an error (true) or success (false).
  */
 export const showMessageBlock = (message, type) => {
-  console.log(message, type);
   
   let messagesBlocksWrapper = document.querySelector(
     '.messages-blocks-wrapper'

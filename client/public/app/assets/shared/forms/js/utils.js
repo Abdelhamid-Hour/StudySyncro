@@ -282,7 +282,18 @@ const handleFormSubmission = (e, form, validateFn, onSuccess) => {
 
   if (validateFn()) {
     const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
+    
+    let data = Object.fromEntries(formData.entries());
+    
+    Object.entries(data).forEach(([key , value])=>{
+      if(value === "on"){
+        data[key] = true
+      }
+      if(value === "off"){
+        data[key] = false
+      }
+    })
+    
     onSuccess && onSuccess(data);
   }
 };
