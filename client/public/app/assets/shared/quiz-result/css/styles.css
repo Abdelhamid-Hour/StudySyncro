@@ -6,7 +6,7 @@
   flex-direction: column;
   gap: calc(var(--primary-gap));
   border: var(--primary-border-style);
-  max-width: 35rem;
+  max-width: 40rem;
   height: clamp(30rem, 80vh, 45rem);
 
   .quiz-result-header {
@@ -30,7 +30,7 @@
       }
     }
 
-    .close-overlay-btn {
+    .close-result-overlay-btn {
       border-radius: 0.2rem;
       &:hover {
         background-color: var(--btn-background-color);
@@ -258,6 +258,7 @@
   gap: var(--primary-gap);
 
   .choice {
+    font-size: var(--small-font-size);
     display: flex;
     align-items: center;
     min-height: 2.5rem;

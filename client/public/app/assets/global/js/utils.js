@@ -32,14 +32,14 @@ export const handelIconsHover = (e, addFill) => {
 };
 
 export const millisecondsToHMFormat = (time) => {
-  const hours = Math.floor(time / (1000 * 60 * 60))
-    .toString()
-    .padStart(2, '0');
-  const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60))
-    .toString()
-    .padStart(2, '0');
+  const hours = Math.floor(time / (1000 * 60 * 60));
+  const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
 
-  return hours === '00' ? `${minutes}m` : `${hours}h ${minutes}m`;
+  return hours !== 0
+    ? `${hours}h ${minutes.toString().padStart(2, '0')}m`
+    : hours === 0 && minutes !== 0
+    ? `${minutes}m`
+    : '0m';
 };
 
 export const closeAndOpenLeftSideBar = () => {
@@ -49,11 +49,12 @@ export const closeAndOpenLeftSideBar = () => {
     element.classList.toggle('hidden');
   });
 };
-export const openOverlayHandler = function (e) {
+export const openOverlayHandler = (e) => {
   const button = e.target.closest('.open-drop-down-btn');
   if (button) {
     const overlay = button.parentElement.querySelector('.overlay');
     overlay.classList.toggle('open-overlay');
+    document.body.style.pointerEvents = 'none';
   }
 };
 export const toggleClass = (array, className) => {
@@ -84,26 +85,12 @@ const getIconClassName = (icon) => {
 // this is for mouse down
 export const handleOverlayClose = (event) => {
   const overlayToClose = document.querySelector('.open-overlay');
-  const clickedElement = event.target.closest(
-    `.open-overlay, .open-drop-down-btn`
-  );
-  if (!clickedElement && overlayToClose) {
+  const isOpenBtn = event.target.closest('.open-drop-down-btn');
+  const isDropDownItem = event.target.closest(`.drop-down-item`);
+  const isOnOverlay = event.target.closest(`.open-overlay`);
+  if ((isDropDownItem || !isOnOverlay) && overlayToClose && !isOpenBtn) {
     overlayToClose.classList.remove('open-overlay');
-  }
-};
-
-/// this is click
-export const handleOverlayClick = (event, includeClasses = []) => {
-  let clickedElement = null;
-  const includeSelector = includeClasses.length
-    ? `.${includeClasses.join(', .')}`
-    : '';
-  const overlayToClose = event.target.closest(`.open-overlay`);
-  if (includeSelector) {
-    clickedElement = event.target.closest(includeSelector);
-  }
-  if (clickedElement && overlayToClose) {
-    overlayToClose.classList.remove('open-overlay');
+    document.body.style.pointerEvents = 'auto';
   }
 };
 
@@ -121,24 +108,17 @@ let tooltipTimer = null;
 
 export const resetTooltip = (tooltip, target) => {
   tooltip.classList.remove('show');
-  if (tooltipTimer) {
-    clearTimeout(tooltipTimer);
+  tooltip.style.left = 0 + 'px';
+  tooltip.style.top = 0 + 'px';
+  tooltip.className = 'tooltip';
+  if (target) {
+    target.dataset.tooltip = '';
+    target.classList.remove('error-animation');
+    target.classList.remove('error-input');
   }
-  tooltipTimer = setTimeout(() => {
-    tooltip.style.left = 0 + 'px';
-    tooltip.style.top = 0 + 'px';
-    tooltip.className = 'tooltip';
-    if (target) {
-      target.dataset.tooltip = '';
-      target.classList.remove('error-animation');
-    }
-  }, 300);
 };
 
 export const showTooltip = (tooltipTarget, tooltip, message, error) => {
-  if (tooltipTimer) {
-    clearTimeout(tooltipTimer);
-  }
   if (message) {
     tooltipTarget.dataset.tooltip = message;
   }
@@ -206,6 +186,7 @@ const SHARED_STYLES_MAP = {
   ],
   '/groups/available': ['/groups-my-available', '/quizzes-groups'],
   '/quiz-play': ['/quiz-result'],
+  '/settings': ['/fields'],
 };
 
 const setSharedStylesResources = (pathName) => {
@@ -264,7 +245,6 @@ const setScriptRoute = async (pathName, thisNav) => {
     const modulePath = `/app/assets${pathName}/js/main.js`;
     const module = await import(modulePath);
     if (thisNav !== navCounter) return;
-    console.log('Script Run', modulePath);
     module.init?.();
   } catch (error) {
     console.error(error);
@@ -533,7 +513,7 @@ export const updateMain = async (path, isTabLinks) => {
     const { pathName, htmlFragment } = await fetchTemplate(path);
 
     if (thisNav !== navCounter) return;
-
+    clearOverlaysModals();
     mainContainer.innerHTML = htmlFragment;
     removePreviousRessources();
     setStyleRoute(pathName);
@@ -630,19 +610,18 @@ export const handleNavigation = (e) => {
       updateMain(pathName, Boolean(tabLink));
       resetTooltip(hoverTooltip);
       history.pushState(null, '', pathName);
-      clearOverlaysModals();
     }
 
     if (tabLink) {
       toggleActiveLink(pathName);
       document.querySelector('.filter-panel').replaceWith(createFilterPanel());
       if (e.target.closest('.available-groups-tab')) {
-        removeCreateGroupBtn();
+        removeCreateBtns();
       } else {
         const groupCreateBtn = document.querySelector('.create-group-btn');
         if (!groupCreateBtn) {
-          const createGroupBtn = createGroupCreateBtn();
-          topSideBarMiddle.after(createGroupBtn);
+          const createGroupBtn = createCreateBtn();
+          topSideBarFooter.prepend(createGroupBtn);
         }
       }
     }
@@ -804,6 +783,7 @@ export const openOverlayModal = async (
   } catch (error) {
     console.log(error);
     backdrop.innerHTML = '<h2>Error loading content</h2>';
+    showMessageBlock(error.message, 'error');
   }
 };
 
@@ -866,7 +846,7 @@ const createConfirmationBox = (
         <i class="bi bi-${
           type === 'confirmation' ? 'check-circle' : 'exclamation-triangle'
         }-fill"></i>
-        <h2>${title}</h2>
+        <h4>${title}</h4>
         <p>${message}</p>
         <div class="buttons">
           <button type="button" class="confirmation-box-btn-cancel should-fill">
@@ -920,4 +900,23 @@ export const showConfirmationBox = async (
   });
 
   return promise;
+};
+
+export const scrollToView = (e, questionLink) => {
+  e.preventDefault();
+  const target = document.getElementById(`${questionLink.href.split('#')[1]}`);
+  if (target) {
+    target.scrollIntoView({
+      behavior: 'smooth',
+    });
+    // Use a more descriptive property and class name
+    if (target.scrollHighlightTimer) {
+      clearTimeout(target.scrollHighlightTimer);
+    }
+    target.classList.add('highlighted-in-view');
+    target.scrollHighlightTimer = setTimeout(() => {
+      target.classList.remove('highlighted-in-view');
+      clearTimeout(target.scrollHighlightTimer);
+    }, 1000);
+  }
 };

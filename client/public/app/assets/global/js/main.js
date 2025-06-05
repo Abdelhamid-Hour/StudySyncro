@@ -2,7 +2,6 @@ import {
   closeAndOpenLeftSideBar,
   handelIconsHover,
   handleNavigation,
-  handleOverlayClick,
   handleOverlayClose,
   handleRoutingClick,
   openOverlayHandler,
@@ -22,12 +21,9 @@ document.addEventListener('mouseover', (e) => handelIconsHover(e, true));
 
 document.addEventListener('mouseout', (e) => handelIconsHover(e, false));
 
-document.addEventListener('click', (e) => {
-  openOverlayHandler(e);
-  handleOverlayClick(e, ['drop-down-item', 'open-drop-down-btn']);
-});
+document.addEventListener('click', openOverlayHandler);
 
-document.addEventListener('mousedown', handleOverlayClose);
+document.addEventListener('click', handleOverlayClose);
 
 document.addEventListener('click', handleRoutingClick, true);
 

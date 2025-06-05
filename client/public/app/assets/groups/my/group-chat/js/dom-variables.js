@@ -36,8 +36,8 @@ groupInfoElementsMap = {
             </button>
             <button
               type="button"
-              data-tooltip="Cancell"
-              class="exclude-btn cancell-btn action-btn has-tooltip"
+              data-tooltip="Cancel"
+              class="exclude-btn cancel-btn action-btn has-tooltip"
             >
               <i class="bi bi-x-lg"></i>
             </button>
@@ -104,8 +104,8 @@ groupInfoElementsMap = {
             </button>
             <button
               type="button"
-              data-tooltip="Cancell"
-              class="exclude-btn cancell-btn action-btn has-tooltip"
+              data-tooltip="Cancel"
+              class="exclude-btn cancel-btn action-btn has-tooltip"
             >
               <i class="bi bi-x-lg"></i>
             </button>
@@ -172,8 +172,8 @@ groupInfoElementsMap = {
             </button>
             <button
               type="button"
-              data-tooltip="Cancell"
-              class="exclude-btn cancell-btn action-btn has-tooltip"
+              data-tooltip="Cancel"
+              class="exclude-btn cancel-btn action-btn has-tooltip"
             >
               <i class="bi bi-x-lg"></i>
             </button>
@@ -237,8 +237,8 @@ groupInfoElementsMap = {
               </button>
               <button
                 type="button"
-                data-tooltip="Cancell"
-                class="exclude-btn cancell-btn action-btn has-tooltip"
+                data-tooltip="Cancel"
+                class="exclude-btn cancel-btn action-btn has-tooltip"
               >
                 <i class="bi bi-x-lg"></i>
               </button>
@@ -304,8 +304,8 @@ groupInfoElementsMap = {
             </button>
             <button
               type="button"
-              data-tooltip="Cancell"
-              class="exclude-btn cancell-btn action-btn has-tooltip"
+              data-tooltip="Cancel"
+              class="exclude-btn cancel-btn action-btn has-tooltip"
             >
               <i class="bi bi-x-lg"></i>
             </button>
@@ -381,8 +381,8 @@ groupInfoElementsMap = {
             </button>
             <button
               type="button"
-              data-tooltip="Cancell"
-              class="exclude-btn cancell-btn action-btn has-tooltip"
+              data-tooltip="Cancel"
+              class="exclude-btn cancel-btn action-btn has-tooltip"
             >
               <i class="bi bi-x-lg"></i>
             </button>

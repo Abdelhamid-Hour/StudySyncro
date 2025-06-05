@@ -3,9 +3,7 @@ import {
   DESCRIPTION_MAX_LENGTH,
   hoverTooltip,
 } from '../../../global/js/dom-variables.js';
-import {
-  getDebounceFunc,
-} from '../../../global/js/utils.js';
+import { getDebounceFunc } from '../../../global/js/utils.js';
 import {
   levelValues,
   subjectMenuObject,
@@ -106,16 +104,10 @@ const createSubjectSelectMenuGroup = (group, subjects) => {
   return groupHtml;
 };
 
-const handleOtherSubjectInputKeydown = (
-  e,
-  selectButtonValue,
-  selectMenu
-) => {
+const handleOtherSubjectInputKeydown = (e, selectButtonValue, selectMenu) => {
   if (e.key === 'Enter') {
     const selectedValue = toCapitalizeFirstLetter(e.currentTarget.value.trim());
     if (selectedValue.length > 1 && selectedValue.length <= 50) {
-      console.log('heeee');
-
       setSubjectValue(selectButtonValue, selectedValue);
       clearOtherSubjectInput(e.currentTarget, selectMenu);
       removeErrorMessage();
@@ -287,12 +279,10 @@ export const countCharsTextarea = (e) => {
 // Generic form validation handler
 const handleFormSubmission = (e, form, validateFn, onSuccess) => {
   e.preventDefault();
-  
+
   if (validateFn()) {
-    console.log('Form submitted successfully');
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
-    console.log(data);
     onSuccess && onSuccess(data);
   }
 };

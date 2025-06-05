@@ -25,17 +25,25 @@ export const handleJoinGroupClick = async (joinGroupBtn) => {
 
   const loaderDiv = createLoaderDiv();
   groupFooter.replaceChild(loaderDiv, joinGroupBtn);
+  try {
+    const { status } = await simulateJoinGroupRequest(groupCard);
 
-  const { status } = await simulateJoinGroupRequest(groupCard);
+    const resultElement = getResultElement(status, groupId);
+    groupFooter.replaceChild(
+      document.createRange().createContextualFragment(resultElement),
+      loaderDiv
+    );
 
-  const resultElement = getResultElement(status, groupId);
-  groupFooter.replaceChild(
-    document.createRange().createContextualFragment(resultElement),
-    loaderDiv
-  );
-
-  const successMessage = getSuccessMessage(status, groupTitle);
-  showMessageBlock(successMessage, 'success');
+    const successMessage = getSuccessMessage(status, groupTitle);
+    showMessageBlock(successMessage, 'success');
+  } catch (error) {
+    console.error('Error joining group:', error);
+    showMessageBlock(
+      'An error occurred while trying to join the group. Please try again later.',
+      'error'
+    );
+    groupFooter.replaceChild(joinGroupBtn, loaderDiv);
+  }
 };
 
 const createLoaderDiv = () => {
@@ -61,7 +69,7 @@ const simulateJoinGroupRequest = (groupCard) => {
 
 const getResultElement = (status, groupId) => {
   return status === 'joined'
-    ? `<a href="/groups/${groupId}" class="view-group-link">
+    ? `<a href="/app/groups/my/${groupId}/chat" class="view-group-link">
                              <i class="bi bi-box-arrow-right"></i><span>View Group</span>
                      </a>`
     : '<span class="pending-text"><i class="bi bi-hourglass-split"></i>Pending</span>';

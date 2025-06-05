@@ -620,6 +620,17 @@
     }
   }
 
+  .include-breaks {
+    display: flex;
+    font-size: var(--small-font-size);
+    align-items: center;
+    gap: calc(var(--primary-gap) / 2);
+
+    &:has(:checked){
+      color: var(--primary-color);
+    }
+  }
+
   .create-task-container {
     display: flex;
     flex-direction: column;
@@ -631,7 +642,20 @@
     padding-inline: var(--primary-gap);
     align-items: center;
     justify-content: space-between;
+    gap: calc(var(--primary-gap) / 2);
     margin-bottom: calc(var(--primary-gap) / 2);
+
+    .badge {
+      margin-right: auto;
+    }
+
+    .btns button {
+      border-radius: 0.2rem;
+
+      &:hover {
+        background-color: var(--btn-background-color);
+      }
+    }
   }
 
   .add-task-btn {
@@ -694,19 +718,6 @@
     .drag-handle {
       &::after {
         background-color: var(--primary-color);
-      }
-    }
-  }
-
-  .tasks-list-container header .btns {
-    margin-right: auto;
-    margin-left: var(--primary-gap);
-
-    button {
-      border-radius: 0.2rem;
-
-      &:hover {
-        background-color: var(--btn-background-color);
       }
     }
   }

@@ -744,7 +744,6 @@ const handleDrop = (e) => {
 };
 
 const handleDragLeave = (e) => {
-  console.log('e.relatedTarget', e.relatedTarget);
 
   if (e.relatedTarget?.matches(':not(.chat *)')) {
     inputChatContainer.classList.remove('drop-start');

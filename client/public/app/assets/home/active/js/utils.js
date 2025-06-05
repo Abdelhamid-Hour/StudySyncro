@@ -146,7 +146,7 @@ export class Quiz extends Task {
   constructor({ UID, title, description, durationInMins, questionsCount }) {
     super({ title, description, durationInMins });
     this.questionsCount = questionsCount;
-    this.UID = UID;
+    this.UID = document.querySelector(QUIZSELECTORS.quizTitle)?.dataset.quizId;
     this.elapsedTime = document.querySelector(QUIZSELECTORS.startTime);
     this.submittedQuestionsCount = document.querySelector(
       QUIZSELECTORS.submittedCount
@@ -154,7 +154,22 @@ export class Quiz extends Task {
     this.score = document.querySelector(QUIZSELECTORS.score);
   }
   updateElapsedTime(quizElapsedTime) {
-    this.elapsedTime.textContent = quizElapsedTime;
+    if (quizElapsedTime) {
+      this.elapsedTime.textContent = quizElapsedTime;
+    } else {
+      const current = this.elapsedTime.textContent;
+      if (current !== '00m') {
+        let minutes = parseInt(current, 10) - 1;
+        this.elapsedTime.textContent =
+          minutes.toString().padStart(2, '0') + 'm';
+      }
+    }
+
+    if (this.elapsedTime.textContent === '00m') {
+      const quizPlayLink = document.createElement('a');
+      quizPlayLink.href = `/app/quiz-play/${this.UID}`;
+      quizPlayLink.click();
+    }
   }
 
   calculateScore(submittedQuestionsCount) {
@@ -213,6 +228,7 @@ export class Session {
         elapsedTime: elapsedTime,
         timeLeft: this.timeLeft,
       });
+      if (this.quiz) this.quiz.updateElapsedTime();
 
       const firstTaskIsComplete =
         this.ongoingTasks.length > 0 &&
@@ -224,8 +240,6 @@ export class Session {
 
       if (firstTaskIsComplete) {
         this.addToCompletedTasks();
-        if (this.quiz)
-          this.quiz.updateElapsedTime(this.calculateQuizElapsedTime());
       }
 
       this._timer = setTimeout(() => this.tick(), delay);
@@ -320,8 +334,6 @@ export class Session {
             questionsCount: parseInt(
               document.querySelector(QUIZSELECTORS.questions).textContent
             ),
-            UID: document.querySelector(QUIZSELECTORS.quizTitle)?.dataset
-              .quizUid,
           })
         : new Task({
             title: task.querySelector(TASKSSELECTORS.taskTitle).textContent,

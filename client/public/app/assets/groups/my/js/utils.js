@@ -156,8 +156,7 @@ const chechGroupValues = (inputs) => {
     );
     return false;
   } else {
-    groupName.closest('.field-container').classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(globalTooltip, groupName.closest('.field-container'));
   }
 
   if (!descriptionValue.trim()) {
@@ -173,24 +172,21 @@ const chechGroupValues = (inputs) => {
     );
     return false;
   } else {
-    description.closest('.field-container').classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(globalTooltip, description.closest('.field-container'));
   }
 
   if (!subjectValue.trim()) {
     showErrorTooltip('Subject is required.', subject);
     return false;
   } else {
-    subject.closest('.field-container').classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(globalTooltip, subject.closest('.field-container'));
   }
 
   if (!levelValues.includes(levelValue)) {
     showErrorTooltip('Level is not valid.', level);
     return false;
   } else {
-    level.closest('.field-container').classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(globalTooltip, level.closest('.field-container'));
   }
 
   if (
@@ -204,16 +200,14 @@ const chechGroupValues = (inputs) => {
     );
     return false;
   } else {
-    maxMembers.closest('.field-container').classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(globalTooltip, maxMembers.closest('.field-container'));
   }
 
   if (!visibilityValues.includes(visibilityValue)) {
     showErrorTooltip('Visibility is not valid.', visibility);
     return false;
   } else {
-    visibility.closest('.field-container').classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(globalTooltip, visibility.closest('.field-container'));
   }
   return true;
 };
@@ -228,9 +222,7 @@ export const handleGroupCreateClick = () => {
 };
 
 const setUpGroupOverlay = (backdropElement) => {
-  setUpSubjectSelectMenu(
-    backdropElement.querySelector('.group-subject-field')
-  );
+  setUpSubjectSelectMenu(backdropElement.querySelector('.group-subject-field'));
   const visibilityField = backdropElement.querySelector(
     '.group-visibility-field'
   );

@@ -301,54 +301,6 @@
                 </div>
                 <div class="drop-target"></div>
               </div> -->
-
-      <div class="create-quiz-overlay">
-        <header>
-          <h3>Create New Quiz</h3>
-          <button
-            type="button"
-            class="exclude-btn close-session-creation-overlay"
-          >
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </header>
-        <form>
-          <div class="field-container session-name-field">
-            <div class="field-icon-container">
-              <span class="icon-box">
-                <i class="bi bi-clipboard-check"></i>
-                <i class="bi bi-info-circle"></i>
-              </span>
-            </div>
-            <input
-              type="text"
-              required
-              id="session-name"
-              name="session-name"
-              class="input"
-              placeholder="Title"
-            />
-          </div>
-          <div class="field-container group-subject-field">
-            <div class="field-icon-container">
-              <i class="bi bi-journal-text"></i>
-            </div>
-            <div class="select-trigger input">
-              <button type="button" class="exclude-btn open-drop-down-btn">
-                <span class="subject-value">Subject</span>
-                <input type="hidden" name="sebject" value="" />
-                <i class="bi bi-chevron-down"></i>
-              </button>
-              <div
-                class="select-menu group-subject-select-menu drop-down-menu overlay"
-              ></div>
-            </div>
-          </div>
-          <button type="submit" class="blue-btn create-btn">Create</button>
-        </form>
-      </div>
-
-      
     </main>
     <div id="hover-tooltip" class="tooltip" role="tooltip"></div>
     <div id="global-tooltip" class="tooltip" role="tooltip"></div>
@@ -357,9 +309,6 @@
       src="./assets/global/js/main.js"
       crossorigin="anonymous"
     ></script>
-    <script
-      type="module"
-      src="./assets/quizzes/quiz-editor/js/main.js"
-    ></script>
+    <script type="module" src="./assets/settings/js/main.js"></script>
   </body>
 </html>

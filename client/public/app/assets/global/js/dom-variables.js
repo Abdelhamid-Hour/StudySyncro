@@ -18,11 +18,20 @@ export const NAME_TITLE_MAX_LENGTH = 50;
 export const NAME_TITLE_MIN_LENGTH = 3;
 export const SESSION_MIN_DURATION = 10; // in minutes
 export const SESSION_MAX_DURATION = 1440;
+export const TASK_MIN_DURATION = 1;
+export const TASK_MAX_DURATION = 140; // in minutes
 export const MAX_MEMBERS = 1000;
 export const MIN_MEMBERS = 2;
 export const QUESTION_TEXT_MAX_LENGTH = 500;
 export const QUESTION_TEXT_MIN_LENGTH = 10;
 export const CHOICE_TEXT_MAX_LENGTH = 200;
+export const profileAllowedFileTypes = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
+];
+export const avatarMaxSize = 5 * 1024 * 1024; // 5 MB
 
 function calculateBoxCounts() {
   boxRowCount = Math.floor(

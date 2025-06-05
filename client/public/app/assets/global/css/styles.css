@@ -846,7 +846,7 @@ main {
   height: 100%;
   left: 0;
   top: 0;
-  z-index: 999;
+  z-index: 1000;
   background-color: rgba(37, 37, 37, 0.468);
   backdrop-filter: blur(3px);
   display: flex;
@@ -888,6 +888,7 @@ main {
 
 /* From Uiverse.io by SelfMadeSystem */
 label.container {
+  width: fit-content;
   cursor: pointer;
 }
 
@@ -1145,14 +1146,12 @@ label.container svg {
     --confirmation-box-confirmation-box-btn-confirm-hover-bg: var(
       --primary-color
     );
-    --confirmation-box-confirmation-box-btn-cancell-color: var(
-      --btn-text-color
-    );
-    --confirmation-box-confirmation-box-btn-cancell-hover-color: var(
+    --confirmation-box-confirmation-box-btn-cancel-color: var(--btn-text-color);
+    --confirmation-box-confirmation-box-btn-cancel-hover-color: var(
       --btn-hover-text-color
     );
-    --confirmation-box-confirmation-box-btn-cancell-bg: transparent;
-    --confirmation-box-confirmation-box-btn-cancell-hover-bg: var(
+    --confirmation-box-confirmation-box-btn-cancel-bg: transparent;
+    --confirmation-box-confirmation-box-btn-cancel-hover-bg: var(
       --background-color
     );
   }
@@ -1167,14 +1166,12 @@ label.container svg {
     --confirmation-box-confirmation-box-btn-confirm-hover-bg: var(
       --orange-color
     );
-    --confirmation-box-confirmation-box-btn-cancell-color: var(
-      --btn-text-color
-    );
-    --confirmation-box-confirmation-box-btn-cancell-hover-color: var(
+    --confirmation-box-confirmation-box-btn-cancel-color: var(--btn-text-color);
+    --confirmation-box-confirmation-box-btn-cancel-hover-color: var(
       --btn-hover-text-color
     );
-    --confirmation-box-confirmation-box-btn-cancell-bg: transparent;
-    --confirmation-box-confirmation-box-btn-cancell-hover-bg: var(
+    --confirmation-box-confirmation-box-btn-cancel-bg: transparent;
+    --confirmation-box-confirmation-box-btn-cancel-hover-bg: var(
       --background-color
     );
   }
@@ -1217,23 +1214,23 @@ label.container svg {
       }
     }
     .confirmation-box-btn-cancel {
-      color: var(--confirmation-box-confirmation-box-btn-cancell-color);
-      border-color: var(--confirmation-box-confirmation-box-btn-cancell-color);
+      color: var(--confirmation-box-confirmation-box-btn-cancel-color);
+      border-color: var(--confirmation-box-confirmation-box-btn-cancel-color);
       background-color: var(--confirmation-box-btn-hover-bg);
 
       &::before {
         background-color: var(
-          --confirmation-box-confirmation-box-btn-cancell-hover-bg
+          --confirmation-box-confirmation-box-btn-cancel-hover-bg
         );
       }
       &:hover {
         --btn-border-color: var(
-          --confirmation-box-confirmation-box-btn-cancell-hover-bg
+          --confirmation-box-confirmation-box-btn-cancel-hover-bg
         );
         border-color: var(
-          --confirmation-box-confirmation-box-btn-cancell-hover-bg
+          --confirmation-box-confirmation-box-btn-cancel-hover-bg
         );
-        color: var(--confirmation-box-confirmation-box-btn-cancell-hover-color);
+        color: var(--confirmation-box-confirmation-box-btn-cancel-hover-color);
       }
     }
   }

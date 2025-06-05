@@ -55,7 +55,6 @@ const chechQuizValues = (inputs) => {
   const { quizTitle, subject } = inputs;
   const quizTitleValue = quizTitle?.value ?? '';
   const subjectValue = subject?.value ?? '';
-  console.log(quizTitle);
 
   if (!quizTitleValue.trim()) {
     showErrorTooltip('Quiz Title is required.', quizTitle);
@@ -70,16 +69,14 @@ const chechQuizValues = (inputs) => {
     );
     return false;
   } else {
-    quizTitle.closest('.field-container').classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(globalTooltip, quizTitle.closest('.field-container'));
   }
 
   if (!subjectValue.trim()) {
     showErrorTooltip('Subject is required.', subject);
     return false;
   } else {
-    subject.closest('.field-container').classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(globalTooltip, subject.closest('.field-container'));
   }
 
   return true;

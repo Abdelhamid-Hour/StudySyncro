@@ -13,7 +13,7 @@ const getCurrentSession = (userId) => {
     new Task({
       title: 'Introduction to JavaScript',
       description:
-        'Learn the basics of JavaScript, including syntax and variables.',
+      'Learn the basics of JavaScript, including syntax and variables.',
       durationInMins: 2, // in minutes
     }),
     new Task({

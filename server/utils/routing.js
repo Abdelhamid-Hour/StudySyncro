@@ -26,6 +26,7 @@ const SHARED_STYLES_MAP = {
   ],
   '/groups/available': ['/groups-my-available', '/quizzes-groups'],
   '/quiz-play': ['/quiz-result'],
+  '/settings': ['/fields'],
 };
 
 const setSharedStylesResources = (pathName) => {

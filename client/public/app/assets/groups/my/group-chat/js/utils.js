@@ -13,6 +13,8 @@ import {
   NAME_TITLE_MIN_LENGTH,
   SESSION_MAX_DURATION,
   SESSION_MIN_DURATION,
+  TASK_MAX_DURATION,
+  TASK_MIN_DURATION,
 } from '../../../../global/js/dom-variables.js';
 import {
   getLoader,
@@ -35,6 +37,7 @@ import {
 import { initAndDiplayErrorTooltip } from '../../../../shared/chat/js/utils.js';
 import {
   handletTasksListners,
+  setUpDragAndDrop,
   Task,
 } from '../../../../shared/tasks/js/utils.js';
 import {
@@ -106,7 +109,10 @@ export const openGroupLeftSideBar = async (route) => {
     }
   } catch (error) {
     console.log(error);
-    showMessageBlock(error.message, 'error');
+    showMessageBlock(
+      'Error loading group info. Please try again later.',
+      'error'
+    );
   }
 };
 
@@ -116,9 +122,9 @@ const getSessionCreationOverlay = () => {
         <header>
           <h3>Create New Session</h3>
           <button type="button" class="exclude-btn close-session-creation-overlay">
-            <i class="bi bi-x-lg"></i>
+          <i class="bi bi-x-lg"></i>
           </button>
-        </header>
+          </header>
         <div class="progress">
           <div class="progress-indecator-container">
             <div class="progress-indecator"></div>
@@ -140,7 +146,7 @@ const getSessionCreationOverlay = () => {
 
   return sessionOverlay;
 };
-const getSessionForm = (name, description, quiz) => {
+const getSessionForm = (name, description, quiz, includeBreaks) => {
   let quizTitle = '';
   let quizId = '';
   if (quiz) {
@@ -213,6 +219,15 @@ const getSessionForm = (name, description, quiz) => {
           </div>
         </div>
       </div>
+      <label class="include-breaks container">
+        <input type="checkbox" name="include-breaks" ${
+          includeBreaks ? 'checked' : ''
+        }>
+          <svg viewBox="0 0 64 64" height="2em" width="2em">
+          <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
+        </svg>
+        Include breaks if available
+      </label>
 
       <button type="submit" class="blue-btn next-btn">Next</button>
     </form>
@@ -239,9 +254,11 @@ const getSessionForm = (name, description, quiz) => {
 export const handleSessionCreateClick = () => {
   const sessionStore = {
     sessionData: {
-      sessionName: '',
-      sessionDescription: '',
+      name: '',
+      description: '',
       sessionQuiz: null,
+      duration: 0,
+      includeBreaks: false,
       tasks: [],
     },
     taskToEdit: {
@@ -398,8 +415,7 @@ const checkTextFieldValidity = (title, description) => {
     );
     return false;
   } else {
-    title.closest('.field-container').classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(globalTooltip, title.closest('.field-container'));
   }
 
   if (!description.value) {
@@ -418,8 +434,7 @@ const checkTextFieldValidity = (title, description) => {
     );
     return false;
   } else {
-    description.closest('.field-container').classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(globalTooltip, description.closest('.field-container'));
   }
 
   return true;
@@ -437,17 +452,16 @@ const checkTaskFormValidity = (form) => {
   if (
     !duration.value ||
     isNaN(duration.value) ||
-    Number(duration.value) < SESSION_MIN_DURATION ||
-    Number(duration.value) > SESSION_MAX_DURATION
+    Number(duration.value) < TASK_MIN_DURATION ||
+    Number(duration.value) > TASK_MAX_DURATION
   ) {
     showErrorTooltip(
-      `Task duration should be a number between ${SESSION_MIN_DURATION} and ${SESSION_MAX_DURATION} minutes`,
+      `Task duration should be a number between ${TASK_MIN_DURATION} and ${TASK_MAX_DURATION} minutes`,
       duration.closest('.field-container')
     );
     return false;
   } else {
-    duration.closest('.field-container').classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(globalTooltip, duration.closest('.field-container'));
   }
 
   return true;
@@ -455,16 +469,15 @@ const checkTaskFormValidity = (form) => {
 
 const createTaskElement = (task, idx) => {
   const durationStr = millisecondsToHMFormat(task.durationInMins * 60 * 1000);
-
   const taskContainer = document.createElement('div');
-  taskContainer.className = 'task-wrapper ';
-  taskContainer.dataset.taskId = idx; // Store index as task ID for easy access
-  taskContainer.draggable = true;
+  taskContainer.className = 'task';
   taskContainer.innerHTML = `
+  ${idx === 0 ? '<div class="drop-target"></div>' : ''}
+    <div data-task-id="${idx}" class="task-wrapper">
       <div ${task.isQuiz ? 'data-tooltip="Quiz"' : ''} class="task-box ${
     task.isQuiz ? 'quiz-task-box has-tooltip' : ''
   }">
-        <div class="counter">
+        <div class="counter drag-handle">
           <span></span>
         </div>
         <span class="title"></span>
@@ -500,7 +513,9 @@ const createTaskElement = (task, idx) => {
         <h5>Details:</h5>
         <p class="task-desc"></p>
       </div>
-    `;
+    </div>
+  <div class="drop-target"></div>
+  `;
 
   // Set textContent for safety
   taskContainer.querySelector('.counter span').textContent = String(
@@ -546,6 +561,7 @@ const getTasksListContainer = (
                 <i class="bi bi-arrows-expand"></i>
               </button>
           </div>
+          <span class="badge simple-badge duration-badge">Total Duration 0m</span>
           <button type="button" class="small-btn create-task-btn">
             <i class="bi bi-plus-lg"></i>
             Add Task
@@ -554,8 +570,54 @@ const getTasksListContainer = (
         ${getTasksList(tasksArray).outerHTML}
       </div>`;
 
-const setUpSessionForm = (wrapper, sessionStore) => {
+const shouldAddOrUpdateQuiz = (data, sessionData) => {
+  return (
+    data['session-quiz-title'] &&
+    data['session-quiz-id'] &&
+    (data['session-quiz-id'] !== sessionData.sessionQuiz?.id ||
+      !sessionData.sessionQuiz?.quiz.description ||
+      !sessionData.sessionQuiz?.quiz.durationInMins)
+  );
+};
+
+const addOrUpdateQuizTask = (data, sessionStore, wrapper) => {
   const sessionData = sessionStore.sessionData;
+  sessionData.sessionQuiz = {
+    quiz: new Task({
+      title: data['session-quiz-title'],
+      description: '',
+      durationInMins: 0,
+      isQuiz: true,
+    }),
+    id: data['session-quiz-id'],
+  };
+
+  const quizIndex = sessionData.tasks.findIndex((task) => task.isQuiz);
+  if (quizIndex !== -1) {
+    sessionData.tasks[quizIndex] = sessionData.sessionQuiz.quiz;
+  } else {
+    sessionData.tasks.push(sessionData.sessionQuiz.quiz);
+  }
+
+  sessionStore.taskToEdit = {
+    task: sessionData.sessionQuiz.quiz,
+    index: quizIndex !== -1 ? quizIndex : 0,
+    addQuiz: true,
+  };
+
+  wrapper.querySelector('.create-session-form').outerHTML = getTasksContainer();
+  wrapper
+    .querySelector('.finish-btn')
+    .addEventListener('click', () =>
+      handleFinishBtnClick(sessionStore.sessionData)
+    );
+  wrapper.querySelector('#progress-end-text').checked = true;
+
+  setUpSwapBtn('back-btn', 'create-session-form', wrapper, sessionStore);
+  swapSessionOverlayContent('create-task-form', wrapper, sessionStore);
+};
+
+const setUpSessionForm = (wrapper, sessionStore) => {
   wrapper.querySelector('#progress-end-text').checked = false;
   wrapper
     .querySelector('textarea')
@@ -564,57 +626,7 @@ const setUpSessionForm = (wrapper, sessionStore) => {
   handleFormSubmit(
     form,
     () => checkSessionFormValidity(form),
-    (data) => {
-      sessionData.sessionName = data['session-name'];
-      sessionData.sessionDescription = data['session-description'];
-      data['session-quiz-title'] = 'Quiz Title'; // ? For test
-      data['session-quiz-id'] = '12345'; // ? For test
-      if (
-        data['session-quiz-title'] &&
-        data['session-quiz-id'] &&
-        (data['session-quiz-id'] !== sessionData.sessionQuiz?.id ||
-          !sessionData.sessionQuiz?.quiz.description ||
-          !sessionData.sessionQuiz?.quiz.durationInMins)
-      ) {
-        // Create a new Task instance for the quiz
-        sessionData.sessionQuiz = {
-          quiz: new Task({
-            title: data['session-quiz-title'],
-            description: '',
-            durationInMins: 0,
-            isQuiz: true,
-          }),
-          id: data['session-quiz-id'],
-        };
-
-        // If a quiz already exists, replace it; otherwise, add the new quiz
-        const quizIndex = sessionData.tasks.findIndex((task) => task.isQuiz);
-        if (quizIndex !== -1) {
-          sessionData.tasks[quizIndex] = sessionData.sessionQuiz.quiz;
-        } else {
-          sessionData.tasks.push(sessionData.sessionQuiz.quiz);
-        }
-        // Set the task to edit for the quiz
-        sessionStore.taskToEdit = {
-          task: sessionData.sessionQuiz.quiz,
-          index: quizIndex !== -1 ? quizIndex : 0,
-          addQuiz: true,
-        };
-
-        wrapper.querySelector('.create-session-form').outerHTML =
-          getTasksContainer();
-        wrapper.querySelector('#progress-end-text').checked = true;
-        setUpSwapBtn('back-btn', 'create-session-form', wrapper, sessionStore);
-        // Swap to the task creation form with the quiz data to add desc and duration
-        swapSessionOverlayContent('create-task-form', wrapper, sessionStore);
-        return;
-      } else if (!data['session-quiz-title'] && !data['session-quiz-id']) {
-        // If the quiz is not selected, just set the sessionQuiz to null
-        sessionData.sessionQuiz = null;
-      }
-
-      swapSessionOverlayContent('create-task-container', wrapper, sessionStore);
-    }
+    (data) => handleSessionForm(data, sessionStore, wrapper)
   );
 };
 
@@ -632,15 +644,77 @@ const checkSessionFormValidity = (form) => {
   return true;
 };
 
+const handleFinishBtnClick = (sessionData) => {
+  const quiz = sessionData.sessionQuiz?.quiz;
+  const tasksLength = sessionData.tasks.length;
+  if (tasksLength === 0)
+    return showMessageBlock(
+      'You must add at least one task before finishing.',
+      'info'
+    );
+
+  if (quiz && (!quiz.description || !quiz.durationInMins))
+    return showMessageBlock(
+      'Please complete the quiz details before finishing.',
+      'info'
+    );
+
+  console.log(sessionData);
+};
+
+const handleSessionForm = (data, sessionStore, wrapper) => {
+  const sessionData = sessionStore.sessionData;
+  sessionData.name = data['session-name'];
+  sessionData.includeBreaks = data['include-breaks'] === 'on';
+  sessionData.description = data['session-description'];
+
+  // For test
+  data['session-quiz-title'] = 'Quiz Title';
+  data['session-quiz-id'] = '12345';
+
+  if (shouldAddOrUpdateQuiz(data, sessionData)) {
+    addOrUpdateQuizTask(data, sessionStore, wrapper);
+    return;
+  } else if (!data['session-quiz-title'] && !data['session-quiz-id']) {
+    sessionData.sessionQuiz = null;
+    sessionStore.taskToEdit = null;
+  }
+
+  swapSessionOverlayContent('create-task-container', wrapper, sessionStore);
+};
+
 const setUpTaskContainer = (wrapper, sessionStore) => {
   wrapper.querySelector('#progress-end-text').checked = true;
   setUpSwapBtn('back-btn', 'create-session-form', wrapper, sessionStore);
+
+  wrapper
+    .querySelector('.finish-btn')
+    .addEventListener('click', () =>
+      handleFinishBtnClick(sessionStore.sessionData)
+    );
   setUpTasksList(wrapper, sessionStore);
+};
+
+const resortTasksArray = () => {
+  // After drag and drop, update the task order
+  sessionData.tasks = Array.from(wrapper.querySelectorAll('.task-wrapper')).map(
+    (taskWrapper, index) => {
+      const taskId = taskWrapper.dataset.taskId;
+      const task = sessionData.tasks[taskId];
+      taskWrapper.dataset.taskId = index;
+      return task;
+    }
+  );
 };
 
 const setUpTasksList = (wrapper, sessionStore) => {
   const sessionData = sessionStore.sessionData;
   setUpSwapBtn('create-task-btn', 'create-task-form', wrapper, sessionStore);
+  setUpDragAndDrop('.tasks-list', '.task', resortTasksArray);
+  const durationBadge = wrapper.querySelector('.duration-badge');
+  durationBadge.textContent = `Duration ${millisecondsToHMFormat(
+    sessionData.duration * 60 * 1000
+  )}`;
   const tasksList = wrapper.querySelector('.tasks-list');
   tasksList.addEventListener('click', async (e) => {
     const editBtn = e.target.closest('.edit-task-btn');
@@ -654,7 +728,8 @@ const setUpTasksList = (wrapper, sessionStore) => {
       swapSessionOverlayContent('create-task-form', wrapper, sessionStore);
     } else if (removeBtn) {
       const taskId = removeBtn.closest('.task-wrapper ')?.dataset.taskId;
-      const isQuizTask = sessionData.tasks[taskId].isQuiz;
+      const task = sessionData.tasks[taskId];
+      const isQuizTask = task.isQuiz;
       if (isQuizTask) {
         const res = await showConfirmationBox(
           'exclamation',
@@ -665,13 +740,15 @@ const setUpTasksList = (wrapper, sessionStore) => {
         );
         if (res) {
           sessionData.sessionQuiz = null; // Remove the quiz from session data
-          sessionData.tasks.splice(taskId, 1);
         } else {
           return; // If user cancels, do nothing
         }
-      } else {
-        sessionData.tasks.splice(taskId, 1);
       }
+      sessionData.duration -= task.durationInMins;
+      durationBadge.textContent = `Duration ${millisecondsToHMFormat(
+        sessionData.duration * 60 * 1000
+      )}`;
+      sessionData.tasks.splice(taskId, 1);
       tasksList.innerHTML = getTasksList(sessionData.tasks).innerHTML;
     }
   });
@@ -709,14 +786,18 @@ const handleCancelTaskCreation = (wrapper, sessionStore) => {
 
 const updateTask = (sessionStore, data) => {
   const taskIndex = sessionStore.taskToEdit.index;
+  const oldTaskDuration =
+    sessionStore.sessionData.tasks[taskIndex].durationInMins;
+  sessionStore.sessionData.duration -= oldTaskDuration;
   sessionStore.sessionData.tasks[taskIndex] = new Task({
     title: data['task-title'],
     description: data['task-description'],
-    durationInMins: data['task-duration'],
+    durationInMins: parseInt(data['task-duration'], 10),
     isQuiz: sessionStore.taskToEdit.task.isQuiz,
   });
+  sessionStore.sessionData.duration += parseInt(data['task-duration'], 10);
   if (sessionStore.taskToEdit.addQuiz) {
-    // If the task is a quiz, update the sessionQuiz as well
+    // If the task is a quiz, update the quiz as well
     sessionStore.sessionData.sessionQuiz.quiz =
       sessionStore.sessionData.tasks[taskIndex];
   }
@@ -727,10 +808,11 @@ const addTask = (sessionData, data) => {
   const task = new Task({
     title: data['task-title'],
     description: data['task-description'],
-    durationInMins: data['task-duration'],
+    durationInMins: parseInt(data['task-duration'], 10),
     isQuiz: false,
   });
   sessionData.tasks.push(task);
+  sessionData.duration += task.durationInMins;
 };
 
 // Helper to handle form submission for task form
@@ -757,12 +839,13 @@ const setUpTaskForm = (wrapper, sessionStore) => {
   const form = wrapper.querySelector('form');
   handleTaskFormSubmission(form, wrapper, sessionStore);
 };
+
 const configs = {
   'create-session-form': {
     getHtml: (sessionStore) =>
       getSessionForm(
-        sessionStore.sessionData.sessionName,
-        sessionStore.sessionData.sessionDescription,
+        sessionStore.sessionData.name,
+        sessionStore.sessionData.description,
         sessionStore.sessionData.sessionQuiz
       ),
     replaceClass: 'create-task-container',
@@ -926,8 +1009,8 @@ const isValueUnchanged = (
 };
 
 // Handle cancel button: revert to view mode
-const handleCancelBtn = (cancellBtn) => {
-  const infoBox = cancellBtn.closest('.info-box');
+const handleCancelBtn = (cancelBtn) => {
+  const infoBox = cancelBtn.closest('.info-box');
   swapMode(infoBox, 'getViewMode');
 };
 
@@ -975,12 +1058,12 @@ const handleSaveBtn = (saveBtn) => {
 };
 
 // Handles save and cancel button actions in the group info sidebar
-export const handleSaveAndCancellBtns = (e) => {
+export const handleSaveAndCancelBtns = (e) => {
   const saveBtn = e.target.closest('.save-btn');
-  const cancellBtn = e.target.closest('.cancell-btn');
+  const cancelBtn = e.target.closest('.cancel-btn');
 
-  if (cancellBtn) {
-    handleCancelBtn(cancellBtn);
+  if (cancelBtn) {
+    handleCancelBtn(cancelBtn);
     return;
   }
 

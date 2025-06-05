@@ -67,7 +67,7 @@ const InitializeGoogleOneTap = function (auth, callback) {
       await handleUserSignIn(auth, user);
     } catch (error) {
       checkError(error);
-      callback(error.message, true);
+      callback(error.message,  'error');
     }
   };
 
@@ -95,7 +95,7 @@ const signInWithFacebookProviderWithPopUp = async function (auth, callback) {
     await signInWhithProvider(auth, fbProvider, callback);
   } catch (error) {
     checkError(error);
-    callback(error.message, true);
+    callback(error.message,  'error');
   }
 };
 
@@ -111,7 +111,7 @@ const signInWithGoogleProviderWithPopUp = async function (auth, callback) {
     await signInWhithProvider(auth, googleProvider, callback);
   } catch (error) {
     checkError(error);
-    callback(error.message, true);
+    callback(error.message, 'error');
   }
 };
 
@@ -146,7 +146,7 @@ const createAuserWithEmailAndPassword = async function (
     await handleUserSignIn(auth, user);
   } catch (error) {
     checkError(error);
-    callback(error.message, true);
+    callback(error.message,  'error');
   }
 };
 
@@ -174,7 +174,7 @@ const signInAuserWithEmailAndPassword = async function (
     redirectTo('/app/home');
   } catch (error) {
     checkError(error);
-    callback(error.message, true);
+    callback(error.message,  'error');
   }
 };
 

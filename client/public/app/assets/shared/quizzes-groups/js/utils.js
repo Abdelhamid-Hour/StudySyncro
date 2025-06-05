@@ -1,4 +1,7 @@
-import { fetchData } from '../../../../../main_assets/js/utils.js';
+import {
+  fetchData,
+  showMessageBlock,
+} from '../../../../../main_assets/js/utils.js';
 import {
   boxRowCount,
   boxTotalCount,
@@ -63,21 +66,30 @@ export class Loader {
 
     const endPoint = `${this.endPoint}?nextLastId=${this.nextLastId}&count=${boxTotalCount}`;
 
-    const { cards, nextLastId } = await fetchData(endPoint);
+    try {
+      const { cards, nextLastId } = await fetchData(endPoint);
 
-    this.nextLastId = nextLastId;
+      this.nextLastId = nextLastId;
 
-    const frag = document.createDocumentFragment();
-    cards.forEach((item) => {
-      const card = this.createCard(item);
-      frag.appendChild(card);
-    });
-    // insert the new cards before the last loader
-    this.sentinel.before(frag);
+      const frag = document.createDocumentFragment();
+      cards.forEach((item) => {
+        const card = this.createCard(item);
+        frag.appendChild(card);
+      });
+      // insert the new cards before the last loader
+      this.sentinel.before(frag);
 
-    if (!nextLastId) {
-      this.io.unobserve(this.sentinel);
-      clearLoadersBoxes();
+      if (!nextLastId) {
+        this.io.unobserve(this.sentinel);
+        clearLoadersBoxes();
+      }
+    } catch (error) {
+      console.error('Error loading more items:', error);
+      // Optionally, you can show an error message to the user
+      showMessageBlock(
+        'Error loading more items. Please try again later.',
+        'error'
+      );
     }
 
     this.loading = false;

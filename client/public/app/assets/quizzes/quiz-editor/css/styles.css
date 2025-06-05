@@ -301,7 +301,7 @@ button:has(.bi-trash3) {
 
         &:focus,
         &:hover {
-          outline-color: var(--primary-color);
+          outline-color: var(--inputs-outline-color);
         }
       }
 
@@ -334,7 +334,7 @@ button:has(.bi-trash3) {
             transition: outline-color var(--primary-transition-style);
 
             &.correct-answer {
-              border-color: var(--primary-color);
+              border-color: var(--inputs-outline-color);
               box-shadow: var(--primary-hover-shadow);
 
               .choice-label {
@@ -345,7 +345,7 @@ button:has(.bi-trash3) {
               }
 
               .choice-input {
-                border-right-color: var(--primary-color);
+                border-right-color: var(--inputs-outline-color);
                 box-shadow: var(--primary-hover-shadow);
               }
             }
@@ -365,16 +365,16 @@ button:has(.bi-trash3) {
             }
 
             &:has(:focus) {
-              border-color: var(--primary-color);
+              border-color: var(--inputs-outline-color);
 
               .choice-label {
-                border-right-color: var(--primary-color);
+                border-right-color: var(--inputs-outline-color);
               }
             }
 
             &:has(:focus),
             &:hover {
-              outline-color: var(--primary-color);
+              outline-color: var(--inputs-outline-color);
             }
 
             .choice-input {

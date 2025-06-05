@@ -1,12 +1,33 @@
 import { showMessageBlock } from '../../../../../main_assets/js/utils.js';
 import { fetchData } from '../../../../main_assets/js/utils.js';
+import { openOverlayModal, scrollToView } from '../../global/js/utils.js';
 import { hoursEl, minutesEl, nextBtn, secondsEl } from './dom-variables.js';
+
+// ? Question template :
+/* 
+  {
+    id: 'q9',
+    text: 'What is the official language of Morocco?',
+    choices: ['French', 'Tamazight', 'Arabic', 'English'],
+    correctAnswerIndex: 2, // Arabic
+  }
+ */
+
+// ? Incorrect question template
+
+/*
+  {
+    id: question.id,
+    answerIndex: value,
+  }
+*/
 
 let quiz = {
   questions: [],
   id: '',
   duration: 0, // Duration in minutes
 };
+
 let examenResult = {
   userId: null,
   quizId: null,
@@ -16,6 +37,7 @@ let examenResult = {
   submittedAt: null,
 };
 let currentQuestionIndex = 0;
+
 const drawArc = (
   canvas,
   ctx,
@@ -86,7 +108,7 @@ const resultTypes = {
   },
 };
 
-const getQuizResultPage = (grade, correctAnswersCount, percentage) => {
+const getQuizResultPage = (grade, correctCount, percentage) => {
   const { title, description } = resultTypes[grade];
   // Capitalize the first letter of grade
   const capitalizedGrade = grade.charAt(0).toUpperCase() + grade.slice(1);
@@ -124,7 +146,7 @@ const getQuizResultPage = (grade, correctAnswersCount, percentage) => {
                         <span class="icon-box">
                             <i class="bi bi-check2-circle"></i>
                         </span>
-                        ${correctAnswersCount} Questions
+                        ${correctCount} Questions
                     </span>
                 </div>
                 <button type="button" class="blue-btn get-result-btn">
@@ -138,16 +160,27 @@ const getQuizResultPage = (grade, correctAnswersCount, percentage) => {
 export const setUpCanvas = (
   grade,
   percentage,
-  correctAnswersCount,
+  correctCount,
   circleAnDuration
 ) => {
-  const quizResultPage = getQuizResultPage(
-    grade,
-    correctAnswersCount,
-    percentage
+  const quizResultPage = getQuizResultPage(grade, correctCount, percentage);
+  const wrapper = document.querySelector('.quiz-view');
+  wrapper.querySelector('.questions-view').outerHTML = quizResultPage;
+  wrapper.querySelector('.get-result-btn').addEventListener('click', () =>
+    openOverlayModal(
+      'quiz-result-overlay',
+      ['.close-result-overlay-btn'],
+      getResultOverlay,
+      (backDrop) => {
+        backDrop
+          .querySelector('.questions-rects')
+          .addEventListener('click', (e) => {
+            const questionsLink = e.target.closest('a.status-rect');
+            if (questionsLink) scrollToView(e, questionsLink);
+          });
+      }
+    )
   );
-  document.querySelector('.questions-view').outerHTML = quizResultPage;
-
   const canvas = document.querySelector('canvas.percentage-circle');
   const ctx = canvas.getContext('2d');
   const colorMap = {
@@ -314,7 +347,6 @@ export const toPreviousQuestion = () => step(-1);
 export const setUpQuiz = async () => {
   try {
     quiz = await fetchData('/quiz-questions');
-    console.log('Quiz data fetched:', quiz);
 
     const finishedDate = new Date(Date.now() + quiz.duration * 60 * 1000);
     const shouldShowHours = Math.floor(quiz.duration / 60) > 0;
@@ -401,12 +433,9 @@ const finishQuiz = () => {
     `${examenResult.correctAnswers.length} of ${quiz.questions.length}`,
     1000
   );
-
-  
 };
 
 export const handleKeyDown = (e) => {
-  console.log('cliced');
 
   if (e.key === 'ArrowRight') {
     e.preventDefault();
@@ -418,4 +447,188 @@ export const handleKeyDown = (e) => {
     e.preventDefault();
     toNextQuestion();
   }
+};
+
+const getStatusClass = (questionId) => {
+  const isCorrect = examenResult.correctAnswers.includes(questionId);
+  const isSkipped = examenResult.skippedQuestions.includes(questionId);
+
+  return isCorrect ? 'correct' : isSkipped ? 'skipped' : 'incorrect';
+};
+
+const getPercentage = (count) =>
+  Math.round((count / quiz.questions.length) * 100);
+
+export const getResultOverlay = () => {
+  const submittedAt = new Date(examenResult.submittedAt);
+  const finishedDate = submittedAt.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  const finishedTime = submittedAt.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  const questionCount = quiz.questions.length;
+  const answeredCount =
+    examenResult.correctAnswers.length + examenResult.incorrectAnswers.length;
+  const correctCount = examenResult.correctAnswers.length;
+  const skippedCount = examenResult.skippedQuestions.length;
+  const incorrectCount = examenResult.incorrectAnswers.length;
+  const answeredPercent = getPercentage(answeredCount);
+  const incorrectPercent = getPercentage(incorrectCount);
+  const correctPercent = getPercentage(correctCount);
+  const skippedPercent = getPercentage(skippedCount);
+
+  const resultWrapper = document.createElement('div');
+  resultWrapper.className = 'overlay-model quiz-result-overlay';
+  resultWrapper.innerHTML = `
+  <header class="quiz-result-header">
+    <span class="finished-date">Finished: ${finishedDate}</span>
+    •
+    <span class="finished-time">${finishedTime}</span>
+    •
+    <span class="questions-count">
+      <span class="icon-box">
+        <i class="bi bi-patch-question"></i>
+      </span>
+      ${questionCount} Questions
+    </span>
+    <button type="button" class="exclude-btn close-result-overlay-btn">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </header>
+  <h3 class="quiz-title">JavaScript Basics Quiz</h3>
+  <div class="answered">
+    <span class="answered-title">Answered :</span>
+    <span class="answered-count">${answeredCount}/${questionCount} Questions</span>
+    •
+    <span class="answered-percent">${answeredPercent}%</span>
+  </div>
+  <div class="questions-rects">
+  ${quiz.questions
+    .map((question, index) => {
+      return `
+      <a href="#question-${index + 1}" class="status-rect ${getStatusClass(
+        question.id
+      )}">${index + 1}</a>`;
+    })
+    .join('')}
+  </div>
+  <div class="analytics">
+    <div class="analytics-item">
+      <span class="title">
+        <span class="green-rect rect"></span>
+        Correct :
+      </span>
+      <span class="questions-count">${correctCount}/${questionCount} Questions</span>
+      •
+      <span class="percent">${correctPercent}%</span>
+    </div>
+    <div class="analytics-item">
+      <span class="title">
+        <span class="gray-rect rect"></span>
+        Skipped :
+      </span>
+      <span class="questions-count">${skippedCount}/${questionCount} Questions</span>
+      •
+      <span class="percent">${skippedPercent}%</span>
+    </div>
+    <div class="analytics-item">
+      <span class="title">
+        <span class="red-rect rect"></span>
+        Incorrect :
+      </span>
+      <span class="questions-count">${incorrectCount}/${questionCount} Questions</span>
+      •
+      <span class="percent">${incorrectPercent}%</span>
+    </div>
+  </div>
+  <div class="questions-list">
+    ${getQuestionsCards()}
+  </div>
+  `;
+
+  return resultWrapper.outerHTML;
+};
+
+const getQuestionsCards = () => {
+  const questionsList = document.createElement('div');
+  questionsList.className = 'questions-list';
+  quiz.questions.forEach((question, index) => {
+    const rectColorClass =
+      getStatusClass(question.id) === 'correct'
+        ? 'green-rect'
+        : getStatusClass(question.id) === 'skipped'
+        ? 'gray-rect'
+        : 'red-rect';
+    const questionCard = document.createElement('div');
+    questionCard.className = 'question-card';
+    questionCard.id = `question-${index + 1}`;
+    questionCard.innerHTML = `
+      <header class="question-card-header">
+        <span class="question-number">
+          <i class="bi bi-patch-question"></i>
+          Question ${index + 1}
+        </span>
+        •
+        <span class="question-status">
+          <span class="${rectColorClass} rect"></span>
+          ${
+            getStatusClass(question.id).charAt(0).toUpperCase() +
+            getStatusClass(question.id).slice(1)
+          }
+        </span>
+        <label type="button" class="exclude-btn open-btn button">
+          <i class="bi bi-chevron-down"></i>
+          <input type="checkbox" id="drop-down" />
+        </label>
+      </header>
+      <p class="question-text"></p>
+      <div class="choices-list">
+        ${getChoicesList(question.id)}
+      </div>
+      <footer class="question-card-footer">
+        <span class="choices-count">${question.choices.length} Choices</span>
+      </footer>
+    `;
+    questionCard.querySelector('.question-text').textContent = question.text;
+    questionsList.appendChild(questionCard);
+  });
+
+  return questionsList.innerHTML;
+};
+
+const getChoicesList = (questionId) => {
+  const choicesList = document.createElement('div');
+  choicesList.className = 'choices-list';
+  const questions = quiz.questions.find((q) => q.id === questionId);
+
+  if (questions) {
+    questions.choices.forEach((choiceText, index) => {
+      const choice = document.createElement('label');
+      const Incorrect = examenResult.incorrectAnswers.find(
+        (q) => q.id === questionId
+      );
+      const incorrectAnswerIndex = Incorrect?.answerIndex || null;
+      const correctAnswerIndex = quiz.questions.find(
+        (q) => q.id === questionId
+      ).correctAnswerIndex;
+      const isCorrectChoice = correctAnswerIndex === index;
+      choice.className = `choice${isCorrectChoice ? ' correct-answer' : ''}${
+        incorrectAnswerIndex && incorrectAnswerIndex === index
+          ? ' incorrect-answer'
+          : ''
+      }`;
+      choice.innerHTML = `
+      <span class="choice-label">${String.fromCharCode(65 + index)}</span>
+      <span class="choice-text"></span>
+      `;
+      choice.querySelector('.choice-text').textContent = choiceText;
+      choicesList.appendChild(choice);
+    });
+  }
+
+  return choicesList.innerHTML;
 };

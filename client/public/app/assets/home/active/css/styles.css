@@ -38,6 +38,11 @@
     max-width: 50%;
   }
 
+  .no-quiz{
+    color: var(--secondary-text-color);
+    opacity: 0.6; /* Muted/disabled effect */
+  }
+
   .small-container {
     flex-basis: 10rem;
     max-width: 20%;
@@ -246,7 +251,7 @@
             padding: initial;
             .progress {
               background-color: var(--primary-color);
-              width: 80%;
+              width: 0%;
               height: 100%;
             }
           }

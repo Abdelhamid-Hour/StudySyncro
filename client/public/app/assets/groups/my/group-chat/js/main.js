@@ -21,7 +21,7 @@ import {
   handleGroupInfo,
   handleLeavingGroup,
   handleRemoveGroup,
-  handleSaveAndCancellBtns,
+  handleSaveAndCancelBtns,
   handleSessionCreateClick,
   handleShowInfoBtnClick,
   handleViewAllMembersBtn,
@@ -75,7 +75,7 @@ export const init = () => {
 
   groupLeftSideBarContent.addEventListener('click', (e) => {
     handleEditBtn(e);
-    handleSaveAndCancellBtns(e);
+    handleSaveAndCancelBtns(e);
     handleViewAllMembersBtn(e);
     handleDemandesBtn(e);
   });

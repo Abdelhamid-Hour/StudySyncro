@@ -45,6 +45,8 @@ export const removeBlock = function () {
  * @param {Boolean} error - Indicates if the message is an error (true) or success (false).
  */
 export const showMessageBlock = (message, type) => {
+  console.log(message, type);
+  
   let messagesBlocksWrapper = document.querySelector(
     '.messages-blocks-wrapper'
   );
@@ -57,7 +59,9 @@ export const showMessageBlock = (message, type) => {
   msgBlock.className = `${type}-block`;
   msgBlock.innerHTML = `
     <p>
-      <i class="bi bi-${type === 'error' ? 'exclamation' : type === 'info' ? 'info' : 'check'}-circle-fill"></i>
+      <i class="bi bi-${
+        type === 'error' ? 'exclamation' : type === 'info' ? 'info' : 'check'
+      }-circle-fill"></i>
       <span>${message}</span>
     </p>
     <i class="bi bi-x"></i>
@@ -86,7 +90,7 @@ export const sendData = async (url, data) => {
     body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json',
-      'csrfToken': csrfToken,
+      csrfToken: csrfToken,
     },
     credentials: 'include',
   });
@@ -105,7 +109,7 @@ export const fetchTemplate = async (url) => {
     method: 'GET',
     headers: {
       'x-requested-with': 'fetch',
-      'csrfToken': csrfToken,
+      csrfToken: csrfToken,
     },
     credentials: 'include',
   });

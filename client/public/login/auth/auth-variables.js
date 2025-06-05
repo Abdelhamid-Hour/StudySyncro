@@ -4,7 +4,7 @@ export const AUTH_ERRORS = {
     message: 'Invalid email or password. Please try again.',
   },
   CANCELLED_POPUP_REQUEST: {
-    code: 'auth/cancelled-popup-request',
+    code: 'auth/canceled-popup-request',
     message:
       'It looks like you closed the popup before completing the action. Please try again.',
   },
@@ -29,9 +29,9 @@ export const AUTH_ERRORS = {
       'It looks like you closed the popup before completing the action. Please open it again and try.',
   },
   REDIRECT_CANCELLED_BY_USER: {
-    code: 'auth/redirect-cancelled-by-user',
+    code: 'auth/redirect-canceled-by-user',
     message:
-      'It seems you cancelled the redirect action. Please try again to complete the process.',
+      'It seems you canceled the redirect action. Please try again to complete the process.',
   },
   USER_NOT_FOUND: {
     code: 'auth/user-not-found',

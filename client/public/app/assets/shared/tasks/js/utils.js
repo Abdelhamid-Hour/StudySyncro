@@ -30,7 +30,6 @@ const addTaskListButtonListeners = (className) => {
 export const handletTasksListners = (...wrapperClasses) => {
   if (wrapperClasses.length) {
     wrapperClasses.forEach((className) => {
-      console.log(className);
 
       const tasksList = document.querySelector(`.${className} .tasks-list`);
       addTaskListButtonListeners(className);
@@ -53,7 +52,7 @@ let container = null;
 const PROXIMITY = 10; // Distance in pixels to trigger a drop
 const SCROLLPROXIMITY = 30; // Distance in pixels to trigger scroll
 let MAX_SCROLL = 0; // Maximum scroll value for the container
-let afterDragEnd = () => {}
+let afterDragEnd = () => {};
 let draggableElSelector = '';
 
 function onTaskListMouseDown(e) {
@@ -76,7 +75,6 @@ function onTaskListMouseDown(e) {
 
   const offsetY =
     e.clientY + container.scrollTop - listRect.top - dragging.offsetY;
-  console.log(e.clientY, container.scrollTop, listRect.top, dragging.offsetY);
 
   const offsetX = e.clientX - listRect.left - dragging.offsetX;
   dragging.dragEl.style.top = `${offsetY}px`;
@@ -148,8 +146,10 @@ function onMouseUp() {
   if (dragging.dragArea) {
     handleFirstTaskDrop();
     moveDraggedElement();
-    updateCounters();    
-    afterDragEnd();
+    updateCounters();
+    if (afterDragEnd) {
+      afterDragEnd();
+    }
     dragging.dragArea.classList.remove('drag-over');
     dragging.dragArea = null;
   }
@@ -244,14 +244,18 @@ function onTaskListMouseMove(e) {
   handleAutoScroll();
 }
 
-export const setUpDragAndDrop = (ContainerSelector, draggableSelector, afterDragEndCallback) => {
+export const setUpDragAndDrop = (
+  ContainerSelector,
+  draggableSelector,
+  afterDragEndCallback
+) => {
   container = document.querySelector(ContainerSelector);
   draggableElSelector = draggableSelector;
   MAX_SCROLL = 0;
   afterDragEnd = afterDragEndCallback;
 
-  container?.addEventListener('mousedown', onTaskListMouseDown);
+  container.addEventListener('mousedown', onTaskListMouseDown);
   document.addEventListener('mouseup', onMouseUp);
-  container?.addEventListener('scroll', onTaskListScroll);
-  container?.addEventListener('mousemove', onTaskListMouseMove);
+  container.addEventListener('scroll', onTaskListScroll);
+  container.addEventListener('mousemove', onTaskListMouseMove);
 };

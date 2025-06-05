@@ -65,7 +65,7 @@
               1000) %></span>
           </div>
         </div>
-        <div class="quiz-title-container info-container">
+        <div class="quiz-title-container<%= !session.quiz ? ' no-quiz' : '' %> info-container">
           <label class="quiz-title-label"> 
           <span class="icon-box">
             <i class="bi bi-clipboard-check"></i>
@@ -402,37 +402,37 @@
           </div> -->
         </header>
         <div class="quiz-details">
-          <div class="quiz-title-container info-container">
+          <div class="quiz-title-container<%= !session.quiz ? ' no-quiz' : '' %> info-container">
             <label class="quiz-title-label"><span class="icon-box">
               <i class="bi bi-clipboard-check"></i>
               <i class="bi bi-info-circle"></i>
             </span>Quiz title</label>
-            <div class="quiz-title content"><%= session.quiz ? session.quiz.title : 'No Quiz Added To This Session' %></div>
+            <div <% if (session.quiz) { %> data-quiz-id="<%= session.quiz.UID %>" <% } %>  class="quiz-title content"><%= session.quiz ? session.quiz.title : 'No Quiz Added To This Session' %></div>
           </div>
-          <div class="questions-container info-container small-container">
+          <div class="questions-container<%= !session.quiz ? ' no-quiz' : '' %> info-container small-container">
             <label class="questions-label"><span class="icon-box"><i class="bi bi-question-circle"></i></span>Questions</label>
             <div class="questions content">
               <span ><%= session.quiz ? session.quiz.questionsCount : '--' %> Questions</span>
             </div>
           </div>
-          <div class="start-in-container info-container small-container">
+          <div class="start-in-container<%= !session.quiz ? ' no-quiz' : '' %> info-container small-container">
             <label class="start-in-label"><span class="icon-box"><i class="bi bi-play-circle"></i></span>Start In</label>
             <div class="content">
               <span class="start-time">--m</span>
             </div>
           </div>
-          <div class="submitted-container info-container small-container">
+          <div class="submitted-container<%= !session.quiz ? ' no-quiz' : '' %> info-container small-container">
             <label class="submitted-label"><span class="icon-box"><i class="bi bi-check2-all"></i></span>Submitted</label>
             <div class="submitted">
               <span class="submitted-count">-- of -- Questions</span>
               <div class="progress-back">
-                <div class="progress"></div>
+                <div <%- !session.quiz ? 'style="width: 0;"' : '' %> class="progress"></div>
               </div>
             </div>
           </div>
         </div>
         <footer class="quiz-footer">
-          <div class="score-container info-container">
+          <div class="score-container<%= !session.quiz ? ' no-quiz' : '' %> info-container">
             <label>Your Score</label>
             <span class="score">____</span>
           </div>

@@ -11,6 +11,7 @@ import {
 import {
   getLoader,
   resetTooltip,
+  scrollToView,
   showConfirmationBox,
   showErrorTooltip,
 } from '../../../global/js/utils.js';
@@ -202,27 +203,6 @@ const getQuestionEls = (questionId, questionCount) => {
               </a>
               <div class="drop-target"></div>`;
   return { questionEditorBox, questionPanelItem };
-};
-
-const handleQuestionsPanelClick = (e, questionLink) => {
-  e.preventDefault();
-  const questionEditor = document.getElementById(
-    questionLink.href.split('#')[1]
-  );
-  if (questionEditor) {
-    questionEditor.scrollIntoView({
-      behavior: 'smooth',
-    });
-    // Use a more descriptive property and class name
-    if (questionEditor.scrollHighlightTimer) {
-      clearTimeout(questionEditor.scrollHighlightTimer);
-    }
-    questionEditor.classList.add('highlighted-in-view');
-    questionEditor.scrollHighlightTimer = setTimeout(() => {
-      questionEditor.classList.remove('highlighted-in-view');
-      clearTimeout(questionEditor.scrollHighlightTimer);
-    }, 1000);
-  }
 };
 
 const handleSelectCorrectAnswer = (radioInput) => {
@@ -458,7 +438,7 @@ export const handleAddQuestion = () => {
 
 export const handleQuestionsPanelListClick = (e) => {
   const questionLink = e.target.closest('.question-card');
-  if (questionLink) handleQuestionsPanelClick(e, questionLink);
+  if (questionLink) scrollToView(e, questionLink);
 
   const deleteQuestionBtn = e.target.closest('.delete-question-btn');
   if (deleteQuestionBtn) {
@@ -533,7 +513,6 @@ export const initializeInitialData = () => {
 
   // get the quiz id
   quizData.id = document.querySelector('.quiz-editor')?.dataset.quizId;
-  console.log(quizData);
 };
 
 export class Question {
@@ -602,8 +581,7 @@ const checkTitleValidity = (value, input) => {
     );
     return;
   } else {
-    input.classList.remove('error-input');
-    resetTooltip(hoverTooltip);
+    resetTooltip(hoverTooltip, input.closest('.input'));
   }
 
   return true;
@@ -639,8 +617,7 @@ const validateQuestionText = (questionText, questionTextValue) => {
     questionText.focus();
     return false;
   } else {
-    questionText.closest('.question-input').classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(globalTooltip, questionText.closest('.question-input'));
   }
   return true;
 };
@@ -658,8 +635,7 @@ const validateChoices = (choices, choicesValues) => {
       );
       return false;
     } else {
-      choiceInput.closest('.choice').classList.remove('error-input');
-      resetTooltip(globalTooltip);
+      resetTooltip(globalTooltip, choiceInput.closest('.choice'));
     }
   }
 
@@ -667,8 +643,7 @@ const validateChoices = (choices, choicesValues) => {
     showErrorTooltip('At least two choices are required.', choices[0]);
     return false;
   } else {
-    choices[0].closest('.choice').classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(globalTooltip, choices[0].closest('.choice'));
   }
   return true;
 };
@@ -696,10 +671,10 @@ const validateCorrectAnswer = (
     );
     return false;
   } else {
-    correctAnswerIndex
-      .closest('.correct-answer-select')
-      .classList.remove('error-input');
-    resetTooltip(globalTooltip);
+    resetTooltip(
+      globalTooltip,
+      correctAnswerIndex.closest('.correct-answer-select')
+    );
   }
   return true;
 };
