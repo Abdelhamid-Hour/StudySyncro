@@ -59,6 +59,17 @@ const createGroup = async (groupdData, userData) => {
   }
 };
 
+const getFormatedGroups = (groups, user_id) =>
+  groups.map(({ members, creator, ...rest }) => ({
+    ...rest,
+    avatars: members.slice(0, 2).map(({ photoURL, fullName }) => ({
+      photoURL,
+      fullName,
+    })),
+    isHost: creator === user_id,
+    extraMembersCount: members.length - 2,
+  }));
+
 const getAvailableGroups = async (
   user_id,
   criteria,
@@ -85,7 +96,10 @@ const getAvailableGroups = async (
 
     // If no more documents, return what we have
     if (snapshot.empty) {
-      return { cards: availableGroups, lastVisible: null };
+      return {
+        cards: getFormatedGroups(availableGroups, user_id),
+        lastVisible: null,
+      };
     }
 
     // Filter out groups where user is creator or member
@@ -100,22 +114,16 @@ const getAvailableGroups = async (
     // Add newly filtered groups to accumulated groups
     availableGroups = availableGroups.concat(filteredGroups);
 
-    lastVisible = snapshot.docs[snapshot.docs.length - 1];
+    lastVisible = snapshot.docs[snapshot.docs.length - 1].id;
 
     // If we have enough groups or no more documents available, return
     if (availableGroups.length >= limit || snapshot.docs.length < batchSize) {
       // Trim to requested limit
-      const finalGroups = availableGroups
-        .slice(0, limit)
-        .map(({ members, ...rest }) => ({
-          ...rest,
-          avatars: members.slice(0, 2).map(({ photoURL, fullName }) => ({
-            photoURL,
-            fullName,
-          })),
-          extraMembersCount: members.length - 2,
-        }));
-      return { cards: finalGroups, lastVisible };
+      const finalGroups = availableGroups.slice(0, limit);
+      return {
+        cards: getFormatedGroups(finalGroups, user_id),
+        lastVisible,
+      };
     }
 
     // Recursively fetch more groups
@@ -128,7 +136,7 @@ const getAvailableGroups = async (
     );
   } catch (error) {
     console.error(error.message, 'error in getAvailableGroups');
-    return { cards: oldGroups, lastVisible }; // Return what we have so far
+    return { cards: getFormatedGroups(oldGroups, user_id), lastVisible }; // Return what we have so far
   }
 };
 
@@ -179,12 +187,13 @@ const getJoinedGroups = async (
     if (joinedGroups.length >= limit || snapshot.docs.length < batchSize) {
       const cards = joinedGroups
         .slice(0, limit)
-        .map(({ members, ...rest }) => ({
+        .map(({ members, creator, ...rest }) => ({
           ...rest,
           avatars: members.slice(0, 2).map(({ photoURL, fullName }) => ({
             photoURL,
             fullName,
           })),
+          isHost: creator === user_id,
           extraMembersCount: members.length - 2,
         }));
       console.log(cards, 'last cards');

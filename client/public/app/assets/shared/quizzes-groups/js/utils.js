@@ -19,20 +19,23 @@ export class Loader {
     getCreteria,
     loadersCount = boxRowCount
   ) {
-    this.container = container;
-    const cardsCount = this.container.children.length;
     this.getCreteria = getCreteria;
     this.creteria = this.getCreteria();
     this.rootMargin = rootMargin;
     this.createCard = createCard;
     this.route = route;
-    this.lastVisible = this.container?.dataset.lastVisible;
     this.loading = false;
     this.io = null;
+    this.container = container;
+    this.loadersCount = loadersCount
+    this.loadingBox = loadingBox
+    this.lastVisible = this.container?.dataset.lastVisible;
+    this.count = boxTotalCount;
+    const cardsCount = this.container.children.length;
     console.log(this.creteria);
-    this.container.removeAttribute('data-next-last-id');
-    if (cardsCount > 20) {
-    this.initLoadingBoxes(loadersCount, loadingBox);
+    this.container.removeAttribute('data-last-visible');
+    if (cardsCount >= 20) {
+    this.initLoadingBoxes();
     this.initObserver();
     }
   }
@@ -40,6 +43,7 @@ export class Loader {
   reset() {
     this.loading = false;
     this.lastVisible = '';
+    this.count = 20;
     if (this.io) {
       this.io.disconnect();
     }
@@ -47,14 +51,18 @@ export class Loader {
     this.sentinel = null;
     this.container.innerHTML = '';
     this.creteria = this.getCreteria();
-    this.initLoadingBoxes(boxRowCount, this.createCard);
+    this.initLoadingBoxes();
     this.initObserver();
   }
 
   initObserver() {
     this.io = new IntersectionObserver(
       (entries) => {
+        
         entries.forEach((entry) => {
+          console.log(entry.isIntersecting ,
+            !this.loading ,
+            this.lastVisible);
           if (
             entry.isIntersecting &&
             !this.loading &&
@@ -75,16 +83,16 @@ export class Loader {
     }
   }
 
-  initLoadingBoxes(loadersCount, loadingBox) {
+  initLoadingBoxes() {
     const frag = document.createDocumentFragment();
-    for (let i = 0; i < loadersCount; i++) {
+    for (let i = 0; i < this.loadersCount; i++) {
       if (i === 0) {
-        const firstLoader = loadingBox.cloneNode(true);
+        const firstLoader = this.loadingBox.cloneNode(true);
         firstLoader.classList.add('first-loading-card');
         frag.appendChild(firstLoader);
         continue;
       }
-      const loader = loadingBox.cloneNode(true);
+      const loader = this.loadingBox.cloneNode(true);
       frag.appendChild(loader);
     }
     this.container.appendChild(frag);
@@ -94,10 +102,11 @@ export class Loader {
   async loadMore() {
     this.loading = true;
 
-    const endPoint = `${this.route}?lastVisible=${this.lastVisible}&count=${boxTotalCount}`;
+    const endPoint = `${this.route}?lastVisible=${this.lastVisible}&count=${this.count}&${this.creteria}`;
 
     try {
       const { cards, lastVisible } = await fetchData(endPoint);
+      console.log({ cards, lastVisible });
 
       this.lastVisible = lastVisible;
 
@@ -134,8 +143,6 @@ const clearLoadersBoxes = () => {
 };
 
 export const initFiltersInputListener = (loader) => {
-  console.log('initFiltersInputListener', loader.getCreteria);
-  
   const resetLoader = getDebounceFunc(() => loader.reset(), 200);
   const handleInputChange = (e) => {
     const isInput = e.target.tagName === 'INPUT';

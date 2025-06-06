@@ -46,7 +46,7 @@ const signInWhithProvider = async function (auth, provider, callback) {
   const userCredential = await signInWithPopup(auth, provider);
   const user = userCredential.user;
   await handleUserSignIn(auth, user);
-  callback('Signed in successfully', false);
+  callback('Signed in successfully', 'success');
 };
 
 /**
@@ -63,7 +63,7 @@ const InitializeGoogleOneTap = function (auth, callback) {
       const credential = GoogleAuthProvider.credential(response.credential);
       const userCredential = await signInWithCredential(auth, credential);
       const user = userCredential.user;
-      callback('Signed in successfully', false);
+      callback('Signed in successfully', 'success');
       await handleUserSignIn(auth, user);
     } catch (error) {
       checkError(error);
@@ -138,7 +138,7 @@ const createAuserWithEmailAndPassword = async function (
       email,
       password
     );
-    callback('User account created successfully', false);
+    callback('Account created! Welcome aboard.', 'success');
     const user = userCredential.user;
     await updateProfile(user, {
       displayName: fullName,
@@ -168,7 +168,7 @@ const signInAuserWithEmailAndPassword = async function (
 ) {
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    callback('Signed in successfully', false);
+    callback('Signed in successfully', 'success');
     await sendIdToken(auth, '/login');
     await signOut(auth);
     redirectTo('/app/home');

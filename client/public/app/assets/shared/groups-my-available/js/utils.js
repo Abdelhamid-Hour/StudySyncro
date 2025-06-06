@@ -69,8 +69,68 @@ export const getcreateGroupCardFunc = (userGroup) => {
     const groupCard = document.createElement('div');
     groupCard.className = 'group-card route-link';
     groupCard.dataset.id = group.id;
-    const groupLevel = `<span class="level-value badge
-      `;
+    const groupLevel = `<span class="level-value badge ${
+      group.level === 'Intermediate'
+        ? 'blue-badge'
+        : group.level === 'Advanced'
+        ? 'orange-badge'
+        : 'gray-badge'
+    }">${group.level}</span>`;
+
+    groupCard.innerHTML = `
+    <header>
+        <span class="badge ${
+          group.visibility.charAt(0).toLowerCase() + group.visibility.slice(1)
+        }-badge">
+            ${group.visibility}
+        </span>
+        ${
+          userGroup
+            ? `<span class="badge ${
+                group.isHost ? 'orange-badge' : 'blue-badge'
+              }">
+                ${group.isHost ? 'Host' : 'Member'}
+            </span>`
+            : groupLevel
+        }
+    </header>
+    <div class="group-meta">
+        <h3 class="group-name">${group.name}</h3>
+        <span class="subject-value badge simple-badge">${group.subject}</span>
+    </div>
+    <div data-tooltip="${
+      group.description
+    }" class="group-description has-tooltip">${group.description}</div>
+    <footer class="group-footer">
+        ${userGroup ? groupLevel : ''}
+        <div class="avatars">
+        ${group.avatars
+          .map(
+            ({ photoURL, fullName }) =>
+              `<div class="avatar">${
+                photoURL
+                  ? `<img src="${photoURL}" alt="avatar" />`
+                  : `<h4>${fullName.charAt(0).toUpperCase()}</h4>`
+              }</div>`
+          )
+          .join('')}
+        ${
+          group.extraMembersCount > 0
+            ? `<div class="member-count">+${group.extraMembersCount}</div>`
+            : ''
+        }
+          </div>
+        ${
+          !userGroup
+            ? `<button class="btn-join">${
+                group.visibility === 'Public'
+                  ? '<i class="bi bi-send"></i>Join This Group'
+                  : '<i class="bi bi-lock"></i>Request to Join'
+              }</button>`
+            : ''
+        }
+    </footer>
+`;
 
     return groupCard;
   };
@@ -86,8 +146,7 @@ export const initLazyLoadingLoader = (userGroup = false) => {
     createLoadingCard(userGroup),
     () => getCreteria(userGroup)
   );
-  console.log(loader);
-  
+
   initFiltersInputListener(loader);
   return loader;
 };

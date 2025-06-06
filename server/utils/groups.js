@@ -1,6 +1,30 @@
-const { millisecondsToHMFormat, Task, Quiz } = require("./global");
-const INITIALE_LOADERS_COUNT = 10;
+const { millisecondsToHMFormat, Task, Quiz } = require('./global');
+const INITIALE_LOADERS_COUNT = 20;
 const groups = [];
+// !! FOR TESTING
+for (let i = 1; i <= 27; i++) {
+  groups.push({
+    id: i,
+    visibility: i % 2 === 0 ? 'Public' : 'Private',
+    isHost: i % 3 === 0,
+    name: `Group ${i}`,
+    subject: `Subject ${i}`,
+    description: `This is the description for Group ${i}.`,
+    level: i % 3 === 0 ? 'Advanced' : i % 3 === 1 ? 'Intermediate' : 'Beginner',
+    avatars: [
+      {
+        photoURL: `/avatar${i}_1.png`,
+        fullName: 'Jhon',
+      },
+      {
+        photoURL: `/avatar${i}_1.png`,
+        fullName: 'Jhon',
+      },
+    ],
+    extraMembersCount: i % 5,
+  });
+}
+
 const getUserGroups = (lastVisible = 0, count) => {
   const startIndex = !lastVisible ? 0 : lastVisible - 1;
   const endIndex = Math.min(startIndex + count, groups.length);
@@ -11,9 +35,13 @@ const getUserGroups = (lastVisible = 0, count) => {
   };
 };
 
-const getAvailableGroups = (lastVisible = 0, count) => {
+const getAvailableGr = (lastVisible = 0, count) => {
+  console.log('getAvailableGr', lastVisible, count);
+
   const startIndex = !lastVisible ? 0 : lastVisible - 1;
   const endIndex = Math.min(startIndex + count, groups.length);
+  console.log(startIndex, endIndex);
+
   return {
     cards: groups.slice(startIndex, endIndex),
     lastVisible: endIndex < groups.length ? groups[endIndex]?.id : null,
@@ -23,7 +51,7 @@ const getAvailableGroups = (lastVisible = 0, count) => {
 const getGroupChatContext = (groupId) => {
   return {
     groupId: groupId,
-    groupName: "Awesome Study Group",
+    groupName: 'Awesome Study Group',
     isAdmin: true,
     sessionActive: false,
   };
@@ -33,35 +61,35 @@ const getGroupChatContext = (groupId) => {
 
 const getGroupInfoContext = () => {
   return {
-    groupName: "<h1>Awesome Study Group</h1>",
+    groupName: '<h1>Awesome Study Group</h1>',
     groupDescription:
-      "A group for collaborative learning and sharing knowledge.",
-    subject: "Mathematics",
-    level: "Intermediate",
-    visibility: "Public",
+      'A group for collaborative learning and sharing knowledge.',
+    subject: 'Mathematics',
+    level: 'Intermediate',
+    visibility: 'Public',
     showInSearch: true,
     maxMembers: 30,
-    creationDate: "2023-09-01",
+    creationDate: '2023-09-01',
     Admin: {
-      fullName: "Emily Clark",
-      photoURL: "https://avatar.iran.liara.run/public/5",
+      fullName: 'Emily Clark',
+      photoURL: 'https://avatar.iran.liara.run/public/5',
     },
     members: [
       {
-        fullName: "Emily Clark",
-        photoURL: "",
+        fullName: 'Emily Clark',
+        photoURL: '',
       },
       {
-        fullName: "John Doe",
-        photoURL: "https://avatar.iran.liara.run/public/7",
+        fullName: 'John Doe',
+        photoURL: 'https://avatar.iran.liara.run/public/7',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/8",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/8',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/9",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/9',
       },
     ],
     isAdmin: true,
@@ -72,30 +100,30 @@ const getSessionInfoContext = () => {
   return {
     isAdmin: true,
     isJoined: true,
-    sessionName: "Session Name",
-    sessionDescription: "Session Description",
-    quizTitle: "Quiz Title",
-    duration: "1h 20m",
-    startTime: "14:00",
-    endTime: "15:00",
+    sessionName: 'Session Name',
+    sessionDescription: 'Session Description',
+    quizTitle: 'Quiz Title',
+    duration: '1h 20m',
+    startTime: '14:00',
+    endTime: '15:00',
     joinedCount: 5,
     tasks: [
       new Task({
-        title: "Introduction to JavaScript",
+        title: 'Introduction to JavaScript',
         description:
-          "Learn the basics of JavaScript, including syntax and variables.",
+          'Learn the basics of JavaScript, including syntax and variables.',
         durationInMins: 2, // in minutes
       }),
       new Task({
-        title: "JavaScript Functions",
+        title: 'JavaScript Functions',
         description:
-          "Understand how to create and use functions in JavaScript.",
+          'Understand how to create and use functions in JavaScript.',
         durationInMins: 45, // in minutes
       }),
       new Quiz({
-        UID: "123",
-        title: "JavaScript Quiz",
-        description: "Test your knowledge of JavaScript basics.",
+        UID: '123',
+        title: 'JavaScript Quiz',
+        description: 'Test your knowledge of JavaScript basics.',
         durationInMins: 10, // in minutes
         questionsCount: 10,
       }),
@@ -111,92 +139,92 @@ const getMembersListContext = () => {
     count: 20,
     members: [
       {
-        fullName: "Emily Clark",
-        photoURL: "",
+        fullName: 'Emily Clark',
+        photoURL: '',
       },
       {
-        fullName: "John Doe",
-        photoURL: "https://avatar.iran.liara.run/public/7",
+        fullName: 'John Doe',
+        photoURL: 'https://avatar.iran.liara.run/public/7',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/8",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/8',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/9",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/9',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/8",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/8',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/9",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/9',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/8",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/8',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/9",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/9',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/8",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/8',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/9",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/9',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/8",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/8',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/9",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/9',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/8",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/8',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/9",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/9',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/8",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/8',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/9",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/9',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/8",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/8',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/9",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/9',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/8",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/8',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/9",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/9',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/8",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/8',
       },
       {
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/9",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/9',
       },
     ],
   };
@@ -209,31 +237,31 @@ const getQuizzesListContext = () => {
     quizzes: [
       {
         quizId: 101,
-        quizTitle: "Algebra Basics",
-        sessionName: "Math Morning",
+        quizTitle: 'Algebra Basics',
+        sessionName: 'Math Morning',
         questionsCount: 7,
-        quizDate: "2024-05-10 09:00",
+        quizDate: '2024-05-10 09:00',
       },
       {
         quizId: 102,
-        quizTitle: "World Capitals",
-        sessionName: "Geography Fun",
+        quizTitle: 'World Capitals',
+        sessionName: 'Geography Fun',
         questionsCount: 9,
-        quizDate: "2024-05-12 11:30",
+        quizDate: '2024-05-12 11:30',
       },
       {
         quizId: 103,
-        quizTitle: "Physics Challenge",
-        sessionName: "Science Hour",
+        quizTitle: 'Physics Challenge',
+        sessionName: 'Science Hour',
         questionsCount: 11,
-        quizDate: "2024-05-15 14:15",
+        quizDate: '2024-05-15 14:15',
       },
       {
         quizId: 104,
-        quizTitle: "Literature Quiz",
-        sessionName: "Book Club",
+        quizTitle: 'Literature Quiz',
+        sessionName: 'Book Club',
         questionsCount: 6,
-        quizDate: "2024-05-18 16:45",
+        quizDate: '2024-05-18 16:45',
       },
     ],
   };
@@ -246,21 +274,21 @@ const getDemandesListContext = () => {
     demandes: [
       {
         userId: 1,
-        fullName: "John Doe",
-        photoURL: "https://avatar.iran.liara.run/public/7",
-        demandeDate: "2024-05-01 12:00",
+        fullName: 'John Doe',
+        photoURL: 'https://avatar.iran.liara.run/public/7',
+        demandeDate: '2024-05-01 12:00',
       },
       {
         userId: 2,
-        fullName: "Jane Smith",
-        photoURL: "https://avatar.iran.liara.run/public/8",
-        demandeDate: "2024-05-02 12:00",
+        fullName: 'Jane Smith',
+        photoURL: 'https://avatar.iran.liara.run/public/8',
+        demandeDate: '2024-05-02 12:00',
       },
       {
         userId: 3,
-        fullName: "Alice Johnson",
-        photoURL: "https://avatar.iran.liara.run/public/9",
-        demandeDate: "2024-05-03 12:00",
+        fullName: 'Alice Johnson',
+        photoURL: 'https://avatar.iran.liara.run/public/9',
+        demandeDate: '2024-05-03 12:00',
       },
     ],
   };
@@ -274,6 +302,6 @@ module.exports = {
   getDemandesListContext,
   getGroupInfoContext,
   getGroupChatContext,
-  getAvailableGroups,
+  getAvailableGr,
   getUserGroups,
 };

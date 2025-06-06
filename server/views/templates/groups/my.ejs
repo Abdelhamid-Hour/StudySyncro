@@ -1,14 +1,21 @@
-<div data-last-visible="<%= lastVisible || '' %>" class="main-content groups-list fade-in-template">
+<div
+  data-last-visible="<%= lastVisible || '' %>"
+  class="main-content groups-list fade-in-template"
+>
   <% cards.forEach(group => { %>
-  <a href="/app/groups/my/<%- group.id %>/chat" class="group-card route-link" data-id="<%= group.id %>">
+  <a
+    href="/app/groups/my/<%= group.id %>/chat"
+    class="group-card route-link"
+    data-id="<%= group.id %>"
+  >
     <header>
       <span
-        class="badge <%= group.visibility === "Public" ? 'public-badge' : 'private-badge' %>"
+        class="badge <%= group.visibility.charAt(0).toLowerCase() + group.visibility.slice(1) _%>-badge"
       >
-        <%= group.visibility === "Public" ? 'Public' : 'Private' %>
+        <%= group.visibility %>
       </span>
-      <span class="badge <%= group.creator === userId ? 'orange-badge' : 'blue-badge' %>">
-        <% if (group.creator === userId) { %>
+      <span class="badge <%= group.isHost ? 'orange-badge' : 'blue-badge' %>">
+        <% if (group.isHost) { %>
         <i class="bi bi-person-fill-gear"></i>
         Host <% } else { %>
         <i class="bi bi-person-fill"></i>
@@ -16,7 +23,7 @@
       </span>
     </header>
     <div class="group-meta">
-      <h3 class="group-title"><%= group.name %></h3>
+      <h3 class="group-name"><%= group.name %></h3>
       <span class="subject-value badge simple-badge"><%= group.subject %></span>
     </div>
     <div
@@ -35,12 +42,9 @@
         <% group.avatars.forEach(({photoURL, fullName}) => { %>
         <div class="avatar">
           <% if (photoURL) { %>
-            <img
-              src="<%= photoURL %>"
-              alt="avatar"
-            />
+          <img src="<%= photoURL %>" alt="avatar" />
           <% } else { %>
-            <h4><%= fullName.charAt(0).toUpperCase() %></h4>
+          <h4><%= fullName.charAt(0).toUpperCase() %></h4>
           <% } %>
         </div>
         <% }); %> <% if (group.extraMembersCount > 0) { %>
