@@ -1,6 +1,19 @@
 const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
 
+
+
+const getFormatedGroups = (groups, user_id) =>
+  groups.map(({ members, creator, ...rest }) => ({
+    ...rest,
+    avatars: members.slice(0, 2).map(({ photoURL, fullName }) => ({
+      photoURL,
+      fullName,
+    })),
+    isHost: creator === user_id,
+    extraMembersCount: members.length - 2,
+  }))
+
 const createGroup = async (groupdData, userData) => {
   try {
     console.log(groupdData, "group data received");
@@ -58,31 +71,42 @@ const getAvailableGroups = async (
 ) => {
   try {
     let availableGroups = [...oldGroups]; // Start with accumulated groups
-
+    if(availableGroups.length >= limit){
+      const finalGroups = getFormatedGroups(availableGroups , user_id)
+      return { cards: finalGroups, lastVisible };
+    }
     const groupRef = db.collection("groups");
 
     let query = groupRef.orderBy("creationDate"); // Add ordering for consistent pagination
 
     if (lastVisible) {
-      query = query.startAfter(lastVisible);
+      const doc = db.collection("groups").doc(lastVisible)
+      const lastElement = await doc.get()
+      query = query.startAfter(lastElement);
     }
 
     // Fetch a reasonable batch size
-    const batchSize = Math.max(limit - availableGroups.length, 10); // At least 10 to make progress
+    const need = limit - availableGroups.length
+    const batchSize = Math.max(need, 10); // At least 10 to make progress
     query = query.limit(batchSize);
 
     const snapshot = await query.get();
 
+    if(snapshot.empty && availableGroups.length === 0){
+      return {cards: [] , lastVisible : null}
+    }
     // If no more documents, return what we have
     if (snapshot.empty) {
-      return { cards: availableGroups, lastVisible: null };
+            const finalGroups = getFormatedGroups(availableGroups , user_id)
+
+      return { cards: finalGroups, lastVisible : null};
     }
 
     // Filter out groups where user is creator or member
     let groups = snapshot.docs
       .map((doc) => ({ id: doc.id, ...doc.data() }))
       .filter(
-        (group) => group.creator != user_id && !group.members.includes(user_id)
+        (group) => group.creator != user_id && !group.membersUids.includes(user_id)
       );
     // Apply additional filter criteria
     const filteredGroups = await filterGroups(user_id, criteria, groups);
@@ -90,22 +114,19 @@ const getAvailableGroups = async (
     // Add newly filtered groups to accumulated groups
     availableGroups = availableGroups.concat(filteredGroups);
 
-    lastVisible = snapshot.docs[snapshot.docs.length - 1];
+    lastVisible = snapshot.docs[snapshot.docs.length - 1].id;
 
     // If we have enough groups or no more documents available, return
     if (availableGroups.length >= limit || snapshot.docs.length < batchSize) {
       // Trim to requested limit
-      const finalGroups = availableGroups
-        .slice(0, limit)
-        .map(({ members, ...rest }) => ({
-          ...rest,
-          avatars: members.slice(0, 2).map(({ photoURL, fullName }) => ({
-            photoURL,
-            fullName,
-          })),
-          extraMembersCount: members.length - 2,
-        }));
+       const finalGroups = getFormatedGroups(availableGroups , user_id)
       return { cards: finalGroups, lastVisible };
+    }
+
+    if (snapshot.docs.length < batchSize) {
+       const finalGroups = getFormatedGroups(availableGroups , user_id)
+
+      return { cards: finalGroups, lastVisible: null };
     }
 
     // Recursively fetch more groups
@@ -131,57 +152,67 @@ const getJoinedGroups = async (
 ) => {
   try {
     let joinedGroups = [...oldGroups]; // Start with accumulated groups
-
+    if(joinedGroups.length >= limit){
+      const finalGroups = getFormatedGroups(joinedGroups , user_id)
+      return { cards: finalGroups, lastVisible };
+    }
     const groupRef = db.collection("groups");
 
-    let query = groupRef.where("membersUids", "array-contains", user_id);
-    // console.log(user_id, "this is the user id ");
-    console.log("await query.get():", (await query.get()).size);
+    let query = groupRef.where("membersUids" , "array-contains" , user_id)
 
-    if (lastVisible) {
-      const ref = groupRef.doc(lastVisible);
-      const group = await ref.get();
-      console.log("last group", group);
-      query = query.startAfter(group);
+    if (typeof lastVisible === "string") {
+      const doc = db.collection("groups").doc(lastVisible)
+      const lastElement = await doc.get()
+      query = query.startAfter(lastElement);
     }
-
-    const batchSize = Math.max(limit - joinedGroups.length, 10);
+    else if(lastVisible){
+      query = query.startAfter(lastVisible)
+    }
+    // Fetch a reasonable batch size
+    const need = limit - joinedGroups.length
+    const batchSize = Math.max(need, 10); // At least 10 to make progress
     query = query.limit(batchSize);
 
     const snapshot = await query.get();
+        console.log(snapshot.size , "size")
 
+    if(snapshot.empty && joinedGroups.length === 0){
+      return {cards: [] , lastVisible : null}
+    }
+    // If no more documents, return what we have
     if (snapshot.empty) {
-      // console.log(joinedGroups, "final joined groups");
+            const finalGroups = getFormatedGroups(joinedGroups , user_id)
 
-      return { cards: joinedGroups, lastVisible: null };
+      return { cards: finalGroups, lastVisible : null};
     }
 
-    let groups = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    //console.log(groups, "these are the groups ");
-    const filteredGroups = groups;
+    // Filter out groups where user is creator or member
+    let groups = snapshot.docs
+      .map((doc) => ({ id: doc.id, ...doc.data() }))
+     
+    // Apply additional filter criteria
+    const filteredGroups = await filterGroups(user_id, criteria, groups);
+
+    // Add newly filtered groups to accumulated groups
     joinedGroups = joinedGroups.concat(filteredGroups);
 
     lastVisible = snapshot.docs[snapshot.docs.length - 1].id;
 
+    // If we have enough groups or no more documents available, return
     if (joinedGroups.length >= limit || snapshot.docs.length < batchSize) {
-      const cards = joinedGroups
-        .slice(0, limit)
-        .map(({ members, ...rest }) => ({
-          ...rest,
-          avatars: members.slice(0, 2).map(({ photoURL, fullName }) => ({
-            photoURL,
-            fullName,
-          })),
-          extraMembersCount: members.length - 2,
-        }));
-      console.log(cards, "last cards");
-      return { cards, lastVisible };
+      // Trim to requested limit
+       const finalGroups = getFormatedGroups(joinedGroups , user_id)
+      return { cards: finalGroups, lastVisible };
     }
 
-    return await getJoinedGroups(
+    if (snapshot.docs.length < batchSize) {
+       const finalGroups = getFormatedGroups(joinedGroups , user_id)
+
+      return { cards: finalGroups, lastVisible: null };
+    }
+
+    // Recursively fetch more groups
+    return await getAvailableGroups(
       user_id,
       criteria,
       limit,
@@ -189,11 +220,10 @@ const getJoinedGroups = async (
       joinedGroups
     );
   } catch (error) {
-    console.log(error.message, "error in getJoinedGroups");
-    return { cards: oldGroups, lastVisible };
+    console.error(error.message, "error in getAvailableGroups");
+    return { cards: oldGroups, lastVisible }; // Return what we have so far
   }
 };
-
 // Fixed filterGroups function with proper parameter
 const filterGroups = async (user_id, criteria, groups) => {
   try {

@@ -3,6 +3,7 @@ const { db } = require("../../firebase/firebaseAdmin");
 
 const ajouterMembre = async (groupId, userId) => {
   try {
+    console.log(groupId, "group id ");
     const groupRef = db.collection("groups").doc(groupId);
     console.log("userIs", userId);
     const userRef = db.collection("users").doc(userId);
@@ -33,13 +34,14 @@ const ajouterMembre = async (groupId, userId) => {
 
     // Add user to group members
     await groupRef.update({
-      membres: FieldValue.arrayUnion({
+      members: FieldValue.arrayUnion({
         uid: userId,
-        name: userData.name || userData.displayName || "Utilisateur",
+        fullName: userData.fullName || userData.displayName || "Utilisateur",
         email: userData.email || "",
         photoURL:
           userData.picture || userData.photoURL || "here//goes//a//photo//url",
       }),
+      membersUids: FieldValue.arrayUnion(userId),
     });
 
     console.log("Member added successfully");
@@ -78,11 +80,12 @@ const sendRequest = async (groupId, userData) => {
         };
       } else if (data.showInSearch) {
         await groupRef.update({
-          demandes: FieldValue.arrayUnion({
+          requests: FieldValue.arrayUnion({
             uid: userData.uid,
-            name: userData.name,
+            name: userData.fullName,
             email: userData.email,
             photoURL: userData.picture || "here//goes//a//photo//url",
+            sentAt: new Date().toISOString(),
           }),
         });
         return {
@@ -104,7 +107,7 @@ const sendRequest = async (groupId, userData) => {
   }
 };
 
-const joinGroup = async (groupId, userId) => {
+const joinGroup = async (groupId, userData) => {
   try {
     const ref = db.collection("groups").doc(groupId);
     const snaphsot = await ref.get();
@@ -113,9 +116,9 @@ const joinGroup = async (groupId, userId) => {
       const group = snaphsot.data();
 
       if (group.visibility === "Public") {
-        return (result = await ajouterMembre(groupId, userId));
+        return (result = await ajouterMembre(groupId, userData.uid));
       } else if (group.showInSearch && group.visibility === "Private") {
-        return (result = await sendRequest(groupId, userId));
+        return (result = await sendRequest(groupId, userData));
       }
     } else {
       return {
@@ -162,12 +165,12 @@ const rejectRequest = async (groupId, requestId) => {
     const groupRef = db.collection("groups").doc(groupId);
     const group = await getGroupByID(groupId);
     if (group) {
-      const request = group.demandes.find(
+      const request = group.requests.find(
         (demande) => demande.uid === requestId
       );
       if (request) {
         await groupRef.update({
-          demandes: FieldValue.arrayRemove(request),
+          requests: FieldValue.arrayRemove(request),
         });
         return true;
       } else {
@@ -186,7 +189,7 @@ const getMembres = async (groupId) => {
   try {
     const group = await getGroupByID(groupId);
     if (group) {
-      return group.membres;
+      return group.members;
     } else {
       return false;
     }
@@ -200,10 +203,10 @@ const kickMember = async (groupId, userId) => {
   try {
     const group = await getGroupByID(groupId);
     const groupRef = db.collection("groups").doc(groupId);
-    const user = group.membres.find((membre) => membre.uid === userId);
+    const user = group.members.find((membre) => membre.uid === userId);
     if (group && user) {
       await groupRef.update({
-        membres: FieldValue.arrayRemove(user),
+        members: FieldValue.arrayRemove(user),
       });
       return true;
     }

@@ -42,7 +42,7 @@ apiRouter.post("/create-group", async (req, res) => {
 apiRouter.post("/join-group", async (req, res) => {
   console.log(req.body, "req body for join group");
   const groupId = req.body.groupId;
-  const result = await joinGroup(groupId, req.user.uid);
+  const result = await joinGroup(groupId, req.user);
   console.log(result, "this is the result");
   if (result.success) {
     return res.status(200).json({ status: result.status });
