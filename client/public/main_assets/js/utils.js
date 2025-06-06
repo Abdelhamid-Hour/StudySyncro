@@ -18,13 +18,14 @@ export const handlEyeIconsClick = (eyeIcons) => {
  * @param {Function} callback - The function to be executed after the specified time interval.
  * @returns {Function} - The throttled function.
  */
-export const throttling = function (TimeInterval, callback) {
+export const throttling = function (TimeInterval, callback, notFireFirstTime) {
   let inAction = false;
   return function (...args) {
     if (!inAction) {
       inAction = true;
-      callback.apply(this, args);
+      if (!notFireFirstTime) callback.apply(this, args);
       setTimeout(() => {
+        if (notFireFirstTime) callback.apply(this, args);
         inAction = false;
       }, TimeInterval);
     }
@@ -45,7 +46,6 @@ export const removeBlock = function () {
  * @param {Boolean} error - Indicates if the message is an error (true) or success (false).
  */
 export const showMessageBlock = (message, type) => {
-  
   let messagesBlocksWrapper = document.querySelector(
     '.messages-blocks-wrapper'
   );
@@ -122,6 +122,8 @@ export const fetchTemplate = async (url) => {
 };
 
 export const fetchData = async (url) => {
+  console.log(`Fetching data from: ${url}`);
+  
   const csrfToken = getCookie('csrfToken');
   const response = await fetch(`/api${url}`, {
     method: 'GET',

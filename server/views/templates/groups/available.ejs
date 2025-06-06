@@ -3,7 +3,7 @@
   <div class="group-card route-link" data-id="<%= group.id %>">
     <header>
       <span
-        class="badge <%= group.isPublic ? 'public-badge' : 'private-badge' %>"
+        class="badge <%= group.visibility === "Public" ? 'public-badge' : 'private-badge' %>"
       ><%=  group.visibility === "Public" ? 'Public' : 'Private' %></span>
       <span
         class="level-value badge <%= group.level === 'Intermediate' ? 'blue-badge' : group.level === 'Advanced' ? 'orange-badge' : 'gray-badge' %>"
@@ -12,7 +12,7 @@
       </span>
     </header>
     <div class="group-meta">
-      <h3 class="group-title"><%= group.groupName %></h3>
+      <h3 class="group-title"><%= group.name %></h3>
       <span class="subject-value badge simple-badge"><%= group.subject %></span>
     </div>
     <div

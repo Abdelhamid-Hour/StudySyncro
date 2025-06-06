@@ -1,21 +1,6 @@
 const { millisecondsToHMFormat, Task, Quiz } = require("./global");
-const INITIALE_LOADERS_COUNT = 20;
+const INITIALE_LOADERS_COUNT = 10;
 const groups = [];
-// !! FOR TESTING
-for (let i = 1; i <= 27; i++) {
-  groups.push({
-    id: i,
-    isPublic: i % 2 === 0,
-    isHost: i % 3 === 0,
-    title: `Group ${i}`,
-    subject: `Subject ${i}`,
-    description: `This is the description for Group ${i}.`,
-    level: i % 3 === 0 ? "Advanced" : i % 3 === 1 ? "Intermediate" : "Beginner",
-    avatars: [`/avatar${i}_1.png`, `/avatar${i}_2.png`],
-    extraMembersCount: i % 5,
-  });
-}
-
 const getUserGroups = (lastVisible = 0, count) => {
   const startIndex = !lastVisible ? 0 : lastVisible - 1;
   const endIndex = Math.min(startIndex + count, groups.length);

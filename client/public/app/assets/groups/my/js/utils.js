@@ -1,4 +1,8 @@
-import { fetchData, sendData, showMessageBlock } from '../../../../../main_assets/js/utils.js';
+import {
+  fetchData,
+  sendData,
+  showMessageBlock,
+} from '../../../../../main_assets/js/utils.js';
 import {
   DESCRIPTION_MAX_LENGTH,
   DESCRIPTION_MIN_LENGTH,
@@ -12,7 +16,9 @@ import {
   openOverlayModal,
   resetTooltip,
   showErrorTooltip,
-  navigateTo
+  navigateTo,
+  updateMain,
+  getLoader,
 } from '../../../global/js/utils.js';
 import {
   levelValues,
@@ -24,6 +30,7 @@ import {
   setUpSubjectSelectMenu,
   setUpSwitchBtn,
 } from '../../../shared/forms/js/utils.js';
+import { groupCreateBtn } from './dom-variables.js';
 
 export const getGroupOverlay = () => `
 <div class="create-group-overlay overlay-model">
@@ -242,27 +249,35 @@ export const initGroupForm = () => {
   const level = form.querySelector('.group-level-field input');
   const maxMembers = form.querySelector('.group-max-members-field input');
   const visibility = form.querySelector('.group-visibility-field input');
+  const createBtn = form.querySelector('.create-btn');
 
   description.addEventListener('input', countCharsTextarea);
 
-  handleFormSubmit(form, () =>
-    chechGroupValues({
-      groupName,
-      description,
-      subject,
-      level,
-      maxMembers,
-      visibility,
-    }),
-    async(groupData)=>{
-
+  handleFormSubmit(
+    form,
+    () =>
+      chechGroupValues({
+        groupName,
+        description,
+        subject,
+        level,
+        maxMembers,
+        visibility,
+      }),
+    async (groupData) => {
+      if (form.isCreating) return;
       try {
-      await sendData("/api/create-group" , {groupData})
-      showMessageBlock("groupe created successfully", "success")
+        form.isCreating = true;
+        createBtn.disabled = true;
+        createBtn.innerHTML = getLoader();
+        await sendData('/api/create-group', { groupData });
+        showMessageBlock('Group created successfully', 'success');
+        updateMain('/app/groups/my');
       } catch (error) {
-        console.error(error)
-        showMessageBlock("something went wrong" , "error")
+        console.error('Error: ', error);
+        showMessageBlock(error.message, 'error');
       }
+      // ? its not necessary to reset the form here, as the overlay will be closed
     }
   );
 };

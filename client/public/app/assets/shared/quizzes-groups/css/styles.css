@@ -12,17 +12,27 @@
 
 .search-container {
   display: flex;
-  gap: var(--primary-gap);
+  gap: calc(var(--primary-gap) / 2);
   align-items: center;
 
   .filter-container {
     position: relative;
   }
 
-  .filter-button {
+  .sort-checkbox {
+    display: none;
+  }
+
+  .sort-button {
+    transition: scale var(--short-transition-style);
+    &:has(:checked) {
+      scale: 1 -1;
+    }
+  }
+
+  .exclude-btn {
     height: fit-content;
     width: fit-content;
-    padding: calc(var(--primary-gap) / 2);
     font-size: var(--medium-font-size);
     border-radius: 0.2rem;
 

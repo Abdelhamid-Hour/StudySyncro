@@ -6,7 +6,6 @@ import { getLoader, showConfirmationBox } from "../../../global/js/utils.js";
 
 export const handleJoinGroupClick = async (joinGroupBtn) => {
   joinGroupBtn.disabled = true;
-  joinGroupBtn.classList.add("disabled");
 
   const result = await showConfirmationBox(
     "confirmation",
@@ -17,7 +16,6 @@ export const handleJoinGroupClick = async (joinGroupBtn) => {
   );
 
   joinGroupBtn.disabled = false;
-  joinGroupBtn.classList.remove("disabled");
 
   if (!result) return;
 
