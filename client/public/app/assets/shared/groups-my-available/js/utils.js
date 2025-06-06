@@ -1,5 +1,11 @@
-import { boxRowCount } from '../../../global/js/dom-variables.js';
-import { Loader } from '../../quizzes-groups/js/utils.js';
+import {
+  boxRowCount,
+  topSideBarMiddle,
+} from '../../../global/js/dom-variables.js';
+import {
+  initFiltersInputListener,
+  Loader,
+} from '../../quizzes-groups/js/utils.js';
 
 export const createLoadingCard = (userGroup) => {
   const div = document.createElement('div');
@@ -72,72 +78,120 @@ export const getcreateGroupCardFunc = (userGroup) => {
     }">${group.level}</span>`;
 
     groupCard.innerHTML = `
-          <header>
-              <span class="badge ${
-                group.isPublic ? 'public-badge' : 'private-badge'
+    <header>
+        <span class="badge ${
+          group.visibility.charAt(0).toLowerCase() + group.visibility.slice(1)
+        }-badge">
+            ${group.visibility}
+        </span>
+        ${
+          userGroup
+            ? `<span class="badge ${
+                group.isHost ? 'orange-badge' : 'blue-badge'
               }">
-                  ${group.isPublic ? 'Public' : 'Private'}
-              </span>
-              ${
-                userGroup
-                  ? `<span class="badge ${
-                      group.isHost ? 'orange-badge' : 'blue-badge'
-                    }">
-                      ${group.isHost ? 'Host' : 'Member'}
-                  </span>`
-                  : groupLevel
-              }
-          </header>
-          <div class="group-meta">
-              <h3 class="group-title">${group.title}</h3>
-              <span class="subject-value badge simple-badge">${
-                group.subject
-              }</span>
+                ${group.isHost ? 'Host' : 'Member'}
+            </span>`
+            : groupLevel
+        }
+    </header>
+    <div class="group-meta">
+        <h3 class="group-name">${group.name}</h3>
+        <span class="subject-value badge simple-badge">${group.subject}</span>
+    </div>
+    <div data-tooltip="${
+      group.description
+    }" class="group-description has-tooltip">${group.description}</div>
+    <footer class="group-footer">
+        ${userGroup ? groupLevel : ''}
+        <div class="avatars">
+        ${group.avatars
+          .map(
+            ({ photoURL, fullName }) =>
+              `<div class="avatar">${
+                photoURL
+                  ? `<img src="${photoURL}" alt="avatar" />`
+                  : `<h4>${fullName.charAt(0).toUpperCase()}</h4>`
+              }</div>`
+          )
+          .join('')}
+        ${
+          group.extraMembersCount > 0
+            ? `<div class="member-count">+${group.extraMembersCount}</div>`
+            : ''
+        }
           </div>
-          <div data-tooltip="${
-            group.description
-          }" class="group-description has-tooltip">${group.description}</div>
-          <footer class="group-footer">
-              ${userGroup ? groupLevel : ''}
-              <div class="avatars">
-              ${group.avatars
-                .map(
-                  (avatar) =>
-                    `<div class="avatar"><img src="${avatar}" /></div>`
-                )
-                .join('')}
-              ${
-                group.extraMembersCount > 0
-                  ? `<div class="member-count">+${group.extraMembersCount}</div>`
-                  : ''
-              }
-                </div>
-              ${
-                !userGroup
-                  ? `<button class="btn-join">${
-                      group.isPublic ? 'Join This Group' : 'Request to Join'
-                    }</button>`
-                  : ''
-              }
-          </footer>
-      `;
+        ${
+          !userGroup
+            ? `<button class="btn-join">${
+                group.visibility === 'Public'
+                  ? '<i class="bi bi-send"></i>Join This Group'
+                  : '<i class="bi bi-lock"></i>Request to Join'
+              }</button>`
+            : ''
+        }
+    </footer>
+`;
 
     return groupCard;
   };
 };
 
 export const initLazyLoadingLoader = (userGroup = false) => {
-  const endPoint = userGroup ? `/user-groups` : `/available-groups`;
+  const route = userGroup ? `/user-groups` : `/available-groups`;
   const loader = new Loader(
     document.querySelector('.groups-list'),
     '200px',
     getcreateGroupCardFunc(userGroup),
-    endPoint
+    route,
+    createLoadingCard(userGroup),
+    () => getCreteria(userGroup)
   );
 
-  loader.initLoadingBoxes(boxRowCount, createLoadingCard(userGroup));
-
-  loader.initObserver();
-
+  initFiltersInputListener(loader);
   return loader;
+};
+
+const getCreteria = (isUserGroups) => {
+  let creteria = '';
+  const sortDate = topSideBarMiddle.querySelector('#sort-checkbox')?.checked;
+  const search = topSideBarMiddle.querySelector('#search-input')?.value;
+  const advancedLevel = topSideBarMiddle.querySelector('#advanced')?.checked;
+  const intermediateLevel =
+    topSideBarMiddle.querySelector('#intermediate')?.checked;
+  const beginnerLevel = topSideBarMiddle.querySelector('#beginner')?.checked;
+  const privateVisibility = topSideBarMiddle.querySelector('#private')?.checked;
+  const publicVisibility = topSideBarMiddle.querySelector('#public')?.checked;
+
+  const sort = sortDate ? 'asc' : 'desc';
+  creteria += `sort=${sort}`;
+  const searchTerm = search ? search.trim() : '';
+  creteria += `&searchTerm=${searchTerm}`;
+
+  const level = [];
+  if (advancedLevel) level.push('Advanced');
+  if (intermediateLevel) level.push('Intermediate');
+  if (beginnerLevel) level.push('Beginner');
+  creteria += `&level=${level.join(',')}`;
+
+  const visibility = [];
+  if (privateVisibility) visibility.push('Private');
+  if (publicVisibility) visibility.push('Public');
+  creteria += `&visibility=${visibility.join(',')}`;
+
+  if (isUserGroups) {
+    const adminRole = topSideBarMiddle.querySelector('#admin')?.checked;
+    const memberRole = topSideBarMiddle.querySelector('#member')?.checked;
+    const role = [];
+    if (adminRole) role.push('admin');
+    if (memberRole) role.push('member');
+    creteria += `&role=${role.join(',')}`;
+  }
+
+  if (!isUserGroups) {
+    const joinableOnly =
+      topSideBarMiddle.querySelector('#joinable-only')?.checked;
+    creteria += `&joinableOnly=${joinableOnly}`;
+  }
+
+  return creteria;
 };

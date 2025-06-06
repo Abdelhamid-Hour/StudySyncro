@@ -100,7 +100,8 @@ a {
 }
 
 a:has(> i[class*='bi']),
-button:has(> i[class*='bi']) {
+button:has(> i[class*='bi']),
+.button:has(> i[class*='bi']) {
   display: inline-flex;
   align-items: center;
   gap: calc(var(--primary-gap) / 2);
@@ -174,13 +175,14 @@ button:not(.exclude-btn),
     }
   }
 
-  &.disabled {
+  &:disabled {
+    cursor: not-allowed;
     &::before {
       display: none !important;
     }
   }
 
-  &:active {
+  &:active:not(&:disabled) {
     scale: 0.95;
   }
 

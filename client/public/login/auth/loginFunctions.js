@@ -47,7 +47,7 @@ const handleUserSignIn = async (auth, user) => {
  */
 const signInWhithProvider = async function (auth, provider, callback) {
   const userCredential = await signInWithPopup(auth, provider);
-  callback('Signed in successfully', false);
+  callback('Signed in successfully', 'success');
   const user = userCredential.user;
   await handleUserSignIn(auth, user);
 };
@@ -66,11 +66,11 @@ const signInWhithProvider = async function (auth, provider, callback) {
       const credential = GoogleAuthProvider.credential(response.credential);
       const userCredential = await signInWithCredential(auth, credential);
       const user = userCredential.user;
-      callback('Signed in successfully', false);
+      callback('Signed in successfully', 'success');
       await handleUserSignIn(auth, user);
     } catch (error) {
       checkError(error);
-      callback(error.message, true);
+      callback(error.message, 'error');
     }
   };
 
@@ -98,7 +98,7 @@ const signInWithFacebookProviderWithPopUp = async function (auth, callback) {
     await signInWhithProvider(auth, fbProvider, callback);
   } catch (error) {
     checkError(error);
-    callback(error.message, true);
+    callback(error.message, 'error');
   }
 };
 
@@ -114,7 +114,7 @@ const signInWithGoogleProviderWithPopUp = async function (auth, callback) {
     await signInWhithProvider(auth, googleProvider, callback);
   } catch (error) {
     checkError(error);
-    callback(error.message, true);
+    callback(error.message, 'error');
   }
 };
 
@@ -141,7 +141,7 @@ const createAuserWithEmailAndPassword = async function (
       email,
       password
     );
-    callback('User account created successfully', false);
+    callback('User account created successfully', 'success');
     const user = userCredential.user;
     await updateProfile(user, {
       displayName: fullName,
@@ -149,7 +149,7 @@ const createAuserWithEmailAndPassword = async function (
     await handleUserSignIn(auth, user);
   } catch (error) {
     checkError(error);
-    callback(error.message, true);
+    callback(error.message, 'error');
   }
 };
 
@@ -171,14 +171,14 @@ const signInAuserWithEmailAndPassword = async function (
 ) {
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    callback('Signed in successfully', false);
+    callback('Signed in successfully', 'success');
     await sendIdToken(auth, '/session-login');
     await signOut(auth);
     redirectTo('/main_page');
   } catch (error) {
     console.log(error)
     checkError(error);
-    callback(error.message, true);
+    callback(error.message, 'error');
   }
 };
 

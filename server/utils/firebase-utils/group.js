@@ -16,51 +16,72 @@ const getFormatedGroups = (groups, user_id) =>
 
 const createGroup = async (groupdData, userData) => {
   try {
-    console.log(groupdData, "group data received");
-    console.log(userData, "user data received ");
-    const groupRef = db.collection("groups");
+    console.log(groupdData, 'group data received');
+    console.log(userData, 'user data received ');
+    const groupRef = db.collection('groups');
     const snapshot = await groupRef
-      .where("name", "==", groupdData["group-name"])
+      .where('name', '==', groupdData['group-name'])
       .get();
+    console.log(snapshot, 'this is the snapshot');
 
     const newGrop = {
-      groupName: groupdData["group-name"],
-      description: groupdData["group-description"],
+      name: groupdData['group-name'],
+      description: groupdData['group-description'],
       subject: groupdData.subject,
       level: groupdData.level,
-      maxMembers: groupdData["max-members"],
+      maxMembers: groupdData['max-members'],
       visibility: groupdData.visibility,
       members: [
         {
           uid: userData.uid,
           fullName: userData.fullName,
           email: userData.email,
-          photoURL: userData.picture || "",
+          photoURL: userData.picture || '',
         },
       ],
       requests: [],
       membersUids: [userData.uid],
       creationDate: new Date().toISOString(),
       creator: userData.uid,
-      showInSearch: groupdData["show-in-search"] || true,
-      currentSession: "",
+      showInSearch: groupdData['show-in-search'] || true,
+      currentSession: '',
       quizzesList: [],
     };
 
     if (snapshot.empty) {
-      console.log("created");
+      console.log('created');
       await groupRef.add(newGrop);
-      return true;
+      return {
+        success: true,
+      };
     } else {
-      console.log("not empty");
-      return false;
+      console.log('not empty');
+      return {
+        success: false,
+        message:
+          'A group with this name already exists. Please choose another name.',
+      };
     }
   } catch (error) {
-    console.log("here the error");
+    console.log('here the error');
     console.log(error.message);
-    return false;
+    return {
+      success: false,
+      message: 'An error occurred while creating the group. Please try again.',
+    };
   }
 };
+
+const getFormatedGroups = (groups, user_id) =>
+  groups.map(({ members, creator, ...rest }) => ({
+    ...rest,
+    avatars: members.slice(0, 2).map(({ photoURL, fullName }) => ({
+      photoURL,
+      fullName,
+    })),
+    isHost: creator === user_id,
+    extraMembersCount: members.length - 2,
+  }));
 
 const getAvailableGroups = async (
   user_id,
@@ -77,7 +98,7 @@ const getAvailableGroups = async (
     }
     const groupRef = db.collection("groups");
 
-    let query = groupRef.orderBy("creationDate"); // Add ordering for consistent pagination
+    let query = groupRef.orderBy('creationDate'); // Add ordering for consistent pagination
 
     if (lastVisible) {
       const doc = db.collection("groups").doc(lastVisible)
@@ -115,6 +136,7 @@ const getAvailableGroups = async (
     availableGroups = availableGroups.concat(filteredGroups);
 
     lastVisible = snapshot.docs[snapshot.docs.length - 1].id;
+    lastVisible = snapshot.docs[snapshot.docs.length - 1].id;
 
     // If we have enough groups or no more documents available, return
     if (availableGroups.length >= limit || snapshot.docs.length < batchSize) {
@@ -138,8 +160,8 @@ const getAvailableGroups = async (
       availableGroups
     );
   } catch (error) {
-    console.error(error.message, "error in getAvailableGroups");
-    return { cards: oldGroups, lastVisible }; // Return what we have so far
+    console.error(error.message, 'error in getAvailableGroups');
+    return { cards: getFormatedGroups(oldGroups, user_id), lastVisible }; // Return what we have so far
   }
 };
 
@@ -227,12 +249,12 @@ const getJoinedGroups = async (
 // Fixed filterGroups function with proper parameter
 const filterGroups = async (user_id, criteria, groups) => {
   try {
-    console.log("Filtering groups with criteria:", criteria);
+    console.log('Filtering groups with criteria:', criteria);
 
     return groups.filter((g) => {
       const matchLevel =
         criteria.level.length === 0 ||
-        criteria.level.includes(g.niveau?.toLowerCase());
+        criteria.level.includes(g.level?.toLowerCase());
 
       const matchVisibility =
         criteria.visibility.length === 0 ||
@@ -241,15 +263,15 @@ const filterGroups = async (user_id, criteria, groups) => {
       const matchShowInSearch = g.showInSearch !== false; // Default to true if undefined
 
       let matchJoinable = true;
-      if (criteria.available) {
-        matchJoinable = (g.maxMembers || Infinity) > (g.membres?.length || 0);
+      if (criteria.joinableOnly) {
+        matchJoinable = (g.maxMembers || Infinity) > (g.members?.length || 0);
       }
 
       const matchRole =
         criteria.role.length === 0 ||
-        (criteria.role.includes("admin") && user_id === g.createur) ||
-        (criteria.role.includes("membre") &&
-          g.membres?.some(
+        (criteria.role.includes('admin') && user_id === g.createur) ||
+        (criteria.role.includes('member') &&
+          g.members?.some(
             (membre) =>
               membre && membre.uid === user_id && user_id !== g.createur
           ));
@@ -259,8 +281,8 @@ const filterGroups = async (user_id, criteria, groups) => {
 
       matchSearch =
         g.subject?.toLowerCase().includes(searchTerm) ||
-        g.groupName?.toLowerCase().includes(searchTerm) ||
-        searchTerm == "";
+        g.name?.toLowerCase().includes(searchTerm) ||
+        searchTerm == '';
 
       const result =
         matchLevel &&
@@ -273,14 +295,14 @@ const filterGroups = async (user_id, criteria, groups) => {
       return result;
     });
   } catch (error) {
-    console.log(error.message, "error in filterGroups");
+    console.log(error.message, 'error in filterGroups');
     return [];
   }
 };
 
 const getGroupByID = async (groupId) => {
   try {
-    const groupRef = db.collection("groups").doc(groupId);
+    const groupRef = db.collection('groups').doc(groupId);
     const snaphsot = await groupRef.get();
     if (snaphsot.empty) {
       return false;
@@ -297,12 +319,12 @@ const getGroupByID = async (groupId) => {
 const quitterGroup = async (groupId, userId) => {
   try {
     const group = await getGroupByID(groupId);
-    const groupRef = db.collection("groups").doc(groupId);
-    const user = group.membres.find((membre) => membre.uid === userId);
+    const groupRef = db.collection('groups').doc(groupId);
+    const user = group.members.find((membre) => membre.uid === userId);
     if (group) {
       if (user) {
         groupRef.update({
-          membres: FieldValue.arrayRemove(user),
+          members: FieldValue.arrayRemove(user),
         });
         return true;
       } else {
@@ -319,16 +341,16 @@ const quitterGroup = async (groupId, userId) => {
 
 const modifyGroup = async (groupId, formData) => {
   try {
-    const groupRef = db.collection("groups").doc(groupId);
+    const groupRef = db.collection('groups').doc(groupId);
     const groups = await getAllGroups();
-    console.log(groups, "these are the groups ");
+    console.log(groups, 'these are the groups ');
     const isDuplicated = groups.some(
       (group) => group.uid != groupId && group.nom_groupe === formData.nomGroupe
     );
     const group = await getGroupByID(groupId);
-    console.log(groupId, "group id");
-    console.log(formData, "form data");
-    console.log(group, "group");
+    console.log(groupId, 'group id');
+    console.log(formData, 'form data');
+    console.log(group, 'group');
     if (group && !isDuplicated) {
       await groupRef.update({
         nom_groupe: formData.nomGroupe,
@@ -351,7 +373,7 @@ const modifyGroup = async (groupId, formData) => {
 
 const getAllGroups = async () => {
   try {
-    const groupRef = db.collection("groups");
+    const groupRef = db.collection('groups');
     const snapshot = await groupRef.get();
     const groups = [];
     if (snapshot.empty) {
@@ -370,14 +392,14 @@ const getAllGroups = async () => {
 
 const modifieGroupPropertie = async (groupId, propertie, newValue) => {
   try {
-    const groupRef = db.collection("groups").doc(groupId);
+    const groupRef = db.collection('groups').doc(groupId);
     const groups = await getAllGroups();
     const group = await groupRef.get();
     if (group.exists) {
-      const isNotEmpty = newValue.trim() != "";
+      const isNotEmpty = newValue.trim() != '';
 
       switch (propertie) {
-        case "nom_groupe": {
+        case 'nom_groupe': {
           const isDuplicated = groups.some(
             (group) => group.id != groupId && group.nom_groupe === newValue
           );
@@ -389,7 +411,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
           }
           break;
         }
-        case "description":
+        case 'description':
           if (isNotEmpty) {
             await groupRef.update({
               description: newValue,
@@ -397,7 +419,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
             return true;
           }
           break;
-        case "matiere":
+        case 'matiere':
           if (isNotEmpty) {
             await groupRef.update({
               matiere: newValue,
@@ -405,7 +427,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
             return true;
           }
           break;
-        case "niveau":
+        case 'niveau':
           if (isNotEmpty) {
             await groupRef.update({
               niveau: newValue,
@@ -413,7 +435,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
             return true;
           }
           break;
-        case "visibility":
+        case 'visibility':
           if (isNotEmpty) {
             await groupRef.update({
               visibility: newValue,
@@ -421,7 +443,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
             return true;
           }
           break;
-        case "nombre_membres":
+        case 'nombre_members':
           if (newValue != null) {
             await groupRef.update({
               maxMembers: newValue,
@@ -429,7 +451,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
             return true;
           }
           break;
-        case "apparaitre_recherche":
+        case 'apparaitre_recherche':
           if (isNotEmpty) {
             await groupRef.update({
               apparaitre_recherche: newValue,
@@ -450,7 +472,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
 
 const deleteGroup = async (groupId) => {
   try {
-    const groupRef = db.collection("groups").doc(groupId);
+    const groupRef = db.collection('groups').doc(groupId);
     const group = await getGroupByID(groupId);
     if (group) {
       await groupRef.delete();
