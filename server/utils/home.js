@@ -215,7 +215,7 @@ const getActiveSessions = (userId) => {
 };
 
 const fetchHomeData = (userId) => {
-  const session = getCurrentSession(userId);
+  const session = null;
   if (session) {
     return {
       pathName: pathNames.home.active,
