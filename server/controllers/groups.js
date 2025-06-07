@@ -5,16 +5,18 @@ const {
 } = require('../utils/firebase-utils/group');
 
 const getUserGroupsHandler = async (req, res) => {
-  const { lastVisible, count, level, visibility, searchTerm, sort, role } = req.query;
+  const { lastVisible, count, level, visibility, searchTerm, sort, role } =
+    req.query;
+  console.log('Query Parameters:', req.query);
 
   const creteria = {
     level: level ? level.split(',') : [],
     visibility: visibility ? visibility.split(',') : [],
     searchTerm: searchTerm || '',
     sort: sort || 'desc',
-    role: role ? role.split(',') : []
+    role: role ? role.split(',') : [],
   };
-  
+
   const data = await getJoinedGroups(
     req.user.uid,
     creteria,
@@ -26,22 +28,21 @@ const getUserGroupsHandler = async (req, res) => {
 };
 
 const getAvailableGroupsHandler = async (req, res) => {
-  const { lastVisible, count, level, visibility, searchTerm, sort } =
-    req.query;
+  const { lastVisible, count, level, visibility, searchTerm, sort, joinableOnly } = req.query;
   const creteria = {
     level: level ? level.split(',') : [],
     visibility: visibility ? visibility.split(',') : [],
     searchTerm: searchTerm || '',
     sort: sort || 'desc',
+    available: joinableOnly,
   };
-  
-const data = await getAvailableGroups(
+
+  const data = await getAvailableGroups(
     req.user.uid,
     creteria,
     parseInt(count, 10),
     lastVisible
   );
-  
 
   return res.json(data);
 };

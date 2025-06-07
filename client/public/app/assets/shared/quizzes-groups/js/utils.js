@@ -103,7 +103,8 @@ export class Loader {
     this.loading = true;
 
     const endPoint = `${this.route}?lastVisible=${this.lastVisible}&count=${this.count}&${this.creteria}`;
-
+    console.log('Loading more items from:', endPoint);
+    
     try {
       const { cards, lastVisible } = await fetchData(endPoint);
       console.log({ cards, lastVisible });
@@ -143,7 +144,7 @@ const clearLoadersBoxes = () => {
 };
 
 export const initFiltersInputListener = (loader) => {
-  const resetLoader = getDebounceFunc(() => loader.reset(), 200);
+  const resetLoader = getDebounceFunc(() => loader.reset(), 300);
   const handleInputChange = (e) => {
     const isInput = e.target.tagName === 'INPUT';
     if (isInput) resetLoader();

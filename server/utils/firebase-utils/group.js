@@ -1,5 +1,5 @@
-const { FieldValue } = require("firebase-admin/firestore");
-const { db } = require("../../firebase/firebaseAdmin");
+const { FieldValue } = require('firebase-admin/firestore');
+const { db } = require('../../firebase/firebaseAdmin');
 
 const createGroup = async (groupdData, userData) => {
   try {
@@ -30,7 +30,10 @@ const createGroup = async (groupdData, userData) => {
       membersUids: [userData.uid],
       creationDate: new Date().toISOString(),
       creator: userData.uid,
-      showInSearch: groupdData['show-in-search'] || true,
+      showInSearch:
+        groupdData.visibility === 'Private' && !groupdData['show-in-search']
+          ? false
+          : true,
       currentSession: '',
       quizzesList: [],
     };
@@ -79,19 +82,21 @@ const getAvailableGroups = async (
 ) => {
   try {
     let availableGroups = [...oldGroups]; // Start with accumulated groups
-    
+
     // If we already have enough groups, return them
     if (availableGroups.length >= limit) {
-      const finalGroups = getFormatedGroups(availableGroups.slice(0, limit), user_id);
+      const finalGroups = getFormatedGroups(
+        availableGroups.slice(0, limit),
+        user_id
+      );
       return { cards: finalGroups, lastVisible };
     }
 
-    let query = db.collection("groups");
-    
+    let query = db.collection('groups');
 
     // Handle pagination
-    if (typeof lastVisible === "string" && lastVisible.trim() !== "") {
-      const doc = db.collection("groups").doc(lastVisible);
+    if (typeof lastVisible === 'string' && lastVisible.trim() !== '') {
+      const doc = db.collection('groups').doc(lastVisible);
       const lastElement = await doc.get();
       query = query.startAfter(lastElement);
     } else if (lastVisible) {
@@ -104,7 +109,7 @@ const getAvailableGroups = async (
     query = query.limit(batchSize);
 
     const snapshot = await query.get();
-    console.log(snapshot.size, "size");
+    console.log(snapshot.size, 'size');
 
     // If no documents at all (first call), return empty
     if (snapshot.empty && availableGroups.length === 0) {
@@ -118,13 +123,18 @@ const getAvailableGroups = async (
     }
 
     // Convert documents to objects
-let groups = snapshot.docs
+    let groups = snapshot.docs
       .map((doc) => ({ id: doc.id, ...doc.data() }))
       .filter(
-        (group) => group.creator != user_id && !group.membersUids.includes(user_id) && group.showInSearch === true
+        (group) =>
+          group.creator != user_id &&
+          !group.membersUids.includes(user_id) &&
+          group.showInSearch === true
       );
     // Apply filter criteria if provided
-    const filteredGroups = criteria ? await filterGroups(user_id, criteria, groups) : groups;
+    const filteredGroups = criteria
+      ? await filterGroups(user_id, criteria, groups, true)
+      : groups;
 
     // Add newly filtered groups to accumulated groups
     availableGroups = availableGroups.concat(filteredGroups);
@@ -140,10 +150,13 @@ let groups = snapshot.docs
       // Trim to requested limit if we have more than needed
       const groupsToReturn = availableGroups.slice(0, limit);
       const finalGroups = getFormatedGroups(groupsToReturn, user_id);
-      
+
       // Set lastVisible to null if this is the last batch OR if we have exactly what we need
-      const finalLastVisible = isLastBatch || availableGroups.length <= limit ? null : newLastVisible.id;
-      
+      const finalLastVisible =
+        isLastBatch || availableGroups.length <= limit
+          ? null
+          : newLastVisible.id;
+
       return { cards: finalGroups, lastVisible: finalLastVisible };
     }
 
@@ -156,12 +169,10 @@ let groups = snapshot.docs
       joinedGroups
     );
   } catch (error) {
-    console.error(error.message, "error in getJoinedGroups");
+    console.error(error.message, 'error in getJoinedGroups');
     return { cards: getFormatedGroups(oldGroups, user_id), lastVisible }; // Return what we have so far
   }
 };
-
-
 
 const getJoinedGroups = async (
   user_id,
@@ -172,19 +183,22 @@ const getJoinedGroups = async (
 ) => {
   try {
     let joinedGroups = [...oldGroups]; // Start with accumulated groups
-    
+
     // If we already have enough groups, return them
     if (joinedGroups.length >= limit) {
-      const finalGroups = getFormatedGroups(joinedGroups.slice(0, limit), user_id);
+      const finalGroups = getFormatedGroups(
+        joinedGroups.slice(0, limit),
+        user_id
+      );
       return { cards: finalGroups, lastVisible };
     }
 
-    const groupRef = db.collection("groups");
-    let query = groupRef.where("membersUids", "array-contains", user_id);
+    const groupRef = db.collection('groups');
+    let query = groupRef.where('membersUids', 'array-contains', user_id);
 
     // Handle pagination
-    if (typeof lastVisible === "string" && lastVisible.trim() !== "") {
-      const doc = db.collection("groups").doc(lastVisible);
+    if (typeof lastVisible === 'string' && lastVisible.trim() !== '') {
+      const doc = db.collection('groups').doc(lastVisible);
       const lastElement = await doc.get();
       query = query.startAfter(lastElement);
     } else if (lastVisible) {
@@ -197,7 +211,7 @@ const getJoinedGroups = async (
     query = query.limit(batchSize);
 
     const snapshot = await query.get();
-    console.log(snapshot.size, "size");
+    console.log(snapshot.size, 'size');
 
     // If no documents at all (first call), return empty
     if (snapshot.empty && joinedGroups.length === 0) {
@@ -214,7 +228,9 @@ const getJoinedGroups = async (
     let groups = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
     // Apply filter criteria if provided
-    const filteredGroups = criteria ? await filterGroups(user_id, criteria, groups) : groups;
+    const filteredGroups = criteria
+      ? await filterGroups(user_id, criteria, groups)
+      : groups;
 
     // Add newly filtered groups to accumulated groups
     joinedGroups = joinedGroups.concat(filteredGroups);
@@ -230,10 +246,11 @@ const getJoinedGroups = async (
       // Trim to requested limit if we have more than needed
       const groupsToReturn = joinedGroups.slice(0, limit);
       const finalGroups = getFormatedGroups(groupsToReturn, user_id);
-      
+
       // Set lastVisible to null if this is the last batch OR if we have exactly what we need
-      const finalLastVisible = isLastBatch || joinedGroups.length <= limit ? null : newLastVisible.id;
-      
+      const finalLastVisible =
+        isLastBatch || joinedGroups.length <= limit ? null : newLastVisible.id;
+
       return { cards: finalGroups, lastVisible: finalLastVisible };
     }
 
@@ -246,36 +263,42 @@ const getJoinedGroups = async (
       joinedGroups
     );
   } catch (error) {
-    console.error(error.message, "error in getJoinedGroups");
+    console.error(error.message, 'error in getJoinedGroups');
     return { cards: getFormatedGroups(oldGroups, user_id), lastVisible }; // Return what we have so far
   }
 };
 
-const filterGroups = async (user_id, criteria, groups) => {
+const filterGroups = async (user_id, criteria, groups, availableGroups) => {
   try {
-    console.log("filter", criteria);
-    
+    console.log('filter', criteria);
+
     const filteredGroups = groups.filter((g) => {
       const matchLevel =
-        criteria.level?.length === 0 ||
-        criteria.level?.includes(g.level);
+        criteria.level?.length === 0 || criteria.level?.includes(g.level);
 
       const matchVisibility =
         criteria.visibility?.length === 0 ||
         criteria.visibility?.includes(g.visibility);
 
-      const matchShowInSearch = g.showInSearch !== false; // Default to true if undefined
+      let matchShowInSearch = true;
+
+      if (availableGroups) matchShowInSearch = g.showInSearch; // Default to true if undefined
 
       let matchJoinable = true;
       if (criteria.joinableOnly) {
         matchJoinable = (g.maxMembers || Infinity) > (g.members?.length || 0);
       }
 
-      const matchRole =
-        criteria.role?.length === 0 ||
-        (criteria.role?.includes('admin') && user_id === g.creator) ||
-        (criteria.role?.includes('member') &&
-          g.membersUids.includes(user_id) && user_id != g.creator )
+      let matchRole = true;
+
+      if (!availableGroups) {
+        matchRole =
+          criteria.role?.length === 0 ||
+          (criteria.role?.includes('admin') && user_id === g.creator) ||
+          (criteria.role?.includes('member') &&
+            g.membersUids.includes(user_id) &&
+            user_id != g.creator);
+      }
 
       let matchSearch = true;
       const searchTerm = criteria.searchTerm?.trim().toLowerCase() || '';
@@ -294,26 +317,41 @@ const filterGroups = async (user_id, criteria, groups) => {
         matchSearch &&
         matchRole;
 
+      console.log(
+        'matchLevel:',
+        matchLevel,
+        'matchVisibility:',
+        matchVisibility,
+        'matchShowInSearch:',
+        matchShowInSearch,
+        'matchJoinable:',
+        matchJoinable,
+        'matchSearch:',
+        matchSearch,
+        'matchRole:',
+        matchRole
+      );
+
       return result;
     });
 
     // Sort by creationDate based on criteria
     let sortedGroups = filteredGroups;
-    
-    if (criteria.sort === "desc" && filteredGroups.length >=2) {
+
+    if (criteria.sort === 'desc' && filteredGroups.length >= 2) {
       sortedGroups = filteredGroups.sort((a, b) => {
         const dateA = new Date(a.creationDate);
         const dateB = new Date(b.creationDate);
         return dateB - dateA; // Descending order (newest first)
       });
-    } else if (criteria.sort === "asc" && filteredGroups.length >=2) {
+    } else if (criteria.sort === 'asc' && filteredGroups.length >= 2) {
       sortedGroups = filteredGroups.sort((a, b) => {
         const dateA = new Date(a.creationDate);
         const dateB = new Date(b.creationDate);
         return dateA - dateB; // Ascending order (oldest first)
       });
     }
-    console.log(sortedGroups.length)
+    console.log(sortedGroups.length);
     return sortedGroups;
   } catch (error) {
     console.log(error.message, 'error in filterGroups');

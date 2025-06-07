@@ -124,7 +124,7 @@ export const getcreateGroupCardFunc = (userGroup) => {
           !userGroup
             ? `<button class="btn-join">${
                 group.visibility === 'Public'
-                  ? '<i class="bi bi-send"></i>Join This Group'
+                  ? '<i class="bi bi-send"></i>Join Now '
                   : '<i class="bi bi-lock"></i>Request to Join'
               }</button>`
             : ''
