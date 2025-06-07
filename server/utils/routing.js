@@ -94,7 +94,21 @@ const fetchData = async (pathName, user) => {
       return templateContext;
 
     case pathNames.groups.available:
-      templateContext = getAvailableGr('', INITIALE_LOADERS_COUNT);
+      templateContext = {
+        ...(await getAvailableGroups(
+          user.uid,
+          {
+            level: [],
+            visibility: [],
+            available: false,
+            role: [],
+            searchTerm: '',
+            searchBy: '',
+          },
+          INITIALE_LOADERS_COUNT
+        )),
+        userId: user.uid,
+      };
 
       return templateContext;
 

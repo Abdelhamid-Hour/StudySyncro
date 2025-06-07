@@ -35,10 +35,13 @@ const getAvailableGroupsHandler = async (req, res) => {
     sort: sort || 'desc',
   };
   
-  const data = getAvailableGr(
-    lastVisible ? parseInt(lastVisible, 10) : 0,
-    parseInt(count, 10)
+const data = await getAvailableGroups(
+    req.user.uid,
+    creteria,
+    parseInt(count, 10),
+    lastVisible
   );
+  
 
   return res.json(data);
 };

@@ -35,7 +35,6 @@ const ajouterMembre = async (groupId, userId) => {
     // Add user to group members
     await groupRef.update({
       members: FieldValue.arrayUnion({
-      members: FieldValue.arrayUnion({
         uid: userId,
         fullName: userData.fullName || userData.displayName || "Utilisateur",
         email: userData.email || "",
@@ -50,12 +49,13 @@ const ajouterMembre = async (groupId, userId) => {
       message: 'Joined the group successfully',
       status: 'joined',
       success: true,
-    };
+    }
   } catch (error) {
     console.error('Error in ajouterMembre function:', error);
     return { message: 'Internal sever error', success: false };
   }
-};
+}
+
 
 const sendRequest = async (groupId, userData) => {
   try {
