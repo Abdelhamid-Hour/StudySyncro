@@ -300,6 +300,7 @@ i {
 }
 
 .badge {
+  min-width: max-content;
   font-size: var(--small-font-size);
   border-radius: 1rem;
   width: fit-content;

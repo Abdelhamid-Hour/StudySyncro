@@ -276,6 +276,10 @@ export const initGroupForm = () => {
       } catch (error) {
         console.error('Error: ', error);
         showMessageBlock(error.message, 'error');
+      } finally{
+        form.isCreating = false;
+        createBtn.disabled = false;
+        createBtn.innerHTML = 'Create';
       }
       // ? its not necessary to reset the form here, as the overlay will be closed
     }

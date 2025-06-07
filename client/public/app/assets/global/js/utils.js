@@ -15,7 +15,9 @@ let isRouting = false;
 export function getDebounceFunc(callback, TimeInterval) {
   let timer;
   return function (...args) {
+    
     clearTimeout(timer);
+    console.log('Fire');
     timer = setTimeout(() => {
       callback.apply(this, args);
     }, TimeInterval);

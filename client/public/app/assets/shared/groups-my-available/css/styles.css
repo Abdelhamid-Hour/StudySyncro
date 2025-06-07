@@ -49,6 +49,10 @@
   transition: box-shadow var(--primary-transition-style),
     border-color var(--primary-transition-style);
 
+  & * {
+    word-break: break-all;
+  }
+
   &:hover {
     box-shadow: var(--primary-hover-shadow);
     border-color: var(--primary-color);
@@ -58,6 +62,7 @@
   footer,
   .group-meta {
     display: flex;
+    gap: calc(var(--primary-gap) / 2);
     justify-content: space-between;
     align-items: center;
   }

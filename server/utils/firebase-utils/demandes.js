@@ -3,8 +3,10 @@ const { db } = require('../../firebase/firebaseAdmin');
 
 const ajouterMembre = async (groupId, userId) => {
   try {
-    const groupRef = db.collection('groups').doc(groupId);
-    const userRef = db.collection('users').doc(userId);
+    console.log(groupId, "group id ");
+    const groupRef = db.collection("groups").doc(groupId);
+    console.log("userIs", userId);
+    const userRef = db.collection("users").doc(userId);
     const userSnap = await userRef.get();
     const groupSnap = await groupRef.get();
     console.log(userSnap, 'user data from the database');
@@ -34,11 +36,12 @@ const ajouterMembre = async (groupId, userId) => {
     await groupRef.update({
       members: FieldValue.arrayUnion({
         uid: userId,
-        name: userData.name || userData.displayName || 'Utilisateur',
-        email: userData.email || '',
+        fullName: userData.fullName || userData.displayName || "Utilisateur",
+        email: userData.email || "",
         photoURL:
           userData.picture || userData.photoURL || 'here//goes//a//photo//url',
       }),
+      membersUids: FieldValue.arrayUnion(userId),
     });
 
     console.log('Member added successfully');
@@ -46,12 +49,13 @@ const ajouterMembre = async (groupId, userId) => {
       message: 'Joined the group successfully',
       status: 'joined',
       success: true,
-    };
+    }
   } catch (error) {
     console.error('Error in ajouterMembre function:', error);
     return { message: 'Internal sever error', success: false };
   }
-};
+}
+
 
 const sendRequest = async (groupId, userData) => {
   try {
@@ -77,11 +81,13 @@ const sendRequest = async (groupId, userData) => {
         };
       } else if (data.showInSearch) {
         await groupRef.update({
-          demandes: FieldValue.arrayUnion({
+          requests: FieldValue.arrayUnion({
             uid: userData.uid,
             name: userData.fullName,
+            name: userData.fullName,
             email: userData.email,
-            photoURL: userData.picture || 'here//goes//a//photo//url',
+            photoURL: userData.picture || "here//goes//a//photo//url",
+            sentAt: new Date().toISOString(),
           }),
         });
         return {
@@ -103,7 +109,7 @@ const sendRequest = async (groupId, userData) => {
   }
 };
 
-const joinGroup = async (groupId, user) => {
+const joinGroup = async (groupId, userData) => {
   try {
     const ref = db.collection('groups').doc(groupId);
     const snaphsot = await ref.get();
@@ -111,10 +117,10 @@ const joinGroup = async (groupId, user) => {
     if (snaphsot.exists) {
       const group = snaphsot.data();
 
-      if (group.visibility === 'Public') {
-        return (result = await ajouterMembre(groupId, user.uid));
-      } else if (group.showInSearch && group.visibility === 'Private') {
-        return (result = await sendRequest(groupId, user));
+      if (group.visibility === "Public") {
+        return (result = await ajouterMembre(groupId, userData.uid));
+      } else if (group.showInSearch && group.visibility === "Private") {
+        return (result = await sendRequest(groupId, userData));
       }
     } else {
       return {
@@ -161,12 +167,12 @@ const rejectRequest = async (groupId, requestId) => {
     const groupRef = db.collection('groups').doc(groupId);
     const group = await getGroupByID(groupId);
     if (group) {
-      const request = group.demandes.find(
+      const request = group.requests.find(
         (demande) => demande.uid === requestId
       );
       if (request) {
         await groupRef.update({
-          demandes: FieldValue.arrayRemove(request),
+          requests: FieldValue.arrayRemove(request),
         });
         return true;
       } else {
@@ -186,6 +192,7 @@ const getMembres = async (groupId) => {
     const group = await getGroupByID(groupId);
     if (group) {
       return group.members;
+      return group.members;
     } else {
       return false;
     }
@@ -198,10 +205,11 @@ const getMembres = async (groupId) => {
 const kickMember = async (groupId, userId) => {
   try {
     const group = await getGroupByID(groupId);
-    const groupRef = db.collection('groups').doc(groupId);
+    const groupRef = db.collection("groups").doc(groupId);
     const user = group.members.find((membre) => membre.uid === userId);
     if (group && user) {
       await groupRef.update({
+        members: FieldValue.arrayRemove(user),
         members: FieldValue.arrayRemove(user),
       });
       return true;
