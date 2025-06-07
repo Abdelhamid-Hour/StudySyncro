@@ -654,6 +654,7 @@
 
       &:hover {
         background-color: var(--btn-background-color);
+        box-shadow: var(--primary-shadow);
       }
     }
   }

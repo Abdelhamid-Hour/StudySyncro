@@ -780,13 +780,7 @@ export const iniChatMessageInput = () => {
 
   messagesContainer.addEventListener('click', handleMessagesContainerClick);
 
-  emojiButton.addEventListener(
-    'click',
-    () => initializeEmojiPicker(emojiList),
-    {
-      once: true,
-    }
-  );
+  initializeEmojiPicker(emojiList)
 
   emojiList.addEventListener('click', (e) => {
     handleEmojiListClick(e, inputMessage, emojiList);

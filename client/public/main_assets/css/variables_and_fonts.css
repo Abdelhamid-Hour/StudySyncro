@@ -2,7 +2,7 @@
   --primary-color: #1e77fd;
   /* DARK MODE colors: */
 
-  --background-color: #1a1a1a;
+  /* --background-color: #1a1a1a;
    --container-background-color: #242424; 
    --container-border-color: #818181;
    --primary-text-color: #dbdbdb; 
@@ -10,11 +10,11 @@
    --secondary-text-color: #c8c8c8;
      --active-tab-bg: var(--btn-background-color);
   --tab-hover-bg: var(--btn-background-color);
-   --primary-shadow-color: transparent;
+   --primary-shadow-color: transparent; */
 
   /* LIGHT MODE colors: */
 
-  /* --background-color: #ebebeb;
+  --background-color: #ebebeb;
   --container-background-color: #fafafa;
   --container-border-color: #cbced5;
   --primary-text-color: black;
@@ -22,7 +22,7 @@
   --secondary-text-color: #575757;
   --primary-shadow-color: rgba(195, 195, 195, 0.58);
   --active-tab-bg: var(--btn-background-color);
-  --tab-hover-bg: var(--background-color); */
+  --tab-hover-bg: var(--background-color);
   
   /* h1 color */
   --heading-color: var(--primary-color);

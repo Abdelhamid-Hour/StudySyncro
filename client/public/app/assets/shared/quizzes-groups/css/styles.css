@@ -24,7 +24,7 @@
   }
 
   .sort-button {
-    transition: scale var(--short-transition-style);
+    transition: scale var(--primary-transition-style), background-color var(--primary-transition-style), box-shadow var(--primary-transition-style);
     &:has(:checked) {
       scale: 1 -1;
     }
@@ -38,6 +38,7 @@
 
     &:hover {
       background-color: var(--btn-background-color);
+      box-shadow: var(--primary-shadow);
     }
   }
 

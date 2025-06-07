@@ -379,7 +379,8 @@ i {
   translate: 0 calc(100% + 0.5rem);
   scale: 0.95;
   pointer-events: none;
-  transition: var(--overlay-transition-style);
+  transition: opacity var(--primary-transition-style),
+    scale var(--primary-transition-style), visibility 300ms;
   z-index: -1;
 }
 .open-overlay {
@@ -388,6 +389,8 @@ i {
   scale: 1;
   opacity: 1;
   visibility: visible;
+    transition: opacity var(--primary-transition-style),
+    scale var(--primary-transition-style), visibility 0s;
 }
 
 .main-search,

@@ -191,7 +191,6 @@
       }
     }
 
-    
     .message-received-text {
       background-color: var(--btn-background-color);
       margin-left: calc(var(--primary-gap) / 2);
@@ -300,7 +299,7 @@
     .file-thumbnail {
       color: white !important;
     }
-    .file-preview .file-name:hover{
+    .file-preview .file-name:hover {
       color: gray !important;
     }
     .audio-player .progress-bar {
@@ -513,6 +512,7 @@
         box-shadow: var(--primary-shadow);
         overflow: hidden;
         z-index: 999;
+        visibility: visible !important;
 
         .categories {
           display: flex;
@@ -619,28 +619,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 0.25rem;
-            height: 10.5rem;
             align-content: flex-start;
-            background-color: var(--loading-color-dark);
-            background-image: linear-gradient(
-                to bottom,
-                transparent 1.5rem,
-                var(--btn-background-color) 1.5rem
-              ),
-              linear-gradient(
-                to right,
-                transparent 1.5rem,
-                var(--btn-background-color) 1.5rem
-              ),
-              linear-gradient(
-                135deg,
-                transparent calc(var(--loading-light-start) - 30%),
-                var(--loading-color-light) var(--loading-light-start)
-                  calc(var(--loading-light-start) + 40%),
-                transparent calc(var(--loading-light-start) + 60%)
-              );
-            background-size: 1.75rem 1.75rem, 1.75rem 1.75rem;
-            animation: loading-animation 1s ease-in-out infinite both;
           }
         }
       }

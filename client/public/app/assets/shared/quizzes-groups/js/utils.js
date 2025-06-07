@@ -68,7 +68,7 @@ export class Loader {
             !this.loading &&
             this.lastVisible !== null
           ) {
-            this.loadMore();
+            // this.loadMore();
           }
         });
       },

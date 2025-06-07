@@ -88,6 +88,7 @@
       }
       &:hover {
         background-color: var(--btn-background-color);
+        box-shadow: var(--primary-shadow);
       }
     }
 
@@ -107,6 +108,7 @@
         transition: background-color var(--btn-hover-tran-duration);
         &:hover {
           background-color: var(--btn-background-color);
+          box-shadow: var(--primary-shadow);
         }
       }
 
