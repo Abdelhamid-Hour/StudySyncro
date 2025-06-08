@@ -1,5 +1,7 @@
 const { FieldValue } = require('firebase-admin/firestore');
 const { db } = require('../../firebase/firebaseAdmin');
+const {getGroupByID} = require("./group")
+
 
 const ajouterMembre = async (groupId, userId) => {
   try {
@@ -84,7 +86,6 @@ const sendRequest = async (groupId, userData) => {
           requests: FieldValue.arrayUnion({
             uid: userData.uid,
             name: userData.fullName,
-            name: userData.fullName,
             email: userData.email,
             photoURL: userData.picture || "here//goes//a//photo//url",
             sentAt: new Date().toISOString(),
@@ -137,20 +138,20 @@ const acceptRequest = async (groupId, requestId) => {
   try {
     const group = await getGroupByID(groupId);
     const groupRef = db.collection('groups').doc(groupId);
-    const request = group.demandes.find((demande) => demande.uid === requestId);
-    console.log('request', group.demandes);
+    const request = group.requests.find((demande) => demande.uid === requestId);
+    console.log('request', group.requests);
     if (group) {
-      if (group.demandes.some((demande) => demande.uid === requestId)) {
+      if (group.requests.some((demande) => demande.uid === requestId)) {
         await groupRef.update({
           members: FieldValue.arrayUnion({
             uid: request.uid,
-            name: request.name,
+            fullName: request.name,
             email: request.email,
             photoURL: request.photoURL,
           }),
         });
         groupRef.update({
-          demandes: FieldValue.arrayRemove(request),
+          requests: FieldValue.arrayRemove(request),
         });
         return true;
       } else {
@@ -187,20 +188,56 @@ const rejectRequest = async (groupId, requestId) => {
   }
 };
 
-const getMembres = async (groupId) => {
+const getFormattedMembers = (members) =>
+   members.map(({ photoURL, fullName }) => ({
+    photoURL,
+    fullName,
+  }))
+
+
+const getFormatedRequests = (requests)=>   
+  requests.map(({ id, name , photoURL , sentAt})=>({
+    usuerId : id , 
+    fullName : name , 
+    photoURL , 
+    demandeDate :sentAt
+    
+  }))
+
+
+const getRequests =async (groupId , userId)=>{
+  try {
+    const group = await getGroupByID(groupId) 
+    if(!group) return false ;
+    const requests = getFormatedRequests(group.requests) 
+    return {
+      count : requests.length , 
+      isAdmin : group.creator === userId ,
+      demandes : requests
+    }
+  } catch (error) {
+    
+  }
+}
+
+const getMembers = async (groupId, userId) => {
   try {
     const group = await getGroupByID(groupId);
-    if (group) {
-      return group.members;
-      return group.members;
-    } else {
-      return false;
-    }
+
+    if (!group) return false;
+
+    const members = getFormattedMembers(group.members);
+    return {
+      isAdmin: group.creator === userId,
+      count: members.length,
+      members,
+    };
   } catch (error) {
     console.log(error);
     return false;
   }
 };
+
 
 const kickMember = async (groupId, userId) => {
   try {
@@ -209,7 +246,6 @@ const kickMember = async (groupId, userId) => {
     const user = group.members.find((membre) => membre.uid === userId);
     if (group && user) {
       await groupRef.update({
-        members: FieldValue.arrayRemove(user),
         members: FieldValue.arrayRemove(user),
       });
       return true;
@@ -222,9 +258,11 @@ const kickMember = async (groupId, userId) => {
 };
 
 module.exports = {
+  getFormattedMembers ,
+  getRequests,
   kickMember,
   acceptRequest,
   rejectRequest,
-  getMembres,
   joinGroup,
+  getMembers
 };

@@ -1,6 +1,5 @@
 const { FieldValue } = require('firebase-admin/firestore');
-const { db } = require('../../firebase/firebaseAdmin');
-
+const { db, admin } = require('../../firebase/firebaseAdmin');
 const createGroup = async (groupdData, userData) => {
   try {
     console.log(groupdData, 'group data received');
@@ -545,7 +544,44 @@ const deleteGroup = async (groupId) => {
   }
 };
 
+const getFormattedMembers = (members) =>
+   members.map(({ photoURL, fullName }) => ({
+    photoURL,
+    fullName,
+  }))
+
+const getGroupInfo = async(id  , userId)=>{
+  try {
+     const group = await getGroupByID(id)
+     if(!group) return false 
+     const adminInfo = group.members.find((m)=>m.uid === group.creator)
+     console.log(adminInfo , "info");
+     console.log(group , "this is the group")
+     
+     return {
+        groupName: group.name,
+    groupDescription:group.description,
+    subject: group.subject,
+    level: group.level,
+    visibility: group.visibility,
+    showInSearch: group.showInSearch,
+    maxMembers: Number(group.maxMembers),
+    creationDate: group.creationDate.split("T")[0],
+    Admin: {
+      fullName: adminInfo.fullName,
+      photoURL: adminInfo.photoURL,
+    },
+    members: getFormattedMembers(group.members) , 
+    isAdmin: group.creator === userId
+     }
+  } catch (error) {
+    console.log(error)
+    return false 
+  }
+}
+
 module.exports = {
+  getGroupInfo ,
   createGroup,
   getAvailableGroups,
   getJoinedGroups,
