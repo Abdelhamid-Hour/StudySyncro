@@ -5,11 +5,7 @@ const { getTaches } = require("./tache")
 const {getAllGroups} = require("./group")
  // examen gestion *
 
-
-
-
-
-const getExams = async (groupId  , criteria)=>{
+const getExams = async (groupId)=>{
     try {
         const examens = []
         const examenRef = db.collection("Examen")
@@ -25,7 +21,7 @@ const getExams = async (groupId  , criteria)=>{
         snapshot.forEach(doc => {
             examens.push({id : doc.id , ...doc.data()})
         })
-        return filterExamens
+        return examens ;
         
     } catch (error) {
                console.log(error.message) 
@@ -43,10 +39,10 @@ const getExams = async (groupId  , criteria)=>{
             .get();     
         if (snaphsot.empty){
             const newExamen = {
-                titre : examenData.title,
-                creerPar :examenData.creerPar ,
+                title : examenData.title,
+                creator :examenData.creerPar ,
                 sessionId :examenData.sessionId ,
-                dateCreation :examenData.dateCreation ,
+                createdAt :examenData.dateCreation ,
                 groupId : examenData.groupId,
                 userIds : []
 
@@ -108,21 +104,35 @@ const getExams = async (groupId  , criteria)=>{
 
 const filtrerExamen = async ( criteria, examens) => {
   try {
-    return examens.filter((ex) => {
+    const examens =  examens.filter((ex) => {
         let matchSearch = true
       const searchTerm = criteria.searchTerm.trim().toLowerCase();
       if (criteria.searchBy === "subject") {
         matchSearch =
-          searchTerm.trim() === "" || ex.subject.toLowerCase().includes(searchTerm.toLowerCase().trim());
-      } else if (criteria.searchBy === "title") {
-        matchSearch =
-          searchTerm.trim() === "" || ex.title.toLowerCase().includes(searchTerm.toLowerCase().trim());
+          searchTerm.trim() === "" || ex.subject.toLowerCase().includes(searchTerm) || ex.title.toLowerCase().includes(searchTerm);
       }
 
       return ( 
         matchSearch 
       );
     });
+    const sortedExams = examens
+
+    if(criteria.sort === "desc" && examens.length >=2){
+        sortedExams = examens.sort((a , b)=>{
+            const dateA = new Date(a.createdAt) 
+            const dateB = new Date(b.createdAt)
+            return  (dateB - dateA)
+        })
+    }
+    else if(criteria.sort === "asc" && examens.length >= 2){
+        sortedExams = examens.sort((a , b)=>{
+             const dateA = new Date(a.createdAt) 
+            const dateB = new Date(b.createdAt)
+            return  (dateA - dateB)
+        })
+    }
+    return sortedExams
   } catch (error) {
     console.log(error.message, "error here ");
     return false;
@@ -237,11 +247,21 @@ const modifieExamen =async(propertie , value , examenId)=>{
     }
     
  }
+const modifierQuestions =async (questions)=>{
+    try {
+        const updatedPromises = questions.map(async (question)=>{
+            const {id , ...fields} = question
+            const ref = db.collection("questions").doc(id)
+            return ref.update(fields)
+        })
+        await Promise.all(updatedPromises)
+        return true 
+    } catch (error) {
+        console.log(error)
+        return false 
+    }
 
-
-
-
-
+}
 //fucntion for updated question and questions 
  module.exports =  { createExamen , createQuestion  , removeQuestion , supprimerExamen , getExams}
  
