@@ -241,6 +241,26 @@ const setUpGroupOverlay = (backdropElement) => {
   initGroupForm();
 };
 
+const handleCreateGroupSubmit = async (groupData, form, createBtn) => {
+  if (form.isCreating) return;
+  try {
+    form.isCreating = true;
+    createBtn.disabled = true;
+    createBtn.innerHTML = getLoader();
+    await sendData('/api/create-group', { groupData });
+    showMessageBlock('Group created successfully', 'success');
+    updateMain('/app/groups/my');
+  } catch (error) {
+    console.error('Error: ', error);
+    showMessageBlock(error.message, 'error');
+  } finally {
+    form.isCreating = false;
+    createBtn.disabled = false;
+    createBtn.innerHTML = 'Create';
+  }
+  // ? its not necessary to reset the form here, as the overlay will be closed
+}
+
 export const initGroupForm = () => {
   const form = document.getElementById('create-group-form');
   const groupName = form.querySelector('.group-name-field input');
@@ -250,9 +270,9 @@ export const initGroupForm = () => {
   const maxMembers = form.querySelector('.group-max-members-field input');
   const visibility = form.querySelector('.group-visibility-field input');
   const createBtn = form.querySelector('.create-btn');
-
+  
   description.addEventListener('input', countCharsTextarea);
-
+  
   handleFormSubmit(
     form,
     () =>
@@ -264,24 +284,7 @@ export const initGroupForm = () => {
         maxMembers,
         visibility,
       }),
-    async (groupData) => {
-      if (form.isCreating) return;
-      try {
-        form.isCreating = true;
-        createBtn.disabled = true;
-        createBtn.innerHTML = getLoader();
-        await sendData('/api/create-group', { groupData });
-        showMessageBlock('Group created successfully', 'success');
-        updateMain('/app/groups/my');
-      } catch (error) {
-        console.error('Error: ', error);
-        showMessageBlock(error.message, 'error');
-      } finally{
-        form.isCreating = false;
-        createBtn.disabled = false;
-        createBtn.innerHTML = 'Create';
-      }
-      // ? its not necessary to reset the form here, as the overlay will be closed
-    }
+      (groupData) => handleCreateGroupSubmit(groupData, form, createBtn)
   );
+
 };

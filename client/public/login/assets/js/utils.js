@@ -27,12 +27,12 @@ let cssRulesLength = stylsheet.cssRules.length;
 
 /**
  * Generates the CSS rules for the swap animation.
- * @param {Number} targetSignUpFormHeight - The target height for the sign-up form.
+ * @param {Number} targetFormHeight - The target height for the sign-up form.
  * @returns {Object} The initial rule and the class keyframe rule of the animation.
  */
-const getSwapAnimationRule = (targetSignUpFormHeight) => {
+const getSwapAnimationRule = (targetFormHeight) => {
   let delay, reverse;
-  if (targetSignUpFormHeight === signInFormHeight) {
+  if (targetFormHeight === signInFormHeight) {
     delay = false;
     reverse = true;
   } else {
@@ -69,19 +69,17 @@ const getSwapAnimationRule = (targetSignUpFormHeight) => {
               : 'animation-delay: calc(var(--login-swap-animation-duration)/2);'
           }
         }
-        &.sign-up-swap-animation {
-          height: ${targetSignUpFormHeight}px;
+        &.sign-in-swap-animation {
+          height: ${targetFormHeight}px;
           }
         }`,
     initialRule: `
-    .sign-up-container{
+    .sign-in-container {
       height: ${
-        targetSignUpFormHeight === signInFormHeight
-          ? signUpFormHeight
-          : signInFormHeight
+        signInFormHeight
       }px;
       z-index: 1;      
-      transition: height calc(var(--login-swap-animation-duration)/2) 
+      transition: height calc(var(--login-swap-animation-duration)/2)
       ${delay ? 'calc(var(--login-swap-animation-duration)/2)' : ''} linear;
         }`,
   };
@@ -97,6 +95,7 @@ const initializeSignUpForm = () => {
     signUpAnimationRules.signUpClassAnimationRule,
     ++cssRulesLength
   );
+  
 };
 const inputsEmptying = () => {
   signInemailField.value = '';
@@ -110,11 +109,11 @@ const inputsEmptying = () => {
 
 /**
  * Executes the swap animation
- * @param {Number} targetSignUpFormHeight - The target height for the sign-up form.
+ * @param {Number} targetFormHeight - The target height for the sign-up form.
  */
-const swapAnimation = (targetSignUpFormHeight) => {
+const swapAnimation = (targetFormHeight) => {
   // add the z-index based on the signUp form height
-  if (targetSignUpFormHeight === signInFormHeight) {
+  if (targetFormHeight === signInFormHeight) {
     hideErrors(
       signUpPasswordField,
       signUpConfirmPasswordField,
@@ -122,12 +121,15 @@ const swapAnimation = (targetSignUpFormHeight) => {
       lastNameField,
       signUpemailField
     );
-    signInFormContainer.classList.add('active');
+    signInFormContainer.classList.add('active-form')
+    signUpFormContainer.classList.remove('active-form')
     signInFormContainer.onanimationstart = () => {
       signUpFormContainer.style.zIndex = '1';
       signInFormContainer.onanimationstart = null;
     };
   } else {
+    signInFormContainer.classList.remove('active-form')
+    signUpFormContainer.classList.add('active-form')
     hideErrors(signInPasswordField, signInemailField);
     signUpFormContainer.onanimationstart = () => {
       signUpFormContainer.style.zIndex = '2';
@@ -136,7 +138,7 @@ const swapAnimation = (targetSignUpFormHeight) => {
   }
   // discharging inputs
   inputsEmptying();
-  const signUpAnimationRules = getSwapAnimationRule(targetSignUpFormHeight);
+  const signUpAnimationRules = getSwapAnimationRule(targetFormHeight);
   // delete the initial sign Up form height before removing the class animation
   // because it prevents the sign Up form to back to the initial animation height
   stylsheet.deleteRule(--cssRulesLength);

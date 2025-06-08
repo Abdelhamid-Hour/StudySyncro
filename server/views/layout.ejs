@@ -101,7 +101,7 @@
       <div class="top-side-bar-middele">
       <% if (resourcesRoute.includes("/home/")) { %>
       <div class="greeting-msg fade-in-template">
-        <h2>Hello <%- user.fullName.charAt(0).toUpperCase() + user.fullName.slice(1) %> 👋</h2>
+        <h2>Hello <%- user.fullName %> 👋</h2>
         <p>Have a good day !</p>
       </div>
       <% } else if (['/quizzes/', '/groups/my/', '/groups/available/'].includes(resourcesRoute)) { %>

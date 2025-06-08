@@ -1,37 +1,59 @@
-import { showMessageBlock } from '../../../../main_assets/js/utils.js';
+import { sendData, showMessageBlock } from "../../../../main_assets/js/utils.js";
 import {
   globalTooltip,
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
-} from '../../global/js/dom-variables.js';
+} from "../../global/js/dom-variables.js";
 import {
   openOverlayModal,
   resetTooltip,
   showErrorTooltip,
-  navigateTo
-} from '../../global/js/utils.js';
+  navigateTo,
+  getLoader,
+} from "../../global/js/utils.js";
 import {
   handleFormSubmit,
   setUpSubjectSelectMenu,
-} from '../../shared/forms/js/utils.js';
+} from "../../shared/forms/js/utils.js";
 
 export const handleQuizCreateClick = () => {
   openOverlayModal(
-    'create-quiz-overlay',
-    ['.close-quiz-overlay'],
+    "create-quiz-overlay",
+    [".close-quiz-overlay"],
     getQuizOverlay,
     setUpQuizOverlay
   );
 };
 const setUpQuizOverlay = (backdropElement) => {
-  setUpSubjectSelectMenu(backdropElement.querySelector('.subject-field'));
+  setUpSubjectSelectMenu(backdropElement.querySelector(".subject-field"));
   initQuizForm();
 };
 
+const handleCreateQuizSubmit = async (quizData, form, createBtn) => {
+  if (form.isCreating) return;
+  try {
+    form.isCreating = true;
+    createBtn.disabled = true;
+    createBtn.innerHTML = getLoader();
+    const { quizId } = await sendData("/api/create-quiz", { quizData });
+    showMessageBlock("Quiz created successfully.", "success");
+    navigateTo(`/quizzes/${quizId}/edit`);
+  } catch (error) {
+    console.error("Error: ", error);
+    showMessageBlock(error.message, "error");
+  } finally {
+    form.isCreating = false;
+    createBtn.disabled = false;
+    createBtn.innerHTML = "Create";
+  }
+  // ? its not necessary to reset the form here, as the overlay will be closed
+};
+
 export const initQuizForm = () => {
-  const form = document.querySelector('form');
-  const quizTitle = form.querySelector('.quiz-title-field input');
-  const subject = form.querySelector('.subject-field input');
+  const form = document.querySelector("form");
+  const quizTitle = form.querySelector(".quiz-title-field input");
+  const subject = form.querySelector(".subject-field input");
+  const createBtn = form.querySelector(".create-btn");
 
   handleFormSubmit(
     form,
@@ -40,20 +62,17 @@ export const initQuizForm = () => {
         quizTitle,
         subject,
       }),
-    () => {
-      showMessageBlock('Quiz created successfully.', 'success');
-      navigateTo('/quizzes/12/edit')
-    }
+    (quizData) => handleCreateQuizSubmit(quizData, form, createBtn)
   );
 };
 
 const chechQuizValues = (inputs) => {
   const { quizTitle, subject } = inputs;
-  const quizTitleValue = quizTitle?.value ?? '';
-  const subjectValue = subject?.value ?? '';
+  const quizTitleValue = quizTitle?.value ?? "";
+  const subjectValue = subject?.value ?? "";
 
   if (!quizTitleValue.trim()) {
-    showErrorTooltip('Quiz Title is required.', quizTitle);
+    showErrorTooltip("Quiz Title is required.", quizTitle);
     return false;
   } else if (
     quizTitleValue.length < NAME_TITLE_MIN_LENGTH ||
@@ -65,20 +84,20 @@ const chechQuizValues = (inputs) => {
     );
     return false;
   } else {
-    resetTooltip(globalTooltip, quizTitle.closest('.field-container'));
+    resetTooltip(globalTooltip, quizTitle.closest(".field-container"));
   }
 
   if (!subjectValue.trim()) {
-    showErrorTooltip('Subject is required.', subject);
+    showErrorTooltip("Subject is required.", subject);
     return false;
   } else {
-    resetTooltip(globalTooltip, subject.closest('.field-container'));
+    resetTooltip(globalTooltip, subject.closest(".field-container"));
   }
 
   return true;
 };
 
-const getQuizOverlay = () => `<div class="create-quiz-overlay">
+const getQuizOverlay = () => `<div class="overlay-model create-quiz-overlay">
         <header>
           <h3>Create New Quiz</h3>
           <button

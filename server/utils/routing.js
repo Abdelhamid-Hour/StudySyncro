@@ -71,8 +71,13 @@ const fetchData = async (pathName, user) => {
     greeting: 'Hello',
   };
   switch (pathName) {
+    
     case '/home':
-      return fetchHomeData();
+      const payload = fetchHomeData()
+      payload.payload.extraData = {
+        fullName: user.fullName,
+      }
+      return payload;
 
     case pathNames.groups.my:
       templateContext = {
@@ -91,7 +96,7 @@ const fetchData = async (pathName, user) => {
         userId: user.uid,
       };
 
-      return templateContext;
+      return {templateContext};
 
     case pathNames.groups.available:
       templateContext = {
@@ -110,7 +115,7 @@ const fetchData = async (pathName, user) => {
         userId: user.uid,
       };
 
-      return templateContext;
+      return {templateContext};
 
     case pathNames.quizzes:
       // ! fetch data for quizzes frag
@@ -129,7 +134,7 @@ const fetchData = async (pathName, user) => {
 
 const renderFragmentOrLayout = (
   template,
-  templateContext,
+  payload,
   pathName,
   req,
   res,
@@ -137,7 +142,7 @@ const renderFragmentOrLayout = (
 ) => {
   const isFetch = req.headers?.['x-requested-with'] === 'fetch'; // should I add it in front end
 
-  return res.render(template, templateContext, (err, htmlFragment) => {
+  return res.render(template, payload.templateContext, (err, htmlFragment) => {
     if (err) {
       console.error('Error rendering template:', err);
       return res
@@ -148,7 +153,7 @@ const renderFragmentOrLayout = (
     if (isFetch)
       return res
         .status(200)
-        .json({ pathName: pathName, htmlFragment: htmlFragment });
+        .json({ pathName: pathName, htmlFragment: htmlFragment, extraData: payload.extraData });
 
     return res.render(
       'layout',

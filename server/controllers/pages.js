@@ -2,19 +2,21 @@ const { getGroupChatContext } = require("../utils/groups");
 const { fetchData, renderFragmentOrLayout } = require("../utils/routing");
 
 const handleRoutes = async (req, res) => {
-  const templateContext = await fetchData(req.path, req.user);
-  const pathName = req.path === "/home" ? templateContext.pathName : req.path;
+  const payload = await fetchData(req.path, req.user);
+  const pathName = req.path === "/home" ? payload.pathName : req.path;
+
+  if (pathName === "/home") console.log(payload);
 
   const template = `templates${
     pathName === "/home"
-      ? templateContext.pathName
+      ? payload.pathName
       : pathName === "/quizzes"
       ? "/quizzes/quizzes-list"
       : pathName
   }`;
   return renderFragmentOrLayout(
     template,
-    req.path === "/home" ? templateContext.templateContext : templateContext,
+    req.path === "/home" ? payload.payload : payload,
     pathName,
     req,
     res
@@ -23,29 +25,40 @@ const handleRoutes = async (req, res) => {
 
 const handleGroupChatRoute = (req, res) => {
   const templateContext = getGroupChatContext(req.params.groupId); // Replace with actual logic to get group chat context
+  const extraData = {
+    groupName: templateContext.groupName,
+  };
+  const payload = {
+    templateContext,
+    extraData: extraData,
+  };
 
   renderFragmentOrLayout(
     "templates/groups/group-chat",
-    templateContext,
+    payload,
     "/groups/my/group-chat",
     req,
     res,
-    {
-      groupName: templateContext.groupName,
-    }
+    extraData
   );
 };
 
 const handleQuizEditRoute = (req, res) => {
   const templateContext = { quizTitle: "Quiz Title" }; // Replace with actual logic to get group chat context
-
+  const extraData = {
+    quizTitle: templateContext.quizTitle,
+  };
+  const payload = {
+    templateContext,
+    extraData: extraData,
+  };
   renderFragmentOrLayout(
     "templates/quizzes/quiz-editor",
-    templateContext,
+    payload,
     "/quizzes/quiz-editor",
     req,
     res,
-    { quizTitle: templateContext.quizTitle }
+    extraData
   );
 };
 
@@ -60,10 +73,12 @@ const handleQuizPlayRoute = (req, res) => {
     totalQuestions: 10,
     quizTitle: "Geography Quiz",
   }; // Replace with actual logic to get group chat context
-
+  const payload = {
+    templateContext,
+  };
   renderFragmentOrLayout(
     "templates/quiz-play",
-    templateContext,
+    payload,
     "/quiz-play",
     req,
     res

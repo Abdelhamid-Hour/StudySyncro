@@ -63,6 +63,7 @@
         translate: calc(var(--primary-gap) / 2) 0;
         &:hover {
           background-color: var(--container-background-color);
+          box-shadow: var(--primary-shadow);
         }
       }
 
@@ -149,6 +150,7 @@ header h4 {
 
 button:has(.bi-trash3) {
   &:hover {
+    box-shadow: var(--primary-shadow);
     background-color: var(--container-background-color);
   }
   .bi-trash3 {
@@ -160,6 +162,7 @@ button:has(.bi-trash3) {
   border-radius: 0.2rem;
   &:hover {
     background-color: var(--btn-background-color);
+    box-shadow: var(--primary-shadow);
     color: var(--primary-color);
   }
 }
@@ -428,6 +431,7 @@ button:has(.bi-trash3) {
       &:hover {
         i {
           background-color: var(--btn-background-color);
+          box-shadow: var(--primary-shadow);
         }
         hr {
           border-color: var(--primary-color);

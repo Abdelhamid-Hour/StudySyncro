@@ -16,8 +16,6 @@ appRouter.get('/groups/my/:groupId/chat', handleGroupChatRoute);
 
 appRouter.get('/quizzes/:quizId/edit', handleQuizEditRoute);
 
-appRouter.get('/quizzes/:quizId/edit', handleQuizEditRoute);
-
 appRouter.get('/quiz-play/:quizId', handleQuizPlayRoute);
 
 module.exports = appRouter;

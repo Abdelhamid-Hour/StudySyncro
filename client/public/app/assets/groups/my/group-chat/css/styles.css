@@ -88,6 +88,14 @@
       scrollbar-width: none;
       padding-bottom: 0 !important;
 
+      .open-drop-down-btn{
+        margin-top: -.2rem;
+
+        &:hover{
+          background-color: var(--background-color) !important;
+        }
+      }
+
       &.session-info {
         gap: var(--primary-gap);
       }

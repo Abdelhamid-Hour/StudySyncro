@@ -81,7 +81,7 @@ export const handleShowInfoBtnClick = async () => {
 
 export let groupInfo;
 
-export const openGroupLeftSideBar = async (route) => {
+export const  openGroupLeftSideBar = async (route) => {
   groupLeftSideBarContent.innerHTML = getLoader();
   groupLeftSideBar.classList.remove('close');
 

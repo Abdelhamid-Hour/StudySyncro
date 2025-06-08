@@ -45,8 +45,8 @@ const handleUserSignIn = async (auth, user) => {
 const signInWhithProvider = async function (auth, provider, callback) {
   const userCredential = await signInWithPopup(auth, provider);
   const user = userCredential.user;
-  await handleUserSignIn(auth, user);
   callback('Signed in successfully', 'success');
+  await handleUserSignIn(auth, user);
 };
 
 /**
@@ -62,8 +62,8 @@ const InitializeGoogleOneTap = function (auth, callback) {
       // Convert Google credential to Firebase credential
       const credential = GoogleAuthProvider.credential(response.credential);
       const userCredential = await signInWithCredential(auth, credential);
-      const user = userCredential.user;
       callback('Signed in successfully', 'success');
+      const user = userCredential.user;
       await handleUserSignIn(auth, user);
     } catch (error) {
       checkError(error);
@@ -109,6 +109,7 @@ const signInWithFacebookProviderWithPopUp = async function (auth, callback) {
 const signInWithGoogleProviderWithPopUp = async function (auth, callback) {
   try {
     await signInWhithProvider(auth, googleProvider, callback);
+    
   } catch (error) {
     checkError(error);
     callback(error.message, 'error');

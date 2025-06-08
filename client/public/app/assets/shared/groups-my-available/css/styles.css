@@ -107,7 +107,7 @@
       margin-right: -0.5rem;
       overflow: hidden;
       &:not(:first-child) {
-        border-left: 2px solid var(--btn-background-color);
+        border-left: .3rem solid var(--btn-background-color);
       }
     }
   }

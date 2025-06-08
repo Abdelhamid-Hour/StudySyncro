@@ -233,20 +233,32 @@ section#forms {
   position: relative;
   width: 100%;
   gap: var(--form-gap);
+  overflow: hidden;
 
   button {
     --btn-width: 100%;
   }
-  #sign-in-container {
-    position: absolute;
-    top: 0;
+  .sign-in-container,
+  .sign-up-container {
     width: 100%;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .sign-in-container {
+    position: relative;
     z-index: 2;
   }
-  #sign-up-container {
-    position: relative;
+
+  .sign-up-container {
+    position: absolute;
     overflow: hidden;
-    /* the animation classes is in the bottom */
+    top: 0;
+  }
+
+  .active-form {
+    visibility: visible;
+    pointer-events: auto;
   }
 
   & > div {
@@ -292,7 +304,7 @@ section#forms {
       }
     }
 
-    div[class^='md-'] {
+    div[class^="md-"] {
       outline: 0.2rem solid transparent;
       display: flex;
       width: 100%;
@@ -325,7 +337,7 @@ section#forms {
         font-size: var(--inputs-icons-font-size);
 
         &::before {
-          content: '';
+          content: "";
           height: 100%;
           width: 20%;
           border-start-start-radius: 5px;
@@ -348,7 +360,7 @@ section#forms {
         }
       }
 
-      div[class*='container-label'] {
+      div[class*="container-label"] {
         width: 85%;
         position: relative;
         border-start-end-radius: 5px;
@@ -523,12 +535,12 @@ div.separator {
 }
 
 @property --mask-animation-start {
-  syntax: '<percentage>';
+  syntax: "<percentage>";
   initial-value: 0%;
   inherits: false;
 }
 @property --mask-animation-end {
-  syntax: '<percentage>';
+  syntax: "<percentage>";
   initial-value: 0%;
   inherits: false;
 }
@@ -611,9 +623,6 @@ div.separator {
             flex-basis: 50%;
           }
         }
-      }
-      #sign-up-container {
-        width: 100%;
       }
     }
   }

@@ -129,6 +129,7 @@ const setSubjectValue = (selectButtonValue, value) => {
 const clearOtherSubjectInput = (input, selectMenu) => {
   input.value = '';
   selectMenu.classList.remove('open-overlay');
+  document.body.style.pointerEvents = 'auto';
 };
 
 const removeErrorMessage = () => {

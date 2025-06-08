@@ -11,7 +11,7 @@
         </span>
       </div>
       <div>
-        <h2 class="session-name"><%= session.name %><span class="badge simple-badge users-count"><%= session.joinedCount %> Joined User</span></h2>
+        <h3 class="session-name"><%= session.name %><span class="badge simple-badge users-count"><%= session.joinedCount %> Joined User</span></h3>
         
       </div>
       <p class="session-description"><%= session.description %></p>
@@ -29,10 +29,10 @@
     </header>
     <% if (session.quiz) { %>
     <div class="quiz">
-      <h2>
+      <h3>
         <i class="bi bi-clipboard2-check-fill"></i>
         Session Quiz
-      </h2>
+      </h3>
       <div class="quiz-info">
         <h3 class="quiz-title"><%= session.quiz.title %></h3>
         <span class="questions-count badge blue-badge">
@@ -48,7 +48,7 @@
     <% } %>
     <div class="session-tasks">
       <header>
-        <h2 class="title"><i class="bi bi-ui-checks"></i>Tasks</h2>
+        <h3 class="title"><i class="bi bi-ui-checks"></i>Tasks</h3>
         <div class="btns">
           <button
             type="button"

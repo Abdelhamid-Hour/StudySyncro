@@ -32,3 +32,5 @@ document.addEventListener('click', handleNavigation);
 window.addEventListener('popstate', () => {
   updateMain(location.pathname);
 });
+
+console.log(document.cookie);
