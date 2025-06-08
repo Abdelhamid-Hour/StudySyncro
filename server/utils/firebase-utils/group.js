@@ -1,28 +1,28 @@
-const { FieldValue } = require('firebase-admin/firestore');
-const { db, admin } = require('../../firebase/firebaseAdmin');
+const { FieldValue } = require("firebase-admin/firestore");
+const { db, admin } = require("../../firebase/firebaseAdmin");
 const createGroup = async (groupdData, userData) => {
   try {
-    console.log(groupdData, 'group data received');
-    console.log(userData, 'user data received ');
-    const groupRef = db.collection('groups');
+    console.log(groupdData, "group data received");
+    console.log(userData, "user data received ");
+    const groupRef = db.collection("groups");
     const snapshot = await groupRef
-      .where('name', '==', groupdData['group-name'])
+      .where("name", "==", groupdData["group-name"])
       .get();
-    console.log(snapshot, 'this is the snapshot');
+    console.log(snapshot, "this is the snapshot");
 
     const newGrop = {
-      name: groupdData['group-name'],
-      description: groupdData['group-description'],
+      name: groupdData["group-name"],
+      description: groupdData["group-description"],
       subject: groupdData.subject,
       level: groupdData.level,
-      maxMembers: groupdData['max-members'],
+      maxMembers: groupdData["max-members"],
       visibility: groupdData.visibility,
       members: [
         {
           uid: userData.uid,
           fullName: userData.fullName,
           email: userData.email,
-          photoURL: userData.picture || '',
+          photoURL: userData.picture || "",
         },
       ],
       requests: [],
@@ -30,33 +30,33 @@ const createGroup = async (groupdData, userData) => {
       creationDate: new Date().toISOString(),
       creator: userData.uid,
       showInSearch:
-        groupdData.visibility === 'Private' && !groupdData['show-in-search']
+        groupdData.visibility === "Private" && !groupdData["show-in-search"]
           ? false
           : true,
-      currentSession: '',
+      currentSession: "",
       quizzesList: [],
     };
 
     if (snapshot.empty) {
-      console.log('created');
+      console.log("created");
       await groupRef.add(newGrop);
       return {
         success: true,
       };
     } else {
-      console.log('not empty');
+      console.log("not empty");
       return {
         success: false,
         message:
-          'A group with this name already exists. Please choose another name.',
+          "A group with this name already exists. Please choose another name.",
       };
     }
   } catch (error) {
-    console.log('here the error');
+    console.log("here the error");
     console.log(error.message);
     return {
       success: false,
-      message: 'An error occurred while creating the group. Please try again.',
+      message: "An error occurred while creating the group. Please try again.",
     };
   }
 };
@@ -91,11 +91,11 @@ const getAvailableGroups = async (
       return { cards: finalGroups, lastVisible };
     }
 
-    let query = db.collection('groups');
+    let query = db.collection("groups");
 
     // Handle pagination
-    if (typeof lastVisible === 'string' && lastVisible.trim() !== '') {
-      const doc = db.collection('groups').doc(lastVisible);
+    if (typeof lastVisible === "string" && lastVisible.trim() !== "") {
+      const doc = db.collection("groups").doc(lastVisible);
       const lastElement = await doc.get();
       query = query.startAfter(lastElement);
     } else if (lastVisible) {
@@ -108,7 +108,7 @@ const getAvailableGroups = async (
     query = query.limit(batchSize);
 
     const snapshot = await query.get();
-    console.log(snapshot.size, 'size');
+    console.log(snapshot.size, "size");
 
     // If no documents at all (first call), return empty
     if (snapshot.empty && availableGroups.length === 0) {
@@ -168,7 +168,7 @@ const getAvailableGroups = async (
       joinedGroups
     );
   } catch (error) {
-    console.error(error.message, 'error in getJoinedGroups');
+    console.error(error.message, "error in getJoinedGroups");
     return { cards: getFormatedGroups(oldGroups, user_id), lastVisible }; // Return what we have so far
   }
 };
@@ -192,12 +192,12 @@ const getJoinedGroups = async (
       return { cards: finalGroups, lastVisible };
     }
 
-    const groupRef = db.collection('groups');
-    let query = groupRef.where('membersUids', 'array-contains', user_id);
+    const groupRef = db.collection("groups");
+    let query = groupRef.where("membersUids", "array-contains", user_id);
 
     // Handle pagination
-    if (typeof lastVisible === 'string' && lastVisible.trim() !== '') {
-      const doc = db.collection('groups').doc(lastVisible);
+    if (typeof lastVisible === "string" && lastVisible.trim() !== "") {
+      const doc = db.collection("groups").doc(lastVisible);
       const lastElement = await doc.get();
       query = query.startAfter(lastElement);
     } else if (lastVisible) {
@@ -210,7 +210,7 @@ const getJoinedGroups = async (
     query = query.limit(batchSize);
 
     const snapshot = await query.get();
-    console.log(snapshot.size, 'size');
+    console.log(snapshot.size, "size");
 
     // If no documents at all (first call), return empty
     if (snapshot.empty && joinedGroups.length === 0) {
@@ -262,14 +262,14 @@ const getJoinedGroups = async (
       joinedGroups
     );
   } catch (error) {
-    console.error(error.message, 'error in getJoinedGroups');
+    console.error(error.message, "error in getJoinedGroups");
     return { cards: getFormatedGroups(oldGroups, user_id), lastVisible }; // Return what we have so far
   }
 };
 
 const filterGroups = async (user_id, criteria, groups, availableGroups) => {
   try {
-    console.log('filter', criteria);
+    console.log("filter", criteria);
 
     const filteredGroups = groups.filter((g) => {
       const matchLevel =
@@ -293,14 +293,14 @@ const filterGroups = async (user_id, criteria, groups, availableGroups) => {
       if (!availableGroups) {
         matchRole =
           criteria.role?.length === 0 ||
-          (criteria.role?.includes('admin') && user_id === g.creator) ||
-          (criteria.role?.includes('member') &&
+          (criteria.role?.includes("admin") && user_id === g.creator) ||
+          (criteria.role?.includes("member") &&
             g.membersUids.includes(user_id) &&
             user_id != g.creator);
       }
 
       let matchSearch = true;
-      const searchTerm = criteria.searchTerm?.trim().toLowerCase() || '';
+      const searchTerm = criteria.searchTerm?.trim().toLowerCase() || "";
 
       if (searchTerm) {
         matchSearch =
@@ -317,17 +317,17 @@ const filterGroups = async (user_id, criteria, groups, availableGroups) => {
         matchRole;
 
       console.log(
-        'matchLevel:',
+        "matchLevel:",
         matchLevel,
-        'matchVisibility:',
+        "matchVisibility:",
         matchVisibility,
-        'matchShowInSearch:',
+        "matchShowInSearch:",
         matchShowInSearch,
-        'matchJoinable:',
+        "matchJoinable:",
         matchJoinable,
-        'matchSearch:',
+        "matchSearch:",
         matchSearch,
-        'matchRole:',
+        "matchRole:",
         matchRole
       );
 
@@ -337,13 +337,13 @@ const filterGroups = async (user_id, criteria, groups, availableGroups) => {
     // Sort by creationDate based on criteria
     let sortedGroups = filteredGroups;
 
-    if (criteria.sort === 'desc' && filteredGroups.length >= 2) {
+    if (criteria.sort === "desc" && filteredGroups.length >= 2) {
       sortedGroups = filteredGroups.sort((a, b) => {
         const dateA = new Date(a.creationDate);
         const dateB = new Date(b.creationDate);
         return dateB - dateA; // Descending order (newest first)
       });
-    } else if (criteria.sort === 'asc' && filteredGroups.length >= 2) {
+    } else if (criteria.sort === "asc" && filteredGroups.length >= 2) {
       sortedGroups = filteredGroups.sort((a, b) => {
         const dateA = new Date(a.creationDate);
         const dateB = new Date(b.creationDate);
@@ -353,14 +353,14 @@ const filterGroups = async (user_id, criteria, groups, availableGroups) => {
     console.log(sortedGroups.length);
     return sortedGroups;
   } catch (error) {
-    console.log(error.message, 'error in filterGroups');
+    console.log(error.message, "error in filterGroups");
     return [];
   }
 };
 
 const getGroupByID = async (groupId) => {
   try {
-    const groupRef = db.collection('groups').doc(groupId);
+    const groupRef = db.collection("groups").doc(groupId);
     const snaphsot = await groupRef.get();
     if (snaphsot.empty) {
       return false;
@@ -377,7 +377,7 @@ const getGroupByID = async (groupId) => {
 const quitterGroup = async (groupId, userId) => {
   try {
     const group = await getGroupByID(groupId);
-    const groupRef = db.collection('groups').doc(groupId);
+    const groupRef = db.collection("groups").doc(groupId);
     const user = group.members.find((membre) => membre.uid === userId);
     if (group) {
       if (user) {
@@ -399,16 +399,16 @@ const quitterGroup = async (groupId, userId) => {
 
 const modifyGroup = async (groupId, formData) => {
   try {
-    const groupRef = db.collection('groups').doc(groupId);
+    const groupRef = db.collection("groups").doc(groupId);
     const groups = await getAllGroups();
-    console.log(groups, 'these are the groups ');
+    console.log(groups, "these are the groups ");
     const isDuplicated = groups.some(
       (group) => group.uid != groupId && group.nom_groupe === formData.nomGroupe
     );
     const group = await getGroupByID(groupId);
-    console.log(groupId, 'group id');
-    console.log(formData, 'form data');
-    console.log(group, 'group');
+    console.log(groupId, "group id");
+    console.log(formData, "form data");
+    console.log(group, "group");
     if (group && !isDuplicated) {
       await groupRef.update({
         nom_groupe: formData.nomGroupe,
@@ -431,7 +431,7 @@ const modifyGroup = async (groupId, formData) => {
 
 const getAllGroups = async () => {
   try {
-    const groupRef = db.collection('groups');
+    const groupRef = db.collection("groups");
     const snapshot = await groupRef.get();
     const groups = [];
     if (snapshot.empty) {
@@ -450,14 +450,14 @@ const getAllGroups = async () => {
 
 const modifieGroupPropertie = async (groupId, propertie, newValue) => {
   try {
-    const groupRef = db.collection('groups').doc(groupId);
+    const groupRef = db.collection("groups").doc(groupId);
     const groups = await getAllGroups();
     const group = await groupRef.get();
     if (group.exists) {
-      const isNotEmpty = newValue.trim() != '';
+      const isNotEmpty = newValue.trim() != "";
 
       switch (propertie) {
-        case 'nom_groupe': {
+        case "nom_groupe": {
           const isDuplicated = groups.some(
             (group) => group.id != groupId && group.nom_groupe === newValue
           );
@@ -469,7 +469,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
           }
           break;
         }
-        case 'description':
+        case "description":
           if (isNotEmpty) {
             await groupRef.update({
               description: newValue,
@@ -477,7 +477,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
             return true;
           }
           break;
-        case 'matiere':
+        case "matiere":
           if (isNotEmpty) {
             await groupRef.update({
               matiere: newValue,
@@ -485,7 +485,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
             return true;
           }
           break;
-        case 'niveau':
+        case "niveau":
           if (isNotEmpty) {
             await groupRef.update({
               niveau: newValue,
@@ -493,7 +493,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
             return true;
           }
           break;
-        case 'visibility':
+        case "visibility":
           if (isNotEmpty) {
             await groupRef.update({
               visibility: newValue,
@@ -501,7 +501,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
             return true;
           }
           break;
-        case 'nombre_members':
+        case "nombre_members":
           if (newValue != null) {
             await groupRef.update({
               maxMembers: newValue,
@@ -509,7 +509,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
             return true;
           }
           break;
-        case 'apparaitre_recherche':
+        case "apparaitre_recherche":
           if (isNotEmpty) {
             await groupRef.update({
               apparaitre_recherche: newValue,
@@ -530,7 +530,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
 
 const deleteGroup = async (groupId) => {
   try {
-    const groupRef = db.collection('groups').doc(groupId);
+    const groupRef = db.collection("groups").doc(groupId);
     const group = await getGroupByID(groupId);
     if (group) {
       await groupRef.delete();
@@ -545,43 +545,43 @@ const deleteGroup = async (groupId) => {
 };
 
 const getFormattedMembers = (members) =>
-   members.map(({ photoURL, fullName }) => ({
+  members.map(({ photoURL, fullName }) => ({
     photoURL,
     fullName,
-  }))
+  }));
 
-const getGroupInfo = async(id  , userId)=>{
+const getGroupInfo = async (id, userId) => {
   try {
-     const group = await getGroupByID(id)
-     if(!group) return false 
-     const adminInfo = group.members.find((m)=>m.uid === group.creator)
-     console.log(adminInfo , "info");
-     console.log(group , "this is the group")
-     
-     return {
-        groupName: group.name,
-    groupDescription:group.description,
-    subject: group.subject,
-    level: group.level,
-    visibility: group.visibility,
-    showInSearch: group.showInSearch,
-    maxMembers: Number(group.maxMembers),
-    creationDate: group.creationDate.split("T")[0],
-    Admin: {
-      fullName: adminInfo.fullName,
-      photoURL: adminInfo.photoURL,
-    },
-    members: getFormattedMembers(group.members) , 
-    isAdmin: group.creator === userId
-     }
+    const group = await getGroupByID(id);
+    if (!group) return false;
+    const adminInfo = group.members.find((m) => m.uid === group.creator);
+    console.log(adminInfo, "info");
+    console.log(group, "this is the group");
+
+    return {
+      groupName: group.name,
+      groupDescription: group.description,
+      subject: group.subject,
+      level: group.level,
+      visibility: group.visibility,
+      showInSearch: group.showInSearch,
+      maxMembers: Number(group.maxMembers),
+      creationDate: group.creationDate.split("T")[0],
+      Admin: {
+        fullName: adminInfo.fullName,
+        photoURL: adminInfo.photoURL,
+      },
+      members: getFormattedMembers(group.members),
+      isAdmin: group.creator === userId,
+    };
   } catch (error) {
-    console.log(error)
-    return false 
+    console.log(error);
+    return false;
   }
-}
+};
 
 module.exports = {
-  getGroupInfo ,
+  getGroupInfo,
   createGroup,
   getAvailableGroups,
   getJoinedGroups,
