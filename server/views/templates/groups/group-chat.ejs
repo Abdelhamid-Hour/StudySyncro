@@ -6,8 +6,6 @@
       </h2>
     </aside>
     <div
-      data-group-id="<%= groupId %>"
-      data-group-name="<%= groupName %>"
       class="left-side-bar-content"
     ></div>
   </aside>
@@ -86,13 +84,6 @@
             >
               <i class="bi bi-people"></i>
               <%= isAdmin ? 'Manage' : 'View' %> Members
-            </button>
-            <button
-              type="button"
-              class="drop-down-item exclude-btn copy-uid-menu-btn"
-            >
-              <i class="bi bi-link-45deg"></i>
-              Copy Group UID
             </button>
             <% if (isAdmin) { %>
             <button

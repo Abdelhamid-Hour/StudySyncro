@@ -61,104 +61,102 @@ const getGroupChatContext = (groupId) => {
 
 // Group Left Side Bar Contexts
 
-const getGroupInfoContext = async(id  , user) => {
-  console.log(id , user , "this is the data from the router")
-  const groupInfo = await getGroupInfo(id , user.uid)
-  console.log("group info" , groupInfo)
-  return groupInfo
+const getGroupInfoContext = async (id, user) => {
+  console.log(id, user, "this is the data from the router");
+  const groupInfo = await getGroupInfo(id, user.uid);
+  console.log("group info", groupInfo);
+  return groupInfo;
 };
 
 const getSessionInfoContext = () => {
   return {
-    isAdmin: true,
-    isJoined: true,
-    sessionName: "Session Name",
-    sessionDescription: "Session Description",
-    quizTitle: "Quiz Title",
-    duration: "1h 20m",
-    startTime: "14:00",
-    endTime: "15:00",
-    joinedCount: 5,
-    tasks: [
-      new Task({
-        title: "Introduction to JavaScript",
-        description:
-          "Learn the basics of JavaScript, including syntax and variables.",
-        durationInMins: 2, // in minutes
-      }),
-      new Task({
-        title: "JavaScript Functions",
-        description:
-          "Understand how to create and use functions in JavaScript.",
-        durationInMins: 45, // in minutes
-      }),
-      new Quiz({
-        UID: "123",
-        title: "JavaScript Quiz",
-        description: "Test your knowledge of JavaScript basics.",
-        durationInMins: 10, // in minutes
-        questionsCount: 10,
-      }),
-    ],
-    millisecondsToHMFormat: millisecondsToHMFormat,
-    Quiz,
+    success: true,
+    context: {
+      isAdmin: true,
+      isJoined: true,
+      sessionName: "Session Name",
+      sessionDescription: "Session Description",
+      quizTitle: "Quiz Title",
+      duration: "1h 20m",
+      startTime: "14:00",
+      endTime: "15:00",
+      joinedCount: 5,
+      tasks: [
+        new Task({
+          title: "Introduction to JavaScript",
+          description:
+            "Learn the basics of JavaScript, including syntax and variables.",
+          durationInMins: 2, // in minutes
+        }),
+        new Task({
+          title: "JavaScript Functions",
+          description:
+            "Understand how to create and use functions in JavaScript.",
+          durationInMins: 45, // in minutes
+        }),
+        new Quiz({
+          UID: "123",
+          title: "JavaScript Quiz",
+          description: "Test your knowledge of JavaScript basics.",
+          durationInMins: 10, // in minutes
+          questionsCount: 10,
+        }),
+      ],
+      millisecondsToHMFormat: millisecondsToHMFormat,
+      Quiz,
+    },
   };
 };
 
 const getMembersListContext = async (id, user) => {
-  const data = await getMembers(id, user.uid);
-  
-  return  {
-    isAdmin: data.isAdmin,
-    count: data.count,
-    members: data.members,
-  };
+  const result = await getMembers(id, user.uid);
+
+  return result;
 };
 
 const getQuizzesListContext = () => {
   return {
-    count: 4,
-    isAdmin: true,
-    quizzes: [
-      {
-        quizId: 101,
-        quizTitle: "Algebra Basics",
-        sessionName: "Math Morning",
-        questionsCount: 7,
-        quizDate: "2024-05-10 09:00",
-      },
-      {
-        quizId: 102,
-        quizTitle: "World Capitals",
-        sessionName: "Geography Fun",
-        questionsCount: 9,
-        quizDate: "2024-05-12 11:30",
-      },
-      {
-        quizId: 103,
-        quizTitle: "Physics Challenge",
-        sessionName: "Science Hour",
-        questionsCount: 11,
-        quizDate: "2024-05-15 14:15",
-      },
-      {
-        quizId: 104,
-        quizTitle: "Literature Quiz",
-        sessionName: "Book Club",
-        questionsCount: 6,
-        quizDate: "2024-05-18 16:45",
-      },
-    ],
+    success: true,
+    context: {
+      count: 4,
+      isAdmin: true,
+      quizzes: [
+        {
+          quizId: 101,
+          quizTitle: "Algebra Basics",
+          sessionName: "Math Morning",
+          questionsCount: 7,
+          quizDate: "2024-05-10 09:00",
+        },
+        {
+          quizId: 102,
+          quizTitle: "World Capitals",
+          sessionName: "Geography Fun",
+          questionsCount: 9,
+          quizDate: "2024-05-12 11:30",
+        },
+        {
+          quizId: 103,
+          quizTitle: "Physics Challenge",
+          sessionName: "Science Hour",
+          questionsCount: 11,
+          quizDate: "2024-05-15 14:15",
+        },
+        {
+          quizId: 104,
+          quizTitle: "Literature Quiz",
+          sessionName: "Book Club",
+          questionsCount: 6,
+          quizDate: "2024-05-18 16:45",
+        },
+      ],
+    },
   };
 };
 
-const getDemandesListContext =async (id , user) => {
-  const data = await getRequests(id , user.uid)
-  return {
-    count: data.count,
-    isAdmin: data.isAdmin,
-    demandes: data.demandes
-  };
+const getDemandesListContext = async (id, user) => {
+  const result = await getRequests(id, user.uid);
+  return result;
 };
 
 module.exports = {

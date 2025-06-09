@@ -6,22 +6,22 @@ const generateTemplateContext =async (req, res, next) => {
 
   switch (true) {
     case originalUrl.includes('/group-info'):
-      res.context = await getGroupInfoContext(req.params.id , req.user);
+      res.payload = await getGroupInfoContext(req.params.id , req.user);
       break;
     case originalUrl.includes('/session-info'):
-      res.context = getSessionInfoContext();
+      res.payload = getSessionInfoContext();
       break;
     case originalUrl.includes('/members-list'):
-      res.context = await getMembersListContext(req.params.id , req.user);
+      res.payload = await getMembersListContext(req.params.id , req.user);
       break;
     case originalUrl.includes('/quizzes-list'):
-      res.context = getQuizzesListContext();
+      res.payload = getQuizzesListContext();
       break;
     case originalUrl.includes('/demandes-list'):
-      res.context = await getDemandesListContext(req.params.id , req.user);
+      res.payload = await getDemandesListContext(req.params.id , req.user);
       break;
     default:
-      res.context = {};
+      res.payload = {};
       break;
   }
 

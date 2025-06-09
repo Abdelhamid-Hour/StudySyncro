@@ -553,30 +553,36 @@ const getFormattedMembers = (members) =>
 const getGroupInfo = async (id, userId) => {
   try {
     const group = await getGroupByID(id);
-    if (!group) return false;
+    if (!group) return { success: false, message: "Group not found" };
     const adminInfo = group.members.find((m) => m.uid === group.creator);
     console.log(adminInfo, "info");
     console.log(group, "this is the group");
 
     return {
-      groupName: group.name,
-      groupDescription: group.description,
-      subject: group.subject,
-      level: group.level,
-      visibility: group.visibility,
-      showInSearch: group.showInSearch,
-      maxMembers: Number(group.maxMembers),
-      creationDate: group.creationDate.split("T")[0],
-      Admin: {
-        fullName: adminInfo.fullName,
-        photoURL: adminInfo.photoURL,
+      success: true,
+      context: {
+        groupName: group.name,
+        groupDescription: group.description,
+        subject: group.subject,
+        level: group.level,
+        visibility: group.visibility,
+        showInSearch: group.showInSearch,
+        maxMembers: Number(group.maxMembers),
+        creationDate: group.creationDate.split("T")[0],
+        Admin: {
+          fullName: adminInfo.fullName,
+          photoURL: adminInfo.photoURL,
+        },
+        members: getFormattedMembers(group.members),
+        isAdmin: group.creator === userId,
       },
-      members: getFormattedMembers(group.members),
-      isAdmin: group.creator === userId,
     };
   } catch (error) {
     console.log(error);
-    return false;
+    return {
+      success: false,
+      message: "An error occurred while fetching group info. Please try again.",
+    };
   }
 };
 
