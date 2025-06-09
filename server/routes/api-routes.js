@@ -11,6 +11,7 @@ const {
 const { generateTemplateContext } = require("../middleware/groups");
 const { createGroup } = require("../utils/firebase-utils/group");
 const { joinGroup } = require("../utils/firebase-utils/demandes");
+const { createExamen , modiferQuizQuestions, updateQuizTitle, updateQuizSubject } = require("../utils/firebase-utils/examen");
 
 const apiRouter = express.Router();
 
@@ -27,7 +28,6 @@ apiRouter.get("/quiz-questions", getQuizQuestionsHandler);
 apiRouter.post("/create-group", async (req, res) => {
   const formData = req.body.groupData;
   const userData = req.user;
-
   const result = await createGroup(formData, userData);
   if (result.success) {
     return res.status(200).json({ message: result.message });
@@ -53,16 +53,11 @@ apiRouter.post("/join-group", async (req, res) => {
 apiRouter.post("/create-quiz", async (req, res) => {
   const quizData = req.body.quizData;
   const userData = req.user;
-  console.log(quizData, "quiz data for create quiz");
-
-  const result = {
-    success: true,
-    quizId: "12345", // This should be replaced with actual logic to create a quiz
-    message: "Quiz created successfully",
-  };
-
+  console.log(quizData , "this is the quizz data")
+  const  result  = await createExamen(quizData , userData)
   if (result.success) {
-    return res.status(200).json({ quizId: result.quizId });
+    console.log(result.id)
+    return res.status(200).json({ quizId: result.id });
   } else {
     return res.status(400).json({
       message: result.message,
@@ -71,20 +66,18 @@ apiRouter.post("/create-quiz", async (req, res) => {
 });
 
 apiRouter.put("/update-quiz/:quizId", async (req, res) => {
-  const updatedData = req.body.updatedData;
+  const updatedQuestions = req.body.updatedQuestions;
+  const newQuestions = req.body.newQuestions 
+  const deletedQuestions = req.body.deletedQuestions
+  const quizzId = req.params.quizId 
   const userData = req.user;
-  console.log(updatedData, "quiz data for create quiz");
-
-  const result = {
-    success: true,
-    message: "Quiz updated successfully",
-  };
-
+  const response =await  modiferQuizQuestions(updatedQuestions , newQuestions , deletedQuestions , quizzId , userData.uid)
+  
   if (result.success) {
-    return res.status(200).json({ message: result.message });
+    return res.status(200).json({ message: response.message });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: response.message,
     });
   }
 });
@@ -92,21 +85,19 @@ apiRouter.put("/update-quiz/:quizId", async (req, res) => {
 apiRouter.patch("/update-quiz/:quizId", async (req, res) => {
   const title = req.body.title;
   const subject = req.body.subject;
+  const quizId = req.params.quizId
   const userData = req.user;
   console.log(title, subject, "quiz data for update quiz");
-
+ const response = title ? await updateQuizTitle(title , quizId , userData.uid ) : await updateQuizSubject(subject , quizId , userData.uid)
   // const result = title ? updateTitle() : updateSubject(); // ? Example logic, replace with actual implementation
 
-  const result = {
-    success: true,
-    message: "Quiz " + title ? "title" : "subject" + " updated successfully",
-  };
+ 
 
-  if (result.success) {
-    return res.status(200).json({ message: result.message });
+  if (response.success) {
+    return res.status(200).json({ message: response.message });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: response.message,
     });
   }
 });
