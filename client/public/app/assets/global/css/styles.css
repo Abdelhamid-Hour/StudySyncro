@@ -894,6 +894,9 @@ main {
 
 /* From Uiverse.io by SelfMadeSystem */
 label.container {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--primary-gap) / 2);
   width: fit-content;
   cursor: pointer;
 }
@@ -910,7 +913,7 @@ label.container svg {
 
 .path {
   fill: none;
-  stroke: white;
+  stroke: var(--primary-text-color);
   stroke-width: 8;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -1135,7 +1138,7 @@ label.container svg {
   align-items: center;
   gap: calc(var(--primary-gap) / 2);
   padding-block: calc(var(--primary-gap) * 2);
-  padding-inline: calc(var(--primary-gap) * 3);
+  padding-inline: var(--primary-gap);
   background-color: var(--confirmation-box-bg);
   border-radius: var(--primary-radius);
   border: var(--primary-border-style);
@@ -1180,6 +1183,10 @@ label.container svg {
     --confirmation-box-confirmation-box-btn-cancel-hover-bg: var(
       --background-color
     );
+  }
+
+  p{
+    text-align: center;
   }
 
   h2 {

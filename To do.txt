@@ -27,6 +27,7 @@
 // try to improve the drag and drop feature like for the mouse out while dragging !
 // Verify any data attr that it data sent from the front end
 // remove the imoji skeleton
+// add a max and min sesision duratioknm
 
  Group Cards
 Subject (Matière)

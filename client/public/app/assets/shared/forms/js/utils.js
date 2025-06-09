@@ -243,7 +243,7 @@ export const setUpSwitchBtn = (wrapper) => {
         if (wrapper.querySelector('.visibility-input')) {
           if (validValues[newIndex] === 'Private') {
             // Create the label element for "Show in Search Results"
-            const showInSearchLabel = createShowInSearchLabel();
+            const showInSearchLabel = createShowInSearchLabel(true);
             wrapper.appendChild(showInSearchLabel);
           } else {
             const showInSearchLabel = wrapper.querySelector(

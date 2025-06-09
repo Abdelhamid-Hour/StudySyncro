@@ -1,9 +1,12 @@
 import {
   DESCRIPTION_MAX_LENGTH,
   DESCRIPTION_MIN_LENGTH,
+  MAX_MEMBERS,
+  MIN_MEMBERS,
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
 } from '../../../../global/js/dom-variables.js';
+import { createShowInSearchLabel } from '../../../../shared/forms/js/utils.js';
 
 export let groupLeftSideBar,
   showInfoBtn,
@@ -53,6 +56,7 @@ groupInfoElementsMap = {
               Group Name
             </label>
             <input
+            name="name"
             id="group-name-input"
               type="text"
               class="group-name-value value"
@@ -121,6 +125,7 @@ groupInfoElementsMap = {
               Group Description
             </label>
             <textarea
+            name="description"
               id="group-description-input"
               maxlength="${DESCRIPTION_MAX_LENGTH}"
               minlength="${DESCRIPTION_MIN_LENGTH}"
@@ -187,7 +192,7 @@ groupInfoElementsMap = {
             </span>
             <div class="select-trigger input">
               <button type="button" class="exclude-btn open-drop-down-btn" id="subject-input">
-                <span class="subject-value value"></span>
+                <span name="subject" class="subject-value value"></span>
                 <i class="bi bi-chevron-down"></i>
               </button>
               <div class="select-menu group-subject-select-menu drop-down-menu overlay">
@@ -258,7 +263,7 @@ groupInfoElementsMap = {
               >
                 <i class="bi bi-arrow-left-right"></i>
               </button>
-              <span data-value="" class="level-input input value content"></span>
+              <span name="level" data-value="" class="level-input input value content"></span>
             </div>
           </div>
           `;
@@ -327,7 +332,7 @@ groupInfoElementsMap = {
             >
               <i class="bi bi-arrow-left-right"></i>
             </button>
-            <span data-value="" class="visibility-input input value content">
+            <span name="visibility" data-value="" class="visibility-input input value content">
             </span>
           </div>
           `;
@@ -398,6 +403,7 @@ groupInfoElementsMap = {
               Max Members
             </label>
             <input
+            name="max-members"
               id="max-members-input"
               type="number"
               value=""

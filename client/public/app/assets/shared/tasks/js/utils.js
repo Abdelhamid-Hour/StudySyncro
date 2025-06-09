@@ -4,46 +4,46 @@ const handelTaskBtns = (className, scroll) => {
     return taskListElement.scroll(0, 0);
   }
   for (const element of taskListElement.children) {
-    element.classList.remove('show-task-details');
+    element.classList.remove("show-task-details");
   }
 };
 
 const handelTaskDetailsBtn = (e) => {
-  if (e.target.closest('.task-down-icon')) {
-    const task = e.target.closest('.task-wrapper, .show-task-details');
+  if (e.target.closest(".task-down-icon")) {
+    const task = e.target.closest(".task-wrapper, .show-task-details");
 
     if (task) {
-      task.classList.toggle('show-task-details');
+      task.classList.toggle("show-task-details");
     }
   }
 };
 
 const addTaskListButtonListeners = (className) => {
-  const selector = className ? `.${className}` : '';
+  const selector = className ? `.${className}` : "";
   const scrollToTop = document.querySelector(`${selector} .scroll-to-top`);
   const collapseAll = document.querySelector(`${selector} .collapse-all`);
 
-  scrollToTop?.addEventListener('click', () => handelTaskBtns(className, true));
-  collapseAll?.addEventListener('click', () => handelTaskBtns(className));
+  scrollToTop?.addEventListener("click", () => handelTaskBtns(className, true));
+  collapseAll?.addEventListener("click", () => handelTaskBtns(className));
 };
 
 export const handletTasksListners = (...wrapperClasses) => {
   if (wrapperClasses.length) {
     wrapperClasses.forEach((className) => {
-
       const tasksList = document.querySelector(`.${className} .tasks-list`);
       addTaskListButtonListeners(className);
-      tasksList.addEventListener('click', handelTaskDetailsBtn);
+      tasksList.addEventListener("click", handelTaskDetailsBtn);
     });
   }
 };
 
 export class Task {
-  constructor({ title, description, durationInMins, isQuiz }) {
+  constructor({ title, description, durationInMins, isQuiz, isBreak }) {
     this.title = title;
-    this.description = description;
     this.durationInMins = durationInMins;
     this.isQuiz = isQuiz || false;
+    this.isBreak = isBreak || false;
+    if (!isBreak) this.description = description;
   }
 }
 // ! ------------------------------------
@@ -53,14 +53,14 @@ const PROXIMITY = 10; // Distance in pixels to trigger a drop
 const SCROLLPROXIMITY = 30; // Distance in pixels to trigger scroll
 let MAX_SCROLL = 0; // Maximum scroll value for the container
 let afterDragEnd = () => {};
-let draggableElSelector = '';
+let draggableElSelector = "";
 
 function onTaskListMouseDown(e) {
-  const handle = e.target.closest('.drag-handle');
+  const handle = e.target.closest(".drag-handle");
   const draggableEl = e.target.closest(draggableElSelector);
   if (!handle || !draggableEl) return;
 
-  document.body.style.userSelect = 'none';
+  document.body.style.userSelect = "none";
 
   dragging.dragEl = draggableEl;
   const dragElRect = draggableEl.getBoundingClientRect();
@@ -70,8 +70,8 @@ function onTaskListMouseDown(e) {
   dragging.offsetY = e.clientY - dragElRect.top;
 
   dragging.dragEl.style.width = `${dragElRect.width}px`;
-  dragging.dragEl.style.position = 'absolute';
-  dragging.dragEl.style.zIndex = '1000';
+  dragging.dragEl.style.position = "absolute";
+  dragging.dragEl.style.zIndex = "1000";
 
   const offsetY =
     e.clientY + container.scrollTop - listRect.top - dragging.offsetY;
@@ -80,7 +80,7 @@ function onTaskListMouseDown(e) {
   dragging.dragEl.style.top = `${offsetY}px`;
   dragging.dragEl.style.left = `${offsetX}px`;
 
-  dragging.dragEl.classList.add('dragging');
+  dragging.dragEl.classList.add("dragging");
 }
 
 function stopScrollAnimation() {
@@ -94,11 +94,11 @@ function updateCounters() {
   const tasks = container.querySelectorAll(draggableElSelector);
   const padCounter = tasks.length.toString().length;
   tasks.forEach((draggableEl, idx) => {
-    const counter = draggableEl.querySelector('.counter');
+    const counter = draggableEl.querySelector(".counter");
     if (counter) {
       counter.textContent = counter.textContent.replace(
         /\d+/g,
-        (idx + 1).toString().padStart(padCounter, '0')
+        (idx + 1).toString().padStart(padCounter, "0")
       );
     }
   });
@@ -106,14 +106,14 @@ function updateCounters() {
 
 function resetDragState() {
   Object.assign(dragging.dragEl.style, {
-    zIndex: '',
-    width: '',
-    position: '',
-    top: '',
-    left: '',
+    zIndex: "",
+    width: "",
+    position: "",
+    top: "",
+    left: "",
   });
-  document.body.style.userSelect = '';
-  dragging.dragEl.classList.remove('dragging');
+  document.body.style.userSelect = "";
+  dragging.dragEl.classList.remove("dragging");
   dragging = {};
 }
 
@@ -121,7 +121,7 @@ function handleFirstTaskDrop() {
   const firstTask = container.querySelector(draggableElSelector);
   if (firstTask === dragging.dragEl) {
     const secondTask = container.querySelector(
-      draggableElSelector + ':not(:first-child)'
+      draggableElSelector + ":not(:first-child)"
     );
     if (secondTask) {
       secondTask.firstElementChild.before(dragging.dragEl.firstElementChild);
@@ -150,7 +150,7 @@ function onMouseUp() {
     if (afterDragEnd) {
       afterDragEnd();
     }
-    dragging.dragArea.classList.remove('drag-over');
+    dragging.dragArea.classList.remove("drag-over");
     dragging.dragArea = null;
   }
 
@@ -164,7 +164,7 @@ function onTaskListScroll() {
   if (dragging.dragEl && dragging.initialScrollTop !== container.scrollTop) {
     const currentTop = parseFloat(dragging.dragEl.style.top) || 0;
     dragging.dragEl.style.top =
-      currentTop - dragging.initialScrollTop + container.scrollTop + 'px';
+      currentTop - dragging.initialScrollTop + container.scrollTop + "px";
     dragging.initialScrollTop = container.scrollTop;
   }
 }
@@ -186,7 +186,7 @@ function handleScroll(direction, speed) {
 }
 
 function handleDropTargets() {
-  const dropTargets = container.querySelectorAll('.drop-target');
+  const dropTargets = container.querySelectorAll(".drop-target");
   dropTargets.forEach((target) => {
     const targetTask = target.closest(draggableElSelector);
     if (targetTask === dragging.dragEl) return;
@@ -200,9 +200,9 @@ function handleDropTargets() {
 
     if (isOverTarget) {
       dragging.dragArea = target;
-      target.classList.add('drag-over');
+      target.classList.add("drag-over");
     } else {
-      target.classList.remove('drag-over');
+      target.classList.remove("drag-over");
     }
   });
 }
@@ -212,8 +212,8 @@ function updateDraggedElementPosition(e) {
   const scrollTop = container.scrollTop;
   const offsetX = e.clientX - rect.left - dragging.offsetX;
   const offsetY = e.clientY + scrollTop - rect.top - dragging.offsetY;
-  dragging.dragEl.style.top = offsetY + 'px';
-  dragging.dragEl.style.left = offsetX + 'px';
+  dragging.dragEl.style.top = offsetY + "px";
+  dragging.dragEl.style.left = offsetX + "px";
 }
 
 function handleAutoScroll() {
@@ -254,8 +254,8 @@ export const setUpDragAndDrop = (
   MAX_SCROLL = 0;
   afterDragEnd = afterDragEndCallback;
 
-  container.addEventListener('mousedown', onTaskListMouseDown);
-  document.addEventListener('mouseup', onMouseUp);
-  container.addEventListener('scroll', onTaskListScroll);
-  container.addEventListener('mousemove', onTaskListMouseMove);
+  container.addEventListener("mousedown", onTaskListMouseDown);
+  document.addEventListener("mouseup", onMouseUp);
+  container.addEventListener("scroll", onTaskListScroll);
+  container.addEventListener("mousemove", onTaskListMouseMove);
 };

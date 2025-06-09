@@ -6,7 +6,7 @@
   gap: var(--primary-gap);
   border: var(--primary-border-style);
   height: fit-content;
-  width: 30rem;
+  min-width: 30rem;
   margin: auto;
   padding-bottom: var(--primary-gap);
   background-color: var(--container-background-color);

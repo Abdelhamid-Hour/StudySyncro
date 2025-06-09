@@ -102,9 +102,16 @@
       border-radius: var(--primary-radius);
       border: var(--primary-border-style);
 
-      &.quiz-task-box {
-        border-color: var(--primary-color);
+      &.quiz-task-box, &.break-box {
         border-right: 0.4rem solid var(--primary-color);
+      }
+
+      &.quiz-task-box {
+        border-color: var(--green-color);
+      }
+
+      &.break-box {
+        border-color: var(--primary-color);
       }
 
       button {

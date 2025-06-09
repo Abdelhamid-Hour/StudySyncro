@@ -87,6 +87,7 @@ const getIconClassName = (icon) => {
 
 // this is for mouse down
 export const handleOverlayClose = (event) => {
+  
   const overlayToClose = document.querySelector(".open-overlay");
   const isOpenBtn = event.target.closest(".open-drop-down-btn");
   const isDropDownItem = event.target.closest(`.drop-down-item`);
@@ -94,6 +95,10 @@ export const handleOverlayClose = (event) => {
   if ((isDropDownItem || !isOnOverlay) && overlayToClose && !isOpenBtn) {
     overlayToClose.classList.remove("open-overlay");
     document.body.style.pointerEvents = "auto";
+  }
+  if (document.body.style.pointerEvents === "none") {
+    document.body.style.pointerEvents = "auto";
+    
   }
 };
 

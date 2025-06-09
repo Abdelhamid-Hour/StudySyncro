@@ -15,14 +15,14 @@
   .chat .top-bar {
     button:hover {
       background-color: var(--btn-background-color);
+      box-shadow: var(--primary-shadow);
     }
   }
 
   .group-left-side-bar {
     overflow: hidden;
     height: 100%;
-    flex: 0 0 25%;
-    max-width: 25%;
+    flex-basis: 25%;
     border-right: var(--primary-border-style);
     transition: max-width var(--primary-transition-style),
       visibility var(--primary-transition-style);
@@ -66,6 +66,10 @@
       align-items: center;
       justify-content: center;
       height: calc(100% - 3rem);
+
+      input[type="search"] {
+        padding-right: calc(var(--primary-gap) * 2);
+      }
       .pencil {
         width: 5rem;
       }
@@ -73,6 +77,17 @@
         padding: var(--primary-gap);
         height: 100%;
         width: 100%;
+      }
+
+      .error-message {
+        width: 70%;
+        text-align: center;
+        color: var(--error-color);
+        i {
+          display: flex;
+          margin-bottom: var(--primary-gap);
+          font-size: 4rem;
+        }
       }
     }
 
@@ -88,10 +103,10 @@
       scrollbar-width: none;
       padding-bottom: 0 !important;
 
-      .open-drop-down-btn{
-        margin-top: -.2rem;
+      .open-drop-down-btn {
+        margin-top: -0.2rem;
 
-        &:hover{
+        &:hover {
           background-color: var(--background-color) !important;
         }
       }
@@ -131,7 +146,7 @@
         padding-bottom: var(--primary-gap);
 
         &::before {
-          content: '';
+          content: "";
           width: 100%;
           height: 1rem;
           position: absolute;
@@ -213,6 +228,7 @@
 
           &:where(:hover) {
             background-color: var(--btn-background-color);
+            box-shadow: var(--primary-shadow);
             color: var(--primary-color);
 
             &.manage-members-btn {
@@ -228,6 +244,7 @@
         }
 
         .show-in-search-label {
+          min-width: max-content;
           font-size: var(--small-font-size);
           display: flex;
           align-items: center;
@@ -257,8 +274,8 @@
         .members-list {
           display: flex;
           flex-direction: column;
-          &::after {
-            content: '';
+          &.blur::after {
+            content: "";
             position: absolute;
             width: calc(100% - 2px);
             height: 8rem;
@@ -278,7 +295,7 @@
             align-items: center;
             justify-content: space-evenly;
             &::after {
-              content: '';
+              content: "";
               height: 80%;
               border-right: var(--primary-border-style);
             }
@@ -338,8 +355,11 @@
           .value {
             border: none;
             background-color: transparent;
+            font-size: var(--small-font-size);
             outline: none;
             width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
 
           p.value {
@@ -383,7 +403,7 @@
           min-width: 0;
           pointer-events: auto;
 
-          input[type='date'] {
+          input[type="date"] {
             visibility: hidden;
             width: 0;
             height: 0;
@@ -445,7 +465,7 @@
       }
 
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         width: calc(100% - 2px);
         height: 3rem;
@@ -634,7 +654,7 @@
     align-items: center;
     gap: calc(var(--primary-gap) / 2);
 
-    &:has(:checked){
+    &:has(:checked) {
       color: var(--primary-color);
     }
   }
@@ -653,7 +673,7 @@
     gap: calc(var(--primary-gap) / 2);
     margin-bottom: calc(var(--primary-gap) / 2);
 
-    .badge {
+    .duration-badge {
       margin-right: auto;
     }
 
@@ -669,6 +689,10 @@
 
   .add-task-btn {
     font-weight: bold;
+  }
+
+  .create-break-btn {
+    margin-left: 2rem;
   }
 
   .buttons {
@@ -710,7 +734,7 @@
       }
 
       &::after {
-        content: '';
+        content: "";
         width: 1px;
         height: 50%;
         background-color: var(--btn-border-color);
@@ -791,7 +815,7 @@
 
       &::after,
       &::before {
-        content: '';
+        content: "";
         position: absolute;
         width: 0.5rem;
         aspect-ratio: 1/1;
@@ -818,7 +842,7 @@
       margin: auto;
       width: var(--progress-width);
 
-      input[type='checkbox'] {
+      input[type="checkbox"] {
         visibility: hidden;
         width: 0;
         height: 0;
