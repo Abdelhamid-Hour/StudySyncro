@@ -60,7 +60,7 @@ const groupFragmentHandler =
   (req, res) => {
     if (!res.payload.success)
       return res.status(400).json({
-        message: res.payload.message || "Failed to load group info.",
+        message: res.payload.message || "Failed to load.",
       });
     return res.render(
       `fragments/my-groups${route}`,

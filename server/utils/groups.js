@@ -116,17 +116,9 @@ const getMembersListContext = async (id, user) => {
   return result;
 };
 
-const getQuizzesListContext =async (id , userData) => {
-  const response  = await getExams(id , userData.uid)
-  return {
-    count : response.count , 
-    isAdmin : response.isAdmin ,
-    quizzes : response.quizzes
-  }
-  
-  
-  };
-
+const getQuizzesListContext = async (id, userData) => {
+  return await getExams(id, userData.uid);
+};
 
 const getDemandesListContext = async (id, user) => {
   const result = await getRequests(id, user.uid);
