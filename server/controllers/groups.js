@@ -1,4 +1,4 @@
-const { getUserGroups, getAvailableGr } = require("../utils/groups");
+const { getUserGroups , getAvailableGr } = require('../utils/groups');
 const {
   getJoinedGroups,
   getAvailableGroups,
@@ -91,6 +91,9 @@ const groupFragmentHandler =
   };
 
 const getQuizQuestionsHandler = (req, res) => {
+  const userid = req.user.uid 
+  const query = req.query
+  
   return res.json({
     questions: [
       {
