@@ -1,4 +1,4 @@
-<div data-user-name="<%-  %>" class="main-content overview-active-session fade-in-template">
+<div class="main-content overview-active-session fade-in-template">
   <div class="left-container">
     <div class="session">
       <header>
@@ -23,15 +23,15 @@
             <i class="bi bi-clock-history"></i>
             <i class="bi bi-info-circle"></i>
           </span>Session name</label>
-          <div class="session-name content" data-session-uid="<%- session.UID %>">
+          <div class="session-name content">
           <%= session.name %>
           </div>
         </div>
         <div class="start-time-container info-container small-container">
           <label class="start-time-label"><span class="icon-box"><i class="bi bi-play-circle"></i></span>Start</label>
           <div class="content">
-            <span class="start-time" data-start-date="<%= session.startDate %>">
-              <%= session.formatHoursMinutes(new Date(session.startDate)) %>
+            <span class="start-time">
+              <%= session.startDate %>
             </span>
           </div>
         </div>
@@ -48,21 +48,20 @@
             <i class="bi bi-people"></i>
             <i class="bi bi-info-circle"></i>
           </span>Group name</label>
-          <div class="group-name content" data-group-uid="<%- session.groupUID %>">
+          <div class="group-name content">
             <%= session.groupName %>
           </div>
         </div>
         <div class="time-left-container info-container small-container">
           <label class="left-label"><span class="icon-box"><i class="bi bi-hourglass-bottom"></i></span>Left</label>
           <div class="content">
-            <span class="time-left">00m</span>
+            <span class="time-left">0m</span>
           </div>
         </div>
         <div class="elapsed-time-container info-container small-container">
           <label class="elapsed-time-label"><span class="icon-box"><i class="bi bi-hourglass-top"></i></span>Elapsed</label>
           <div class="content">
-            <span class="elapsed-time"><%= session.millisecondsToHMFormat(session.durationInMins * 60 *
-              1000) %></span>
+            <span class="elapsed-time">0m</span>
           </div>
         </div>
         <div class="quiz-title-container<%= !session.quiz ? ' no-quiz' : '' %> info-container">
@@ -78,10 +77,9 @@
                 <i class="bi bi-clock"></i>
               </span>Duration</label>
           <div class="content">
-            <span class="duration" data-duration-in-mins="<%= session.durationInMins %>">
+            <span class="duration">
               
-              <%= session.millisecondsToHMFormat(session.durationInMins * 60 *
-              1000) %>
+              <%= session.duration %>
             </span>
           </div>
         </div>
@@ -131,45 +129,7 @@
               </button>
             </div>
           </header>
-          <div class="tasks-list ongoing-tasks-list">
-            <%_ session.tasks.map((task, index) => { %>
-            <div class="task-wrapper ">
-              <div <%- index === 0 
-              ? 'data-tooltip="Active Task"' 
-              : task instanceof Quiz 
-              ? 'data-tooltip="Quiz"' 
-              : '' %> class="task-box<%= task instanceof Quiz ? ' quiz-task-box' : '' %><%= index === 0 ? ' first' : '' %><%= (index === 0 || task instanceof Quiz) ? ' has-tooltip' : '' _%>
-              ">
-                <div class="counter">
-                  <span>
-                    <%= (index + 1) .toString()
-                    .padStart(session.tasks.length.toString().length, '0') %>
-                  </span>
-                </div>
-                <span class="title"><%= task.title %></span>
-                <span class="duration" data-duration-in-mins="<%= task.durationInMins %>"><%= session.millisecondsToHMFormat( task.durationInMins * 60 * 1000
-                  ) _%>
-                </span>
-                <div class="icons">
-                  <button type="button" class="task-menu-btn exclude-btn">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </button>
-                  <button type="button" data-tooltip="Show Details" class="task-down-icon exclude-btn should-fill has-tooltip">
-                    <i class="bi bi-caret-down"></i>
-                  </button>
-                </div>
-              </div>
-              <div class="task-details">
-                <h5>Title:</h5>
-                <p><%= task.title %></p>
-                <h5>Details:</h5>
-                <%=task.description _%>
-              </div>
-            </div>
-            <% }) %>
-          </div>
+          <div class="tasks-list ongoing-tasks-list"></div>
         </div>
         <hr class="separator" />
         <div class="completed-tasks">
@@ -407,7 +367,7 @@
               <i class="bi bi-clipboard-check"></i>
               <i class="bi bi-info-circle"></i>
             </span>Quiz title</label>
-            <div <% if (session.quiz) { %> data-quiz-id="<%= session.quiz.UID %>" <% } %>  class="quiz-title content"><%= session.quiz ? session.quiz.title : 'No Quiz Added To This Session' %></div>
+            <div  class="quiz-title content"><%= session.quiz ? session.quiz.title : 'No Quiz Added To This Session' %></div>
           </div>
           <div class="questions-container<%= !session.quiz ? ' no-quiz' : '' %> info-container small-container">
             <label class="questions-label"><span class="icon-box"><i class="bi bi-question-circle"></i></span>Questions</label>

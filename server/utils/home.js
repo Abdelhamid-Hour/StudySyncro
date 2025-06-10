@@ -9,51 +9,28 @@ const {
 const getCurrentSession = (userId) => {
   // ! firestore query for if the user is join to any session
   // ! you can add a index to the quiz collection for know the task order
-  const tasks = [
-    new Task({
-      title: "Introduction to JavaScript",
-      description:
-        "Learn the basics of JavaScript, including syntax and variables.",
-      durationInMins: 2, // in minutes
-    }),
-    new Task({
-      title: "JavaScript Functions",
-      description: "Understand how to create and use functions in JavaScript.",
-      durationInMins: 45, // in minutes
-    }),
-    new Quiz({
+  const durationInMins = 120; // Example duration in minutes
+  const startDate = '2025-06-09T22:15:40.707Z';
+  const endDate = formatHoursMinutes(
+    new Date(startDate).getTime() + durationInMins * 60 * 1000
+  );
+
+  return {
+    name: "Session de révision - Janvier 2025",
+    description: "Description de la session",
+    startDate: formatHoursMinutes(startDate),
+    endDate: endDate,
+    duration: durationInMins,
+    groupName: "Frontend Developers",
+    joinedCount: 25,
+    isAdmin: true,
+    quiz: new Quiz({
       UID: "123",
       title: "JavaScript Quiz",
       description: "Test your knowledge of JavaScript basics.",
       durationInMins: 10, // in minutes
       questionsCount: 10,
     }),
-  ];
-  const durationInMins = tasks.reduce(
-    (acc, task) => (acc += task.durationInMins),
-    0
-  );
-  const startDate = new Date().toISOString();
-  const endDate = formatHoursMinutes(
-    new Date(startDate).getTime() + durationInMins * 60 * 1000
-  );
-
-  return {
-    // ? sessionId, 👇
-    UID: "12345",
-    groupUID: "67890",
-    name: "Session de révision - Janvier 2025",
-    description: "Description de la session",
-    startDate: startDate,
-    endDate: endDate,
-    durationInMins: durationInMins,
-    groupName: "Frontend Developers",
-    joinedCount: 25,
-    tasks: tasks,
-    isAdmin: true,
-    quiz: tasks.filter((task) => task instanceof Quiz)[0],
-    formatHoursMinutes: formatHoursMinutes,
-    millisecondsToHMFormat: millisecondsToHMFormat,
   };
 };
 
@@ -119,7 +96,7 @@ const getSessionDetails = (sessionId) => {
     tasks,
     getTimeLeft(durationInMins, endTime)
   );
-  const quiz = tasks.filter((task) => task instanceof Quiz)[0];
+  const quiz = tasks.filter((task) => task.isQuiz)[0];
   return {
     // UID: sessionId,
     name: "Session de révision - Janvier 2025",
@@ -132,7 +109,7 @@ const getSessionDetails = (sessionId) => {
     tasks: tasks,
     quiz: {
       ...quiz,
-      status: completedTasks.find((t) => t === quiz)
+      status: quiz.
         ? "Finished"
         : ongoingTasks[0] === quiz
         ? "Ongoing"
@@ -215,7 +192,7 @@ const getActiveSessions = (userId) => {
 };
 
 const fetchHomeData = (userId) => {
-  const session = null;
+  const session = getCurrentSession(userId);
   if (session) {
     return {
       pathName: pathNames.home.active,

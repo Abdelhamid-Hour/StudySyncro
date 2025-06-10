@@ -186,7 +186,7 @@
 
       span.title {
         font-size: var(--small-font-size);
-        flex-basis: 55%;
+        flex-basis: 65%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

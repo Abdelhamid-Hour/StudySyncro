@@ -1,56 +1,9 @@
 // const { get } = require("../routes/api-routes");
 const { getMembers, getRequests } = require("./firebase-utils/demandes");
 const { getExams } = require("./firebase-utils/examen");
-const { getGroupByID, getGroupInfo } = require("./firebase-utils/group");
+const { getGroupInfo } = require("./firebase-utils/group");
 const { millisecondsToHMFormat, Task, Quiz } = require("./global");
 const INITIALE_LOADERS_COUNT = 20;
-const groups = [];
-// !! FOR TESTING
-for (let i = 1; i <= 27; i++) {
-  groups.push({
-    id: i,
-    visibility: i % 2 === 0 ? "Public" : "Private",
-    isHost: i % 3 === 0,
-    name: `Group ${i}`,
-    subject: `Subject ${i}`,
-    description: `This is the description for Group ${i}.`,
-    level: i % 3 === 0 ? "Advanced" : i % 3 === 1 ? "Intermediate" : "Beginner",
-    avatars: [
-      {
-        photoURL: `/avatar${i}_1.png`,
-        fullName: "Jhon",
-      },
-      {
-        photoURL: `/avatar${i}_1.png`,
-        fullName: "Jhon",
-      },
-    ],
-    extraMembersCount: i % 5,
-  });
-}
-
-const getUserGroups = (lastVisible = 0, count) => {
-  const startIndex = !lastVisible ? 0 : lastVisible - 1;
-  const endIndex = Math.min(startIndex + count, groups.length);
-
-  return {
-    cards: groups.slice(startIndex, endIndex),
-    lastVisible: endIndex < groups.length ? groups[endIndex]?.id : null,
-  };
-};
-
-const getAvailableGr = (lastVisible = 0, count) => {
-  console.log("getAvailableGr", lastVisible, count);
-
-  const startIndex = !lastVisible ? 0 : lastVisible - 1;
-  const endIndex = Math.min(startIndex + count, groups.length);
-  console.log(startIndex, endIndex);
-
-  return {
-    cards: groups.slice(startIndex, endIndex),
-    lastVisible: endIndex < groups.length ? groups[endIndex]?.id : null,
-  };
-};
 
 const getGroupChatContext = (groupId) => {
   return {
@@ -132,7 +85,5 @@ module.exports = {
   getQuizzesListContext,
   getDemandesListContext,
   getGroupInfoContext,
-  getGroupChatContext,
-  getAvailableGr,
-  getUserGroups,
+  getGroupChatContext
 };

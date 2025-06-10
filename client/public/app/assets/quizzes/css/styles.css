@@ -2,6 +2,10 @@
   grid-auto-rows: 13.5rem;
 }
 
+.loading-btn {
+ margin-left: auto;
+}
+
 .quiz-card {
   background-color: var(--btn-background-color);
   border-radius: var(--primary-radius);

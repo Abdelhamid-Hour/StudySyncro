@@ -1,13 +1,16 @@
 class Task {
-  constructor({ title, description, durationInMins }) {
+  constructor({ title, description, durationInMins, isQuiz, isBreak }) {
     this.title = title;
-    this.description = description;
     this.durationInMins = durationInMins;
+    this.isQuiz = isQuiz || false;
+    this.isBreak = isBreak || false;
+    if (!isBreak) this.description = description;
   }
 }
+
 class Quiz extends Task {
   constructor({ UID, title, description, durationInMins, questionsCount }) {
-    super({ title, description, durationInMins });
+    super({ title, description, durationInMins, isQuiz: true });
     this.questionsCount = questionsCount;
     this.UID = UID;
   }

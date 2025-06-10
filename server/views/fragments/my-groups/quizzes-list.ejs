@@ -78,12 +78,7 @@
           <i class="bi bi-eye"></i>
           View <%= isAdmin ? 'Results' : 'Result' %>
         </button>
-        <% if (isAdmin) { %>
-        <button type="button" class="edit-quiz-btn">
-          <i class="bi bi-pencil-square"></i>
-          Edit
-        </button>
-        <% } else { %>
+        <% if (!isAdmin) { %>
         <button type="button" class="restart-quiz-btn">
           <i class="bi bi-arrow-repeat"></i>
           Retake

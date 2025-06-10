@@ -7,11 +7,18 @@ const {
   getAvailableGroupsHandler,
   groupFragmentHandler,
   getQuizQuestionsHandler,
+  getQuizzesHandler,
 } = require("../controllers/groups");
 const { generateTemplateContext } = require("../middleware/groups");
 const { createGroup } = require("../utils/firebase-utils/group");
 const { joinGroup } = require("../utils/firebase-utils/demandes");
-const { createExamen , modiferQuizQuestions, updateQuizTitle, updateQuizSubject } = require("../utils/firebase-utils/examen");
+const {
+  createExamen,
+  modiferQuizQuestions,
+  updateQuizTitle,
+  updateQuizSubject,
+} = require("../utils/firebase-utils/examen");
+const { Task, Quiz } = require("../utils/global");
 
 const apiRouter = express.Router();
 
@@ -23,7 +30,39 @@ apiRouter.get("/user-groups", getUserGroupsHandler);
 
 apiRouter.get("/available-groups", getAvailableGroupsHandler);
 
+apiRouter.get("/quizzes", getQuizzesHandler);
+
 apiRouter.get("/quiz-questions", getQuizQuestionsHandler);
+
+apiRouter.get("/active-session", (req, res) => {
+  return res.status(200).json({
+    tasks: [
+      new Task({
+        title: "Introduction to JavaScript",
+        description:
+          "Learn the basics of JavaScript, including syntax and variables.",
+        durationInMins: 30, // in minutes
+      }),
+      new Task({
+        title: "Break",
+        durationInMins: 5, // in minutes
+        isBreak: true,
+      }),
+      {
+        uid: "123",
+        title: "JavaScript Quiz",
+        description: "Test your knowledge of JavaScript basics.",
+        durationInMins: 10, // in minutes
+        questionsCount: 10,
+        isQuiz: true,
+      },
+    ],
+    startDate: '2025-06-09T22:15:40.707Z',
+    id: "12345",
+    groupId: "67890",
+    durationInMins: 60, // in minutes
+  });
+});
 
 apiRouter.post("/create-group", async (req, res) => {
   const formData = req.body.groupData;
@@ -53,10 +92,10 @@ apiRouter.post("/join-group", async (req, res) => {
 apiRouter.post("/create-quiz", async (req, res) => {
   const quizData = req.body.quizData;
   const userData = req.user;
-  console.log(quizData , "this is the quizz data")
-  const  result  = await createExamen(quizData , userData)
+  console.log(quizData, "this is the quizz data");
+  const result = await createExamen(quizData, userData);
   if (result.success) {
-    console.log(result.id)
+    console.log(result.id);
     return res.status(200).json({ quizId: result.id });
   } else {
     return res.status(400).json({
@@ -67,12 +106,18 @@ apiRouter.post("/create-quiz", async (req, res) => {
 
 apiRouter.put("/update-quiz/:quizId", async (req, res) => {
   const updatedQuestions = req.body.updatedQuestions;
-  const newQuestions = req.body.newQuestions 
-  const deletedQuestions = req.body.deletedQuestions
-  const quizzId = req.params.quizId 
+  const newQuestions = req.body.newQuestions;
+  const deletedQuestions = req.body.deletedQuestions;
+  const quizzId = req.params.quizId;
   const userData = req.user;
-  const response =await  modiferQuizQuestions(updatedQuestions , newQuestions , deletedQuestions , quizzId , userData.uid)
-  
+  const response = await modiferQuizQuestions(
+    updatedQuestions,
+    newQuestions,
+    deletedQuestions,
+    quizzId,
+    userData.uid
+  );
+
   if (result.success) {
     return res.status(200).json({ message: response.message });
   } else {
@@ -85,13 +130,13 @@ apiRouter.put("/update-quiz/:quizId", async (req, res) => {
 apiRouter.patch("/update-quiz/:quizId", async (req, res) => {
   const title = req.body.title;
   const subject = req.body.subject;
-  const quizId = req.params.quizId
+  const quizId = req.params.quizId;
   const userData = req.user;
   console.log(title, subject, "quiz data for update quiz");
- const response = title ? await updateQuizTitle(title , quizId , userData.uid ) : await updateQuizSubject(subject , quizId , userData.uid)
+  const response = title
+    ? await updateQuizTitle(title, quizId, userData.uid)
+    : await updateQuizSubject(subject, quizId, userData.uid);
   // const result = title ? updateTitle() : updateSubject(); // ? Example logic, replace with actual implementation
-
- 
 
   if (response.success) {
     return res.status(200).json({ message: response.message });
@@ -106,7 +151,7 @@ apiRouter.patch("/update-group/:groupId", async (req, res) => {
   const updatedData = req.body.updatedData;
 
   // ! Note:
-  // ! if the fieldName is visibility, the value is like : 
+  // ! if the fieldName is visibility, the value is like :
   // ! { visibility: "public", showInSearch: true } // ! showInSearch is optional
   const userData = req.user;
   console.log(updatedData, "group data for update group");
@@ -116,7 +161,7 @@ apiRouter.patch("/update-group/:groupId", async (req, res) => {
 
   const result = {
     success: true,
-    message: "Group " + (updatedData.fieldName) + " updated successfully",
+    message: "Group " + updatedData.fieldName + " updated successfully",
   };
 
   if (result.success) {

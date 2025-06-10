@@ -1,18 +1,22 @@
-<div class="quizzes-list fade-in-template">
+<div
+  data-last-visible="<%= lastVisible || '' %>"
+  class="quizzes-list fade-in-template"
+>
+  <% cards.forEach(function(quiz) { %>
   <div class="quiz-card">
     <div class="quiz-title-container info-container">
       <label class="quiz-title-label">
         <span class="icon-box"><i class="bi bi-card-text"></i></span>
         Quiz title
       </label>
-      <div class="quiz-title content">JavaScript Async Mastery</div>
+      <div class="quiz-title content"><%= quiz.title %></div>
     </div>
     <div class="questions-count-container info-container small-container">
       <label class="questions-count-label">
         <span class="icon-box"><i class="bi bi-question-circle"></i></span>
         Questions
       </label>
-      <span class="count content">14</span>
+      <span class="count content"><%= quiz.questionsCount %></span>
     </div>
     <div class="shared-in-container info-container">
       <label class="shared-in-label">
@@ -20,7 +24,9 @@
         Shared in
       </label>
       <div class="content">
-        <span class="count content">3 Groups | 5 Sessions</span>
+        <span class="count content">
+          <%= quiz.sharedGroups %> Groups | <%= quiz.sharedSessions %> Sessions
+        </span>
       </div>
     </div>
     <div class="subject-container info-container small-container">
@@ -28,11 +34,31 @@
         <span class="icon-box"><i class="bi bi-book"></i></span>
         Subject
       </label>
-      <span class="subject content">JavaScript</span>
+      <span class="subject content"><%= quiz.subject %></span>
     </div>
-    <a href="/app/quizzes/12/edit" class="button route-link edit-quiz-btn">
-      <i class="bi bi-pencil-square"></i>
-      Edit Quiz
-    </a>
+    <!-- <div class="action-btns">
+      <button
+        type="button"
+        class="<%# isAdmin ? 'view-members-results-btn' : 'view-quiz-result-btn' %> should-fill"
+      >
+        <i class="bi bi-eye"></i>
+        View <%# isAdmin ? 'Results' : 'Result' %>
+      </button>
+      <%# if (isAdmin) { %> -->
+      <a
+        href="/app/quizzes/<%= quiz.id _%>/edit"
+        class="button route-link edit-quiz-btn"
+      >
+        <i class="bi bi-pencil-square"></i>
+        Edit Quiz
+      </a>
+      <%# } else { %>
+      <!-- <button type="button" class="restart-quiz-btn">
+        <i class="bi bi-arrow-repeat"></i>
+        Retake
+      </button> -->
+      <%# } %>
+    <!-- </div> -->
   </div>
+  <% }); %>
 </div>

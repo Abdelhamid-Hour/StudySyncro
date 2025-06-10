@@ -741,7 +741,6 @@ const setUpTaskContainer = (wrapper, sessionStore) => {
 };
 
 const resortTasksArray = (sessionData, wrapper) => {
-  debugger
   // After drag and drop, update the task order
   sessionData.tasks = Array.from(wrapper.querySelectorAll(".task-wrapper")).map(
     (taskWrapper, index) => {

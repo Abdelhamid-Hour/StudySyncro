@@ -1,4 +1,3 @@
-const { getUserGroups , getAvailableGr } = require('../utils/groups');
 const {
   getJoinedGroups,
   getAvailableGroups,
@@ -55,6 +54,123 @@ const getAvailableGroupsHandler = async (req, res) => {
   return res.json(data);
 };
 
+
+
+const getQuizzesHandler = async (req, res) => {
+  const {
+    searchTerm,
+    sort
+  } = req.query;
+  const creteria = {
+    searchTerm: searchTerm || "",
+    sort: sort || "desc"
+  };
+
+  const data = {
+    cards: [
+      {
+        id: "quiz1",
+        title: "Algebra Essentials",
+        questionsCount: 12,
+        sharedGroups: 3,
+        sharedSessions: 7,
+        subject: "Mathematics",
+      },
+      {
+        id: "quiz2",
+        title: "World Capitals Challenge",
+        questionsCount: 10,
+        sharedGroups: 2,
+        sharedSessions: 5,
+        subject: "Geography",
+      },
+      {
+        id: "quiz3",
+        title: "Physics Fundamentals",
+        questionsCount: 15,
+        sharedGroups: 4,
+        sharedSessions: 8,
+        subject: "Science",
+      },
+      {
+        id: "quiz4",
+        title: "Modern History",
+        questionsCount: 9,
+        sharedGroups: 2,
+        sharedSessions: 3,
+        subject: "History",
+      },
+      {
+        id: "quiz5",
+        title: "General Knowledge Mix",
+        questionsCount: 20,
+        sharedGroups: 5,
+        sharedSessions: 10,
+        subject: "General",
+      },
+      {
+        id: "quiz6",
+        title: "English Vocabulary",
+        questionsCount: 14,
+        sharedGroups: 3,
+        sharedSessions: 6,
+        subject: "English",
+      },
+      {
+        id: "quiz7",
+        title: "Chemistry Basics",
+        questionsCount: 11,
+        sharedGroups: 2,
+        sharedSessions: 4,
+        subject: "Science",
+      },
+      {
+        id: "quiz8",
+        title: "African Geography",
+        questionsCount: 8,
+        sharedGroups: 1,
+        sharedSessions: 2,
+        subject: "Geography",
+      },
+      {
+        id: "quiz9",
+        title: "Computer Science Intro",
+        questionsCount: 13,
+        sharedGroups: 3,
+        sharedSessions: 7,
+        subject: "Technology",
+      },
+      {
+        id: "quiz10",
+        title: "French Language Basics",
+        questionsCount: 10,
+        sharedGroups: 2,
+        sharedSessions: 3,
+        subject: "French",
+      },
+      {
+        id: "quiz11",
+        title: "Moroccan Culture",
+        questionsCount: 7,
+        sharedGroups: 2,
+        sharedSessions: 2,
+        subject: "Culture",
+      },
+      {
+        id: "quiz12",
+        title: "Environmental Science",
+        questionsCount: 16,
+        sharedGroups: 4,
+        sharedSessions: 9,
+        subject: "Science",
+      },
+    ],
+    lastVisible: null,
+  }
+
+  return res.json(data);
+};
+
 const groupFragmentHandler =
   ({ route, title }) =>
   (req, res) => {
@@ -68,7 +184,6 @@ const groupFragmentHandler =
         ...res.payload.context,
       },
       (err, template) => {
-        
         if (err) {
           console.error("Error rendering template:", err);
           return res.status(500).json({
@@ -78,7 +193,8 @@ const groupFragmentHandler =
 
         const response = { template, title };
 
-        if (res.payload.context.count) response.count = res.payload.context.count;
+        if (res.payload.context.count)
+          response.count = res.payload.context.count;
 
         if (route === "/group-info")
           response.info = {
@@ -91,9 +207,9 @@ const groupFragmentHandler =
   };
 
 const getQuizQuestionsHandler = (req, res) => {
-  const userid = req.user.uid 
-  const query = req.query
-  
+  const userid = req.user.uid;
+  const query = req.query;
+
   return res.json({
     questions: [
       {
@@ -167,4 +283,5 @@ module.exports = {
   getAvailableGroupsHandler,
   groupFragmentHandler,
   getQuizQuestionsHandler,
+  getQuizzesHandler
 };

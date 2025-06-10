@@ -1,13 +1,13 @@
 import {
   fetchData,
   showMessageBlock,
-} from '../../../../../main_assets/js/utils.js';
+} from "../../../../../main_assets/js/utils.js";
 import {
   boxRowCount,
   boxTotalCount,
   topSideBarMiddle,
-} from '../../../global/js/dom-variables.js';
-import { getDebounceFunc } from '../../../global/js/utils.js';
+} from "../../../global/js/dom-variables.js";
+import { getDebounceFunc } from "../../../global/js/utils.js";
 
 export class Loader {
   constructor(
@@ -27,29 +27,29 @@ export class Loader {
     this.loading = false;
     this.io = null;
     this.container = container;
-    this.loadersCount = loadersCount
-    this.loadingBox = loadingBox
+    this.loadersCount = loadersCount;
+    this.loadingBox = loadingBox;
     this.lastVisible = this.container?.dataset.lastVisible;
     this.count = boxTotalCount;
     const cardsCount = this.container.children.length;
     console.log(this.creteria);
-    this.container.removeAttribute('data-last-visible');
+    this.container.removeAttribute("data-last-visible");
     if (cardsCount >= 20) {
-    this.initLoadingBoxes();
-    this.initObserver();
+      this.initLoadingBoxes();
+      this.initObserver();
     }
   }
 
   reset() {
     this.loading = false;
-    this.lastVisible = '';
+    this.lastVisible = "";
     this.count = 20;
     if (this.io) {
       this.io.disconnect();
     }
     clearLoadersBoxes();
     this.sentinel = null;
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
     this.creteria = this.getCreteria();
     this.initLoadingBoxes();
     this.initObserver();
@@ -58,17 +58,14 @@ export class Loader {
   initObserver() {
     this.io = new IntersectionObserver(
       (entries) => {
-        
         entries.forEach((entry) => {
-          console.log(entry.isIntersecting ,
-            !this.loading ,
-            this.lastVisible);
+          console.log(entry.isIntersecting, !this.loading, this.lastVisible);
           if (
             entry.isIntersecting &&
             !this.loading &&
             this.lastVisible !== null
           ) {
-            // this.loadMore();
+            this.loadMore();
           }
         });
       },
@@ -86,25 +83,21 @@ export class Loader {
   initLoadingBoxes() {
     const frag = document.createDocumentFragment();
     for (let i = 0; i < this.loadersCount; i++) {
-      if (i === 0) {
-        const firstLoader = this.loadingBox.cloneNode(true);
-        firstLoader.classList.add('first-loading-card');
-        frag.appendChild(firstLoader);
-        continue;
-      }
-      const loader = this.loadingBox.cloneNode(true);
-      frag.appendChild(loader);
+      const loadingBox = this.loadingBox.cloneNode(true);
+      if (i === 0) loadingBox.classList.add("first-loading-card");
+
+      frag.appendChild(loadingBox);
     }
     this.container.appendChild(frag);
-    this.sentinel = document.querySelector('.first-loading-card');
+    this.sentinel = document.querySelector(".first-loading-card");
   }
 
   async loadMore() {
     this.loading = true;
 
     const endPoint = `${this.route}?lastVisible=${this.lastVisible}&count=${this.count}&${this.creteria}`;
-    console.log('Loading more items from:', endPoint);
-    
+    console.log("Loading more items from:", endPoint);
+
     try {
       const { cards, lastVisible } = await fetchData(endPoint);
       console.log({ cards, lastVisible });
@@ -124,11 +117,11 @@ export class Loader {
         clearLoadersBoxes();
       }
     } catch (error) {
-      console.error('Error loading more items:', error);
+      console.error("Error loading more items:", error);
       // Optionally, you can show an error message to the user
       showMessageBlock(
-        'Error loading more items. Please try again later.',
-        'error'
+        "Error loading more items. Please try again later.",
+        "error"
       );
     }
 
@@ -137,7 +130,7 @@ export class Loader {
 }
 
 const clearLoadersBoxes = () => {
-  const loaders = document.querySelectorAll('.loading-card');
+  const loaders = document.querySelectorAll(".loading-card");
   loaders.forEach((loader) => {
     loader.remove();
   });
@@ -146,8 +139,8 @@ const clearLoadersBoxes = () => {
 export const initFiltersInputListener = (loader) => {
   const resetLoader = getDebounceFunc(() => loader.reset(), 300);
   const handleInputChange = (e) => {
-    const isInput = e.target.tagName === 'INPUT';
+    const isInput = e.target.tagName === "INPUT";
     if (isInput) resetLoader();
   };
-  topSideBarMiddle.addEventListener('input', handleInputChange);
+  topSideBarMiddle.addEventListener("input", handleInputChange);
 };

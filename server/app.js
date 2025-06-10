@@ -34,7 +34,6 @@ routes.forEach(({ paths, redirect }) => {
 app.use(
   "/",
   (req, res, next) => {
-    console.log(req.path);
     return next();
   },
   authRouter

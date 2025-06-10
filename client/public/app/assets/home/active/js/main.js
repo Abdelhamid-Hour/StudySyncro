@@ -7,6 +7,7 @@ import { handletTasksListners } from '../../../shared/tasks/js/utils.js';
 import { iniChatMessageInput } from '../../../shared/chat/js/utils.js';
 
 export const init = () => {
+
   initDomVariables();
 
   expandDescriptionBtn.addEventListener('click', expandAndShrinkDescription);
@@ -16,6 +17,7 @@ export const init = () => {
   new Session().startSession();
 
   iniChatMessageInput();
+  
 };
 
 init();

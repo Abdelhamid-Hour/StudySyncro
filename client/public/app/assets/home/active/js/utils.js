@@ -1,19 +1,19 @@
-import { millisecondsToHMFormat } from '../../../global/js/utils.js';
-import { Task } from '../../../shared/tasks/js/utils.js';
+import { millisecondsToHMFormat } from "../../../global/js/utils.js";
+import { Task } from "../../../shared/tasks/js/utils.js";
 import {
   QUIZSELECTORS,
   SESSIONSSELECTORS,
   TASKSSELECTORS,
-} from './dom-variables.js';
+} from "./dom-variables.js";
 
 export const expandAndShrinkDescription = (e) => {
   const btn = e.currentTarget;
 
-  if (btn.classList.toggle('expanded')) {
-    btn.parentElement.nextElementSibling.style.webkitLineClamp = 'unset';
+  if (btn.classList.toggle("expanded")) {
+    btn.parentElement.nextElementSibling.style.webkitLineClamp = "unset";
   } else {
     setTimeout(() => {
-      btn.parentElement.nextElementSibling.style.webkitLineClamp = '3';
+      btn.parentElement.nextElementSibling.style.webkitLineClamp = "3";
       btn.parentElement.nextElementSibling.scroll(0, 0);
     }, 300);
   }
@@ -32,13 +32,13 @@ export class FlipTimer {
       const delay = remainingTime % 1000 || 1000;
       const seconds = (Math.floor(remainingTime / 1000) % 60)
         .toString()
-        .padStart(2, '0');
+        .padStart(2, "0");
       const minutes = (Math.floor(remainingTime / 1000 / 60) % 60)
         .toString()
-        .padStart(2, '0');
+        .padStart(2, "0");
       const hours = Math.floor(remainingTime / 1000 / 60 / 60)
         .toString()
-        .padStart(2, '0');
+        .padStart(2, "0");
 
       this.onUpdate({ hours, minutes, seconds });
 
@@ -53,9 +53,9 @@ export class FlipTimer {
   }
 
   onUpdate({ hours, minutes, seconds }) {
-    this.handleUnitChange('hours', hours);
-    this.handleUnitChange('minutes', minutes);
-    this.handleUnitChange('seconds', seconds);
+    this.handleUnitChange("hours", hours);
+    this.handleUnitChange("minutes", minutes);
+    this.handleUnitChange("seconds", seconds);
 
     // store for next time
     this.prev = { hours, minutes, seconds };
@@ -63,7 +63,7 @@ export class FlipTimer {
 
   handleUnitChange(unit, newDigits) {
     const oldDigits = this.prev[unit];
-    const sides = ['left', 'right'];
+    const sides = ["left", "right"];
 
     sides.forEach((side, idx) => {
       if (newDigits[idx] !== oldDigits[idx]) {
@@ -76,7 +76,7 @@ export class FlipTimer {
     this.initDigits();
     this.endTime = Date.now() + durationInMsecs;
     this._timer = null;
-    this.prev = { hours: '00', minutes: '00', seconds: '00' };
+    this.prev = { hours: "00", minutes: "00", seconds: "00" };
     this.tick();
   }
 
@@ -86,8 +86,8 @@ export class FlipTimer {
       minutes: { left: null, right: null },
       seconds: { left: null, right: null },
     };
-    ['hours', 'minutes', 'seconds'].forEach((unit) => {
-      ['left', 'right'].forEach((side) => {
+    ["hours", "minutes", "seconds"].forEach((unit) => {
+      ["left", "right"].forEach((side) => {
         this.digits[unit][side] = {
           topContainer: document.querySelector(
             `.flip-${unit}-${side}-digit .flip-top-container`
@@ -110,35 +110,35 @@ export class FlipTimer {
   }
 
   initEventListener() {
-    document.addEventListener('animationend', this.eventListner);
+    document.addEventListener("animationend", this.eventListner);
   }
 
   // event listner
   eventListner(e) {
     const flipContainer = e.target;
-    if (flipContainer.matches('.flip-top-container')) {
+    if (flipContainer.matches(".flip-top-container")) {
       const bottomSpan = flipContainer
-        .closest('.flip-digit')
-        .querySelector('.flip-face-bottom span');
+        .closest(".flip-digit")
+        .querySelector(".flip-face-bottom span");
       const topFrontFontText = flipContainer
-        .closest('.flip-digit')
-        .querySelector('.flip-face-top-front-front span');
+        .closest(".flip-digit")
+        .querySelector(".flip-face-top-front-front span");
       const number = bottomSpan?.dataset.nextDigit;
       bottomSpan.textContent = number;
       topFrontFontText.textContent = number;
-      flipContainer.classList.remove('flip');
+      flipContainer.classList.remove("flip");
     }
   }
 
   flip(number, unit, side) {
     this.digits[unit][side].topFrontBackText.textContent = number;
     this.digits[unit][side].topBackText.textContent = number;
-    this.digits[unit][side].topContainer.classList.add('flip');
+    this.digits[unit][side].topContainer.classList.add("flip");
     this.digits[unit][side].bottomSpan.dataset.nextDigit = number;
   }
 
   onComplete() {
-    removeEventListener('animationend', this.eventListner);
+    removeEventListener("animationend", this.eventListner);
   }
 }
 
@@ -158,15 +158,15 @@ export class Quiz extends Task {
       this.elapsedTime.textContent = quizElapsedTime;
     } else {
       const current = this.elapsedTime.textContent;
-      if (current !== '00m') {
+      if (current !== "00m") {
         let minutes = parseInt(current, 10) - 1;
         this.elapsedTime.textContent =
-          minutes.toString().padStart(2, '0') + 'm';
+          minutes.toString().padStart(2, "0") + "m";
       }
     }
 
-    if (this.elapsedTime.textContent === '00m') {
-      const quizPlayLink = document.createElement('a');
+    if (this.elapsedTime.textContent === "00m") {
+      const quizPlayLink = document.createElement("a");
       quizPlayLink.href = `/app/quiz-play/${this.UID}`;
       quizPlayLink.click();
     }
@@ -181,8 +181,8 @@ export class Quiz extends Task {
   setQuizResult(submittedQuestionsCount) {
     this.score.textContent = this.calculateScore(submittedQuestionsCount);
     this.submittedQuestionsCount.textContent = `${submittedQuestionsCount} of ${this.questionsCount} Quetions`;
-    const button = document.createElement('button');
-    button.type = 'button';
+    const button = document.createElement("button");
+    button.type = "button";
     button.innerHTML = `<i class="bi bi-question-circle"></i>
     <span>View Details</span>`;
     document.querySelector(QUIZSELECTORS.quizFooter).append(button);
@@ -200,7 +200,7 @@ export class Session {
     )?.dataset.durationInMins;
     this.initVariables();
     this.initTime();
-    this.timerDuration =
+    this.elapsedTime =
       this.durationInMins * 60 * 1000 <= this.timeLeft
         ? 0
         : this.durationInMins * 60 * 1000 - this.timeLeft;
@@ -260,8 +260,17 @@ export class Session {
         ? this.durationInMins * 60 * 1000 - remainingTime
         : -(remainingTime - this.durationInMins * 60 * 1000);
   }
+
   initTimer() {
-    this.TIMER = new FlipTimer(this.timerDuration);
+    const notStartedTasksDuration = this.ongoingTasks.reduce(
+      (acc, task, index) => {
+        if (index !== 0) return (acc += task.durationInMins * 60 * 1000);
+        return acc;
+      },
+      0
+    );
+    const activeTaskRemainingTime = this.elapsedTime - notStartedTasksDuration;
+    this.TIMER = new FlipTimer(activeTaskRemainingTime);
     this._timer = null;
     this.tick();
   }
@@ -273,35 +282,47 @@ export class Session {
 
   addToCompletedTasks() {
     this.ongoingTasksContainer.firstElementChild.remove();
-    const nextTask = this.ongoingTasksContainer.firstElementChild;
-    if (nextTask) {
-      nextTask.firstElementChild.setAttribute('data-tooltip', 'Active Task');
-      nextTask.firstElementChild.classList.add('first', 'has-tooltip');
-    }
-
     const complatedTask = this.ongoingTasks.shift();
     this.completedTasks.push(complatedTask);
+    const nextTask = this.ongoingTasksContainer.firstElementChild;
+    if (nextTask) {
+      new FlipTimer(this.ongoingTasks[0].durationInMins * 60 * 1000);
+      nextTask.firstElementChild.setAttribute("data-tooltip", "Active Task");
+      nextTask.firstElementChild.classList.add("first", "has-tooltip");
+    }
     this.displayComplatedTask(complatedTask);
   }
+
   displayComplatedTask(task) {
-    const taskContainer = document.createElement('div');
-    taskContainer.className = 'completed-task';
+    const taskContainer = document.createElement("div");
+    taskContainer.className = "completed-task";
     taskContainer.innerHTML = `
         <div class="completed-task-box"> 
           <span class="title">${task.title}</span>
           <span class="duration">${millisecondsToHMFormat(
             task.durationInMins * 60 * 1000
           )}</span>
+           ${
+             task.isBreak
+               ? ""
+               : `
             <button type="button" data-tooltip="Show Details" class="task-down-icon exclude-btn should-fill has-tooltip">
               <i class="bi bi-caret-down"></i>
             </button>
+           `
+           }
         </div>
-        <div class="task-details">
+        ${
+          task.isBreak
+            ? ""
+            : `
+      <div class="task-details">
           <h5>Title: </h5>
           <p>${task.title}</p>
           <h5>Details: </h5>
           ${task.description}
-        </div>
+        </div>`
+        }
       `;
     this.completedTasksContainer.append(taskContainer);
   }
@@ -312,6 +333,7 @@ export class Session {
       this.ongoingTasksContainer.firstElementChild.remove();
     }
   }
+  
   initTasks() {
     this.ongoingTasksContainer = document.querySelector(
       TASKSSELECTORS.ongoingTasksList
@@ -320,9 +342,9 @@ export class Session {
       TASKSSELECTORS.completedTasksList
     );
     const tasksElements =
-      this.ongoingTasksContainer.querySelectorAll('.task-wrapper ');
+      this.ongoingTasksContainer.querySelectorAll(".task-wrapper ");
     const tasks = Array.from(tasksElements).map((task) => {
-      return task.firstElementChild.className.includes('quiz-task-box')
+      return task.firstElementChild.className.includes("quiz-task-box")
         ? new Quiz({
             title: task.querySelector(TASKSSELECTORS.taskTitle).textContent,
             description: task.querySelector(TASKSSELECTORS.taskDetails)
@@ -346,7 +368,7 @@ export class Session {
           });
     });
     // !!! add the empty ui
-    this.completedTasksContainer.innerHTML = '';
+    this.completedTasksContainer.innerHTML = "";
     let timeLeft = Math.floor(this.timeLeft / 1000 / 60);
     this.completedTasks = [];
     for (const task of tasks) {

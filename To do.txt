@@ -28,6 +28,7 @@
 // Verify any data attr that it data sent from the front end
 // remove the imoji skeleton
 // add a max and min sesision duratioknm
+// remove menu btn from tasks list in ongoing session page (session active)
 
  Group Cards
 Subject (Matière)

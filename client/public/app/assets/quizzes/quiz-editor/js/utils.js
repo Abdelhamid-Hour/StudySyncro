@@ -787,7 +787,6 @@ const saveQuizToServer = async (questions) => {
     // Extract quizId from URL: /app/quizzes/anything-here/edit (Firebase UID can contain chars)
 
     const quizId = getQuizId();
-    debugger
     await sendData("/api/update-quiz/" + quizId, updatedData, "PUT");
     showMessageBlock("Quiz saved successfully!", "success");
     // update the initialData with the new questions
