@@ -9,6 +9,7 @@ const handelTaskBtns = (className, scroll) => {
 };
 
 const handelTaskDetailsBtn = (e) => {
+  debugger
   if (e.target.closest(".task-down-icon")) {
     const task = e.target.closest(".task-wrapper, .show-task-details");
 
@@ -38,8 +39,18 @@ export const handletTasksListners = (...wrapperClasses) => {
 };
 
 export class Task {
-  constructor({ title, description, durationInMins, isQuiz, isBreak }) {
+  constructor({
+    title,
+    description,
+    durationInMins,
+    isQuiz,
+    isBreak,
+    status,
+    UID,
+  }) {
     this.title = title;
+    this.status = status;
+    this.UID = UID || null; // Unique identifier for the task
     this.durationInMins = durationInMins;
     this.isQuiz = isQuiz || false;
     this.isBreak = isBreak || false;

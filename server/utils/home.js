@@ -10,7 +10,7 @@ const getCurrentSession = (userId) => {
   // ! firestore query for if the user is join to any session
   // ! you can add a index to the quiz collection for know the task order
   const durationInMins = 120; // Example duration in minutes
-  const startDate = '2025-06-09T22:15:40.707Z';
+  const startDate = '2025-06-10T21:23:54.096Z';
   const endDate = formatHoursMinutes(
     new Date(startDate).getTime() + durationInMins * 60 * 1000
   );
@@ -24,13 +24,7 @@ const getCurrentSession = (userId) => {
     groupName: "Frontend Developers",
     joinedCount: 25,
     isAdmin: true,
-    quiz: new Quiz({
-      UID: "123",
-      title: "JavaScript Quiz",
-      description: "Test your knowledge of JavaScript basics.",
-      durationInMins: 10, // in minutes
-      questionsCount: 10,
-    }),
+    quiz: null,
   };
 };
 
@@ -98,7 +92,6 @@ const getSessionDetails = (sessionId) => {
   );
   const quiz = tasks.filter((task) => task.isQuiz)[0];
   return {
-    // UID: sessionId,
     name: "Session de révision - Janvier 2025",
     description: "Description de la session",
     startTime: formatHoursMinutes(startDate),
@@ -108,12 +101,13 @@ const getSessionDetails = (sessionId) => {
     joinedCount: 25,
     tasks: tasks,
     quiz: {
-      ...quiz,
-      status: quiz.
-        ? "Finished"
-        : ongoingTasks[0] === quiz
-        ? "Ongoing"
-        : "Not Started",
+      UID: "123",
+      title: "JavaScript Quiz",
+      description: "Test your knowledge of JavaScript basics.",
+      durationInMins: 10, // in minutes
+      questionsCount: 10,
+      isQuiz: true,
+      status: "pending", 
     },
     millisecondsToHMFormat: millisecondsToHMFormat,
   };

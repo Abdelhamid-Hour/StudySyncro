@@ -38,30 +38,53 @@ apiRouter.get("/active-session", (req, res) => {
   return res.status(200).json({
     tasks: [
       new Task({
+        UID: "task-1",
         title: "Introduction to JavaScript",
         description:
           "Learn the basics of JavaScript, including syntax and variables.",
         durationInMins: 30, // in minutes
+        status: "completed",
       }),
       new Task({
+        UID: "task-2",
         title: "Break",
         durationInMins: 5, // in minutes
         isBreak: true,
+        status: "active"
       }),
       {
-        uid: "123",
+        UID: "123",
         title: "JavaScript Quiz",
         description: "Test your knowledge of JavaScript basics.",
         durationInMins: 10, // in minutes
         questionsCount: 10,
-        isQuiz: true,
+        status: "pending",
       },
     ],
-    startDate: '2025-06-09T22:15:40.707Z',
+    startDate: '2025-06-10T21:23:54.096Z',
     id: "12345",
     groupId: "67890",
     durationInMins: 60, // in minutes
+    quiz: null,
   });
+});
+
+apiRouter.post("/update-task-status", async (req, res) => {
+  const { taskId, status } = req.body;
+  const userData = req.user;
+
+  const result = {
+    success: true,
+    message: `Task ${taskId} status updated to ${status}`,
+  };
+
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({
+      message: result.message,
+    });
+  }
 });
 
 apiRouter.post("/create-group", async (req, res) => {

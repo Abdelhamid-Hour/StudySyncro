@@ -1,4 +1,12 @@
-import { millisecondsToHMFormat } from "../../../global/js/utils.js";
+import {
+  fetchData,
+  sendData,
+  showMessageBlock,
+} from "../../../../../main_assets/js/utils.js";
+import {
+  millisecondsToHMFormat,
+  navigateTo,
+} from "../../../global/js/utils.js";
 import { Task } from "../../../shared/tasks/js/utils.js";
 import {
   QUIZSELECTORS,
@@ -144,13 +152,9 @@ export class FlipTimer {
 
 export class Quiz extends Task {
   constructor({ UID, title, description, durationInMins, questionsCount }) {
-    super({ title, description, durationInMins });
+    super({ UID, title, description, durationInMins });
     this.questionsCount = questionsCount;
-    this.UID = document.querySelector(QUIZSELECTORS.quizTitle)?.dataset.quizId;
     this.elapsedTime = document.querySelector(QUIZSELECTORS.startTime);
-    this.submittedQuestionsCount = document.querySelector(
-      QUIZSELECTORS.submittedCount
-    );
     this.score = document.querySelector(QUIZSELECTORS.score);
   }
   updateElapsedTime(quizElapsedTime) {
@@ -165,10 +169,8 @@ export class Quiz extends Task {
       }
     }
 
-    if (this.elapsedTime.textContent === "00m") {
-      const quizPlayLink = document.createElement("a");
-      quizPlayLink.href = `/app/quiz-play/${this.UID}`;
-      quizPlayLink.click();
+    if (this.elapsedTime.textContent === quizElapsedTime) {
+      navigateTo(`/quiz-play/${this.UID}`);
     }
   }
 
@@ -189,23 +191,45 @@ export class Quiz extends Task {
   }
 }
 
+export const startSession = async () => {
+  try {
+    debugger;
+    const sessionData = await fetchData("/active-session");
+    const session = new Session(sessionData);
+    session.startSession();
+  } catch (error) {
+    console.error("Error starting session:", error);
+    showMessageBlock(
+      "Error starting session. Please try again later.",
+      "error"
+    );
+  }
+};
+
 export class Session {
-  constructor() {
-    this.startDate = document.querySelector(
-      SESSIONSSELECTORS.startDate
-    )?.dataset.startDate;
-    // !? you can change htis method with queryselecctor for the durationInMins element
-    this.durationInMins = document.querySelector(
-      SESSIONSSELECTORS.durationInMins
-    )?.dataset.durationInMins;
-    this.initVariables();
+  constructor({
+    tasks,
+    startDate,
+    durationInMins, // in minutes
+    id,
+    groupId,
+    quiz,
+  }) {
+    this.id = id;
+    this.groupId = groupId;
+    this.startDate = startDate;
+    this.durationInMins = durationInMins;
+    this.tasks = tasks;
+    this.quiz = quiz
+      ? new Quiz({
+          title: quiz.title,
+          UID: quiz.UID,
+          questionsCount: quiz.questionsCount,
+        })
+      : null;
     this.initTime();
-    this.elapsedTime =
-      this.durationInMins * 60 * 1000 <= this.timeLeft
-        ? 0
-        : this.durationInMins * 60 * 1000 - this.timeLeft;
+    this.initVariables();
     this.initTasks();
-    this.initQuiz();
   }
 
   initVariables() {
@@ -213,6 +237,14 @@ export class Session {
     this.elapsedTimeElement = document.querySelector(
       SESSIONSSELECTORS.elapsedTime
     );
+    this.ongoingTasksContainer = document.querySelector(
+      TASKSSELECTORS.ongoingTasksList
+    );
+    this.completedTasksContainer = document.querySelector(
+      TASKSSELECTORS.completedTasksList
+    );
+    this.completedTasks = [];
+    this.ongoingTasks = [];
   }
   // !! 'No Quiz Added To The Session';
   tick() {
@@ -259,6 +291,10 @@ export class Session {
       remainingTime > 0
         ? this.durationInMins * 60 * 1000 - remainingTime
         : -(remainingTime - this.durationInMins * 60 * 1000);
+    this.elapsedTime =
+      this.durationInMins * 60 * 1000 <= this.timeLeft
+        ? 0
+        : this.durationInMins * 60 * 1000 - this.timeLeft;
   }
 
   initTimer() {
@@ -285,20 +321,22 @@ export class Session {
     const complatedTask = this.ongoingTasks.shift();
     this.completedTasks.push(complatedTask);
     const nextTask = this.ongoingTasksContainer.firstElementChild;
-    if (nextTask) {
+    if (nextTask && this.ongoingTasks[0]) {
       new FlipTimer(this.ongoingTasks[0].durationInMins * 60 * 1000);
       nextTask.firstElementChild.setAttribute("data-tooltip", "Active Task");
       nextTask.firstElementChild.classList.add("first", "has-tooltip");
+      this.displayComplatedTask(this.ongoingTasks[0].UID, "active");
     }
+    this.updateTaskStatus(complatedTask.UID, "completed");
     this.displayComplatedTask(complatedTask);
   }
 
   displayComplatedTask(task) {
     const taskContainer = document.createElement("div");
-    taskContainer.className = "completed-task";
+    taskContainer.className = "completed-task task-wrapper";
     taskContainer.innerHTML = `
         <div class="completed-task-box"> 
-          <span class="title">${task.title}</span>
+          <span class="title"></span>
           <span class="duration">${millisecondsToHMFormat(
             task.durationInMins * 60 * 1000
           )}</span>
@@ -316,62 +354,30 @@ export class Session {
           task.isBreak
             ? ""
             : `
-      <div class="task-details">
+        <div class="task-details">
           <h5>Title: </h5>
-          <p>${task.title}</p>
+          <p class="task-title">${task.title}</p>
           <h5>Details: </h5>
-          ${task.description}
+          <p class="task-desc">${task.description}</p>
         </div>`
         }
       `;
+    taskContainer.querySelector(".title").textContent = task.title;
+    if (!task.isBreak) {
+      taskContainer.querySelector(".task-title").textContent = task.title;
+      taskContainer.querySelector(".task-desc").textContent = task.description;
+    }
     this.completedTasksContainer.append(taskContainer);
   }
 
   displayComplatedTasks() {
     this.completedTasks.forEach((task) => this.displayComplatedTask(task));
-    for (let index = 0; index < this.completedTasks.length; index++) {
-      this.ongoingTasksContainer.firstElementChild.remove();
-    }
   }
-  
-  initTasks() {
-    this.ongoingTasksContainer = document.querySelector(
-      TASKSSELECTORS.ongoingTasksList
-    );
-    this.completedTasksContainer = document.querySelector(
-      TASKSSELECTORS.completedTasksList
-    );
-    const tasksElements =
-      this.ongoingTasksContainer.querySelectorAll(".task-wrapper ");
-    const tasks = Array.from(tasksElements).map((task) => {
-      return task.firstElementChild.className.includes("quiz-task-box")
-        ? new Quiz({
-            title: task.querySelector(TASKSSELECTORS.taskTitle).textContent,
-            description: task.querySelector(TASKSSELECTORS.taskDetails)
-              .textContent,
-            durationInMins: parseInt(
-              task.querySelector(TASKSSELECTORS.taskDuration)?.dataset
-                .durationInMins
-            ),
-            questionsCount: parseInt(
-              document.querySelector(QUIZSELECTORS.questions).textContent
-            ),
-          })
-        : new Task({
-            title: task.querySelector(TASKSSELECTORS.taskTitle).textContent,
-            description: task.querySelector(TASKSSELECTORS.taskDetails)
-              .textContent,
-            durationInMins: parseInt(
-              task.querySelector(TASKSSELECTORS.taskDuration)?.dataset
-                .durationInMins
-            ),
-          });
-    });
-    // !!! add the empty ui
-    this.completedTasksContainer.innerHTML = "";
+
+  async initTasks() {
     let timeLeft = Math.floor(this.timeLeft / 1000 / 60);
     this.completedTasks = [];
-    for (const task of tasks) {
+    for (const task of this.tasks) {
       if (task.durationInMins <= timeLeft) {
         timeLeft - task.durationInMins;
         this.completedTasks.push(task);
@@ -379,14 +385,35 @@ export class Session {
         break;
       }
     }
-    this.ongoingTasks = tasks.filter(
+
+    this.ongoingTasks = this.tasks.filter(
       (task) => !this.completedTasks.find((t) => t === task)
     );
+
+    this.completedTasks.forEach(async (task) => {
+      if (task.status !== "completed")
+        await this.updateTaskStatus(task.UID, "completed");
+    });
+
+    if (this.ongoingTasks[0] && this.ongoingTasks[0].status !== "active")
+      await this.updateTaskStatus(this.ongoingTasks[0].UID, "active");
+
     return this;
   }
 
-  initQuiz() {
-    this.quiz = this.ongoingTasks.find((task) => task instanceof Quiz) || null;
+  async updateTaskStatus(taskId, status) {
+    try {
+      await sendData("/api/update-task-status", {
+        taskId,
+        status,
+      });
+    } catch (error) {
+      console.error("Error updating task status:", error);
+      showMessageBlock(
+        "Error updating task status. Please try again later.",
+        "error"
+      );
+    }
   }
 
   calculateQuizElapsedTime() {
@@ -404,6 +431,76 @@ export class Session {
     return millisecondsToHMFormat(quizElapsedTime * 60 * 1000);
   }
 
+  displayOngoingTasks() {
+    this.ongoingTasks.forEach((task, index) => {
+      const isQuiz = task.isQuiz;
+      const isBreak = task.isBreak;
+      const isFirst = index === 0;
+
+      // Build HTML string with XSS prevention for user content
+      const html = `
+          <div
+            ${
+              isFirst
+                ? 'data-tooltip="Active Task"'
+                : isQuiz
+                ? 'data-tooltip="Quiz"'
+                : isBreak
+                ? 'data-tooltip="Break"'
+                : ""
+            }
+            class="task-box${
+              isQuiz ? " quiz-task-box" : isBreak ? " break-box" : ""
+            }${isFirst ? " first" : ""}${
+        isFirst || isQuiz || isBreak ? " has-tooltip" : ""
+      }"
+          >
+            <div class="counter">
+              <span>${(index + 1)
+                .toString()
+                .padStart(this.tasks.length.toString().length, "0")}</span>
+            </div>
+            <span class="title"></span>
+            <span class="duration" data-duration-in-mins="${
+              task.durationInMins
+            }">${millisecondsToHMFormat(task.durationInMins * 60 * 1000)}</span>
+            ${
+              !isBreak
+                ? `<button type="button" data-tooltip="Show Details" class="task-down-icon exclude-btn should-fill has-tooltip">
+                    <i class="bi bi-caret-down"></i>
+                  </button>`
+                : ""
+            }
+          </div>
+          ${
+            !isBreak
+              ? `<div class="task-details">
+                  <h5>Title:</h5>
+                  <p class="task-title"></p>
+                  <h5>Details:</h5>
+                  <p class="task-desc"></p>
+                </div>`
+              : ""
+          }
+      `;
+
+      // Create container and set HTML
+      const wrapper = document.createElement("div");
+      wrapper.className = "task-wrapper";
+      wrapper.innerHTML = html;
+
+      // Set textContent for user data to prevent XSS
+      wrapper.querySelector(".title").textContent = task.title;
+      if (!isBreak) {
+        wrapper.querySelector(".task-title").textContent = task.title;
+        wrapper.querySelector(".task-desc").textContent = task.description;
+      }
+
+      // Append to container
+      this.ongoingTasksContainer.appendChild(wrapper);
+    });
+  }
+
   // !! implement this method
   sendMessage({ message, file }) {}
   // !! implement this
@@ -414,6 +511,7 @@ export class Session {
       this.quiz.updateElapsedTime(this.calculateQuizElapsedTime());
     }
     this.displayComplatedTasks();
+    this.displayOngoingTasks();
     this.initTimer();
     return this;
   }

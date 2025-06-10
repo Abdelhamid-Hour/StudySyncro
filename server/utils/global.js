@@ -1,9 +1,19 @@
 class Task {
-  constructor({ title, description, durationInMins, isQuiz, isBreak }) {
+  constructor({
+    title,
+    description,
+    durationInMins,
+    isQuiz,
+    isBreak,
+    status,
+    UID,
+  }) {
     this.title = title;
+    this.status;
     this.durationInMins = durationInMins;
     this.isQuiz = isQuiz || false;
     this.isBreak = isBreak || false;
+    this.UID = UID || null; // Unique identifier for the task
     if (!isBreak) this.description = description;
   }
 }
@@ -18,22 +28,22 @@ class Quiz extends Task {
 
 const pathNames = {
   home: {
-    inactive: '/home/inactive',
-    active: '/home/active',
+    inactive: "/home/inactive",
+    active: "/home/active",
   },
   groups: {
-    my: '/groups/my',
-    available: '/groups/available',
+    my: "/groups/my",
+    available: "/groups/available",
   },
-  quizzes: '/quizzes',
-  settings: '/settings',
+  quizzes: "/quizzes",
+  settings: "/settings",
 };
 
 const formatHoursMinutes = (TimeOrDate) => {
   const date = new Date(TimeOrDate);
   return date.toLocaleString([], {
-    hour: '2-digit',
-    minute: '2-digit',
+    hour: "2-digit",
+    minute: "2-digit",
     hour12: false,
   });
 };
@@ -41,12 +51,12 @@ const formatHoursMinutes = (TimeOrDate) => {
 const millisecondsToHMFormat = (time) => {
   const hours = Math.floor(time / (1000 * 60 * 60))
     .toString()
-    .padStart(2, '0');
+    .padStart(2, "0");
   const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60))
     .toString()
-    .padStart(2, '0');
+    .padStart(2, "0");
 
-  return hours === '00' ? `${minutes}m` : `${hours}h ${minutes}m`;
+  return hours === "00" ? `${minutes}m` : `${hours}h ${minutes}m`;
 };
 
 module.exports = {

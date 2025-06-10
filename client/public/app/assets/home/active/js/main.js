@@ -1,23 +1,18 @@
-import { expandAndShrinkDescription, Session } from './utils.js';
-import {
-  expandDescriptionBtn,
-  initDomVariables,
-} from './dom-variables.js';
-import { handletTasksListners } from '../../../shared/tasks/js/utils.js';
-import { iniChatMessageInput } from '../../../shared/chat/js/utils.js';
+import { expandAndShrinkDescription, Session, startSession } from "./utils.js";
+import { expandDescriptionBtn, initDomVariables } from "./dom-variables.js";
+import { handletTasksListners } from "../../../shared/tasks/js/utils.js";
+import { iniChatMessageInput } from "../../../shared/chat/js/utils.js";
 
 export const init = () => {
-
   initDomVariables();
 
-  expandDescriptionBtn.addEventListener('click', expandAndShrinkDescription);
-  
-  handletTasksListners('completed-tasks', 'ongoing-tasks');
+  expandDescriptionBtn.addEventListener("click", expandAndShrinkDescription);
 
-  new Session().startSession();
+  handletTasksListners("completed-tasks", "ongoing-tasks");
 
   iniChatMessageInput();
   
+  startSession();
 };
 
 init();

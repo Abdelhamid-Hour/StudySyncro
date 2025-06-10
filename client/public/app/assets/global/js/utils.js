@@ -607,7 +607,7 @@ const toggleActiveLink = (pathName) => {
       break;
   }
 
-  const links = document.querySelectorAll(className);
+  const links = className ? document.querySelectorAll(className) : [];
   if (links.length) {
     toggleClass(links, "active");
     links.forEach((link) => {
