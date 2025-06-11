@@ -365,7 +365,7 @@ groupInfoElementsMap = {
       const content = wrapper.querySelector('.visibility-value.content');
       content.textContent = value;
       if (value === 'Private') {
-        const label = createShowInSearchLabel(showInSearchInput);
+        const label = createShowInSearchLabel(showInSearchInput, true);
         wrapper.appendChild(label);
       }
       return wrapper.innerHTML;
