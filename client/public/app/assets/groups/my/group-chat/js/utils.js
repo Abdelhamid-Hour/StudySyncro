@@ -966,12 +966,16 @@ export const closeGroupLeftSideBar = () => {
 };
 
 const swapMode = (infoBox, modeFuncName, updatedValue, showInSearchValue) => {
+  // debugger;
   const editBoxClass = infoBox.className
     .split(' ')
     .find((c) => c.includes('-info-box'));
   if (updatedValue) {
     groupInfo[dashedToCamelCase(editBoxClass.split('-info-box')[0])] =
       updatedValue;
+  }
+  if (showInSearchValue !== undefined) {
+    groupInfo['showInSearch'] = showInSearchValue;
   }
   const value =
     groupInfo[dashedToCamelCase(editBoxClass.split('-info-box')[0])];
@@ -1083,7 +1087,6 @@ const handleCancelBtn = (cancelBtn) => {
 const handleSaveBtn = (saveBtn) => {
   const infoBox = saveBtn.closest('.info-box');
   const infoWrapper = infoBox.querySelector('.info-container');
-  const actionsBtns = infoBox.querySelector('.action-btns');
   const editBoxClass = infoBox.className
     .split(' ')
     .find((c) => c.includes('-info-box'));
@@ -1095,7 +1098,6 @@ const handleSaveBtn = (saveBtn) => {
   const showInSearchInput = infoBox.querySelector('#show-in-search');
 
   const CONDITIONS = getInfoBoxConditions(editBoxClass, input);
-
   if (
     isValueUnchanged(
       input,
@@ -1105,7 +1107,7 @@ const handleSaveBtn = (saveBtn) => {
       oldValueShowInSearchInput
     )
   ) {
-    swapMode(infoBox, 'getViewMode');
+    swapMode(infoBox, 'getViewMode', '', oldValueShowInSearchInput);
     return;
   }
   const isValid = checkValidity(input, CONDITIONS);
@@ -1282,21 +1284,17 @@ const insertQuizzesToSelectMenu = (
   quizzesGroupSelectMenu.innerHTML = ''; // Clear previous options
   quizzes.forEach((quiz) => {
     const dropDownItem = createDropDownItem(quiz.title, quiz.id, searchTerm);
-    quizzesGroupSelectMenu.appendChild(option);
+    quizzesGroupSelectMenu.appendChild(dropDownItem);
   });
 };
 
-const updateQuizzesList = async (
-  searchTerm = '',
-  count = 10,
-  lastVisible = null,
-  quizzesGroupSelectMenu
-) => {
-  try {
-    const { quizzes, lastVisible } = await fetchData(
-      '/quizzes-list' +
-        `?search=${searchTerm}&count=${count}&lastVisible=${lastVisible}`
-    );
-    insertQuizzesToSelectMenu(quizzes, quizzesGroupSelectMenu, searchTerm);
-  } catch (error) {}
-};
+// const updateQuizzesList = async (
+//   searchTerm = '',
+//   count = 10,
+//   lastVisible = null,
+//   quizzesGroupSelectMenu
+// ) => {
+//   if ( ) {
+
+//   }
+// };
