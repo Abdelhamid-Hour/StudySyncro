@@ -75,9 +75,7 @@ const getSwapAnimationRule = (targetFormHeight) => {
         }`,
     initialRule: `
     .sign-in-container {
-      height: ${
-        signInFormHeight
-      }px;
+      height: ${signInFormHeight}px;
       z-index: 1;      
       transition: height calc(var(--login-swap-animation-duration)/2)
       ${delay ? 'calc(var(--login-swap-animation-duration)/2)' : ''} linear;
@@ -95,7 +93,6 @@ const initializeSignUpForm = () => {
     signUpAnimationRules.signUpClassAnimationRule,
     ++cssRulesLength
   );
-  
 };
 const inputsEmptying = () => {
   signInemailField.value = '';
@@ -121,19 +118,25 @@ const swapAnimation = (targetFormHeight) => {
       lastNameField,
       signUpemailField
     );
-    signInFormContainer.classList.add('active-form')
-    signUpFormContainer.classList.remove('active-form')
+    signInFormContainer.classList.add('active-form');
     signInFormContainer.onanimationstart = () => {
       signUpFormContainer.style.zIndex = '1';
       signInFormContainer.onanimationstart = null;
     };
+    signUpFormContainer.onanimationend = null;
+    signInFormContainer.onanimationend = () => {
+      signUpFormContainer.classList.remove('active-form');
+    };
   } else {
-    signInFormContainer.classList.remove('active-form')
-    signUpFormContainer.classList.add('active-form')
+    signUpFormContainer.classList.add('active-form');
     hideErrors(signInPasswordField, signInemailField);
     signUpFormContainer.onanimationstart = () => {
       signUpFormContainer.style.zIndex = '2';
       signUpFormContainer.onanimationstart = null;
+    };
+    signInFormContainer.onanimationend = null;
+    signUpFormContainer.onanimationend = () => {
+      signInFormContainer.classList.remove('active-form');
     };
   }
   // discharging inputs

@@ -30,6 +30,7 @@
 // add a max and min sesision duratioknm
 // remove menu btn from tasks list in ongoing session page (session active)
 // add condition to not start quiz if session is completed
+// fix the scroll to the end of the containre fliker while dragging
 
  Group Cards
 Subject (Matière)

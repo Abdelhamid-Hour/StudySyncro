@@ -193,7 +193,6 @@ export class Quiz extends Task {
 
 export const startSession = async () => {
   try {
-    debugger;
     const sessionData = await fetchData("/active-session");
     const session = new Session(sessionData);
     session.startSession();

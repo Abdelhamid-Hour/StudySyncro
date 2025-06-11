@@ -9,7 +9,6 @@ const handelTaskBtns = (className, scroll) => {
 };
 
 const handelTaskDetailsBtn = (e) => {
-  debugger
   if (e.target.closest(".task-down-icon")) {
     const task = e.target.closest(".task-wrapper, .show-task-details");
 

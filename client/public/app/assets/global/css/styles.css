@@ -34,8 +34,8 @@ body {
   max-height: 100vh;
   overflow: hidden;
   grid-template-areas:
-    "left-side-bar top-side-bar"
-    "left-side-bar main";
+    'left-side-bar top-side-bar'
+    'left-side-bar main';
   grid-template-columns: auto 1fr;
   grid-template-rows: auto 1fr;
 }
@@ -101,8 +101,8 @@ body {
     align-items: center;
     justify-content: center;
     &::after {
-      content: "";
-      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMCAzMCIgd2lkdGg9IjMwcHgiIGhlaWdodD0iMzBweCI+PHBhdGggZD0iTTkuOTM4IDEuOTM3OTk5OTk5OTk5OTk5N0EzIDMgMCAxMDkuOTM4IDcuOTM4IDMgMyAwIDEwOS45MzggMS45Mzc5OTk5OTk5OTk5OTk3ek05LjkzOCAxMS45MzhBMyAzIDAgMTA5LjkzOCAxNy45MzgwMDAwMDAwMDAwMDIgMyAzIDAgMTA5LjkzOCAxMS45Mzh6TTkuOTM4IDIxLjkzOEEzIDMgMCAxMDkuOTM4IDI3LjkzOCAzIDMgMCAxMDkuOTM4IDIxLjkzOHpNMTkuOTM4IDEuOTM3OTk5OTk5OTk5OTk5N0EzIDMgMCAxMDE5LjkzOCA3LjkzOCAzIDMgMCAxMDE5LjkzOCAxLjkzNzk5OTk5OTk5OTk5OTdNMTkuOTM4IDExLjkzOEEzIDMgMCAxMDE5LjkzOCAxNy45MzgwMDAwMDAwMDAwMDIgMyAzIDAgMTAxOS45MzggMTEuOTM4ek0xOS45MzggMjEuOTM4QTMgMyAwIDEwMTkuOTM4IDI3LjkzOCAzIDMgMCAxMDE5LjkzOCAyMS45Mzh6IiBmaWxsPSIjY2NjY2NjIi8+PC9zdmc+");
+      content: '';
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMCAzMCIgd2lkdGg9IjMwcHgiIGhlaWdodD0iMzBweCI+PHBhdGggZD0iTTkuOTM4IDEuOTM3OTk5OTk5OTk5OTk5N0EzIDMgMCAxMDkuOTM4IDcuOTM4IDMgMyAwIDEwOS45MzggMS45Mzc5OTk5OTk5OTk5OTk3ek05LjkzOCAxMS45MzhBMyAzIDAgMTA5LjkzOCAxNy45MzgwMDAwMDAwMDAwMDIgMyAzIDAgMTA5LjkzOCAxMS45Mzh6TTkuOTM4IDIxLjkzOEEzIDMgMCAxMDkuOTM4IDI3LjkzOCAzIDMgMCAxMDkuOTM4IDIxLjkzOHpNMTkuOTM4IDEuOTM3OTk5OTk5OTk5OTk5N0EzIDMgMCAxMDE5LjkzOCA3LjkzOCAzIDMgMCAxMDE5LjkzOCAxLjkzNzk5OTk5OTk5OTk5OTdNMTkuOTM4IDExLjkzOEEzIDMgMCAxMDE5LjkzOCAxNy45MzgwMDAwMDAwMDAwMDIgMyAzIDAgMTAxOS45MzggMTEuOTM4ek0xOS45MzggMjEuOTM4QTMgMyAwIDEwMTkuOTM4IDI3LjkzOCAzIDMgMCAxMDE5LjkzOCAyMS45Mzh6IiBmaWxsPSIjY2NjY2NjIi8+PC9zdmc+');
       background-repeat: no-repeat;
       background-size: contain;
       width: 1em;
@@ -290,7 +290,7 @@ h1 {
   color: var(--primary-color);
 }
 
-i[class*="fill"] {
+i[class*='fill'] {
   color: var(--primary-color);
   transition: var(--primary-transition-style);
 }
@@ -433,7 +433,7 @@ i {
     }
   }
 
-  input[type="search"] {
+  input[type='search'] {
     padding: var(--primary-gap);
     width: 100%;
     padding-left: 4rem;
@@ -797,7 +797,7 @@ main {
   }
 
   &:before {
-    content: "";
+    content: '';
     position: absolute;
     border-top: 0.4rem solid var(--primary-color);
     border-left: 0.4rem solid transparent;
@@ -1137,8 +1137,9 @@ label.container svg {
   justify-content: center;
   align-items: center;
   gap: calc(var(--primary-gap) / 2);
-  padding-block: calc(var(--primary-gap) * 2);
+  padding-block: var(--primary-gap);
   padding-inline: var(--primary-gap);
+  height: 15rem;
   background-color: var(--confirmation-box-bg);
   border-radius: var(--primary-radius);
   border: var(--primary-border-style);
@@ -1185,7 +1186,7 @@ label.container svg {
     );
   }
 
-  p{
+  p {
     text-align: center;
   }
 
@@ -1195,6 +1196,7 @@ label.container svg {
 
   i {
     font-size: 5rem;
+    margin-top: auto;
   }
   i.bi-exclamation-triangle-fill {
     color: var(--confirmation-box-color);
@@ -1203,7 +1205,7 @@ label.container svg {
   .buttons {
     display: flex;
     width: 100%;
-    margin-top: 1rem;
+    margin-top: auto;
     justify-content: space-between;
     .confirmation-box-btn-confirm {
       color: var(--confirmation-box-confirmation-box-btn-confirm-color);

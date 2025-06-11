@@ -3,7 +3,7 @@
     <header class="questions-header">
       <h4 class="panel-title">
         Questions
-        <span class="count badge simple-badge">2</span>
+        <span class="count badge simple-badge"><%= questions.length %></span>
       </h4>
       <button
         type="button"
@@ -14,79 +14,46 @@
       </button>
     </header>
     <div class="questions-list">
-      <div class="question">
-        <div class="drop-target"></div>
-        <a
-          draggable="false"
-          href="#1748838512380"
-          class="question-card"
-        >
-          <header class="question-card-header">
-            <h4>
-              <span class="icon-box">
-                <i class="bi bi-patch-question"></i>
-              </span>
-              <span class="question-count counter">Question 1</span>
-            </h4>
-            <button
-              type="button"
-              class="exclude-btn drag-handle has-tooltip"
-              data-tooltip="Drag to Reorder"
-            >
-              <i class="drag-icon"></i>
-            </button>
-          </header>
-          <p class="question-text">
-            What is the output of 2 + 2 in JavaScript?
-          </p>
-          <footer class="question-card-footer">
-            <span class="choices-count">2 Choices</span>
-            <button
-              type="button"
-              class="delete-question-btn exclude-btn has-tooltip"
-              data-tooltip="Delete Question"
-            >
-              <i class="bi bi-trash3"></i>
-            </button>
-          </footer>
-        </a>
-        <div class="drop-target"></div>
-      </div>
-      <div class="question">
-        <a
-          draggable="false"
-          href="#1748838512797"
-          class="question-card"
-        >
-          <header class="question-card-header">
-            <h4>
-              <span class="icon-box">
-                <i class="bi bi-patch-question"></i>
-              </span>
-              <span class="question-count counter">Question 2</span>
-            </h4>
-            <button
-              type="button"
-              class="exclude-btn drag-handle has-tooltip"
-              data-tooltip="Drag to Reorder"
-            >
-              <i class="drag-icon"></i>
-            </button>
-          </header>
-          <p class="question-text">Which company developed JavaScript?</p>
-          <footer class="question-card-footer">
-            <span class="choices-count">2 Choices</span>
-            <button
-              type="button"
-              class="delete-question-btn exclude-btn has-tooltip"
-              data-tooltip="Delete Question"
-            >
-              <i class="bi bi-trash3"></i>
-            </button>
-          </footer>
-        </a>
-        <div class="drop-target"></div>
-      </div>
+      <% questions.forEach(function(q, idx) { %>
+        <div class="question">
+          <% if (idx === 0) { %>
+           <div class="drop-target"></div>
+          <% } %>
+          <a
+            draggable="false"
+            href="#<%= q.id %>"
+            class="question-card"
+          >
+            <header class="question-card-header">
+              <h4>
+                <span class="icon-box">
+                  <i class="bi bi-patch-question"></i>
+                </span>
+                <span class="question-count counter">Question <%= idx + 1 %></span>
+              </h4>
+              <button
+                type="button"
+                class="exclude-btn drag-handle has-tooltip"
+                data-tooltip="Drag to Reorder"
+              >
+                <i class="drag-icon"></i>
+              </button>
+            </header>
+            <p class="question-text"><%= q.text %></p>
+            <footer class="question-card-footer">
+              <span class="choices-count"><%= q.choices.length %> Choices</span>
+              <button
+                type="button"
+                class="delete-question-btn exclude-btn has-tooltip"
+                data-tooltip="Delete Question"
+              >
+                <i class="bi bi-trash3"></i>
+              </button>
+            </footer>
+          </a>
+          <div class="drop-target"></div>
+        </div>
+      <% }); %>
     </div>
   </section>
   <section class="question-editor-panel">
@@ -99,7 +66,7 @@
             </span>
             Subject:
           </span>
-          <span class="subject-value value">JavaScript</span>
+          <span class="subject-value value"><%= subject %></span>
           <button
             class="exclude-btn edit-subject-btn has-tooltip"
             data-tooltip="Edit Subject"
@@ -111,7 +78,7 @@
       </div>
       <div class="title">
         <div class="container">
-          <h4 class="title-text"><%= quizTitle %></h4>
+          <h4 class="title-text"><%= title %></h4>
           <button
             class="exclude-btn edit-title-btn has-tooltip"
             data-tooltip="Edit Title"
@@ -129,230 +96,107 @@
           Shared In:
         </span>
         <span class="groups-count value">
-          <span class="count badge simple-badge">0</span>
-          Group
+          <span class="count badge simple-badge"><%= groupsCount %></span>
+          Group<%= groupsCount === 1 ? '' : 's' %>
         </span>
         <span class="sessions-count value">
-          <span class="count badge simple-badge">0</span>
-          Session
+          <span class="count badge simple-badge"><%= sessionsCount %></span>
+          Session<%= sessionsCount === 1 ? '' : 's' %>
         </span>
       </span>
     </header>
     <div class="questions-list">
-      <div class="question-editor-box" id="1748838512380">
-        <header class="question-header">
-          <h4>
-            <span class="icon-box">
-              <i class="bi bi-patch-question"></i>
-            </span>
-            <span class="question-count counter">Question 1</span>
-          </h4>
-          <button
-            type="button"
-            class="delete-question-btn exclude-btn has-tooltip"
-            data-tooltip="Delete Choice"
-          >
-            <i class="bi bi-trash3"></i>
-          </button>
-        </header>
-        <textarea
-          class="question-input input"
-          placeholder="Enter question text here..."
-          id="question-text"
-          style="height: 45px"
-        >
-What is the output of 2 + 2 in JavaScript?</textarea
-        >
-        <div class="choices-section">
-          <h5 class="choices-title section-title">
-            <span class="icon-box">
-              <i class="bi bi-list-ol"></i>
-            </span>
-            Choices
-          </h5>
-          <div class="choices-list">
-            <div data-choice-id="0" class="choice correct-answer">
-              <span class="choice-label">A</span>
-              <input
-                type="text"
-                class="choice-input input"
-                placeholder="Enter choice A"
-                value="4"
-              />
-              <button
-                type="button"
-                class="delete-choice-btn exclude-btn has-tooltip"
-                data-tooltip="Delete Choice"
-              >
-                <i class="bi bi-trash3"></i>
-              </button>
-            </div>
-            <div data-choice-id="1" class="choice">
-              <span class="choice-label">B</span>
-              <input
-                type="text"
-                class="choice-input input"
-                placeholder="Enter choice B"
-                value="5"
-              />
-              <button
-                type="button"
-                class="delete-choice-btn exclude-btn has-tooltip"
-                data-tooltip="Delete Choice"
-              >
-                <i class="bi bi-trash3"></i>
-              </button>
-            </div>
-          </div>
-          <button type="button" class="add-choice-btn small-btn">
-            <i class="bi bi-plus-circle"></i>
-            Add Choice
-          </button>
-          <hr />
-          <h5 class="correct-answer-title section-title">
-            <span class="icon-box">
-              <i class="bi bi-check-circle"></i>
-            </span>
-            Correct Answer
-          </h5>
-          <div class="correct-answer-select">
-            <div class="icon-box">
-              <i class="bi bi-check-circle"></i>
-            </div>
-            <div class="select-trigger input">
-              <button type="button" class="exclude-btn open-drop-down-btn">
-                <span class="correct-answer-value">A</span>
-                <input type="hidden" name="correct-answer" value="0" />
-                <i class="bi bi-chevron-down"></i>
-              </button>
-              <div
-                class="select-menu group-subject-select-menu drop-down-menu overlay"
-              >
-                <label class="drop-down-item">
+      <% questions.forEach(function(q, idx) { %>
+        <div class="question-editor-box" id="<%= q.id %>">
+          <header class="question-header">
+            <h4>
+              <span class="icon-box">
+                <i class="bi bi-patch-question"></i>
+              </span>
+              <span class="question-count counter">Question <%= idx + 1 %></span>
+            </h4>
+            <button
+              type="button"
+              class="delete-question-btn exclude-btn has-tooltip"
+              data-tooltip="Delete Choice"
+            >
+              <i class="bi bi-trash3"></i>
+            </button>
+          </header>
+          <textarea
+            class="question-input input"
+            placeholder="Enter question text here..."
+            id="question-text"
+            style="height: 45px"
+          ><%= q.text %></textarea>
+          <div class="choices-section">
+            <h5 class="choices-title section-title">
+              <span class="icon-box">
+                <i class="bi bi-list-ol"></i>
+              </span>
+              Choices
+            </h5>
+            <div class="choices-list">
+              <% q.choices.forEach(function(choice, cidx) { %>
+                <div data-choice-id="<%= cidx %>" class="choice<%= q.correctAnswerIndex === cidx ? ' correct-answer' : '' %>">
+                  <span class="choice-label"><%= String.fromCharCode(65 + cidx) %></span>
                   <input
-                    type="radio"
-                    name="correct-answer-1"
-                    value="0"
-                    checked
+                    type="text"
+                    class="choice-input input"
+                    placeholder="Enter choice <%= String.fromCharCode(65 + cidx) %>"
+                    value="<%= choice %>"
                   />
-                  A
-                </label>
-                <label class="drop-down-item">
-                  <input type="radio" name="correct-answer-1" value="1" />
-                  B
-                </label>
+                  <button
+                    type="button"
+                    class="delete-choice-btn exclude-btn has-tooltip"
+                    data-tooltip="Delete Choice"
+                  >
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </div>
+              <% }); %>
+            </div>
+            <button type="button" class="add-choice-btn small-btn">
+              <i class="bi bi-plus-circle"></i>
+              Add Choice
+            </button>
+            <hr />
+            <h5 class="correct-answer-title section-title">
+              <span class="icon-box">
+                <i class="bi bi-check-circle"></i>
+              </span>
+              Correct Answer
+            </h5>
+            <div class="correct-answer-select">
+              <div class="icon-box">
+                <i class="bi bi-check-circle"></i>
+              </div>
+              <div class="select-trigger input">
+                <button type="button" class="exclude-btn open-drop-down-btn">
+                  <span class="correct-answer-value"><%= String.fromCharCode(65 + q.correctAnswerIndex) %></span>
+                  <input type="hidden" name="correct-answer" value="<%= q.correctAnswerIndex %>" />
+                  <i class="bi bi-chevron-down"></i>
+                </button>
+                <div
+                  class="select-menu group-subject-select-menu drop-down-menu overlay"
+                >
+                  <% q.choices.forEach(function(choice, cidx) { %>
+                    <label class="drop-down-item">
+                      <input
+                        type="radio"
+                        name="correct-answer-<%= idx + 1 %>"
+                        value="<%= cidx %>"
+                        <%= q.correctAnswerIndex === cidx ? 'checked' : '' %>
+                      />
+                      <%= String.fromCharCode(65 + cidx) %>
+                    </label>
+                  <% }); %>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="question-editor-box" id="1748838512797">
-        <header class="question-header">
-          <h4>
-            <span class="icon-box">
-              <i class="bi bi-patch-question"></i>
-            </span>
-            <span class="question-count counter">Question 2</span>
-          </h4>
-          <button
-            type="button"
-            class="delete-question-btn exclude-btn has-tooltip"
-            data-tooltip="Delete Choice"
-          >
-            <i class="bi bi-trash3"></i>
-          </button>
-        </header>
-        <textarea
-          class="question-input input"
-          placeholder="Enter question text here..."
-          id="question-text"
-          style="height: 45px"
-        >
-Which company developed JavaScript?</textarea
-        >
-        <div class="choices-section">
-          <h5 class="choices-title section-title">
-            <span class="icon-box">
-              <i class="bi bi-list-ol"></i>
-            </span>
-            Choices
-          </h5>
-          <div class="choices-list">
-            <div data-choice-id="0" class="choice correct-answer">
-              <span class="choice-label">A</span>
-              <input
-                type="text"
-                class="choice-input input"
-                placeholder="Enter choice A"
-                value="Netscape"
-              />
-              <button
-                type="button"
-                class="delete-choice-btn exclude-btn has-tooltip"
-                data-tooltip="Delete Choice"
-              >
-                <i class="bi bi-trash3"></i>
-              </button>
-            </div>
-            <div data-choice-id="1" class="choice">
-              <span class="choice-label">B</span>
-              <input
-                type="text"
-                class="choice-input input"
-                placeholder="Enter choice B"
-                value="Microsoft"
-              />
-              <button
-                type="button"
-                class="delete-choice-btn exclude-btn has-tooltip"
-                data-tooltip="Delete Choice"
-              >
-                <i class="bi bi-trash3"></i>
-              </button>
-            </div>
-          </div>
-          <button type="button" class="add-choice-btn small-btn">
-            <i class="bi bi-plus-circle"></i>
-            Add Choice
-          </button>
-          <hr />
-          <h5 class="correct-answer-title section-title">
-            <span class="icon-box">
-              <i class="bi bi-check-circle"></i>
-            </span>
-            Correct Answer
-          </h5>
-          <div class="correct-answer-select">
-            <div class="icon-box">
-              <i class="bi bi-check-circle"></i>
-            </div>
-            <div class="select-trigger input">
-              <button type="button" class="exclude-btn open-drop-down-btn">
-                <span class="correct-answer-value">A</span>
-                <input type="hidden" name="correct-answer" value="0" />
-                <i class="bi bi-chevron-down"></i>
-              </button>
-              <div
-                class="select-menu group-subject-select-menu drop-down-menu overlay"
-              >
-                <label class="drop-down-item">
-                  <input
-                    type="radio"
-                    name="correct-answer-2"
-                    value="0"
-                    checked
-                  />
-                  A
-                </label>
-                <label class="drop-down-item">
-                  <input type="radio" name="correct-answer-2" value="1" />
-                  B
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <% }); %>
       <button type="button" class="exclude-btn add-question-btn">
         <i class="bi bi-plus-circle"></i>
         <hr />
