@@ -3,80 +3,119 @@ const { getTaches } = require("./tache");
 const { getAllGroups } = require("./group");
 // examen gestion *
 
+const getFormatedQuizzs = (quizzes, user_id) =>
+  quizzes.map(({ id , title , subject , questionsCount , sessionIdsCount , groupIdsCount, ...rest }) => ({
+     id: id,
+        title: title,
+        questionsCount: questionsCount,
+        sharedGroups: groupIdsCount,
+        sharedSessions: sessionIdsCount,
+        subject: subject,
+  }));
+
 const formatDate = (date) => {
-const formatted = new Date(date).toLocaleString(
-    typeof Intl !== "undefined" && Intl.DateTimeFormat().resolvedOptions().locale
-        ? Intl.DateTimeFormat().resolvedOptions().locale
-        : "fr-MA",
+  const formatted = new Date(date).toLocaleString(
+    typeof Intl !== "undefined" &&
+      Intl.DateTimeFormat().resolvedOptions().locale
+      ? Intl.DateTimeFormat().resolvedOptions().locale
+      : "fr-MA",
     {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
     }
-);
+  );
   return formatted;
 };
 
-const getExams = async (groupId, userId) => {
+const getExams = async (
+  userId,
+  criteria,
+  limit = 5,
+  lastVisible = null,
+  oldExams = []
+) => {
   try {
-    const quizzesList = [];
-    const sessionRef = db.collection("sessions");
-    const quizzRef = db.collection("Examen");
-    const groupRef = db.collection("groups").doc(groupId);
-    const snapshot = await groupRef.get();
-    const group = snapshot.data();
-    const listQ = group.quizList;
+    let availableExams = [...oldExams];
 
-    if (snapshot.exists) {
-      if (listQ.length === 0) {
-        return {
-          success: true,
-          context: {
-            count: 0,
-            isAdmin: group.creator === userId,
-            quizzes: [],
-          },
-        };
-      } else {
-        listQ.foreach(async (snap) => {
-          const session = await sessionRef.doc(snap.sessionId).get();
-          const quiz = await quizzRef.doc(snap.quizId).get();
-          if (!quiz.exists && !session.exists) {
-          }
-          quizzesList.push({
-            quizId: quiz.id,
-            quizTitle: quiz.title,
-            sessionName: session.name,
-            questionsCount: quiz.questionsCount,
-            quizDate: formatDate(quiz.createdAt),
-          });
-        });
-
-        return {
-          success: true,
-          context: {
-            count: quizzesList.length,
-            isAdmin: group.creator === userId,
-            quizzes: quizzesList,
-          },
-        };
-      }
-    } else {
-      return {
-        success: false,
-        message: "Group not found",
-      };
+    // Return early if we already have enough exams
+    if (availableExams.length >= limit) {
+      const formattedExams = getFormatedQuizzs(
+        availableExams.slice(0, limit),
+        userId
+      );
+      return { cards: formattedExams, lastVisible };
     }
+
+    let query = db.collection("quizzes").where("creator", "==", userId);
+
+    // Pagination logic
+    if (typeof lastVisible === "string" && lastVisible.trim() !== "") {
+      const doc = db.collection("quizzes").doc(lastVisible);
+      const lastElement = await doc.get();
+      query = query.startAfter(lastElement);
+    } else if (lastVisible) {
+      query = query.startAfter(lastVisible);
+    }
+
+    // Fetch more than limit to account for filtering
+    const need = limit - availableExams.length;
+    const batchSize = Math.max(need * 2, 20);
+    query = query.limit(batchSize);
+
+    const snapshot = await query.get();
+
+    if (snapshot.empty && availableExams.length === 0) {
+      return { cards: [], lastVisible: null };
+    }
+
+    if (snapshot.empty) {
+      const formattedExams = getFormattedExams(availableExams, userId);
+      return { cards: formattedExams, lastVisible: null };
+    }
+
+    // Convert documents to quiz objects
+    let exams = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    // Apply filter if provided
+    const filteredExams = criteria
+      ? await filtrerExamen(userId, criteria, exams, true)
+      : exams;
+
+    availableExams = availableExams.concat(filteredExams);
+
+    const newLastVisible = snapshot.docs[snapshot.docs.length - 1];
+    const isLastBatch = snapshot.docs.length < batchSize;
+    const hasEnoughExams = availableExams.length >= limit;
+
+    if (hasEnoughExams || isLastBatch) {
+      const examsToReturn = availableExams.slice(0, limit);
+      const formattedExams = getFormattedExams(examsToReturn, userId);
+
+      const finalLastVisible =
+        isLastBatch || availableExams.length <= limit
+          ? null
+          : newLastVisible.id;
+
+      return { cards: formattedExams, lastVisible: finalLastVisible };
+    }
+
+    // Recursive call to get more exams
+    return await getExams(userId, criteria, limit, newLastVisible.id, availableExams);
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message, "error in getExams");
     return {
-        success: false,
-        message: "Error fetching exams",
+      cards: getFormattedExams(oldExams, userId),
+      lastVisible,
     };
   }
 };
+
 
 const createExamen = async (examenData, userData) => {
   try {
@@ -90,16 +129,17 @@ const createExamen = async (examenData, userData) => {
         title: examenData["quiz-title"],
         subject: examenData.subject,
         creator: userData.uid,
-        sessionIdsCount: [],
-        groupIdsCount: [],
+        sessionIdsCount: 0,
+        groupIdsCount: 0,
         createdAt: new Date().toISOString(),
         questionsCount: 0,
         userIds: [],
       };
-      const id = await examenRef.add(newExamen);
+      const docRef = await examenRef.add(newExamen);
+      console.log(docRef.id , 'backend qui id')
       const result = {
         success: true,
-        quizId: id, // This should be replaced with actual logic to create a quiz
+        quizId: docRef.id, // This should be replaced with actual logic to create a quiz
         message: "Quiz created successfully",
       };
       return result;
@@ -160,7 +200,7 @@ const getQuestions = async (examenId) => {
 
 const filtrerExamen = async (criteria, examens) => {
   try {
-    const examens = examens.filter((ex) => {
+    const quizzes = examens.filter((ex) => {
       let matchSearch = true;
       const searchTerm = criteria.searchTerm.trim().toLowerCase();
       if (criteria.searchBy === "subject") {
