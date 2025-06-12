@@ -397,37 +397,74 @@ const quitterGroup = async (groupId, userId) => {
   }
 };
 
-const modifyGroup = async (groupId, formData) => {
+const modifyGroup = async (userId , groupId, formData) => {
   try {
-    const groupRef = db.collection("groups").doc(groupId);
-    const groups = await getAllGroups();
-    console.log(groups, "these are the groups ");
-    const isDuplicated = groups.some(
-      (group) => group.uid != groupId && group.nom_groupe === formData.nomGroupe
-    );
     const group = await getGroupByID(groupId);
-    console.log(groupId, "group id");
-    console.log(formData, "form data");
-    console.log(group, "group");
-    if (group && !isDuplicated) {
+    const groupRef = db.collection("groups").doc(groupId)
+    const snaphsot = await groupRef.get()
+    let isAdmin = true 
+     isAdmin = group.creator === userId
+      if (!group){
+      return {
+        success : false , 
+        message : `Id : ${groupId} does not match any group.`
+      }
+    };
+    if (!isAdmin){
+      return {
+        success : false , 
+        message : "you dont have the right to upate the group informations."
+      }
+    };
+
+   const fieldName = formData.fieldName 
+   const value = formData.value 
+ // hnaya acheck using the keys to inssure that there is fileds to upddate heheh
+ if(fieldName === "visibility"){
+if(value.visibility){
+    await groupRef.update({
+        visibility : value.visibility
+      })
+       return {
+        success : true , 
+        message  :  `Group visibility updated successfully.`
+      }
+}  
+else if(value.showInSearch){
+    await groupRef.update({
+        showInSearch : value.showInSearch
+      })
+       return {
+        success : true , 
+        message  :  `Groupe privacy  updated successfully.`
+      }
+}
+ }
+ else    if(fieldName != "" && fieldName != "visibility" || value != "" || snaphsot.exists){
       await groupRef.update({
-        nom_groupe: formData.nomGroupe,
-        description: formData.description,
-        matière: formData.matiere,
-        niveau: formData.niveau,
-        maxMembers: formData.maxNum,
-        visibility: formData.visibility,
-        appataire_recherche: formData.apparaitreRecherche,
-      });
-      return true;
-    } else {
-      return false;
+        [fieldName] : value 
+      })
+       return {
+        success : true , 
+        message  :  `Group ${fieldName} updated successfully.`
+      }
+    }
+     
+     else {
+      return {
+        success : false  , 
+        message : "No changes detected, skipping update."
+      };
     }
   } catch (error) {
-    console.log(error.message);
-    return false;
+    console.error("Error in modifyGroup:", error.message);
+    return {
+      success : false , 
+      message : "Can't update group properties ! please try again later."
+    };
   }
 };
+
 
 const getAllGroups = async () => {
   try {
@@ -457,7 +494,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
       const isNotEmpty = newValue.trim() != "";
 
       switch (propertie) {
-        case "nom_groupe": {
+        case "name": {
           const isDuplicated = groups.some(
             (group) => group.id != groupId && group.nom_groupe === newValue
           );
@@ -573,7 +610,7 @@ const getGroupInfo = async (id, userId) => {
           fullName: adminInfo.fullName,
           photoURL: adminInfo.photoURL,
         },
-        members: getFormattedMembers(group.members),
+        members: getFormattedMembers(group.members.filter(m=>m.uid != group.creator)),
         isAdmin: group.creator === userId,
       },
     };

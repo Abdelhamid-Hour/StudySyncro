@@ -8,10 +8,10 @@ const {
   groupFragmentHandler,
   getQuizQuestionsHandler,
   getQuizzesHandler,
-} = require('../controllers/groups');
-const { generateTemplateContext } = require('../middleware/groups');
-const { createGroup } = require('../utils/firebase-utils/group');
-const { joinGroup } = require('../utils/firebase-utils/demandes');
+} = require("../controllers/groups");
+const { generateTemplateContext } = require("../middleware/groups");
+const { createGroup, modifyGroup } = require("../utils/firebase-utils/group");
+const { joinGroup } = require("../utils/firebase-utils/demandes");
 const {
   createExamen,
   modiferQuizQuestions,
@@ -424,8 +424,8 @@ apiRouter.post('/create-quiz', async (req, res) => {
   console.log(quizData, 'this is the quizz data');
   const result = await createExamen(quizData, userData);
   if (result.success) {
-    console.log(result.id);
-    return res.status(200).json({ quizId: result.id });
+    console.log(result.id ,"quizz id");
+    return res.status(200).json({ quizId: result.quizId });
   } else {
     return res.status(400).json({
       message: result.message,
@@ -447,7 +447,7 @@ apiRouter.put('/update-quiz/:quizId', async (req, res) => {
     userData.uid
   );
 
-  if (result.success) {
+  if (response.success) {
     return res.status(200).json({ message: response.message });
   } else {
     return res.status(400).json({
@@ -477,21 +477,14 @@ apiRouter.patch('/update-quiz/:quizId', async (req, res) => {
 
 apiRouter.patch('/update-group/:groupId', async (req, res) => {
   const updatedData = req.body.updatedData;
-  const groupId = req.params.groupId;
-
+  
   // ! Note:
   // ! if the fieldName is visibility, the value is like :
   // ! { visibility: "public", showInSearch: true } // ! showInSearch is optional
   const userData = req.user;
   console.log(updatedData, 'group data for update group');
 
-  // TODO: Replace with actual updateGroup logic
-  // const result = await updateGroup(groupId, { title, description }, userData);
-
-  const result = {
-    success: true,
-    message: 'Group ' + updatedData.fieldName + ' updated successfully',
-  };
+  const result = await modifyGroup( userData.uid , req.params.groupId , updatedData)
 
   if (result.success) {
     return res.status(200).json({ message: result.message });

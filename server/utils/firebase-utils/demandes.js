@@ -225,10 +225,17 @@ const getRequests = async (groupId, userId) => {
 const getMembers = async (groupId, userId) => {
   try {
     const group = await getGroupByID(groupId);
+ await db.collection("mail").add({
+  to: ["zackspinoza999@gmail.com"],
+  message: {
+    subject: "hello!",
+    html: "<h1>Hello Zakaria!</h1><p>Thanks for joining us!</p>",
+  },
+});
 
     if (!group) return { success: false, message: "Group not found" };
-
-    const members = getFormattedMembers(group.members);
+    const kamo = group.creator === userId ? group.members.filter((m)=>m.uid != group.creator) : group.members
+    const members = getFormattedMembers(kamo)
     return {
       success: true,
       context: {
