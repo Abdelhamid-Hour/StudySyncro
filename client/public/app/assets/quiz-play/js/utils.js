@@ -1,7 +1,7 @@
-import { showMessageBlock } from '../../../../../main_assets/js/utils.js';
-import { fetchData } from '../../../../main_assets/js/utils.js';
-import { openOverlayModal, scrollToView } from '../../global/js/utils.js';
-import { hoursEl, minutesEl, nextBtn, secondsEl } from './dom-variables.js';
+import { showMessageBlock } from "../../../../../main_assets/js/utils.js";
+import { fetchData } from "../../../../main_assets/js/utils.js";
+import { openOverlayModal, scrollToView } from "../../global/js/utils.js";
+import { hoursEl, minutesEl, nextBtn, secondsEl } from "./dom-variables.js";
 
 // ? Question template :
 /* 
@@ -24,7 +24,7 @@ import { hoursEl, minutesEl, nextBtn, secondsEl } from './dom-variables.js';
 
 let quiz = {
   questions: [],
-  id: '',
+  id: window.location.pathname.split("/").pop(),
   duration: 0, // Duration in minutes
 };
 
@@ -42,13 +42,13 @@ const drawArc = (
   canvas,
   ctx,
   percentage = 1,
-  color = 'red',
+  color = "red",
   step = 0.1,
   angle = 0
 ) => {
-  ctx.lineCap = 'round'; // Make the arc ends rounded
+  ctx.lineCap = "round"; // Make the arc ends rounded
   ctx.lineWidth = 0.01 * innerWidth; // Set line width relative to canvas size
-  ctx.strokeStyle = 'gray';
+  ctx.strokeStyle = "gray";
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.beginPath();
   ctx.arc(
@@ -91,20 +91,20 @@ function animateArc(canvas, ctx, percentage, color, duration = 1000) {
 
 const resultTypes = {
   excellent: {
-    title: 'Excellent work!',
-    description: 'You nailed it! Keep it up.',
+    title: "Excellent work!",
+    description: "You nailed it! Keep it up.",
   },
   good: {
-    title: 'Well done!',
-    description: 'Great job! You have a good grasp of the material.',
+    title: "Well done!",
+    description: "Great job! You have a good grasp of the material.",
   },
   average: {
-    title: 'Not bad, keep going!',
+    title: "Not bad, keep going!",
     description: "You're almost there! Keep up the good work.",
   },
   poor: {
-    title: 'Better luck next time!',
-    description: 'Try to review the material and keep practicing.',
+    title: "Better luck next time!",
+    description: "Try to review the material and keep practicing.",
   },
 };
 
@@ -164,30 +164,30 @@ export const setUpCanvas = (
   circleAnDuration
 ) => {
   const quizResultPage = getQuizResultPage(grade, correctCount, percentage);
-  const wrapper = document.querySelector('.quiz-view');
-  wrapper.querySelector('.questions-view').outerHTML = quizResultPage;
-  wrapper.querySelector('.get-result-btn').addEventListener('click', () =>
+  const wrapper = document.querySelector(".quiz-view");
+  wrapper.querySelector(".questions-view").outerHTML = quizResultPage;
+  wrapper.querySelector(".get-result-btn").addEventListener("click", () =>
     openOverlayModal(
-      'quiz-result-overlay',
-      ['.close-result-overlay-btn'],
+      "quiz-result-overlay",
+      [".close-result-overlay-btn"],
       getResultOverlay,
       (backDrop) => {
         backDrop
-          .querySelector('.questions-rects')
-          .addEventListener('click', (e) => {
-            const questionsLink = e.target.closest('a.status-rect');
+          .querySelector(".questions-rects")
+          .addEventListener("click", (e) => {
+            const questionsLink = e.target.closest("a.status-rect");
             if (questionsLink) scrollToView(e, questionsLink);
           });
       }
     )
   );
-  const canvas = document.querySelector('canvas.percentage-circle');
-  const ctx = canvas.getContext('2d');
+  const canvas = document.querySelector("canvas.percentage-circle");
+  const ctx = canvas.getContext("2d");
   const colorMap = {
-    excellent: '#00ad0c',
-    good: '#1e77fd',
-    average: '#d45f00',
-    poor: '#eb3b43ff',
+    excellent: "#00ad0c",
+    good: "#1e77fd",
+    average: "#d45f00",
+    poor: "#eb3b43ff",
   };
 
   const updateSize = function () {
@@ -196,13 +196,13 @@ export const setUpCanvas = (
     animateArc(canvas, ctx, percentage, colorMap[grade], circleAnDuration);
   };
 
-  window.addEventListener('resize', updateSize);
+  window.addEventListener("resize", updateSize);
 
   updateSize();
 
   lottie.loadAnimation({
-    container: document.getElementById('lottie-animation'), // the HTML element
-    renderer: 'svg', // or 'canvas' or 'html'
+    container: document.getElementById("lottie-animation"), // the HTML element
+    renderer: "svg", // or 'canvas' or 'html'
     loop: true,
     autoplay: true,
     path: `/app/assets/quiz-play/characters/${grade}.json`, // path to your Lottie JSON file
@@ -210,25 +210,25 @@ export const setUpCanvas = (
 };
 
 const createChoiceElement = (choice, index) => {
-  const choiceElement = document.createElement('label');
-  choiceElement.className = 'choice';
+  const choiceElement = document.createElement("label");
+  choiceElement.className = "choice";
   choiceElement.innerHTML = `
     <input type="radio" value="${index}" name="choice">
     <span class="choice-label">${String.fromCharCode(65 + index)}</span>
     <span class="choice-text"></span>
   `;
-  choiceElement.querySelector('.choice-text').textContent = choice;
+  choiceElement.querySelector(".choice-text").textContent = choice;
   return choiceElement;
 };
 
 export const getQuestionTemplate = (
   {
-    questionText = 'A simple question text here, simple question text here, simple question text here, simple question text here',
-    choices = ['Choice A', 'Choice B', 'Choice C'],
+    questionText = "A simple question text here, simple question text here, simple question text here, simple question text here",
+    choices = ["Choice A", "Choice B", "Choice C"],
   },
   animationClass
 ) => {
-  const questionTemplate = document.createElement('div');
+  const questionTemplate = document.createElement("div");
   questionTemplate.className = `question-body ${animationClass}`;
   questionTemplate.innerHTML = `
   <div class="question-body">
@@ -240,9 +240,9 @@ export const getQuestionTemplate = (
     </div>
   </div>
   `;
-  const questionHeader = questionTemplate.querySelector('h4');
+  const questionHeader = questionTemplate.querySelector("h4");
   questionHeader.textContent = questionText;
-  const choicesList = questionTemplate.querySelector('.choices-list');
+  const choicesList = questionTemplate.querySelector(".choices-list");
   choices.forEach((choice, index) => {
     const choiceElement = createChoiceElement(choice, index);
     choicesList.appendChild(choiceElement);
@@ -287,13 +287,13 @@ const step = (direction) => {
   }
 
   const nextIsLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
-  if (nextIsLastQuestion) nextBtn.textContent = 'Finish';
-  else nextBtn.textContent = 'Next';
+  if (nextIsLastQuestion) nextBtn.textContent = "Finish";
+  else nextBtn.textContent = "Next";
 
-  const questionCounter = document.querySelector('.current-question-number');
+  const questionCounter = document.querySelector(".current-question-number");
   questionCounter.textContent = currentQuestionIndex + 1;
   const question = quiz.questions[currentQuestionIndex];
-  const animationClass = direction === 1 ? 'slide-in-right' : 'slide-in-left';
+  const animationClass = direction === 1 ? "slide-in-right" : "slide-in-left";
   const questionEl = getQuestionTemplate(
     {
       questionText: question.text,
@@ -302,7 +302,7 @@ const step = (direction) => {
     },
     animationClass
   );
-  const questionContainer = document.querySelector('.question-body');
+  const questionContainer = document.querySelector(".question-body");
   questionContainer.replaceWith(questionEl);
 };
 
@@ -310,8 +310,8 @@ export const toNextQuestion = () => {
   const checkedChoice = document.querySelector('input[type="radio"]:checked');
   if (!checkedChoice) {
     showMessageBlock(
-      'Please select an answer or click the Skip button to continue.',
-      'info'
+      "Please select an answer or click the Skip button to continue.",
+      "info"
     );
     return;
   }
@@ -346,21 +346,28 @@ export const toPreviousQuestion = () => step(-1);
 
 export const setUpQuiz = async () => {
   try {
-    quiz = await fetchData('/quiz-questions');
-
-    const finishedDate = new Date(Date.now() + quiz.duration * 60 * 1000);
-    const shouldShowHours = Math.floor(quiz.duration / 60) > 0;
-    if (!shouldShowHours) {
-      hoursEl.nextElementSibling?.remove();
-      hoursEl.remove();
+    const { questions, duration } = await fetchData(
+      "/quiz-questions/" + quiz.id
+    );
+    quiz.duration = duration;
+    quiz.questions = questions;
+    if (quiz.duration) {
+      const finishedDate = new Date(Date.now() + quiz.duration * 60 * 1000);
+      const shouldShowHours = Math.floor(quiz.duration / 60) > 0;
+      if (!shouldShowHours) {
+        hoursEl.nextElementSibling?.remove();
+        hoursEl.remove();
+      }
+      document.addEventListener("keydown", handleKeyDown);
+      tick(finishedDate, shouldShowHours);
+    }else {
+      timerEl.remove()
     }
-    document.addEventListener('keydown', handleKeyDown);
-    tick(finishedDate, shouldShowHours);
   } catch (error) {
-    console.error('Failed to fetch quiz questions:', error);
+    console.error("Failed to fetch quiz questions:", error);
     showMessageBlock(
-      'Failed to load quiz questions. Please try again later.',
-      'error'
+      "Failed to load quiz questions. Please try again later.",
+      "error"
     );
     return;
   }
@@ -370,13 +377,13 @@ const tick = (finishedDate, shouldShowHours) => {
   const timeLeft = finishedDate.getTime() - Date.now();
   const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60))
     .toString()
-    .padStart(2, '0');
+    .padStart(2, "0");
   const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
     .toString()
-    .padStart(2, '0');
+    .padStart(2, "0");
   const secondsLeft = Math.floor((timeLeft % (1000 * 60)) / 1000)
     .toString()
-    .padStart(2, '0');
+    .padStart(2, "0");
   updateTimerDisplay(hoursLeft, minutesLeft, secondsLeft, shouldShowHours);
   const nextTickDelay = Date.now() % 1000 || 1000; // Ensure at least 1s
   if (timeLeft <= 0) {
@@ -411,19 +418,19 @@ const getQuizGrade = () => {
   const correctAnswers = examenResult.correctAnswers.length;
   const percentage = (correctAnswers / totalQuestions).toFixed(2);
   const result = {
-    grade: '',
+    grade: "",
     percentage: percentage,
   };
-  if (percentage >= 0.8) result.grade = 'excellent';
-  else if (percentage >= 0.6) result.grade = 'good';
-  else if (percentage >= 0.4) result.grade = 'average';
-  else result.grade = 'poor';
+  if (percentage >= 0.8) result.grade = "excellent";
+  else if (percentage >= 0.6) result.grade = "good";
+  else if (percentage >= 0.4) result.grade = "average";
+  else result.grade = "poor";
 
   return result;
 };
 
 const finishQuiz = () => {
-  document.removeEventListener('keydown', handleKeyDown);
+  document.removeEventListener("keydown", handleKeyDown);
   markSkipped();
   examenResult.submittedAt = new Date().toISOString();
   const { grade, percentage } = getQuizGrade();
@@ -436,14 +443,13 @@ const finishQuiz = () => {
 };
 
 export const handleKeyDown = (e) => {
-
-  if (e.key === 'ArrowRight') {
+  if (e.key === "ArrowRight") {
     e.preventDefault();
     toNextQuestion();
-  } else if (e.key === 'ArrowLeft') {
+  } else if (e.key === "ArrowLeft") {
     e.preventDefault();
     toPreviousQuestion();
-  } else if (e.key === 'Enter') {
+  } else if (e.key === "Enter") {
     e.preventDefault();
     toNextQuestion();
   }
@@ -453,7 +459,7 @@ const getStatusClass = (questionId) => {
   const isCorrect = examenResult.correctAnswers.includes(questionId);
   const isSkipped = examenResult.skippedQuestions.includes(questionId);
 
-  return isCorrect ? 'correct' : isSkipped ? 'skipped' : 'incorrect';
+  return isCorrect ? "correct" : isSkipped ? "skipped" : "incorrect";
 };
 
 const getPercentage = (count) =>
@@ -461,14 +467,14 @@ const getPercentage = (count) =>
 
 export const getResultOverlay = () => {
   const submittedAt = new Date(examenResult.submittedAt);
-  const finishedDate = submittedAt.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
+  const finishedDate = submittedAt.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
   });
-  const finishedTime = submittedAt.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
+  const finishedTime = submittedAt.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
   });
   const questionCount = quiz.questions.length;
   const answeredCount =
@@ -481,8 +487,8 @@ export const getResultOverlay = () => {
   const correctPercent = getPercentage(correctCount);
   const skippedPercent = getPercentage(skippedCount);
 
-  const resultWrapper = document.createElement('div');
-  resultWrapper.className = 'overlay-model quiz-result-overlay';
+  const resultWrapper = document.createElement("div");
+  resultWrapper.className = "overlay-model quiz-result-overlay";
   resultWrapper.innerHTML = `
   <header class="quiz-result-header">
     <span class="finished-date">Finished: ${finishedDate}</span>
@@ -514,7 +520,7 @@ export const getResultOverlay = () => {
         question.id
       )}">${index + 1}</a>`;
     })
-    .join('')}
+    .join("")}
   </div>
   <div class="analytics">
     <div class="analytics-item">
@@ -554,17 +560,17 @@ export const getResultOverlay = () => {
 };
 
 const getQuestionsCards = () => {
-  const questionsList = document.createElement('div');
-  questionsList.className = 'questions-list';
+  const questionsList = document.createElement("div");
+  questionsList.className = "questions-list";
   quiz.questions.forEach((question, index) => {
     const rectColorClass =
-      getStatusClass(question.id) === 'correct'
-        ? 'green-rect'
-        : getStatusClass(question.id) === 'skipped'
-        ? 'gray-rect'
-        : 'red-rect';
-    const questionCard = document.createElement('div');
-    questionCard.className = 'question-card';
+      getStatusClass(question.id) === "correct"
+        ? "green-rect"
+        : getStatusClass(question.id) === "skipped"
+        ? "gray-rect"
+        : "red-rect";
+    const questionCard = document.createElement("div");
+    questionCard.className = "question-card";
     questionCard.id = `question-${index + 1}`;
     questionCard.innerHTML = `
       <header class="question-card-header">
@@ -593,7 +599,7 @@ const getQuestionsCards = () => {
         <span class="choices-count">${question.choices.length} Choices</span>
       </footer>
     `;
-    questionCard.querySelector('.question-text').textContent = question.text;
+    questionCard.querySelector(".question-text").textContent = question.text;
     questionsList.appendChild(questionCard);
   });
 
@@ -601,13 +607,13 @@ const getQuestionsCards = () => {
 };
 
 const getChoicesList = (questionId) => {
-  const choicesList = document.createElement('div');
-  choicesList.className = 'choices-list';
+  const choicesList = document.createElement("div");
+  choicesList.className = "choices-list";
   const questions = quiz.questions.find((q) => q.id === questionId);
 
   if (questions) {
     questions.choices.forEach((choiceText, index) => {
-      const choice = document.createElement('label');
+      const choice = document.createElement("label");
       const Incorrect = examenResult.incorrectAnswers.find(
         (q) => q.id === questionId
       );
@@ -616,16 +622,16 @@ const getChoicesList = (questionId) => {
         (q) => q.id === questionId
       ).correctAnswerIndex;
       const isCorrectChoice = correctAnswerIndex === index;
-      choice.className = `choice${isCorrectChoice ? ' correct-answer' : ''}${
+      choice.className = `choice${isCorrectChoice ? " correct-answer" : ""}${
         incorrectAnswerIndex && incorrectAnswerIndex === index
-          ? ' incorrect-answer'
-          : ''
+          ? " incorrect-answer"
+          : ""
       }`;
       choice.innerHTML = `
       <span class="choice-label">${String.fromCharCode(65 + index)}</span>
       <span class="choice-text"></span>
       `;
-      choice.querySelector('.choice-text').textContent = choiceText;
+      choice.querySelector(".choice-text").textContent = choiceText;
       choicesList.appendChild(choice);
     });
   }

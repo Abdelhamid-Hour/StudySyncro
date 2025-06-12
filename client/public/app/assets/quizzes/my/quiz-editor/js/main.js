@@ -1,5 +1,4 @@
-import { showConfirmationBox } from '../../../global/js/utils.js';
-import { setUpDragAndDrop } from '../../../shared/tasks/js/utils.js';
+import { setUpDragAndDrop } from '../../../../shared/tasks/js/utils.js';
 import {
   editorHeader,
   editorQuestionsList,

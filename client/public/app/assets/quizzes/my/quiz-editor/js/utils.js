@@ -2,7 +2,7 @@ import {
   fetchData,
   sendData,
   showMessageBlock,
-} from '../../../../../main_assets/js/utils.js';
+} from '../../../../../../main_assets/js/utils.js';
 import {
   CHOICE_TEXT_MAX_LENGTH,
   globalTooltip,
@@ -11,15 +11,15 @@ import {
   hoverTooltip,
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
-} from '../../../global/js/dom-variables.js';
+} from '../../../../global/js/dom-variables.js';
 import {
   getLoader,
   resetTooltip,
   scrollToView,
   showConfirmationBox,
   showErrorTooltip,
-} from '../../../global/js/utils.js';
-import { setUpSelectMenu } from '../../../shared/forms/js/utils.js';
+} from '../../../../global/js/utils.js';
+import { setUpSelectMenu } from '../../../../shared/forms/js/utils.js';
 import {
   editorQuestionsList,
   metaInfoEl,
@@ -39,7 +39,7 @@ export let updatedData = {
   updatedQuestions: [],
 };
 const getQuizId = () => {
-  const match = window.location.pathname.match(/\/quizzes\/([^/]+)\/edit/);
+  const match = window.location.pathname.match(/\/quizzes\/my\/([^/]+)\/edit/);
   const quizId = match ? match[1] : null;
   if (!quizId) throw new Error('Quiz ID not found');
   return quizId;

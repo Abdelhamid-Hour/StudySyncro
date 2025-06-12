@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 const routes = [
-  { paths: "/quizzes", redirect: "/app/quizzes" },
+  { paths: ["/quizzes", "/app/quizzes"], redirect: "/app/quizzes/my" },
   { paths: "/settings", redirect: "/app/settings" },
   { paths: ["/home", "/app"], redirect: "/app/home" },
   { paths: ["/groups", "/app/groups"], redirect: "/app/groups/my" },
@@ -31,13 +31,7 @@ routes.forEach(({ paths, redirect }) => {
 });
 // Routes
 // authentification route
-app.use(
-  "/",
-  (req, res, next) => {
-    return next();
-  },
-  authRouter
-);
+app.use("/", authRouter);
 // Serve the static files
 app.use(express.static(path.join(__dirname, "../client/public")));
 // application route

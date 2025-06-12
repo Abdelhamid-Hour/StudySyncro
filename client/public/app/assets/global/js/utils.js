@@ -86,7 +86,6 @@ const getIconClassName = (icon) => {
 
 // this is for mouse down
 export const handleOverlayClose = (event) => {
-  
   const overlayToClose = document.querySelector(".open-overlay");
   const isOpenBtn = event.target.closest(".open-drop-down-btn");
   const isDropDownItem = event.target.closest(`.drop-down-item`);
@@ -97,7 +96,6 @@ export const handleOverlayClose = (event) => {
   }
   if (document.body.style.pointerEvents === "none") {
     document.body.style.pointerEvents = "auto";
-    
   }
 };
 
@@ -182,7 +180,13 @@ export const tooltipSetup = () => {
 const SHARED_STYLES_MAP = {
   "/home/inactive": ["/tasks"],
   "/home/active": ["/tasks", "/chat", "/quiz-result"],
-  "/quizzes": ["/quizzes-groups", "/fields", "/forms"],
+  "/quizzes/my": ["/quizzes-groups", "/fields", "/forms", "/quizzes-my-groups"],
+  "/quizzes/groups": [
+    "/quizzes-groups",
+    "/fields",
+    "/forms",
+    "quizzes-my-groups",
+  ],
   "/groups/my": [
     "/groups-my-available",
     "/quizzes-groups",
@@ -303,7 +307,7 @@ const createGreetingMsg = (fullName) => {
     "Hi",
     "Greetings",
     "Good to see you",
-    "Hey"
+    "Hey",
   ];
   // Pick a random greeting
   const greeting = greetings[Math.floor(Math.random() * greetings.length)];
@@ -316,9 +320,10 @@ const createGreetingMsg = (fullName) => {
     "Wishing you a productive session!",
     "Let's achieve something great today!",
     "Ready to make progress?",
-    "Have a wonderful day ahead!"
+    "Have a wonderful day ahead!",
   ];
-  paragraph.textContent = dayMessages[Math.floor(Math.random() * dayMessages.length)];
+  paragraph.textContent =
+    dayMessages[Math.floor(Math.random() * dayMessages.length)];
 
   greetingMsg.appendChild(heading);
   greetingMsg.appendChild(paragraph);
@@ -392,24 +397,25 @@ const createFilterContainer = () => {
   return filterContainer;
 };
 
-const createGroupsTabs = () => {
+const createTabs = (tabContent, tabsClassName) => {
   const navigationTabs = document.createElement("div");
-  navigationTabs.className = "navigation-tabs";
+  navigationTabs.className = `navigation-tabs ${
+    tabsClassName || ""
+  } fade-in-template`;
   navigationTabs.style.opacity = 0;
 
-  const myGroupsTab = document.createElement("a");
-  myGroupsTab.href = "/app/groups/my";
-  myGroupsTab.className = "tab route-link my-groups-tab active exclude-btn";
-  myGroupsTab.textContent = "My Groups";
-
-  const availableGroupsTab = document.createElement("a");
-  availableGroupsTab.href = "/app/groups/available";
-  availableGroupsTab.className =
-    "tab route-link available-groups-tab exclude-btn";
-  availableGroupsTab.textContent = "Available Groups";
-
-  navigationTabs.appendChild(myGroupsTab);
-  navigationTabs.appendChild(availableGroupsTab);
+  tabContent.forEach((tab) => {
+    const tabLink = document.createElement("a");
+    tabLink.href = tab.route;
+    tabLink.className = `tab route-link exclude-btn ${
+      tab.className || ""
+    }`.trim();
+    tabLink.textContent = tab.textContent;
+    if (tab.active) {
+      tabLink.classList.add("active");
+    }
+    navigationTabs.appendChild(tabLink);
+  });
 
   return navigationTabs;
 };
@@ -421,12 +427,11 @@ const setGroupName = (groupName) => {
   return groupNameEl;
 };
 
-const setQuizTitle = () => {
-  const quizTitle = document.createElement("h1");
-  quizTitle.className = "fade-in-template";
-  const quizEditor = document.querySelector(".quiz-editor");
-  quizTitle.textContent = quizEditor?.dataset.quizTitle;
-  return quizTitle;
+const setQuizTitle = (quizTitle) => {
+  const quizTitleEl = document.createElement("h1");
+  quizTitleEl.className = "fade-in-template";
+  quizTitleEl.textContent = quizTitle;
+  return quizTitleEl;
 };
 
 const createCreateBtn = (quiz) => {
@@ -469,13 +474,17 @@ const pageConfig = {
     title: "Groups",
     middle: () => createSearchContainer(),
   },
-  "/quizzes": {
+  "/quizzes/my": {
     title: "Quizzes",
     middle: () => createSearchContainer(true),
     additional: () => {
       const createQuizBtn = createCreateBtn(true);
       topSideBarFooter.prepend(createQuizBtn);
     },
+  },
+  "/quizzes/groups": {
+    title: "Quizzes",
+    middle: () => createSearchContainer(true),
   },
   "/settings": {
     title: "Settings",
@@ -486,7 +495,7 @@ const pageConfig = {
       '<a href="/app/groups/my"><i class="bi bi-caret-left-fill"></i>Group Chat</a>',
     middle: (extraData) => setGroupName(extraData.groupName),
   },
-  "/quizzes/quiz-editor": {
+  "/quizzes/my/quiz-editor": {
     title:
       '<a href="/app/quizzes"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>',
     middle: (extraData) => setQuizTitle(extraData.quizTitle),
@@ -528,14 +537,44 @@ const updateTopSideBar = (pathName, extraData) => {
   removeCreateBtns();
 
   removeSaveQuizBtn();
-
   // 5) ONLY groups get tabs
   const isGroups = ["/groups/my", "/groups/available"].includes(pathName);
+  const isQuizzes = ["/quizzes/my", "/quizzes/groups"].includes(pathName);
   const existingTabs = document.querySelector(".navigation-tabs");
-  if (isGroups && !existingTabs) {
-    topSideBarHeader.appendChild(createGroupsTabs());
-  } else if (!isGroups && existingTabs) {
+  if (existingTabs) {
     existingTabs.remove();
+  }
+  if (isGroups) {
+    const tabContent = [
+      {
+        route: "/app/groups/my",
+        textContent: "My Groups",
+        active: true,
+      },
+      {
+        route: "/app/groups/available",
+        className: "available-groups-tab",
+        textContent: "Available Groups",
+        active: false,
+      },
+    ];
+    topSideBarHeader.appendChild(createTabs(tabContent, "groups-tabs"));
+  }
+  if (isQuizzes) {
+    const tabContent = [
+      {
+        route: "/app/quizzes/my",
+        textContent: "My Quizzes",
+        active: true,
+      },
+      {
+        route: "/app/quizzes/groups",
+        className: "available-quizzes-tab",
+        textContent: "Groups Quizzes",
+        active: false,
+      },
+    ];
+    topSideBarHeader.appendChild(createTabs(tabContent, "quizzes-tabs"));
   }
 
   // 6) add additional content if needed
@@ -556,11 +595,8 @@ export const updateMain = async (path, isTabLinks) => {
   try {
     if (thisNav !== navCounter) return;
     mainContainer.innerHTML = getLoader();
-    clearOverlaysModals(); 
-    const {
-       pathName, htmlFragment , extraData
-    } = await fetchTemplate(path);
-    
+    clearOverlaysModals();
+    const { pathName, htmlFragment, extraData } = await fetchTemplate(path);
 
     if (thisNav !== navCounter) return;
     mainContainer.innerHTML = htmlFragment;
@@ -569,7 +605,10 @@ export const updateMain = async (path, isTabLinks) => {
     setScriptRoute(pathName, thisNav);
     setSharedStylesResources(pathName);
     if (!isTabLinks)
-      updateTopSideBar(pathName.includes("/home") ? "/home" : pathName, extraData);
+      updateTopSideBar(
+        pathName.includes("/home") ? "/home" : pathName,
+        extraData
+      );
     isRouting = false;
   } catch (error) {
     console.error(error);
@@ -598,8 +637,11 @@ const toggleActiveLink = (pathName) => {
     case pathName.includes("/app/groups/available"):
       className = '[href="/app/groups/available"]';
       break;
-    case pathName.includes("/app/quizzes"):
-      className = '[href="/app/quizzes"]';
+    case pathName.includes("/app/quizzes/my"):
+      className = '[href="/app/quizzes/my"]';
+      break;
+    case pathName.includes("/app/quizzes/groups"):
+      className = '[href="/app/quizzes/groups"]';
       break;
     case pathName.includes("/app/settings"):
       className = '[href="/app/settings"]';
@@ -677,16 +719,27 @@ export const handleNavigation = (e) => {
     if (tabLink) {
       toggleActiveLink(pathName);
       topSideBarMiddle.querySelector("#sort-checkbox").checked = false;
-      topSideBarMiddle
-        .querySelector(".filter-panel")
-        .replaceWith(createFilterPanel());
-      if (e.target.closest(".available-groups-tab")) {
+      const isGroupsTabs = e.target.closest(".groups-tabs");
+      if (isGroupsTabs) {
+        topSideBarMiddle
+          .querySelector(".filter-panel")
+          .replaceWith(createFilterPanel());
+      }
+      if (
+        e.target.closest(".available-groups-tab") ||
+        e.target.closest(".groups-quizzes-tab")
+      ) {
         removeCreateBtns();
       } else {
         const groupCreateBtn = document.querySelector(".create-group-btn");
-        if (!groupCreateBtn) {
+        const quizCreateBtn = document.querySelector(".create-quiz-btn");
+        if (!groupCreateBtn && isGroupsTabs) {
           const createGroupBtn = createCreateBtn();
           topSideBarFooter.prepend(createGroupBtn);
+        }
+        if (!quizCreateBtn && !isGroupsTabs) {
+          const createQuizBtn = createCreateBtn(true);
+          topSideBarFooter.prepend(createQuizBtn);
         }
       }
     }

@@ -1,5 +1,6 @@
+import { initLazyLoadingLoader } from "../../../shared/quizzes-my-groups/js/utils.js";
 import { initDomVariables, quizCreateBtn } from "./dom-variables.js";
-import { handleQuizCreateClick, initLazyLoadingLoader } from "./utils.js";
+import { handleQuizCreateClick } from "./utils.js";
 
 
 export const init = () => {

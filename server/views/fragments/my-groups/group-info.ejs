@@ -1,12 +1,12 @@
 <div class="group-info fade-in-template">
   <div class="group-name-info-box info-box">
+    <% if (isAdmin) { %>
     <button type="button" class="exclude-btn edit-btn action-btn should-fill">
       <i class="bi bi-pencil"></i>
       Edit
     </button>
+    <% } %>
     <div class="group-name-container info-container">
-      <span class="label">
-        <span class="group-info-icon icon-box">
           <i class="bi bi-people-fill"></i>
           <i class="bi bi-info-circle"></i>
         </span>

@@ -35,7 +35,10 @@ const pathNames = {
     my: "/groups/my",
     available: "/groups/available",
   },
-  quizzes: "/quizzes",
+  quizzes: {
+    my: "/quizzes/my",
+    groups: "/quizzes/groups",
+  },
   settings: "/settings",
 };
 

@@ -123,7 +123,7 @@ const handleQuizEditRoute = (req, res) => {
   renderFragmentOrLayout(
     'templates/quizzes/quiz-editor',
     payload,
-    '/quizzes/quiz-editor',
+    '/quizzes/my/quiz-editor',
     req,
     res,
     extraData
@@ -131,7 +131,7 @@ const handleQuizEditRoute = (req, res) => {
 }; // ! should implement with firebase
 
 const handleQuizPlayRoute = (req, res) => {
-  const templateContext = {
+  const {templateContext} = {
     firstQuestion: {
       id: 'q1',
       text: 'What is the capital of Morocco?',
@@ -144,6 +144,8 @@ const handleQuizPlayRoute = (req, res) => {
   const payload = {
     templateContext,
   };
+
+  
   renderFragmentOrLayout(
     'templates/quiz-play',
     payload,

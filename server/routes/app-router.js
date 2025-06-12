@@ -6,7 +6,8 @@ const routes = [
   '/home',
   '/groups/my',
   '/groups/available',
-  '/quizzes',
+  '/quizzes/my',
+  '/quizzes/groups',
   '/settings',
 ];
 
@@ -14,7 +15,7 @@ appRouter.get(routes, handleRoutes);
 
 appRouter.get('/groups/my/:groupId/chat', handleGroupChatRoute);
 
-appRouter.get('/quizzes/:quizId/edit', handleQuizEditRoute);
+appRouter.get('/quizzes/my/:quizId/edit', handleQuizEditRoute);
 
 appRouter.get('/quiz-play/:quizId', handleQuizPlayRoute);
 

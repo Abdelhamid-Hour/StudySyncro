@@ -72,28 +72,28 @@
             ? "Home" 
             : ['/groups/my/', '/groups/available/'].includes(resourcesRoute) 
             ? 'Groups' 
-            : resourcesRoute === '/quizzes/' 
+            : ['/quizzes/my/', '/quizzes/groups/'].includes(resourcesRoute) 
             ? 'Quizzes' 
             : resourcesRoute === '/groups/my/group-chat/' 
             ? `<a href="/app/groups/my"><i class="bi bi-caret-left-fill"></i>Group Chat</a>`
-            : resourcesRoute === '/quizzes/quiz-editor/' 
-            ? `<a href="/app/quizzes"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>`
+            : resourcesRoute === '/quizzes/my/quiz-editor/' 
+            ? `<a href="/app/quizzes/my"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>`
             : '' %>
         </h2>
-        <!-- ? Navigation for Groups -->
-        <% if (['/groups/my/', '/groups/available/'].includes(resourcesRoute)) { %>
-        <div class="navigation-tabs">
+        <!-- ? Navigation for Groups and Quizzes -->
+        <% if (['/groups/my/', '/groups/available/', '/quizzes/my/', '/quizzes/groups/'].includes(resourcesRoute)) { %>
+        <div class="navigation-tabs <%= resourcesRoute.includes('/quizzes/') ? 'quizzes-tabs' : 'groups-tabs' _%>">
           <a
-            href="/app/groups/my"
-            class="tab route-link my-groups-tab<% if (resourcesRoute === "/groups/my/") { %> active<% } %> exclude-btn"
+            href="/app<%= resourcesRoute.includes('/quizzes/') ? '/quizzes' : '/groups' _%>/my"
+            class="tab route-link <% if (resourcesRoute === "/groups/my/" || resourcesRoute === "/quizzes/my/") { %> active<% } %> exclude-btn"
           >
-            My Groups
+            My <%= resourcesRoute.includes('/quizzes/') ? 'Quizzes' : 'Groups' %>
           </a>
           <a
-            href="/app/groups/available"
-            class="tab route-link available-groups-tab<% if (resourcesRoute === "/groups/available/") { %> active<% } %> exclude-btn"
+            href="/app<%= resourcesRoute.includes('/quizzes/') ? '/quizzes/groups' : '/groups/available' _%>"
+            class="tab route-link <%= resourcesRoute.includes('/quizzes/') ? 'groups-quizzes-tab' : 'available-groups-tab' %> <% if (resourcesRoute === "/groups/available/" || resourcesRoute === "/quizzes/groups/") { %> active<% } %> exclude-btn"
           >
-            Available Groups
+            <%= resourcesRoute.includes('/quizzes/') ? 'Groups' : 'Available Groups' %>
           </a>
         </div>
         <% } %>
@@ -104,13 +104,13 @@
         <h2>Hello <%- user.fullName %> 👋</h2>
         <p>Have a good day !</p>
       </div>
-      <% } else if (['/quizzes/', '/groups/my/', '/groups/available/'].includes(resourcesRoute)) { %>
+      <% } else if (['/quizzes/my/', '/quizzes/groups/', '/groups/my/', '/groups/available/'].includes(resourcesRoute)) { %>
       <div class="search-container fade-in-template">
         <div class="main-search">
           <div class="search-icon-container">
             <i class="bi bi-search"></i>
           </div>
-          <input type="search" id="search-input" placeholder="<%- resourcesRoute === '/quizzes/' ? 'Search By Quiz Title or Subject' : 'Search By Group Name or Subject' %>" />
+          <input type="search" id="search-input" placeholder="<%- resourcesRoute.includes('/quizzes/') ? 'Search By Quiz Title or Subject' : 'Search By Group Name or Subject' %>" />
         </div>
         <!-- ? Filters -->
         <label type="button" class="exclude-btn sort-button button">
@@ -262,7 +262,7 @@
       </div>
       <% } else if (resourcesRoute === '/groups/my/group-chat/') { %>
         <h1 class="fade-in-template"><%= groupName %></h1>
-      <% } else if (resourcesRoute === '/quizzes/quiz-editor/') { %>
+      <% } else if (resourcesRoute === '/quizzes/my/quiz-editor/') { %>
         <h1 class="fade-in-template"><%= quizTitle %></h1>
       <% } %>
       </div>
@@ -272,12 +272,12 @@
           <i class="bi bi-plus-circle"></i>
           <span>Create Group</span>
         </button>
-        <% } else if (resourcesRoute === '/quizzes/quiz-editor/') { %>
+        <% } else if (resourcesRoute === '/quizzes/my/quiz-editor/') { %>
         <button type="button" class="save-quiz-btn should-fill blue-btn">
           <i class="bi bi-floppy"></i>
           <span>Save</span>
         </button>
-        <% } else if (resourcesRoute === '/quizzes/') { %>
+        <% } else if (resourcesRoute === '/quizzes/my/') { %>
         <button type="button" class="create-quiz-btn">
           <i class="bi bi-plus-circle"></i>
           <span>Create Quiz</span>
@@ -315,7 +315,7 @@
               </a>
             </li>
             <li class="quizzes should-fill">
-              <a href="/app/quizzes" class="drop-down-item route-link">
+              <a href="/app/quizzes/my" class="drop-down-item route-link">
                 <i class="bi bi-clipboard-check"></i>
                 My Quizzes
               </a>
@@ -348,7 +348,7 @@
             <i class="bi bi-people<%_ if (resourcesRoute.includes("/groups/")) { %>-fill<% } %>"></i>
             <h3 class="should-hide">Groups</h3>
           </a>
-          <a href="/app/quizzes" class="nav-link route-link should-fill<% if (resourcesRoute.includes("/quizzes/")) { %> active<% } %>">
+          <a href="/app/quizzes/my" class="nav-link route-link should-fill<% if (resourcesRoute.includes("/quizzes/")) { %> active<% } %>">
             <i class="bi bi-clipboard-check<% if (resourcesRoute.includes("/quizzes/")) { %>-fill<% } %>"></i>
             <h3 class="should-hide">Quizzes</h3>
           </a>
