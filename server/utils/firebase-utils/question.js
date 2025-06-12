@@ -1,9 +1,9 @@
-const { FieldValue } = require("firebase-admin/firestore");
-const { db } = require("../../firebase/firebaseAdmin");
+const { FieldValue } = require('firebase-admin/firestore');
+const { db } = require('../../firebase/firebaseAdmin');
 
 const ajouterQuestion = async (question) => {
   try {
-    const questionRef = db.collection("questions");
+    const questionRef = db.collection('questions');
     await questionRef.add(question);
     return true;
   } catch (error) {
@@ -15,14 +15,15 @@ const ajouterQuestion = async (question) => {
 const getQuestions = async (quizId) => {
   try {
     let questions = [];
-    const questionRef = db.collection("questions");
-    const snapshot = await questionRef.where("quizId", "==", quizId).get();
+    const questionRef = db.collection('questions');
+    const snapshot = await questionRef.where('quizId', '==', quizId).get();
 
     if (!snapshot.empty) {
-      questions  = snapshot.docs.map((doc) => {
+      questions = snapshot.docs.map((doc) => {
         const data = doc.data();
+
         return {
-          id: data.id,
+          id: doc.id,
           text: data.text,
           choices: data.choices,
           correctAnswerIndex: data.correctAnswerIndex,
@@ -41,18 +42,18 @@ const getQuestions = async (quizId) => {
 
 const getQuestionsPlayContext = async (userId, quizId) => {
   try {
-    const ref = db.collection("sessions");
-    const taskRef = db.collection("tasks");
+    const ref = db.collection('sessions');
+    const taskRef = db.collection('tasks');
     let duration = 0;
-    let sessionId = "";
+    let sessionId = '';
     const sessions = await ref.get();
     let timeLeft = 0;
     const questions = await getQuestions(quizId, userId);
 
-    const tasks = await taskRef.where("sessionId", "==", sessionId).get();
+    const tasks = await taskRef.where('sessionId', '==', sessionId).get();
     tasks.docs.forEach((doc) => {
       const data = doc.data();
-      if (data.isQuiz && data.status === "active") {
+      if (data.isQuiz && data.status === 'active') {
         duration = data.durationInMins;
       }
     });
@@ -84,7 +85,7 @@ const getQuestionsPlayContext = async (userId, quizId) => {
 
 const getChoices = async (examenId) => {
   try {
-    const questionRef = db.collection("questions").doc(examenId);
+    const questionRef = db.collection('questions').doc(examenId);
     const doc = await questionRef.get();
     if (doc.exists) {
       const data = doc.data();
@@ -102,19 +103,19 @@ const getChoices = async (examenId) => {
 const geQuiztDuration = async (user, quizId) => {
   try {
     let duration = 0;
-    const sessionRf = db.collection("sessions");
+    const sessionRf = db.collection('sessions');
     const session = await sessionRf.doc(user.currentSession).get();
     const taskRef = db
-      .collection("tasks")
-      .where("sessionId", "==", user.currentSession)
-      .where("state", "==", "active");
+      .collection('tasks')
+      .where('sessionId', '==', user.currentSession)
+      .where('state', '==', 'active');
     const task = await taskRef.get();
     const timeLeft = Date.now() - new Date(session.startDate).getTime();
     if (!task.empty && task.isQuiz && session.exists) {
       if (timeLeft < session.duration) {
         const timeDiff = Math.floor(session.duration - timeLeft * 60000);
         const pendingTasks = await taskRef
-          .where("status", "==", "pending")
+          .where('status', '==', 'pending')
           .get();
         const totalduration = pendingTasks.docs.reduce((accumulated, doc) => {
           const data = doc.data();
@@ -135,7 +136,7 @@ const geQuiztDuration = async (user, quizId) => {
 
 const addChoice = async (choice, questionId) => {
   try {
-    const questionRef = db.collection("questions").doc(questionId);
+    const questionRef = db.collection('questions').doc(questionId);
     const doc = await questionRef.get();
 
     if (!doc.exists) return false;
@@ -154,7 +155,7 @@ const addChoice = async (choice, questionId) => {
 
 const addCorrectChoice = async (choice, questionId) => {
   try {
-    const questionRef = db.collection("questions").doc(questionId);
+    const questionRef = db.collection('questions').doc(questionId);
     await questionRef.update({
       reponse: choice,
     });
@@ -167,7 +168,7 @@ const addCorrectChoice = async (choice, questionId) => {
 
 const deleteQuestion = async (questionId) => {
   try {
-    const questionRef = db.collection("questions").doc(questionId);
+    const questionRef = db.collection('questions').doc(questionId);
     const doc = await questionRef.get();
     if (doc.exists) {
       await questionRef.delete();
@@ -182,7 +183,7 @@ const deleteQuestion = async (questionId) => {
 
 const deleteChoice = async (choice, questionId) => {
   try {
-    const questionRef = db.collection("questions").doc(questionId);
+    const questionRef = db.collection('questions').doc(questionId);
     const doc = await questionRef.get();
 
     if (doc.exists) {
@@ -212,13 +213,13 @@ const modifierQuestion = async (questionId, propertie, value) => {
     const ref = tacheRef.doc(questionId);
     const snaphsot = await ref.get();
     const question = snaphsot.data();
-    const isNotEmpty = value.trim() != "";
+    const isNotEmpty = value.trim() != '';
     if (question) {
       await ref.update({
         propertie: value,
       });
       switch (propertie) {
-        case "text":
+        case 'text':
           if (isNotEmpty) {
             ref.update({
               text: value,
@@ -227,7 +228,7 @@ const modifierQuestion = async (questionId, propertie, value) => {
           }
           break;
 
-        case "choix":
+        case 'choix':
           if (isNotEmpty) {
             ref.update({
               choix: [...question.choix, value],
@@ -235,7 +236,7 @@ const modifierQuestion = async (questionId, propertie, value) => {
             return true;
           }
           break;
-        case "reponse":
+        case 'reponse':
           if (isNotEmpty) {
             ref.update({
               reponse: value,
@@ -257,7 +258,7 @@ const modifierQuestion = async (questionId, propertie, value) => {
 
 const getQuestionCountExam = async (examenId) => {
   try {
-    const ref = db.collection("questions").where("QuizId", "==", examenId);
+    const ref = db.collection('questions').where('QuizId', '==', examenId);
     const snaphsot = await ref.get();
 
     if (snaphsot.empty) {

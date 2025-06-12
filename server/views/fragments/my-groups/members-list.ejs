@@ -29,7 +29,7 @@
       </div>
       <span class="username"><%= member.fullName %></span>
       <% if (isAdmin) { %>
-      <div class="action-btns">
+      <div class="action-btns" data-member-id="<%= member.id %>">
         <button type="button" class="red-btn kick-btn small-btn">
           <i class="bi bi-person-dash"></i>
           Kick

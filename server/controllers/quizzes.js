@@ -16,8 +16,6 @@ const createQuizHandler = async (req, res) => {
 };
 
 const updateQuizHandler = async (req, res) => {
-  console.log(req.body , "this is the body");
-  
   const updatedQuestions = req.body.updatedQuestions;
   const newQuestions = req.body.newQuestions;
   const deletedQuestions = req.body.deletedQuestions;

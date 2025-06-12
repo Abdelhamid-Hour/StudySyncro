@@ -431,7 +431,6 @@ button:has(.bi-trash3) {
       &:hover {
         i {
           background-color: var(--btn-background-color);
-          box-shadow: var(--primary-shadow);
         }
         hr {
           border-color: var(--primary-color);
@@ -441,7 +440,7 @@ button:has(.bi-trash3) {
         width: 100%;
         border: none;
         border-bottom: 1px dashed var(--btn-border-color);
-        transition: background-color var(--primary-transition-style);
+        transition: border-color var(--primary-transition-style);
       }
 
       i {

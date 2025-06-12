@@ -73,7 +73,7 @@
     }
     .messages-container,
     .sessions-container {
-      padding-inline: calc(var(--primary-gap) / 3);
+      padding: calc(var(--primary-gap) / 3);
       overflow: auto;
       width: 100%;
       flex-grow: 1;
@@ -300,7 +300,6 @@
         display: inline-flex;
         margin-left: auto;
         gap: calc(var(--primary-gap) / 2);
-        color: var(--secondary-text-color);
         font-size: var(--small-font-size);
       }
     }

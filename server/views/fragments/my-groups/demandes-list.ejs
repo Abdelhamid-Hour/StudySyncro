@@ -28,7 +28,7 @@
   </header>
   <div class="members-list demandes-list">
     <% demandes.forEach((demande) => { %>
-    <div data-user-id="<%= demande.userId %>" class="demande">
+    <div class="demande">
       <div class="avatar">
         <% if (demande.photoURL) { %>
         <img src="<%= demande.photoURL %>" alt="avatar" />
@@ -40,7 +40,7 @@
         <span class="username"><%= demande.fullName %></span>
         <span class="request-date"><%= demande.demandeDate %></span>
       </div>
-      <div class="action-btns">
+      <div class="action-btns" data-user-id="<%= demande.userId %>">
         <button type="button" class="red-btn reject-btn small-btn">
           <i class="bi bi-x-circle"></i>
           Reject

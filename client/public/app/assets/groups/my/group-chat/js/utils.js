@@ -66,14 +66,21 @@ export const getGroupId = () => {
   return groupId;
 };
 
-export const handleLeavingGroup = async () => {
-  await showConfirmationBox(
+export const handleLeavingGroup = async (e) => {
+  const res = await showConfirmationBox(
     'exclamation',
     'Leave Group',
     'Are you sure you want to leave this group?',
     'Cancel',
     'Leave'
   );
+  if (res) {
+    const groupId = getGroupId();
+    handleApiAction('/leave-group', { groupId }, e.target, {
+      successMsg: 'Left group successfully',
+      onSuccess: () => navigateTo('/groups/my'),
+    });
+  }
 };
 
 export const handleGroupInfo = async () => {
@@ -1058,6 +1065,136 @@ export const handleViewAllMembersBtn = (e) => {
   }
 };
 
+/**
+ * Helper to handle API requests with button state management and success/error messages.
+ * @param {string} route - API route (without leading /api/).
+ * @param {object} data - Data to send.
+ * @param {HTMLElement} btn - Button element to show loading state.
+ * @param {function} [onSuccess] - Optional callback on success: (data, response) => void.
+ * @param {string} [successMsg] - Optional success message to display.
+ */
+export const handleApiAction = async (
+  route,
+  data,
+  btn,
+  options = {
+    successMsg: 'Operation successful',
+    onSuccess: () => {},
+    method: 'POST',
+  }
+) => {
+  if (btn.isCreating) return;
+  const originalHtml = btn.innerHTML;
+  try {
+    btn.isCreating = true;
+    btn.disabled = true;
+    btn.innerHTML = getLoader();
+    const response = await sendData(
+      `/api${route}`,
+      { ...data },
+      options.method || 'POST'
+    );
+    if (options.successMsg) showMessageBlock(options.successMsg, 'success');
+    if (typeof options.onSuccess === 'function')
+      options.onSuccess(data, response);
+  } catch (error) {
+    console.error('Error:', error);
+    showMessageBlock(error.message || 'An error occurred.', 'error');
+  } finally {
+    btn.isCreating = false;
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+};
+
+export const handleGroupLeftSideBarContent = (e) => {
+  handleEditBtn(e);
+  handleSaveAndCancelBtns(e);
+  handleViewAllMembersBtn(e);
+  handleDemandesBtn(e);
+
+  // Kick member
+  const kickBtn = e.target.closest('.kick-btn');
+  if (kickBtn) {
+    const memberId = kickBtn
+      .closest('.action-btns')
+      .getAttribute('data-member-id');
+    const groupId = getGroupId();
+    handleApiAction('/kick-member', { groupId, memberId }, kickBtn, {
+      successMsg: 'Member kicked successfully',
+    });
+    return;
+  }
+
+  // Move admin role
+  const moveAdminRoleBtn = e.target.closest('.move-admin-role-btn');
+  if (moveAdminRoleBtn) {
+    const memberId = moveAdminRoleBtn
+      .closest('.action-btns')
+      .getAttribute('data-member-id');
+    const groupId = getGroupId();
+    handleApiAction('/transfer-role', { groupId, memberId }, moveAdminRoleBtn, {
+      successMsg: 'Role transferred successfully',
+    });
+    return;
+  }
+
+  // Add member
+  const addMemberBtn = e.target.closest('.add-member-btn');
+  const searchMemberInput = document.querySelector('.members-search #search');
+  if (
+    addMemberBtn &&
+    searchMemberInput &&
+    searchMemberInput.value.trim() !== ''
+  ) {
+    const memberId = searchMemberInput.value.trim();
+    const groupId = getGroupId();
+    handleApiAction('/add-member', { memberId, groupId }, addMemberBtn, {
+      successMsg: 'Member added successfully',
+    });
+    return;
+  }
+
+  // Accept demande
+  const acceptBtn = e.target.closest('.accept-btn');
+  if (acceptBtn) {
+    const demandeId = acceptBtn
+      .closest('.action-btns')
+      .getAttribute('data-user-id');
+    const groupId = getGroupId();
+    handleApiAction('/accept-demande', { demandeId, groupId }, acceptBtn, {
+      successMsg: 'Demande accepted',
+    });
+    return;
+  }
+
+  // Reject demande
+  const rejectBtn = e.target.closest('.reject-btn');
+  if (rejectBtn) {
+    const demandeId = rejectBtn
+      .closest('.action-btns')
+      .getAttribute('data-user-id');
+    const groupId = getGroupId();
+    handleApiAction('/reject-demande', { demandeId, groupId }, rejectBtn, {
+      successMsg: 'Demande rejected',
+    });
+    return;
+  }
+};
+
+export const handleQuizzesListMenuBtn = async () => {
+  await openGroupLeftSideBar('/quizzes-list');
+  setUpDatePicker();
+};
+export const handleMembersListMenuBtn = () => {
+  openGroupLeftSideBar('/members-list');
+};
+
+export const handleSessionInfoMenuBtn = async () => {
+  await openGroupLeftSideBar('/session-info');
+  handletTasksListners('session-info');
+};
+
 export const setUpDatePicker = () => {
   const dateInput = groupLeftSideBarContent.querySelector('input[type="date"]');
   dateInput.onclick = (e) => {
@@ -1065,7 +1202,7 @@ export const setUpDatePicker = () => {
   };
 };
 
-export const handleRemoveGroup = async () => {
+export const handleRemoveGroup = async (e) => {
   const res = await showConfirmationBox(
     'exclamation',
     'Remove group',
@@ -1073,14 +1210,26 @@ export const handleRemoveGroup = async () => {
     'Cancel',
     'Remove'
   );
+  if (res) {
+    const groupId = getGroupId();
+    handleApiAction(`/remove-group/${groupId}`, {}, e.target, {
+      successMsg: 'Group removed successfully',
+      onSuccess: () => navigateTo('/groups/my'),
+      method: 'DELETE',
+    });
+  }
 };
 
 export const handleDemandesBtn = async (e) => {
   const demandesBtn = e.target.closest('.demandes-btn');
   if (demandesBtn) {
-    await openGroupLeftSideBar('/demandes-list');
-    setUpDatePicker();
+    setUpDemandes();
   }
+};
+
+export const setUpDemandes = async () => {
+  await openGroupLeftSideBar('/demandes-list');
+  setUpDatePicker();
 };
 
 export const handleEditBtn = (e) => {
@@ -1328,11 +1477,12 @@ const getQuizLoaderSearchParams = (wrapper) => {
 };
 
 function escapeHTML(str) {
-  return str.replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 const createDropDownItem = (quiz, searchTerm) => {

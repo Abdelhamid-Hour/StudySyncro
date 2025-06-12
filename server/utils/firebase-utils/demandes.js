@@ -1,27 +1,27 @@
-const { FieldValue } = require("firebase-admin/firestore");
-const { db } = require("../../firebase/firebaseAdmin");
-const { getGroupByID } = require("./group");
+const { FieldValue } = require('firebase-admin/firestore');
+const { db } = require('../../firebase/firebaseAdmin');
+const { getGroupByID } = require('./group');
 
 const ajouterMembre = async (groupId, userId) => {
   try {
-    console.log(groupId, "group id ");
-    const groupRef = db.collection("groups").doc(groupId);
-    console.log("userIs", userId);
-    const userRef = db.collection("users").doc(userId);
+    console.log(groupId, 'group id ');
+    const groupRef = db.collection('groups').doc(groupId);
+    console.log('userIs', userId);
+    const userRef = db.collection('users').doc(userId);
     const userSnap = await userRef.get();
     const groupSnap = await groupRef.get();
-    console.log(userSnap, "user data from the database");
+    console.log(userSnap, 'user data from the database');
     // Check if group exists, user exists, and user is not already a member
     if (!groupSnap.exists) {
-      return { message: "Group  does not exist", success: false };
+      return { message: 'Group  does not exist', success: false };
     } else if (!userSnap.exists) {
-      return { message: "User does not exist", success: false };
+      return { message: 'User does not exist', success: false };
     }
     const group = groupSnap.data();
     // Ensure members is always an array
     const maxMembre = group.members.length >= group.maxMembers;
     if (maxMembre) {
-      return { message: "Group is full", success: false };
+      return { message: 'Group is full', success: false };
     }
     const userData = userSnap.data();
 
@@ -30,36 +30,36 @@ const ajouterMembre = async (groupId, userId) => {
     );
 
     if (isAlreadyMember) {
-      return { message: "You are already a member", success: false };
+      return { message: 'You are already a member', success: false };
     }
 
     // Add user to group members
     await groupRef.update({
       members: FieldValue.arrayUnion({
         uid: userId,
-        fullName: userData.fullName || userData.displayName || "Utilisateur",
-        email: userData.email || "",
+        fullName: userData.fullName || userData.displayName || 'Utilisateur',
+        email: userData.email || '',
         photoURL:
-          userData.picture || userData.photoURL || "here//goes//a//photo//url",
+          userData.picture || userData.photoURL || 'here//goes//a//photo//url',
       }),
       membersUids: FieldValue.arrayUnion(userId),
     });
 
-    console.log("Member added successfully");
+    console.log('Member added successfully');
     return {
-      message: "Joined the group successfully",
-      status: "joined",
+      message: 'Joined the group successfully',
+      status: 'joined',
       success: true,
     };
   } catch (error) {
-    console.error("Error in ajouterMembre function:", error);
-    return { message: "Internal sever error", success: false };
+    console.error('Error in ajouterMembre function:', error);
+    return { message: 'Internal sever error', success: false };
   }
 };
 
 const sendRequest = async (groupId, userData) => {
   try {
-    const groupRef = db.collection("groups").doc(groupId);
+    const groupRef = db.collection('groups').doc(groupId);
     const groupSnap = await groupRef.get();
     const data = groupSnap.data();
     if (groupSnap.exists) {
@@ -73,10 +73,10 @@ const sendRequest = async (groupId, userData) => {
       } else if (
         group.requests.some((demande) => demande.uid === userData.uid)
       ) {
-        return { message: "You have already sent a request", success: false };
+        return { message: 'You have already sent a request', success: false };
       } else if (group.members.some((member) => member.uid === userData.uid)) {
         return {
-          message: "You are already a member ",
+          message: 'You are already a member ',
           success: false,
         };
       } else if (data.showInSearch) {
@@ -85,20 +85,20 @@ const sendRequest = async (groupId, userData) => {
             uid: userData.uid,
             name: userData.fullName,
             email: userData.email,
-            photoURL: userData.picture || "here//goes//a//photo//url",
+            photoURL: userData.picture || 'here//goes//a//photo//url',
             sentAt: new Date().toISOString(),
           }),
         });
         return {
           message: "Can't send request the group is full",
-          status: "requested",
+          status: 'requested',
           success: true,
         };
       } else {
       }
     } else {
       return {
-        message: "Group does not exists",
+        message: 'Group does not exists',
         success: false,
       };
     }
@@ -110,34 +110,34 @@ const sendRequest = async (groupId, userData) => {
 
 const joinGroup = async (groupId, userData) => {
   try {
-    const ref = db.collection("groups").doc(groupId);
+    const ref = db.collection('groups').doc(groupId);
     const snaphsot = await ref.get();
 
     if (snaphsot.exists) {
       const group = snaphsot.data();
 
-      if (group.visibility === "Public") {
+      if (group.visibility === 'Public') {
         return (result = await ajouterMembre(groupId, userData.uid));
-      } else if (group.showInSearch && group.visibility === "Private") {
+      } else if (group.showInSearch && group.visibility === 'Private') {
         return (result = await sendRequest(groupId, userData));
       }
     } else {
       return {
-        message: "Group does not exist",
+        message: 'Group does not exist',
         success: false,
       };
     }
   } catch (error) {
     console.error(error);
-    return { message: "Internal server error", success: false };
+    return { message: 'Internal server error', success: false };
   }
 };
 const acceptRequest = async (groupId, requestId) => {
   try {
     const group = await getGroupByID(groupId);
-    const groupRef = db.collection("groups").doc(groupId);
+    const groupRef = db.collection('groups').doc(groupId);
     const request = group.requests.find((demande) => demande.uid === requestId);
-    console.log("request", group.requests);
+    console.log('request', group.requests);
     if (group) {
       if (group.requests.some((demande) => demande.uid === requestId)) {
         await groupRef.update({
@@ -163,7 +163,7 @@ const acceptRequest = async (groupId, requestId) => {
 };
 const rejectRequest = async (groupId, requestId) => {
   try {
-    const groupRef = db.collection("groups").doc(groupId);
+    const groupRef = db.collection('groups').doc(groupId);
     const group = await getGroupByID(groupId);
     if (group) {
       const request = group.requests.find(
@@ -186,11 +186,13 @@ const rejectRequest = async (groupId, requestId) => {
   }
 };
 
-const getFormattedMembers = (members) =>
-  members.map(({ photoURL, fullName }) => ({
+const getFormattedMembers = (members) => {
+  return members.map(({ photoURL, fullName, uid }) => ({
     photoURL,
     fullName,
+    id: uid,
   }));
+};
 
 const getFormatedRequests = (requests) =>
   requests.map(({ id, name, photoURL, sentAt }) => ({
@@ -203,7 +205,7 @@ const getFormatedRequests = (requests) =>
 const getRequests = async (groupId, userId) => {
   try {
     const group = await getGroupByID(groupId);
-    if (!group) return { success: false, message: "Group not found" };
+    if (!group) return { success: false, message: 'Group not found' };
     const requests = getFormatedRequests(group.requests);
     return {
       success: true,
@@ -217,7 +219,7 @@ const getRequests = async (groupId, userId) => {
     console.log(error);
     return {
       success: false,
-      message: "An error occurred while fetching requests",
+      message: 'An error occurred while fetching requests',
     };
   }
 };
@@ -225,17 +227,20 @@ const getRequests = async (groupId, userId) => {
 const getMembers = async (groupId, userId) => {
   try {
     const group = await getGroupByID(groupId);
- await db.collection("mail").add({
-  to: ["zackspinoza999@gmail.com"],
-  message: {
-    subject: "hello!",
-    html: "<h1>Hello Zakaria!</h1><p>Thanks for joining us!</p>",
-  },
-});
+    await db.collection('mail').add({
+      to: ['zackspinoza999@gmail.com'],
+      message: {
+        subject: 'hello!',
+        html: '<h1>Hello Zakaria!</h1><p>Thanks for joining us!</p>',
+      },
+    }); // ! what is this
 
-    if (!group) return { success: false, message: "Group not found" };
-    const kamo = group.creator === userId ? group.members.filter((m)=>m.uid != group.creator) : group.members
-    const members = getFormattedMembers(kamo)
+    if (!group) return { success: false, message: 'Group not found' };
+    const kamo =
+      group.creator === userId
+        ? group.members.filter((m) => m.uid != group.creator)
+        : group.members;
+    const members = getFormattedMembers(kamo);
     return {
       success: true,
       context: {
@@ -248,7 +253,7 @@ const getMembers = async (groupId, userId) => {
     console.log(error);
     return {
       success: false,
-      message: "An error occurred while fetching members",
+      message: 'An error occurred while fetching members',
     };
   }
 };
@@ -256,7 +261,7 @@ const getMembers = async (groupId, userId) => {
 const kickMember = async (groupId, userId) => {
   try {
     const group = await getGroupByID(groupId);
-    const groupRef = db.collection("groups").doc(groupId);
+    const groupRef = db.collection('groups').doc(groupId);
     const user = group.members.find((membre) => membre.uid === userId);
     if (group && user) {
       await groupRef.update({

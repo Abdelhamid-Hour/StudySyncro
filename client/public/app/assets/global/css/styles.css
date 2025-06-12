@@ -356,6 +356,7 @@ i {
     color: var(--orange-color);
   }
 }
+.purple-badge,
 .private-badge {
   background-color: var(--private-bg);
   color: var(--private-color);
@@ -495,7 +496,14 @@ textarea {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     flex: 0 0 30%;
+
+    h1 {
+      text-align: start;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   .top-side-bar-footer {

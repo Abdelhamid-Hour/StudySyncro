@@ -17,21 +17,26 @@ import {
 } from './dom-variables.js';
 import {
   getGroupId,
+  handleApiAction,
   handleDemandesBtn,
   handleEditBtn,
   handleGroupInfo,
+  handleGroupLeftSideBarContent,
   handleLeavingGroup,
+  handleMembersListMenuBtn,
+  handleQuizzesListMenuBtn,
   handleRemoveGroup,
   handleSaveAndCancelBtns,
   handleSessionCreateClick,
+  handleSessionInfoMenuBtn,
   handleShowInfoBtnClick,
   handleViewAllMembersBtn,
   openGroupLeftSideBar,
   setUpDatePicker,
+  setUpDemandes,
 } from './utils.js';
 
 export const init = () => {
-  
   initDomVariables();
 
   iniChatMessageInput();
@@ -40,22 +45,13 @@ export const init = () => {
 
   groupInfoMenuBtn.addEventListener('click', handleGroupInfo);
 
-  quizzesListMenuBtn.addEventListener('click', async () => {
-    await openGroupLeftSideBar('/quizzes-list');
-    setUpDatePicker();
-  });
-  membersListMenuBtn.addEventListener('click', () => {
-    openGroupLeftSideBar('/members-list');
-  });
-  sessionInfoMenuBtn?.addEventListener('click', async () => {
-    await openGroupLeftSideBar('/session-info');
-    handletTasksListners('session-info');
-  });
+  quizzesListMenuBtn.addEventListener('click', handleQuizzesListMenuBtn);
 
-  manageDemanesMenuBtn?.addEventListener('click', async () => {
-    await openGroupLeftSideBar('/demandes-list');
-    setUpDatePicker();
-  });
+  membersListMenuBtn.addEventListener('click', handleMembersListMenuBtn);
+
+  sessionInfoMenuBtn?.addEventListener('click', handleSessionInfoMenuBtn);
+
+  manageDemanesMenuBtn?.addEventListener('click', setUpDemandes);
 
   leaveGroupMenuBtn?.addEventListener('click', handleLeavingGroup);
 
@@ -63,12 +59,11 @@ export const init = () => {
 
   removeGroupMenuBtn?.addEventListener('click', handleRemoveGroup);
 
-  groupLeftSideBarContent.addEventListener('click', (e) => {
-    handleEditBtn(e);
-    handleSaveAndCancelBtns(e);
-    handleViewAllMembersBtn(e);
-    handleDemandesBtn(e);
-  });
+  // ! solve the duplicated event listener issue
+  groupLeftSideBarContent.addEventListener(
+    'click',
+    handleGroupLeftSideBarContent
+  );
 };
 
 init();

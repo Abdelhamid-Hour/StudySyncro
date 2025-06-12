@@ -1,23 +1,23 @@
 // const { get } = require("../routes/api-routes");
-const { getMembers, getRequests } = require("./firebase-utils/demandes");
-const { getExams } = require("./firebase-utils/examen");
-const { getGroupInfo, getChatContext } = require("./firebase-utils/group");
-const { millisecondsToHMFormat, Task, Quiz } = require("./global");
+const { getMembers, getRequests } = require('./firebase-utils/demandes');
+const { getExams } = require('./firebase-utils/examen');
+const { getGroupInfo, getChatContext } = require('./firebase-utils/group');
+const { millisecondsToHMFormat, Task, Quiz } = require('./global');
 const INITIALE_LOADERS_COUNT = 20;
 
-const getGroupChatContext = async (userId , groupId) => {
-  const result = await getChatContext(userId , groupId)
-  console.log("reult" , result);
-  
-  return result 
+const getGroupChatContext = async (userId, groupId) => {
+  const result = await getChatContext(userId, groupId);
+  console.log('reult', result);
+
+  return result;
 };
 
 // Group Left Side Bar Contexts
 
 const getGroupInfoContext = async (id, user) => {
-  console.log(id, user, "this is the data from the router");
+  console.log(id, user, 'this is the data from the router');
   const groupInfo = await getGroupInfo(id, user.uid);
-  console.log("group info", groupInfo);
+  console.log('group info', groupInfo);
   return groupInfo;
 };
 
@@ -27,30 +27,30 @@ const getSessionInfoContext = () => {
     context: {
       isAdmin: true,
       isJoined: true,
-      sessionName: "Session Name",
-      sessionDescription: "Session Description",
-      quizTitle: "Quiz Title",
-      duration: "1h 20m",
-      startTime: "14:00",
-      endTime: "15:00",
+      sessionName: 'Session Name',
+      sessionDescription: 'Session Description',
+      quizTitle: 'Quiz Title',
+      duration: '1h 20m',
+      startTime: '14:00',
+      endTime: '15:00',
       joinedCount: 5,
       tasks: [
         new Task({
-          title: "Introduction to JavaScript",
+          title: 'Introduction to JavaScript',
           description:
-            "Learn the basics of JavaScript, including syntax and variables.",
+            'Learn the basics of JavaScript, including syntax and variables.',
           durationInMins: 2, // in minutes
         }),
         new Task({
-          title: "JavaScript Functions",
+          title: 'JavaScript Functions',
           description:
-            "Understand how to create and use functions in JavaScript.",
+            'Understand how to create and use functions in JavaScript.',
           durationInMins: 45, // in minutes
         }),
         new Quiz({
-          UID: "123",
-          title: "JavaScript Quiz",
-          description: "Test your knowledge of JavaScript basics.",
+          UID: '123',
+          title: 'JavaScript Quiz',
+          description: 'Test your knowledge of JavaScript basics.',
           durationInMins: 10, // in minutes
           questionsCount: 10,
         }),
@@ -63,6 +63,7 @@ const getSessionInfoContext = () => {
 
 const getMembersListContext = async (id, user) => {
   const result = await getMembers(id, user.uid);
+  console.log(result.context.members);
 
   return result;
 };
@@ -83,5 +84,5 @@ module.exports = {
   getQuizzesListContext,
   getDemandesListContext,
   getGroupInfoContext,
-  getGroupChatContext
+  getGroupChatContext,
 };

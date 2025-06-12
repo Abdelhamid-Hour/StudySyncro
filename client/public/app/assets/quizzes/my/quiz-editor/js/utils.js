@@ -431,7 +431,7 @@ const handleDeleteQuestion = (questionId) => {
 
 export const handleAddQuestion = () => {
   const { questionEditorBox, questionPanelItem } = getQuestionEls(
-    `question-${Date.now()}`,
+    `${Date.now()}`,
     editorQuestionsList.children.length
   );
   editorQuestionsList.lastElementChild.before(questionEditorBox);
@@ -554,6 +554,10 @@ export const handleSaveBtn = async (type, btn) => {
     await sendData('/api/update-quiz/' + quizId, { [type]: value }, 'PATCH');
     initialData[type] = value; // Update the initial data with the new value
     swapMode('getViewMode', type, value);
+    showMessageBlock(
+      `${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully!`,
+      'success'
+    );
   } catch (error) {
     console.error(`Failed to update ${type}:`, error);
     showMessageBlock(`Failed to update ${type}. Please try again.`, 'error');
@@ -698,16 +702,6 @@ const getQuestionInputs = (question) => {
   return { questionText, choices, correctAnswerIndex };
 };
 
-const normalizeQuestionId = (question) => {
-  if (question.id.includes('question-')) {
-    const questionId = question.id.replace('question-', '');
-    document.querySelector(`a[href="#${question.id}"]`).href = `#${questionId}`;
-    question.id = questionId;
-    return questionId;
-  }
-  return question.id;
-};
-
 const collectQuestionsFromDOM = (checkValidity) => {
   const questionElements = Array.from(editorQuestionsList.children);
   questionElements.pop(); // Remove the last child (the button)
@@ -722,7 +716,6 @@ const collectQuestionsFromDOM = (checkValidity) => {
       return null; // Stop saving if any question is invalid
     }
     const questionObject = getQuestionObject(question);
-    normalizeQuestionId(question);
     if (questionObject) {
       questions.push(questionObject);
     }
@@ -734,9 +727,10 @@ const classifyQuestions = (questions) => {
   const newQuestions = [];
   const updatedQuestions = [];
   questions.forEach((question) => {
-    const isNewQuestion = initialData.questions.every(
-      (q) => q.id !== question.id
+    const isNewQuestion = !initialData.questions.some(
+      (q) => q.id === question.id
     );
+    if (isNewQuestion) return newQuestions.push(question);
     const isUpdatedQuestion = initialData.questions.some(
       (q) =>
         q.id === question.id &&
@@ -747,15 +741,14 @@ const classifyQuestions = (questions) => {
           ) ||
           question.correctAnswerIndex !== q.correctAnswerIndex)
     );
-    if (isNewQuestion) newQuestions.push(question);
-    else if (isUpdatedQuestion) updatedQuestions.push(question);
+    if (isUpdatedQuestion) return updatedQuestions.push(question);
   });
   return { newQuestions, updatedQuestions };
 };
 
 const getDeletedQuestionIds = (questions) => {
   return initialData.questions
-    .filter((q) => !questions.some((newQ) => newQ.id === q.id))
+    .filter((q) => questions.every((currQ) => currQ.id !== q.id))
     .map((q) => q.id);
 };
 
@@ -795,7 +788,7 @@ export const prepareQuizData = (checkValidity) => {
     showMessageBlock('Please add at least one valid question.', 'error');
     return null;
   }
-
+  debugger;
   const { newQuestions, updatedQuestions } = classifyQuestions(questions);
   updatedData.newQuestions = newQuestions;
   updatedData.updatedQuestions = updatedQuestions;

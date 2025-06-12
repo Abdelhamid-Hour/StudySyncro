@@ -36,7 +36,7 @@
   /* button hover border color */
   --btn-hover-border-color: var(--primary-color);
   --btn-hover-background-color: var(--primary-color);
-  --btn-hover-text-color: var(--primary-text-color);
+  --btn-hover-text-color: white;
   /* inputs colors variables */
   --inputs-background-color: var(--container-background-color);
   --inputs-focus-background-color: var(--background-color);

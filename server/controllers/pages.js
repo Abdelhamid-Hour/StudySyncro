@@ -1,26 +1,26 @@
 const {
   getQuizzPlayContext,
   getQuizEditContext,
-} = require("../utils/firebase-utils/examen");
-const { getGroupChatContext } = require("../utils/groups");
-const { fetchData, renderFragmentOrLayout } = require("../utils/routing");
+} = require('../utils/firebase-utils/examen');
+const { getGroupChatContext } = require('../utils/groups');
+const { fetchData, renderFragmentOrLayout } = require('../utils/routing');
 
 const handleRoutes = async (req, res) => {
   const payload = await fetchData(req.path, req.user);
-  const pathName = req.path === "/home" ? payload.pathName : req.path;
+  const pathName = req.path === '/home' ? payload.pathName : req.path;
 
-  if (pathName === "/home") console.log(payload);
+  if (pathName === '/home') console.log(payload);
 
   const template = `templates${
-    pathName === "/home"
+    pathName === '/home'
       ? payload.pathName
-      : pathName === "/quizzes"
-      ? "/quizzes/quizzes-list"
+      : pathName === '/quizzes'
+      ? '/quizzes/quizzes-list'
       : pathName
   }`;
   return renderFragmentOrLayout(
     template,
-    req.path === "/home" ? payload.payload : payload,
+    req.path === '/home' ? payload.payload : payload,
     pathName,
     req,
     res
@@ -42,9 +42,9 @@ const handleGroupChatRoute = async (req, res) => {
   };
 
   renderFragmentOrLayout(
-    "templates/groups/group-chat",
+    'templates/groups/group-chat',
     payload,
-    "/groups/my/group-chat",
+    '/groups/my/group-chat',
     req,
     res,
     extraData
@@ -55,9 +55,14 @@ const handleQuizEditRoute = async (req, res) => {
   const quizId = req.params.quizId;
 
   const result = await getQuizEditContext(quizId, req.user.uid);
-  
+
+  if (!result.success) {
+    return res.status(500).json({
+      message: result.message || 'Failed to load quiz editor',
+    });
+  }
+
   const templateContext = result.templateContext;
-  console.log("templateContext", templateContext);
 
   const extraData = {
     quizTitle: templateContext.title,
@@ -67,16 +72,10 @@ const handleQuizEditRoute = async (req, res) => {
     extraData: extraData,
   };
 
-  if (!result.success) {
-    return res.status(500).json({
-      message: result.message || "Failed to load quiz editor",
-    });
-  }
-
   renderFragmentOrLayout(
-    "templates/quizzes/quiz-editor",
+    'templates/quizzes/quiz-editor',
     payload,
-    "/quizzes/my/quiz-editor",
+    '/quizzes/my/quiz-editor',
     req,
     res,
     extraData
@@ -85,20 +84,19 @@ const handleQuizEditRoute = async (req, res) => {
 
 const handleQuizPlayRoute = async (req, res) => {
   const response = await getQuizzPlayContext(req.user.uid, req.params.quizId);
-  console.log("response ", response);
   const templateContext = response.templateContext;
   const payload = {
     templateContext,
   };
   if (!response.success) {
-    const backUrl = req.header("Referer") || "/app/home";
+    const backUrl = req.header('Referer') || '/app/home';
     return res.redirect(backUrl);
   }
 
   renderFragmentOrLayout(
-    "templates/quiz-play",
+    'templates/quiz-play',
     payload,
-    "/quiz-play",
+    '/quiz-play',
     req,
     res
   );

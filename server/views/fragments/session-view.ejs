@@ -39,9 +39,9 @@
           <%= session.quiz.questionsCount %>
           <span>Questions</span>
         </span>
-        <span class="start-time badge<%= session.quiz.status === 'Finished' ? ' orange-badge' : session.quiz.status === 'Ongoing' ? 'green-badge' : ' gray-badge'%>">
+        <span class="start-time badge<%= session.quiz.status === 'Finished' ? ' gray-badge' : session.quiz.status === 'active' ? ' green-badge' : ' orange-badge'%>">
           <i class="bi bi-clock-fill"></i>
-          <%= session.quiz.status  %>
+          <%= session.quiz.status.slice(0, 1).toUpperCase() +  session.quiz.status.slice(1)  %>
         </span>
       </div>
     </div>
