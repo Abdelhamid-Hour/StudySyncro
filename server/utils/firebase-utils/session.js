@@ -8,7 +8,8 @@
         const groupRef = db.collection("groups").doc(sessionData.groupId)
         if(sessionData){
            const docRef =  await sessionRef.add(sessionData)
-            await groupRef.update({
+           
+           await groupRef.update({
                 curentSession : docRef.id
             })
             return true 
