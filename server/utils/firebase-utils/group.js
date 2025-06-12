@@ -2,13 +2,10 @@ const { FieldValue } = require("firebase-admin/firestore");
 const { db, admin } = require("../../firebase/firebaseAdmin");
 const createGroup = async (groupdData, userData) => {
   try {
-    console.log(groupdData, "group data received");
-    console.log(userData, "user data received ");
     const groupRef = db.collection("groups");
     const snapshot = await groupRef
       .where("name", "==", groupdData["group-name"])
       .get();
-    console.log(snapshot, "this is the snapshot");
 
     const newGrop = {
       name: groupdData["group-name"],
@@ -38,13 +35,11 @@ const createGroup = async (groupdData, userData) => {
     };
 
     if (snapshot.empty) {
-      console.log("created");
       await groupRef.add(newGrop);
       return {
         success: true,
       };
     } else {
-      console.log("not empty");
       return {
         success: false,
         message:
@@ -52,7 +47,6 @@ const createGroup = async (groupdData, userData) => {
       };
     }
   } catch (error) {
-    console.log("here the error");
     console.log(error.message);
     return {
       success: false,
@@ -108,7 +102,6 @@ const getAvailableGroups = async (
     query = query.limit(batchSize);
 
     const snapshot = await query.get();
-    console.log(snapshot.size, "size");
 
     // If no documents at all (first call), return empty
     if (snapshot.empty && availableGroups.length === 0) {
@@ -210,7 +203,6 @@ const getJoinedGroups = async (
     query = query.limit(batchSize);
 
     const snapshot = await query.get();
-    console.log(snapshot.size, "size");
 
     // If no documents at all (first call), return empty
     if (snapshot.empty && joinedGroups.length === 0) {
@@ -269,8 +261,6 @@ const getJoinedGroups = async (
 
 const filterGroups = async (user_id, criteria, groups, availableGroups) => {
   try {
-    console.log("filter", criteria);
-
     const filteredGroups = groups.filter((g) => {
       const matchLevel =
         criteria.level?.length === 0 || criteria.level?.includes(g.level);
@@ -315,21 +305,6 @@ const filterGroups = async (user_id, criteria, groups, availableGroups) => {
         matchJoinable &&
         matchSearch &&
         matchRole;
-
-      console.log(
-        "matchLevel:",
-        matchLevel,
-        "matchVisibility:",
-        matchVisibility,
-        "matchShowInSearch:",
-        matchShowInSearch,
-        "matchJoinable:",
-        matchJoinable,
-        "matchSearch:",
-        matchSearch,
-        "matchRole:",
-        matchRole
-      );
 
       return result;
     });
@@ -592,8 +567,6 @@ const getGroupInfo = async (id, userId) => {
     const group = await getGroupByID(id);
     if (!group) return { success: false, message: "Group not found" };
     const adminInfo = group.members.find((m) => m.uid === group.creator);
-    console.log(adminInfo, "info");
-    console.log(group, "this is the group");
 
     return {
       success: true,

@@ -59,12 +59,12 @@ const getAvailableGroupsHandler = async (req, res) => {
 };
 
 const getQuizzesHandler = async (req, res) => {
-  const { searchTerm, sort, lastVisible } = req.query;
+  const { searchTerm, sort, lastVisible, count } = req.query;
   const creteria = {
     searchTerm: searchTerm || '',
     sort: sort || 'desc',
   };
-  const data = await getExams(req.user.uid, creteria, null, null, lastVisible);
+  const data = await getExams(req.user.uid, creteria, count, lastVisible);
   return res.json(data);
 };
 

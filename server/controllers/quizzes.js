@@ -6,7 +6,7 @@ const createQuizHandler = async (req, res) => {
   console.log(quizData, 'this is the quizz data');
   const result = await createExamen(quizData, userData);
   if (result.success) {
-    console.log(result.id, 'quizz id');
+    console.log(result.quizId, 'quizz id');
     return res.status(200).json({ quizId: result.quizId });
   } else {
     return res.status(400).json({
