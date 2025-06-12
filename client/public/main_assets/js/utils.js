@@ -135,7 +135,6 @@ export const fetchTemplate = async (url) => {
 };
 
 export const fetchData = async (url) => {
-  console.log(`Fetching data from: ${url}`);
   const response = await fetchStructure(`/api${url}`, "GET", {}, {});
   return response;
 };

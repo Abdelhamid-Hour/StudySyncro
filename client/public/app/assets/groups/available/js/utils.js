@@ -27,8 +27,6 @@ export const handleJoinGroupClick = async (joinGroupBtn) => {
   const loaderDiv = createLoaderDiv();
   groupFooter.replaceChild(loaderDiv, joinGroupBtn);
   try {
-    console.log('Joining group with ID:', groupId);
-
     const { status } = await sendData('/api/join-group', { groupId });
 
     const resultElement = getResultElement(status, groupId);

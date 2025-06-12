@@ -16,7 +16,6 @@ export function getDebounceFunc(callback, TimeInterval) {
   let timer;
   return function (...args) {
     clearTimeout(timer);
-    console.log("Fire");
     timer = setTimeout(() => {
       callback.apply(this, args);
     }, TimeInterval);
@@ -657,7 +656,6 @@ export const navigateTo = (pathName) => {
   link.href = `/app${pathName}`; // add the correct id or path
   link.className = "route-link";
   link.style.display = "none";
-  console.log(mainContainer);
   mainContainer.appendChild(link);
   link.click();
 };

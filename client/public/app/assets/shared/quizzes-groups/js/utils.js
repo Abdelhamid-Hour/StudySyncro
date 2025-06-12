@@ -32,7 +32,6 @@ export class Loader {
     this.lastVisible = this.container?.dataset.lastVisible;
     this.count = boxTotalCount;
     const cardsCount = this.container.children.length;
-    console.log(this.creteria);
     this.container.removeAttribute('data-last-visible');
     if (cardsCount >= 20) {
       this.initLoadingBoxes();
@@ -59,7 +58,6 @@ export class Loader {
     this.io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          console.log(entry.isIntersecting, !this.loading, this.lastVisible);
           if (
             entry.isIntersecting &&
             !this.loading &&
@@ -96,11 +94,9 @@ export class Loader {
     this.loading = true;
 
     const endPoint = `${this.route}?lastVisible=${this.lastVisible}&count=${this.count}&${this.creteria}`;
-    console.log('Loading more items from:', endPoint);
 
     try {
       const { cards, lastVisible } = await fetchData(endPoint);
-      console.log({ cards, lastVisible });
 
       this.lastVisible = lastVisible;
 
