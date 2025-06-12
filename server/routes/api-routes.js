@@ -281,21 +281,19 @@ apiRouter.get('/quizzes-list', (req, res) => {
       title: 'JavaScript Quantum Computing',
     },
   ];
-
+  const cards = quizzes
+    .filter((quiz) => {
+      return quiz.title.toLowerCase().includes(searchTerm.toLowerCase());
+    })
+    .slice(searchTerm && lastVisible ? lastVisible : 0, count ? count : 10);
   const result = {
     success: true,
     quizData: {
-      quizzes: quizzes
-        .filter((quiz) => {
-          return quiz.title.toLowerCase().includes(searchTerm.toLowerCase());
-        })
-        .slice(
-          searchTerm && lastVisible ? lastVisible : 0,
-          count ? count + 1 : 10 + 1
-        ),
+      cards: cards,
       lastVisible:
-        quizzes.length == (count ? count : 10)
-          ? (searchTerm && lastVisible ? lastVisible : 0) + (count ? count : 10)
+        cards.length == (count ? count : 10)
+          ? (searchTerm && lastVisible ? parseInt(count, 10) : 0) +
+            (count ? parseInt(count, 10) : 10)
           : null,
     },
   };
@@ -379,6 +377,26 @@ apiRouter.post('/create-group', async (req, res) => {
   const formData = req.body.groupData;
   const userData = req.user;
   const result = await createGroup(formData, userData);
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({
+      message: result.message,
+    });
+  }
+});
+
+apiRouter.post('/create-session', async (req, res) => {
+  const sessionData = req.body.sessionData;
+  const userData = req.user;
+  // const result = await createGroup(formData, userData);
+  const result = {
+    success: true,
+    message: 'Session created successfully',
+  };
+  
+  console.log(sessionData);
+
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
