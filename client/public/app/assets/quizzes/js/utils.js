@@ -1,30 +1,33 @@
 import {
   sendData,
   showMessageBlock,
-} from "../../../../main_assets/js/utils.js";
+} from '../../../../main_assets/js/utils.js';
 import {
   globalTooltip,
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
   topSideBarMiddle,
-} from "../../global/js/dom-variables.js";
+} from '../../global/js/dom-variables.js';
 import {
   openOverlayModal,
   resetTooltip,
   showErrorTooltip,
   navigateTo,
   getLoader,
-} from "../../global/js/utils.js";
+} from '../../global/js/utils.js';
 import {
   handleFormSubmit,
-  setUpSubjectSelectMenu,
-} from "../../shared/forms/js/utils.js";
-import { initFiltersInputListener, Loader } from "../../shared/quizzes-groups/js/utils.js";
+  setUpSelectMenu,
+} from '../../shared/forms/js/utils.js';
+import {
+  initFiltersInputListener,
+  Loader,
+} from '../../shared/quizzes-groups/js/utils.js';
 
 export const initLazyLoadingLoader = () => {
   const loader = new Loader(
-    document.querySelector(".quizzes-list"),
-    "200px",
+    document.querySelector('.quizzes-list'),
+    '200px',
     getcreateQuizCardFunc,
     '/quizzes',
     createLoadingCard(),
@@ -36,13 +39,13 @@ export const initLazyLoadingLoader = () => {
 };
 
 const getCreteria = () => {
-  let creteria = "";
-  const sortDate = topSideBarMiddle.querySelector("#sort-checkbox")?.checked;
-  const search = topSideBarMiddle.querySelector("#search-input")?.value;
+  let creteria = '';
+  const sortDate = topSideBarMiddle.querySelector('#sort-checkbox')?.checked;
+  const search = topSideBarMiddle.querySelector('#search-input')?.value;
 
-  const sort = sortDate ? "asc" : "desc";
+  const sort = sortDate ? 'asc' : 'desc';
   creteria += `sort=${sort}`;
-  const searchTerm = search ? search.trim() : "";
+  const searchTerm = search ? search.trim() : '';
   creteria += `&searchTerm=${searchTerm}`;
 
   return creteria;
@@ -50,16 +53,16 @@ const getCreteria = () => {
 
 const getcreateQuizCardFunc = (quiz = {}) => {
   const {
-    id = "",
-    title = "Untitled Quiz",
+    id = '',
+    title = 'Untitled Quiz',
     questionsCount = 0,
     sharedGroups = 0,
     sharedSessions = 0,
-    subject = "Unknown",
+    subject = 'Unknown',
   } = quiz;
 
   // Create a wrapper div
-  const wrapper = document.createElement("div");
+  const wrapper = document.createElement('div');
   wrapper.innerHTML = `
     <div class="quiz-card">
       <div class="quiz-title-container info-container">
@@ -101,19 +104,23 @@ const getcreateQuizCardFunc = (quiz = {}) => {
 
   // Set values safely
   const card = wrapper.firstElementChild;
-  card.querySelector(".quiz-title.content").textContent = title;
-  card.querySelector(".questions-count-container .count.content").textContent = questionsCount;
-  card.querySelector(".shared-in-container .count.content").textContent = `${sharedGroups} Groups | ${sharedSessions} Sessions`;
-  card.querySelector(".subject-container .subject.content").textContent = subject;
-  const editBtn = card.querySelector(".edit-quiz-btn");
-  editBtn.setAttribute("href", `/app/quizzes/${id}/edit`);
+  card.querySelector('.quiz-title.content').textContent = title;
+  card.querySelector('.questions-count-container .count.content').textContent =
+    questionsCount;
+  card.querySelector(
+    '.shared-in-container .count.content'
+  ).textContent = `${sharedGroups} Groups | ${sharedSessions} Sessions`;
+  card.querySelector('.subject-container .subject.content').textContent =
+    subject;
+  const editBtn = card.querySelector('.edit-quiz-btn');
+  editBtn.setAttribute('href', `/app/quizzes/${id}/edit`);
 
   return card;
 };
 
 export const createLoadingCard = () => {
-  const loadingCard = document.createElement("div");
-  loadingCard.className = "quiz-card loading-animation loading-card"
+  const loadingCard = document.createElement('div');
+  loadingCard.className = 'quiz-card loading-animation loading-card';
   loadingCard.innerHTML = `
       <div class="quiz-title-container info-container">
         <label class="quiz-title-label">
@@ -155,14 +162,14 @@ export const createLoadingCard = () => {
 
 export const handleQuizCreateClick = () => {
   openOverlayModal(
-    "create-quiz-overlay",
-    [".close-quiz-overlay"],
+    'create-quiz-overlay',
+    ['.close-quiz-overlay'],
     getQuizOverlay,
     setUpQuizOverlay
   );
 };
 const setUpQuizOverlay = (backdropElement) => {
-  setUpSubjectSelectMenu(backdropElement.querySelector(".subject-field"));
+  setUpSelectMenu(backdropElement.querySelector('.subject-field'));
   initQuizForm();
 };
 
@@ -172,25 +179,25 @@ const handleCreateQuizSubmit = async (quizData, form, createBtn) => {
     form.isCreating = true;
     createBtn.disabled = true;
     createBtn.innerHTML = getLoader();
-    const { quizId } = await sendData("/api/create-quiz", { quizData });
-    showMessageBlock("Quiz created successfully.", "success");
+    const { quizId } = await sendData('/api/create-quiz', { quizData });
+    showMessageBlock('Quiz created successfully.', 'success');
     navigateTo(`/quizzes/${quizId}/edit`);
   } catch (error) {
-    console.error("Error: ", error);
-    showMessageBlock(error.message, "error");
+    console.error('Error: ', error);
+    showMessageBlock(error.message, 'error');
   } finally {
     form.isCreating = false;
     createBtn.disabled = false;
-    createBtn.innerHTML = "Create";
+    createBtn.innerHTML = 'Create';
   }
   // ? its not necessary to reset the form here, as the overlay will be closed
 };
 
 export const initQuizForm = () => {
-  const form = document.querySelector("form");
-  const quizTitle = form.querySelector(".quiz-title-field input");
-  const subject = form.querySelector(".subject-field input");
-  const createBtn = form.querySelector(".create-btn");
+  const form = document.querySelector('form');
+  const quizTitle = form.querySelector('.quiz-title-field input');
+  const subject = form.querySelector('.subject-field input');
+  const createBtn = form.querySelector('.create-btn');
 
   handleFormSubmit(
     form,
@@ -205,11 +212,11 @@ export const initQuizForm = () => {
 
 const chechQuizValues = (inputs) => {
   const { quizTitle, subject } = inputs;
-  const quizTitleValue = quizTitle?.value ?? "";
-  const subjectValue = subject?.value ?? "";
+  const quizTitleValue = quizTitle?.value ?? '';
+  const subjectValue = subject?.value ?? '';
 
   if (!quizTitleValue.trim()) {
-    showErrorTooltip("Quiz Title is required.", quizTitle);
+    showErrorTooltip('Quiz Title is required.', quizTitle);
     return false;
   } else if (
     quizTitleValue.length < NAME_TITLE_MIN_LENGTH ||
@@ -221,14 +228,14 @@ const chechQuizValues = (inputs) => {
     );
     return false;
   } else {
-    resetTooltip(globalTooltip, quizTitle.closest(".field-container"));
+    resetTooltip(globalTooltip, quizTitle.closest('.field-container'));
   }
 
   if (!subjectValue.trim()) {
-    showErrorTooltip("Subject is required.", subject);
+    showErrorTooltip('Subject is required.', subject);
     return false;
   } else {
-    resetTooltip(globalTooltip, subject.closest(".field-container"));
+    resetTooltip(globalTooltip, subject.closest('.field-container'));
   }
 
   return true;

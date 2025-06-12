@@ -1,13 +1,13 @@
 import {
   fetchData,
   showMessageBlock,
-} from "../../../../../main_assets/js/utils.js";
+} from '../../../../../main_assets/js/utils.js';
 import {
   boxRowCount,
   boxTotalCount,
   topSideBarMiddle,
-} from "../../../global/js/dom-variables.js";
-import { getDebounceFunc } from "../../../global/js/utils.js";
+} from '../../../global/js/dom-variables.js';
+import { getDebounceFunc } from '../../../global/js/utils.js';
 
 export class Loader {
   constructor(
@@ -33,7 +33,7 @@ export class Loader {
     this.count = boxTotalCount;
     const cardsCount = this.container.children.length;
     console.log(this.creteria);
-    this.container.removeAttribute("data-last-visible");
+    this.container.removeAttribute('data-last-visible');
     if (cardsCount >= 20) {
       this.initLoadingBoxes();
       this.initObserver();
@@ -42,14 +42,14 @@ export class Loader {
 
   reset() {
     this.loading = false;
-    this.lastVisible = "";
+    this.lastVisible = '';
     this.count = 20;
     if (this.io) {
       this.io.disconnect();
     }
     clearLoadersBoxes();
     this.sentinel = null;
-    this.container.innerHTML = "";
+    this.container.innerHTML = '';
     this.creteria = this.getCreteria();
     this.initLoadingBoxes();
     this.initObserver();
@@ -84,19 +84,19 @@ export class Loader {
     const frag = document.createDocumentFragment();
     for (let i = 0; i < this.loadersCount; i++) {
       const loadingBox = this.loadingBox.cloneNode(true);
-      if (i === 0) loadingBox.classList.add("first-loading-card");
+      if (i === 0) loadingBox.classList.add('first-loading-card');
 
       frag.appendChild(loadingBox);
     }
     this.container.appendChild(frag);
-    this.sentinel = document.querySelector(".first-loading-card");
+    this.sentinel = document.querySelector('.first-loading-card');
   }
 
   async loadMore() {
     this.loading = true;
 
     const endPoint = `${this.route}?lastVisible=${this.lastVisible}&count=${this.count}&${this.creteria}`;
-    console.log("Loading more items from:", endPoint);
+    console.log('Loading more items from:', endPoint);
 
     try {
       const { cards, lastVisible } = await fetchData(endPoint);
@@ -106,7 +106,7 @@ export class Loader {
 
       const frag = document.createDocumentFragment();
       cards.forEach((item) => {
-        const card = this.createCard(item);
+        const card = this.createCard(item, this.creteria.searchTerm);
         frag.appendChild(card);
       });
       // insert the new cards before the last loader
@@ -117,11 +117,11 @@ export class Loader {
         clearLoadersBoxes();
       }
     } catch (error) {
-      console.error("Error loading more items:", error);
+      console.error('Error loading more items:', error);
       // Optionally, you can show an error message to the user
       showMessageBlock(
-        "Error loading more items. Please try again later.",
-        "error"
+        'Error loading more items. Please try again later.',
+        'error'
       );
     }
 
@@ -130,7 +130,7 @@ export class Loader {
 }
 
 const clearLoadersBoxes = () => {
-  const loaders = document.querySelectorAll(".loading-card");
+  const loaders = document.querySelectorAll('.loading-card');
   loaders.forEach((loader) => {
     loader.remove();
   });
@@ -139,8 +139,8 @@ const clearLoadersBoxes = () => {
 export const initFiltersInputListener = (loader) => {
   const resetLoader = getDebounceFunc(() => loader.reset(), 300);
   const handleInputChange = (e) => {
-    const isInput = e.target.tagName === "INPUT";
+    const isInput = e.target.tagName === 'INPUT';
     if (isInput) resetLoader();
   };
-  topSideBarMiddle.addEventListener("input", handleInputChange);
+  topSideBarMiddle.addEventListener('input', handleInputChange);
 };

@@ -27,7 +27,7 @@ import {
 import {
   countCharsTextarea,
   handleFormSubmit,
-  setUpSubjectSelectMenu,
+  setUpSelectMenu,
   setUpSwitchBtn,
 } from '../../../shared/forms/js/utils.js';
 import { groupCreateBtn } from './dom-variables.js';
@@ -231,7 +231,7 @@ export const handleGroupCreateClick = () => {
 };
 
 const setUpGroupOverlay = (backdropElement) => {
-  setUpSubjectSelectMenu(backdropElement.querySelector('.group-subject-field'));
+  setUpSelectMenu(backdropElement.querySelector('.group-subject-field'));
   const visibilityField = backdropElement.querySelector(
     '.group-visibility-field'
   );
@@ -259,7 +259,7 @@ const handleCreateGroupSubmit = async (groupData, form, createBtn) => {
     createBtn.innerHTML = 'Create';
   }
   // ? its not necessary to reset the form here, as the overlay will be closed
-}
+};
 
 export const initGroupForm = () => {
   const form = document.getElementById('create-group-form');
@@ -270,9 +270,9 @@ export const initGroupForm = () => {
   const maxMembers = form.querySelector('.group-max-members-field input');
   const visibility = form.querySelector('.group-visibility-field input');
   const createBtn = form.querySelector('.create-btn');
-  
+
   description.addEventListener('input', countCharsTextarea);
-  
+
   handleFormSubmit(
     form,
     () =>
@@ -284,7 +284,6 @@ export const initGroupForm = () => {
         maxMembers,
         visibility,
       }),
-      (groupData) => handleCreateGroupSubmit(groupData, form, createBtn)
+    (groupData) => handleCreateGroupSubmit(groupData, form, createBtn)
   );
-
 };

@@ -19,32 +19,41 @@ export const checkSubject = (subject) => {
   return false;
 };
 
-export const setUpSubjectSelectMenu = (container) => {
+export const setUpSelectMenu = (
+  container,
+  getSelectMenuHtml,
+  isGlobalSelect,
+  onSelect
+) => {
   const selectMenu = container.querySelector(`.select-menu`);
   if (!selectMenu) return;
 
-  selectMenu.innerHTML = createSubjectSelectMenu();
+  selectMenu.innerHTML = getSelectMenuHtml() || createSubjectSelectMenu();
   const searchInput = selectMenu.querySelector('.select-search input');
-  const selectButtonValue = container.querySelector('.subject-value');
-  const otherSubjectInput = selectMenu.querySelector('.other-subject-input');
+  const selectButtonValue = container.querySelector(
+    '.subject-value, .quiz-value'
+  );
 
   // Debounced search input handler
   searchInput.addEventListener('input', (e) => {
-    getDebounceFunc(handleSubjectSearchInput, 200)(e, selectMenu);
+    getDebounceFunc(handleSelectSearchInput, 200)(e, selectMenu);
   });
 
   // Handle subject selection from the list
   selectMenu.addEventListener('click', (e) =>
-    HandleSubjectSelection(e, selectButtonValue)
+    HandleSelection(e, selectButtonValue, isGlobalSelect, onSelect)
   );
 
   // Handle custom subject input
-  otherSubjectInput.addEventListener('keydown', (e) =>
-    handleOtherSubjectInputKeydown(e, selectButtonValue, selectMenu)
-  );
+  if (!isGlobalSelect) {
+    const otherSubjectInput = selectMenu.querySelector('.other-subject-input');
+    otherSubjectInput.addEventListener('keydown', (e) =>
+      handleOtherSubjectInputKeydown(e, selectButtonValue, selectMenu)
+    );
+  }
 };
 
-const HandleSubjectSelection = (e, selectButtonValue) => {
+const HandleSelection = (e, selectButtonValue, isGlobalSelect, onSelect) => {
   const selectedItem = e.target.closest('.select-item');
   if (!selectedItem) return;
 
@@ -53,8 +62,12 @@ const HandleSubjectSelection = (e, selectButtonValue) => {
   }
 
   const selectedValue = selectedItem?.dataset.value;
-  if (checkSubject(selectedValue)) {
-    setSubjectValue(selectButtonValue, selectedValue);
+  if (checkSubject(selectedValue) || isGlobalSelect) {
+    if (onSelect) {
+      onSelect(selectButtonValue, selectedItem, selectedValue);
+    } else {
+      setSelectValue(selectButtonValue, selectedValue);
+    }
   } else {
     showMessageBlock(
       'Please select a valid subject from the list or specify a new one.',
@@ -108,7 +121,7 @@ const handleOtherSubjectInputKeydown = (e, selectButtonValue, selectMenu) => {
   if (e.key === 'Enter') {
     const selectedValue = toCapitalizeFirstLetter(e.currentTarget.value.trim());
     if (selectedValue.length > 1 && selectedValue.length <= 50) {
-      setSubjectValue(selectButtonValue, selectedValue);
+      setSelectValue(selectButtonValue, selectedValue);
       clearOtherSubjectInput(e.currentTarget, selectMenu);
       removeErrorMessage();
     } else {
@@ -117,7 +130,7 @@ const handleOtherSubjectInputKeydown = (e, selectButtonValue, selectMenu) => {
   }
 };
 
-const setSubjectValue = (selectButtonValue, value) => {
+const setSelectValue = (selectButtonValue, value) => {
   selectButtonValue.textContent = value;
   if (selectButtonValue.nextElementSibling.matches('input[type="hidden"]')) {
     selectButtonValue.nextElementSibling.value = value;
@@ -161,7 +174,7 @@ export const toCapitalizeFirstLetter = (str) => {
     .join(' ');
 };
 
-export const handleSubjectSearchInput = (e, selectMenu) => {
+export const handleSelectSearchInput = (e, selectMenu) => {
   const searchValue = e.target.value.trim().toLowerCase();
   const items = document.querySelectorAll(
     '.group-subject-select-menu .select-item'

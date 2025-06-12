@@ -25,6 +25,7 @@ import {
   millisecondsToHMFormat,
   showErrorTooltip,
   dashedToCamelCase,
+  navigateTo,
 } from '../../../../global/js/utils.js';
 import {
   levelValues,
@@ -33,7 +34,7 @@ import {
 import {
   countCharsTextarea,
   handleFormSubmit,
-  setUpSubjectSelectMenu,
+  setUpSelectMenu,
   setUpSwitchBtn,
 } from '../../../../shared/forms/js/utils.js';
 import { initAndDiplayErrorTooltip } from '../../../../shared/chat/js/utils.js';
@@ -49,8 +50,13 @@ import {
   groupLeftSideBarContent,
   groupLeftSideBarTitle,
 } from './dom-variables.js';
+import {
+  initFiltersInputListener,
+  Loader,
+} from '../../../../shared/quizzes-groups/js/utils.js';
 
 export let groupInfo;
+export let lastVisible = null;
 
 export const getGroupId = () => {
   // Example path: /app/groups/my/CKrhlort4dLmUq9zRtOl/chat
@@ -214,7 +220,7 @@ const getSessionForm = (name, description, quiz) => {
         <div class="select-trigger input">
           <button type="button" class="exclude-btn open-drop-down-btn">
             <span class="quiz-value">Quiz Title (Optional)</span>
-            <input type="hidden" name="session-quiz" value="" />
+            <input type="hidden" name="session-quiz-title" value="" />
             <input type="hidden" name="session-quiz-id" value="" />
             <i class="bi bi-chevron-down"></i>
           </button>
@@ -247,7 +253,10 @@ const getSessionForm = (name, description, quiz) => {
   const quizValueEl = wrapper.querySelector('.quiz-value');
   quizValueEl.textContent = quizTitle ? quizTitle : 'Quiz Title (Optional)';
   wrapper
-    .querySelector('input[name="session-quiz"]')
+    .querySelector('input[name="session-quiz-title"]')
+    .setAttribute('value', quizTitle || '');
+  wrapper
+    .querySelector('input[name="session-quiz-id"]')
     .setAttribute('value', quizId || '');
 
   return wrapper.outerHTML;
@@ -635,12 +644,12 @@ const addOrUpdateQuizTask = (data, sessionStore, wrapper) => {
   const sessionData = sessionStore.sessionData;
   sessionData.sessionQuiz = {
     quiz: new Task({
+      UID: data['session-quiz-id'],
       title: data['session-quiz-title'],
       description: '',
       durationInMins: 0,
       isQuiz: true,
     }),
-    id: data['session-quiz-id'],
   };
 
   const quizIndex = sessionData.tasks.findIndex((task) => task.isQuiz);
@@ -659,8 +668,8 @@ const addOrUpdateQuizTask = (data, sessionStore, wrapper) => {
   wrapper.querySelector('.create-session-form').outerHTML = getTasksContainer();
   wrapper
     .querySelector('.finish-btn')
-    .addEventListener('click', () =>
-      handleFinishBtnClick(sessionStore.sessionData)
+    .addEventListener('click', (e) =>
+      handleFinishBtnClick(sessionStore.sessionData, e.target)
     );
   wrapper.querySelector('#progress-end-text').checked = true;
 
@@ -674,19 +683,52 @@ const setUpSessionForm = (wrapper, sessionStore) => {
     .querySelector('textarea')
     .addEventListener('input', countCharsTextarea);
   const form = wrapper.querySelector('form');
+  const quizzesSelectTrigger = wrapper.querySelector('.select-trigger');
+  setUpSelectMenu(
+    quizzesSelectTrigger,
+    () => `
+    <div class="select-search">
+      <input id="select-search" type="search" />
+    </div>
+    <div class="select-group quizzes-menu drop-down-group"></div>
+  `,
+    true,
+    (selectButtonValue, selectedItem, selectedValue) => {
+      selectButtonValue.textContent = selectedItem.textContent;
+      quizzesSelectTrigger.querySelector(
+        'input[name="session-quiz-title"]'
+      ).value = selectedItem.textContent;
+      quizzesSelectTrigger.querySelector(
+        'input[name="session-quiz-id"]'
+      ).value = selectedValue;
+    }
+  );
+
+  const quizzesMenu = wrapper.querySelector('.quizzes-menu');
+
   handleFormSubmit(
     form,
     () => checkSessionFormValidity(form),
     (data) => handleSessionForm(data, sessionStore, wrapper)
   );
+
+  const loader = new Loader(
+    quizzesMenu,
+    '10px',
+    createDropDownItem,
+    '/quizzes-list',
+    getQuizLoaderLoadingItem(),
+    () => getQuizLoaderSearchParams(wrapper),
+    1
+  );
+  loader.reset();
+  initFiltersInputListener(loader);
 };
 
 const checkSessionFormValidity = (form) => {
   // get inputs
   const name = form.querySelector('#session-name');
   const description = form.querySelector('#session-description');
-  const quiz = form.querySelector('input[name="session-quiz"]');
-  const quizValue = form.querySelector('.quiz-value');
 
   // check name and description
   if (!checkTextFieldValidity(name, description)) {
@@ -695,7 +737,7 @@ const checkSessionFormValidity = (form) => {
   return true;
 };
 
-const handleFinishBtnClick = (sessionData) => {
+const handleFinishBtnClick = async (sessionData, btn) => {
   const quiz = sessionData.sessionQuiz?.quiz;
   const tasksLength = sessionData.tasks.length;
   if (tasksLength === 0)
@@ -710,17 +752,28 @@ const handleFinishBtnClick = (sessionData) => {
       'info'
     );
 
-  console.log(sessionData);
+  if (btn.isCreating) return;
+  try {
+    btn.isCreating = true;
+    btn.disabled = true;
+    btn.innerHTML = getLoader();
+    await sendData('/api/create-session', { sessionData });
+    showMessageBlock('Session created successfully', 'success');
+    navigateTo('/home');
+  } catch (error) {
+    console.error('Error: ', error);
+    showMessageBlock(error.message, 'error');
+  } finally {
+    btn.isCreating = false;
+    btn.disabled = false;
+    btn.innerHTML = 'Finish';
+  }
 };
 
 const handleSessionForm = (data, sessionStore, wrapper) => {
   const sessionData = sessionStore.sessionData;
   sessionData.name = data['session-name'];
   sessionData.description = data['session-description'];
-
-  // For test
-  data['session-quiz-title'] = 'Quiz Title';
-  data['session-quiz-id'] = '12345';
 
   if (shouldAddOrUpdateQuiz(data, sessionData)) {
     addOrUpdateQuizTask(data, sessionStore, wrapper);
@@ -737,11 +790,9 @@ const setUpTaskContainer = (wrapper, sessionStore) => {
   wrapper.querySelector('#progress-end-text').checked = true;
   setUpSwapBtn('back-btn', 'create-session-form', wrapper, sessionStore);
 
-  wrapper
-    .querySelector('.finish-btn')
-    .addEventListener('click', () =>
-      handleFinishBtnClick(sessionStore.sessionData)
-    );
+  wrapper.querySelector('.finish-btn').addEventListener('click', (e) => {
+    handleFinishBtnClick(sessionStore.sessionData, e.target);
+  });
   setUpTasksList(wrapper, sessionStore);
 };
 
@@ -966,7 +1017,6 @@ export const closeGroupLeftSideBar = () => {
 };
 
 const swapMode = (infoBox, modeFuncName, updatedValue, showInSearchValue) => {
-  // debugger;
   const editBoxClass = infoBox.className
     .split(' ')
     .find((c) => c.includes('-info-box'));
@@ -989,7 +1039,7 @@ const swapMode = (infoBox, modeFuncName, updatedValue, showInSearchValue) => {
   );
   if (modeFuncName === 'getEditMode') {
     if (editBoxClass === 'subject-info-box') {
-      setUpSubjectSelectMenu(infoBoxClone);
+      setUpSelectMenu(infoBoxClone);
     }
     if (['visibility-info-box', 'level-info-box'].includes(editBoxClass)) {
       setUpSwitchBtn(infoBoxClone);
@@ -1265,36 +1315,42 @@ const checkRadioValidity = (input, valideValues) => {
   return true;
 };
 
-const createDropDownItem = (text, value, searchTerm) => {
+const getQuizLoaderLoadingItem = () => {
   const div = document.createElement('div');
   div.className = 'select-item drop-down-item';
-  div.setAttribute('data-value', value);
-  const mark = document.createElement('mark');
-  mark.textContent = searchTerm;
-  const firstTextSpan = document.createElement('span');
-  firstTextSpan.textContent = text.replace();
+  div.innerHTML = `<div class="loading-opacity-animation"></div>`;
   return div;
 };
 
-const insertQuizzesToSelectMenu = (
-  quizzes,
-  quizzesGroupSelectMenu,
-  searchTerm
-) => {
-  quizzesGroupSelectMenu.innerHTML = ''; // Clear previous options
-  quizzes.forEach((quiz) => {
-    const dropDownItem = createDropDownItem(quiz.title, quiz.id, searchTerm);
-    quizzesGroupSelectMenu.appendChild(dropDownItem);
-  });
+const getQuizLoaderSearchParams = (wrapper) => {
+  const searchInput = wrapper.querySelector('#select-search');
+  return `searchTerm=${searchInput.value.toLowerCase().trim()}`;
 };
 
-// const updateQuizzesList = async (
-//   searchTerm = '',
-//   count = 10,
-//   lastVisible = null,
-//   quizzesGroupSelectMenu
-// ) => {
-//   if ( ) {
+function escapeHTML(str) {
+  return str.replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+}
 
-//   }
-// };
+const createDropDownItem = (quiz, searchTerm) => {
+  const div = document.createElement('div');
+  div.className = 'select-item drop-down-item';
+  div.setAttribute('data-value', quiz.id);
+
+  const title = quiz.title;
+  const escapedTitle = escapeHTML(title);
+  const escapedSearchTerm = escapeHTML(searchTerm);
+
+  // Create a case-insensitive RegExp to find the search term
+  const regex = new RegExp(`(${escapedSearchTerm})`, 'ig');
+
+  // Highlight matched part
+  const highlightedTitle = escapedTitle.replace(regex, '<mark>$1</mark>');
+
+  div.innerHTML = highlightedTitle;
+
+  return div;
+};

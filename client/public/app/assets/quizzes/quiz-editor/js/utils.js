@@ -19,7 +19,7 @@ import {
   showConfirmationBox,
   showErrorTooltip,
 } from '../../../global/js/utils.js';
-import { setUpSubjectSelectMenu } from '../../../shared/forms/js/utils.js';
+import { setUpSelectMenu } from '../../../shared/forms/js/utils.js';
 import {
   editorQuestionsList,
   metaInfoEl,
@@ -526,7 +526,7 @@ export const handleEditBtn = (type) => {
   swapMode('getEditMode', type, value);
   const container = document.querySelector(`.${type} .container`);
   if (type === 'subject') {
-    setUpSubjectSelectMenu(container);
+    setUpSelectMenu(container);
   } else {
     container.querySelector('input').focus();
   }
