@@ -23,8 +23,9 @@ const handleRoutes = async (req, res) => {
   );
 };
 
-const handleGroupChatRoute = (req, res) => {
-  const templateContext = getGroupChatContext(req.params.groupId); // Replace with actual logic to get group chat context
+const handleGroupChatRoute = async(req, res) => {
+  const templateContext = await  getGroupChatContext( req.user.uid , req.params.groupId); // Replace with actual logic to get group chat context
+  
   const extraData = {
     groupName: templateContext.groupName,
   };

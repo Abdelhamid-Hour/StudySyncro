@@ -1,6 +1,7 @@
 const { db } = require('../../firebase/firebaseAdmin');
 const { getTaches } = require('./tache');
 const { getAllGroups } = require('./group');
+const { getQuestions, geQuiztDuration } = require('./question');
 
 const getFormatedQuizzes = (quizzes, user_id) => {
   return quizzes.map(
@@ -181,27 +182,27 @@ const supprimerExamen = async (examenId) => {
 // questions gestion
 
 //Quesetion creation : Params (questionData)
-const getQuestions = async (examenId) => {
-  try {
-    const questionRef = db.collection('questions');
-    if (questionRef) {
-      const snapshot = await questionRef
-        .where('examenId', '==', examenId)
-        .get();
-      if (snapshot.empty) {
-        return [];
-      }
-      const questions = [];
-      snapshot.forEach((question) => {
-        questions.push({
-          id: question.id,
-          ...question.data(),
-        });
-      });
-      return questions;
-    }
-  } catch (error) {}
-};
+// const getQuestions = async (examenId) => {
+//   try {
+//     const questionRef = db.collection('questions');
+//     if (questionRef) {
+//       const snapshot = await questionRef
+//         .where('examenId', '==', examenId)
+//         .get();
+//       if (snapshot.empty) {
+//         return [];
+//       }
+//       const questions = [];
+//       snapshot.forEach((question) => {
+//         questions.push({
+//           id: question.id,
+//           ...question.data(),
+//         });
+//       });
+//       return questions;
+//     }
+//   } catch (error) {}
+// };
 
 const filtrerExamen = async (criteria, examens) => {
   console.log('examens', examens, 'criteria', criteria);
@@ -372,33 +373,114 @@ const updateQuizSubject = async (subject, id, userId) => {
 
 // wach kayn examneId in current sessions , new field in groups , current session for the joined groups , is session active and sessio has the quiz id return , if is session Active and the quiz id in the current tache send play quiz
 
-const getQuizzQuestion = async (sessionId, examId) => {
-  const groups = await getAllGroups();
-  const currentSessions = groups.map((group) => {
-    return group.currentSession;
-  });
-  const activeSession = currentSessions.some(
-    (session) => session === sessionId
-  );
-  if (activeSession) {
-    const taches = await getTaches(sessionId);
+const getQuizzQuestions = async (userId, quizId) => {
+ try {
+   const ref = db.collection("users").doc(userId)
+   const snapshot = await ref.get()
+   const user = snapshot.data()
+   const sessionRf = db.collection("sessions")
+   const sessions = await sessionRf.where("status" , "==" , "active").get()
+   const session = await sessionRf.doc(user.currentSession).get()
+   const taskRef =db.collection("tasks").where("sessionId" , "==" , user.currentSession)
+   const task = taskRef.where("status" , "==","active").get()
+   const quizz  = await db.collection("quizzes").doc(quizId).get()
+   let duration = 0
+   
+ 
+  if(!quizz.exists){
+     return {
+       success : false  , 
+       message : "No quiz available."
+     }
+   }
+  else if(session && session.quizId  == quizId){
+       if(!task.isQuizz){
+         return {
+       success : false , 
+       message : "Your current session does not have this quiz in tasks."
+     }}
 
-    if (taches.length > 0) {
-      taches.forEach((tache) => async () => {
-        if (tache.isQuizz && tache.status != 'active') {
-          return;
-        } else if (tache.isQuizz === examId && tache.status == 'active') {
-          const questions = await getQuestions(examId);
-          if (questions.length > 0) {
-            return questions;
-          } else {
-            return [];
-          }
-        }
-      });
+   } 
+ 
+   else if (!sessions.empty){
+     sessions.forEach((doc)=>{
+       const data = doc.data()
+       if (data.quizId === quizId){
+         return {
+           succes : false , 
+           message : "Can't access this quiz."
+         }
+       }
+ 
+     })
+   }
+ 
+     const questions = await getQuestions(quizId ,  userId)
+     if(questions.length == 0){
+       return {
+         success : false , 
+         message :"No questions are available"
+       }
+     }
+     return {
+       success : true , 
+       templateContext : 
+       {
+        firstQuestion : questions[0] ,
+       quizTitle  : quizz.title ,
+       totalQustions :  questions.length
+      }
+     }
+ } catch (error) {
+    console.log(error)
+    return {
+      success : false , 
+      message : "Something wrong happened while fetching the quiz data"
     }
+ }
+    
   }
-};
+
+
+const getQuizzInfo = async (quizId , userId)=>{
+   try {
+      const ref = db.collection("quizzes").doc(quizId)
+      const snap = await  ref.get()
+      const quiz = snap.data()
+      
+    if(quiz && quiz.creator === userId){
+      const questions = await getQuestions(quizId , userId) 
+      /*success: true,
+    quizData: {
+      title: 'JavaScript Basics',
+      subject: 'JavaScript',
+      questions: [
+        { */
+       return {
+        success : true , 
+        quizData : {
+          title : quiz.title , 
+          subject : quiz.subject ,
+          questions : questions
+        }
+       }
+    }
+    else {
+      return {
+        success :false , 
+        message : "Quiz not found or user does not have the right."
+      }
+    }
+
+   } catch (error) {
+    console.log(error )
+    return {success : false , 
+      message : "Cant fetch the quiz questions please try again late.r"
+    }
+    
+   }
+}
+
 
 const getSessionQuizzes = async (
   userId,
@@ -433,7 +515,7 @@ const getSessionQuizzes = async (
     query = query.limit(batchSize);
 
     const snapshot = await query.get();
-    //checking if there is no item in bakend rak 3aref and the quizzes array length is sphengea 0
+    //checking if there is no item in bakend  and the quizzes array length is sphengea 0
     if (snapshot.empty && accumulatedQuizzes.length === 0) {
       return { cards: [], lastVisible: null };
     }
@@ -446,9 +528,9 @@ const getSessionQuizzes = async (
       };
     });
 
-    const filteredQuizzes = quizzes.filter((q) =>
+    const filteredQuizzes = searchTerm.trim() != "" ? quizzes.filter((q) =>
       q.title.toLowerCase().includes(searchTerm.toLowerCase().trim())
-    );
+    )  : quizzes
 
     accumulatedQuizzes = accumulatedQuizzes.concat(filteredQuizzes);
 
@@ -549,6 +631,8 @@ const modiferQuizQuestions = async (
 //fucntion for updated question and questions
 module.exports = {
   createExamen,
+  getSessionQuizzes ,
+  getQuizzInfo, 
   createQuestion,
   updateQuizSubject,
   updateQuizTitle,

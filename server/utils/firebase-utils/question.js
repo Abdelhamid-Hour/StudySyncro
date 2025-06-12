@@ -3,7 +3,7 @@ const { db } = require('../../firebase/firebaseAdmin');
 
 const ajouterQuestion = async (question) => {
   try {
-    const questionRef = db.collection('Question');
+    const questionRef = db.collection('Questions');
     await questionRef.add(question);
     return true;
   } catch (error) {
@@ -12,14 +12,21 @@ const ajouterQuestion = async (question) => {
   }
 };
 
-const getQuestions = async (examenId) => {
+const getQuestions = async (quizId , userId) => {
   try {
-    const questions = [];
-    const questionRef = db.collection('Question');
-    const snapshot = await questionRef.where('examenId', '==', examenId).get();
+    const questions = [] 
+    const questionRef = db.collection('Questions');
+    const snapshot = await questionRef.where('QuizId', '==', quizId).get();
+    
     if (!snapshot.empty) {
-      snapshot.forEach((doc) => {
-        questions.push({ id: doc.id, ...doc.data() });
+      snapshot.docs.map((doc) => {
+        const data  = doc.data()
+        return {
+          id : data.id , 
+          text : data.text , 
+          choices : data.choices , 
+          correctAnswerIndex : data.correctAnswerIndex
+        }
       });
       return questions;
     } else {
@@ -32,9 +39,65 @@ const getQuestions = async (examenId) => {
   }
 };
 
+
+
+
+
+const getQuestionsPlayContext = async(userId  , quizId )=>{
+  try {
+    const ref = db.collection("sessions")
+    const taskRef = db.collection("tasks")
+    let duration = 0
+    let sessionId = ""
+    const sessions = await ref.get()
+    let timeLeft = 0
+    const questions =  await  getQuestions(quizId  , userId)
+ 
+
+
+    const tasks = await taskRef.where("sessionId" , "==" , sessionId).get()
+    tasks.docs.forEach((doc)=>{
+      const data = doc.data() 
+      if (data.isQuiz && data.status === "active"){
+        duration = data.durationInMins
+
+      }
+    })
+    sessions.docs.forEach((doc)=>{
+      const data = doc.data()
+      if(data.quizId  == quizId){
+        sessionId = data.id 
+        const currentTime = new Date.now() 
+        const timeDiff =  currentTime  -  new Date(data.startDate)
+        if(timeDiff < data.duration ){
+            timeLeft =  Math.floor(timeDiff / 60000)
+            
+        }
+      }
+    })
+  
+
+  } catch (error) {
+    console.log(error)
+  }
+} 
+
+
+// const getQuestionsForPlay = async (userId , quizId)=>{
+//   try {
+//     const questions = await getQuestions(quizId , userId)
+    
+    
+ 
+//   } catch (error) {
+//     console.error(error.message);
+//     return false;
+//   }
+// }
+
 const getChoices = async (examenId) => {
   try {
-    const questionRef = db.collection('Question').doc(examenId);
+    const questionRef = db.collection('Questions').doc(examenId);
     const doc = await questionRef.get();
     if (doc.exists) {
       const data = doc.data();
@@ -49,9 +112,43 @@ const getChoices = async (examenId) => {
   }
 };
 
+const geQuiztDuration = async ( user, quizId)=>{
+
+ try{ 
+  let duration = 0
+  const sessionRf = db.collection("sessions")
+  const session = await sessionRf.doc(user.currentSession).get()
+  const taskRef =db.collection("tasks").where("sessionId" , "==" , user.currentSession).where("state" , "==" , "active")
+  const task = await taskRef.get()
+  const timeLeft =  Date.now() - new Date(session.startDate).getTime()
+  if(!task.empty && task.isQuiz && session.exists){
+    if(timeLeft < session.duration){
+          const timeDiff = Math.floor(session.duration - timeLeft * 60000)
+         const pendingTasks = await taskRef.where("status" ,"==" , "pending").get()
+        const totalduration =   pendingTasks.docs.reduce((accumulated , doc)=>{
+           const data = doc.data() 
+           accumulated  += data.duration 
+           return accumulated
+         } , 0)
+         duration  = timeDiff - totalduration 
+        }
+}
+else {
+ duration  = null 
+}
+return  duration 
+
+
+}catch(error){
+  console.log(error)
+  return false
+}
+}
+
+
 const addChoice = async (choice, questionId) => {
   try {
-    const questionRef = db.collection('Question').doc(questionId);
+    const questionRef = db.collection('Questions').doc(questionId);
     const doc = await questionRef.get();
 
     if (!doc.exists) return false;
@@ -70,7 +167,7 @@ const addChoice = async (choice, questionId) => {
 
 const addCorrectChoice = async (choice, questionId) => {
   try {
-    const questionRef = db.collection('Question').doc(questionId);
+    const questionRef = db.collection('Questions').doc(questionId);
     await questionRef.update({
       reponse: choice,
     });
@@ -96,7 +193,7 @@ const addCorrectChoice = async (choice, questionId) => {
 
 const deleteQuestion = async (questionId) => {
   try {
-    const questionRef = db.collection('Question').doc(questionId);
+    const questionRef = db.collection('Questions').doc(questionId);
     const doc = await questionRef.get();
     if (doc.exists) {
       await questionRef.delete();
@@ -111,7 +208,7 @@ const deleteQuestion = async (questionId) => {
 
 const deleteChoice = async (choice, questionId) => {
   try {
-    const questionRef = db.collection('Question').doc(questionId);
+    const questionRef = db.collection('Questions').doc(questionId);
     const doc = await questionRef.get();
 
     if (doc.exists) {
@@ -186,7 +283,8 @@ const modifierQuestion = async (questionId, propertie, value) => {
 
 const getQuestionCountExam = async (examenId) => {
   try {
-    const ref = db.collection('questions');
+    const ref = db.collection('Questions')
+      .where('QuizId', '==', examenId);
     const snaphsot = await ref.get();
 
     if (snaphsot.empty) {
@@ -208,4 +306,5 @@ module.exports = {
   deleteChoice,
   addCorrectChoice,
   addChoice,
+  geQuiztDuration
 };

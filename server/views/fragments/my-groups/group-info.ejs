@@ -16,10 +16,12 @@
     </div>
   </div>
   <div class="group-description-info-box info-box">
+   <% if (isAdmin) { %>
     <button type="button" class="exclude-btn edit-btn action-btn should-fill">
       <i class="bi bi-pencil"></i>
       Edit
     </button>
+    <% } %>
     <div class="group-description-container info-container">
       <span class="label">
         <span class="group-description-icon icon-box">
@@ -38,10 +40,12 @@
   </div>
   <div class="subject-level dual-box">
     <div class="subject-info-box info-box">
-      <button type="button" class="exclude-btn edit-btn action-btn should-fill">
-        <i class="bi bi-pencil"></i>
-        Edit
-      </button>
+     <% if (isAdmin) { %>
+    <button type="button" class="exclude-btn edit-btn action-btn should-fill">
+      <i class="bi bi-pencil"></i>
+      Edit
+    </button>
+    <% } %>
       <div class="subject-container info-container">
         <span class="label">
           <span class="subject-icon icon-box">
@@ -53,10 +57,12 @@
       </div>
     </div>
     <div class="level-info-box info-box">
-      <button type="button" class="exclude-btn edit-btn action-btn should-fill">
-        <i class="bi bi-pencil"></i>
-        Edit
-      </button>
+     <% if (isAdmin) { %>
+    <button type="button" class="exclude-btn edit-btn action-btn should-fill">
+      <i class="bi bi-pencil"></i>
+      Edit
+    </button>
+    <% } %>
       <div class="level-container info-container">
         <span class="label">
           <span class="level-icon icon-box">
@@ -70,10 +76,12 @@
   </div>
   <div class="visibility-max-members dual-box">
     <div class="visibility-info-box info-box">
-      <button type="button" class="exclude-btn edit-btn action-btn should-fill">
-        <i class="bi bi-pencil"></i>
-        Edit
-      </button>
+      <% if (isAdmin) { %>
+    <button type="button" class="exclude-btn edit-btn action-btn should-fill">
+      <i class="bi bi-pencil"></i>
+      Edit
+    </button>
+    <% } %>
       <div class="visibility-container info-container">
         <span class="label">
           <span class="visibility-icon icon-box">
@@ -99,10 +107,12 @@
       <% } %>
     </div>
     <div class="max-members-info-box info-box">
-      <button type="button" class="exclude-btn edit-btn action-btn should-fill">
-        <i class="bi bi-pencil"></i>
-        Edit
-      </button>
+     <% if (isAdmin) { %>
+    <button type="button" class="exclude-btn edit-btn action-btn should-fill">
+      <i class="bi bi-pencil"></i>
+      Edit
+    </button>
+    <% } %>
       <div class="max-members-container info-container">
         <span class="label">
           <span class="max-members-icon icon-box">

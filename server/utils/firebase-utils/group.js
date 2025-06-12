@@ -583,7 +583,7 @@ const getGroupInfo = async (id, userId) => {
           fullName: adminInfo.fullName,
           photoURL: adminInfo.photoURL,
         },
-        members: getFormattedMembers(group.members.filter(m=>m.uid != group.creator)),
+        members: getFormattedMembers(group.members),
         isAdmin: group.creator === userId,
       },
     };
@@ -596,6 +596,32 @@ const getGroupInfo = async (id, userId) => {
   }
 };
 
+const getChatContext = async (userId, groupId)=>{
+  try {
+    const group = await getGroupByID(groupId)
+    if(group){
+      return {
+        groupName : group.name ,
+        isAdmin : group.creator === userId ,
+        sessionActive  : group.currentSession != ""
+      }
+    }
+    else {
+      return {
+        success : false , 
+        message : "NO groupe availabe with id " + groupId
+      }
+    }
+  } catch (error) {
+  console.log(error) 
+  return {
+    success : false , 
+    message : "Cannot fetch data , please try again later !."
+  }    
+  }
+}
+
+
 module.exports = {
   getGroupInfo,
   createGroup,
@@ -606,4 +632,5 @@ module.exports = {
   getAllGroups,
   modifieGroupPropertie,
   deleteGroup,
+  getChatContext
 };

@@ -1,17 +1,15 @@
 // const { get } = require("../routes/api-routes");
 const { getMembers, getRequests } = require("./firebase-utils/demandes");
 const { getExams } = require("./firebase-utils/examen");
-const { getGroupInfo } = require("./firebase-utils/group");
+const { getGroupInfo, getChatContext } = require("./firebase-utils/group");
 const { millisecondsToHMFormat, Task, Quiz } = require("./global");
 const INITIALE_LOADERS_COUNT = 20;
 
-const getGroupChatContext = (groupId) => {
-  return {
-    groupId: groupId,
-    groupName: "Awesome Study Group",
-    isAdmin: true,
-    sessionActive: false,
-  };
+const getGroupChatContext = async (userId , groupId) => {
+  const result = await getChatContext(userId , groupId)
+  console.log("reult" , result);
+  
+  return result 
 };
 
 // Group Left Side Bar Contexts
