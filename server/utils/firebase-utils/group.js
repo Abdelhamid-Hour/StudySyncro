@@ -440,7 +440,7 @@ else if(value.showInSearch){
       }
 }
  }
-    if(fieldName != "" && fieldName != "visibility" || value != "" || snaphsot.exists){
+ else    if(fieldName != "" && fieldName != "visibility" || value != "" || snaphsot.exists){
       await groupRef.update({
         [fieldName] : value 
       })
@@ -610,7 +610,7 @@ const getGroupInfo = async (id, userId) => {
           fullName: adminInfo.fullName,
           photoURL: adminInfo.photoURL,
         },
-        members: getFormattedMembers(group.members),
+        members: getFormattedMembers(group.members.filter(m=>m.uid != group.creator)),
         isAdmin: group.creator === userId,
       },
     };

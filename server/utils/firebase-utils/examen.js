@@ -203,7 +203,7 @@ const filtrerExamen = async (criteria, examens) => {
     const quizzes = examens.filter((ex) => {
       let matchSearch = true;
       const searchTerm = criteria.searchTerm.trim().toLowerCase();
-      if (criteria.searchBy === "subject") {
+      if (searchTerm) {
         matchSearch =
           searchTerm.trim() === "" ||
           ex.subject.toLowerCase().includes(searchTerm) ||
@@ -212,15 +212,15 @@ const filtrerExamen = async (criteria, examens) => {
 
       return matchSearch;
     });
-    const sortedExams = examens;
+    const sortedExams = quizzes;
 
-    if (criteria.sort === "desc" && examens.length >= 2) {
+    if (criteria.sort === "desc" && quizzes.length >= 2) {
       sortedExams = examens.sort((a, b) => {
         const dateA = new Date(a.createdAt);
         const dateB = new Date(b.createdAt);
         return dateB - dateA;
       });
-    } else if (criteria.sort === "asc" && examens.length >= 2) {
+    } else if (criteria.sort === "asc" && quizzes.length >= 2) {
       sortedExams = examens.sort((a, b) => {
         const dateA = new Date(a.createdAt);
         const dateB = new Date(b.createdAt);
@@ -392,6 +392,77 @@ const getQuizzQuestion = async (sessionId, examId) => {
     }
   }
 };
+
+
+const getSessionQuizzes = async (userId, lastVisible = null, limit, searchTerm = "", oldQuizzes = []) => {
+  try {
+    let accumulatedQuizzes = [...oldQuizzes];
+//have enough element to return 
+    if (accumulatedQuizzes.length >= limit) {
+      return {
+        cards: accumulatedQuizzes.slice(0, limit),
+        lastVisible
+      };
+    }
+
+    let query = db.collection("Quizzes").where("creator", "==", userId);
+//checking if the lastVisible is a doc or an id
+    if (typeof lastVisible === "string" && lastVisible.trim() !== "") {
+      const lastDocSnap = await db.collection("Quizzes").doc(lastVisible).get();
+      if (lastDocSnap.exists) {
+        query = query.startAfter(lastDocSnap);
+      }
+    } else if (lastVisible) {
+      query = query.startAfter(lastVisible);
+    }
+
+    const need = limit - accumulatedQuizzes.length;
+    const batchSize = Math.max(need * 2, 20);
+    query = query.limit(batchSize);
+
+    const snapshot = await query.get();
+  //checking if there is no item in bakend rak 3aref and the quizzes array length is sphengea 0
+    if (snapshot.empty && accumulatedQuizzes.length === 0) {
+      return { cards: [], lastVisible: null };
+    }
+
+    const quizzes = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        title: data.title
+      };
+    });
+
+    const filteredQuizzes = quizzes.filter((q) =>
+      q.title.toLowerCase().includes(searchTerm.toLowerCase().trim())
+    );
+
+    accumulatedQuizzes = accumulatedQuizzes.concat(filteredQuizzes);
+
+    const newLastVisible = snapshot.docs[snapshot.docs.length - 1];
+    const isLastBatch = snapshot.docs.length < batchSize;
+    const hasEnough = accumulatedQuizzes.length >= limit;
+//if we got enogh element we return them if we arrive to the end of the database elemnent we do return what we have 
+    if (hasEnough || isLastBatch) {
+      return {
+        cards: accumulatedQuizzes.slice(0, limit),
+        lastVisible: isLastBatch || accumulatedQuizzes.length <= limit ? null : newLastVisible.id
+      };
+    }
+//call back to the same function to try to get the limit 
+    return await getSessionQuizzes(userId, newLastVisible.id, limit, searchTerm, accumulatedQuizzes);
+
+  } catch (error) {
+    console.error("Error fetching quizzes:", error.message);
+    return {
+      cards: oldQuizzes,
+      lastVisible: null
+    };
+  }
+};
+
+
 const modiferQuizQuestions = async (
   updatedQuestions,
   newQuestions,

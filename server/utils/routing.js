@@ -11,6 +11,7 @@ const {
 const { fetchHomeData } = require("./home");
 
 const {} = require("./firebase-utils/group");
+const { getExams } = require("./firebase-utils/examen");
 
 const SHARED_STYLES_MAP = {
   "/home/inactive": ["/tasks"],
@@ -117,6 +118,10 @@ const fetchData = async (pathName, user) => {
       return { templateContext };
 
     case pathNames.quizzes:
+      const q = getExams(user.uid , {
+        searchTerm  : "",
+        sort : "desc"
+      })
       templateContext = {
         cards: [
           {
