@@ -31,6 +31,7 @@
 // remove menu btn from tasks list in ongoing session page (session active)
 // add condition to not start quiz if session is completed
 // fix the scroll to the end of the containre fliker while dragging
+// dont forgot kick and transfer rule
 
  Group Cards
 Subject (Matière)
