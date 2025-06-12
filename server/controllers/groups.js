@@ -1,4 +1,4 @@
-const { getExams } = require("../utils/firebase-utils/examen");
+const { getExams } = require('../utils/firebase-utils/examen');
 const {
   getJoinedGroups,
   getAvailableGroups,
@@ -56,16 +56,12 @@ const getAvailableGroupsHandler = async (req, res) => {
 };
 
 const getQuizzesHandler = async (req, res) => {
-  const {
-    searchTerm,
-    sort , 
-    lastVisible
-  } = req.query;
+  const { searchTerm, sort, lastVisible } = req.query;
   const creteria = {
     searchTerm: searchTerm || '',
     sort: sort || 'desc',
   };
-  const data = await getExams(req.user.uid , creteria  ,null, null, lastVisible)
+  const data = await getExams(req.user.uid, creteria, null, null, lastVisible);
   return res.json(data);
 };
 
@@ -187,10 +183,59 @@ const getQuizQuestionsHandler = (req, res) => {
   }
 };
 
+const createGroupHandler = async (req, res) => {
+  const formData = req.body.groupData;
+  const userData = req.user;
+  const result = await createGroup(formData, userData);
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({
+      message: result.message,
+    });
+  }
+};
+
+const joinGroupHandler = async (req, res) => {
+  console.log(req.body, 'req body for join group');
+  const groupId = req.body.groupId;
+
+  const result = await joinGroup(groupId, req.user);
+  console.log(result, 'this is the result');
+  if (result.success) {
+    return res.status(200).json({ status: result.status });
+  }
+  return res.status(400).json({ message: result.message });
+};
+
+const patchGroupHandler = async (req, res) => {
+  const updatedData = req.body.updatedData;
+
+  const userData = req.user;
+  console.log(updatedData, 'group data for update group');
+
+  const result = await modifyGroup(
+    userData.uid,
+    req.params.groupId,
+    updatedData
+  );
+
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({
+      message: result.message,
+    });
+  }
+};
+
 module.exports = {
   getUserGroupsHandler,
   getAvailableGroupsHandler,
   groupFragmentHandler,
   getQuizQuestionsHandler,
   getQuizzesHandler,
+  patchGroupHandler,
+  joinGroupHandler,
+  createGroupHandler,
 };

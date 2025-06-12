@@ -1,7 +1,6 @@
 const { db } = require("../../firebase/firebaseAdmin");
 const { getTaches } = require("./tache");
 const { getAllGroups } = require("./group");
-// examen gestion *
 
 const getFormatedQuizzs = (quizzes, user_id) =>
   quizzes.map(({ id , title , subject , questionsCount , sessionIdsCount , groupIdsCount, ...rest }) => ({
@@ -12,23 +11,6 @@ const getFormatedQuizzs = (quizzes, user_id) =>
         sharedSessions: sessionIdsCount,
         subject: subject,
   }));
-
-const formatDate = (date) => {
-  const formatted = new Date(date).toLocaleString(
-    typeof Intl !== "undefined" &&
-      Intl.DateTimeFormat().resolvedOptions().locale
-      ? Intl.DateTimeFormat().resolvedOptions().locale
-      : "fr-MA",
-    {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    }
-  );
-  return formatted;
-};
 
 const getExams = async (
   userId,
