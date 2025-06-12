@@ -1,7 +1,10 @@
+const { joinGroup } = require('../utils/firebase-utils/demandes');
 const { getExams } = require('../utils/firebase-utils/examen');
 const {
   getJoinedGroups,
   getAvailableGroups,
+  modifyGroup,
+  createGroup,
 } = require('../utils/firebase-utils/group');
 
 const getUserGroupsHandler = async (req, res) => {

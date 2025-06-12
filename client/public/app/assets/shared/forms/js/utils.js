@@ -28,7 +28,11 @@ export const setUpSelectMenu = (
   const selectMenu = container.querySelector(`.select-menu`);
   if (!selectMenu) return;
 
-  selectMenu.innerHTML = getSelectMenuHtml() || createSubjectSelectMenu();
+  if (getSelectMenuHtml) {
+    selectMenu.innerHTML = getSelectMenuHtml();
+  } else {
+    selectMenu.innerHTML = createSubjectSelectMenu();
+  }
   const searchInput = selectMenu.querySelector('.select-search input');
   const selectButtonValue = container.querySelector(
     '.subject-value, .quiz-value'

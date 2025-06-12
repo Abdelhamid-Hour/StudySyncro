@@ -118,10 +118,12 @@ const fetchData = async (pathName, user) => {
       return { templateContext };
 
     case pathNames.quizzes:
-      const templateContext = getExams(user.uid, {
+      const templateContext = await getExams(user.uid, {
         searchTerm: '',
         sort: 'desc',
       });
+      console.log('templatContext: ', templateContext);
+
       return { templateContext };
 
     case pathNames.settings:
