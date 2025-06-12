@@ -1,3 +1,4 @@
+const { getCurrentSessionInfo } = require("./firebase-utils/session");
 const {
   Task,
   Quiz,
@@ -6,27 +7,13 @@ const {
   pathNames,
 } = require("./global");
 
-const getCurrentSession = (userId) => {
+const getCurrentSession = async(userId) => {
   // ! firestore query for if the user is join to any session
   // ! you can add a index to the quiz collection for know the task order
-  const durationInMins = 120; // Example duration in minutes
-  const startDate = '2025-06-10T21:23:54.096Z';
-  const endDate = formatHoursMinutes(
-    new Date(startDate).getTime() + durationInMins * 60 * 1000
-  );
-
-  return {
-    name: "Session de révision - Janvier 2025",
-    description: "Description de la session",
-    startDate: formatHoursMinutes(startDate),
-    endDate: endDate,
-    duration: durationInMins,
-    groupName: "Frontend Developers",
-    joinedCount: 25,
-    isAdmin: true,
-    quiz: null,
-  };
-};
+  const response  = await getCurrentSessionInfo (userId)
+  console.log(response , "curret session")
+  return response 
+}
 
 const getTimeLeft = (durationInMins, endTime) => {
   const now = new Date().getTime();

@@ -1,6 +1,9 @@
 
  const {FieldValue} = require("firebase-admin/firestore")
- const {db} = require('../../firebase/firebaseAdmin')
+ const {db} = require('../../firebase/firebaseAdmin');
+const { formatHoursMinutes } = require("../global");
+
+
 
 /**
  * {
@@ -56,7 +59,7 @@
       name: name || "",
       description: description || "",
       duration: duration || 0,
-      startDate: Date.now(),
+      startDate: new Date.toIsoString(),
       groupId: groupId || "",
       quizId: quizId || "",
       status: "active",
@@ -164,8 +167,90 @@
     }
  }
 
+
+ const getCurrentSessionInfo = async (userId) => {
+  try {
+    console.log(userId)
+    const userRef = db.collection("users").doc(userId);
+    const userSnap = await userRef.get();
+
+    if (!userSnap.exists) {
+      console.warn(`User with ID ${userId} not found.`);
+      return null;
+    }
+
+    const user = userSnap.data();
+
+    if (!user || !user.currentSession || user.currentSession === "") {
+      console.log(`User ${userId} does not have an active session.`);
+      return null;
+    }
+
+    const sessionRef = db.collection("sessions").doc(user.currentSession);
+    const sessionSnap = await sessionRef.get();
+
+    if (!sessionSnap.exists) {
+      console.warn(`Session with ID ${user.currentSession} not found for user ${userId}.`);
+      return null;
+    }
+
+    const session = sessionSnap.data();
+
+    const [groupSnap, quizSnap] = await Promise.all([
+      db.collection("groups").doc(session.groupId).get(),
+      session.quizId ? db.collection("quizzes").doc(session.quizId).get() : Promise.resolve(null),
+    ]);
+
+    if (!groupSnap.exists) {
+      console.warn(`Group with ID ${session.groupId} not found for session ${user.currentSession}.`);
+      return null;
+    }
+
+    const group = groupSnap.data();
+    const quiz = quizSnap && quizSnap.exists ? quizSnap.data() : null;
+
+    const startDate = session.startDate;
+    const endDateTimestamp = startDate + (session.duration * 60 * 1000);
+
+    return {
+      name: session.name,
+      description: session.description,
+      startDate: formatHoursMinutes(startDate),
+      endDate: formatHoursMinutes(endDateTimestamp),
+      duration: session.duration,
+      groupName: group.name,
+      joinedCount: session.userIds ? session.userIds.length : 0,
+      isAdmin: group.creator === userId,
+      quiz: quiz,
+    };
+
+  } catch (error) {
+    console.error("Error getting current session info:", error);
+    return null;
+  }
+};
+/* const durationInMins = 120; // Example duration in minutes
+  const startDate = '2025-06-10T21:23:54.096Z';
+  const endDate = formatHoursMinutes(
+    new Date(startDate).getTime() + durationInMins * 60 * 1000
+  );
+
+  return {
+    name: "Session de révision - Janvier 2025",
+    description: "Description de la session",
+    startDate: formatHoursMinutes(startDate),
+    endDate: endDate,
+    duration: durationInMins,
+    groupName: "Frontend Developers",
+    joinedCount: 25,
+    isAdmin: true,
+    quiz: null,
+  };
+}; */
+
  module.exports = {
     modifieSessionPropertie , 
     createSessions , 
-    annulerSession
+    annulerSession , 
+    getCurrentSessionInfo
  }
