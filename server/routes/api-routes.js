@@ -8,10 +8,10 @@ const {
   groupFragmentHandler,
   getQuizQuestionsHandler,
   getQuizzesHandler,
-} = require("../controllers/groups");
-const { generateTemplateContext } = require("../middleware/groups");
-const { createGroup, modifyGroup } = require("../utils/firebase-utils/group");
-const { joinGroup } = require("../utils/firebase-utils/demandes");
+} = require('../controllers/groups');
+const { generateTemplateContext } = require('../middleware/groups');
+const { createGroup, modifyGroup } = require('../utils/firebase-utils/group');
+const { joinGroup } = require('../utils/firebase-utils/demandes');
 const {
   createExamen,
   modiferQuizQuestions,
@@ -30,7 +30,7 @@ apiRouter.get('/user-groups', getUserGroupsHandler);
 
 apiRouter.get('/available-groups', getAvailableGroupsHandler);
 
-apiRouter.get('/quizzes', getQuizzesHandler); // ! should implement with firebase
+apiRouter.get('/quizzes', getQuizzesHandler);
 
 apiRouter.get('/quiz-questions/:quizId', getQuizQuestionsHandler); // ! should implement with firebase
 
@@ -373,6 +373,25 @@ apiRouter.post('/update-task-status', async (req, res) => {
   }
 }); // ! should implement with firebase
 
+apiRouter.post('/create-session', async (req, res) => {
+  const sessionData = req.body.sessionData;
+  const userData = req.user;
+  const result = {
+    success: true,
+    message: 'Session created successfully',
+  };
+
+  console.log(sessionData);
+
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({
+      message: result.message,
+    });
+  }
+}); // ! should implement with firebase
+
 apiRouter.post('/create-group', async (req, res) => {
   const formData = req.body.groupData;
   const userData = req.user;
@@ -384,27 +403,7 @@ apiRouter.post('/create-group', async (req, res) => {
       message: result.message,
     });
   }
-});
-
-apiRouter.post('/create-session', async (req, res) => {
-  const sessionData = req.body.sessionData;
-  const userData = req.user;
-  // const result = await createGroup(formData, userData);
-  const result = {
-    success: true,
-    message: 'Session created successfully',
-  };
-  
-  console.log(sessionData);
-
-  if (result.success) {
-    return res.status(200).json({ message: result.message });
-  } else {
-    return res.status(400).json({
-      message: result.message,
-    });
-  }
-});
+}); // * Completed
 
 apiRouter.post('/join-group', async (req, res) => {
   console.log(req.body, 'req body for join group');
@@ -416,7 +415,7 @@ apiRouter.post('/join-group', async (req, res) => {
     return res.status(200).json({ status: result.status });
   }
   return res.status(400).json({ message: result.message });
-});
+}); // * Completed
 
 apiRouter.post('/create-quiz', async (req, res) => {
   const quizData = req.body.quizData;
@@ -424,14 +423,14 @@ apiRouter.post('/create-quiz', async (req, res) => {
   console.log(quizData, 'this is the quizz data');
   const result = await createExamen(quizData, userData);
   if (result.success) {
-    console.log(result.id ,"quizz id");
+    console.log(result.id, 'quizz id');
     return res.status(200).json({ quizId: result.quizId });
   } else {
     return res.status(400).json({
       message: result.message,
     });
   }
-});
+}); // * Completed
 
 apiRouter.put('/update-quiz/:quizId', async (req, res) => {
   const updatedQuestions = req.body.updatedQuestions;
@@ -454,7 +453,7 @@ apiRouter.put('/update-quiz/:quizId', async (req, res) => {
       message: result.message,
     });
   }
-});
+}); // * Completed
 
 apiRouter.patch('/update-quiz/:quizId', async (req, res) => {
   const title = req.body.title;
@@ -473,18 +472,19 @@ apiRouter.patch('/update-quiz/:quizId', async (req, res) => {
       message: response.message,
     });
   }
-});
+}); // * Completed
 
 apiRouter.patch('/update-group/:groupId', async (req, res) => {
   const updatedData = req.body.updatedData;
-  
-  // ! Note:
-  // ! if the fieldName is visibility, the value is like :
-  // ! { visibility: "public", showInSearch: true } // ! showInSearch is optional
+
   const userData = req.user;
   console.log(updatedData, 'group data for update group');
 
-  const result = await modifyGroup( userData.uid , req.params.groupId , updatedData)
+  const result = await modifyGroup(
+    userData.uid,
+    req.params.groupId,
+    updatedData
+  );
 
   if (result.success) {
     return res.status(200).json({ message: result.message });
@@ -493,7 +493,7 @@ apiRouter.patch('/update-group/:groupId', async (req, res) => {
       message: result.message,
     });
   }
-}); // ! should implement with firebase
+}); // * Completed
 
 // ? Group Fragment Routes: Send Group Left Sidebar Content
 
