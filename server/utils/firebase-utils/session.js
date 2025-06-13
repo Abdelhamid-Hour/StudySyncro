@@ -33,7 +33,7 @@ const { formatHoursMinutes } = require('../global');
 }
  */
 
-const createGroupSession = async (sessionData) => {
+const createGroupSession = async (sessionData, userId) => {
   try {
     if (!sessionData) {
       return {
@@ -46,12 +46,23 @@ const createGroupSession = async (sessionData) => {
       name,
       description,
       duration,
-      groupId,
-      quizId,
       tasks,
-      userIds = [],
+      groupId,
+      sessionQuiz: { UID: quizId },
     } = sessionData;
 
+    const groupRef = db.collection('groups').doc(groupId);
+    const groupSnap = await groupRef.get();
+    if (groupSnap.exists) {
+      const groupData = groupSnap.data();
+      if (groupData.creator !== userId) {
+        return {
+          success: false,
+          message: 'You are not the creator of this group',
+        };
+      }
+    }
+    
     const newSessionData = {
       name: name || '',
       description: description || '',
@@ -60,15 +71,18 @@ const createGroupSession = async (sessionData) => {
       groupId: groupId || '',
       quizId: quizId || '',
       status: 'active',
-      userIds: userIds,
     };
 
     const sessionRef = db.collection('sessions');
     const docRef = await sessionRef.add(newSessionData);
     const newSessionId = docRef.id;
 
+    const creator = db.collection('users').doc(userId);
+    await creator.update({
+      currentSession: newSessionId,
+    });
+
     if (groupId) {
-      const groupRef = db.collection('groups').doc(groupId);
       await groupRef.update({
         currentSession: newSessionId,
       });
@@ -213,7 +227,7 @@ const getCurrentSessionInfo = async (userId) => {
     const quiz = quizSnap && quizSnap.exists ? quizSnap.data() : null;
 
     const startDate = session.startDate;
-    const endDateTimestamp = startDate + session.duration * 60 * 1000;
+    const endDateTimestamp = new Date(startDate).getTime() + session.duration * 60 * 1000;
 
     return {
       name: session.name,

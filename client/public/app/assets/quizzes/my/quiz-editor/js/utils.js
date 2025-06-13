@@ -486,9 +486,10 @@ export const handleEditorQuestionsListClick = (e) => {
 export const getQuestionObject = (question) => {
   const id = question.id;
   const text = question.querySelector('textarea').value.trim();
-  const correctAnswerIndex = question.querySelector(
-    '.correct-answer-select input[type="hidden"]'
-  ).value;
+  const correctAnswerIndex = parseInt(
+    question.querySelector('.correct-answer-select input[type="hidden"]').value,
+    10
+  );
   const choices = Array.from(question.querySelectorAll('.choice-input')).map(
     (choice) => choice.value.trim()
   );
@@ -788,7 +789,6 @@ export const prepareQuizData = (checkValidity) => {
     showMessageBlock('Please add at least one valid question.', 'error');
     return null;
   }
-  debugger;
   const { newQuestions, updatedQuestions } = classifyQuestions(questions);
   updatedData.newQuestions = newQuestions;
   updatedData.updatedQuestions = updatedQuestions;
@@ -814,18 +814,24 @@ export const saveQuiz = async () => {
 };
 
 export const handleSidebarTitleLinkClick = async (e) => {
+  // Prevent multiple triggers and ensure leave property is only set on Element
+  if (typeof e.target.leave === 'undefined') e.target.leave = false;
   if (e.target.leave) return;
-  else e.target.leave = false;
   try {
     const questions = prepareQuizData();
+    // If there are no changes, allow navigation
     if (
       updatedData.newQuestions.length === 0 &&
       updatedData.updatedQuestions.length === 0 &&
-      updatedData.deletedQuestions.length === 0
+      updatedData.deletedQuestions.length === 0 && questions
     ) {
       return;
     }
-    if (!questions) return e.preventDefault();
+    // If questions are invalid, prevent navigation
+    if (!questions) {
+      e.preventDefault();
+      return;
+    }
 
     e.preventDefault();
 
@@ -841,11 +847,13 @@ export const handleSidebarTitleLinkClick = async (e) => {
       const error = await saveQuiz();
       if (!error) {
         e.target.leave = true;
-        e.target.click();
+        // Use setTimeout to avoid recursion and allow navigation
+        e.target.click()
       }
     } else {
+      // Only navigate if user confirms leaving without saving
       e.target.leave = true;
-      e.target.click();
+      e.target.click()
     }
   } catch (error) {
     console.error('Error', error);

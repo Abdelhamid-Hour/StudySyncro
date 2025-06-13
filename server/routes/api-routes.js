@@ -146,7 +146,7 @@ apiRouter.post('/create-session', async (req, res) => {
   const sessionData = req.body.sessionData;
   console.log('sessionDATa', sessionData);
   
-  const result = await createGroupSession(sessionData);
+  const result = await createGroupSession(sessionData, req.user.uid);
 
   if (result.success) {
     return res.status(200).json({ message: result.message });

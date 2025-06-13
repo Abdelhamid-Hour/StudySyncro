@@ -102,7 +102,7 @@ export class Loader {
 
       const frag = document.createDocumentFragment();
       cards.forEach((item) => {
-        const card = this.createCard(item, this.creteria.searchTerm);
+        const card = this.createCard(item, this.creteria.split('=')[1]);
         frag.appendChild(card);
       });
       // insert the new cards before the last loader
@@ -132,11 +132,11 @@ const clearLoadersBoxes = () => {
   });
 };
 
-export const initFiltersInputListener = (loader) => {
+export const initFiltersInputListener = (loader, container) => {
   const resetLoader = getDebounceFunc(() => loader.reset(), 300);
   const handleInputChange = (e) => {
     const isInput = e.target.tagName === 'INPUT';
     if (isInput) resetLoader();
   };
-  topSideBarMiddle.addEventListener('input', handleInputChange);
+  container.addEventListener('input', handleInputChange);
 };

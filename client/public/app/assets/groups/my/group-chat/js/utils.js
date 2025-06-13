@@ -641,7 +641,7 @@ const shouldAddOrUpdateQuiz = (data, sessionData) => {
   return (
     data['session-quiz-title'] &&
     data['session-quiz-id'] &&
-    (data['session-quiz-id'] !== sessionData.sessionQuiz?.id ||
+    (data['session-quiz-id'] !== sessionData.sessionQuiz?.UID ||
       !sessionData.sessionQuiz?.quiz.description ||
       !sessionData.sessionQuiz?.quiz.durationInMins)
   );
@@ -651,12 +651,12 @@ const addOrUpdateQuizTask = (data, sessionStore, wrapper) => {
   const sessionData = sessionStore.sessionData;
   sessionData.sessionQuiz = {
     quiz: new Task({
-      UID: data['session-quiz-id'],
       title: data['session-quiz-title'],
       description: '',
       durationInMins: 0,
       isQuiz: true,
     }),
+    UID: data['session-quiz-id'],
   };
 
   const quizIndex = sessionData.tasks.findIndex((task) => task.isQuiz);
@@ -729,7 +729,7 @@ const setUpSessionForm = (wrapper, sessionStore) => {
     1
   );
   loader.reset();
-  initFiltersInputListener(loader);
+  initFiltersInputListener(loader, quizzesSelectTrigger);
 };
 
 const checkSessionFormValidity = (form) => {
@@ -764,6 +764,7 @@ const handleFinishBtnClick = async (sessionData, btn) => {
     btn.isCreating = true;
     btn.disabled = true;
     btn.innerHTML = getLoader();
+    sessionData.groupId = getGroupId();
     await sendData('/api/create-session', { sessionData });
     showMessageBlock('Session created successfully', 'success');
     navigateTo('/home');
@@ -1466,7 +1467,7 @@ const checkRadioValidity = (input, valideValues) => {
 
 const getQuizLoaderLoadingItem = () => {
   const div = document.createElement('div');
-  div.className = 'select-item drop-down-item';
+  div.className = 'select-item drop-down-item loading-card';
   div.innerHTML = `<div class="loading-opacity-animation"></div>`;
   return div;
 };

@@ -596,12 +596,13 @@ const modiferQuizQuestions = async (
   try {
     const quizzRef = db.collection('quizzes').doc(quizzId);
     const snaphsot = await quizzRef.get();
+    const questionnsRef = db.collection('questions');
     const quizz = snaphsot.data();
     if (snaphsot.exists && quizz.creator === userId) {
       const operations = [];
       if (updatedQuestions.length > 0) {
         const updates = updatedQuestions.map((q) => {
-          const ref = db.collection('questions').doc(q.id);
+          const ref = questionnsRef.doc(q.id);
           return ref.update({
             text: q.text,
             choices: q.choices,
@@ -612,15 +613,17 @@ const modiferQuizQuestions = async (
       }
       if (deletedQuestions.length > 0) {
         const suppression = deletedQuestions.map((q) => {
-          const ref = db.collection('questions').doc(q);
-          return ref.delete();
+          return questionnsRef.doc(q).delete();
         });
         operations.push(...suppression);
+
+        await quizzRef.update({
+          questionsCount: (await questionnsRef.get()).size,
+        });
       }
       if (newQuestions.length > 0) {
         const creation = newQuestions.map((q) => {
-          const ref = db.collection('questions');
-          return ref.doc(q.id).set({
+          return questionnsRef.doc(q.id).set({
             text: q.text,
             choices: q.choices,
             correctAnswerIndex: parseInt(q.correctAnswerIndex, 10),
