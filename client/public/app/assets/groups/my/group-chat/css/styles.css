@@ -145,6 +145,10 @@
         padding-top: calc(var(--primary-gap) / 2);
         padding-bottom: var(--primary-gap);
 
+        .demandes-btn .badge {
+          font-size: var(--x-small-font-size);
+        }
+
         &::before {
           content: '';
           width: 100%;
@@ -549,6 +553,21 @@
           .action-btns {
             flex: 0 0 content;
             min-width: fit-content;
+            display: flex;
+            gap: calc(var(--primary-gap) / 2);
+
+            .kick-btn:disabled,
+            .move-admin-role-btn:disabled {
+              padding: 0 !important;
+
+              .pencil {
+                width: 2rem;
+              }
+
+              &.move-admin-role-btn {
+                width: 9rem;
+              }
+            }
           }
 
           .username {

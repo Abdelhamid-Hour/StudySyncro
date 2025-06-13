@@ -102,5 +102,4 @@ const fetchHomeData = async (userId) => {
 module.exports = {
   fetchHomeData,
   getSessionDetails,
-  getTimeLeft,
 };

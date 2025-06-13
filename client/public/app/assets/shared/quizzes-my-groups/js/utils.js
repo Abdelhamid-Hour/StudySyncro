@@ -1,34 +1,34 @@
 import {
   boxRowCount,
   topSideBarMiddle,
-} from "../../../global/js/dom-variables.js";
+} from '../../../global/js/dom-variables.js';
 import {
   initFiltersInputListener,
   Loader,
-} from "../../quizzes-groups/js/utils.js";
+} from '../../quizzes-groups/js/utils.js';
 
 export const initLazyLoadingLoader = () => {
   const loader = new Loader(
-    document.querySelector(".quizzes-list"),
-    "200px",
+    document.querySelector('.quizzes-list'),
+    '200px',
     getcreateQuizCardFunc,
-    "/quizzes",
+    '/quizzes',
     createLoadingCard(),
     () => getCreteria()
   );
 
-  initFiltersInputListener(loader);
+  initFiltersInputListener(loader, topSideBarMiddle);
   return loader;
 };
 
 const getCreteria = () => {
-  let creteria = "";
-  const sortDate = topSideBarMiddle.querySelector("#sort-checkbox")?.checked;
-  const search = topSideBarMiddle.querySelector("#search-input")?.value;
+  let creteria = '';
+  const sortDate = topSideBarMiddle.querySelector('#sort-checkbox')?.checked;
+  const search = topSideBarMiddle.querySelector('#search-input')?.value;
 
-  const sort = sortDate ? "asc" : "desc";
+  const sort = sortDate ? 'asc' : 'desc';
   creteria += `sort=${sort}`;
-  const searchTerm = search ? search.trim() : "";
+  const searchTerm = search ? search.trim() : '';
   creteria += `&searchTerm=${searchTerm}`;
 
   return creteria;
@@ -36,16 +36,16 @@ const getCreteria = () => {
 
 const getcreateQuizCardFunc = (quiz = {}) => {
   const {
-    id = "",
-    title = "Untitled Quiz",
+    id = '',
+    title = 'Untitled Quiz',
     questionsCount = 0,
     sharedGroups = 0,
     sharedSessions = 0,
-    subject = "Unknown",
+    subject = 'Unknown',
   } = quiz;
 
   // Create a wrapper div
-  const wrapper = document.createElement("div");
+  const wrapper = document.createElement('div');
   wrapper.innerHTML = `
     <div class="quiz-card">
       <div class="quiz-title-container info-container">
@@ -87,23 +87,23 @@ const getcreateQuizCardFunc = (quiz = {}) => {
 
   // Set values safely
   const card = wrapper.firstElementChild;
-  card.querySelector(".quiz-title.content").textContent = title;
-  card.querySelector(".questions-count-container .count.content").textContent =
+  card.querySelector('.quiz-title.content').textContent = title;
+  card.querySelector('.questions-count-container .count.content').textContent =
     questionsCount;
   card.querySelector(
-    ".shared-in-container .count.content"
+    '.shared-in-container .count.content'
   ).textContent = `${sharedGroups} Groups | ${sharedSessions} Sessions`;
-  card.querySelector(".subject-container .subject.content").textContent =
+  card.querySelector('.subject-container .subject.content').textContent =
     subject;
-  const editBtn = card.querySelector(".edit-quiz-btn");
-  editBtn.setAttribute("href", `/app/quizzes/my/${id}/edit`);
+  const editBtn = card.querySelector('.edit-quiz-btn');
+  editBtn.setAttribute('href', `/app/quizzes/my/${id}/edit`);
 
   return card;
 };
 
 export const createLoadingCard = () => {
-  const loadingCard = document.createElement("div");
-  loadingCard.className = "quiz-card loading-animation loading-card";
+  const loadingCard = document.createElement('div');
+  loadingCard.className = 'quiz-card loading-animation loading-card';
   loadingCard.innerHTML = `
       <div class="quiz-title-container info-container">
         <label class="quiz-title-label">

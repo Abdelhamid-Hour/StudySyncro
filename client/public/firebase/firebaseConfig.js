@@ -17,5 +17,5 @@ const auth = getAuth(app);
     await setPersistence(auth, inMemoryPersistence);
     console.log('Auth persistence set');
 })();
-export { auth };
+export { auth, app };
 

@@ -125,7 +125,7 @@ export const initLazyLoadingLoader = (userGroup = false) => {
     () => getCreteria(userGroup)
   );
 
-  initFiltersInputListener(loader);
+  initFiltersInputListener(loader, topSideBarMiddle);
   return loader;
 };
 

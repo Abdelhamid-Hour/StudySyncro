@@ -6,7 +6,6 @@ import {
   signInWithPopup,
   updateProfile,
   FacebookAuthProvider,
-  signOut,
 } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
 import { AUTH_ERRORS } from './auth-variables.js';
 import { redirectTo, sendData } from '../../main_assets/js/utils.js';
@@ -31,8 +30,6 @@ const handleUserSignIn = async (auth, user) => {
   };
   // send user data to the server to save it in Firestore
   await sendData('/api/insert-user-data', { userInfo });
-  // Sign out the user because the session is handled by the server
-  await signOut(auth);
   // Redirect to the main page
   redirectTo('/app/home');
 };
@@ -171,7 +168,6 @@ const signInAuserWithEmailAndPassword = async function (
     await signInWithEmailAndPassword(auth, email, password);
     callback('Signed in successfully', 'success');
     await sendIdToken(auth, '/login');
-    await signOut(auth);
     redirectTo('/app/home');
   } catch (error) {
     checkError(error);
