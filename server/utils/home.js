@@ -1,4 +1,4 @@
-const { getCurrentSessionInfo } = require("./firebase-utils/session");
+const { getCurrentSessionInfo } = require('./firebase-utils/session');
 const {
   Task,
   Quiz,
@@ -7,13 +7,13 @@ const {
   pathNames,
 } = require('./global');
 
-const getCurrentSession = async(userId) => {
+const getCurrentSession = async (userId) => {
   // ! firestore query for if the user is join to any session
   // ! you can add a index to the quiz collection for know the task order
-  const response  = await getCurrentSessionInfo (userId)
-  console.log(response , "curret session")
-  return response 
-}
+  const response = await getCurrentSessionInfo(userId);
+  console.log(response, 'curret session');
+  return response;
+};
 
 const getTimeLeft = (durationInMins, endTime) => {
   const now = new Date().getTime();
@@ -146,7 +146,7 @@ const getActiveSessions = (userId) => {
 };
 
 const fetchHomeData = async (userId) => {
-  const session = await getCurrentSession(); // or null
+  const session = await getCurrentSession(userId); // or null
   if (session) {
     return {
       pathName: pathNames.home.active,
