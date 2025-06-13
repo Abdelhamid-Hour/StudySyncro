@@ -168,16 +168,39 @@ const annulerSession = async (sessionId) => {
     const snapshot = await sessionRef.get();
     const session = snapshot.data();
     if (session) {
-      sessionRef.delete();
-      return true;
+      await  sessionRef.delete();
+      return { success: true, message: 'Session ended' };
     } else {
-      return false;
+      return { success: false , message: 'Cant end session' };
     }
   } catch (error) {
     console.log(error.message);
-    return false;
+   return { success: false , message: 'Somethign went wrong' };
   }
 };
+
+
+const leavSession  = async(userID , sessionId)=>{
+  const ref = db.collection("users").doc(userID)
+  const snap = await  ref.get()
+  const data =  ref.data()  
+
+  if(ref.exists){
+    await ref.update({
+      currentSession  : ""
+    })
+    return {
+      success : true , 
+      message : "left the session "
+    }
+  }
+  else {
+    return {
+      success : false , 
+      message : "Cant leave session"
+    }
+  }
+}
 
 const getCurrentSessionInfo = async (userId) => {
   try {
@@ -418,6 +441,68 @@ const getSessionInformations = async (sessionID) => {
   }
 };
  
+ const getActiveSession = async (userId)=>{
+try {
+    const userRef = db.collection('users').doc(userId);
+    const userSnap = await userRef.get();
+
+    if (!userSnap.exists) {
+      console.warn(`User with ID ${userId} not found.`);
+      return null;
+    }
+
+    const user = userSnap.data();
+
+    if (!user || !user.currentSession || user.currentSession === '') {
+      console.log(`User ${userId} does not have an active session.`);
+      return null;
+    }
+
+    const sessionRef = db.collection('sessions').doc(user.currentSession);
+    const sessionSnap = await sessionRef.get();
+
+    if (!sessionSnap.exists) {
+      console.warn(
+        `Session with ID ${user.currentSession} not found for user ${userId}.`
+      );
+      return null;
+    }
+
+    const session = sessionSnap.data();
+
+    const [groupSnap, quizSnap] = await Promise.all([
+      db.collection('groups').doc(session.groupId).get(),
+      session.quizId
+        ? db.collection('quizzes').doc(session.quizId).get()
+        : Promise.resolve(null),
+    ]);
+
+    if (!groupSnap.exists) {
+      console.warn(
+        `Group with ID ${session.groupId} not found for session ${user.currentSession}.`
+      );
+      return null;
+    }
+
+    const group = groupSnap.data();
+    const quiz = quizSnap && quizSnap.exists ? quizSnap.data() : null;
+
+    const startDate = session.startDate;
+
+    return {success : true , 
+    sessionData : {  id : session.id ,
+      name: session.name,
+      startDate: formatHoursMinutes(startDate),
+      durationInMins: session.duration,
+      groupId  : session.groupId ,
+      quiz: quiz,}
+    };
+
+  
+} catch (error) {
+  console.log("error")
+}
+ }
 
 const joinSession = async(sessionId  , userId)=>{
     try {
@@ -443,6 +528,8 @@ const joinSession = async(sessionId  , userId)=>{
 }
 
 module.exports = {
+  leavSession ,
+  getActiveSession ,
   modifieSessionPropertie,
   createGroupSession,
   annulerSession,
