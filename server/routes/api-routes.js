@@ -1,5 +1,5 @@
 const express = require('express');
-const { createNewUser } = require('../controllers/auth');
+const { createNewUser, createSession } = require('../controllers/auth');
 const { setSessionDetails } = require('../middleware/home');
 const { sendSessionDetails } = require('../controllers/home');
 const {
@@ -26,6 +26,7 @@ const {
   patchQuizHandler,
 } = require('../controllers/quizzes');
 const { changeTaskState } = require('../utils/firebase-utils/tache');
+const { createSessions } = require('../utils/firebase-utils/session');
 
 const apiRouter = express.Router();
 
@@ -141,47 +142,12 @@ apiRouter.post('/update-task-status', async (req, res) => {
   }
 }); // * should test
 
-/**
- * {
-   {
-  name: 'first session ',
-  description: 'iuytmlkojhghh',
-  sessionQuiz: {
-    quiz: {
-      title: 'hzhz',
-      durationInMins: 5,
-      isQuiz: true,
-      isBreak: false,
-      description: 'lpoijuhygfds'
-    },
-    UID: 'aMw6hejAA1toscYKE2jB'
-  },
-  duration: 5,
-  tasks: [
-    {
-      title: 'hzhz',
-      durationInMins: 5,
-      isQuiz: true,
-      isBreak: false,
-      description: 'lpoijuhygfds'
-    }
-  ]
-}
-        }
-    ]
-}
- */
-
 apiRouter.post('/create-session', async (req, res) => {
   const sessionData = req.body.sessionData;
-  const userData = req.user;
 
-  const result = {
-    success: true,
-    message: 'Session created successfully',
-  };
 
-  console.log(sessionData);
+  const result = await createSessions(sessionData);
+  console.log(result, 'result');
 
   if (result.success) {
     return res.status(200).json({ message: result.message });
