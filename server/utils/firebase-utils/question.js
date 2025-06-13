@@ -170,8 +170,16 @@ const deleteQuestion = async (questionId) => {
   try {
     const questionRef = db.collection('questions').doc(questionId);
     const doc = await questionRef.get();
+
     if (doc.exists) {
-      await questionRef.delete();
+      const data = doc.data()
+      const quizId  = data.quizId 
+      
+      const quizRef = db.collection("quizzes").doc(quizId)
+
+      const promises = []
+      promises.push( questionRef.delete())
+
       return true;
     }
     return false;
