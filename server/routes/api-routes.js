@@ -13,8 +13,8 @@ const {
   patchGroupHandler,
 } = require('../controllers/groups');
 const { generateTemplateContext } = require('../middleware/groups');
-const { createGroup, modifyGroup } = require('../utils/firebase-utils/group');
-const { joinGroup } = require('../utils/firebase-utils/demandes');
+const { createGroup, modifyGroup, deleteGroup } = require('../utils/firebase-utils/group');
+const { joinGroup, acceptRequest, rejectRequest } = require('../utils/firebase-utils/demandes');
 const {
   getQuizzInfo,
   getSessionQuizzes,
@@ -26,7 +26,7 @@ const {
   patchQuizHandler,
 } = require('../controllers/quizzes');
 const { changeTaskState } = require('../utils/firebase-utils/tache');
-const { createSessions } = require('../utils/firebase-utils/session');
+const { createSessions, joinSession } = require('../utils/firebase-utils/session');
 
 const apiRouter = express.Router();
 
@@ -158,9 +158,9 @@ apiRouter.post('/create-session', async (req, res) => {
 
 // Accept a join request by userId and groupId
 apiRouter.post('/accept-demande', async (req, res) => {
+  console.log(req.body , "body")
   const { demandeId, groupId } = req.body;
-  // TODO: Implement acceptDemande logic
-  const result = { success: true, message: 'Demande accepted' };
+   const result = await acceptRequest(groupId , demandeId , req.user.uid)
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
@@ -170,10 +170,10 @@ apiRouter.post('/accept-demande', async (req, res) => {
 
 // Reject a join request by userId and groupId
 apiRouter.post('/reject-demande', async (req, res) => {
-  const { userId, groupId } = req.body;
+  const { demandeId, groupId } = req.body;
   // TODO: Implement rejectDemande logic
-  const result = { success: true, message: 'Demande rejected' };
-  if (result.success) {
+  const result = await rejectRequest(groupId , demandeId , req.user.uid)
+ if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
     return res.status(400).json({ message: result.message });
@@ -183,8 +183,7 @@ apiRouter.post('/reject-demande', async (req, res) => {
 // Join a session by sessionId
 apiRouter.post('/join-session/:sessionId', async (req, res) => {
   const { sessionId } = req.params;
-  // TODO: Implement joinSession logic
-  const result = { success: true, message: 'Joined session' };
+  const result = await joinSession(sessionId , req.user)
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
@@ -195,8 +194,7 @@ apiRouter.post('/join-session/:sessionId', async (req, res) => {
 // Remove a group by groupId
 apiRouter.delete('/remove-group/:groupId', async (req, res) => {
   const { groupId } = req.params;
-  // TODO: Implement removeGroup logic
-  const result = { success: true, message: 'Group removed' };
+  const result = await deleteGroup(groupId)
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {

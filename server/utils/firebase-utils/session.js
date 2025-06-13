@@ -1,7 +1,9 @@
 
  const {FieldValue} = require("firebase-admin/firestore")
  const {db} = require('../../firebase/firebaseAdmin');
-const { formatHoursMinutes } = require("../global");
+const { formatHoursMinutes, millisecondsToHMFormat } = require("../global");
+const { messaging } = require("firebase-admin");
+const { getTaches } = require("./tache");
 
 
 
@@ -59,7 +61,7 @@ const { formatHoursMinutes } = require("../global");
       name: name || "",
       description: description || "",
       duration: duration || 0,
-      startDate: new Date.toIsoString(),
+      startDate: new Date().getTime(),
       groupId: groupId || "",
       quizId: quizId || "",
       status: "active",
@@ -92,12 +94,23 @@ const { formatHoursMinutes } = require("../global");
         return taskRef.add(taskDocData);
       });
        await Promise.all(taskPromises);
-    }
-
-    return {
+       return {
         success : true , 
         message  : "Session created successfully"
     } 
+    }
+
+    
+    }
+    else {
+        return {
+            success : false , 
+            message : "Cant create session"   
+        }
+    }
+    return {
+        success : true , 
+        message : "Session created successfully"
     }
   } catch (error) {
     console.log(error)
@@ -246,9 +259,190 @@ const { formatHoursMinutes } = require("../global");
     isAdmin: true,
     quiz: null,
   };
-}; */
+}; 
+
+
+
+ {
+      UID: '12345',
+      name: 'Session de révision - Janvier 2025',
+      groupName: 'Frontend Developers',
+      description: 'Description de la session',
+      startTime: formatHoursMinutes('2025-01-01T14:00:00Z'),
+      endTime: formatHoursMinutes('2025-01-01T16:00:00Z'),
+      duration: millisecondsToHMFormat(120 * 60 * 1000),
+      joinedCount: 25,
+      tasksCount: 14,
+    },
+
+*/
+
+const getFetchActiveSessions = async (userId) => {
+  try {
+    const groupRef = db.collection("groups");
+    const sessionRef = db.collection("sessions");
+    const taskRef = db.collection("tasks");
+
+    const userGroupsSnapshot = await groupRef
+      .where("members", "array-contains", userId)
+      .get();
+
+    if (userGroupsSnapshot.empty) {
+      console.log(`User ${userId} is not a member of any groups.`);
+      return [];
+    }
+
+    const groupNamesMap = new Map();
+    userGroupsSnapshot.forEach(groupDoc => {
+      const groupData = groupDoc.data();
+      groupNamesMap.set(groupDoc.id, groupData.name);
+    });
+
+    const sessionIdsToFetch = new Set();
+    userGroupsSnapshot.forEach(groupDoc => {
+      const groupData = groupDoc.data();
+      if (groupData.currentSession && groupData.currentSession !== "") {
+        sessionIdsToFetch.add(groupData.currentSession);
+      }
+    });
+
+    if (sessionIdsToFetch.size === 0) {
+      console.log(`No active sessions found for user ${userId} in any joined groups.`);
+      return [];
+    }
+
+    const sessionIDsArray = Array.from(sessionIdsToFetch);
+
+    const [sessionSnapshots, taskQuerySnapshots] = await Promise.all([
+      Promise.all(sessionIDsArray.map(sessionId => sessionRef.doc(sessionId).get())),
+      Promise.all(sessionIDsArray.map(sessionId => taskRef.where("sessionId", "==", sessionId).get()))
+    ]);
+
+    const activeSessionsData = sessionSnapshots
+      .filter(sessionSnap => sessionSnap.exists)
+      .map(sessionSnap => ({
+        id: sessionSnap.id,
+        ...sessionSnap.data()
+      }));
+
+    const tasksBySessionId = new Map();
+    taskQuerySnapshots.forEach(querySnap => {
+      querySnap.forEach(taskDoc => {
+        const taskData = taskDoc.data();
+        if (taskData.sessionId) {
+          if (!tasksBySessionId.has(taskData.sessionId)) {
+            tasksBySessionId.set(taskData.sessionId, []);
+          }
+          tasksBySessionId.get(taskData.sessionId).push({ id: taskDoc.id, ...taskData });
+        }
+      });
+    });
+
+    const formattedSessions = activeSessionsData.map((session) => {
+      const startTime = session.startDate;
+      const endTime = startTime + (session.duration * 60 * 1000);
+
+      const groupName = groupNamesMap.get(session.groupId) || 'Unknown Group';
+      const sessionTasks = tasksBySessionId.get(session.id) || [];
+
+      return {
+        UID: session.id,
+        name: session.name || '',
+        groupName: groupName,
+        description: session.description || '',
+        startTime: formatHoursMinutes(startTime),
+        endTime: formatHoursMinutes(endTime),
+        duration: millisecondsToHMFormat(session.duration * 60 * 1000),
+        joinedCount: session.userIds ? session.userIds.length : 0,
+        tasksCount: sessionTasks.length,
+      };
+    });
+
+    return formattedSessions;
+
+  } catch (error) {
+    console.error("Error getting active sessions:", error);
+    return [];
+  }
+};
+ 
+
+
+const getSessionInformations = async (sessionID) => {
+  try {
+    const snap = await db.collection("sessions").doc(sessionID).get();
+    const tasks = await getTaches(sessionID); // Assumes this returns an array of Task/Quiz objects
+
+    if (!snap.exists || tasks.length === 0) {
+      return null;
+    }
+
+    const sessionData = snap.data();
+
+    // Total duration
+    const durationInMins = tasks.reduce(
+      (acc, task) => acc + (task.durationInMins || 0),
+      0
+    );
+
+    const startDate = new Date(sessionData.startTime || new Date());
+    const endTime = new Date(startDate.getTime() + durationInMins * 60 * 1000);
+
+    // Get first quiz task (if any)
+    const quiz = tasks.find((task) => task.isQuiz);
+
+    return {
+      name: sessionData.name || "Session Name",
+      description: sessionData.description || "",
+      startTime: formatHoursMinutes(startDate),
+      endTime: formatHoursMinutes(endTime),
+      duration: millisecondsToHMFormat(durationInMins * 60 * 1000),
+      groupName: sessionData.groupName || "No group",
+      joinedCount: sessionData.joinedCount || 0,
+      tasks,
+      quiz: quiz
+        ? {
+            UID: quiz.UID || "",
+            title: quiz.title,
+            questionsCount: quiz.questionsCount || 0,
+            status: "pending", // or derive from quiz if needed
+          }
+        : null,
+    };
+  } catch (error) {
+    console.error("Failed to fetch session details:", error.message);
+    return null;
+  }
+};
+ 
+
+const joinSession = async(sessionId  , userId)=>{
+    try {
+        const ref = db.collection("sessions").doc(sessionId)
+        const snap = await ref.get()
+        const useref = db.collection("users").doc(userId)
+        const usSnap =await   useref.get()
+        if(snap.exists && usSnap.exists){
+            await usSnap.update({
+                currentSession : sessionId
+            })
+            return {
+                success : true , 
+                message : "You joined the session succcessfully"
+            }
+        }
+    } catch (error) {
+        return {
+            success : false , 
+            message : "Somethign wrong happened , please try again later"
+        }
+    }
+}
 
  module.exports = {
+    joinSession ,
+    getSessionInformations ,
+    getFetchActiveSessions ,
     modifieSessionPropertie , 
     createSessions , 
     annulerSession , 

@@ -1,6 +1,7 @@
 const { FieldValue } = require('firebase-admin/firestore');
 const { db } = require('../../firebase/firebaseAdmin');
 const { getGroupByID } = require('./group');
+const { messaging } = require('firebase-admin');
 
 const ajouterMembre = async (groupId, userId) => {
   try {
@@ -132,40 +133,68 @@ const joinGroup = async (groupId, userData) => {
     return { message: 'Internal server error', success: false };
   }
 };
-const acceptRequest = async (groupId, requestId) => {
+const acceptRequest = async (groupId, requestId, userId) => {
   try {
-    const group = await getGroupByID(groupId);
     const groupRef = db.collection('groups').doc(groupId);
-    const request = group.requests.find((demande) => demande.uid === requestId);
-    console.log('request', group.requests);
-    if (group) {
-      if (group.requests.some((demande) => demande.uid === requestId)) {
-        await groupRef.update({
-          members: FieldValue.arrayUnion({
-            uid: request.uid,
-            fullName: request.name,
-            email: request.email,
-            photoURL: request.photoURL,
-          }),
-        });
-        groupRef.update({
-          requests: FieldValue.arrayRemove(request),
-        });
-        return true;
-      } else {
-        return false;
+
+    const result = await db.runTransaction(async (transaction) => {
+      const groupDocSnapshot = await transaction.get(groupRef);
+
+      if (!groupDocSnapshot.exists) {
+        return { success: false, message: `Group with ID ${groupId} not found.` };
       }
-    }
+
+      const groupData = groupDocSnapshot.data();
+
+      if (groupData.creator !== userId) {
+        return { success: false, message: "Only the group creator can accept requests." };
+      }
+
+      const requestToAccept = groupData.requests.find((demande) => demande.uid === requestId);
+
+      if (!requestToAccept) {
+        return { success: false, message: "Join request not found." };
+      }
+
+      const newMember = {
+        uid: requestToAccept.uid,
+        fullName: requestToAccept.name,
+        email: requestToAccept.email,
+        photoURL: requestToAccept.photoURL,
+      };
+      
+      const isAlreadyMember = groupData.members.some(member => member.uid === newMember.uid);
+
+      if (isAlreadyMember) {
+        transaction.update(groupRef, {
+            requests: FieldValue.arrayRemove(requestToAccept),
+        });
+        return { success: true, message: "User is already a member, request removed." };
+      }
+
+      transaction.update(groupRef, {
+        members: FieldValue.arrayUnion(newMember),
+        requests: FieldValue.arrayRemove(requestToAccept),
+      });
+
+      return { success: true, message: 'Join request accepted successfully!' };
+    });
+
+    return result;
+
   } catch (error) {
-    console.log(error.message);
-    return false;
+    console.error("Error accepting request:", error.message);
+    return {
+      success: false,
+      message: `Failed to accept request: ${error.message || "An unexpected error occurred."}`
+    };
   }
 };
-const rejectRequest = async (groupId, requestId) => {
+const rejectRequest = async (groupId, requestId , userId ) => {
   try {
     const groupRef = db.collection('groups').doc(groupId);
     const group = await getGroupByID(groupId);
-    if (group) {
+    if (group && group.creator === userId) {
       const request = group.requests.find(
         (demande) => demande.uid === requestId
       );
@@ -173,16 +202,28 @@ const rejectRequest = async (groupId, requestId) => {
         await groupRef.update({
           requests: FieldValue.arrayRemove(request),
         });
-        return true;
+        return {
+          success : true , 
+          message : "Request rejected successfully."
+        }
       } else {
-        return false;
+        return {
+           success  : false , 
+           message : "No Request match "
+        }
       }
     } else {
-      return false;
+      return {
+        success : false , 
+        message : "No group found or user does not have the right to accomplish the action"
+      };
     }
   } catch (error) {
     console.log(error.message);
-    return false;
+    return {
+      success : false , 
+      message : "Something wrong happened "
+    }
   }
 };
 

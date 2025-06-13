@@ -77,7 +77,7 @@ const deleteTache = async (tacheId) => {
 const getTaches = async (sessionId) => {
   try {
     const taches = [];
-    const snaphsot = await tacheRef.where("session_id", "==", sessionId).get();
+    const snaphsot = await tacheRef.where("sessionId", "==", sessionId).get();
     if (snaphsot.empty) {
       return 0;
     } else {

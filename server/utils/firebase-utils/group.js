@@ -546,13 +546,13 @@ const deleteGroup = async (groupId) => {
     const group = await getGroupByID(groupId);
     if (group) {
       await groupRef.delete();
-      return true;
+  return { success: true, message: 'Group removed' };
     } else {
-      return false;
+  return { success: true, message: 'Group removed' };
     }
   } catch (error) {
     console.log(error.message);
-    return false;
+  return { success: false , message: 'Group removed' };
   }
 };
 
