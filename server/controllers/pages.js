@@ -83,15 +83,25 @@ const handleQuizEditRoute = async (req, res) => {
 };
 
 const handleQuizPlayRoute = async (req, res) => {
-  const response = await getQuizzPlayContext(req.user.uid, req.params.quizId);
-  const templateContext = response.templateContext;
+  const templateContext = {
+    firstQuestion: {
+      id: 'q1',
+      text: 'What is the capital of Morocco?',
+      choices: ['Casablanca', 'Marrakesh', 'Fez', 'Rabat'],
+      correctAnswerIndex: 3, // Rabat
+    },
+    totalQuestions: 10,
+    quizTitle: 'Geography Quiz',
+  }; // Replace with actual logic to get group chat context
+  // const response = await getQuizzPlayContext(req.user.uid, req.params.quizId);
+  // const templateContext = response.templateContext;
   const payload = {
     templateContext,
   };
-  if (!response.success) {
-    const backUrl = req.header('Referer') || '/app/home';
-    return res.redirect(backUrl);
-  }
+  // if (!response.success) {
+  //   const backUrl = req.header('Referer') || '/app/home';
+  //   return res.redirect(backUrl);
+  // }
 
   renderFragmentOrLayout(
     'templates/quiz-play',
