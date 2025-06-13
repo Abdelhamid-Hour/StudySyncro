@@ -6,7 +6,7 @@ import {
   topSideBarHeader,
   topSideBarMiddle,
 } from "./dom-variables.js";
-import { fetchTemplate, throttling } from "../../../../main_assets/js/utils.js";
+import { fetchTemplate, sendData, throttling } from "../../../../main_assets/js/utils.js";
 import { showMessageBlock } from "../../../../main_assets/js/utils.js";
 import { initAndDiplayErrorTooltip } from "../../shared/chat/js/utils.js";
 
@@ -602,22 +602,22 @@ const updateTopSideBar = (pathName, extraData) => {
     ];
     topSideBarHeader.appendChild(createTabs(tabContent, "groups-tabs"));
   }
-  if (isQuizzes) {
-    const tabContent = [
-      {
-        route: "/app/quizzes/my",
-        textContent: "My Quizzes",
-        active: true,
-      },
-      {
-        route: "/app/quizzes/groups",
-        className: "available-quizzes-tab",
-        textContent: "Groups Quizzes",
-        active: false,
-      },
-    ];
-    topSideBarHeader.appendChild(createTabs(tabContent, "quizzes-tabs"));
-  }
+  // if (isQuizzes) {
+  //   const tabContent = [
+  //     {
+  //       route: "/app/quizzes/my",
+  //       textContent: "My Quizzes",
+  //       active: true,
+  //     },
+  //     {
+  //       route: "/app/quizzes/groups",
+  //       className: "available-quizzes-tab",
+  //       textContent: "Groups Quizzes",
+  //       active: false,
+  //     },
+  //   ];
+  //   topSideBarHeader.appendChild(createTabs(tabContent, "quizzes-tabs"));
+  // }
 
   // 6) add additional content if needed
   const { additional } = pageConfig[pathName] || {};

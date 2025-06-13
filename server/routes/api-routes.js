@@ -101,7 +101,8 @@ apiRouter.get("/quizzes-list", async (req, res) => {
 
 apiRouter.get("/active-session", async (req, res) => {
   const result = await getActiveSession(req.user.uid);
-  console.log("active session result", result);
+  
+  console.log("active session result", result.sessionData.tasks);
   
   if (result.success) {
     return res.status(200).json({ ...result.sessionData });

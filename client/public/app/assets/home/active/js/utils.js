@@ -153,11 +153,21 @@ export class FlipTimer {
 }
 
 export class Quiz extends Task {
-  constructor({ UID, title, description, durationInMins, questionsCount }) {
+  constructor({
+    UID,
+    title,
+    description,
+    durationInMins,
+    questionsCount,
+    status,
+  }) {
     super({ UID, title, description, durationInMins });
     this.questionsCount = questionsCount;
     this.elapsedTime = document.querySelector(QUIZSELECTORS.startTime);
     this.score = document.querySelector(QUIZSELECTORS.score);
+    if (status) {
+      this.status = status;
+    }
   }
   updateElapsedTime({ quizElapsedTime, isQuizPassed = false }) {
     if (quizElapsedTime) {
@@ -227,6 +237,7 @@ export class Session {
           title: quiz.title,
           UID: quiz.UID,
           questionsCount: quiz.questionsCount,
+          status: quiz.status,
         })
       : null;
     this.initTime();

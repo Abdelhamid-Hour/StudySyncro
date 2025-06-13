@@ -1,8 +1,5 @@
-const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
 const { formatHoursMinutes } = require("../global");
-const { is } = require("date-fns/locale");
-const { messaging } = require("firebase-admin");
 
 /**
  * {
@@ -89,6 +86,8 @@ const createGroupSession = async (sessionData, userId) => {
         currentSession: newSessionId,
       });
 
+      console.log("tasks in createGroupSession: ", tasks);
+      
       if (tasks && tasks.length > 0) {
         const taskRef = db.collection("tasks");
         const taskPromises = tasks.map((task) => {
@@ -168,11 +167,9 @@ const annulerSession = async (sessionId, userId) => {
   try {
     const sessionRef = db.collection("sessions").doc(sessionId);
     const snapshot = await sessionRef.get();
-    const usRef = db.collection("");
+    const usRef = db.collection("users");
     const groupRef = db.collection("groups");
-    const usersRef = db
-      .collection("users")
-      .where("currentSession", "==", sessionId);
+    const usersRef = usRef.where("currentSession", "==", sessionId);
     const snap = await usersRef.get();
     const session = snapshot.data();
 
@@ -182,10 +179,11 @@ const annulerSession = async (sessionId, userId) => {
       const time = new Date(session.startDate).getTime() + duration * 1000 * 60;
       const timestamp = Date.now();
 
-      if (timestamp > time) {
+      if (timestamp >= time) {
         await sessionRef.update({
           status: "finished",
         });
+        return { success: true, message: "Session ended" };
       } else {
         return {
           success: false,
@@ -197,9 +195,11 @@ const annulerSession = async (sessionId, userId) => {
     if (session && !snap.empty) {
       const promises = snap.docs.map((doc) => {
         const reference = usRef.doc(doc.id);
+        sessionRef.update({
+          status: "aborted",
+        });
         return reference.update({
           currentSession: "",
-          status: "aborted",
         });
       });
       const gRefernce = groupRef.doc(session.groupId);
@@ -558,6 +558,7 @@ const getActiveSession = async (userId) => {
     const quiz = quizSnap && quizSnap.exists ? quizSnap.data() : null;
 
     const startDate = session.startDate;
+    console.log('taskstaskstaskstasks tasks: ', tasks);
     return {
       success: true,
       sessionData: {

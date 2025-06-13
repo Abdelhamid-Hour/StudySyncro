@@ -108,10 +108,15 @@ const getQuizDuration = async (user, quizId) => {
     const taskRef = db
       .collection('tasks')
       .where('sessionId', '==', user.currentSession)
-      .where('state', '==', 'active');
-    const task = await taskRef.get();
+      .where('status', '==', 'active');
+    const taskSnap = await taskRef.get();
+    const task = taskSnap.docs.length > 0 ? taskSnap.docs[0].data() : {};
     const timeLeft = Date.now() - new Date(session.startDate).getTime();
+
+    // console.log(!task.empty , task , session.exists);
+    
     if (!task.empty && task.isQuiz && session.exists) {
+
       if (timeLeft < session.duration) {
         const timeDiff = Math.floor(session.duration - timeLeft * 60000);
         const pendingTasks = await taskRef
@@ -119,10 +124,12 @@ const getQuizDuration = async (user, quizId) => {
           .get();
         const totalduration = pendingTasks.docs.reduce((accumulated, doc) => {
           const data = doc.data();
-          accumulated += data.duration;
+          accumulated += data.durationInMins;
           return accumulated;
         }, 0);
-        duration = timeDiff - totalduration;
+        // console.log('timeDiff', timeDiff , 'totalduration', totalduration );
+        
+        duration = timeDiff - totalduration 
       }
     } else {
       duration = null;

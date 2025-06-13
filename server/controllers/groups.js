@@ -190,14 +190,14 @@ const getQuizQuestionsHandler = async (req, res) => {
   // }
   const userid = req.user.uid;
   const quizId = req.params.quizId;
-  console.log(quizId, "quiz id");
-  console.log(userid, "user id");
+  // console.log(quizId, "quiz id");
+  // console.log(userid, "user id");
   
 
   const questions = await getQuestions(quizId, userid);
   const duration = await getQuizDuration(req.user, quizId);
-  console.log(questions, "questions");
-  console.log(duration, "duration");
+  // console.log(questions, "questions");
+  // console.log(duration, "duration");
 
   if (questions) {
     return res.status(200).json({ questions, duration });

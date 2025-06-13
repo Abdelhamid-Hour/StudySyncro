@@ -80,8 +80,8 @@
             ? `<a href="/app/quizzes/my"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>`
             : '' %>
         </h2>
-        <!-- ? Navigation for Groups and Quizzes -->
-        <% if (['/groups/my/', '/groups/available/', '/quizzes/my/', '/quizzes/groups/'].includes(resourcesRoute)) { %>
+        <!-- ? Navigation for Groups and Quizzes !!! add quizzes tabs also -->
+        <% if (['/groups/my/', '/groups/available/'].includes(resourcesRoute)) { %>
         <div class="navigation-tabs <%= resourcesRoute.includes('/quizzes/') ? 'quizzes-tabs' : 'groups-tabs' _%>">
           <a
             href="/app<%= resourcesRoute.includes('/quizzes/') ? '/quizzes' : '/groups' _%>/my"
