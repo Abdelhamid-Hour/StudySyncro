@@ -1,6 +1,8 @@
 const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
 const { formatHoursMinutes } = require("../global");
+const { is } = require("date-fns/locale");
+const { messaging } = require("firebase-admin");
 
 /**
  * {
@@ -162,13 +164,56 @@ const modifieSessionPropertie = async (newValue, propertie, session_id) => {
   }
 };
 
-const annulerSession = async (sessionId) => {
+const annulerSession = async (sessionId, userId) => {
   try {
     const sessionRef = db.collection("sessions").doc(sessionId);
     const snapshot = await sessionRef.get();
+    const usRef = db.collection("");
+    const groupRef = db.collection("groups");
+    const usersRef = db
+      .collection("users")
+      .where("currentSession", "==", sessionId);
+    const snap = await usersRef.get();
     const session = snapshot.data();
-    if (session) {
-      await sessionRef.delete();
+
+    const isAdmin = session.creator === userId;
+
+    if (!isAdmin) {
+      const time = new Date(session.startDate).getTime() + duration * 1000 * 60;
+      const timestamp = Date.now();
+
+      if (timestamp > time) {
+        await sessionRef.update({
+          status: "finished",
+        });
+      } else {
+        return {
+          success: false,
+          message: "You dont have the right to end the session.",
+        };
+      }
+    }
+
+    if (session && !snap.empty) {
+      const promises = snap.docs.map((doc) => {
+        const reference = usRef.doc(doc.id);
+        return reference.update({
+          currentSession: "",
+          status: "aborted",
+        });
+      });
+      const gRefernce = groupRef.doc(session.groupId);
+      const fetch = await gRefernce.get();
+
+      if (fetch.exists) {
+        promises.push(
+          gRefernce.update({
+            currentSession: "",
+          })
+        );
+      }
+
+      await Promise.all(promises);
       return { success: true, message: "Session ended" };
     } else {
       return { success: false, message: "Cant end session" };
@@ -179,12 +224,11 @@ const annulerSession = async (sessionId) => {
   }
 };
 
-const leavSession = async (userID, sessionId) => {
+const leavSession = async (userID) => {
   const ref = db.collection("users").doc(userID);
-  const snap = await ref.get();
-  const data = ref.data();
+  const doc = await ref.get();
 
-  if (ref.exists) {
+  if (doc.exists) {
     await ref.update({
       currentSession: "",
     });
@@ -452,15 +496,17 @@ const getActiveSession = async (userId) => {
     const userRef = db.collection("users").doc(userId);
     const userSnap = await userRef.get();
     const taskRef = db.collection("tasks");
-    
+
     if (!userSnap.exists) {
       console.warn(`User with ID ${userId} not found.`);
       return null;
     }
-    
+
     const user = userSnap.data();
-    const tasksSnap = await taskRef.where("sessionId", "==", user.currentSession).get();
-    const tasks = tasksSnap.docs.map(doc => ({
+    const tasksSnap = await taskRef
+      .where("sessionId", "==", user.currentSession)
+      .get();
+    const tasks = tasksSnap.docs.map((doc) => ({
       UID: doc.id,
       ...doc.data(),
     }));
@@ -512,7 +558,7 @@ const getActiveSession = async (userId) => {
           ...quiz,
           UID: session.quizId || "",
         },
-        tasks: tasks
+        tasks: tasks,
       },
     };
   } catch (error) {
