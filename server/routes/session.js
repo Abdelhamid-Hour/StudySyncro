@@ -1,6 +1,6 @@
 const express = require('express');
 const { verifySessionCookieWithoutRedirect } = require('../middleware/sessionVerification');
-const { createSession, modifieSessionPropertie, annulerSession } = require('../controllers/session');
+const { createGroupSession, modifieSessionPropertie, annulerSession } = require('../controllers/session');
 const router = express.Router()
 
 
@@ -8,7 +8,7 @@ const router = express.Router()
 router.post("/createSession" , verifySessionCookieWithoutRedirect ,async (req ,res)=>{
         try {
             const sessionData = req.body.sessionData 
-            const result = await createSession(sessionData)
+            const result = await createGroupSession(sessionData)
             if(result){
                 res.status(200).json({success : true , message : "session created sucssessfully"})
             }

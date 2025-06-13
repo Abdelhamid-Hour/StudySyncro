@@ -26,7 +26,7 @@ const {
   patchQuizHandler,
 } = require('../controllers/quizzes');
 const { changeTaskState } = require('../utils/firebase-utils/tache');
-const { createSessions } = require('../utils/firebase-utils/session');
+const { createGroupSession } = require('../utils/firebase-utils/session');
 
 const apiRouter = express.Router();
 
@@ -144,8 +144,9 @@ apiRouter.post('/update-task-status', async (req, res) => {
 
 apiRouter.post('/create-session', async (req, res) => {
   const sessionData = req.body.sessionData;
-
-  const result = await createSessions(sessionData);
+  console.log('sessionDATa', sessionData);
+  
+  const result = await createGroupSession(sessionData);
 
   if (result.success) {
     return res.status(200).json({ message: result.message });

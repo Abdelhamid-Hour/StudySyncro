@@ -15,16 +15,6 @@ const getCurrentSession = async (userId) => {
   return response;
 };
 
-const getTimeLeft = (durationInMins, endTime) => {
-  const now = new Date().getTime();
-  const remainingTime = endTime - now;
-  const timeLeft =
-    remainingTime > 0
-      ? durationInMins * 60 * 1000 - remainingTime
-      : -(remainingTime - this.durationInMins * 60 * 1000);
-  return timeLeft;
-};
-
 const getSessionDetails = (sessionId) => {
   const tasks = [
     new Task({
@@ -165,5 +155,4 @@ const fetchHomeData = async (userId) => {
 module.exports = {
   fetchHomeData,
   getSessionDetails,
-  getTimeLeft,
 };

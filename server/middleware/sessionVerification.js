@@ -38,7 +38,7 @@ const requireAuthForPages = async (req, res, next) => {
   } catch (error) {
     clearCookies(res, ['session', 'SECRET', 'csrfToken']);
     if (isFetch) return res.status(401).json({ message: 'Unauthorized' });
-    return res.redirect('/login');
+    return res.redirect('/logout');
   }
 };
 
