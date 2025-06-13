@@ -555,7 +555,7 @@ const handleChatInput = async () => {
     new ChatMessage(
       inputValue,
       files,
-      false,
+      true,
       '',
       'Abdelwahed',
       new Date(),

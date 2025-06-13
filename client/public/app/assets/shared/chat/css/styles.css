@@ -23,6 +23,8 @@
     }
     .avatar {
       font-size: var(--xx-large-font-size);
+      height: 2rem;
+      width: 2rem;
     }
     .message-media-preview {
       position: relative;
@@ -129,7 +131,7 @@
           max-width: 21.25rem;
           max-height: 20rem;
           width: fit-content;
-          &[class*='first-message'] {
+          &[class*="first-message"] {
             max-width: calc(22rem + var(--primary-gap) / 2);
           }
         }
@@ -255,7 +257,7 @@
         );
       }
       &::before {
-        content: '';
+        content: "";
         position: absolute;
         height: 100%;
         width: 100%;

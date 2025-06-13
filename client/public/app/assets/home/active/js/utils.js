@@ -370,6 +370,7 @@ export class Session {
   }
 
   displayComplatedTasks() {
+    this.completedTasksContainer.innerHTML = "";
     this.completedTasks.forEach((task) => this.displayComplatedTask(task));
   }
 
@@ -431,6 +432,7 @@ export class Session {
   }
 
   displayOngoingTasks() {
+    this.ongoingTasksContainer.innerHTML = "";
     this.ongoingTasks.forEach((task, index) => {
       const isQuiz = task.isQuiz;
       const isBreak = task.isBreak;

@@ -345,32 +345,52 @@ export const skipQuestion = () => {
 export const toPreviousQuestion = () => step(-1);
 
 export const setUpQuiz = async () => {
-  try {
-    const { questions, duration } = await fetchData(
-      "/quiz-questions/" + quiz.id
-    );
-    quiz.duration = duration;
-    quiz.questions = questions;
-    if (quiz.duration) {
-      const finishedDate = new Date(Date.now() + quiz.duration * 60 * 1000);
-      const shouldShowHours = Math.floor(quiz.duration / 60) > 0;
-      if (!shouldShowHours) {
-        hoursEl.nextElementSibling?.remove();
-        hoursEl.remove();
-      }
-      document.addEventListener("keydown", handleKeyDown);
-      tick(finishedDate, shouldShowHours);
-    }else {
-      timerEl.remove()
+    try {
+    quiz = await fetchData('/quiz-questions/' + quiz.id);
+      console.log(quiz, 'quiz data');
+      
+    const finishedDate = new Date(Date.now() + quiz.duration * 60 * 1000);
+    const shouldShowHours = Math.floor(quiz.duration / 60) > 0;
+    if (!shouldShowHours) {
+      hoursEl.nextElementSibling?.remove();
+      hoursEl.remove();
     }
+    document.addEventListener('keydown', handleKeyDown);
+    tick(finishedDate, shouldShowHours);
   } catch (error) {
-    console.error("Failed to fetch quiz questions:", error);
+    console.error('Failed to fetch quiz questions:', error);
     showMessageBlock(
-      "Failed to load quiz questions. Please try again later.",
-      "error"
+      'Failed to load quiz questions. Please try again later.',
+      'error'
     );
     return;
   }
+  // try {
+  //   const { questions, duration } = await fetchData(
+  //     "/quiz-questions/" + quiz.id
+  //   );
+  //   quiz.duration = duration;
+  //   quiz.questions = questions;
+  //   if (quiz.duration) {
+  //     const finishedDate = new Date(Date.now() + quiz.duration * 60 * 1000);
+  //     const shouldShowHours = Math.floor(quiz.duration / 60) > 0;
+  //     if (!shouldShowHours) {
+  //       hoursEl.nextElementSibling?.remove();
+  //       hoursEl.remove();
+  //     }
+  //     document.addEventListener("keydown", handleKeyDown);
+  //     tick(finishedDate, shouldShowHours);
+  //   }else {
+  //     timerEl.remove()
+  //   }
+  // } catch (error) {
+  //   console.error("Failed to fetch quiz questions:", error);
+  //   showMessageBlock(
+  //     "Failed to load quiz questions. Please try again later.",
+  //     "error"
+  //   );
+  //   return;
+  // }
 };
 
 const tick = (finishedDate, shouldShowHours) => {
