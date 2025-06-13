@@ -114,7 +114,6 @@ apiRouter.get("/active-session", async (req, res) => {
 
 apiRouter.post("/update-task-status", async (req, res) => {
   const { taskId, status } = req.body;
-  const userData = req.user;
   const result = await changeTaskState(status, taskId);
   console.log(result);
   if (result.success) {
@@ -239,8 +238,8 @@ apiRouter.post("/transfer-role", async (req, res) => {
 }); // ! should implement with firebase
 
 // End a session by sessionId
-apiRouter.post("/end-session/:sessionId", async (req, res) => {
-  const { sessionId } = req.params;
+apiRouter.post("/end-session", async (req, res) => {
+  const { sessionId } = req.body;
   const result = await annulerSession(sessionId);
   // TODO: Implement endSession logic
 
@@ -253,8 +252,8 @@ apiRouter.post("/end-session/:sessionId", async (req, res) => {
 
 // Leave a session by sessionId and userId
 apiRouter.post("/leave-session", async (req, res) => {
-  const { sessionId, userId } = req.body;
-  const result = await leavSession(userId, sessionId);
+  const { sessionId } = req.body;
+  const result = await leavSession(req.user.uid, sessionId);
 
   if (result.success) {
     return res.status(200).json({ message: result.message });

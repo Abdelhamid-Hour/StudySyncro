@@ -249,7 +249,7 @@ const handleCreateGroupSubmit = async (groupData, form, createBtn) => {
     createBtn.innerHTML = getLoader();
     await sendData('/api/create-group', { groupData });
     showMessageBlock('Group created successfully', 'success');
-    updateMain('/app/groups/my');
+    navigateTo('/groups/my');
   } catch (error) {
     console.error('Error: ', error);
     showMessageBlock(error.message, 'error');

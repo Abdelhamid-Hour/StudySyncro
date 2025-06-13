@@ -26,6 +26,7 @@ import {
   showErrorTooltip,
   dashedToCamelCase,
   navigateTo,
+  handleApiAction,
 } from '../../../../global/js/utils.js';
 import {
   levelValues,
@@ -1066,46 +1067,53 @@ export const handleViewAllMembersBtn = (e) => {
   }
 };
 
-/**
- * Helper to handle API requests with button state management and success/error messages.
- * @param {string} route - API route (without leading /api/).
- * @param {object} data - Data to send.
- * @param {HTMLElement} btn - Button element to show loading state.
- * @param {function} [onSuccess] - Optional callback on success: (data, response) => void.
- * @param {string} [successMsg] - Optional success message to display.
- */
-export const handleApiAction = async (
-  route,
-  data,
-  btn,
-  options = {
-    successMsg: 'Operation successful',
-    onSuccess: () => {},
-    method: 'POST',
-  }
-) => {
-  if (btn.isCreating) return;
-  const originalHtml = btn.innerHTML;
-  try {
-    btn.isCreating = true;
-    btn.disabled = true;
-    btn.innerHTML = getLoader();
-    const response = await sendData(
-      `/api${route}`,
-      { ...data },
-      options.method || 'POST'
-    );
-    if (options.successMsg) showMessageBlock(options.successMsg, 'success');
-    if (typeof options.onSuccess === 'function')
-      options.onSuccess(data, response);
-  } catch (error) {
-    console.error('Error:', error);
-    showMessageBlock(error.message || 'An error occurred.', 'error');
-  } finally {
-    btn.isCreating = false;
-    btn.disabled = false;
-    btn.innerHTML = originalHtml;
-  }
+// Sub-functions for group sidebar actions
+const handleKickMember = (kickBtn) => {
+  const memberId = kickBtn
+    .closest('.action-btns')
+    .getAttribute('data-member-id');
+  const groupId = getGroupId();
+  handleApiAction('/kick-member', { groupId, memberId }, kickBtn, {
+    successMsg: 'Member kicked successfully',
+  });
+};
+
+const handleMoveAdminRole = (moveAdminRoleBtn) => {
+  const memberId = moveAdminRoleBtn
+    .closest('.action-btns')
+    .getAttribute('data-member-id');
+  const groupId = getGroupId();
+  handleApiAction('/transfer-role', { groupId, memberId }, moveAdminRoleBtn, {
+    successMsg: 'Role transferred successfully',
+  });
+};
+
+const handleAddMember = (addMemberBtn, searchMemberInput) => {
+  const memberId = searchMemberInput.value.trim();
+  const groupId = getGroupId();
+  handleApiAction('/add-member', { memberId, groupId }, addMemberBtn, {
+    successMsg: 'Member added successfully',
+  });
+};
+
+const handleAcceptDemande = (acceptBtn) => {
+  const demandeId = acceptBtn
+    .closest('.action-btns')
+    .getAttribute('data-user-id');
+  const groupId = getGroupId();
+  handleApiAction('/accept-demande', { demandeId, groupId }, acceptBtn, {
+    successMsg: 'Demande accepted',
+  });
+};
+
+const handleRejectDemande = (rejectBtn) => {
+  const demandeId = rejectBtn
+    .closest('.action-btns')
+    .getAttribute('data-user-id');
+  const groupId = getGroupId();
+  handleApiAction('/reject-demande', { demandeId, groupId }, rejectBtn, {
+    successMsg: 'Demande rejected',
+  });
 };
 
 export const handleGroupLeftSideBarContent = (e) => {
@@ -1117,26 +1125,14 @@ export const handleGroupLeftSideBarContent = (e) => {
   // Kick member
   const kickBtn = e.target.closest('.kick-btn');
   if (kickBtn) {
-    const memberId = kickBtn
-      .closest('.action-btns')
-      .getAttribute('data-member-id');
-    const groupId = getGroupId();
-    handleApiAction('/kick-member', { groupId, memberId }, kickBtn, {
-      successMsg: 'Member kicked successfully',
-    });
+    handleKickMember(kickBtn);
     return;
   }
 
   // Move admin role
   const moveAdminRoleBtn = e.target.closest('.move-admin-role-btn');
   if (moveAdminRoleBtn) {
-    const memberId = moveAdminRoleBtn
-      .closest('.action-btns')
-      .getAttribute('data-member-id');
-    const groupId = getGroupId();
-    handleApiAction('/transfer-role', { groupId, memberId }, moveAdminRoleBtn, {
-      successMsg: 'Role transferred successfully',
-    });
+    handleMoveAdminRole(moveAdminRoleBtn);
     return;
   }
 
@@ -1148,37 +1144,21 @@ export const handleGroupLeftSideBarContent = (e) => {
     searchMemberInput &&
     searchMemberInput.value.trim() !== ''
   ) {
-    const memberId = searchMemberInput.value.trim();
-    const groupId = getGroupId();
-    handleApiAction('/add-member', { memberId, groupId }, addMemberBtn, {
-      successMsg: 'Member added successfully',
-    });
+    handleAddMember(addMemberBtn, searchMemberInput);
     return;
   }
 
   // Accept demande
   const acceptBtn = e.target.closest('.accept-btn');
   if (acceptBtn) {
-    const demandeId = acceptBtn
-      .closest('.action-btns')
-      .getAttribute('data-user-id');
-    const groupId = getGroupId();
-    handleApiAction('/accept-demande', { demandeId, groupId }, acceptBtn, {
-      successMsg: 'Demande accepted',
-    });
+    handleAcceptDemande(acceptBtn);
     return;
   }
 
   // Reject demande
   const rejectBtn = e.target.closest('.reject-btn');
   if (rejectBtn) {
-    const demandeId = rejectBtn
-      .closest('.action-btns')
-      .getAttribute('data-user-id');
-    const groupId = getGroupId();
-    handleApiAction('/reject-demande', { demandeId, groupId }, rejectBtn, {
-      successMsg: 'Demande rejected',
-    });
+    handleRejectDemande(rejectBtn);
     return;
   }
 };

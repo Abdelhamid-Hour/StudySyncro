@@ -22,6 +22,48 @@ export function getDebounceFunc(callback, TimeInterval) {
   };
 }
 
+/**
+ * Helper to handle API requests with button state management and success/error messages.
+ * @param {string} route - API route (without leading /api/).
+ * @param {object} data - Data to send.
+ * @param {HTMLElement} btn - Button element to show loading state.
+ * @param {function} [onSuccess] - Optional callback on success: (data, response) => void.
+ * @param {string} [successMsg] - Optional success message to display.
+ */
+export const handleApiAction = async (
+  route,
+  data,
+  btn,
+  options = {
+    successMsg: "Operation successful",
+    onSuccess: () => {},
+    method: "POST",
+  }
+) => {
+  if (btn.isCreating) return;
+  const originalHtml = btn.innerHTML;
+  try {
+    btn.isCreating = true;
+    btn.disabled = true;
+    btn.innerHTML = getLoader();
+    const response = await sendData(
+      `/api${route}`,
+      { ...data },
+      options.method || "POST"
+    );
+    if (options.successMsg) showMessageBlock(options.successMsg, "success");
+    if (typeof options.onSuccess === "function")
+      options.onSuccess(data, response);
+  } catch (error) {
+    console.error("Error:", error);
+    showMessageBlock(error.message || "An error occurred.", "error");
+  } finally {
+    btn.isCreating = false;
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  }
+};
+
 export const handelIconsHover = (e, addFill) => {
   const target = e.target.closest(".should-fill:not(.active)");
   if (target) {
@@ -616,7 +658,7 @@ export const updateMain = async (path, isTabLinks) => {
   }
 };
 
-const toggleActiveLink = (pathName) => {
+export const toggleActiveLink = (pathName) => {
   const activeLinks = document.querySelectorAll(".active");
   activeLinks.forEach((link) => {
     link.classList.remove("active");
@@ -694,12 +736,10 @@ const clearOverlaysModals = () => {
 };
 
 export const navigateTo = (pathName) => {
-  const link = document.createElement("a");
-  link.href = `/app${pathName}`; // add the correct id or path
-  link.className = "route-link";
-  link.style.display = "none";
-  mainContainer.appendChild(link);
-  link.click();
+  history.pushState({}, "", `/app${pathName}`);
+  window.dispatchEvent(new PopStateEvent("popstate", { state: {} }));
+  resetTooltip(hoverTooltip);
+  resetTooltip(globalTooltip);
 };
 
 export const handleNavigation = (e) => {

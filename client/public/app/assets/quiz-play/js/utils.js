@@ -1,7 +1,7 @@
 import { showMessageBlock } from "../../../../../main_assets/js/utils.js";
 import { fetchData } from "../../../../main_assets/js/utils.js";
 import { openOverlayModal, scrollToView } from "../../global/js/utils.js";
-import { hoursEl, minutesEl, nextBtn, secondsEl } from "./dom-variables.js";
+import { hoursEl, minutesEl, nextBtn, secondsEl, timerEl } from "./dom-variables.js";
 
 // ? Question template :
 /* 
@@ -315,7 +315,9 @@ export const toNextQuestion = () => {
     );
     return;
   }
-
+  
+  step(1);
+  
   const question = quiz.questions[currentQuestionIndex];
 
   removeCurrentQuestionFromResults(question.id);
@@ -332,7 +334,6 @@ export const toNextQuestion = () => {
       answerIndex: value,
     });
   }
-  step(1);
 };
 
 export const skipQuestion = () => {
@@ -345,44 +346,18 @@ export const skipQuestion = () => {
 export const toPreviousQuestion = () => step(-1);
 
 export const setUpQuiz = async () => {
-  try {
-    quiz = await fetchData("/quiz-questions/" + quiz.id);
-    console.log(quiz, "quiz data");
-
-    const finishedDate = new Date(Date.now() + quiz.duration * 60 * 1000);
-    const shouldShowHours = Math.floor(quiz.duration / 60) > 0;
-    if (!shouldShowHours) {
-      hoursEl.nextElementSibling?.remove();
-      hoursEl.remove();
-    }
-    document.addEventListener("keydown", handleKeyDown);
-    tick(finishedDate, shouldShowHours);
-  } catch (error) {
-    console.error("Failed to fetch quiz questions:", error);
-    showMessageBlock(
-      "Failed to load quiz questions. Please try again later.",
-      "error"
-    );
-    return;
-  }
   // try {
-  //   const { questions, duration } = await fetchData(
-  //     "/quiz-questions/" + quiz.id
-  //   );
-  //   quiz.duration = duration;
-  //   quiz.questions = questions;
-  //   if (quiz.duration) {
-  //     const finishedDate = new Date(Date.now() + quiz.duration * 60 * 1000);
-  //     const shouldShowHours = Math.floor(quiz.duration / 60) > 0;
-  //     if (!shouldShowHours) {
-  //       hoursEl.nextElementSibling?.remove();
-  //       hoursEl.remove();
-  //     }
-  //     document.addEventListener("keydown", handleKeyDown);
-  //     tick(finishedDate, shouldShowHours);
-  //   }else {
-  //     timerEl.remove()
+  //   quiz = await fetchData("/quiz-questions/" + quiz.id);
+  //   console.log(quiz, "quiz data");
+
+  //   const finishedDate = new Date(Date.now() + quiz.duration * 60 * 1000);
+  //   const shouldShowHours = Math.floor(quiz.duration / 60) > 0;
+  //   if (!shouldShowHours) {
+  //     hoursEl.nextElementSibling?.remove();
+  //     hoursEl.remove();
   //   }
+  //   document.addEventListener("keydown", handleKeyDown);
+  //   tick(finishedDate, shouldShowHours);
   // } catch (error) {
   //   console.error("Failed to fetch quiz questions:", error);
   //   showMessageBlock(
@@ -391,6 +366,33 @@ export const setUpQuiz = async () => {
   //   );
   //   return;
   // }
+
+  try {
+    const { questions, duration } = await fetchData(
+      "/quiz-questions/" + quiz.id
+    );
+    quiz.duration = duration;
+    quiz.questions = questions;
+    if (quiz.duration) {
+      const finishedDate = new Date(Date.now() + quiz.duration * 60 * 1000);
+      const shouldShowHours = Math.floor(quiz.duration / 60) > 0;
+      if (!shouldShowHours) {
+        hoursEl.nextElementSibling?.remove();
+        hoursEl.remove();
+      }
+      document.addEventListener("keydown", handleKeyDown);
+      tick(finishedDate, shouldShowHours);
+    }else {
+      timerEl.remove()
+    }
+  } catch (error) {
+    console.error("Failed to fetch quiz questions:", error);
+    showMessageBlock(
+      "Failed to load quiz questions. Please try again later.",
+      "error"
+    );
+    return;
+  }
 };
 
 const tick = (finishedDate, shouldShowHours) => {

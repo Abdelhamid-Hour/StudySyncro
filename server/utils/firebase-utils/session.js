@@ -92,7 +92,7 @@ const createGroupSession = async (sessionData, userId) => {
         const taskPromises = tasks.map((task) => {
           const taskDocData = {
             title: task.title || "",
-            durationInMin: task.durationInMin || 0,
+            durationInMins: task.durationInMins || 0,
             isBreak: task.isBreak || false,
             isQuiz: task.isQuiz || false,
             description: task.description || "",
@@ -452,18 +452,32 @@ const getActiveSession = async (userId) => {
     const userRef = db.collection("users").doc(userId);
     const userSnap = await userRef.get();
     const taskRef = db.collection("tasks");
-    
+
     if (!userSnap.exists) {
       console.warn(`User with ID ${userId} not found.`);
       return null;
     }
-    
+
     const user = userSnap.data();
-    const tasksSnap = await taskRef.where("sessionId", "==", user.currentSession).get();
-    const tasks = tasksSnap.docs.map(doc => ({
+    const tasksSnap = await taskRef
+      .where("sessionId", "==", user.currentSession)
+      .get();
+    const tasks = tasksSnap.docs.map((doc) => ({
       UID: doc.id,
       ...doc.data(),
     }));
+
+    /**
+     * {
+    title,
+    description,
+    durationInMins,
+    isQuiz,
+    isBreak,
+    status,
+    UID,
+  }
+     */
 
     if (!user || !user.currentSession || user.currentSession === "") {
       console.log(`User ${userId} does not have an active session.`);
@@ -503,16 +517,22 @@ const getActiveSession = async (userId) => {
     return {
       success: true,
       sessionData: {
-        id: session.id,
+        id: sessionSnap.id,
         name: session.name,
-        startDate: formatHoursMinutes(startDate),
+        startDate: startDate,
         durationInMins: session.duration,
         groupId: session.groupId,
-        quiz: {
-          ...quiz,
-          UID: session.quizId || "",
-        },
-        tasks: tasks
+        quiz: quiz
+          ? {
+              ...quiz,
+              UID: session.quizId || "",
+              status: () => {
+                const quizTask = tasks.find((task) => task.isQuiz);
+                return quizTask.status;
+              },
+            }
+          : null,
+        tasks: tasks,
       },
     };
   } catch (error) {
@@ -551,4 +571,5 @@ module.exports = {
   annulerSession,
   getCurrentSessionInfo,
   getFetchActiveSessions,
+  joinSession,
 };

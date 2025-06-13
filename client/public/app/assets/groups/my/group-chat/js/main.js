@@ -16,23 +16,15 @@ import {
   showInfoBtn,
 } from './dom-variables.js';
 import {
-  getGroupId,
-  handleApiAction,
-  handleDemandesBtn,
-  handleEditBtn,
   handleGroupInfo,
   handleGroupLeftSideBarContent,
   handleLeavingGroup,
   handleMembersListMenuBtn,
   handleQuizzesListMenuBtn,
   handleRemoveGroup,
-  handleSaveAndCancelBtns,
   handleSessionCreateClick,
   handleSessionInfoMenuBtn,
   handleShowInfoBtnClick,
-  handleViewAllMembersBtn,
-  openGroupLeftSideBar,
-  setUpDatePicker,
   setUpDemandes,
 } from './utils.js';
 

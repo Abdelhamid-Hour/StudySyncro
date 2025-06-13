@@ -4,8 +4,10 @@ import {
   showMessageBlock,
 } from "../../../../../main_assets/js/utils.js";
 import {
+  handleApiAction,
   millisecondsToHMFormat,
   navigateTo,
+  updateMain,
 } from "../../../global/js/utils.js";
 import { Task } from "../../../shared/tasks/js/utils.js";
 import {
@@ -157,7 +159,7 @@ export class Quiz extends Task {
     this.elapsedTime = document.querySelector(QUIZSELECTORS.startTime);
     this.score = document.querySelector(QUIZSELECTORS.score);
   }
-  updateElapsedTime(quizElapsedTime) {
+  updateElapsedTime({ quizElapsedTime, isQuizPassed = false }) {
     if (quizElapsedTime) {
       this.elapsedTime.textContent = quizElapsedTime;
     } else {
@@ -169,7 +171,7 @@ export class Quiz extends Task {
       }
     }
 
-    if (this.elapsedTime.textContent === quizElapsedTime) {
+    if (this.elapsedTime.textContent === "0m" && !isQuizPassed) {
       navigateTo(`/quiz-play/${this.UID}`);
     }
   }
@@ -194,7 +196,6 @@ export class Quiz extends Task {
 export const startSession = async () => {
   try {
     const sessionData = await fetchData("/active-session");
-    debugger
     const session = new Session(sessionData);
     session.startSession();
   } catch (error) {
@@ -207,6 +208,7 @@ export const startSession = async () => {
 };
 
 export class Session {
+  static id = null;
   constructor({
     tasks,
     startDate,
@@ -215,7 +217,7 @@ export class Session {
     groupId,
     quiz,
   }) {
-    this.id = id;
+    Session.id = id; // Set the static id property
     this.groupId = groupId;
     this.startDate = startDate;
     this.durationInMins = durationInMins;
@@ -260,19 +262,12 @@ export class Session {
         elapsedTime: elapsedTime,
         timeLeft: this.timeLeft,
       });
-      if (this.quiz) this.quiz.updateElapsedTime();
+      if (this.quiz)
+        this.quiz.updateElapsedTime({
+          isQuizPassed: this.quiz.status === "completed",
+        });
 
-      const firstTaskIsComplete =
-        this.ongoingTasks.length > 0 &&
-        this.ongoingTasks[0].durationInMins <=
-          Math.floor(this.timeLeft / 1000 / 60) -
-            this.completedTasks.reduce((acc, task) => {
-              return (acc += task.durationInMins);
-            }, 0);
-
-      if (firstTaskIsComplete) {
-        this.addToCompletedTasks();
-      }
+      if (this.isFirstTaskComplete()) this.addToCompletedTasks();
 
       this._timer = setTimeout(() => this.tick(), delay);
     } else {
@@ -281,6 +276,17 @@ export class Session {
       }
       this.onComplete();
     }
+  }
+
+  isFirstTaskComplete() {
+    return (
+      this.ongoingTasks.length > 0 &&
+      this.ongoingTasks[0].durationInMins <=
+        Math.floor(this.timeLeft / 1000 / 60) -
+          this.completedTasks.reduce((acc, task) => {
+            return (acc += task.durationInMins);
+          }, 0)
+    );
   }
 
   initTime() {
@@ -305,8 +311,8 @@ export class Session {
       },
       0
     );
-    const activeTaskRemainingTime = this.elapsedTime - notStartedTasksDuration;
-    this.TIMER = new FlipTimer(activeTaskRemainingTime);
+    this.activeTaskRemainingTime = this.elapsedTime - notStartedTasksDuration;
+    this.TIMER = new FlipTimer(this.activeTaskRemainingTime);
     this._timer = null;
     this.tick();
   }
@@ -377,10 +383,11 @@ export class Session {
 
   async initTasks() {
     let timeLeft = Math.floor(this.timeLeft / 1000 / 60);
+    debugger;
     this.completedTasks = [];
     for (const task of this.tasks) {
       if (task.durationInMins <= timeLeft) {
-        timeLeft - task.durationInMins;
+        timeLeft -= task.durationInMins;
         this.completedTasks.push(task);
       } else {
         break;
@@ -392,12 +399,23 @@ export class Session {
     );
 
     this.completedTasks.forEach(async (task) => {
-      if (task.status !== "completed")
+      if (task.status !== "completed") {
         await this.updateTaskStatus(task.UID, "completed");
+        task.status = "completed";
+        if (task.isQuiz) {
+          this.quiz.status = "active";
+        }
+      }
     });
 
-    if (this.ongoingTasks[0] && this.ongoingTasks[0].status !== "active")
-      await this.updateTaskStatus(this.ongoingTasks[0].UID, "active");
+    const firstOngoingTask = this.ongoingTasks[0];
+    if (this.ongoingTasks[0] && firstOngoingTask.status !== "active") {
+      await this.updateTaskStatus(firstOngoingTask.UID, "active");
+      firstOngoingTask.status = "active";
+      if (firstOngoingTask.isQuiz) {
+        this.quiz.status = "active";
+      }
+    }
 
     return this;
   }
@@ -418,12 +436,15 @@ export class Session {
   }
 
   calculateQuizElapsedTime() {
+    debugger;
     let quizPassed = false;
-    const quizElapsedTime = this.ongoingTasks.reduce((acc, task) => {
-      if (task === this.quiz) {
+    const quizElapsedTime = this.ongoingTasks.reduce((acc, task, index) => {
+      if (task.isQuiz) {
         quizPassed = true;
       }
       if (!quizPassed) {
+        if (index === 0)
+          return (acc += this.activeTaskRemainingTime / 1000 / 60);
         return (acc += task.durationInMins);
       }
       return acc;
@@ -506,15 +527,47 @@ export class Session {
   // !! implement this method
   sendMessage({ message, file }) {}
   // !! implement this
-  onComplete() {}
+  async onComplete() {
+    try {
+      await sendData("/api/end-session", { sessionId: Session.id });
+      window.history.replaceState({}, "", "/app/home");
+      showMessageBlock("Session finished", "info");
+    } catch (error) {
+      console.error("Error ending session:", error);
+      showMessageBlock(
+        "Error ending session. Please try again later.",
+        "error"
+      );
+    }
+  }
+
+  static endSession(btn) {
+    handleApiAction("/end-session", { sessionId: Session.id }, btn, {
+      onSuccess: () => {
+        history.pushState({}, "", "/app/home");
+        window.dispatchEvent(new PopStateEvent("popstate", { state: {} }));
+      },
+      successMsg: "Session ended successfully.",
+    });
+  }
+
+  static leaveSession(btn) {
+    handleApiAction("/leave-session", { sessionId: Session.id }, btn, {
+      onSuccess: () => navigateTo("/app/home"),
+      successMsg: "You have left the session successfully.",
+    });
+  }
 
   startSession() {
+    this.initTimer();
     if (this.quiz) {
-      this.quiz.updateElapsedTime(this.calculateQuizElapsedTime());
+      this.quiz.updateElapsedTime({
+        quizElapsedTime: this.calculateQuizElapsedTime(),
+        isQuizPassed: this.quiz.status === "completed",
+      });
     }
     this.displayComplatedTasks();
     this.displayOngoingTasks();
-    this.initTimer();
     return this;
   }
 

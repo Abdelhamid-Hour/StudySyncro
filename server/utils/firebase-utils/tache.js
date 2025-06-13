@@ -4,6 +4,7 @@ const tacheRef = db.collection("tache");
 
 const createTach = async (tacheData) => {
   try {
+
     if (tacheData) {
       await tacheRef.add(tacheData);
       return true;
@@ -92,28 +93,28 @@ const getTaches = async (sessionId) => {
   }
 };
 
-const changeTaskState = async (state, taskId) => {
+const changeTaskState = async (status, taskId) => {
   try {
     const ref = db.collection("tasks").doc(taskId);
     const snap = await ref.get();
     if (snap.exists) {
       await ref.update({
-        state: state,
+        status,
       });
       return {
         success: true,
-        message: `Task ${taskId} status updated to ${state}`,
+        message: `Task ${taskId} status updated to ${status}`,
       };
     }
-    return{
-        success : true , 
-        message : "uprdtyauediksdg"
-    }
+    return {
+      success: true,
+      message: "Task not found",
+    };
   } catch (error) {
     console.log(error);
     return {
       success: false,
-      message: "Could not update task state",
+      message: "Could not update task status",
     };
   }
 };

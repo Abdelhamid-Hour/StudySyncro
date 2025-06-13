@@ -5,6 +5,7 @@ import {
   handleOverlayClose,
   handleRoutingClick,
   openOverlayHandler,
+  toggleActiveLink,
   tooltipSetup,
   updateMain,
 } from './utils.js';
@@ -59,5 +60,6 @@ toggleModeBtn.addEventListener('click', () => {
 });
 
 window.addEventListener('popstate', () => {
+  toggleActiveLink(location.pathname);
   updateMain(location.pathname);
 });

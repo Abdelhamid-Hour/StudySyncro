@@ -100,7 +100,7 @@ const getChoices = async (examenId) => {
   }
 };
 
-const geQuiztDuration = async (user, quizId) => {
+const getQuizDuration = async (user, quizId) => {
   try {
     let duration = 0;
     const sessionRf = db.collection('sessions');
@@ -280,6 +280,6 @@ module.exports = {
   deleteChoice,
   addCorrectChoice,
   addChoice,
-  geQuiztDuration,
+  getQuizDuration,
   getQuestionsPlayContext,
 };
