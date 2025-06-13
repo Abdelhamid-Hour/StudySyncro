@@ -1,5 +1,6 @@
 const { FieldValue } = require('firebase-admin/firestore');
 const { db, admin } = require('../../firebase/firebaseAdmin');
+const { messaging } = require('firebase-admin');
 const createGroup = async (groupdData, userData) => {
   try {
     const groupRef = db.collection('groups');
@@ -359,16 +360,28 @@ const quitterGroup = async (groupId, userId) => {
         groupRef.update({
           members: FieldValue.arrayRemove(user),
         });
-        return true;
+        return {
+          success : true , 
+          message  : "Left the groupe"
+        }
       } else {
-        return false;
+        return {
+          success : false , 
+          message : "user not found"
+        };
       }
     } else {
-      return false;
+      return {
+        success : false , 
+        message : "group not found"
+      }
     }
   } catch (error) {
     console.log(error.message);
-    return false;
+   return {
+      success :false , 
+      message : "cant leave groupe , something went wrong"
+   }
   }
 };
 
@@ -476,7 +489,10 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
             await groupRef.update({
               nom_groupe: newValue,
             });
-            return true;
+            return  {
+    success: true,
+    message: 'Updated successfully',
+  };
           }
           break;
         }
@@ -485,23 +501,43 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
             await groupRef.update({
               description: newValue,
             });
-            return true;
+               return  {
+    success: true,
+    message: 'Updated successfully',
+  };
           }
           break;
-        case 'matiere':
+        case 'creator':
+          if (isNotEmpty) {
+            await groupRef.update({
+              creator: newValue,
+            });
+  return  {
+    success: true,
+    message: 'Updated successfully',
+  };;
+          }
+          break;
+        case 'subject':
           if (isNotEmpty) {
             await groupRef.update({
               matiere: newValue,
             });
-            return true;
+              return  {
+    success: true,
+    message: 'Updated successfully',
+  };
           }
           break;
-        case 'niveau':
+        case 'level':
           if (isNotEmpty) {
             await groupRef.update({
               niveau: newValue,
             });
-            return true;
+              return  {
+    success: true,
+    message: 'Updated successfully',
+  };
           }
           break;
         case 'visibility':
@@ -509,34 +545,51 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
             await groupRef.update({
               visibility: newValue,
             });
-            return true;
+              return  {
+    success: true,
+    message: 'Updated successfully',
+  };
           }
           break;
-        case 'nombre_members':
+        case 'MaxMembres':
           if (newValue != null) {
             await groupRef.update({
               maxMembers: newValue,
             });
-            return true;
+              return  {
+    success: true,
+    message: 'Updated successfully',
+  };
           }
           break;
-        case 'apparaitre_recherche':
+        case 'showInSearch':
           if (isNotEmpty) {
             await groupRef.update({
               apparaitre_recherche: newValue,
             });
-            return true;
+              return  {
+    success: true,
+    message: 'Updated successfully',
+  };
           }
           break;
         default:
-          return false;
+             return  {
+    success: false ,
+    message: 'cant update',
+  };
       }
     }
-    return false;
+       return  {
+    success: false,
+    message: 'cant update',
+  };
   } catch (error) {
     console.log(error.message);
-    return false;
-  }
+   return  {
+    success: false ,
+    message: 'cant update',
+  };  }
 };
 
 const deleteGroup = async (groupId) => {
@@ -622,6 +675,7 @@ const getChatContext = async (userId, groupId) => {
 };
 
 module.exports = {
+  quitterGroup ,
   getGroupInfo,
   createGroup,
   getAvailableGroups,

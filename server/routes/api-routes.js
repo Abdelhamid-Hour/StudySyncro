@@ -13,8 +13,8 @@ const {
   patchGroupHandler,
 } = require('../controllers/groups');
 const { generateTemplateContext } = require('../middleware/groups');
-const { createGroup, modifyGroup, deleteGroup } = require('../utils/firebase-utils/group');
-const { joinGroup, acceptRequest, rejectRequest } = require('../utils/firebase-utils/demandes');
+const { createGroup, modifyGroup, deleteGroup  , quitterGroup, modifieGroupPropertie} = require('../utils/firebase-utils/group');
+const { joinGroup, acceptRequest, rejectRequest, ajouterMembre, kickMember } = require('../utils/firebase-utils/demandes');
 const {
   getQuizzInfo,
   getSessionQuizzes,
@@ -26,7 +26,7 @@ const {
   patchQuizHandler,
 } = require('../controllers/quizzes');
 const { changeTaskState } = require('../utils/firebase-utils/tache');
-const { createGroupSession } = require('../utils/firebase-utils/session');
+const { createGroupSession, getActiveSession, annulerSession, leavSession } = require('../utils/firebase-utils/session');
 
 const apiRouter = express.Router();
 
@@ -82,43 +82,8 @@ apiRouter.get('/quizzes-list', async (req, res) => {
   });
 }); // * shoult test
 
-apiRouter.get('/active-session', (req, res) => {
-  const result = {
-    success: true,
-    sessionData: {
-      tasks: [
-        new Task({
-          UID: 'task-1',
-          title: 'Introduction to JavaScript',
-          description:
-            'Learn the basics of JavaScript, including syntax and variables.',
-          durationInMins: 30, // in minutes
-          status: 'completed',
-        }),
-        new Task({
-          UID: 'task-2',
-          title: 'Break',
-          durationInMins: 5, // in minutes
-          isBreak: true,
-          status: 'active',
-        }),
-        {
-          UID: '123',
-          title: 'JavaScript Quiz',
-          description: 'Test your knowledge of JavaScript basics.',
-          durationInMins: 10, // in minutes
-          questionsCount: 10,
-          status: 'pending',
-        },
-      ],
-      startDate: '2025-06-10T21:23:54.096Z',
-      id: '12345',
-      groupId: '67890',
-      durationInMins: 60, // in minutes
-      quiz: null,
-    },
-  };
-
+apiRouter.get('/active-session',async (req, res) => {
+  const result = await getActiveSession(req.user.uid)
   if (result.success) {
     return res.status(200).json({ ...result.sessionData });
   } else {
@@ -206,11 +171,8 @@ apiRouter.delete('/remove-group/:groupId', async (req, res) => {
 // Leave a group by userId and groupId
 apiRouter.post('/leave-group', async (req, res) => {
   const { groupId } = req.body;
-  // TODO: Implement leaveGroup logic
-  const result = {
-    success: true,
-    message: 'Left group',
-  };
+  const result = quitterGroup(groupId  , req.user.uid)
+ 
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
@@ -220,12 +182,11 @@ apiRouter.post('/leave-group', async (req, res) => {
 
 // Add members to a group by userId(s) and groupId
 apiRouter.post('/add-member', async (req, res) => {
+  
   const { memberId, groupId } = req.body; // !! check the userId
+    const result = await ajouterMembre(groupId  , memberId)
   // TODO: Implement addMembers logic
-  const result = {
-    success: true,
-    message: 'Member added to group',
-  };
+  
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
@@ -236,11 +197,9 @@ apiRouter.post('/add-member', async (req, res) => {
 // Kick a member from a group by groupId and userId
 apiRouter.post('/kick-member', async (req, res) => {
   const { groupId, memberId } = req.body;
+  const result  = await kickMember(groupId , memberId)
   // TODO: Implement kickMember logic
-  const result = {
-    success: true,
-    message: 'Member kicked from group',
-  };
+  
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
@@ -251,11 +210,9 @@ apiRouter.post('/kick-member', async (req, res) => {
 // Transfer role in a group by groupId, fromUserId, toUserId
 apiRouter.post('/transfer-role', async (req, res) => {
   const { groupId, memberId } = req.body;
+  const result = await modifieGroupPropertie(groupId , "creator" , memberId)
   // TODO: Implement transferRole logic
-  const result = {
-    success: true,
-    message: 'Role transferred in group',
-  };
+  
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
@@ -266,8 +223,9 @@ apiRouter.post('/transfer-role', async (req, res) => {
 // End a session by sessionId
 apiRouter.post('/end-session/:sessionId', async (req, res) => {
   const { sessionId } = req.params;
+  const result = await annulerSession(sessionId)
   // TODO: Implement endSession logic
-  const result = { success: true, message: 'Session ended' };
+ 
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
@@ -278,11 +236,8 @@ apiRouter.post('/end-session/:sessionId', async (req, res) => {
 // Leave a session by sessionId and userId
 apiRouter.post('/leave-session', async (req, res) => {
   const { sessionId, userId } = req.body;
-  // TODO: Implement leaveSession logic
-  const result = {
-    success: true,
-    message: 'Left session',
-  };
+  const result = await leavSession(userId  , sessionId)
+  
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
@@ -293,7 +248,7 @@ apiRouter.post('/leave-session', async (req, res) => {
 // Get examen result by userId and quizId
 apiRouter.get('/examen-result', async (req, res) => {
   const { userId, quizId } = req.query;
-  // TODO: Implement getExamenResult logic
+  
   const result = {
     success: true,
     message: 'Examen result',

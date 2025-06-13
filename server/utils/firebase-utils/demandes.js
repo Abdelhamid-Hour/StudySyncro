@@ -268,13 +268,7 @@ const getRequests = async (groupId, userId) => {
 const getMembers = async (groupId, userId) => {
   try {
     const group = await getGroupByID(groupId);
-    await db.collection('mail').add({
-      to: ['zackspinoza999@gmail.com'],
-      message: {
-        subject: 'hello!',
-        html: '<h1>Hello Zakaria!</h1><p>Thanks for joining us!</p>',
-      },
-    }); // ! what is this
+   
 
     if (!group) return { success: false, message: 'Group not found' };
     const kamo =
@@ -308,12 +302,21 @@ const kickMember = async (groupId, userId) => {
       await groupRef.update({
         members: FieldValue.arrayRemove(user),
       });
-      return true;
+      return  {
+    success: true,
+    message: 'Member kicked from group',
+  };
     }
-    return false;
+    return    {
+    success: false ,
+    message: 'user not found',
+  };;
   } catch (error) {
     console.log(error.message);
-    return false;
+     return  {
+    success: false ,
+    message: 'Something went wrong',
+  };
   }
 };
 
@@ -324,5 +327,6 @@ module.exports = {
   acceptRequest,
   rejectRequest,
   joinGroup,
+  ajouterMembre ,
   getMembers,
 };
