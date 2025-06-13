@@ -145,9 +145,7 @@ apiRouter.post('/update-task-status', async (req, res) => {
 apiRouter.post('/create-session', async (req, res) => {
   const sessionData = req.body.sessionData;
 
-
   const result = await createSessions(sessionData);
-  console.log(result, 'result');
 
   if (result.success) {
     return res.status(200).json({ message: result.message });
@@ -156,7 +154,7 @@ apiRouter.post('/create-session', async (req, res) => {
       message: result.message,
     });
   }
-}); // ! should implement with firebase
+}); // * should test
 
 // Accept a join request by userId and groupId
 apiRouter.post('/accept-demande', async (req, res) => {
