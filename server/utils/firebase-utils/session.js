@@ -497,18 +497,12 @@ const getActiveSession = async (userId) => {
     const userSnap = await userRef.get();
     const taskRef = db.collection("tasks");
 
-
     if (!userSnap.exists) {
       console.warn(`User with ID ${userId} not found.`);
       return null;
     }
 
-
     const user = userSnap.data();
-    const tasksSnap = await taskRef
-      .where("sessionId", "==", user.currentSession)
-      .get();
-    const tasks = tasksSnap.docs.map((doc) => ({
     const tasksSnap = await taskRef
       .where("sessionId", "==", user.currentSession)
       .get();
