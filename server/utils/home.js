@@ -1,5 +1,5 @@
 const { getJoinedGroups } = require('./firebase-utils/group');
-const { getCurrentSessionInfo, getFetchActiveSessions, getSessionInformations } = require('./firebase-utils/session');
+const { getCurrentSessionInfo, getSessionInformations, getFetchActiveSessions } = require('./firebase-utils/session');
 const {
   Task,
   Quiz,

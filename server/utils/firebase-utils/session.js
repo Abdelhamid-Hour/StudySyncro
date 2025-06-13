@@ -1,6 +1,6 @@
-const { FieldValue } = require('firebase-admin/firestore');
-const { db } = require('../../firebase/firebaseAdmin');
-const { formatHoursMinutes } = require('../global');
+const { FieldValue } = require("firebase-admin/firestore");
+const { db } = require("../../firebase/firebaseAdmin");
+const { formatHoursMinutes } = require("../global");
 
 /**
  * {
@@ -38,7 +38,7 @@ const createGroupSession = async (sessionData, userId) => {
     if (!sessionData) {
       return {
         success: false,
-        message: 'no data is received',
+        message: "no data is received",
       };
     }
 
@@ -51,33 +51,33 @@ const createGroupSession = async (sessionData, userId) => {
       sessionQuiz: { UID: quizId },
     } = sessionData;
 
-    const groupRef = db.collection('groups').doc(groupId);
+    const groupRef = db.collection("groups").doc(groupId);
     const groupSnap = await groupRef.get();
     if (groupSnap.exists) {
       const groupData = groupSnap.data();
       if (groupData.creator !== userId) {
         return {
           success: false,
-          message: 'You are not the creator of this group',
+          message: "You are not the creator of this group",
         };
       }
     }
-    
+
     const newSessionData = {
-      name: name || '',
-      description: description || '',
+      name: name || "",
+      description: description || "",
       duration: duration || 0,
       startDate: new Date().toISOString(),
-      groupId: groupId || '',
-      quizId: quizId || '',
-      status: 'active',
+      groupId: groupId || "",
+      quizId: quizId || "",
+      status: "active",
     };
 
-    const sessionRef = db.collection('sessions');
+    const sessionRef = db.collection("sessions");
     const docRef = await sessionRef.add(newSessionData);
     const newSessionId = docRef.id;
 
-    const creator = db.collection('users').doc(userId);
+    const creator = db.collection("users").doc(userId);
     await creator.update({
       currentSession: newSessionId,
     });
@@ -88,17 +88,17 @@ const createGroupSession = async (sessionData, userId) => {
       });
 
       if (tasks && tasks.length > 0) {
-        const taskRef = db.collection('tasks');
+        const taskRef = db.collection("tasks");
         const taskPromises = tasks.map((task) => {
           const taskDocData = {
-            title: task.title || '',
+            title: task.title || "",
             durationInMin: task.durationInMin || 0,
             isBreak: task.isBreak || false,
             isQuiz: task.isQuiz || false,
-            description: task.description || '',
-            groupId: groupId || '',
+            description: task.description || "",
+            groupId: groupId || "",
             sessionId: newSessionId,
-            status: 'pending',
+            status: "pending",
           };
           return taskRef.add(taskDocData);
         });
@@ -107,25 +107,25 @@ const createGroupSession = async (sessionData, userId) => {
 
       return {
         success: true,
-        message: 'Session created successfully',
+        message: "Session created successfully",
       };
     }
   } catch (error) {
     console.log(error);
     return {
       success: false,
-      message: 'Cant create session',
+      message: "Cant create session",
     };
   }
 };
 const modifieSessionPropertie = async (newValue, propertie, session_id) => {
   try {
-    const sessionRef = db.collection('sessions').doc(session_id);
+    const sessionRef = db.collection("sessions").doc(session_id);
     const snapshot = await sessionRef.get();
     const session = snapshot.data();
     if (session) {
       switch (propertie) {
-        case 'title':
+        case "title":
           if (isNotEmpty) {
             ref.update({
               title: value,
@@ -134,7 +134,7 @@ const modifieSessionPropertie = async (newValue, propertie, session_id) => {
           }
           break;
 
-        case 'description':
+        case "description":
           if (isNotEmpty) {
             ref.update({
               description: value,
@@ -142,7 +142,7 @@ const modifieSessionPropertie = async (newValue, propertie, session_id) => {
             return true;
           }
           break;
-        case 'totalDuration':
+        case "totalDuration":
           if (isNotEmpty) {
             ref.update({
               totalDuration: value,
@@ -164,48 +164,46 @@ const modifieSessionPropertie = async (newValue, propertie, session_id) => {
 
 const annulerSession = async (sessionId) => {
   try {
-    const sessionRef = db.collection('sessions').doc(sessionId);
+    const sessionRef = db.collection("sessions").doc(sessionId);
     const snapshot = await sessionRef.get();
     const session = snapshot.data();
     if (session) {
-      await  sessionRef.delete();
-      return { success: true, message: 'Session ended' };
+      await sessionRef.delete();
+      return { success: true, message: "Session ended" };
     } else {
-      return { success: false , message: 'Cant end session' };
+      return { success: false, message: "Cant end session" };
     }
   } catch (error) {
     console.log(error.message);
-   return { success: false , message: 'Somethign went wrong' };
+    return { success: false, message: "Somethign went wrong" };
   }
 };
 
+const leavSession = async (userID, sessionId) => {
+  const ref = db.collection("users").doc(userID);
+  const snap = await ref.get();
+  const data = ref.data();
 
-const leavSession  = async(userID , sessionId)=>{
-  const ref = db.collection("users").doc(userID)
-  const snap = await  ref.get()
-  const data =  ref.data()  
-
-  if(ref.exists){
+  if (ref.exists) {
     await ref.update({
-      currentSession  : ""
-    })
+      currentSession: "",
+    });
     return {
-      success : true , 
-      message : "left the session "
-    }
-  }
-  else {
+      success: true,
+      message: "left the session ",
+    };
+  } else {
     return {
-      success : false , 
-      message : "Cant leave session"
-    }
+      success: false,
+      message: "Cant leave session",
+    };
   }
-}
+};
 
 const getCurrentSessionInfo = async (userId) => {
   try {
     console.log(userId);
-    const userRef = db.collection('users').doc(userId);
+    const userRef = db.collection("users").doc(userId);
     const userSnap = await userRef.get();
 
     if (!userSnap.exists) {
@@ -215,12 +213,12 @@ const getCurrentSessionInfo = async (userId) => {
 
     const user = userSnap.data();
 
-    if (!user || !user.currentSession || user.currentSession === '') {
+    if (!user || !user.currentSession || user.currentSession === "") {
       console.log(`User ${userId} does not have an active session.`);
       return null;
     }
 
-    const sessionRef = db.collection('sessions').doc(user.currentSession);
+    const sessionRef = db.collection("sessions").doc(user.currentSession);
     const sessionSnap = await sessionRef.get();
 
     if (!sessionSnap.exists) {
@@ -233,9 +231,9 @@ const getCurrentSessionInfo = async (userId) => {
     const session = sessionSnap.data();
 
     const [groupSnap, quizSnap] = await Promise.all([
-      db.collection('groups').doc(session.groupId).get(),
+      db.collection("groups").doc(session.groupId).get(),
       session.quizId
-        ? db.collection('quizzes').doc(session.quizId).get()
+        ? db.collection("quizzes").doc(session.quizId).get()
         : Promise.resolve(null),
     ]);
 
@@ -250,7 +248,8 @@ const getCurrentSessionInfo = async (userId) => {
     const quiz = quizSnap && quizSnap.exists ? quizSnap.data() : null;
 
     const startDate = session.startDate;
-    const endDateTimestamp = new Date(startDate).getTime() + session.duration * 60 * 1000;
+    const endDateTimestamp =
+      new Date(startDate).getTime() + session.duration * 60 * 1000;
 
     return {
       name: session.name,
@@ -264,7 +263,7 @@ const getCurrentSessionInfo = async (userId) => {
       quiz: quiz,
     };
   } catch (error) {
-    console.error('Error getting current session info:', error);
+    console.error("Error getting current session info:", error);
     return null;
   }
 };
@@ -319,13 +318,13 @@ const getFetchActiveSessions = async (userId) => {
     }
 
     const groupNamesMap = new Map();
-    userGroupsSnapshot.forEach(groupDoc => {
+    userGroupsSnapshot.forEach((groupDoc) => {
       const groupData = groupDoc.data();
       groupNamesMap.set(groupDoc.id, groupData.name);
     });
 
     const sessionIdsToFetch = new Set();
-    userGroupsSnapshot.forEach(groupDoc => {
+    userGroupsSnapshot.forEach((groupDoc) => {
       const groupData = groupDoc.data();
       if (groupData.currentSession && groupData.currentSession !== "") {
         sessionIdsToFetch.add(groupData.currentSession);
@@ -333,49 +332,59 @@ const getFetchActiveSessions = async (userId) => {
     });
 
     if (sessionIdsToFetch.size === 0) {
-      console.log(`No active sessions found for user ${userId} in any joined groups.`);
+      console.log(
+        `No active sessions found for user ${userId} in any joined groups.`
+      );
       return [];
     }
 
     const sessionIDsArray = Array.from(sessionIdsToFetch);
 
     const [sessionSnapshots, taskQuerySnapshots] = await Promise.all([
-      Promise.all(sessionIDsArray.map(sessionId => sessionRef.doc(sessionId).get())),
-      Promise.all(sessionIDsArray.map(sessionId => taskRef.where("sessionId", "==", sessionId).get()))
+      Promise.all(
+        sessionIDsArray.map((sessionId) => sessionRef.doc(sessionId).get())
+      ),
+      Promise.all(
+        sessionIDsArray.map((sessionId) =>
+          taskRef.where("sessionId", "==", sessionId).get()
+        )
+      ),
     ]);
 
     const activeSessionsData = sessionSnapshots
-      .filter(sessionSnap => sessionSnap.exists)
-      .map(sessionSnap => ({
+      .filter((sessionSnap) => sessionSnap.exists)
+      .map((sessionSnap) => ({
         id: sessionSnap.id,
-        ...sessionSnap.data()
+        ...sessionSnap.data(),
       }));
 
     const tasksBySessionId = new Map();
-    taskQuerySnapshots.forEach(querySnap => {
-      querySnap.forEach(taskDoc => {
+    taskQuerySnapshots.forEach((querySnap) => {
+      querySnap.forEach((taskDoc) => {
         const taskData = taskDoc.data();
         if (taskData.sessionId) {
           if (!tasksBySessionId.has(taskData.sessionId)) {
             tasksBySessionId.set(taskData.sessionId, []);
           }
-          tasksBySessionId.get(taskData.sessionId).push({ id: taskDoc.id, ...taskData });
+          tasksBySessionId
+            .get(taskData.sessionId)
+            .push({ id: taskDoc.id, ...taskData });
         }
       });
     });
 
     const formattedSessions = activeSessionsData.map((session) => {
       const startTime = session.startDate;
-      const endTime = startTime + (session.duration * 60 * 1000);
+      const endTime = startTime + session.duration * 60 * 1000;
 
-      const groupName = groupNamesMap.get(session.groupId) || 'Unknown Group';
+      const groupName = groupNamesMap.get(session.groupId) || "Unknown Group";
       const sessionTasks = tasksBySessionId.get(session.id) || [];
 
       return {
         UID: session.id,
-        name: session.name || '',
+        name: session.name || "",
         groupName: groupName,
-        description: session.description || '',
+        description: session.description || "",
         startTime: formatHoursMinutes(startTime),
         endTime: formatHoursMinutes(endTime),
         duration: millisecondsToHMFormat(session.duration * 60 * 1000),
@@ -385,14 +394,11 @@ const getFetchActiveSessions = async (userId) => {
     });
 
     return formattedSessions;
-
   } catch (error) {
     console.error("Error getting active sessions:", error);
     return [];
   }
 };
- 
-
 
 const getSessionInformations = async (sessionID) => {
   try {
@@ -440,25 +446,31 @@ const getSessionInformations = async (sessionID) => {
     return null;
   }
 };
- 
- const getActiveSession = async (userId)=>{
-try {
-    const userRef = db.collection('users').doc(userId);
-    const userSnap = await userRef.get();
 
+const getActiveSession = async (userId) => {
+  try {
+    const userRef = db.collection("users").doc(userId);
+    const userSnap = await userRef.get();
+    const taskRef = db.collection("tasks");
+    
     if (!userSnap.exists) {
       console.warn(`User with ID ${userId} not found.`);
       return null;
     }
-
+    
     const user = userSnap.data();
+    const tasksSnap = await taskRef.where("sessionId", "==", user.currentSession).get();
+    const tasks = tasksSnap.docs.map(doc => ({
+      UID: doc.id,
+      ...doc.data(),
+    }));
 
-    if (!user || !user.currentSession || user.currentSession === '') {
+    if (!user || !user.currentSession || user.currentSession === "") {
       console.log(`User ${userId} does not have an active session.`);
       return null;
     }
 
-    const sessionRef = db.collection('sessions').doc(user.currentSession);
+    const sessionRef = db.collection("sessions").doc(user.currentSession);
     const sessionSnap = await sessionRef.get();
 
     if (!sessionSnap.exists) {
@@ -471,9 +483,9 @@ try {
     const session = sessionSnap.data();
 
     const [groupSnap, quizSnap] = await Promise.all([
-      db.collection('groups').doc(session.groupId).get(),
+      db.collection("groups").doc(session.groupId).get(),
       session.quizId
-        ? db.collection('quizzes').doc(session.quizId).get()
+        ? db.collection("quizzes").doc(session.quizId).get()
         : Promise.resolve(null),
     ]);
 
@@ -488,50 +500,55 @@ try {
     const quiz = quizSnap && quizSnap.exists ? quizSnap.data() : null;
 
     const startDate = session.startDate;
-
-    return {success : true , 
-    sessionData : {  id : session.id ,
-      name: session.name,
-      startDate: formatHoursMinutes(startDate),
-      durationInMins: session.duration,
-      groupId  : session.groupId ,
-      quiz: quiz,}
+    return {
+      success: true,
+      sessionData: {
+        id: session.id,
+        name: session.name,
+        startDate: formatHoursMinutes(startDate),
+        durationInMins: session.duration,
+        groupId: session.groupId,
+        quiz: {
+          ...quiz,
+          UID: session.quizId || "",
+        },
+        tasks: tasks
+      },
     };
+  } catch (error) {
+    console.log("error");
+  }
+};
 
-  
-} catch (error) {
-  console.log("error")
-}
- }
-
-const joinSession = async(sessionId  , userId)=>{
-    try {
-        const ref = db.collection("sessions").doc(sessionId)
-        const snap = await ref.get()
-        const useref = db.collection("users").doc(userId)
-        const usSnap =await   useref.get()
-        if(snap.exists && usSnap.exists){
-            await usSnap.update({
-                currentSession : sessionId
-            })
-            return {
-                success : true , 
-                message : "You joined the session succcessfully"
-            }
-        }
-    } catch (error) {
-        return {
-            success : false , 
-            message : "Somethign wrong happened , please try again later"
-        }
+const joinSession = async (sessionId, userId) => {
+  try {
+    const ref = db.collection("sessions").doc(sessionId);
+    const snap = await ref.get();
+    const useref = db.collection("users").doc(userId);
+    const usSnap = await useref.get();
+    if (snap.exists && usSnap.exists) {
+      await usSnap.update({
+        currentSession: sessionId,
+      });
+      return {
+        success: true,
+        message: "You joined the session succcessfully",
+      };
     }
-}
+  } catch (error) {
+    return {
+      success: false,
+      message: "Somethign wrong happened , please try again later",
+    };
+  }
+};
 
 module.exports = {
-  leavSession ,
-  getActiveSession ,
+  leavSession,
+  getActiveSession,
   modifieSessionPropertie,
   createGroupSession,
   annulerSession,
   getCurrentSessionInfo,
+  getFetchActiveSessions,
 };

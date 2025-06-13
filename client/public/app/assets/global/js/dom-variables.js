@@ -9,6 +9,7 @@ export const topSideBarFooter = document.querySelector('.top-side-bar-footer');
 export const hoverTooltip = document.getElementById('hover-tooltip');
 export const globalTooltip = document.getElementById('global-tooltip');
 export const mainContainer = document.querySelector('main');
+export const toggleModeBtn = document.querySelector('.toggle-container');
 const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 export let boxRowCount;
 export const boxTotalCount = 12;
