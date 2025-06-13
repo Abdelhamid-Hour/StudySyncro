@@ -633,6 +633,11 @@ const modiferQuizQuestions = async (
         operations.push(...creation);
       }
 
+      const snap = await  questionnsRef.where("quizId" , "=="  , quizzId).get()
+      const size = snap.size()
+      operations.push(quizzRef.update({
+        questionsCount : size 
+      }))
       await Promise.all(operations);
 
       return {
