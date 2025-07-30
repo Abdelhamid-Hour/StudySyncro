@@ -12,7 +12,6 @@ const getCurrentSession = async (userId) => {
   // ! firestore query for if the user is join to any session
   // ! you can add a index to the quiz collection for know the task order
   const response = await getCurrentSessionInfo(userId);
-  console.log(response, 'curret session');
   return response;
 };
 

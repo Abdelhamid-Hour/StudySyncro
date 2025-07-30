@@ -89,7 +89,7 @@
             Joined Count
           </label>
           <div class="joined-count-content">
-            <span class="joined-count"><%= session.joinedCount %> Members</span>
+            <span class="joined-count"><%= session.joinedCount %></span>
           </div>
         </div>
         <div class="session-description-container info-container">
@@ -354,12 +354,17 @@
             <i class="bi bi-clipboard-check-fill"></i>
             <h2>Quiz</h2>
           </div>
-          <!-- <div class="badges">
-            <span class="badge in-progress-badge">
-              <i class="bi bi-clock-history"></i>
-              In Progress
+          <% if (!session.isAdmin && session.quiz && session.quiz.passed) { %>
+           <span class="quiz-note badge gray-badge"><i class="bi bi-info-circle"></i>You already passed this quiz. You cannot retake it.</span>
+          <% } %>
+          <% if (session.quiz) { %>
+           <div class="badges">
+            <span class="status-badge badge <%= session.quiz.status === 'active' ? 'orange-badge' : session.quiz.status === 'completed' ? 'green-badge' : 'gray-badge' %>">
+                <i class="bi <%= session.quiz.status === 'active' ? 'bi-clock-history' : session.quiz.status === 'completed' ? 'bi-check-circle' : 'bi-hourglass' %>"></i>
+              <%= session.quiz.status === 'active' ? 'In Progress' : session.quiz.status === 'completed' ? 'Completed' : 'Pending' %>
             </span>
-          </div> -->
+          </div>
+          <% } %>
         </header>
         <div class="quiz-details">
           <div class="quiz-title-container<%= !session.quiz ? ' no-quiz' : '' %> info-container">
@@ -381,21 +386,36 @@
               <span class="start-time">--m</span>
             </div>
           </div>
-          <div class="submitted-container<%= !session.quiz ? ' no-quiz' : '' %> info-container small-container">
+          <% if (!session.isAdmin) { %>
+           <div class="submitted-container<%= !session.quiz ? ' no-quiz' : '' %> info-container small-container">
             <label class="submitted-label"><span class="icon-box"><i class="bi bi-check2-all"></i></span>Submitted</label>
             <div class="submitted">
-              <span class="submitted-count"><%= session.quiz && session.quiz.status === "completed" ? `${session.quiz.submittedQuestions} of ${session.quiz.questionsCount}` : '-- of --' %> Questions</span>
+              <span class="submitted-count"><%= session.quiz && session.quiz.passed ? `${session.quiz.submittedCount} of ${session.quiz.questionsCount}` : '-- of --' %> Questions</span>
               <div class="progress-back">
-                <div <%- !session.quiz ? 'style="width: 0;"' : '' %> class="progress"></div>
+                <div style="width: <%= session.quiz && session.quiz.passed ? session.quiz.percentage : '0' %>%;" class="progress"></div>
               </div>
             </div>
           </div>
+          <% } %>
         </div>
         <footer class="quiz-footer">
-          <div class="score-container<%= !session.quiz ? ' no-quiz' : '' %> info-container">
+          <% if (!session.isAdmin && session.quiz && session.quiz.passed) { %>
+           <div class="score-container<%= !session.quiz ? ' no-quiz' : '' %> info-container">
             <label>Your Score</label>
-            <span class="score"><%= session.quiz && session.quiz.status === "completed" ? `${session.quiz.persentage}%` : '_____' %></span>
+            <span class="score"><%= session.quiz && session.quiz.passed ? `${session.quiz.percentage}%` : '_____' %></span>
           </div>
+          <% } %>
+          <% if (session.quiz) { %>
+            <% if ((session.isAdmin && session.quiz.status === 'completed') || (!session.isAdmin && (session.quiz.status === 'completed' || session.quiz.passed))) { %>
+              <button
+               type="button"
+               class="result-btn should-fill"
+             >
+               <i class="bi bi-eye"></i>
+               View <%= session.isAdmin ? 'Results' : 'Result' %>
+             </button>
+            <% } %>
+          <% } %>
         </footer>
       </div>
     </div>

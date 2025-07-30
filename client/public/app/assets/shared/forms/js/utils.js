@@ -181,7 +181,7 @@ export const toCapitalizeFirstLetter = (str) => {
 export const handleSelectSearchInput = (e, selectMenu) => {
   const searchValue = e.target.value.trim().toLowerCase();
   const items = document.querySelectorAll(
-    '.group-subject-select-menu .select-item'
+    '.select-menu .select-item'
   );
   items.forEach((item) => {
     const itemText = item.textContent.toLowerCase();

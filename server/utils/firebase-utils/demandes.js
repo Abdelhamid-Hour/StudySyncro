@@ -5,13 +5,10 @@ const { messaging } = require('firebase-admin');
 
 const ajouterMembre = async (groupId, userId) => {
   try {
-    console.log(groupId, 'group id ');
     const groupRef = db.collection('groups').doc(groupId);
-    console.log('userIs', userId);
     const userRef = db.collection('users').doc(userId);
     const userSnap = await userRef.get();
     const groupSnap = await groupRef.get();
-    console.log(userSnap, 'user data from the database');
     // Check if group exists, user exists, and user is not already a member
     if (!groupSnap.exists) {
       return { message: 'Group  does not exist', success: false };

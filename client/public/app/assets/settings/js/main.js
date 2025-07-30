@@ -14,7 +14,13 @@ import {
   handleSettingsWrapperClick,
 } from './utils.js';
 
-export const init = () => {
+let firstLoad = true;
+
+export const init = (virtual = false) => {
+  if (virtual && firstLoad) {
+    firstLoad = false; // Prevent re-initialization on subsequent calls
+    return;
+  }
   initDomVariables();
 
   settingsWrapper.addEventListener('click', handleSettingsWrapperClick);

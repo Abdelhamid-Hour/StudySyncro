@@ -7,7 +7,6 @@ const INITIALE_LOADERS_COUNT = 20;
 
 const getGroupChatContext = async (userId, groupId) => {
   const result = await getChatContext(userId, groupId);
-  console.log("reult", result);
 
   return result;
 };
@@ -15,9 +14,7 @@ const getGroupChatContext = async (userId, groupId) => {
 // Group Left Side Bar Contexts
 
 const getGroupInfoContext = async (id, user) => {
-  console.log(id, user, "this is the data from the router");
   const groupInfo = await getGroupInfo(id, user.uid);
-  console.log("group info", groupInfo);
   return groupInfo;
 };
 
@@ -63,7 +60,6 @@ const getSessionInfoContext = () => {
 
 const getMembersListContext = async (id, user) => {
   const result = await getMembers(id, user.uid);
-  console.log(result.context.members);
 
   return result;
 };

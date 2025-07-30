@@ -33,46 +33,20 @@
 // fix the scroll to the end of the containre fliker while dragging
 // dont forgot kick and transfer rule
 
- Group Cards
-Subject (Matière)
-Dropdown or tag-based multi-select so users can pick one or more subjects.
 
-Level
-(e.g. “1ère année”, “2ème année”, etc.)
+- What you should do next : 
 
-Visibility
-Public / Private toggle.
++ submit the examen result from quiz play page
 
-Status
-Active / Inactive (or “Session started”, “Session upcoming”).
+add show result button:
+for user : if submit the quiz or the quiz task has been completed
+for admin: after the quiz task completed and the btn text is : 'show Results' (list of users results)
 
-Max Members
-Range slider (e.g. show only groups with 5–20 members).
 
-Date Created
-Date-picker range (or presets: Today, Last week, Last month).
++ quiz play:
 
-User Role in Group
-(Admin vs Member vs Not yet joined)
+if the user has been passed the quiz dont let him repassed with new result *
 
-2. Quizzes
-Subject
-Multi-select tags.
+dont let the admin pass the exam by the url
 
-Creator
-Filter by teacher name.
-
-Difficulty
-(Easy / Medium / Hard / Custom scale).
-
-Date Created
-Date-picker range or quick presets.
-
-Status
-Draft / Published / Archived.
-
-Due Date
-Upcoming / Expired / No due date.
-
-Number of Questions
-Range slider.
+remove the quiz if is empty or without quetions

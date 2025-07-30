@@ -1,12 +1,12 @@
 // Add Event listener for eye icon click to toggle password visibility
 export const handlEyeIconsClick = (eyeIcons) => {
   eyeIcons.forEach((e) => {
-    e.addEventListener("click", () => {
-      e.lastElementChild.classList.toggle("show");
-      if (e.previousElementSibling.getAttribute("type") === "password") {
-        e.previousElementSibling.setAttribute("type", "text");
+    e.addEventListener('click', () => {
+      e.lastElementChild.classList.toggle('show');
+      if (e.previousElementSibling.getAttribute('type') === 'password') {
+        e.previousElementSibling.setAttribute('type', 'text');
       } else {
-        e.previousElementSibling.setAttribute("type", "password");
+        e.previousElementSibling.setAttribute('type', 'password');
       }
     });
   });
@@ -47,19 +47,19 @@ export const removeBlock = function () {
  */
 export const showMessageBlock = (message, type) => {
   let messagesBlocksWrapper = document.querySelector(
-    ".messages-blocks-wrapper"
+    '.messages-blocks-wrapper'
   );
   if (!messagesBlocksWrapper) {
-    messagesBlocksWrapper = document.createElement("div");
-    messagesBlocksWrapper.className = "messages-blocks-wrapper";
+    messagesBlocksWrapper = document.createElement('div');
+    messagesBlocksWrapper.className = 'messages-blocks-wrapper';
     document.body.appendChild(messagesBlocksWrapper);
   }
-  const msgBlock = document.createElement("div");
+  const msgBlock = document.createElement('div');
   msgBlock.className = `${type}-block`;
   msgBlock.innerHTML = `
     <p>
       <i class="bi bi-${
-        type === "error" ? "exclamation" : type === "info" ? "info" : "check"
+        type === 'error' ? 'exclamation' : type === 'info' ? 'info' : 'check'
       }-circle-fill"></i>
       <span>${message}</span>
     </p>
@@ -68,7 +68,7 @@ export const showMessageBlock = (message, type) => {
       <hr>
     </div>
   `;
-  msgBlock.querySelector(".bi-x").addEventListener("click", removeBlock);
+  msgBlock.querySelector('.bi-x').addEventListener('click', removeBlock);
   const firstMsgBlockChild = messagesBlocksWrapper.firstElementChild;
   messagesBlocksWrapper.insertBefore(msgBlock, firstMsgBlockChild);
   setTimeout(() => {
@@ -77,29 +77,34 @@ export const showMessageBlock = (message, type) => {
 };
 
 const fetchStructure = async (url, method, options, extraHeaders) => {
-  const csrfToken = getCookie("csrfToken");
+  const csrfToken = getCookie('csrfToken');
   const response = await fetch(url, {
     method: method,
     headers: {
       ...extraHeaders,
       csrfToken: csrfToken,
     },
-    credentials: "include",
+    credentials: 'include',
     ...options,
   });
   if (!response.ok) {
     if (response.status === 401) {
       // Handle unauthorized access
       showMessageBlock(
-        "🚫 You are not authorized to access this resource. Please log in.",
-        "error"
-      )
+        '🚫 You are not authorized to access this resource. Please log in.',
+        'error'
+      );
       setTimeout(() => {
-        redirectTo("/login");
-      }
-      , 2000);
+        redirectTo('/login');
+      }, 2000);
       return;
     }
+
+    // if the responce is for redirection
+    if (response.status === 301) {
+      history.back();
+    }
+
     const responseData = await response.json();
     const error = new Error(responseData.message);
     error.data = responseData;
@@ -114,12 +119,12 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
  * @param {String} url - The URL to send data to
  * @param {Object} data - The data to send
  */
-export const sendData = async (url, data, method = "POST") => {
+export const sendData = async (url, data, method = 'POST') => {
   const response = await fetchStructure(
     url,
     method,
     { body: JSON.stringify(data) },
-    { "Content-Type": "application/json" }
+    { 'Content-Type': 'application/json' }
   );
   return response;
 };
@@ -127,15 +132,15 @@ export const sendData = async (url, data, method = "POST") => {
 export const fetchTemplate = async (url) => {
   const response = await fetchStructure(
     url,
-    "GET",
+    'GET',
     {},
-    { "x-requested-with": "fetch" }
+    { 'x-requested-with': 'fetch' }
   );
   return response;
 };
 
 export const fetchData = async (url) => {
-  const response = await fetchStructure(`/api${url}`, "GET", {}, {});
+  const response = await fetchStructure(`/api${url}`, 'GET', {}, {});
   return response;
 };
 /**
@@ -144,7 +149,7 @@ export const fetchData = async (url) => {
  * @returns Cookie value
  */
 export const getCookie = (name) => {
-  const cookies = document.cookie.split("; ");
+  const cookies = document.cookie.split('; ');
   const cookie = cookies.find((c) => c.startsWith(name));
-  return cookie ? cookie.split("=")[1] : null;
+  return cookie ? cookie.split('=')[1] : null;
 };

@@ -1,7 +1,6 @@
 :root {
   --primary-shadow: 0px 0px 4px var(--primary-shadow-color);
   --primary-hover-shadow: 0 0px 5px var(--primary-color);
-  --primary-transition-style: 300ms ease-out;
   --short-transition-style: 150ms ease-out;
   --overlay-transition-style: 200ms ease-out;
   --primary-border-style: 1px solid var(--container-border-color);
@@ -537,8 +536,8 @@ textarea {
             border-bottom: var(--primary-border-style);
           }
         }
-        li:hover {
-          a {
+        li {
+          a:hover {
             background-color: var(--background-color);
             color: var(--primary-color);
           }

@@ -93,12 +93,17 @@ const handleQuizPlayRoute = async (req, res) => {
   //   totalQuestions: 10,
   //   quizTitle: 'Geography Quiz',
   // }; // Replace with actual logic to get group chat context
-  const response = await getQuizzPlayContext(req.user.uid, req.params.quizId);
+  console.log('request params:', req.params);
+  
+  const response = await getQuizzPlayContext(req.user, req.params.quizId);
   const templateContext = response.templateContext;
+
+  console.log('responce: ', response);
 
   const payload = {
     templateContext,
   };
+
   if (!response.success) {
     const backUrl = req.header('Referer') || '/app/home';
     return res.redirect(backUrl);

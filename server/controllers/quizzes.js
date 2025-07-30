@@ -1,4 +1,9 @@
-const { createExamen, modiferQuizQuestions, updateQuizTitle, updateQuizSubject } = require("../utils/firebase-utils/examen");
+const {
+  createExamen,
+  modifyQuizQuestions,
+  updateQuizTitle,
+  updateQuizSubject,
+} = require('../utils/firebase-utils/examen');
 
 const createQuizHandler = async (req, res) => {
   const quizData = req.body.quizData;
@@ -21,7 +26,7 @@ const updateQuizHandler = async (req, res) => {
   const deletedQuestions = req.body.deletedQuestions;
   const quizzId = req.params.quizId;
   const userData = req.user;
-  const result = await modiferQuizQuestions(
+  const result = await modifyQuizQuestions(
     updatedQuestions,
     newQuestions,
     deletedQuestions,

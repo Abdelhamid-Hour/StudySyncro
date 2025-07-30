@@ -671,6 +671,12 @@
     flex-basis: 55% !important;
   }
 
+  .quiz-value:has(
+      + *.session-quiz-title:not([value=""])
+    ) {
+    color: var(--primary-text-color);
+  }
+
   .select-menu {
     overflow: hidden;
     display: flex;

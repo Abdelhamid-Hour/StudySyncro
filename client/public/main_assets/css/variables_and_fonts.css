@@ -106,4 +106,5 @@
   --primary-radius: 5px;
   --disabled-text-color: var(--btn-border-color);
   --disabled-background-color: var(--btn-background-color);
+  --primary-transition-style: 300ms ease-out;
 }

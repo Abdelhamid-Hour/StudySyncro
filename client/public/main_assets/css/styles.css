@@ -58,7 +58,8 @@ button,
   transition: color var(--primary-transition-style),
     background-color var(--primary-transition-style),
     border-color var(--primary-transition-style),
-    box-shadow var(--primary-transition-style);
+    box-shadow var(--primary-transition-style),
+    scale var(--primary-transition-style);
   color: var(--btn-text-color);
 
   &:disabled,

@@ -28,38 +28,38 @@ class Quiz extends Task {
 
 const pathNames = {
   home: {
-    inactive: "/home/inactive",
-    active: "/home/active",
+    inactive: '/home/inactive',
+    active: '/home/active',
   },
   groups: {
-    my: "/groups/my",
-    available: "/groups/available",
+    my: '/groups/my',
+    available: '/groups/available',
   },
   quizzes: {
-    my: "/quizzes/my",
-    groups: "/quizzes/groups",
+    my: '/quizzes/my',
+    groups: '/quizzes/groups',
   },
-  settings: "/settings",
+  settings: '/settings',
 };
 
 const formatHoursMinutes = (TimeOrDate) => {
   const date = new Date(TimeOrDate);
   return date.toLocaleString([], {
-    hour: "2-digit",
-    minute: "2-digit",
+    hour: '2-digit',
+    minute: '2-digit',
     hour12: false,
   });
 };
 
 const millisecondsToHMFormat = (time) => {
-  const hours = Math.floor(time / (1000 * 60 * 60))
-    .toString()
-    .padStart(2, "0");
-  const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60))
-    .toString()
-    .padStart(2, "0");
+  const hours = Math.floor(time / (1000 * 60 * 60));
+  const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
 
-  return hours === "00" ? `${minutes}m` : `${hours}h ${minutes}m`;
+  return hours !== 0
+    ? `${hours}h ${minutes.toString().padStart(2, '0')}m`
+    : hours === 0 && minutes !== 0
+    ? `${minutes}m`
+    : '0m';
 };
 
 module.exports = {

@@ -12,6 +12,7 @@ export const mainContainer = document.querySelector('main');
 export const toggleModeBtn = document.querySelector('.toggle-container');
 const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 export let boxRowCount;
+export const timers = {}
 export const boxTotalCount = 12;
 export const DESCRIPTION_MAX_LENGTH = 1000;
 export const DESCRIPTION_MIN_LENGTH = 10;

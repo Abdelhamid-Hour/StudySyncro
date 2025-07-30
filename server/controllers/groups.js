@@ -1,27 +1,28 @@
-const { joinGroup } = require("../utils/firebase-utils/demandes");
-const { getExams } = require("../utils/firebase-utils/examen");
+const { joinGroup } = require('../utils/firebase-utils/demandes');
+const { getExams } = require('../utils/firebase-utils/examen');
 const {
   getJoinedGroups,
   getAvailableGroups,
   modifyGroup,
   createGroup,
-} = require("../utils/firebase-utils/group");
+} = require('../utils/firebase-utils/group');
 const {
   getQuestions,
   getQuizDuration,
-} = require("../utils/firebase-utils/question");
+} = require('../utils/firebase-utils/question');
+const { isQuizPassed } = require('../utils/firebase-utils/session');
 
 const getUserGroupsHandler = async (req, res) => {
   const { lastVisible, count, level, visibility, searchTerm, sort, role } =
     req.query;
-  console.log("Query Parameters:", req.query);
+  console.log('Query Parameters:', req.query);
 
   const creteria = {
-    level: level ? level.split(",") : [],
-    visibility: visibility ? visibility.split(",") : [],
-    searchTerm: searchTerm || "",
-    sort: sort || "desc",
-    role: role ? role.split(",") : [],
+    level: level ? level.split(',') : [],
+    visibility: visibility ? visibility.split(',') : [],
+    searchTerm: searchTerm || '',
+    sort: sort || 'desc',
+    role: role ? role.split(',') : [],
   };
 
   const data = await getJoinedGroups(
@@ -45,10 +46,10 @@ const getAvailableGroupsHandler = async (req, res) => {
     joinableOnly,
   } = req.query;
   const creteria = {
-    level: level ? level.split(",") : [],
-    visibility: visibility ? visibility.split(",") : [],
-    searchTerm: searchTerm || "",
-    sort: sort || "desc",
+    level: level ? level.split(',') : [],
+    visibility: visibility ? visibility.split(',') : [],
+    searchTerm: searchTerm || '',
+    sort: sort || 'desc',
     available: joinableOnly,
   };
 
@@ -65,8 +66,8 @@ const getAvailableGroupsHandler = async (req, res) => {
 const getQuizzesHandler = async (req, res) => {
   const { searchTerm, sort, lastVisible, count } = req.query;
   const creteria = {
-    searchTerm: searchTerm || "",
-    sort: sort || "desc",
+    searchTerm: searchTerm || '',
+    sort: sort || 'desc',
   };
   const data = await getExams(req.user.uid, creteria, count, lastVisible);
   return res.json(data);
@@ -77,7 +78,7 @@ const groupFragmentHandler =
   (req, res) => {
     if (!res.payload.success)
       return res.status(400).json({
-        message: res.payload.message || "Failed to load.",
+        message: res.payload.message || 'Failed to load.',
       });
     return res.render(
       `fragments/my-groups${route}`,
@@ -86,9 +87,9 @@ const groupFragmentHandler =
       },
       (err, template) => {
         if (err) {
-          console.error("Error rendering template:", err);
+          console.error('Error rendering template:', err);
           return res.status(500).json({
-            message: "Failed to load group info. Please try again later.",
+            message: 'Failed to load group info. Please try again later.',
           });
         }
 
@@ -97,7 +98,7 @@ const groupFragmentHandler =
         if (res.payload.context.count)
           response.count = res.payload.context.count;
 
-        if (route === "/group-info")
+        if (route === '/group-info')
           response.info = {
             ...res.payload.context,
           };
@@ -107,7 +108,7 @@ const groupFragmentHandler =
     );
   };
 
-const getQuizQuestionsHandler = async (req, res) => {
+const getQuizPlayDetailsHandler = async (req, res) => {
   // const userid = req.user.uid;
   // const quizId = req.query.quizId;
 
@@ -188,22 +189,21 @@ const getQuizQuestionsHandler = async (req, res) => {
   //     message: result.message,
   //   });
   // }
-  const userid = req.user.uid;
+  const userId = req.user.uid;
   const quizId = req.params.quizId;
-  // console.log(quizId, "quiz id");
-  // console.log(userid, "user id");
+
+  const questions = await getQuestions(quizId, userId);
+  const duration = await getQuizDuration(req.user, quizId);
+  const passed = await isQuizPassed(userId, quizId);
+
+  console.log({ questions, duration, passed });
   
 
-  const questions = await getQuestions(quizId, userid);
-  const duration = await getQuizDuration(req.user, quizId);
-  // console.log(questions, "questions");
-  // console.log(duration, "duration");
-
   if (questions) {
-    return res.status(200).json({ questions, duration });
+    return res.status(200).json({ questions, duration, passed });
   } else {
     return res.status(400).json({
-      message: "Failed to load quiz questions. Please try again later.",
+      message: 'Failed to load quiz questions. Please try again later.',
     });
   }
 };
@@ -222,11 +222,11 @@ const createGroupHandler = async (req, res) => {
 };
 
 const joinGroupHandler = async (req, res) => {
-  console.log(req.body, "req body for join group");
+  console.log(req.body, 'req body for join group');
   const groupId = req.body.groupId;
 
   const result = await joinGroup(groupId, req.user);
-  console.log(result, "this is the result");
+  console.log(result, 'this is the result');
   if (result.success) {
     return res.status(200).json({ status: result.status });
   }
@@ -237,7 +237,7 @@ const patchGroupHandler = async (req, res) => {
   const updatedData = req.body.updatedData;
 
   const userData = req.user;
-  console.log(updatedData, "group data for update group");
+  console.log(updatedData, 'group data for update group');
 
   const result = await modifyGroup(
     userData.uid,
@@ -258,7 +258,7 @@ module.exports = {
   getUserGroupsHandler,
   getAvailableGroupsHandler,
   groupFragmentHandler,
-  getQuizQuestionsHandler,
+  getQuizPlayDetailsHandler,
   getQuizzesHandler,
   patchGroupHandler,
   joinGroupHandler,

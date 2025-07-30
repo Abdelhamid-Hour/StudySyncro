@@ -177,7 +177,7 @@ const getSessionForm = (name, description, quiz) => {
   if (quiz) {
     // If quiz is provided, destructure its properties safely
     quizTitle = quiz.quiz?.title || '';
-    quizId = quiz.id || '';
+    quizId = quiz.UID || '';
   }
   const wrapper = document.createElement('div');
   wrapper.className = 'create-session-form';
@@ -228,8 +228,8 @@ const getSessionForm = (name, description, quiz) => {
         <div class="select-trigger input">
           <button type="button" class="exclude-btn open-drop-down-btn">
             <span class="quiz-value">Quiz Title (Optional)</span>
-            <input type="hidden" name="session-quiz-title" value="" />
-            <input type="hidden" name="session-quiz-id" value="" />
+            <input type="hidden" class="session-quiz-title" name="session-quiz-title" value="" />
+            <input type="hidden" class="session-quiz-id" name="session-quiz-id" value="" />
             <i class="bi bi-chevron-down"></i>
           </button>
           <div class="select-menu session-quiz-select-menu drop-down-menu overlay">
@@ -510,7 +510,7 @@ const checkTaskFormValidity = (form, isBreak) => {
   return true;
 };
 
-const createTaskElement = (task, idx) => {
+const createTaskElement = (task, idx, taskCount) => {
   const durationStr = millisecondsToHMFormat(task.durationInMins * 60 * 1000);
   const taskContainer = document.createElement('div');
   taskContainer.className = 'task';
@@ -582,7 +582,7 @@ const createTaskElement = (task, idx) => {
   // Set textContent for safety
   taskContainer.querySelector('.counter span').textContent = String(
     idx + 1
-  ).padStart(2, '0');
+  ).padStart(taskCount.length, '0');
   taskContainer.querySelector('.title').textContent = task.title || '';
   taskContainer.querySelector('.duration').textContent = durationStr;
   if (!task.isBreak) {
@@ -599,7 +599,7 @@ const getTasksList = (tasksArray = []) => {
   wrapper.className = 'tasks-list';
 
   tasksArray.forEach((task, idx) => {
-    wrapper.appendChild(createTaskElement(task, idx));
+    wrapper.appendChild(createTaskElement(task, idx, tasksArray.length.toString()));
   });
 
   return wrapper;

@@ -169,7 +169,6 @@ const renderFragmentOrLayout = (
         htmlFragment: htmlFragment,
         extraData: payload.extraData,
       });
-    console.log('Rendering full layout for path:', pathName);
 
     return res.render(
       'layout',

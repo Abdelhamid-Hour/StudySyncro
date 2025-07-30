@@ -103,33 +103,37 @@ const getChoices = async (examenId) => {
 const getQuizDuration = async (user, quizId) => {
   try {
     let duration = 0;
+
     const sessionRf = db.collection('sessions');
-    const session = await sessionRf.doc(user.currentSession).get();
+    const sessionSnap = user.currentSession
+      ? await sessionRf.doc(user.currentSession).get()
+      : null;
+    const session = sessionSnap && sessionSnap.exists ? sessionSnap.data() : {};
     const taskRef = db
       .collection('tasks')
-      .where('sessionId', '==', user.currentSession)
-      .where('status', '==', 'active');
-    const taskSnap = await taskRef.get();
-    const task = taskSnap.docs.length > 0 ? taskSnap.docs[0].data() : {};
+      .where('sessionId', '==', user.currentSession);
+    const activeTasksSnap = await taskRef.where('status', '==', 'active').get();
+    const pendingTasksSnap = await taskRef
+      .where('status', '==', 'pending')
+      .get();
+    const activeTask =
+      activeTasksSnap.docs.length > 0 ? activeTasksSnap.docs[0].data() : {};
     const timeLeft = Date.now() - new Date(session.startDate).getTime();
 
-    // console.log(!task.empty , task , session.exists);
-    
-    if (!task.empty && task.isQuiz && session.exists) {
+    if (!activeTask.empty && activeTask.isQuiz && sessionSnap.exists) {
+      if (timeLeft < session.duration * 60000) {
+        const elapsedTime = Math.floor(session.duration * 60000 - timeLeft);
 
-      if (timeLeft < session.duration) {
-        const timeDiff = Math.floor(session.duration - timeLeft * 60000);
-        const pendingTasks = await taskRef
-          .where('status', '==', 'pending')
-          .get();
-        const totalduration = pendingTasks.docs.reduce((accumulated, doc) => {
-          const data = doc.data();
-          accumulated += data.durationInMins;
-          return accumulated;
-        }, 0);
-        // console.log('timeDiff', timeDiff , 'totalduration', totalduration );
-        
-        duration = timeDiff - totalduration 
+        const totalPendingTasksDuration = pendingTasksSnap.docs.reduce(
+          (accumulated, doc) => {
+            const data = doc.data();
+            accumulated += data.durationInMins * 60000; // Convert minutes to milliseconds
+            return accumulated;
+          },
+          0
+        );
+
+        duration = elapsedTime - totalPendingTasksDuration;
       }
     } else {
       duration = null;
@@ -179,13 +183,13 @@ const deleteQuestion = async (questionId) => {
     const doc = await questionRef.get();
 
     if (doc.exists) {
-      const data = doc.data()
-      const quizId  = data.quizId 
-      
-      const quizRef = db.collection("quizzes").doc(quizId)
+      const data = doc.data();
+      const quizId = data.quizId;
 
-      const promises = []
-      promises.push( questionRef.delete())
+      const quizRef = db.collection('quizzes').doc(quizId);
+
+      const promises = [];
+      promises.push(questionRef.delete());
 
       return true;
     }

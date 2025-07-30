@@ -6,7 +6,8 @@
   gap: var(--primary-gap);
   border: var(--primary-border-style);
   height: fit-content;
-  width: 35rem;
+  min-width: 30rem;
+  max-width: 37rem;
   margin: auto;
   padding-bottom: var(--primary-gap);
   background-color: var(--container-background-color);
@@ -52,14 +53,14 @@
     gap: var(--primary-gap);
 
     /* Chrome, Safari, Edge, Opera */
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
+    input[type='number']::-webkit-outer-spin-button,
+    input[type='number']::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
 
     /* Firefox */
-    input[type="number"] {
+    input[type='number'] {
       appearance: textfield;
       -moz-appearance: textfield;
     }
