@@ -11,14 +11,14 @@
       />
     </div>
     <% if(isAdmin) { %>
-    <button type="button" class="add-member-btn">
-      <i class="bi bi-plus"></i>
-      Add
+    <button type="button" class="invite-user-btn">
+      <i class="bi bi-plus-lg"></i>
+      Invite
     </button>
     <% } %>
   </header>
   <div class="members-list">
-    <% members.forEach((member) => { %>
+    <% formattedMembers.forEach((member) => { %>
     <div class="member">
       <div class="avatar">
         <% if (member.photoURL) { %>

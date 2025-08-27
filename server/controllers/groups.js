@@ -1,28 +1,36 @@
-const { joinGroup } = require('../utils/firebase-utils/demandes');
-const { getExams } = require('../utils/firebase-utils/examen');
+const { getExams } = require("../utils/firebase-utils/examen");
 const {
   getJoinedGroups,
   getAvailableGroups,
   modifyGroup,
   createGroup,
-} = require('../utils/firebase-utils/group');
+  joinGroup,
+  deleteGroup,
+  quitterGroup,
+  inviteMembers,
+} = require("../utils/firebase-utils/group");
+const {
+  addMember,
+  kickMember,
+  getUsers,
+} = require("../utils/firebase-utils/members");
 const {
   getQuestions,
   getQuizDuration,
-} = require('../utils/firebase-utils/question');
-const { isQuizPassed } = require('../utils/firebase-utils/session');
+} = require("../utils/firebase-utils/question");
+const { isQuizPassed } = require("../utils/firebase-utils/session");
 
 const getUserGroupsHandler = async (req, res) => {
   const { lastVisible, count, level, visibility, searchTerm, sort, role } =
     req.query;
-  console.log('Query Parameters:', req.query);
+  console.log("Query Parameters:", req.query);
 
   const creteria = {
-    level: level ? level.split(',') : [],
-    visibility: visibility ? visibility.split(',') : [],
-    searchTerm: searchTerm || '',
-    sort: sort || 'desc',
-    role: role ? role.split(',') : [],
+    level: level ? level.split(",") : [],
+    visibility: visibility ? visibility.split(",") : [],
+    searchTerm: searchTerm || "",
+    sort: sort || "desc",
+    role: role ? role.split(",") : [],
   };
 
   const data = await getJoinedGroups(
@@ -46,10 +54,10 @@ const getAvailableGroupsHandler = async (req, res) => {
     joinableOnly,
   } = req.query;
   const creteria = {
-    level: level ? level.split(',') : [],
-    visibility: visibility ? visibility.split(',') : [],
-    searchTerm: searchTerm || '',
-    sort: sort || 'desc',
+    level: level ? level.split(",") : [],
+    visibility: visibility ? visibility.split(",") : [],
+    searchTerm: searchTerm || "",
+    sort: sort || "desc",
     available: joinableOnly,
   };
 
@@ -66,8 +74,8 @@ const getAvailableGroupsHandler = async (req, res) => {
 const getQuizzesHandler = async (req, res) => {
   const { searchTerm, sort, lastVisible, count } = req.query;
   const creteria = {
-    searchTerm: searchTerm || '',
-    sort: sort || 'desc',
+    searchTerm: searchTerm || "",
+    sort: sort || "desc",
   };
   const data = await getExams(req.user.uid, creteria, count, lastVisible);
   return res.json(data);
@@ -78,7 +86,7 @@ const groupFragmentHandler =
   (req, res) => {
     if (!res.payload.success)
       return res.status(400).json({
-        message: res.payload.message || 'Failed to load.',
+        message: res.payload.message || "Failed to load.",
       });
     return res.render(
       `fragments/my-groups${route}`,
@@ -87,18 +95,18 @@ const groupFragmentHandler =
       },
       (err, template) => {
         if (err) {
-          console.error('Error rendering template:', err);
+          console.error("Error rendering template:", err);
           return res.status(500).json({
-            message: 'Failed to load group info. Please try again later.',
+            message: "Failed to load group info. Please try again later.",
           });
         }
 
         const response = { template, title };
 
-        if (res.payload.context.count)
+        if (res.payload.context.count !== undefined)
           response.count = res.payload.context.count;
 
-        if (route === '/group-info')
+        if (route === "/group-info")
           response.info = {
             ...res.payload.context,
           };
@@ -197,13 +205,12 @@ const getQuizPlayDetailsHandler = async (req, res) => {
   const passed = await isQuizPassed(userId, quizId);
 
   console.log({ questions, duration, passed });
-  
 
   if (questions) {
     return res.status(200).json({ questions, duration, passed });
   } else {
     return res.status(400).json({
-      message: 'Failed to load quiz questions. Please try again later.',
+      message: "Failed to load quiz questions. Please try again later.",
     });
   }
 };
@@ -222,11 +229,11 @@ const createGroupHandler = async (req, res) => {
 };
 
 const joinGroupHandler = async (req, res) => {
-  console.log(req.body, 'req body for join group');
+  console.log(req.body, "req body for join group");
   const groupId = req.body.groupId;
 
   const result = await joinGroup(groupId, req.user);
-  console.log(result, 'this is the result');
+  console.log(result, "this is the result");
   if (result.success) {
     return res.status(200).json({ status: result.status });
   }
@@ -237,7 +244,7 @@ const patchGroupHandler = async (req, res) => {
   const updatedData = req.body.updatedData;
 
   const userData = req.user;
-  console.log(updatedData, 'group data for update group');
+  console.log(updatedData, "group data for update group");
 
   const result = await modifyGroup(
     userData.uid,
@@ -254,13 +261,106 @@ const patchGroupHandler = async (req, res) => {
   }
 };
 
+const transferRoleHandler = async (req, res) => {
+  const { groupId, memberId } = req.body;
+  const result = await updateGroupProperty(groupId, "creator", memberId);
+  // TODO: Implement transferRole logic
+
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
+const kickMemberHandler = async (req, res) => {
+  const { groupId, memberId } = req.body;
+  const result = await kickMember(groupId, memberId);
+  // TODO: Implement kickMember logic
+
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
+const addMemberHandler = async (req, res) => {
+  const { memberId, groupId } = req.body; // !! check the userId
+  const result = await addMember(groupId, memberId);
+  // TODO: Implement addMembers logic
+
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
+const leaveGroupHandler = async (req, res) => {
+  const { groupId } = req.body;
+  const result = await quitterGroup(groupId, req.user.uid);
+
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
+const removeGroupHandler = async (req, res) => {
+  const { groupId } = req.params;
+  const result = await deleteGroup(groupId);
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
+const getUsersHandler = async (req, res) => {
+  try {
+    const { search, count, lastVisible } = req.query;
+    const result = await getUsers(search, count, lastVisible);
+    console.log("result: ", result);
+
+    if (result.success) {
+      res.json({ cards: result.users, lastVisible: result.lastVisible });
+    } else {
+      res.status(400).json({ message: result.message });
+    }
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const inviteMembersHandler = async (req, res) => {
+  const { groupId, users } = req.body;
+  console.log({ groupId, users });
+
+  const result = await inviteMembers(groupId, users);
+  if (result.success) {
+    return res.status(200).json({ success: true });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
 module.exports = {
   getUserGroupsHandler,
-  getAvailableGroupsHandler,
-  groupFragmentHandler,
   getQuizPlayDetailsHandler,
+  getAvailableGroupsHandler,
+  inviteMembersHandler,
+  groupFragmentHandler,
+  getUsersHandler,
   getQuizzesHandler,
   patchGroupHandler,
   joinGroupHandler,
   createGroupHandler,
+  transferRoleHandler,
+  kickMemberHandler,
+  addMemberHandler,
+  leaveGroupHandler,
+  removeGroupHandler,
 };

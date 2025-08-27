@@ -8,13 +8,6 @@ const {
   pathNames,
 } = require('./global');
 
-const getCurrentSession = async (userId) => {
-  // ! firestore query for if the user is join to any session
-  // ! you can add a index to the quiz collection for know the task order
-  const response = await getCurrentSessionInfo(userId);
-  return response;
-};
-
 const getTimeLeft = (durationInMins, endTime) => {
   const now = new Date().getTime();
   const remainingTime = endTime - now;
@@ -82,15 +75,16 @@ const getActiveSessions = async(userId) => {
 };
 
 const fetchHomeData = async (userId) => {
-  const session = await getCurrentSession(userId); // or null
+  const session = await getCurrentSessionInfo(userId); // or null
   if (session) {
     return {
       pathName: pathNames.home.active,
-      payload: { templateContext: { session, Quiz } },
+      payload: { templateContext: { session } },
     };
   }
+  
 
-  const availableSessions = getActiveSessions(userId);
+  const availableSessions = await getActiveSessions(userId);  
 
   return {
     pathName: pathNames.home.inactive,

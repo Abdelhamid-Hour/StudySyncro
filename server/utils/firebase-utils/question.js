@@ -73,16 +73,6 @@ const getQuestionsPlayContext = async (userId, quizId) => {
   }
 };
 
-// const getQuestionsForPlay = async (userId , quizId)=>{
-//   try {
-//     const questions = await getQuestions(quizId , userId)
-
-//   } catch (error) {
-//     console.error(error.message);
-//     return false;
-//   }
-// }
-
 const getChoices = async (examenId) => {
   try {
     const questionRef = db.collection('questions').doc(examenId);
@@ -275,21 +265,6 @@ const modifierQuestion = async (questionId, propertie, value) => {
   }
 };
 
-const getQuestionCountExam = async (examenId) => {
-  try {
-    const ref = db.collection('questions').where('QuizId', '==', examenId);
-    const snaphsot = await ref.get();
-
-    if (snaphsot.empty) {
-      return 0;
-    } else {
-      return snaphsot.size();
-    }
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
-};
 module.exports = {
   ajouterQuestion,
   modifierQuestion,

@@ -2,29 +2,36 @@ import {
   fetchData,
   sendData,
   showMessageBlock,
-} from '../../../../../main_assets/js/utils.js';
-import { timers } from '../../../global/js/dom-variables.js';
+} from "../../../../../main_assets/js/utils.js";
+import { timers } from "../../../global/js/dom-variables.js";
 import {
   handleApiAction,
   millisecondsToHMFormat,
   navigateTo,
   updateMain,
-} from '../../../global/js/utils.js';
-import { Task } from '../../../shared/tasks/js/utils.js';
+} from "../../../global/js/utils.js";
+import {
+  openQuizResultOverlay,
+  openQuizResultsOverlay,
+} from "../../../shared/quiz-result/js/utils.js";
+import { Task } from "../../../shared/tasks/js/utils.js";
 import {
   QUIZSELECTORS,
+  retakeBtn,
   SESSIONSSELECTORS,
   TASKSSELECTORS,
-} from './dom-variables.js';
+  viewResultBtn,
+  viewResultsBtn,
+} from "./dom-variables.js";
 
 export const expandAndShrinkDescription = (e) => {
   const btn = e.currentTarget;
 
-  if (btn.classList.toggle('expanded')) {
-    btn.parentElement.nextElementSibling.style.webkitLineClamp = 'unset';
+  if (btn.classList.toggle("expanded")) {
+    btn.parentElement.nextElementSibling.style.webkitLineClamp = "unset";
   } else {
     setTimeout(() => {
-      btn.parentElement.nextElementSibling.style.webkitLineClamp = '3';
+      btn.parentElement.nextElementSibling.style.webkitLineClamp = "3";
       btn.parentElement.nextElementSibling.scroll(0, 0);
     }, 300);
   }
@@ -43,13 +50,13 @@ export class FlipTimer {
       const delay = remainingTime % 1000 || 1000;
       const seconds = (Math.floor(remainingTime / 1000) % 60)
         .toString()
-        .padStart(2, '0');
+        .padStart(2, "0");
       const minutes = (Math.floor(remainingTime / 1000 / 60) % 60)
         .toString()
-        .padStart(2, '0');
+        .padStart(2, "0");
       const hours = Math.floor(remainingTime / 1000 / 60 / 60)
         .toString()
-        .padStart(2, '0');
+        .padStart(2, "0");
 
       this.onUpdate({ hours, minutes, seconds });
 
@@ -65,9 +72,9 @@ export class FlipTimer {
   }
 
   onUpdate({ hours, minutes, seconds }) {
-    this.handleUnitChange('hours', hours);
-    this.handleUnitChange('minutes', minutes);
-    this.handleUnitChange('seconds', seconds);
+    this.handleUnitChange("hours", hours);
+    this.handleUnitChange("minutes", minutes);
+    this.handleUnitChange("seconds", seconds);
 
     // store for next time
     this.prev = { hours, minutes, seconds };
@@ -75,7 +82,7 @@ export class FlipTimer {
 
   handleUnitChange(unit, newDigits) {
     const oldDigits = this.prev[unit];
-    const sides = ['left', 'right'];
+    const sides = ["left", "right"];
 
     sides.forEach((side, idx) => {
       if (newDigits[idx] !== oldDigits[idx]) {
@@ -88,7 +95,7 @@ export class FlipTimer {
     this.initDigits();
     this.endTime = Date.now() + durationInMsecs;
     this._timer = null;
-    this.prev = { hours: '00', minutes: '00', seconds: '00' };
+    this.prev = { hours: "00", minutes: "00", seconds: "00" };
     this.tick();
   }
 
@@ -98,8 +105,8 @@ export class FlipTimer {
       minutes: { left: null, right: null },
       seconds: { left: null, right: null },
     };
-    ['hours', 'minutes', 'seconds'].forEach((unit) => {
-      ['left', 'right'].forEach((side) => {
+    ["hours", "minutes", "seconds"].forEach((unit) => {
+      ["left", "right"].forEach((side) => {
         this.digits[unit][side] = {
           topContainer: document.querySelector(
             `.flip-${unit}-${side}-digit .flip-top-container`
@@ -122,35 +129,35 @@ export class FlipTimer {
   }
 
   initEventListener() {
-    document.addEventListener('animationend', this.eventListner);
+    document.addEventListener("animationend", this.eventListner);
   }
 
   // event listner
   eventListner(e) {
     const flipContainer = e.target;
-    if (flipContainer.matches('.flip-top-container')) {
+    if (flipContainer.matches(".flip-top-container")) {
       const bottomSpan = flipContainer
-        .closest('.flip-digit')
-        .querySelector('.flip-face-bottom span');
+        .closest(".flip-digit")
+        .querySelector(".flip-face-bottom span");
       const topFrontFontText = flipContainer
-        .closest('.flip-digit')
-        .querySelector('.flip-face-top-front-front span');
+        .closest(".flip-digit")
+        .querySelector(".flip-face-top-front-front span");
       const number = bottomSpan?.dataset.nextDigit;
       bottomSpan.textContent = number;
       topFrontFontText.textContent = number;
-      flipContainer.classList.remove('flip');
+      flipContainer.classList.remove("flip");
     }
   }
 
   flip(number, unit, side) {
     this.digits[unit][side].topFrontBackText.textContent = number;
     this.digits[unit][side].topBackText.textContent = number;
-    this.digits[unit][side].topContainer.classList.add('flip');
+    this.digits[unit][side].topContainer.classList.add("flip");
     this.digits[unit][side].bottomSpan.dataset.nextDigit = number;
   }
 
   onComplete() {
-    removeEventListener('animationend', this.eventListner);
+    removeEventListener("animationend", this.eventListner);
   }
 }
 
@@ -180,18 +187,18 @@ export class Quiz extends Task {
   updateElapsedTime({ quizElapsedTime, status, isAdmin }) {
     console.log({ quizElapsedTime, status, isAdmin });
 
-    if (status === 'active' && !this.passed && !isAdmin) {
+    if (status === "active" && !this.passed && !isAdmin) {
       navigateTo(`/quiz-play/${this.UID}`);
     }
 
     if (quizElapsedTime) {
       this.elapsedTime.textContent = quizElapsedTime;
     } else {
-      const current = parseInt(this.elapsedTime.textContent, 10);
+      let current = parseInt(this.elapsedTime.textContent, 10);
       if (current) {
         current--;
         this.elapsedTime.textContent =
-          current.toString().padStart(2, '0') + 'm';
+          current.toString().padStart(2, "0") + "m";
       }
     }
   }
@@ -202,15 +209,58 @@ export class Quiz extends Task {
     }%`;
   }
 
-  addResultButton(isAdmin) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'result-btn' + ' should-fill';
+  addQuizBtns(isAdmin) {
+    const quizFooter = document.querySelector(QUIZSELECTORS.quizFooter);
+    if (!quizFooter) return;
+
+    this.addViewResultBtn(quizFooter, isAdmin);
+    if (!isAdmin) {
+      this.addRetakeBtn(quizFooter);
+    }
+  }
+
+  addViewResultBtn(quizFooter, isAdmin) {
+    const existedButton1 = quizFooter.querySelector(".result-btn");
+    const existedButton2 = quizFooter.querySelector(".results-btn");
+    if (existedButton1) return;
+    if (existedButton2) return;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `result${isAdmin ? "s" : ""}-btn should-fill`;
     button.innerHTML = `
       <i class="bi bi-eye"></i>
-      View ${isAdmin ? 'Results' : 'Result'}
+      View ${isAdmin ? "Results" : "Result"}
     `;
-    document.querySelector(QUIZSELECTORS.quizFooter).append(button);
+
+    if (!isAdmin) {
+      button.addEventListener("click", () =>
+        openQuizResultOverlay({
+          userId: "self",
+          quizId: this.UID,
+        })
+      );
+    } else {
+      button.addEventListener("click", () => openQuizResultsOverlay(this.UID));
+    }
+    quizFooter.append(button);
+  }
+
+  addRetakeBtn(quizFooter) {
+    const existedRetakeButton = quizFooter.querySelector(".retake-btn");
+    if (existedRetakeButton) return;
+
+    const retakeBtn = document.createElement("button");
+    retakeBtn.type = "button";
+    retakeBtn.className = "retake-btn";
+    retakeBtn.innerHTML = `
+      <i class="bi bi-arrow-clockwise"></i>
+      Retake Quiz
+    `;
+    retakeBtn.addEventListener("click", () => {
+      navigateTo(`/quiz-play/${this.UID}`);
+    });
+    quizFooter.append(retakeBtn);
   }
 
   updateBadge(status) {
@@ -219,21 +269,21 @@ export class Quiz extends Task {
     if (!badge) return;
 
     // Determine badge class and icon based on status
-    let badgeClass = 'gray-badge';
-    let iconClass = 'bi-hourglass';
-    let text = 'Pending';
+    let badgeClass = "gray-badge";
+    let iconClass = "bi-hourglass";
+    let text = "Pending";
 
-    if (status === 'active') {
-      badgeClass = 'orange-badge';
-      iconClass = 'bi-clock-history';
-      text = 'In Progress';
-    } else if (status === 'completed') {
-      badgeClass = 'green-badge';
-      iconClass = 'bi-check-circle';
-      text = 'Completed';
+    if (status === "active") {
+      badgeClass = "orange-badge";
+      iconClass = "bi-clock-history";
+      text = "In Progress";
+    } else if (status === "completed") {
+      badgeClass = "green-badge";
+      iconClass = "bi-check-circle";
+      text = "Completed";
     }
 
-    badge.classList.remove('gray-badge', 'orange-badge', 'green-badge');
+    badge.classList.remove("gray-badge", "orange-badge", "green-badge");
     badge.classList.add(badgeClass);
 
     // Set icon and text using innerHTML
@@ -241,18 +291,37 @@ export class Quiz extends Task {
   }
 }
 
+export const addQuizEventListnersBns = (quizId) => {
+  if (viewResultBtn)
+    viewResultBtn.addEventListener("click", () => {
+      openQuizResultOverlay({
+        userId: "self",
+        quizId: quizId,
+      });
+    });
+
+  if (viewResultsBtn)
+    viewResultsBtn.addEventListener("click", () =>
+      openQuizResultsOverlay(quizId)
+    );
+
+  if (retakeBtn)
+    retakeBtn.addEventListener("click", () => {
+      navigateTo(`/quiz-play/${quizId}`);
+    });
+};
 export const startSession = async () => {
   try {
-    const sessionData = await fetchData('/active-session');
-    console.log('Init The Session');
+    const sessionData = await fetchData("/active-session");
 
     const session = new Session(sessionData);
+    addQuizEventListnersBns(session.quiz?.UID);
     session.startSession();
   } catch (error) {
-    console.error('Error starting session:', error);
+    console.error("Error starting session:", error);
     showMessageBlock(
-      'Error starting session. Please try again later.',
-      'error'
+      "Error starting session. Please try again later.",
+      "error"
     );
   }
 };
@@ -268,7 +337,7 @@ export class Session {
     quiz,
     isAdmin,
   }) {
-    console.log('Initializing session with data:');
+    console.log("Initializing session with data:");
     Session.id = id; // Set the static id property
     this.isAdmin = isAdmin;
     this.groupId = groupId;
@@ -319,12 +388,12 @@ export class Session {
 
       if (this.isFirstTaskComplete()) this.addToCompletedTasks();
 
-      if (this.quiz && this.quiz.status !== 'completed') {
+      if (this.quiz && this.quiz.status !== "completed") {
         this.quiz.updateElapsedTime({
           status: this.quiz.status,
           isAdmin: this.isAdmin,
         });
-        if (this.quiz.status == 'active' && !this.quiz.passed && !this.isAdmin)
+        if (this.quiz.status == "active" && !this.quiz.passed && !this.isAdmin)
           return;
       }
 
@@ -388,29 +457,29 @@ export class Session {
     this.ongoingTasksContainer.firstElementChild.remove();
     const complatedTask = this.ongoingTasks.shift();
     this.completedTasks.push(complatedTask);
+    this.displayComplatedTask(complatedTask);
     const nextTask = this.ongoingTasksContainer.firstElementChild;
     if (nextTask && this.ongoingTasks[0]) {
       new FlipTimer(this.ongoingTasks[0].durationInMins * 60 * 1000);
-      nextTask.firstElementChild.setAttribute('data-tooltip', 'Active Task');
-      nextTask.firstElementChild.classList.add('first', 'has-tooltip');
+      nextTask.firstElementChild.setAttribute("data-tooltip", "Active Task");
+      nextTask.firstElementChild.classList.add("first", "has-tooltip");
       if (this.ongoingTasks[0].isQuiz) {
-        this.quiz.status = 'active';
-        this.quiz.updateBadge('active');
+        this.quiz.status = "active";
+        this.quiz.updateBadge("active");
       }
-      await this.updateTaskStatus(this.ongoingTasks[0].UID, 'active');
+      await this.updateTaskStatus(this.ongoingTasks[0].UID, "active");
     }
     if (complatedTask.isQuiz) {
-      this.quiz.status = 'completed';
-      this.quiz.updateBadge('completed');
-      this.quiz.addResultButton(this.isAdmin);
+      this.quiz.status = "completed";
+      this.quiz.updateBadge("completed");
+      this.quiz.addQuizBtns(this.isAdmin);
     }
-    this.displayComplatedTask(complatedTask);
-    await this.updateTaskStatus(complatedTask.UID, 'completed');
+    await this.updateTaskStatus(complatedTask.UID, "completed");
   }
 
   displayComplatedTask(task) {
-    const taskContainer = document.createElement('div');
-    taskContainer.className = 'completed-task task-wrapper';
+    const taskContainer = document.createElement("div");
+    taskContainer.className = "completed-task task-wrapper";
     taskContainer.innerHTML = `
         <div class="completed-task-box"> 
           <span class="title"></span>
@@ -419,7 +488,7 @@ export class Session {
           )}</span>
            ${
              task.isBreak
-               ? ''
+               ? ""
                : `
             <button type="button" data-tooltip="Show Details" class="task-down-icon exclude-btn should-fill has-tooltip">
               <i class="bi bi-caret-down"></i>
@@ -429,7 +498,7 @@ export class Session {
         </div>
         ${
           task.isBreak
-            ? ''
+            ? ""
             : `
         <div class="task-details">
           <h5>Title: </h5>
@@ -439,21 +508,21 @@ export class Session {
         </div>`
         }
       `;
-    taskContainer.querySelector('.title').textContent = task.title;
+    taskContainer.querySelector(".title").textContent = task.title;
     if (!task.isBreak) {
-      taskContainer.querySelector('.task-title').textContent = task.title;
-      taskContainer.querySelector('.task-desc').textContent = task.description;
+      taskContainer.querySelector(".task-title").textContent = task.title;
+      taskContainer.querySelector(".task-desc").textContent = task.description;
     }
     this.completedTasksContainer.append(taskContainer);
   }
 
   displayComplatedTasks() {
-    this.completedTasksContainer.innerHTML = '';
+    this.completedTasksContainer.innerHTML = "";
     this.completedTasks.forEach((task) => this.displayComplatedTask(task));
   }
 
   async initTasks() {
-    console.log('Initializing tasks...');
+    console.log("Initializing tasks...");
 
     let timeLeft = Math.floor(this.timeLeft / 1000 / 60);
     this.completedTasks = [];
@@ -471,24 +540,24 @@ export class Session {
     );
 
     this.completedTasks.forEach(async (task) => {
-      if (task.status !== 'completed') {
-        await this.updateTaskStatus(task.UID, 'completed');
-        task.status = 'completed';
+      if (task.status !== "completed") {
+        await this.updateTaskStatus(task.UID, "completed");
+        task.status = "completed";
         if (task.isQuiz) {
-          this.quiz.status = 'completed';
-          this.quiz.updateBadge('completed');
+          this.quiz.status = "completed";
+          this.quiz.updateBadge("completed");
         }
       }
     });
 
     const firstOngoingTask = this.ongoingTasks[0];
-    if (this.ongoingTasks[0] && firstOngoingTask.status !== 'active') {
-      await this.updateTaskStatus(firstOngoingTask.UID, 'active');
-      console.log('Setting first ongoing task status to active');
-      firstOngoingTask.status = 'active';
+    if (this.ongoingTasks[0] && firstOngoingTask.status !== "active") {
+      await this.updateTaskStatus(firstOngoingTask.UID, "active");
+      console.log("Setting first ongoing task status to active");
+      firstOngoingTask.status = "active";
       if (firstOngoingTask.isQuiz) {
-        this.quiz.status = 'active';
-        this.quiz.updateBadge('active');
+        this.quiz.status = "active";
+        this.quiz.updateBadge("active");
       }
     }
 
@@ -497,15 +566,15 @@ export class Session {
 
   async updateTaskStatus(taskId, status) {
     try {
-      await sendData('/api/update-task-status', {
+      await sendData("/api/update-task-status", {
         taskId,
         status,
       });
     } catch (error) {
-      console.error('Error updating task status:', error);
+      console.error("Error updating task status:", error);
       showMessageBlock(
-        'Error updating task status. Please try again later.',
-        'error'
+        "Error updating task status. Please try again later.",
+        "error"
       );
     }
   }
@@ -531,7 +600,7 @@ export class Session {
   }
 
   displayOngoingTasks() {
-    this.ongoingTasksContainer.innerHTML = '';
+    this.ongoingTasksContainer.innerHTML = "";
     this.ongoingTasks.forEach((task, index) => {
       const isQuiz = task.isQuiz;
       const isBreak = task.isBreak;
@@ -547,18 +616,18 @@ export class Session {
                 ? 'data-tooltip="Quiz"'
                 : isBreak
                 ? 'data-tooltip="Break"'
-                : ''
+                : ""
             }
             class="task-box${
-              isQuiz ? ' quiz-task-box' : isBreak ? ' break-box' : ''
-            }${isFirst ? ' first' : ''}${
-        isFirst || isQuiz || isBreak ? ' has-tooltip' : ''
+              isQuiz ? " quiz-task-box" : isBreak ? " break-box" : ""
+            }${isFirst ? " first" : ""}${
+        isFirst || isQuiz || isBreak ? " has-tooltip" : ""
       }"
           >
             <div class="counter">
               <span>${(index + 1)
                 .toString()
-                .padStart(this.tasks.length.toString().length, '0')}</span>
+                .padStart(this.tasks.length.toString().length, "0")}</span>
             </div>
             <span class="title"></span>
             <span class="duration" data-duration-in-mins="${
@@ -569,7 +638,7 @@ export class Session {
                 ? `<button type="button" data-tooltip="Show Details" class="task-down-icon exclude-btn should-fill has-tooltip">
                     <i class="bi bi-caret-down"></i>
                   </button>`
-                : ''
+                : ""
             }
           </div>
           ${
@@ -580,20 +649,20 @@ export class Session {
                   <h5>Details:</h5>
                   <p class="task-desc"></p>
                 </div>`
-              : ''
+              : ""
           }
       `;
 
       // Create container and set HTML
-      const wrapper = document.createElement('div');
-      wrapper.className = 'task-wrapper';
+      const wrapper = document.createElement("div");
+      wrapper.className = "task-wrapper";
       wrapper.innerHTML = html;
 
       // Set textContent for user data to prevent XSS
-      wrapper.querySelector('.title').textContent = task.title;
+      wrapper.querySelector(".title").textContent = task.title;
       if (!isBreak) {
-        wrapper.querySelector('.task-title').textContent = task.title;
-        wrapper.querySelector('.task-desc').textContent = task.description;
+        wrapper.querySelector(".task-title").textContent = task.title;
+        wrapper.querySelector(".task-desc").textContent = task.description;
       }
 
       // Append to container
@@ -606,45 +675,21 @@ export class Session {
   // !! implement this
   async onComplete() {
     try {
-      await sendData('/api/end-session', { sessionId: Session.id });
-      navigateTo('/home');
-      showMessageBlock('Session finished', 'info');
+      await sendData("/api/end-session", { sessionId: Session.id });
+      navigateTo("/home");
+      showMessageBlock("Session finished", "info");
     } catch (error) {
-      console.error('Error ending session:', error);
+      console.error("Error ending session:", error);
       showMessageBlock(
-        'Error ending session. Please try again later.',
-        'error'
+        "Error ending session. Please try again later.",
+        "error"
       );
     }
-  }
-
-  static endSession(btn) {
-    handleApiAction('/end-session', { sessionId: Session.id }, btn, {
-      onSuccess: () => {
-        history.pushState({}, '', '/app/home');
-        window.dispatchEvent(new PopStateEvent('popstate', { state: {} }));
-      },
-      successMsg: 'Session ended successfully.',
-    });
-  }
-
-  static leaveSession(btn) {
-    handleApiAction('/leave-session', { sessionId: Session.id }, btn, {
-      onSuccess: () => navigateTo('/app/home'),
-      successMsg: 'You have left the session successfully.',
-    });
   }
 
   async startSession() {
     await this.initTasks();
     this.initTimer();
-    console.log(
-      'Session timer initialized with duration:',
-      this.durationInMins,
-      'minutes'
-    );
-
-    console.log(this.quiz);
 
     if (this.quiz) {
       this.quiz.updateElapsedTime({
@@ -653,14 +698,15 @@ export class Session {
         isAdmin: this.isAdmin,
       });
     }
+
     this.displayComplatedTasks();
     this.displayOngoingTasks();
     return this;
   }
 
-  addResultButton(submittedCount) {
+  addQuizBtns(isAdmin) {
     if (this.quiz) {
-      this.quiz.addResultButton(submittedCount);
+      this.quiz.addQuizBtns(isAdmin);
     }
   }
 }

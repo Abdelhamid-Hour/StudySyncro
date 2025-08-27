@@ -18,8 +18,22 @@
         <i class="bi bi-info-circle"></i>
       </button>
       <h2 class="title">Real Time Chat</h2>
-      <% if (sessionActive) { %>
-      <span class="session-active-badge badge green-badge">Active Session</span>
+      <% if (sessionId) { %>
+      <% if (isAdmin) { %>
+        <button type="button" data-session-id="<%= sessionId %>" class="small-btn red-btn end-session">
+          <i class="bi bi-stop-circle"></i>
+          End Session
+        </button>
+      <% } else { %>
+        <button type="button" data-session-id="<%= sessionId %>" class="join-session small-btn blue-btn">
+          <i class="bi bi-box-arrow-in-right"></i>
+          Join Session
+        </button>
+      <% } %>
+      <span
+        class="session-active-badge badge circle-badge-1 green-badge has-tooltip"
+        data-tooltip="Active Session"
+      ></span>
       <% } else if(isAdmin) { %>
       <button type="button" class="small-btn create-session-btn">
         <i class="bi bi-plus-circle"></i>
@@ -55,7 +69,7 @@
               <i class="bi bi-clipboard-check"></i>
               View Quizzes
             </button>
-            <% if (sessionActive) { %>
+            <% if (sessionId) { %>
             <button
               type="button"
               class="drop-down-item exclude-btn session-info-menu-btn"
@@ -64,9 +78,9 @@
               View Session Info
             </button>
             <% } %> <% if (isAdmin) { %>
-            <button type="button" class="drop-down-item exclude-btn">
+            <button type="button" class="drop-down-item exclude-btn add-members-menu-btn">
               <i class="bi bi-person-plus"></i>
-              Invite Members
+              Add Members
             </button>
             <% if ( isRequested) { %>
             <button

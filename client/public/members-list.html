@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    />
+    <link rel="stylesheet" href="main_assets/css/styles.css" />
+    <link rel="stylesheet" href="main_assets/css/variables_and_fonts.css" />
+    <link rel="stylesheet" href="app/assets/global/css/styles.css" />
+  </head>
+  <body>
+    <style>
+      .add-member-overlay {
+        position: relative;
+        display: flex;
+        height: 40rem;
+        width: 30rem;
+        flex-direction: column;
+        gap: var(--primary-gap);
+        background-color: var(--container-background-color);
+        border-radius: calc(var(--primary-radius) * 2);
+        padding: var(--primary-gap);
+        border: var(--primary-border-style);
+        box-shadow: var(--primary-shadow);
+
+        header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .label {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--primary-color);
+          }
+
+          .close-overlay-btn {
+            &:hover {
+              background-color: var(--btn-background-color);
+              box-shadow: var(--primary-shadow);
+            }
+          }
+        }
+
+        .users-search {
+          width: 100%;
+        }
+
+        .text-helper {
+          font-size: var(--small-font-size);
+          color: var(--secondary-text-color);
+        }
+
+        .search-sec {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: var(--primary-gap);
+        }
+
+        .action-btns {
+          display: flex;
+          justify-content: center;
+          gap: var(--primary-gap);
+          width: fit-content;
+          margin-left: auto;
+          margin-top: auto;
+        }
+
+        .selected-users {
+          display: flex;
+          flex-wrap: wrap;
+          gap: calc(var(--primary-gap) / 2);
+          overflow: hidden;
+          background-color: var(--background-color);
+          padding: var(--primary-gap);
+          border-radius: var(--primary-radius);
+          height: 5rem;
+          min-height: 5rem;
+          overflow: auto;
+          scrollbar-width: none;
+          border: var(--primary-border-style);
+
+          .user-badge {
+            position: relative;
+            border-radius: 1rem;
+            padding: 0.2rem;
+            padding-right: 0.4rem;
+            background-color: var(--btn-background-color);
+            margin-bottom: calc(var(--primary-gap) / 2);
+            margin-right: calc(var(--primary-gap) / 2);
+
+            &:last-child {
+              margin-right: auto;
+            }
+
+            .remove-btn {
+              position: absolute;
+              top: 0;
+              right: 0;
+              translate: 50% -50%;
+              z-index: 1;
+              padding: 0;
+              border-radius: 50%;
+              background-color: var(--btn-background-color);
+              &:hover {
+                box-shadow: var(--primary-shadow);
+                background-color: color-mix(
+                  in srgb,
+                  var(--btn-background-color) 80%,
+                  var(--primary-text-color)
+                );
+              }
+            }
+
+            .avatar {
+              height: 1.5rem;
+              width: 1.5rem;
+            }
+          }
+        }
+
+        .users-result {
+          display: flex;
+          flex-direction: column;
+          gap: var(--primary-gap);
+          overflow: auto;
+          scrollbar-width: none;
+          padding: 0.1rem;
+
+          .user-item {
+            display: flex;
+            width: 100%;
+            gap: var(--primary-gap);
+            padding-block: calc(var(--primary-gap) / 2);
+            padding-inline: var(--primary-gap);
+            border-radius: var(--primary-radius);
+            align-items: center;
+            outline: var(--primary-border-style);
+            transition: var(--primary-transition-style);
+
+            &:hover {
+              background-color: var(--background-color);
+            }
+
+            .avatar {
+              height: 2rem;
+              width: 2rem;
+            }
+          }
+        }
+      }
+    </style>
+    <div class="backdrop">
+      <div class="overlay-model add-member-overlay">
+        <header class="list-header">
+          <h3 class="label">
+            <i class="bi bi-people-fill"></i>
+            Add Members
+          </h3>
+          <!-- close btn -->
+          <button type="button" class="close-overlay-btn exclude-btn">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </header>
+        <section class="text-helper">
+          Enter the user’s ID or name to add them to the group
+        </section>
+        <section class="search-sec">
+          <div class="members-search users-search">
+            <div class="search-icon-container">
+              <i class="bi bi-person-fill"></i>
+            </div>
+
+            <input
+              type="search"
+              id="search"
+              placeholder="Search By Member Name or ID"
+            />
+          </div>
+        </section>
+        <section class="selected-users">
+          <div class="user-badge badge simple-badge">
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/32.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            <span class="full-name">John Doe</span>
+            <button class="remove-btn exclude-btn">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          <div class="user-badge badge simple-badge">
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/women/44.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            <span class="full-name">Jane Smith</span>
+            <button class="remove-btn exclude-btn">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          <div class="user-badge badge simple-badge">
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/65.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            <span class="full-name">Alex Brown</span>
+            <button class="remove-btn exclude-btn">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          <div class="user-badge badge simple-badge">
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/women/12.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            <span class="full-name">Emily Clark</span>
+            <button class="remove-btn exclude-btn">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          <div class="user-badge badge simple-badge">
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/23.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            <span class="full-name">Michael Lee</span>
+            <button class="remove-btn exclude-btn">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          <div class="user-badge badge simple-badge">
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/women/56.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            <span class="full-name">Sophia Turner</span>
+            <button class="remove-btn exclude-btn">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          <div class="user-badge badge simple-badge">
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/78.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            <span class="full-name">David Kim</span>
+            <button class="remove-btn exclude-btn">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          <div class="user-badge badge simple-badge">
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/women/34.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            <span class="full-name">Olivia Wilson</span>
+            <button class="remove-btn exclude-btn">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          <div class="user-badge badge simple-badge">
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/41.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            <span class="full-name">Chris Evans</span>
+            <button class="remove-btn exclude-btn">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          <div class="user-badge badge simple-badge">
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/women/21.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            <span class="full-name">Mia Johnson</span>
+            <button class="remove-btn exclude-btn">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          <div class="user-badge badge simple-badge">
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/17.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            <span class="full-name">Ethan Walker</span>
+            <button class="remove-btn exclude-btn">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          <div class="user-badge badge simple-badge">
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/women/67.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            <span class="full-name">Ava Martinez</span>
+            <button class="remove-btn exclude-btn">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+        </section>
+        <span class="badge simple-badge results-count">13 Members Found</span>
+        <section class="users-result">
+          <label class="container user-item">
+            <input type="checkbox" id="admin" value="Admin" />
+            <svg viewBox="0 0 64 64" height="2em" width="2em">
+              <path
+                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                pathLength="575.0541381835938"
+                class="path"
+              ></path>
+            </svg>
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/78.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            Michael Lee
+          </label>
+          <label class="container user-item">
+            <input type="checkbox" id="admin" value="Admin" />
+            <svg viewBox="0 0 64 64" height="2em" width="2em">
+              <path
+                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                pathLength="575.0541381835938"
+                class="path"
+              ></path>
+            </svg>
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/78.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            Michael Lee
+          </label>
+          <label class="container user-item">
+            <input type="checkbox" id="admin" value="Admin" />
+            <svg viewBox="0 0 64 64" height="2em" width="2em">
+              <path
+                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                pathLength="575.0541381835938"
+                class="path"
+              ></path>
+            </svg>
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/78.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            Michael Lee
+          </label>
+          <label class="container user-item">
+            <input type="checkbox" id="admin" value="Admin" />
+            <svg viewBox="0 0 64 64" height="2em" width="2em">
+              <path
+                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                pathLength="575.0541381835938"
+                class="path"
+              ></path>
+            </svg>
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/78.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            Michael Lee
+          </label>
+          <label class="container user-item">
+            <input type="checkbox" id="admin" value="Admin" />
+            <svg viewBox="0 0 64 64" height="2em" width="2em">
+              <path
+                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                pathLength="575.0541381835938"
+                class="path"
+              ></path>
+            </svg>
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/78.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            Michael Lee
+          </label>
+          <label class="container user-item">
+            <input type="checkbox" id="admin" value="Admin" />
+            <svg viewBox="0 0 64 64" height="2em" width="2em">
+              <path
+                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                pathLength="575.0541381835938"
+                class="path"
+              ></path>
+            </svg>
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/78.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            Michael Lee
+          </label>
+          <label class="container user-item">
+            <input type="checkbox" id="admin" value="Admin" />
+            <svg viewBox="0 0 64 64" height="2em" width="2em">
+              <path
+                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                pathLength="575.0541381835938"
+                class="path"
+              ></path>
+            </svg>
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/78.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            Michael Lee
+          </label>
+          <label class="container user-item">
+            <input type="checkbox" id="admin" value="Admin" />
+            <svg viewBox="0 0 64 64" height="2em" width="2em">
+              <path
+                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                pathLength="575.0541381835938"
+                class="path"
+              ></path>
+            </svg>
+            <div class="avatar">
+              <img
+                src="https://randomuser.me/api/portraits/men/78.jpg"
+                alt="Member Avatar"
+              />
+            </div>
+            Michael Lee
+          </label>
+        </section>
+        <div class="action-btns">
+          <button type="button" class="btn blue-btn add-member-confirm-btn">
+            Confirm
+          </button>
+          <button type="button" class="btn gray-btn close-results-overlay-btn">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -32,7 +32,8 @@
 // add condition to not start quiz if session is completed
 // fix the scroll to the end of the containre fliker while dragging
 // dont forgot kick and transfer rule
-
+// make the firebase functions remove the finished sessions
+// add refresh btn to the inactive tabs (msgs and active sessions) or other update solution 
 
 - What you should do next : 
 

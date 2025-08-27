@@ -1,12 +1,20 @@
-import { showMessageBlock } from '../../../../../../main_assets/js/utils.js';
-import { iniChatMessageInput } from '../../../../shared/chat/js/utils.js';
-import { handletTasksListners } from '../../../../shared/tasks/js/utils.js';
+import { showMessageBlock } from "../../../../../../main_assets/js/utils.js";
+import { openOverlayModal } from "../../../../global/js/utils.js";
+import { iniChatMessageInput } from "../../../../shared/chat/js/utils.js";
 import {
+  endSession,
+  joinSession,
+} from "../../../../shared/session/js/utils.js";
+import { handletTasksListners } from "../../../../shared/tasks/js/utils.js";
+import {
+  addMembersMenuBtn,
   copyUIDMenuBtn,
   createSessionBtn,
+  endSessionBtn,
   groupInfoMenuBtn,
   groupLeftSideBarContent,
   initDomVariables,
+  joinSessionBtn,
   leaveGroupMenuBtn,
   manageDemanesMenuBtn,
   membersListMenuBtn,
@@ -14,8 +22,9 @@ import {
   removeGroupMenuBtn,
   sessionInfoMenuBtn,
   showInfoBtn,
-} from './dom-variables.js';
+} from "./dom-variables.js";
 import {
+  handleAddMembersBtn,
   handleGroupInfo,
   handleGroupLeftSideBarContent,
   handleLeavingGroup,
@@ -26,7 +35,7 @@ import {
   handleSessionInfoMenuBtn,
   handleShowInfoBtnClick,
   setUpDemandes,
-} from './utils.js';
+} from "./utils.js";
 
 let firstLoad = true;
 
@@ -36,30 +45,39 @@ export const init = (virtual = false) => {
     return;
   }
   initDomVariables();
-  console.log('Active Module start: chat.js');
+
   iniChatMessageInput();
 
-  showInfoBtn.addEventListener('click', handleShowInfoBtnClick);
+  showInfoBtn.addEventListener("click", handleShowInfoBtnClick);
 
-  groupInfoMenuBtn.addEventListener('click', handleGroupInfo);
+  groupInfoMenuBtn.addEventListener("click", handleGroupInfo);
 
-  quizzesListMenuBtn.addEventListener('click', handleQuizzesListMenuBtn);
+  quizzesListMenuBtn.addEventListener("click", handleQuizzesListMenuBtn);
 
-  membersListMenuBtn.addEventListener('click', handleMembersListMenuBtn);
+  membersListMenuBtn.addEventListener("click", handleMembersListMenuBtn);
 
-  sessionInfoMenuBtn?.addEventListener('click', handleSessionInfoMenuBtn);
+  sessionInfoMenuBtn?.addEventListener("click", handleSessionInfoMenuBtn);
 
-  manageDemanesMenuBtn?.addEventListener('click', setUpDemandes);
+  manageDemanesMenuBtn?.addEventListener("click", setUpDemandes);
 
-  leaveGroupMenuBtn?.addEventListener('click', handleLeavingGroup);
+  addMembersMenuBtn?.addEventListener("click", handleAddMembersBtn);
 
-  createSessionBtn?.addEventListener('click', handleSessionCreateClick);
+  leaveGroupMenuBtn?.addEventListener("click", handleLeavingGroup);
 
-  removeGroupMenuBtn?.addEventListener('click', handleRemoveGroup);
+  createSessionBtn?.addEventListener("click", handleSessionCreateClick);
 
-  // ! solve the duplicated event listener issue
+  removeGroupMenuBtn?.addEventListener("click", handleRemoveGroup);
+
+  joinSessionBtn?.addEventListener("click", (e) =>
+    joinSession(e.target.dataset.sessionId, e.target)
+  );
+
+  endSessionBtn?.addEventListener("click", (e) =>
+    endSession(e.target, e.target.dataset.sessionId)
+  );
+
   groupLeftSideBarContent.addEventListener(
-    'click',
+    "click",
     handleGroupLeftSideBarContent
   );
 };

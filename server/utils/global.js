@@ -9,7 +9,7 @@ class Task {
     UID,
   }) {
     this.title = title;
-    this.status;
+    this.status = status || "pending";
     this.durationInMins = durationInMins;
     this.isQuiz = isQuiz || false;
     this.isBreak = isBreak || false;
@@ -28,25 +28,37 @@ class Quiz extends Task {
 
 const pathNames = {
   home: {
-    inactive: '/home/inactive',
-    active: '/home/active',
+    inactive: "/home/inactive",
+    active: "/home/active",
   },
   groups: {
-    my: '/groups/my',
-    available: '/groups/available',
+    my: "/groups/my",
+    available: "/groups/available",
   },
   quizzes: {
-    my: '/quizzes/my',
-    groups: '/quizzes/groups',
+    my: "/quizzes/my",
+    groups: "/quizzes/groups",
   },
-  settings: '/settings',
+  settings: "/settings",
 };
 
 const formatHoursMinutes = (TimeOrDate) => {
   const date = new Date(TimeOrDate);
   return date.toLocaleString([], {
-    hour: '2-digit',
-    minute: '2-digit',
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+};
+
+const toReadableDate = (TimeOrDate) => {
+  const date = new Date(TimeOrDate);
+  return date.toLocaleString([], {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
     hour12: false,
   });
 };
@@ -56,14 +68,15 @@ const millisecondsToHMFormat = (time) => {
   const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
 
   return hours !== 0
-    ? `${hours}h ${minutes.toString().padStart(2, '0')}m`
+    ? `${hours}h ${minutes.toString().padStart(2, "0")}m`
     : hours === 0 && minutes !== 0
     ? `${minutes}m`
-    : '0m';
+    : "0m";
 };
 
 module.exports = {
   formatHoursMinutes,
+  toReadableDate,
   millisecondsToHMFormat,
   pathNames,
   Task,

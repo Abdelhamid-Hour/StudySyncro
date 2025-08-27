@@ -1,13 +1,13 @@
 import {
   fetchData,
   showMessageBlock,
-} from '../../../../../main_assets/js/utils.js';
+} from "../../../../../main_assets/js/utils.js";
 import {
   boxRowCount,
   boxTotalCount,
   topSideBarMiddle,
-} from '../../../global/js/dom-variables.js';
-import { getDebounceFunc } from '../../../global/js/utils.js';
+} from "../../../global/js/dom-variables.js";
+import { getDebounceFunc } from "../../../global/js/utils.js";
 
 export class Loader {
   constructor(
@@ -17,9 +17,11 @@ export class Loader {
     route,
     loadingBox,
     getCreteria,
-    loadersCount = boxRowCount
+    loadersCount = boxRowCount,
+    afterAppendRes = () => {}
   ) {
-    this.getCreteria = getCreteria;
+    this.getCreteria = getCreteria || (() => "");
+    this.afterAppendRes = afterAppendRes;
     this.creteria = this.getCreteria();
     this.rootMargin = rootMargin;
     this.createCard = createCard;
@@ -32,7 +34,7 @@ export class Loader {
     this.lastVisible = this.container?.dataset.lastVisible;
     this.count = boxTotalCount;
     const cardsCount = this.container.children.length;
-    this.container.removeAttribute('data-last-visible');
+    this.container.removeAttribute("data-last-visible");
     if (cardsCount >= 20) {
       this.initLoadingBoxes();
       this.initObserver();
@@ -41,14 +43,14 @@ export class Loader {
 
   reset() {
     this.loading = false;
-    this.lastVisible = '';
+    this.lastVisible = "";
     this.count = 20;
     if (this.io) {
       this.io.disconnect();
     }
     clearLoadersBoxes();
     this.sentinel = null;
-    this.container.innerHTML = '';
+    this.container.innerHTML = "";
     this.creteria = this.getCreteria();
     this.initLoadingBoxes();
     this.initObserver();
@@ -82,12 +84,12 @@ export class Loader {
     const frag = document.createDocumentFragment();
     for (let i = 0; i < this.loadersCount; i++) {
       const loadingBox = this.loadingBox.cloneNode(true);
-      if (i === 0) loadingBox.classList.add('first-loading-card');
+      if (i === 0) loadingBox.classList.add("first-loading-card");
 
       frag.appendChild(loadingBox);
     }
     this.container.appendChild(frag);
-    this.sentinel = document.querySelector('.first-loading-card');
+    this.sentinel = document.querySelector(".first-loading-card");
   }
 
   async loadMore() {
@@ -102,22 +104,25 @@ export class Loader {
 
       const frag = document.createDocumentFragment();
       cards.forEach((item) => {
-        const card = this.createCard(item, this.creteria.split('=')[1]);
+        const card = this.createCard(item, this.creteria.split("=")[1]);
         frag.appendChild(card);
       });
+
       // insert the new cards before the last loader
       this.sentinel.before(frag);
+      
+      this.afterAppendRes({ cards, lastVisible });
 
       if (!lastVisible) {
         this.io.unobserve(this.sentinel);
         clearLoadersBoxes();
       }
     } catch (error) {
-      console.error('Error loading more items:', error);
+      console.error("Error loading more items:", error);
       // Optionally, you can show an error message to the user
       showMessageBlock(
-        'Error loading more items. Please try again later.',
-        'error'
+        "Error loading more items. Please try again later.",
+        "error"
       );
     }
 
@@ -126,7 +131,7 @@ export class Loader {
 }
 
 const clearLoadersBoxes = () => {
-  const loaders = document.querySelectorAll('.loading-card');
+  const loaders = document.querySelectorAll(".loading-card");
   loaders.forEach((loader) => {
     loader.remove();
   });
@@ -135,8 +140,8 @@ const clearLoadersBoxes = () => {
 export const initFiltersInputListener = (loader, container) => {
   const resetLoader = getDebounceFunc(() => loader.reset(), 300);
   const handleInputChange = (e) => {
-    const isInput = e.target.tagName === 'INPUT';
+    const isInput = e.target.tagName === "INPUT";
     if (isInput) resetLoader();
   };
-  container.addEventListener('input', handleInputChange);
+  container.addEventListener("input", handleInputChange);
 };

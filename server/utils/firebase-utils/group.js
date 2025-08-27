@@ -1,6 +1,8 @@
 const { FieldValue } = require("firebase-admin/firestore");
-const { db, admin } = require("../../firebase/firebaseAdmin");
-const { messaging } = require("firebase-admin");
+const { db } = require("../../firebase/firebaseAdmin");
+const { getFormattedMembers, addMember } = require("./members");
+const { getGroupById } = require("./shared");
+
 const createGroup = async (groupdData, userData) => {
   try {
     const groupRef = db.collection("groups");
@@ -159,7 +161,7 @@ const getAvailableGroups = async (
       criteria,
       limit,
       newLastVisible.id,
-      joinedGroups
+      availableGroups
     );
   } catch (error) {
     console.error(error.message, "error in getJoinedGroups");
@@ -334,25 +336,9 @@ const filterGroups = async (user_id, criteria, groups, availableGroups) => {
   }
 };
 
-const getGroupByID = async (groupId) => {
-  try {
-    const groupRef = db.collection("groups").doc(groupId);
-    const snaphsot = await groupRef.get();
-    if (snaphsot.empty) {
-      return false;
-    } else {
-      const group = { id: groupId, ...snaphsot.data() };
-      return group;
-    }
-  } catch (error) {
-    console.log(error.message);
-    return false;
-  }
-};
-
 const quitterGroup = async (groupId, userId) => {
   try {
-    const group = await getGroupByID(groupId);
+    const group = await getGroupById(groupId);
     const groupRef = db.collection("groups").doc(groupId);
     const user = group.members.find((membre) => membre.uid === userId);
     if (group) {
@@ -388,7 +374,7 @@ const quitterGroup = async (groupId, userId) => {
 
 const modifyGroup = async (userId, groupId, formData) => {
   try {
-    const group = await getGroupByID(groupId);
+    const group = await getGroupById(groupId);
     const groupRef = db.collection("groups").doc(groupId);
     const snaphsot = await groupRef.get();
     let isAdmin = true;
@@ -473,7 +459,7 @@ const getAllGroups = async () => {
   }
 };
 
-const modifieGroupPropertie = async (groupId, propertie, newValue) => {
+const updateGroupProperty = async (groupId, propertie, newValue) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
     const groups = await getAllGroups();
@@ -597,7 +583,7 @@ const modifieGroupPropertie = async (groupId, propertie, newValue) => {
 const deleteGroup = async (groupId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
-    const group = await getGroupByID(groupId);
+    const group = await getGroupById(groupId);
     if (group) {
       await groupRef.delete();
       return { success: true, message: "Group removed" };
@@ -610,15 +596,9 @@ const deleteGroup = async (groupId) => {
   }
 };
 
-const getFormattedMembers = (members) =>
-  members.map(({ photoURL, fullName }) => ({
-    photoURL,
-    fullName,
-  }));
-
 const getGroupInfo = async (id, userId) => {
   try {
-    const group = await getGroupByID(id);
+    const group = await getGroupById(id);
     if (!group) return { success: false, message: "Group not found" };
     const adminInfo = group.members.find((m) => m.uid === group.creator);
 
@@ -653,12 +633,12 @@ const getGroupInfo = async (id, userId) => {
 
 const getChatContext = async (userId, groupId) => {
   try {
-    const group = await getGroupByID(groupId);
+    const group = await getGroupById(groupId);
     if (group) {
       return {
         groupName: group.name,
         isAdmin: group.creator === userId,
-        sessionActive: group.currentSession != "",
+        sessionId: group.currentSession,
         isRequested: group.visibility === "Private" && group.showInSearch,
       };
     } else {
@@ -676,16 +656,44 @@ const getChatContext = async (userId, groupId) => {
   }
 };
 
+const joinGroup = async (groupId, userData) => {
+  try {
+    const ref = db.collection("groups").doc(groupId);
+    const snaphsot = await ref.get();
+
+    if (snaphsot.exists) {
+      const group = snaphsot.data();
+
+      if (group.visibility === "Public") {
+        return (result = await addMember(groupId, userData.uid));
+      } else if (group.showInSearch && group.visibility === "Private") {
+        return (result = await sendRequest(groupId, userData));
+      }
+    } else {
+      return {
+        message: "Group does not exist",
+        success: false,
+      };
+    }
+  } catch (error) {
+    console.error(error);
+    return { message: "Internal server error", success: false };
+  }
+};
+
+const inviteMembers = async () => ({ success: true });
+
 module.exports = {
   quitterGroup,
   getGroupInfo,
+  joinGroup,
   createGroup,
   getAvailableGroups,
   getJoinedGroups,
-  getGroupByID,
   modifyGroup,
   getAllGroups,
-  modifieGroupPropertie,
+  updateGroupProperty,
   deleteGroup,
   getChatContext,
+  inviteMembers,
 };

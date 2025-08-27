@@ -354,7 +354,7 @@
             <i class="bi bi-clipboard-check-fill"></i>
             <h2>Quiz</h2>
           </div>
-          <% if (!session.isAdmin && session.quiz && session.quiz.passed) { %>
+          <% if (!session.isAdmin && session.quiz && session.quiz.passed && session.quiz.status !== 'completed') { %>
            <span class="quiz-note badge gray-badge"><i class="bi bi-info-circle"></i>You already passed this quiz. You cannot retake it.</span>
           <% } %>
           <% if (session.quiz) { %>
@@ -407,13 +407,24 @@
           <% } %>
           <% if (session.quiz) { %>
             <% if ((session.isAdmin && session.quiz.status === 'completed') || (!session.isAdmin && (session.quiz.status === 'completed' || session.quiz.passed))) { %>
-              <button
-               type="button"
-               class="result-btn should-fill"
-             >
-               <i class="bi bi-eye"></i>
-               View <%= session.isAdmin ? 'Results' : 'Result' %>
-             </button>
+              <div class="action-buttons">
+                <% if (!session.isAdmin) { %>
+                  <button
+                  type="button"
+                  class="retake-btn"
+                >
+                  <i class="bi bi-arrow-clockwise"></i>
+                  Retake Quiz
+                </button>
+                <% } %>
+                <button
+                type="button"
+                class="result<%= session.isAdmin ? 's' : '' %>-btn should-fill"
+              >
+                <i class="bi bi-eye"></i>
+                View <%= session.isAdmin ? 'Results' : 'Result' %>
+                </button>
+              </div>
             <% } %>
           <% } %>
         </footer>

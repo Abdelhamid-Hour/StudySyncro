@@ -1,7 +1,54 @@
-const { db } = require('../../firebase/firebaseAdmin');
-const { getTaches } = require('./tache');
-const { getAllGroups } = require('./group');
-const { getQuestions, geQuiztDuration } = require('./question');
+const { FieldValue } = require("firebase-admin/firestore");
+const { db } = require("../../firebase/firebaseAdmin");
+const { getQuestions } = require("./question");
+const { toReadableDate } = require("../global");
+
+class QuizResult {
+  constructor(resultDetails, user) {
+    this.resultDetails = resultDetails;
+    this.user = user;
+    resultDetails.submittedAt = toReadableDate(resultDetails.submittedAt);
+    this.score = this.calculateScore();
+  }
+
+  static async create(resultDetails) {
+    const userSnap = await db
+      .collection("users")
+      .doc(resultDetails.userId)
+      .get();
+    return new QuizResult(resultDetails, userSnap.data());
+  }
+
+  calculateScore() {
+    const totalQuestions =
+      this.resultDetails.correctAnswers.length +
+      this.resultDetails.incorrectAnswers.length +
+      this.resultDetails.skippedQuestions.length;
+    const score =
+      (this.resultDetails.correctAnswers.length / totalQuestions) * 100 || 0;
+    return Math.round(score); // Return score as a string with one decimal place
+  }
+}
+
+// Example fake object for this template:
+const fakeQuizResult = new QuizResult(
+  {
+    userId: "user123",
+    quizId: "quiz456",
+    correctAnswers: [1, 3, 5],
+    incorrectAnswers: [{ id: 2, answerIndex: 4 }],
+    skippedQuestions: [6],
+    submittedCount: 4,
+    submittedAt: new Date().toISOString(),
+  },
+  {
+    id: "user123",
+    fullName: "John Doe",
+  }
+);
+
+// Usage example:
+console.log(fakeQuizResult);
 
 const getFormatedQuizzes = (quizzes) => {
   return quizzes.map(
@@ -35,11 +82,11 @@ const getExams = async (
       return { cards: formattedExams, lastVisible };
     }
 
-    let query = db.collection('quizzes').where('creator', '==', userId);
+    let query = db.collection("quizzes").where("creator", "==", userId);
 
     // Pagination logic
-    if (typeof lastVisible === 'string' && lastVisible.trim() !== '') {
-      const doc = db.collection('quizzes').doc(lastVisible);
+    if (typeof lastVisible === "string" && lastVisible.trim() !== "") {
+      const doc = db.collection("quizzes").doc(lastVisible);
       const lastElement = await doc.get();
       query = query.startAfter(lastElement);
     } else if (lastVisible) {
@@ -100,7 +147,7 @@ const getExams = async (
       availableExams
     );
   } catch (error) {
-    console.error(error.message, 'error in getExams');
+    console.error(error.message, "error in getExams");
     return {
       cards: getFormatedQuizzes(oldExams, userId),
       lastVisible,
@@ -110,14 +157,14 @@ const getExams = async (
 
 const createExamen = async (examenData, userData) => {
   try {
-    const examenRef = db.collection('quizzes');
+    const examenRef = db.collection("quizzes");
     const snaphsot = await examenRef
-      .where('title', '==', examenData['quiz-title'])
-      .where('creator', '==', userData.uid)
+      .where("title", "==", examenData["quiz-title"])
+      .where("creator", "==", userData.uid)
       .get();
     if (snaphsot.empty) {
       const newExamen = {
-        title: examenData['quiz-title'],
+        title: examenData["quiz-title"],
         subject: examenData.subject,
         creator: userData.uid,
         sessionsCount: 0,
@@ -131,27 +178,27 @@ const createExamen = async (examenData, userData) => {
       const result = {
         success: true,
         quizId: docRef.id, // This should be replaced with actual logic to create a quiz
-        message: 'Quiz created successfully',
+        message: "Quiz created successfully",
       };
       return result;
     } else {
       return {
         success: false,
-        message: 'A quizz already exist with the same title',
+        message: "A quizz already exist with the same title",
       };
     }
   } catch (error) {
     console.log(error.message);
     return {
       success: false,
-      message: 'Error creating the quizz',
+      message: "Error creating the quizz",
     };
   }
 };
 
 const supprimerExamen = async (examenId) => {
   try {
-    const examenRef = db.collection('quizzes').doc(examenId);
+    const examenRef = db.collection("quizzes").doc(examenId);
     if (examenRef) {
       await examenRef.delete();
       return true;
@@ -163,31 +210,6 @@ const supprimerExamen = async (examenId) => {
   }
 };
 
-// questions gestion
-
-//Quesetion creation : Params (questionData)
-// const getQuestions = async (examenId) => {
-//   try {
-//     const questionRef = db.collection('questions');
-//     if (questionRef) {
-//       const snapshot = await questionRef
-//         .where('examenId', '==', examenId)
-//         .get();
-//       if (snapshot.empty) {
-//         return [];
-//       }
-//       const questions = [];
-//       snapshot.forEach((question) => {
-//         questions.push({
-//           id: question.id,
-//           ...question.data(),
-//         });
-//       });
-//       return questions;
-//     }
-//   } catch (error) {}
-// };
-
 const filtrerExamen = async (criteria, examens) => {
   try {
     const quizzes = examens.filter((ex) => {
@@ -195,7 +217,7 @@ const filtrerExamen = async (criteria, examens) => {
       const searchTerm = criteria.searchTerm.trim().toLowerCase();
       if (searchTerm) {
         matchSearch =
-          searchTerm.trim() === '' ||
+          searchTerm.trim() === "" ||
           ex.subject.toLowerCase().includes(searchTerm) ||
           ex.title.toLowerCase().includes(searchTerm);
       }
@@ -204,13 +226,13 @@ const filtrerExamen = async (criteria, examens) => {
     });
     let sortedExams = quizzes;
 
-    if (criteria.sort === 'desc' && quizzes.length >= 2) {
+    if (criteria.sort === "desc" && quizzes.length >= 2) {
       sortedExams = examens.sort((a, b) => {
         const dateA = new Date(a.createdAt);
         const dateB = new Date(b.createdAt);
         return dateB - dateA;
       });
-    } else if (criteria.sort === 'asc' && quizzes.length >= 2) {
+    } else if (criteria.sort === "asc" && quizzes.length >= 2) {
       sortedExams = examens.sort((a, b) => {
         const dateA = new Date(a.createdAt);
         const dateB = new Date(b.createdAt);
@@ -219,13 +241,13 @@ const filtrerExamen = async (criteria, examens) => {
     }
     return sortedExams;
   } catch (error) {
-    console.log(error.message, 'error here ');
+    console.log(error.message, "error here ");
     return false;
   }
 };
 const createQuestion = async (questionData) => {
   try {
-    const questionsRef = db.collection('questions');
+    const questionsRef = db.collection("questions");
     if (questionsRef) {
       const newQuestion = {
         text: questionData.text,
@@ -233,23 +255,7 @@ const createQuestion = async (questionData) => {
         reponse: questionData.reponse,
         examenId: questionData.examenId,
       };
-      await setDoc(doc(db, 'questions', id), newQuestion);
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.log(error.message);
-    return false;
-  }
-};
-//question remove : params(questionId)
-
-const removeQuestion = async (questionId) => {
-  try {
-    const questionRef = db.collection('questions').doc(questionId);
-
-    if (questionRef) {
-      await questionRef.delete();
+      await setDoc(doc(db, "questions", id), newQuestion);
       return true;
     }
     return false;
@@ -259,48 +265,9 @@ const removeQuestion = async (questionId) => {
   }
 };
 
-const modifieQuiz = async (propertie, value, examenId) => {
-  try {
-    const ref = tacheRef.doc(examenId);
-    const snaphsot = await ref.get();
-    const examen = snaphsot.data();
-    const isNotEmpty = value.trim() != '';
-    if (examen) {
-      await ref.update({
-        propertie: value,
-      });
-      switch (propertie) {
-        case 'title':
-          if (isNotEmpty) {
-            ref.update({
-              title: value,
-            });
-            return true;
-          }
-          break;
-
-        case 'subject':
-          if (isNotEmpty) {
-            ref.update({
-              matiere: [...question.choix, value],
-            });
-            return true;
-          }
-          break;
-        default:
-          return false;
-      }
-    } else {
-      return false;
-    }
-  } catch (error) {
-    console.log(error.message);
-    return false;
-  }
-};
 const updateQuizTitle = async (title, id, userId) => {
   try {
-    const ref = db.collection('quizzes').doc(id);
+    const ref = db.collection("quizzes").doc(id);
     const snapShot = await ref.get();
     const quiz = snapShot.data();
     if (snapShot.exists && quiz.creator === userId) {
@@ -309,25 +276,25 @@ const updateQuizTitle = async (title, id, userId) => {
       });
       return {
         success: true,
-        message: 'Quiz title updated successfully',
+        message: "Quiz title updated successfully",
       };
     } else {
       return {
         success: false,
-        message: 'Quiz id is not valid',
+        message: "Quiz id is not valid",
       };
     }
   } catch (error) {
     console.log(error);
     return {
       success: false,
-      message: 'Could not update  the quiz title',
+      message: "Could not update  the quiz title",
     };
   }
 };
 const updateQuizSubject = async (subject, id, userId) => {
   try {
-    const ref = db.collection('quizzes').doc(id);
+    const ref = db.collection("quizzes").doc(id);
     const snapShot = await ref.get();
     const quiz = snapShot.data();
     if (snapShot.exists && quiz.creator === userId) {
@@ -336,43 +303,41 @@ const updateQuizSubject = async (subject, id, userId) => {
       });
       return {
         success: true,
-        message: 'Quiz subject updated successfully',
+        message: "Quiz subject updated successfully",
       };
     } else {
       return {
         success: false,
-        message: 'Quiz id is not valid',
+        message: "Quiz id is not valid",
       };
     }
   } catch (error) {
     console.log(error);
     return {
       success: false,
-      message: 'Could not update the quiz subject',
+      message: "Could not update the quiz subject",
     };
   }
 };
 
-// wach kayn examneId in current sessions , new field in groups , current session for the joined groups , is session active and sessio has the quiz id return , if is session Active and the quiz id in the current tache send play quiz
-
 const getQuizzPlayContext = async (user, quizId) => {
   try {
     const sessionSnap = user.currentSession
-      ? await db.collection('sessions').doc(user.currentSession).get()
+      ? await db.collection("sessions").doc(user.currentSession).get()
       : null;
     const session = sessionSnap && sessionSnap.exists ? sessionSnap.data() : {};
     const taskSnap = user.currentSession
       ? await db
-          .collection('tasks')
-          .where('sessionId', '==', user.currentSession)
-          .where('status', '==', 'active')
+          .collection("tasks")
+          .where("sessionId", "==", user.currentSession)
+          .where("status", "==", "active")
           .get()
       : null;
     const task = taskSnap && !taskSnap.empty ? taskSnap.docs[0].data() : {};
-    const quizSnap = await db.collection('quizzes').doc(quizId).get();
+    const quizSnap = await db.collection("quizzes").doc(quizId).get();
 
     if (!quizSnap) {
-      console.log('Quiz not found');
+      console.log("Quiz not found");
 
       return {
         success: false,
@@ -383,7 +348,7 @@ const getQuizzPlayContext = async (user, quizId) => {
     const questions = await getQuestions(quizId, user.uid);
 
     if (questions.length == 0) {
-      console.log('No questions found for the quiz');
+      console.log("No questions found for the quiz");
 
       return {
         success: false,
@@ -396,9 +361,9 @@ const getQuizzPlayContext = async (user, quizId) => {
     const sessionHasQuiz =
       session && session.quizId === quizId && task && task.isQuiz;
 
-    console.log('isCreator:', isCreator);
-    console.log('hasPassed:', hasPassed);
-    console.log('sessionHasQuiz:', sessionHasQuiz);
+    console.log("isCreator:", isCreator);
+    console.log("hasPassed:", hasPassed);
+    console.log("sessionHasQuiz:", sessionHasQuiz);
 
     if (isCreator || hasPassed || sessionHasQuiz) {
       return {
@@ -424,7 +389,7 @@ const getQuizzPlayContext = async (user, quizId) => {
 
 const getQuizEditContext = async (quizId, userId) => {
   try {
-    const ref = db.collection('quizzes').doc(quizId);
+    const ref = db.collection("quizzes").doc(quizId);
     const snap = await ref.get();
     const questions = await getQuestions(quizId);
 
@@ -443,21 +408,21 @@ const getQuizEditContext = async (quizId, userId) => {
     } else {
       return {
         succeess: false,
-        message: 'unauthorized',
+        message: "unauthorized",
       };
     }
   } catch (error) {
-    console.log(error, 'error');
+    console.log(error, "error");
     return {
       success: false,
-      message: 'a message',
+      message: "a message",
     };
   }
 };
 
 const getQuizzInfo = async (quizId, userId) => {
   try {
-    const ref = db.collection('quizzes').doc(quizId);
+    const ref = db.collection("quizzes").doc(quizId);
     const snap = await ref.get();
     const quiz = snap.data();
 
@@ -480,14 +445,14 @@ const getQuizzInfo = async (quizId, userId) => {
     } else {
       return {
         success: false,
-        message: 'Quiz not found or user does not have the right.',
+        message: "Quiz not found or user does not have the right.",
       };
     }
   } catch (error) {
     console.log(error);
     return {
       success: false,
-      message: 'Cant fetch the quiz questions please try again late.r',
+      message: "Cant fetch the quiz questions please try again late.r",
     };
   }
 };
@@ -496,7 +461,7 @@ const getSessionQuizzes = async (
   userId,
   lastVisible = null,
   limit,
-  searchTerm = '',
+  searchTerm = "",
   oldQuizzes = []
 ) => {
   try {
@@ -509,10 +474,10 @@ const getSessionQuizzes = async (
       };
     }
 
-    let query = db.collection('quizzes').where('creator', '==', userId);
+    let query = db.collection("quizzes").where("creator", "==", userId);
     //checking if the lastVisible is a doc or an id
-    if (typeof lastVisible === 'string' && lastVisible.trim() !== '') {
-      const lastDocSnap = await db.collection('quizzes').doc(lastVisible).get();
+    if (typeof lastVisible === "string" && lastVisible.trim() !== "") {
+      const lastDocSnap = await db.collection("quizzes").doc(lastVisible).get();
       if (lastDocSnap.exists) {
         query = query.startAfter(lastDocSnap);
       }
@@ -539,7 +504,7 @@ const getSessionQuizzes = async (
     });
 
     const filteredQuizzes =
-      searchTerm.trim() != ''
+      searchTerm.trim() != ""
         ? quizzes.filter((q) =>
             q.title.toLowerCase().includes(searchTerm.toLowerCase().trim())
           )
@@ -569,7 +534,7 @@ const getSessionQuizzes = async (
       accumulatedQuizzes
     );
   } catch (error) {
-    console.error('Error fetching quizzes:', error.message);
+    console.error("Error fetching quizzes:", error.message);
     return {
       cards: oldQuizzes,
       lastVisible: null,
@@ -585,9 +550,9 @@ const modifyQuizQuestions = async (
   userId
 ) => {
   try {
-    const quizzRef = db.collection('quizzes').doc(quizzId);
+    const quizzRef = db.collection("quizzes").doc(quizzId);
     const snaphsot = await quizzRef.get();
-    const questionnsRef = db.collection('questions');
+    const questionnsRef = db.collection("questions");
     const quizz = snaphsot.data();
     if (snaphsot.exists && quizz.creator === userId) {
       const operations = [];
@@ -622,7 +587,7 @@ const modifyQuizQuestions = async (
 
       await Promise.all(operations);
 
-      const snap = await questionnsRef.where('quizId', '==', quizzId).get();
+      const snap = await questionnsRef.where("quizId", "==", quizzId).get();
       const size = snap.size;
       quizzRef.update({
         questionsCount: size,
@@ -630,7 +595,7 @@ const modifyQuizQuestions = async (
 
       return {
         success: true,
-        message: 'Quiz updated successfully',
+        message: "Quiz updated successfully",
       };
     } else {
       return {
@@ -642,43 +607,60 @@ const modifyQuizQuestions = async (
     console.log(error);
     return {
       success: false,
-      message: 'Something happend while updating the quiz',
+      message: "Something happend while updating the quiz",
     };
   }
 };
 
-const getQuizResult = async (userId, quizId) => {
-  const quizResultRef = db.collection('quizResults');
+const getQuizResult = async (reqUserId, quizId, userId) => {
+  
+  const quizSnap = await db.collection("quizzes").doc(quizId).get();
+  const quizCreator = quizSnap.data().creator;
+
+  if (reqUserId === "self") {
+    reqUserId = userId;
+  }
+
+  if (userId !== reqUserId && userId !== quizCreator)
+    return {
+      success: false,
+      message: "You are not authorized to view this quiz result.",
+    };
+
+  const quizResultRef = db.collection("quizResults");
   try {
     const snapshot = await quizResultRef
-      .where('userId', '==', userId)
-      .where('quizId', '==', quizId)
+      .where("userId", "==", reqUserId)
+      .where("quizId", "==", quizId)
       .get();
     if (snapshot.empty) {
       return {
         success: false,
-        message: 'No quiz result found for this user and quiz',
+        message: "No quiz result found for this user and quiz",
       };
     }
+
+    const questions = await getQuestions(quizId);
     const quizResult = snapshot.docs[0]?.data();
     return {
       success: true,
       quizResult,
+      questions,
     };
   } catch (error) {
-    console.error('Error fetching quiz result:', error);
+    console.error("Error fetching quiz result:", error);
     return {
       success: false,
-      message: 'Failed to fetch quiz result',
+      message: "Failed to fetch quiz result",
     };
   }
 };
 
 const addQuizResult = async (userId, quizResult) => {
-  const quizResultRef = db.collection('quizResults');
+  const quizResultRef = db.collection("quizResults");
   const existingResult = await quizResultRef
-    .where('userId', '==', userId)
-    .where('quizId', '==', quizResult.quizId)
+    .where("userId", "==", userId)
+    .where("quizId", "==", quizResult.quizId)
     .get();
 
   const submittedCount =
@@ -688,23 +670,69 @@ const addQuizResult = async (userId, quizResult) => {
       userId: userId,
       ...quizResult,
       submittedCount,
-      submittedAt: new Date().toISOString(),
     };
     if (existingResult.empty) {
       await quizResultRef.add(newResult);
+      // Add userId to usersIds array in the quizzes collection
+      await db
+        .collection("quizzes")
+        .doc(quizResult.quizId)
+        .update({
+          usersIds: FieldValue.arrayUnion(userId),
+        });
     } else {
       await quizResultRef.doc(existingResult.docs[0].id).update(newResult);
     }
 
     return {
       success: true,
-      message: 'Quiz result saved successfully',
+      message: "Quiz result saved successfully",
     };
   } catch (error) {
-    console.error('Error saving quiz result:', error);
+    console.error("Error saving quiz result:", error);
     return {
       success: false,
-      message: 'Failed to save quiz result',
+      message: "Failed to save quiz result",
+    };
+  }
+};
+
+const getQuizResultsList = async (quizId, userId) => {
+  try {
+    const quizSnap = await db.collection("quizzes").doc(quizId).get();
+    const quiz = quizSnap.data();
+
+    if (!quizSnap.exists)
+      return {
+        success: false,
+        message: "Quiz not found",
+      };
+
+    if (quiz.creator !== userId)
+      return {
+        success: false,
+        message: "You are not authorized to view this quiz results.",
+      };
+
+    const quizResults = await db
+      .collection("quizResults")
+      .where("quizId", "==", quizId)
+      .get();
+
+    const results = await Promise.all(
+      quizResults.docs.map((doc) => QuizResult.create(doc.data()))
+    );
+
+    return {
+      success: true,
+      results,
+      quizTitle: quiz.title,
+    };
+  } catch (error) {
+    console.error("Error fetching quiz results:", error);
+    return {
+      success: false,
+      message: "Failed to fetch quiz results",
     };
   }
 };
@@ -712,6 +740,7 @@ const addQuizResult = async (userId, quizResult) => {
 //fucntion for updated question and questions
 module.exports = {
   createExamen,
+  getQuizResultsList,
   getSessionQuizzes,
   getQuizzInfo,
   createQuestion,

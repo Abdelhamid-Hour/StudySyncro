@@ -2,7 +2,7 @@ import {
   fetchData,
   sendData,
   showMessageBlock,
-} from '../../../../../../main_assets/js/utils.js';
+} from "../../../../../../main_assets/js/utils.js";
 import {
   DESCRIPTION_MAX_LENGTH,
   DESCRIPTION_MIN_LENGTH,
@@ -12,11 +12,9 @@ import {
   MIN_MEMBERS,
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
-  SESSION_MAX_DURATION,
-  SESSION_MIN_DURATION,
   TASK_MAX_DURATION,
   TASK_MIN_DURATION,
-} from '../../../../global/js/dom-variables.js';
+} from "../../../../global/js/dom-variables.js";
 import {
   getLoader,
   resetTooltip,
@@ -27,34 +25,40 @@ import {
   dashedToCamelCase,
   navigateTo,
   handleApiAction,
-} from '../../../../global/js/utils.js';
+  closeOverlayModal,
+} from "../../../../global/js/utils.js";
 import {
   levelValues,
   visibilityValues,
-} from '../../../../shared/forms/js/dom-variables.js';
+} from "../../../../shared/forms/js/dom-variables.js";
 import {
   countCharsTextarea,
   handleFormSubmit,
   setUpSelectMenu,
   setUpSwitchBtn,
-} from '../../../../shared/forms/js/utils.js';
-import { initAndDiplayErrorTooltip } from '../../../../shared/chat/js/utils.js';
+} from "../../../../shared/forms/js/utils.js";
+import { initAndDiplayErrorTooltip } from "../../../../shared/chat/js/utils.js";
 import {
   handletTasksListners,
   setUpDragAndDrop,
   Task,
-} from '../../../../shared/tasks/js/utils.js';
+} from "../../../../shared/tasks/js/utils.js";
 import {
   groupLeftSideBar,
   showInfoBtn,
   groupInfoElementsMap,
   groupLeftSideBarContent,
   groupLeftSideBarTitle,
-} from './dom-variables.js';
+} from "./dom-variables.js";
 import {
   initFiltersInputListener,
   Loader,
-} from '../../../../shared/quizzes-groups/js/utils.js';
+} from "../../../../shared/quizzes-groups/js/utils.js";
+import {
+  endSession,
+  joinSession,
+  leaveSession,
+} from "../../../../shared/session/js/utils.js";
 
 export let groupInfo;
 export let lastVisible = null;
@@ -63,41 +67,41 @@ export const getGroupId = () => {
   // Example path: /app/groups/my/CKrhlort4dLmUq9zRtOl/chat
   const match = window.location.pathname.match(/\/groups\/my\/([^/]+)\/chat/);
   const groupId = match ? match[1] : null;
-  if (!groupId) throw new Error('Quiz ID not found');
+  if (!groupId) throw new Error("Quiz ID not found");
   return groupId;
 };
 
 export const handleLeavingGroup = async (e) => {
   const res = await showConfirmationBox(
-    'exclamation',
-    'Leave Group',
-    'Are you sure you want to leave this group?',
-    'Cancel',
-    'Leave'
+    "exclamation",
+    "Leave Group",
+    "Are you sure you want to leave this group?",
+    "Cancel",
+    "Leave"
   );
   if (res) {
     const groupId = getGroupId();
-    handleApiAction('/leave-group', { groupId }, e.target, {
-      successMsg: 'Left group successfully',
-      onSuccess: () => navigateTo('/groups/my'),
+    handleApiAction("/leave-group", { groupId }, e.target, {
+      successMsg: "Left group successfully",
+      onSuccess: () => navigateTo("/groups/my"),
     });
   }
 };
 
 export const handleGroupInfo = async () => {
-  await openGroupLeftSideBar('/group-info');
-  const removeGroupBtn = document.querySelector('.remove-group-btn');
+  await openGroupLeftSideBar("/group-info");
+  const removeGroupBtn = document.querySelector(".remove-group-btn");
   if (removeGroupBtn) {
-    removeGroupBtn.addEventListener('click', handleRemoveGroup);
+    removeGroupBtn.addEventListener("click", handleRemoveGroup);
   } else {
     document
-      .querySelector('.leave-group-btn')
-      .addEventListener('click', handleLeavingGroup);
+      .querySelector(".leave-group-btn")
+      .addEventListener("click", handleLeavingGroup);
   }
 };
 
 export const handleShowInfoBtnClick = async () => {
-  if (groupLeftSideBar.classList.contains('close')) {
+  if (groupLeftSideBar.classList.contains("close")) {
     handleGroupInfo();
   } else {
     closeGroupLeftSideBar();
@@ -106,12 +110,12 @@ export const handleShowInfoBtnClick = async () => {
 
 export const openGroupLeftSideBar = async (route) => {
   groupLeftSideBarContent.innerHTML = getLoader();
-  groupLeftSideBar.classList.remove('close');
+  groupLeftSideBar.classList.remove("close");
 
   showInfoBtn
-    .querySelector('i')
-    .classList.replace('bi-info-circle', 'bi-x-circle');
-  showInfoBtn.setAttribute('data-tooltip', 'Close group info');
+    .querySelector("i")
+    .classList.replace("bi-info-circle", "bi-x-circle");
+  showInfoBtn.setAttribute("data-tooltip", "Close group info");
 
   try {
     const groupId = getGroupId();
@@ -125,17 +129,37 @@ export const openGroupLeftSideBar = async (route) => {
 
     groupLeftSideBarContent.innerHTML = template;
     groupLeftSideBarTitle.textContent = title;
-    if (count) {
-      const badge = document.createElement('span');
-      badge.className = 'badge simple-badge';
+
+    if (count !== undefined) {
+      const badge = document.createElement("span");
+      badge.className = "badge simple-badge";
       badge.textContent = count;
       groupLeftSideBarTitle.appendChild(badge);
     }
+
+    const endBtn = groupLeftSideBarContent.querySelector(".end-btn");
+    const leaveBtn = groupLeftSideBarContent.querySelector(".leave-btn");
+    const joinBtn = groupLeftSideBarContent.querySelector(".join-btn");
+
+    if (endBtn)
+      endBtn.addEventListener("click", () =>
+        endSession(endBtn, endBtn.dataset.sessionId)
+      );
+
+    if (leaveBtn)
+      leaveBtn.addEventListener("click", () =>
+        leaveSession(leaveBtn, leaveBtn.dataset.sessionId)
+      );
+
+    if (joinBtn)
+      joinBtn.addEventListener("click", () =>
+        joinSession(joinBtn.dataset.sessionId, joinBtn)
+      );
   } catch (error) {
     console.log(error);
     showMessageBlock(
-      error.message || 'An error occurred while loading group info.',
-      'error'
+      error.message || "An error occurred while loading group info.",
+      "error"
     );
     groupLeftSideBarContent.innerHTML = `<p class="error-message"><i class="bi bi-exclamation-circle"></i>Failed to load group info. Please try again later.</p>`;
   }
@@ -172,15 +196,15 @@ const getSessionCreationOverlay = () => {
   return sessionOverlay;
 };
 const getSessionForm = (name, description, quiz) => {
-  let quizTitle = '';
-  let quizId = '';
+  let quizTitle = "";
+  let quizId = "";
   if (quiz) {
     // If quiz is provided, destructure its properties safely
-    quizTitle = quiz.quiz?.title || '';
-    quizId = quiz.UID || '';
+    quizTitle = quiz.quiz?.title || "";
+    quizId = quiz.UID || "";
   }
-  const wrapper = document.createElement('div');
-  wrapper.className = 'create-session-form';
+  const wrapper = document.createElement("div");
+  wrapper.className = "create-session-form";
   wrapper.innerHTML = `
     <form novalidate>
       <div class="field-container session-name-field">
@@ -250,22 +274,22 @@ const getSessionForm = (name, description, quiz) => {
   `;
 
   // Set values using textContent
-  wrapper.querySelector('#session-name').setAttribute('value', name || '');
+  wrapper.querySelector("#session-name").setAttribute("value", name || "");
 
-  wrapper.querySelector('#session-description').textContent = description || '';
+  wrapper.querySelector("#session-description").textContent = description || "";
 
-  wrapper.querySelector('.chars-limit').textContent = `${
+  wrapper.querySelector(".chars-limit").textContent = `${
     description?.length || 0
   }/${DESCRIPTION_MAX_LENGTH}`;
 
-  const quizValueEl = wrapper.querySelector('.quiz-value');
-  quizValueEl.textContent = quizTitle ? quizTitle : 'Quiz Title (Optional)';
+  const quizValueEl = wrapper.querySelector(".quiz-value");
+  quizValueEl.textContent = quizTitle ? quizTitle : "Quiz Title (Optional)";
   wrapper
     .querySelector('input[name="session-quiz-title"]')
-    .setAttribute('value', quizTitle || '');
+    .setAttribute("value", quizTitle || "");
   wrapper
     .querySelector('input[name="session-quiz-id"]')
-    .setAttribute('value', quizId || '');
+    .setAttribute("value", quizId || "");
 
   return wrapper.outerHTML;
 };
@@ -273,37 +297,37 @@ const getSessionForm = (name, description, quiz) => {
 export const handleSessionCreateClick = () => {
   const sessionStore = {
     sessionData: {
-      name: '',
-      description: '',
+      name: "",
+      description: "",
       sessionQuiz: null,
       duration: 0,
       tasks: [],
     },
     taskToEdit: {
       task: null,
-      index: '',
+      index: "",
       addQuiz: false,
     },
     addBreak: false,
   };
 
   openOverlayModal(
-    'create-session-overlay',
-    ['.close-session-creation-overlay'],
+    "create-session-overlay",
+    [".close-session-creation-overlay"],
     getSessionCreationOverlay,
     (backdropElement) => setUpSessionForm(backdropElement, sessionStore)
   );
 };
 
 const setUpSwapBtn = (btnClassName, targetClassName, wrapper, sessionStore) => {
-  wrapper.querySelector(`.${btnClassName}`)?.addEventListener('click', (e) => {
+  wrapper.querySelector(`.${btnClassName}`)?.addEventListener("click", (e) => {
     e.preventDefault();
-    if (btnClassName === 'back-btn') {
+    if (btnClassName === "back-btn") {
       // Reset taskToEdit when going back
       sessionStore.taskToEdit = null;
       sessionStore.addBreak = false;
     }
-    if (btnClassName === 'create-break-btn') {
+    if (btnClassName === "create-break-btn") {
       // Reset taskToEdit when going back
       sessionStore.addBreak = true;
     }
@@ -314,37 +338,37 @@ const setUpSwapBtn = (btnClassName, targetClassName, wrapper, sessionStore) => {
 // task form
 const getTaskButtonLabel = (task, addQuiz, addBreak) =>
   addQuiz
-    ? 'Add Quiz'
+    ? "Add Quiz"
     : addBreak
-    ? 'Add Break'
+    ? "Add Break"
     : task?.isQuiz
-    ? 'Update Quiz'
+    ? "Update Quiz"
     : task?.isBreak
-    ? 'Update Break'
+    ? "Update Break"
     : task
-    ? 'Update Task'
-    : 'Add Task';
+    ? "Update Task"
+    : "Add Task";
 const getTaskForm = (task, addQuiz, addBreak) => {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'create-task-form';
+  const wrapper = document.createElement("div");
+  wrapper.className = "create-task-form";
   wrapper.innerHTML = `
     <header class="tasks-header">
       <h3>${
         addQuiz
-          ? 'Add Quiz Task Details'
+          ? "Add Quiz Task Details"
           : task?.isQuiz
-          ? 'Edit Quiz Task'
+          ? "Edit Quiz Task"
           : task?.isBreak
-          ? 'Edit Break'
+          ? "Edit Break"
           : task
-          ? 'Edit Task'
+          ? "Edit Task"
           : addBreak
-          ? 'Create Break'
-          : 'Create Task'
+          ? "Create Break"
+          : "Create Task"
       }</h3>
       ${
         addQuiz
-          ? ''
+          ? ""
           : `<button type="button" class="gray-btn small-btn cancel-task-creation">
         Cancel
       </button>`
@@ -377,7 +401,7 @@ const getTaskForm = (task, addQuiz, addBreak) => {
 
       ${
         task?.isBreak || addBreak
-          ? ''
+          ? ""
           : `<div class="field-container task-description-field">
         <div class="field-icon-container">
           <span class="icon-box">
@@ -427,24 +451,24 @@ const getTaskForm = (task, addQuiz, addBreak) => {
     </form>
   `;
 
-  wrapper.querySelector('#task-title').setAttribute('value', task?.title || '');
+  wrapper.querySelector("#task-title").setAttribute("value", task?.title || "");
   if (!addBreak && !task?.isBreak) {
-    wrapper.querySelector('#task-description').textContent =
-      task?.description || '';
-    wrapper.querySelector('.chars-limit').textContent = `${
+    wrapper.querySelector("#task-description").textContent =
+      task?.description || "";
+    wrapper.querySelector(".chars-limit").textContent = `${
       task?.description?.length || 0
     }/${DESCRIPTION_MAX_LENGTH}`;
   }
   wrapper
-    .querySelector('#task-duration')
-    .setAttribute('value', task?.durationInMins || '');
+    .querySelector("#task-duration")
+    .setAttribute("value", task?.durationInMins || "");
 
   return wrapper.outerHTML;
 };
 
 const checkTextFieldValidity = (title, description, isBreak) => {
   if (!title.value) {
-    showErrorTooltip('Please enter a title', title.closest('.field-container'));
+    showErrorTooltip("Please enter a title", title.closest(".field-container"));
     return false;
   } else if (
     title.value.length < NAME_TITLE_MIN_LENGTH ||
@@ -452,18 +476,18 @@ const checkTextFieldValidity = (title, description, isBreak) => {
   ) {
     showErrorTooltip(
       `Title should be between ${NAME_TITLE_MIN_LENGTH} and ${NAME_TITLE_MAX_LENGTH} characters`,
-      title.closest('.field-container')
+      title.closest(".field-container")
     );
     return false;
   } else {
-    resetTooltip(globalTooltip, title.closest('.field-container'));
+    resetTooltip(globalTooltip, title.closest(".field-container"));
   }
 
   if (!isBreak) {
     if (!description.value) {
       showErrorTooltip(
-        'Please enter a description',
-        description.closest('.field-container')
+        "Please enter a description",
+        description.closest(".field-container")
       );
       return false;
     } else if (
@@ -472,11 +496,11 @@ const checkTextFieldValidity = (title, description, isBreak) => {
     ) {
       showErrorTooltip(
         `Description should be between ${DESCRIPTION_MIN_LENGTH} and ${DESCRIPTION_MAX_LENGTH} characters`,
-        description.closest('.field-container')
+        description.closest(".field-container")
       );
       return false;
     } else {
-      resetTooltip(globalTooltip, description.closest('.field-container'));
+      resetTooltip(globalTooltip, description.closest(".field-container"));
     }
   }
 
@@ -484,9 +508,9 @@ const checkTextFieldValidity = (title, description, isBreak) => {
 };
 
 const checkTaskFormValidity = (form, isBreak) => {
-  const title = form.querySelector('#task-title');
-  const description = form.querySelector('#task-description');
-  const duration = form.querySelector('#task-duration');
+  const title = form.querySelector("#task-title");
+  const description = form.querySelector("#task-description");
+  const duration = form.querySelector("#task-duration");
 
   if (!checkTextFieldValidity(title, description, isBreak)) {
     return false;
@@ -500,11 +524,11 @@ const checkTaskFormValidity = (form, isBreak) => {
   ) {
     showErrorTooltip(
       `Task duration should be a number between ${TASK_MIN_DURATION} and ${TASK_MAX_DURATION} minutes`,
-      duration.closest('.field-container')
+      duration.closest(".field-container")
     );
     return false;
   } else {
-    resetTooltip(globalTooltip, duration.closest('.field-container'));
+    resetTooltip(globalTooltip, duration.closest(".field-container"));
   }
 
   return true;
@@ -512,23 +536,23 @@ const checkTaskFormValidity = (form, isBreak) => {
 
 const createTaskElement = (task, idx, taskCount) => {
   const durationStr = millisecondsToHMFormat(task.durationInMins * 60 * 1000);
-  const taskContainer = document.createElement('div');
-  taskContainer.className = 'task';
+  const taskContainer = document.createElement("div");
+  taskContainer.className = "task";
   taskContainer.innerHTML = `
-  ${idx === 0 ? '<div class="drop-target"></div>' : ''}
+  ${idx === 0 ? '<div class="drop-target"></div>' : ""}
     <div data-task-id="${idx}" class="task-wrapper">
       <div ${
         task.isQuiz
           ? 'data-tooltip="Quiz"'
           : task.isBreak
           ? 'data-tooltip="Break"'
-          : ''
+          : ""
       } class="task-box ${
     task.isQuiz
-      ? 'quiz-task-box has-tooltip'
+      ? "quiz-task-box has-tooltip"
       : task.isBreak
-      ? 'break-box has-tooltip'
-      : ''
+      ? "break-box has-tooltip"
+      : ""
   }">
         <div class="counter drag-handle">
           <span></span>
@@ -543,7 +567,7 @@ const createTaskElement = (task, idx, taskCount) => {
           </button>
           ${
             task.isBreak
-              ? ''
+              ? ""
               : `<button
             type="button"
             data-tooltip="Show Details"
@@ -567,7 +591,7 @@ const createTaskElement = (task, idx, taskCount) => {
       </div>
       ${
         task.isBreak
-          ? ''
+          ? ""
           : `<div class="task-details">
         <h5>Title:</h5>
         <p class="task-title"></p>
@@ -580,26 +604,28 @@ const createTaskElement = (task, idx, taskCount) => {
   `;
 
   // Set textContent for safety
-  taskContainer.querySelector('.counter span').textContent = String(
+  taskContainer.querySelector(".counter span").textContent = String(
     idx + 1
-  ).padStart(taskCount.length, '0');
-  taskContainer.querySelector('.title').textContent = task.title || '';
-  taskContainer.querySelector('.duration').textContent = durationStr;
+  ).padStart(taskCount.length, "0");
+  taskContainer.querySelector(".title").textContent = task.title || "";
+  taskContainer.querySelector(".duration").textContent = durationStr;
   if (!task.isBreak) {
-    taskContainer.querySelector('.task-title').textContent = task.title || '';
-    taskContainer.querySelector('.task-desc').textContent =
-      task.description || '';
+    taskContainer.querySelector(".task-title").textContent = task.title || "";
+    taskContainer.querySelector(".task-desc").textContent =
+      task.description || "";
   }
 
   return taskContainer;
 };
 // the tasks list
 const getTasksList = (tasksArray = []) => {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'tasks-list';
+  const wrapper = document.createElement("div");
+  wrapper.className = "tasks-list";
 
   tasksArray.forEach((task, idx) => {
-    wrapper.appendChild(createTaskElement(task, idx, tasksArray.length.toString()));
+    wrapper.appendChild(
+      createTaskElement(task, idx, tasksArray.length.toString())
+    );
   });
 
   return wrapper;
@@ -640,9 +666,9 @@ const getTasksListContainer = (
 
 const shouldAddOrUpdateQuiz = (data, sessionData) => {
   return (
-    data['session-quiz-title'] &&
-    data['session-quiz-id'] &&
-    (data['session-quiz-id'] !== sessionData.sessionQuiz?.UID ||
+    data["session-quiz-title"] &&
+    data["session-quiz-id"] &&
+    (data["session-quiz-id"] !== sessionData.sessionQuiz?.UID ||
       !sessionData.sessionQuiz?.quiz.description ||
       !sessionData.sessionQuiz?.quiz.durationInMins)
   );
@@ -652,12 +678,12 @@ const addOrUpdateQuizTask = (data, sessionStore, wrapper) => {
   const sessionData = sessionStore.sessionData;
   sessionData.sessionQuiz = {
     quiz: new Task({
-      title: data['session-quiz-title'],
-      description: '',
+      title: data["session-quiz-title"],
+      description: "",
       durationInMins: 0,
       isQuiz: true,
     }),
-    UID: data['session-quiz-id'],
+    UID: data["session-quiz-id"],
   };
 
   const quizIndex = sessionData.tasks.findIndex((task) => task.isQuiz);
@@ -673,25 +699,25 @@ const addOrUpdateQuizTask = (data, sessionStore, wrapper) => {
     addQuiz: true,
   };
 
-  wrapper.querySelector('.create-session-form').outerHTML = getTasksContainer();
+  wrapper.querySelector(".create-session-form").outerHTML = getTasksContainer();
   wrapper
-    .querySelector('.finish-btn')
-    .addEventListener('click', (e) =>
+    .querySelector(".finish-btn")
+    .addEventListener("click", (e) =>
       handleFinishBtnClick(sessionStore.sessionData, e.target)
     );
-  wrapper.querySelector('#progress-end-text').checked = true;
+  wrapper.querySelector("#progress-end-text").checked = true;
 
-  setUpSwapBtn('back-btn', 'create-session-form', wrapper, sessionStore);
-  swapSessionOverlayContent('create-task-form', wrapper, sessionStore);
+  setUpSwapBtn("back-btn", "create-session-form", wrapper, sessionStore);
+  swapSessionOverlayContent("create-task-form", wrapper, sessionStore);
 };
 
 const setUpSessionForm = (wrapper, sessionStore) => {
-  wrapper.querySelector('#progress-end-text').checked = false;
+  wrapper.querySelector("#progress-end-text").checked = false;
   wrapper
-    .querySelector('textarea')
-    .addEventListener('input', countCharsTextarea);
-  const form = wrapper.querySelector('form');
-  const quizzesSelectTrigger = wrapper.querySelector('.select-trigger');
+    .querySelector("textarea")
+    .addEventListener("input", countCharsTextarea);
+  const form = wrapper.querySelector("form");
+  const quizzesSelectTrigger = wrapper.querySelector(".select-trigger");
   setUpSelectMenu(
     quizzesSelectTrigger,
     () => `
@@ -712,7 +738,7 @@ const setUpSessionForm = (wrapper, sessionStore) => {
     }
   );
 
-  const quizzesMenu = wrapper.querySelector('.quizzes-menu');
+  const quizzesMenu = wrapper.querySelector(".quizzes-menu");
 
   handleFormSubmit(
     form,
@@ -722,9 +748,9 @@ const setUpSessionForm = (wrapper, sessionStore) => {
 
   const loader = new Loader(
     quizzesMenu,
-    '10px',
+    "10px",
     createDropDownItem,
-    '/quizzes-list',
+    "/quizzes-list",
     getQuizLoaderLoadingItem(),
     () => getQuizLoaderSearchParams(wrapper),
     1
@@ -735,8 +761,8 @@ const setUpSessionForm = (wrapper, sessionStore) => {
 
 const checkSessionFormValidity = (form) => {
   // get inputs
-  const name = form.querySelector('#session-name');
-  const description = form.querySelector('#session-description');
+  const name = form.querySelector("#session-name");
+  const description = form.querySelector("#session-description");
 
   // check name and description
   if (!checkTextFieldValidity(name, description)) {
@@ -750,14 +776,14 @@ const handleFinishBtnClick = async (sessionData, btn) => {
   const tasksLength = sessionData.tasks.length;
   if (tasksLength === 0)
     return showMessageBlock(
-      'You must add at least one task before finishing.',
-      'info'
+      "You must add at least one task before finishing.",
+      "info"
     );
 
   if (quiz && (!quiz.description || !quiz.durationInMins))
     return showMessageBlock(
-      'Please complete the quiz details before finishing.',
-      'info'
+      "Please complete the quiz details before finishing.",
+      "info"
     );
 
   if (btn.isCreating) return;
@@ -766,40 +792,40 @@ const handleFinishBtnClick = async (sessionData, btn) => {
     btn.disabled = true;
     btn.innerHTML = getLoader();
     sessionData.groupId = getGroupId();
-    await sendData('/api/create-session', { sessionData });
-    showMessageBlock('Session created successfully', 'success');
-    navigateTo('/home');
+    await sendData("/api/create-session", { sessionData });
+    showMessageBlock("Session created successfully", "success");
+    navigateTo("/home");
   } catch (error) {
-    console.error('Error: ', error);
-    showMessageBlock(error.message, 'error');
+    console.error("Error: ", error);
+    showMessageBlock(error.message, "error");
   } finally {
     btn.isCreating = false;
     btn.disabled = false;
-    btn.innerHTML = 'Finish';
+    btn.innerHTML = "Finish";
   }
 };
 
 const handleSessionForm = (data, sessionStore, wrapper) => {
   const sessionData = sessionStore.sessionData;
-  sessionData.name = data['session-name'];
-  sessionData.description = data['session-description'];
+  sessionData.name = data["session-name"];
+  sessionData.description = data["session-description"];
 
   if (shouldAddOrUpdateQuiz(data, sessionData)) {
     addOrUpdateQuizTask(data, sessionStore, wrapper);
     return;
-  } else if (!data['session-quiz-title'] && !data['session-quiz-id']) {
+  } else if (!data["session-quiz-title"] && !data["session-quiz-id"]) {
     sessionData.sessionQuiz = null;
     sessionStore.taskToEdit = null;
   }
 
-  swapSessionOverlayContent('create-task-container', wrapper, sessionStore);
+  swapSessionOverlayContent("create-task-container", wrapper, sessionStore);
 };
 
 const setUpTaskContainer = (wrapper, sessionStore) => {
-  wrapper.querySelector('#progress-end-text').checked = true;
-  setUpSwapBtn('back-btn', 'create-session-form', wrapper, sessionStore);
+  wrapper.querySelector("#progress-end-text").checked = true;
+  setUpSwapBtn("back-btn", "create-session-form", wrapper, sessionStore);
 
-  wrapper.querySelector('.finish-btn').addEventListener('click', (e) => {
+  wrapper.querySelector(".finish-btn").addEventListener("click", (e) => {
     handleFinishBtnClick(sessionStore.sessionData, e.target);
   });
   setUpTasksList(wrapper, sessionStore);
@@ -807,7 +833,7 @@ const setUpTaskContainer = (wrapper, sessionStore) => {
 
 const resortTasksArray = (sessionData, wrapper) => {
   // After drag and drop, update the task order
-  sessionData.tasks = Array.from(wrapper.querySelectorAll('.task-wrapper')).map(
+  sessionData.tasks = Array.from(wrapper.querySelectorAll(".task-wrapper")).map(
     (taskWrapper, index) => {
       const taskId = taskWrapper.dataset.taskId;
       const task = sessionData.tasks[taskId];
@@ -819,37 +845,37 @@ const resortTasksArray = (sessionData, wrapper) => {
 
 const setUpTasksList = (wrapper, sessionStore) => {
   const sessionData = sessionStore.sessionData;
-  setUpSwapBtn('create-task-btn', 'create-task-form', wrapper, sessionStore);
-  setUpSwapBtn('create-break-btn', 'create-task-form', wrapper, sessionStore);
-  setUpDragAndDrop('.tasks-list', '.task', () =>
+  setUpSwapBtn("create-task-btn", "create-task-form", wrapper, sessionStore);
+  setUpSwapBtn("create-break-btn", "create-task-form", wrapper, sessionStore);
+  setUpDragAndDrop(".tasks-list", ".task", () =>
     resortTasksArray(sessionData, wrapper)
   );
-  const durationBadge = wrapper.querySelector('.duration-badge');
+  const durationBadge = wrapper.querySelector(".duration-badge");
   durationBadge.textContent = `Duration ${millisecondsToHMFormat(
     sessionData.duration * 60 * 1000
   )}`;
-  const tasksList = wrapper.querySelector('.tasks-list');
-  tasksList.addEventListener('click', async (e) => {
-    const editBtn = e.target.closest('.edit-task-btn');
-    const removeBtn = e.target.closest('.remove-task-btn');
+  const tasksList = wrapper.querySelector(".tasks-list");
+  tasksList.addEventListener("click", async (e) => {
+    const editBtn = e.target.closest(".edit-task-btn");
+    const removeBtn = e.target.closest(".remove-task-btn");
     if (editBtn) {
-      const taskId = editBtn.closest('.task-wrapper ')?.dataset.taskId;
+      const taskId = editBtn.closest(".task-wrapper ")?.dataset.taskId;
       sessionStore.taskToEdit = {
         task: sessionData.tasks[taskId],
         index: taskId,
       };
-      swapSessionOverlayContent('create-task-form', wrapper, sessionStore);
+      swapSessionOverlayContent("create-task-form", wrapper, sessionStore);
     } else if (removeBtn) {
-      const taskId = removeBtn.closest('.task-wrapper ')?.dataset.taskId;
+      const taskId = removeBtn.closest(".task-wrapper ")?.dataset.taskId;
       const task = sessionData.tasks[taskId];
       const isQuizTask = task.isQuiz;
       if (isQuizTask) {
         const res = await showConfirmationBox(
-          'exclamation',
-          'Remove Quiz',
-          'Are you sure you want to remove the quiz?',
-          'Cancel',
-          'Remove Quiz'
+          "exclamation",
+          "Remove Quiz",
+          "Are you sure you want to remove the quiz?",
+          "Cancel",
+          "Remove Quiz"
         );
         if (res) {
           sessionData.sessionQuiz = null; // Remove the quiz from session data
@@ -865,7 +891,7 @@ const setUpTasksList = (wrapper, sessionStore) => {
       tasksList.innerHTML = getTasksList(sessionData.tasks).innerHTML;
     }
   });
-  handletTasksListners('tasks-list-container');
+  handletTasksListners("tasks-list-container");
 };
 // wrapper of the tasks swap
 const getTasksContainer = (
@@ -885,14 +911,14 @@ const getTasksContainer = (
 // Helper to handle cancel task creation
 const handleCancelTaskCreation = (wrapper, sessionStore) => {
   setUpSwapBtn(
-    'cancel-task-creation',
-    'tasks-list-container',
+    "cancel-task-creation",
+    "tasks-list-container",
     wrapper,
     sessionStore
   );
   wrapper
-    .querySelector('.cancel-task-creation')
-    ?.addEventListener('click', () => {
+    .querySelector(".cancel-task-creation")
+    ?.addEventListener("click", () => {
       sessionStore.taskToEdit = null; // Reset after editing
       sessionStore.addBreak = false; // Reset after adding a break
     });
@@ -904,13 +930,13 @@ const updateTask = (sessionStore, data) => {
     sessionStore.sessionData.tasks[taskIndex].durationInMins;
   sessionStore.sessionData.duration -= oldTaskDuration;
   sessionStore.sessionData.tasks[taskIndex] = new Task({
-    title: data['task-title'],
-    description: data['task-description'] || '',
-    durationInMins: parseInt(data['task-duration'], 10),
+    title: data["task-title"],
+    description: data["task-description"] || "",
+    durationInMins: parseInt(data["task-duration"], 10),
     isQuiz: sessionStore.taskToEdit.task.isQuiz,
     isBreak: sessionStore.taskToEdit.task.isBreak,
   });
-  sessionStore.sessionData.duration += parseInt(data['task-duration'], 10);
+  sessionStore.sessionData.duration += parseInt(data["task-duration"], 10);
   if (sessionStore.taskToEdit.addQuiz) {
     // If the task is a quiz, update the quiz as well
     sessionStore.sessionData.sessionQuiz.quiz =
@@ -921,9 +947,9 @@ const updateTask = (sessionStore, data) => {
 
 const addTask = (sessionData, data, addBreak) => {
   const task = new Task({
-    title: data['task-title'],
-    description: data['task-description'] || '',
-    durationInMins: parseInt(data['task-duration'], 10),
+    title: data["task-title"],
+    description: data["task-description"] || "",
+    durationInMins: parseInt(data["task-duration"], 10),
     isQuiz: false,
     isBreak: addBreak,
   });
@@ -947,7 +973,7 @@ const handleTaskFormSubmission = (form, wrapper, sessionStore) => {
         addTask(sessionStore.sessionData, data, sessionStore.addBreak);
         sessionStore.addBreak = false;
       }
-      swapSessionOverlayContent('tasks-list-container', wrapper, sessionStore);
+      swapSessionOverlayContent("tasks-list-container", wrapper, sessionStore);
     }
   );
 };
@@ -956,44 +982,44 @@ const setUpTaskForm = (wrapper, sessionStore) => {
   handleCancelTaskCreation(wrapper, sessionStore);
   if (!sessionStore.addBreak && !sessionStore.taskToEdit?.task.isBreak) {
     wrapper
-      .querySelector('textarea')
-      .addEventListener('input', countCharsTextarea);
+      .querySelector("textarea")
+      .addEventListener("input", countCharsTextarea);
   }
-  const form = wrapper.querySelector('form');
+  const form = wrapper.querySelector("form");
   handleTaskFormSubmission(form, wrapper, sessionStore);
 };
 
 const configs = {
-  'create-session-form': {
+  "create-session-form": {
     getHtml: (sessionStore) =>
       getSessionForm(
         sessionStore.sessionData.name,
         sessionStore.sessionData.description,
         sessionStore.sessionData.sessionQuiz
       ),
-    replaceClass: 'create-task-container',
+    replaceClass: "create-task-container",
     setup: (wrapper, sessionStore) => setUpSessionForm(wrapper, sessionStore),
   },
-  'create-task-container': {
+  "create-task-container": {
     getHtml: (sessionStore) =>
       getTasksContainer(sessionStore.sessionData.tasks),
-    replaceClass: 'create-session-form',
+    replaceClass: "create-session-form",
     setup: (wrapper, sessionStore) => setUpTaskContainer(wrapper, sessionStore),
   },
-  'tasks-list-container': {
+  "tasks-list-container": {
     getHtml: (sessionStore) =>
       getTasksListContainer(sessionStore.sessionData.tasks),
-    replaceClass: 'create-task-form',
+    replaceClass: "create-task-form",
     setup: (wrapper, sessionStore) => setUpTasksList(wrapper, sessionStore),
   },
-  'create-task-form': {
+  "create-task-form": {
     getHtml: (sessionStore) =>
       getTaskForm(
         sessionStore.taskToEdit?.task,
         sessionStore.taskToEdit?.addQuiz,
         sessionStore.addBreak
       ),
-    replaceClass: 'tasks-list-container',
+    replaceClass: "tasks-list-container",
     setup: (wrapper, sessionStore) => setUpTaskForm(wrapper, sessionStore),
   },
 };
@@ -1018,26 +1044,26 @@ const swapSessionOverlayContent = (targetClassName, wrapper, sessionStore) => {
 };
 
 export const closeGroupLeftSideBar = () => {
-  groupLeftSideBar.classList.add('close');
+  groupLeftSideBar.classList.add("close");
   showInfoBtn
-    .querySelector('i')
-    .classList.replace('bi-x-circle', 'bi-info-circle');
-  showInfoBtn.setAttribute('data-tooltip', 'Show group info');
+    .querySelector("i")
+    .classList.replace("bi-x-circle", "bi-info-circle");
+  showInfoBtn.setAttribute("data-tooltip", "Show group info");
 };
 
 const swapMode = (infoBox, modeFuncName, updatedValue, showInSearchValue) => {
   const editBoxClass = infoBox.className
-    .split(' ')
-    .find((c) => c.includes('-info-box'));
+    .split(" ")
+    .find((c) => c.includes("-info-box"));
   if (updatedValue) {
-    groupInfo[dashedToCamelCase(editBoxClass.split('-info-box')[0])] =
+    groupInfo[dashedToCamelCase(editBoxClass.split("-info-box")[0])] =
       updatedValue;
   }
   if (showInSearchValue !== undefined) {
-    groupInfo['showInSearch'] = showInSearchValue;
+    groupInfo["showInSearch"] = showInSearchValue;
   }
   const value =
-    groupInfo[dashedToCamelCase(editBoxClass.split('-info-box')[0])];
+    groupInfo[dashedToCamelCase(editBoxClass.split("-info-box")[0])];
   const showInSearchInput =
     showInSearchValue !== null ? showInSearchValue : null;
   const infoBoxClone = infoBox.cloneNode();
@@ -1046,11 +1072,11 @@ const swapMode = (infoBox, modeFuncName, updatedValue, showInSearchValue) => {
     value,
     showInSearchInput
   );
-  if (modeFuncName === 'getEditMode') {
-    if (editBoxClass === 'subject-info-box') {
+  if (modeFuncName === "getEditMode") {
+    if (editBoxClass === "subject-info-box") {
       setUpSelectMenu(infoBoxClone);
     }
-    if (['visibility-info-box', 'level-info-box'].includes(editBoxClass)) {
+    if (["visibility-info-box", "level-info-box"].includes(editBoxClass)) {
       setUpSwitchBtn(infoBoxClone);
     }
   }
@@ -1060,59 +1086,61 @@ const swapMode = (infoBox, modeFuncName, updatedValue, showInSearchValue) => {
 
 export const handleViewAllMembersBtn = (e) => {
   const viewAllMembersBtn = e.target.closest(
-    '.view-all-btn, .manage-members-btn'
+    ".view-all-btn, .manage-members-btn"
   );
   if (viewAllMembersBtn) {
-    openGroupLeftSideBar('/members-list');
+    handleMembersListMenuBtn();
   }
 };
 
 // Sub-functions for group sidebar actions
 const handleKickMember = (kickBtn) => {
   const memberId = kickBtn
-    .closest('.action-btns')
-    .getAttribute('data-member-id');
+    .closest(".action-btns")
+    .getAttribute("data-member-id");
   const groupId = getGroupId();
-  handleApiAction('/kick-member', { groupId, memberId }, kickBtn, {
-    successMsg: 'Member kicked successfully',
+  handleApiAction("/kick-member", { groupId, memberId }, kickBtn, {
+    successMsg: "Member kicked successfully",
+    onSuccess: () => kickBtn.closest(".member").remove(), // Remove the member from the UI
   });
 };
 
 const handleMoveAdminRole = (moveAdminRoleBtn) => {
   const memberId = moveAdminRoleBtn
-    .closest('.action-btns')
-    .getAttribute('data-member-id');
+    .closest(".action-btns")
+    .getAttribute("data-member-id");
   const groupId = getGroupId();
-  handleApiAction('/transfer-role', { groupId, memberId }, moveAdminRoleBtn, {
-    successMsg: 'Role transferred successfully',
+  handleApiAction("/transfer-role", { groupId, memberId }, moveAdminRoleBtn, {
+    successMsg: "Role transferred successfully",
+    onSuccess: () => navigateTo(`/groups/my/${groupId}/chat`), // Refresh the page to reflect changes
   });
 };
 
 const handleAddMember = (addMemberBtn, searchMemberInput) => {
   const memberId = searchMemberInput.value.trim();
   const groupId = getGroupId();
-  handleApiAction('/add-member', { memberId, groupId }, addMemberBtn, {
-    successMsg: 'Member added successfully',
+  handleApiAction("/add-member", { memberId, groupId }, addMemberBtn, {
+    successMsg: "Member added successfully",
   });
 };
 
 const handleAcceptDemande = (acceptBtn) => {
   const demandeId = acceptBtn
-    .closest('.action-btns')
-    .getAttribute('data-user-id');
+    .closest(".action-btns")
+    .getAttribute("data-user-id");
   const groupId = getGroupId();
-  handleApiAction('/accept-demande', { demandeId, groupId }, acceptBtn, {
-    successMsg: 'Demande accepted',
+  handleApiAction("/accept-demande", { demandeId, groupId }, acceptBtn, {
+    successMsg: "Demande accepted",
   });
 };
 
 const handleRejectDemande = (rejectBtn) => {
   const demandeId = rejectBtn
-    .closest('.action-btns')
-    .getAttribute('data-user-id');
+    .closest(".action-btns")
+    .getAttribute("data-user-id");
   const groupId = getGroupId();
-  handleApiAction('/reject-demande', { demandeId, groupId }, rejectBtn, {
-    successMsg: 'Demande rejected',
+  handleApiAction("/reject-demande", { demandeId, groupId }, rejectBtn, {
+    successMsg: "Demande rejected",
   });
 };
 
@@ -1123,40 +1151,40 @@ export const handleGroupLeftSideBarContent = (e) => {
   handleDemandesBtn(e);
 
   // Kick member
-  const kickBtn = e.target.closest('.kick-btn');
+  const kickBtn = e.target.closest(".kick-btn");
   if (kickBtn) {
     handleKickMember(kickBtn);
     return;
   }
 
   // Move admin role
-  const moveAdminRoleBtn = e.target.closest('.move-admin-role-btn');
+  const moveAdminRoleBtn = e.target.closest(".move-admin-role-btn");
   if (moveAdminRoleBtn) {
     handleMoveAdminRole(moveAdminRoleBtn);
     return;
   }
 
   // Add member
-  const addMemberBtn = e.target.closest('.add-member-btn');
-  const searchMemberInput = document.querySelector('.members-search #search');
+  const addMemberBtn = e.target.closest(".add-member-btn");
+  const searchMemberInput = document.querySelector(".members-search #search");
   if (
     addMemberBtn &&
     searchMemberInput &&
-    searchMemberInput.value.trim() !== ''
+    searchMemberInput.value.trim() !== ""
   ) {
     handleAddMember(addMemberBtn, searchMemberInput);
     return;
   }
 
   // Accept demande
-  const acceptBtn = e.target.closest('.accept-btn');
+  const acceptBtn = e.target.closest(".accept-btn");
   if (acceptBtn) {
     handleAcceptDemande(acceptBtn);
     return;
   }
 
   // Reject demande
-  const rejectBtn = e.target.closest('.reject-btn');
+  const rejectBtn = e.target.closest(".reject-btn");
   if (rejectBtn) {
     handleRejectDemande(rejectBtn);
     return;
@@ -1164,16 +1192,19 @@ export const handleGroupLeftSideBarContent = (e) => {
 };
 
 export const handleQuizzesListMenuBtn = async () => {
-  await openGroupLeftSideBar('/quizzes-list');
+  await openGroupLeftSideBar("/quizzes-list");
   setUpDatePicker();
 };
-export const handleMembersListMenuBtn = () => {
-  openGroupLeftSideBar('/members-list');
+
+export const handleMembersListMenuBtn = async () => {
+  await openGroupLeftSideBar("/members-list");
+  const inviteUserBtn = groupLeftSideBar.querySelector(".invite-user-btn");
+  inviteUserBtn?.addEventListener("click", handleAddMembersBtn);
 };
 
 export const handleSessionInfoMenuBtn = async () => {
-  await openGroupLeftSideBar('/session-info');
-  handletTasksListners('session-info');
+  await openGroupLeftSideBar("/session-info");
+  handletTasksListners("session-info");
 };
 
 export const setUpDatePicker = () => {
@@ -1185,43 +1216,43 @@ export const setUpDatePicker = () => {
 
 export const handleRemoveGroup = async (e) => {
   const res = await showConfirmationBox(
-    'exclamation',
-    'Remove group',
-    'Are you sure you want to remove this group?',
-    'Cancel',
-    'Remove'
+    "exclamation",
+    "Remove group",
+    "Are you sure you want to remove this group?",
+    "Cancel",
+    "Remove"
   );
   if (res) {
     const groupId = getGroupId();
     handleApiAction(`/remove-group/${groupId}`, {}, e.target, {
-      successMsg: 'Group removed successfully',
-      onSuccess: () => navigateTo('/groups/my'),
-      method: 'DELETE',
+      successMsg: "Group removed successfully",
+      onSuccess: () => navigateTo("/groups/my"),
+      method: "DELETE",
     });
   }
 };
 
 export const handleDemandesBtn = async (e) => {
-  const demandesBtn = e.target.closest('.demandes-btn');
+  const demandesBtn = e.target.closest(".demandes-btn");
   if (demandesBtn) {
     setUpDemandes();
   }
 };
 
 export const setUpDemandes = async () => {
-  await openGroupLeftSideBar('/demandes-list');
+  await openGroupLeftSideBar("/demandes-list");
   setUpDatePicker();
 };
 
 export const handleEditBtn = (e) => {
-  const editBtn = e.target.closest('.edit-btn');
+  const editBtn = e.target.closest(".edit-btn");
   if (editBtn) {
-    const infoBox = editBtn.closest('.info-box');
-    const showInSearch = infoBox.querySelector('#show-in-search');
+    const infoBox = editBtn.closest(".info-box");
+    const showInSearch = infoBox.querySelector("#show-in-search");
     swapMode(
       infoBox,
-      'getEditMode',
-      '',
+      "getEditMode",
+      "",
       showInSearch ? showInSearch.checked : null
     );
   }
@@ -1229,13 +1260,13 @@ export const handleEditBtn = (e) => {
 
 // Helper: Get info box conditions
 const getInfoBoxConditions = (editBoxClass, input) => ({
-  isVisbilityBox: editBoxClass === 'visibility-info-box',
-  isLevelBox: editBoxClass === 'level-info-box',
-  isSubjectBox: editBoxClass === 'subject-info-box',
-  isGroupDescriptionBox: editBoxClass === 'group-description-info-box',
-  isGroupNameBox: editBoxClass === 'group-name-info-box',
-  isMaxMembersBox: editBoxClass === 'max-members-info-box',
-  isInputElement: ['INPUT', 'TEXTAREA'].includes(input.tagName),
+  isVisbilityBox: editBoxClass === "visibility-info-box",
+  isLevelBox: editBoxClass === "level-info-box",
+  isSubjectBox: editBoxClass === "subject-info-box",
+  isGroupDescriptionBox: editBoxClass === "group-description-info-box",
+  isGroupNameBox: editBoxClass === "group-name-info-box",
+  isMaxMembersBox: editBoxClass === "max-members-info-box",
+  isInputElement: ["INPUT", "TEXTAREA"].includes(input.tagName),
 });
 
 // Helper: Check if value has changed
@@ -1248,10 +1279,10 @@ const isValueUnchanged = (
 ) => {
   if (CONDITIONS.isVisbilityBox) {
     return (
-      (input?.dataset.value === 'Private' &&
+      (input?.dataset.value === "Private" &&
         showInSearchInput.checked === oldValueShowInSearch &&
         input?.dataset.value === oldValue) ||
-      (input?.dataset.value === 'Public' && input?.dataset.value === oldValue)
+      (input?.dataset.value === "Public" && input?.dataset.value === oldValue)
     );
   }
   return input.value === oldValue || input?.dataset.value === oldValue;
@@ -1259,23 +1290,23 @@ const isValueUnchanged = (
 
 // Handle cancel button: revert to view mode
 const handleCancelBtn = (cancelBtn) => {
-  const infoBox = cancelBtn.closest('.info-box');
-  swapMode(infoBox, 'getViewMode');
+  const infoBox = cancelBtn.closest(".info-box");
+  swapMode(infoBox, "getViewMode");
 };
 
 // Handle save button logic
 const handleSaveBtn = (saveBtn) => {
-  const infoBox = saveBtn.closest('.info-box');
-  const infoWrapper = infoBox.querySelector('.info-container');
+  const infoBox = saveBtn.closest(".info-box");
+  const infoWrapper = infoBox.querySelector(".info-container");
   const editBoxClass = infoBox.className
-    .split(' ')
-    .find((c) => c.includes('-info-box'));
+    .split(" ")
+    .find((c) => c.includes("-info-box"));
   const oldValue =
-    groupInfo[dashedToCamelCase(editBoxClass.split('-info-box')[0])];
-  const oldValueShowInSearchInput = groupInfo['showInSearch'];
+    groupInfo[dashedToCamelCase(editBoxClass.split("-info-box")[0])];
+  const oldValueShowInSearchInput = groupInfo["showInSearch"];
 
-  const input = infoBox.querySelector('.value');
-  const showInSearchInput = infoBox.querySelector('#show-in-search');
+  const input = infoBox.querySelector(".value");
+  const showInSearchInput = infoBox.querySelector("#show-in-search");
 
   const CONDITIONS = getInfoBoxConditions(editBoxClass, input);
   if (
@@ -1287,21 +1318,21 @@ const handleSaveBtn = (saveBtn) => {
       oldValueShowInSearchInput
     )
   ) {
-    swapMode(infoBox, 'getViewMode', '', oldValueShowInSearchInput);
+    swapMode(infoBox, "getViewMode", "", oldValueShowInSearchInput);
     return;
   }
   const isValid = checkValidity(input, CONDITIONS);
 
   if (isValid) {
-    infoWrapper.classList.remove('error-input');
+    infoWrapper.classList.remove("error-input");
     handleSaveAction(input, infoBox, CONDITIONS, saveBtn, showInSearchInput);
   }
 };
 
 // Handles save and cancel button actions in the group info sidebar
 export const handleSaveAndCancelBtns = (e) => {
-  const saveBtn = e.target.closest('.save-btn');
-  const cancelBtn = e.target.closest('.cancel-btn');
+  const saveBtn = e.target.closest(".save-btn");
+  const cancelBtn = e.target.closest(".cancel-btn");
 
   if (cancelBtn) {
     handleCancelBtn(cancelBtn);
@@ -1328,15 +1359,15 @@ const handleSaveAction = async (
     const groupId = getGroupId();
 
     const updatedData = {
-      fieldName: input.name ? input.name : input.getAttribute('name'),
-      value: '',
+      fieldName: input.name ? input.name : input.getAttribute("name"),
+      value: "",
     };
     if (CONDITIONS.isVisbilityBox) {
       updatedData.value = {};
       if (input?.dataset.value !== groupInfo.visibility)
         updatedData.value.visibility = input?.dataset.value;
       if (
-        input?.dataset.value === 'Private' &&
+        input?.dataset.value === "Private" &&
         showInSearchInput.checked !== groupInfo.showInSearch
       )
         updatedData.value.showInSearch = showInSearchInput.checked;
@@ -1345,21 +1376,21 @@ const handleSaveAction = async (
         ? input.value.trim()
         : input?.dataset.value;
     }
-    await sendData('/api/update-group/' + groupId, { updatedData }, 'PATCH');
+    await sendData("/api/update-group/" + groupId, { updatedData }, "PATCH");
     const updatedValue =
-      typeof updatedData.value === 'object'
+      typeof updatedData.value === "object"
         ? updatedData.value.visibility
         : updatedData.value;
     const showInSearchValue =
-      CONDITIONS.isVisbilityBox && input?.dataset.value === 'Private'
+      CONDITIONS.isVisbilityBox && input?.dataset.value === "Private"
         ? showInSearchInput.checked
         : null;
 
-    swapMode(infoBox, 'getViewMode', updatedValue, showInSearchValue);
-    showMessageBlock('Group info updated successfully', 'success');
+    swapMode(infoBox, "getViewMode", updatedValue, showInSearchValue);
+    showMessageBlock("Group info updated successfully", "success");
   } catch (error) {
-    console.log('Error', error);
-    showMessageBlock(error.message, 'error');
+    console.log("Error", error);
+    showMessageBlock(error.message, "error");
   } finally {
     saveBtn.innerHTML = '<i class="bi bi-floppy"></i>';
     saveBtn.disabled = false;
@@ -1375,7 +1406,7 @@ const validateMaxMembers = (input, value) => {
     maxMembers > MAX_MEMBERS
   ) {
     initAndDiplayErrorTooltip(
-      input.closest('.info-edit-wrapper'),
+      input.closest(".info-edit-wrapper"),
       `Max members should be a number between ${MIN_MEMBERS} and ${MAX_MEMBERS}`
     );
     return false;
@@ -1389,7 +1420,7 @@ const validateGroupName = (input, value) => {
     value.length > NAME_TITLE_MAX_LENGTH
   ) {
     initAndDiplayErrorTooltip(
-      input.closest('.info-edit-wrapper'),
+      input.closest(".info-edit-wrapper"),
       `Group name should be between ${NAME_TITLE_MIN_LENGTH} and ${NAME_TITLE_MAX_LENGTH} characters`
     );
     return false;
@@ -1403,7 +1434,7 @@ const validateGroupDescription = (input, value) => {
     value.length > DESCRIPTION_MAX_LENGTH
   ) {
     initAndDiplayErrorTooltip(
-      input.closest('.info-edit-wrapper'),
+      input.closest(".info-edit-wrapper"),
       `Group description should be between ${DESCRIPTION_MIN_LENGTH} and ${DESCRIPTION_MAX_LENGTH} characters`
     );
     return false;
@@ -1436,8 +1467,8 @@ const checkValidity = (input, CONDITIONS) => {
 const checkRadioValidity = (input, valideValues) => {
   if (!valideValues.includes(input?.dataset.value)) {
     initAndDiplayErrorTooltip(
-      input.closest('.info-edit-wrapper'),
-      'Please select a valid option'
+      input.closest(".info-edit-wrapper"),
+      "Please select a valid option"
     );
     return false;
   }
@@ -1446,42 +1477,297 @@ const checkRadioValidity = (input, valideValues) => {
 };
 
 const getQuizLoaderLoadingItem = () => {
-  const div = document.createElement('div');
-  div.className = 'select-item drop-down-item loading-card';
+  const div = document.createElement("div");
+  div.className = "select-item drop-down-item loading-card";
   div.innerHTML = `<div class="loading-opacity-animation"></div>`;
   return div;
 };
 
 const getQuizLoaderSearchParams = (wrapper) => {
-  const searchInput = wrapper.querySelector('#select-search');
+  const searchInput = wrapper.querySelector("#select-search");
   return `searchTerm=${searchInput.value.toLowerCase().trim()}`;
 };
 
 function escapeHTML(str) {
   return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 const createDropDownItem = (quiz, searchTerm) => {
-  const div = document.createElement('div');
-  div.className = 'select-item drop-down-item';
-  div.setAttribute('data-value', quiz.id);
+  const div = document.createElement("div");
+  div.className = "select-item drop-down-item";
+  div.setAttribute("data-value", quiz.id);
 
   const title = quiz.title;
   const escapedTitle = escapeHTML(title);
   const escapedSearchTerm = escapeHTML(searchTerm);
 
   // Create a case-insensitive RegExp to find the search term
-  const regex = new RegExp(`(${escapedSearchTerm})`, 'ig');
+  const regex = new RegExp(`(${escapedSearchTerm})`, "ig");
 
   // Highlight matched part
-  const highlightedTitle = escapedTitle.replace(regex, '<mark>$1</mark>');
+  const highlightedTitle = escapedTitle.replace(regex, "<mark>$1</mark>");
 
   div.innerHTML = highlightedTitle;
 
   return div;
+};
+
+export const handleAddMembersBtn = () => {
+  openOverlayModal(
+    "add-members-overlay",
+    [".close-overlay-btn", ".cancel-btn"],
+    getAddMembersOverlay,
+    setUpAddMembersOverlay
+  );
+};
+
+const getAddMembersOverlay = () => {
+  return `
+    <div class="overlay-model add-members-overlay">
+      <header class="list-header">
+      <h3 class="label">
+        <i class="bi bi-people-fill"></i>
+        Add Members
+      </h3>
+      <!-- close btn -->
+      <button type="button" class="close-overlay-btn exclude-btn">
+        <i class="bi bi-x-lg"></i>
+      </button>
+      </header>
+      <section class="text-helper">
+      Enter the user’s ID or name to add them to the group
+      </section>
+      <section class="search-sec">
+      <div class="members-search users-search">
+        <div class="search-icon-container">
+        <i class="bi bi-person-fill"></i>
+        </div>
+
+        <input
+        type="search"
+        id="search"
+        placeholder="Search By Member Name or ID"
+        />
+      </div>
+      </section>
+      <section class="users-result">
+      </section>
+      <div class="action-btns">
+      <button type="button" class="btn blue-btn confirm-btn">
+        Confirm
+      </button>
+      <button type="button" class="btn gray-btn cancel-btn">
+        Cancel
+      </button>
+      </div>
+    </div>
+    `;
+};
+
+const createUserBadge = (user) => {
+  const badge = document.createElement("div");
+  badge.className = "user-badge badge simple-badge";
+  badge.innerHTML = `
+  <div class="avatar">
+    <img
+      alt="Member Avatar"
+    />
+  </div>
+  <span class="full-name"></span>
+  <button class="remove-btn exclude-btn">
+    <i class="bi bi-x"></i>
+  </button>
+  `;
+  badge.querySelector("img").setAttribute("src", user.photoURL);
+  badge.setAttribute("data-user-id", user.id);
+  badge.querySelector(".full-name").textContent = user.fullName;
+  return badge;
+};
+
+const updateSelectedUsers = (container, user, action, removeFromUsers) => {
+  let selectedUsersContainer = container.querySelector(".selected-users");
+  const searchSection = container.querySelector(".search-sec");
+  if (!selectedUsersContainer) {
+    selectedUsersContainer = createSelectedUsersDiv(
+      container,
+      searchSection,
+      removeFromUsers
+    );
+  }
+  const selectedUsersBadges =
+    selectedUsersContainer.querySelectorAll(".user-badge");
+
+  if (action === "add") {
+    const userBadge = createUserBadge(user);
+    selectedUsersContainer.appendChild(userBadge);
+  } else {
+    selectedUsersBadges.forEach((badge) => {
+      if (badge.dataset.userId === user.id) {
+        badge.remove();
+      }
+    });
+  }
+
+  if (selectedUsersContainer.childElementCount === 0)
+    selectedUsersContainer.remove();
+};
+
+function createSelectedUsersDiv(container, searchSection, removeFromUsers) {
+  const selectedUsersContainer = document.createElement("div");
+  selectedUsersContainer.className = "selected-users";
+  searchSection.after(selectedUsersContainer);
+  selectedUsersContainer.addEventListener("click", (e) => {
+    const removeBtn = e.target.closest(".remove-btn");
+    if (removeBtn) {
+      const userId = removeBtn.closest(".user-badge").dataset.userId;
+      const userInResult = container.querySelector(
+        `.user-item[data-user-id="${userId}"]`
+      );
+      if (userInResult) userInResult.querySelector("input").checked = false;
+      removeFromUsers(userId);
+      updateSelectedUsers(container, { id: userId }, "remove", removeFromUsers);
+    }
+  });
+
+  return selectedUsersContainer;
+}
+
+const inviteUsersToGroup = (users, confirmBtn) => {
+  handleApiAction(
+    "/invite-users",
+    { groupId: getGroupId(), users },
+    confirmBtn,
+    {
+      successMsg: "Users invited successfully!",
+      onSuccess: () => closeOverlayModal("add-members-overlay"),
+    }
+  );
+};
+
+const handleConfirmClick = (users, confirmBtn) => {
+  if (users.length === 0) {
+    showMessageBlock("Please select at least one user to add.", "info");
+    return;
+  } else {
+    inviteUsersToGroup(users, confirmBtn);
+  }
+};
+
+const handleMembersResultsInput = (e, users, container, removeFromUsers) => {
+  const card = e.target.closest(".user-item");
+  const user = {
+    fullName: card.querySelector(".full-name").textContent,
+    photoURL: card.querySelector("img").src,
+    id: card.dataset.userId,
+  };
+  if (e.target.checked) {
+    users.push(user.id);
+    updateSelectedUsers(container, user, "add", removeFromUsers);
+  } else {
+    users.splice(users.indexOf(user.id), 1);
+    updateSelectedUsers(container, user, "remove", removeFromUsers);
+  }
+};
+
+const handleMembersLoader = (data, container, users) => {
+  const membersResults = container.querySelector(".users-result");
+  const search = container.querySelector(".members-search input");
+  let badgeCount = container.querySelector(".results-count");
+  if (!badgeCount) {
+    badgeCount = document.createElement("span");
+    badgeCount.className = "badge simple-badge results-count";
+    membersResults.before(badgeCount);
+  }
+  if (search.value === "") return badgeCount.remove();
+  badgeCount.textContent = `${data.cards.length} Users Found`;
+  data.cards.forEach((card) => {
+    if (users.includes(card.id)) {
+      const userInResult = membersResults.querySelector(
+        `.user-item[data-user-id="${card.id}"]`
+      );
+      if (userInResult) userInResult.querySelector("input").checked = true;
+    }
+  });
+};
+
+const createMemberCard = (user) => {
+  const card = document.createElement("label");
+  card.className = "container user-item";
+  card.innerHTML = `
+  <input type="checkbox" />
+  <svg viewBox="0 0 64 64" height="2em" width="2em">
+    <path
+      d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+      pathLength="575.0541381835938"
+      class="path"
+    ></path>
+  </svg>
+  <div class="avatar">
+    <img
+      src="${user.photoURL}"
+      alt="Member Avatar"
+    />
+  </div>
+  <span class="full-name"></span>
+  `;
+
+  card.querySelector(".full-name").textContent = user.fullName || "N/A";
+  card.setAttribute("data-user-id", user.id);
+  return card;
+};
+
+const createMemberLoadingCard = () => {
+  const loadingCard = document.createElement("label");
+  loadingCard.className = "container user-item loading-card loading-animation";
+  loadingCard.innerHTML = `
+    <input type="checkbox" disabled />
+    <svg viewBox="0 0 64 64" height="2em" width="2em" class="loading-opacity-animation">
+      <path
+        d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+        pathLength="575.0541381835938"
+        class="path"
+      ></path>
+    </svg>
+    <div class="avatar loading-opacity-animation">
+      <div class="img loading-opacity-animation"></div>
+    </div>
+    <span style="width: 50%; border-radius: 1rem" class="full-name loading-opacity-animation"></span>
+  `;
+  return loadingCard;
+};
+
+const setUpAddMembersOverlay = (container) => {
+  const users = [];
+  const removeFromUsers = (userId) => {
+    users.splice(users.indexOf(userId), 1);
+  };
+  const search = container.querySelector(".members-search input");
+  const membersResults = container.querySelector(".users-result");
+  const confirmBtn = container.querySelector(".confirm-btn");
+
+  confirmBtn.addEventListener("click", () =>
+    handleConfirmClick(users, confirmBtn)
+  );
+
+  membersResults.addEventListener("input", (e) =>
+    handleMembersResultsInput(e, users, container, removeFromUsers)
+  );
+
+  const loader = new Loader(
+    membersResults,
+    "200px",
+    createMemberCard,
+    "/users",
+    createMemberLoadingCard(),
+    () => `search=${search.value}`,
+    1,
+    (data) => handleMembersLoader(data, container, users)
+  );
+
+  initFiltersInputListener(loader, search);
 };

@@ -8,7 +8,7 @@
         </span>
         Session Name
       </span>
-      <span class="session-name-value value content"><%= sessionName %></span>
+      <span class="session-name-value value content"><%= name %></span>
     </div>
   </div>
 
@@ -23,14 +23,13 @@
       </span>
       <p
         class="session-description-value value has-tooltip"
-        data-tooltip="<%= sessionDescription %>"
+        data-tooltip="<%= description %>"
       >
-        <%= sessionDescription %>
+        <%= description %>
       </p>
     </div>
   </div>
 
-  <!-- Quiz -->
   <div class="quiz-info-box info-box">
     <div class="quiz-container info-container">
       <span class="label">
@@ -39,7 +38,7 @@
         </span>
         Quiz
       </span>
-      <span class="quiz-value value content"><%= quizTitle %></span>
+      <span class="quiz-value value content"><%= quiz ? quiz.title : "No Quiz Assigned" %></span>
     </div>
   </div>
 
@@ -125,9 +124,9 @@
     <div class="tasks-list">
       <%_ tasks.map((task, index) => { %>
           <div class="task-wrapper">
-            <div <%- task instanceof Quiz 
+            <div <%- task.isQuiz
             ? 'data-tooltip="Quiz"' 
-            : '' %> class="task-box<%= task instanceof Quiz ? ' has-tooltip quiz-task-box' : '' %>">
+            : '' %> class="task-box<%= task.isQuiz ? ' has-tooltip quiz-task-box' : '' %>">
               <div class="counter">
                 <span>
                   <%= (index + 1) .toString()
@@ -156,12 +155,12 @@
   </div>
   <div class="action-btns">
     <% if (isJoined) { %>
-    <button type="button" class="red-btn should-fill">
+    <button data-session-id="<%= id %>" type="button" class="<%= isAdmin ? 'end' : 'leave' %>-btn red-btn should-fill">
       <i class="bi bi-x-circle"></i>
-      Cancel Session
+      <%= isAdmin ? 'End' : 'Leave' %> Session
     </button>
     <% } else { %>
-    <button type="button" class="green-btn should-fill blue-btn">
+    <button data-session-id="<%= id %>" type="button" class="green-btn join-btn should-fill blue-btn">
       <i class="bi bi-check-circle"></i>
       Join Session
     </button>

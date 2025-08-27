@@ -1,0 +1,97 @@
+<div class="results-list-overlay overlay-model">
+  <header class="list-header">
+    <h3 class="label">
+      <i class="bi bi-people-fill"></i>
+      Users Results
+    </h3>
+    <div class="quiz-title">
+      <span class="title-label">Quiz Title</span>
+      <h3 class="quiz-title"><%= quizTitle %></h3>
+    </div>
+    <!-- close btn -->
+    <button type="button" class="close-results-overlay-btn exclude-btn">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </header>
+  <div class="table-div">
+    <table>
+      <thead>
+        <tr>
+          <th>
+            <div>
+              <i class="bi bi-person-circle"></i>
+              Profile
+            </div>
+          </th>
+          <th>
+            <div>
+              <i class="bi bi-person"></i>
+              Full Name
+            </div>
+          </th>
+          <th>
+            <div>
+              <i class="bi bi-calendar-event"></i>
+              Submitted At
+            </div>
+          </th>
+          <th>
+            <div>
+              <i class="bi bi-list-ol"></i>
+              Answered Questions
+            </div>
+          </th>
+          <th>
+            <div>
+              <i class="bi bi-bar-chart-line"></i>
+              Score
+            </div>
+          </th>
+          <th>
+            <div>
+              <i class="bi bi-gear"></i>
+              Actions
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <% 
+          function getScoreClass(score) {
+            if (score >= 80) return 'excellent';
+            if (score >= 60) return 'good';
+            if (score >= 40) return 'average';
+            return 'poor';
+          }
+          results.forEach(result => { 
+        %>
+        <tr>
+          <td>
+            <div class="avatar-cover">
+              <img
+                src="https://randomuser.me/api/portraits/men/32.jpg"
+                alt="Profile"
+                width="32"
+                height="32"
+              />
+            </div>
+          </td>
+          <td><%= result.user.fullName %></td>
+          <td><%= result.resultDetails.submittedAt %></td>
+          <td><%= result.resultDetails.submittedCount %></td>
+          <td class="<%= getScoreClass(result.score) %>"><%= result.score %></td>
+          <td>
+            <button
+              class="small-btn show-result-btn"
+              data-user-id="<%= result.resultDetails.userId %>"
+            >
+              <i class="bi bi-eye"></i>
+              View Result
+            </button>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</div>

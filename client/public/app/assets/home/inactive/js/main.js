@@ -1,5 +1,5 @@
 import { activeSessions, initDomVariables } from "./dom-variables.js";
-import { handleSessionDetailsBtn } from "./utils.js";
+import { handleSessionBtns } from "./utils.js";
 
 
 let firstLoad = true;
@@ -11,10 +11,9 @@ export const init = (virtual = false) => {
   }
 
   initDomVariables();
-console.log("Active Module start: inactive.js"); 
-  activeSessions.addEventListener('click', handleSessionDetailsBtn);
 
+  activeSessions.addEventListener('click', handleSessionBtns);
+  
 };
-
 
 init()

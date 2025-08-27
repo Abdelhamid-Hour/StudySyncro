@@ -193,7 +193,7 @@
       }
 
       & > div.tasks-list {
-        & > div[class*='task'] div[class*='task-box'] {
+        & > div[class*="task"] div[class*="task-box"] {
           &.task-box.first {
             border-left: 0.4rem solid var(--success-block-border-color);
           }
@@ -279,10 +279,6 @@
       justify-content: space-between;
       align-items: center;
 
-      .result-btn {
-        margin-left: auto;
-      }
-
       .score-container {
         position: relative;
         height: 2.3906rem;
@@ -310,6 +306,12 @@
         &:hover i {
           color: white;
         }
+      }
+
+      .action-buttons {
+        margin-left: auto;
+        display: flex;
+        gap: var(--primary-gap);
       }
     }
   }
@@ -408,7 +410,7 @@
 
         &::after,
         &::before {
-          content: '';
+          content: "";
           width: 1rem;
           height: 1rem;
           border-radius: 25%;
@@ -457,7 +459,7 @@
           }
 
           &::after {
-            content: '';
+            content: "";
             position: absolute;
             height: 2px;
             width: calc(100% - 1rem);
@@ -613,7 +615,7 @@
 }
 
 @property --top-ffront-shadow-color {
-  syntax: '<color>';
+  syntax: "<color>";
   initial-value: #1e77fd;
   inherits: false;
 }

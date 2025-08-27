@@ -6,9 +6,9 @@ import {
   signInWithPopup,
   updateProfile,
   FacebookAuthProvider,
-} from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
-import { AUTH_ERRORS } from './auth-variables.js';
-import { redirectTo, sendData } from '../../main_assets/js/utils.js';
+} from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { AUTH_ERRORS } from "./auth-variables.js";
+import { redirectTo, sendData } from "../../main_assets/js/utils.js";
 
 const googleProvider = new GoogleAuthProvider();
 const fbProvider = new FacebookAuthProvider();
@@ -20,18 +20,19 @@ const fbProvider = new FacebookAuthProvider();
  */
 const handleUserSignIn = async (auth, user) => {
   // Send the ID token to the server and get CSRF token
-  await sendIdToken(auth, '/login');
+  await sendIdToken(auth, "/login");
   // Get CSRF token from the cookie
   const userInfo = {
     fullName: user.displayName,
+    fullNameLower: user.displayName.toLowerCase(),
     photoURL: user.photoURL,
     email: user.email,
     uid: user.uid,
   };
   // send user data to the server to save it in Firestore
-  await sendData('/api/insert-user-data', { userInfo });
+  await sendData("/api/insert-user-data", { userInfo });
   // Redirect to the main page
-  redirectTo('/app/home');
+  redirectTo("/app/home");
 };
 
 /**
@@ -42,7 +43,7 @@ const handleUserSignIn = async (auth, user) => {
 const signInWhithProvider = async function (auth, provider, callback) {
   const userCredential = await signInWithPopup(auth, provider);
   const user = userCredential.user;
-  callback('Signed in successfully', 'success');
+  callback("Signed in successfully", "success");
   await handleUserSignIn(auth, user);
 };
 
@@ -59,12 +60,12 @@ const InitializeGoogleOneTap = function (auth, callback) {
       // Convert Google credential to Firebase credential
       const credential = GoogleAuthProvider.credential(response.credential);
       const userCredential = await signInWithCredential(auth, credential);
-      callback('Signed in successfully', 'success');
+      callback("Signed in successfully", "success");
       const user = userCredential.user;
       await handleUserSignIn(auth, user);
     } catch (error) {
       checkError(error);
-      callback(error.message,  'error');
+      callback(error.message, "error");
     }
   };
 
@@ -92,7 +93,7 @@ const signInWithFacebookProviderWithPopUp = async function (auth, callback) {
     await signInWhithProvider(auth, fbProvider, callback);
   } catch (error) {
     checkError(error);
-    callback(error.message,  'error');
+    callback(error.message, "error");
   }
 };
 
@@ -106,10 +107,9 @@ const signInWithFacebookProviderWithPopUp = async function (auth, callback) {
 const signInWithGoogleProviderWithPopUp = async function (auth, callback) {
   try {
     await signInWhithProvider(auth, googleProvider, callback);
-    
   } catch (error) {
     checkError(error);
-    callback(error.message, 'error');
+    callback(error.message, "error");
   }
 };
 
@@ -136,7 +136,7 @@ const createAuserWithEmailAndPassword = async function (
       email,
       password
     );
-    callback('Account created! Welcome aboard.', 'success');
+    callback("Account created! Welcome aboard.", "success");
     const user = userCredential.user;
     await updateProfile(user, {
       displayName: fullName,
@@ -144,7 +144,7 @@ const createAuserWithEmailAndPassword = async function (
     await handleUserSignIn(auth, user);
   } catch (error) {
     checkError(error);
-    callback(error.message,  'error');
+    callback(error.message, "error");
   }
 };
 
@@ -166,12 +166,12 @@ const signInAuserWithEmailAndPassword = async function (
 ) {
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    callback('Signed in successfully', 'success');
-    await sendIdToken(auth, '/login');
-    redirectTo('/app/home');
+    callback("Signed in successfully", "success");
+    await sendIdToken(auth, "/login");
+    redirectTo("/app/home");
   } catch (error) {
     checkError(error);
-    callback(error.message,  'error');
+    callback(error.message, "error");
   }
 };
 
@@ -185,10 +185,10 @@ export const sendIdToken = async function (auth, url) {
   const idToken = await auth.currentUser.getIdToken();
   // Send the ID token to the server
   const response = await fetch(url, {
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify({ idToken }),
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
   if (!response.ok) {
@@ -214,8 +214,8 @@ const checkError = function (error) {
       return;
     }
   }
-  const code = error.code.split('/')[1];
-  const message = code.split('-').join(' ');
+  const code = error.code.split("/")[1];
+  const message = code.split("-").join(" ");
   error.message = message;
   return;
 };

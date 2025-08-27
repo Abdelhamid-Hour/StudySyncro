@@ -1,59 +1,60 @@
 // const { get } = require("../routes/api-routes");
-const { getMembers, getRequests } = require("./firebase-utils/demandes");
+const { db } = require("../firebase/firebaseAdmin");
+const { getRequests } = require("./firebase-utils/demandes");
 const { getExams } = require("./firebase-utils/examen");
 const { getGroupInfo, getChatContext } = require("./firebase-utils/group");
+const { getMembers } = require("./firebase-utils/members");
+const { getSessionInformations } = require("./firebase-utils/session");
 const { millisecondsToHMFormat, Task, Quiz } = require("./global");
 const INITIALE_LOADERS_COUNT = 20;
+const GroupFragmentRoutes = [
+  { route: "/group-info", title: "Group Informations" },
+  { route: "/session-info", title: "Session Informations" },
+  { route: "/members-list", title: "Members" },
+  { route: "/demandes-list", title: "Join Requests" },
+  { route: "/quizzes-list", title: "Quizzes" },
+];
 
 const getGroupChatContext = async (userId, groupId) => {
   const result = await getChatContext(userId, groupId);
 
   return result;
 };
-
 // Group Left Side Bar Contexts
-
 const getGroupInfoContext = async (id, user) => {
   const groupInfo = await getGroupInfo(id, user.uid);
   return groupInfo;
 };
 
-const getSessionInfoContext = () => {
+const getSessionInfoContext = async (groupId, userId) => {
+  const groupSnap = await db.collection("groups").doc(groupId).get();
+  const groupData = groupSnap.data();
+
+  if (!groupSnap.exists)
+    return {
+      success: false,
+      message: "Group Not exists",
+    };
+
+  const res = await getSessionInformations(groupData.currentSession);
+
+  if (!res.success) {
+    return {
+      success: false,
+      message: res.message || "Failed to load session information",
+    };
+  }
+
   return {
     success: true,
     context: {
-      isAdmin: true,
-      isJoined: true,
-      sessionName: "Session Name",
-      sessionDescription: "Session Description",
-      quizTitle: "Quiz Title",
-      duration: "1h 20m",
-      startTime: "14:00",
-      endTime: "15:00",
-      joinedCount: 5,
-      tasks: [
-        new Task({
-          title: "Introduction to JavaScript",
-          description:
-            "Learn the basics of JavaScript, including syntax and variables.",
-          durationInMins: 2, // in minutes
-        }),
-        new Task({
-          title: "JavaScript Functions",
-          description:
-            "Understand how to create and use functions in JavaScript.",
-          durationInMins: 45, // in minutes
-        }),
-        new Quiz({
-          UID: "123",
-          title: "JavaScript Quiz",
-          description: "Test your knowledge of JavaScript basics.",
-          durationInMins: 10, // in minutes
-          questionsCount: 10,
-        }),
-      ],
+      ...res.session,
+      count: res.session.joinedCount,
+      isAdmin: groupData.creator === userId,
+      isJoined:
+        res.session.joinedUsers.includes(userId) ||
+        groupData.creator === userId,
       millisecondsToHMFormat: millisecondsToHMFormat,
-      Quiz,
     },
   };
 };
@@ -112,6 +113,7 @@ const getDemandesListContext = async (id, user) => {
 
 module.exports = {
   INITIALE_LOADERS_COUNT,
+  GroupFragmentRoutes,
   getSessionInfoContext,
   getMembersListContext,
   getQuizzesListContext,

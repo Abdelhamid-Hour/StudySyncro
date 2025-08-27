@@ -5,8 +5,8 @@ import {
   MIN_MEMBERS,
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
-} from '../../../../global/js/dom-variables.js';
-import { createShowInSearchLabel } from '../../../../shared/forms/js/utils.js';
+} from "../../../../global/js/dom-variables.js";
+import { createShowInSearchLabel } from "../../../../shared/forms/js/utils.js";
 
 export let groupLeftSideBar,
   showInfoBtn,
@@ -22,12 +22,15 @@ export let groupLeftSideBar,
   leaveGroupMenuBtn,
   copyUIDMenuBtn,
   createSessionBtn,
+  joinSessionBtn,
+  endSessionBtn,
+  addMembersMenuBtn,
   groupInfoMenuBtn;
 
 groupInfoElementsMap = {
-  'group-name-info-box': {
+  "group-name-info-box": {
     getEditMode: (value) => {
-      const wrapper = document.createElement('div');
+      const wrapper = document.createElement("div");
       wrapper.innerHTML = `
             <div class="action-btns">
             <button
@@ -65,12 +68,12 @@ groupInfoElementsMap = {
             />
           </div>
           `;
-      const input = wrapper.querySelector('#group-name-input');
-      input.setAttribute('value', value);
+      const input = wrapper.querySelector("#group-name-input");
+      input.setAttribute("value", value);
       return wrapper.innerHTML;
     },
     getViewMode: (value) => {
-      const wrapper = document.createElement('div');
+      const wrapper = document.createElement("div");
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
@@ -88,15 +91,15 @@ groupInfoElementsMap = {
               </span>
             </div>
           `;
-      const content = wrapper.querySelector('.group-name-value.content');
+      const content = wrapper.querySelector(".group-name-value.content");
       content.textContent = value;
       return wrapper.innerHTML;
     },
   },
 
-  'group-description-info-box': {
+  "group-description-info-box": {
     getEditMode: (value) => {
-      const wrapper = document.createElement('div');
+      const wrapper = document.createElement("div");
       wrapper.innerHTML = `
             <div class="action-btns">
             <button
@@ -134,12 +137,12 @@ groupInfoElementsMap = {
               rows="3"></textarea>
           </div>
           `;
-      const textarea = wrapper.querySelector('#group-description-input');
+      const textarea = wrapper.querySelector("#group-description-input");
       textarea.textContent = value;
       return wrapper.innerHTML;
     },
     getViewMode: (value) => {
-      const wrapper = document.createElement('div');
+      const wrapper = document.createElement("div");
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
@@ -156,16 +159,16 @@ groupInfoElementsMap = {
               <p data-tooltip="" class="group-description-value value has-tooltip"></p>
             </div>
           `;
-      const p = wrapper.querySelector('.group-description-value');
+      const p = wrapper.querySelector(".group-description-value");
       p.textContent = value;
-      p.setAttribute('data-tooltip', value);
+      p.setAttribute("data-tooltip", value);
       return wrapper.innerHTML;
     },
   },
 
-  'subject-info-box': {
+  "subject-info-box": {
     getEditMode: (value) => {
-      const wrapper = document.createElement('div');
+      const wrapper = document.createElement("div");
       wrapper.innerHTML = `
             <div class="action-btns">
             <button
@@ -200,13 +203,13 @@ groupInfoElementsMap = {
             </div>
           </div>
           `;
-      const span = wrapper.querySelector('.subject-value.value');
+      const span = wrapper.querySelector(".subject-value.value");
       span.textContent = value;
-      span.setAttribute('data-value', value);
+      span.setAttribute("data-value", value);
       return wrapper.innerHTML;
     },
     getViewMode: (value) => {
-      const wrapper = document.createElement('div');
+      const wrapper = document.createElement("div");
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
@@ -222,15 +225,15 @@ groupInfoElementsMap = {
               <span class="subject-value value content"></span>
             </div>
           `;
-      const content = wrapper.querySelector('.subject-value.content');
+      const content = wrapper.querySelector(".subject-value.content");
       content.textContent = value;
       return wrapper.innerHTML;
     },
   },
 
-  'level-info-box': {
+  "level-info-box": {
     getEditMode: (value) => {
-      const wrapper = document.createElement('div');
+      const wrapper = document.createElement("div");
       wrapper.innerHTML = `
             <div class="action-btns">
               <button
@@ -267,13 +270,13 @@ groupInfoElementsMap = {
             </div>
           </div>
           `;
-      const span = wrapper.querySelector('.level-input');
+      const span = wrapper.querySelector(".level-input");
       span.textContent = value;
-      span.setAttribute('data-value', value);
+      span.setAttribute("data-value", value);
       return wrapper.innerHTML;
     },
     getViewMode: (value) => {
-      const wrapper = document.createElement('div');
+      const wrapper = document.createElement("div");
       wrapper.innerHTML = `
            <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
@@ -289,15 +292,15 @@ groupInfoElementsMap = {
               <span class="level-value value content"></span>
             </div>
           `;
-      const content = wrapper.querySelector('.level-value.content');
+      const content = wrapper.querySelector(".level-value.content");
       content.textContent = value;
       return wrapper.innerHTML;
     },
   },
 
-  'visibility-info-box': {
+  "visibility-info-box": {
     getEditMode: (value, showInSearchInput) => {
-      const wrapper = document.createElement('div');
+      const wrapper = document.createElement("div");
       wrapper.innerHTML = `
             <div class="action-btns">
             <button
@@ -336,17 +339,17 @@ groupInfoElementsMap = {
             </span>
           </div>
           `;
-      const span = wrapper.querySelector('.visibility-input');
+      const span = wrapper.querySelector(".visibility-input");
       span.textContent = value;
-      span.setAttribute('data-value', value);
-      if (value === 'Private') {
+      span.setAttribute("data-value", value);
+      if (value === "Private") {
         const label = createShowInSearchLabel(showInSearchInput);
         wrapper.appendChild(label);
       }
       return wrapper.innerHTML;
     },
     getViewMode: (value, showInSearchInput) => {
-      const wrapper = document.createElement('div');
+      const wrapper = document.createElement("div");
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
@@ -362,9 +365,9 @@ groupInfoElementsMap = {
               <span class="visibility-value value content"></span>
             </div>
           `;
-      const content = wrapper.querySelector('.visibility-value.content');
+      const content = wrapper.querySelector(".visibility-value.content");
       content.textContent = value;
-      if (value === 'Private') {
+      if (value === "Private") {
         const label = createShowInSearchLabel(showInSearchInput, true);
         wrapper.appendChild(label);
       }
@@ -372,9 +375,9 @@ groupInfoElementsMap = {
     },
   },
 
-  'max-members-info-box': {
+  "max-members-info-box": {
     getEditMode: (value) => {
-      const wrapper = document.createElement('div');
+      const wrapper = document.createElement("div");
       wrapper.innerHTML = `
             <div class="action-btns">
             <button
@@ -413,12 +416,12 @@ groupInfoElementsMap = {
             />
           </div>
           `;
-      const input = wrapper.querySelector('#max-members-input');
-      input.setAttribute('value', value);
+      const input = wrapper.querySelector("#max-members-input");
+      input.setAttribute("value", value);
       return wrapper.innerHTML;
     },
     getViewMode: (value) => {
-      const wrapper = document.createElement('div');
+      const wrapper = document.createElement("div");
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
@@ -434,7 +437,7 @@ groupInfoElementsMap = {
               <span class="max-members-value value content"></span>
             </div>
           `;
-      const content = wrapper.querySelector('.max-members-value.content');
+      const content = wrapper.querySelector(".max-members-value.content");
       content.textContent = value;
       return wrapper.innerHTML;
     },
@@ -442,17 +445,20 @@ groupInfoElementsMap = {
 };
 
 export const initDomVariables = () => {
-  quizzesListMenuBtn = document.querySelector('.quizzes-list-menu-btn');
-  membersListMenuBtn = document.querySelector('.members-list-menu-btn');
-  sessionInfoMenuBtn = document.querySelector('.session-info-menu-btn');
-  removeGroupMenuBtn = document.querySelector('.remove-group-menu-btn');
-  leaveGroupMenuBtn = document.querySelector('.leave-group-menu-btn');
-  groupInfoMenuBtn = document.querySelector('.group-info-menu-btn');
-  manageDemanesMenuBtn = document.querySelector('.manage-demanes-menu-btn');
-  copyUIDMenuBtn = document.querySelector('.copy-uid-menu-btn');
-  groupLeftSideBar = document.querySelector('.group-left-side-bar');
-  showInfoBtn = document.querySelector('.show-info-btn');
-  createSessionBtn = document.querySelector('.create-session-btn');
-  groupLeftSideBarContent = document.querySelector('.left-side-bar-content');
-  groupLeftSideBarTitle = groupLeftSideBar.querySelector('.side-bar-title');
+  quizzesListMenuBtn = document.querySelector(".quizzes-list-menu-btn");
+  membersListMenuBtn = document.querySelector(".members-list-menu-btn");
+  sessionInfoMenuBtn = document.querySelector(".session-info-menu-btn");
+  removeGroupMenuBtn = document.querySelector(".remove-group-menu-btn");
+  leaveGroupMenuBtn = document.querySelector(".leave-group-menu-btn");
+  addMembersMenuBtn = document.querySelector(".add-members-menu-btn");
+  groupInfoMenuBtn = document.querySelector(".group-info-menu-btn");
+  manageDemanesMenuBtn = document.querySelector(".manage-demanes-menu-btn");
+  copyUIDMenuBtn = document.querySelector(".copy-uid-menu-btn");
+  groupLeftSideBar = document.querySelector(".group-left-side-bar");
+  showInfoBtn = document.querySelector(".show-info-btn");
+  createSessionBtn = document.querySelector(".create-session-btn");
+  groupLeftSideBarContent = document.querySelector(".left-side-bar-content");
+  groupLeftSideBarTitle = groupLeftSideBar.querySelector(".side-bar-title");
+  joinSessionBtn = document.querySelector(".join-session");
+  endSessionBtn = document.querySelector(".end-session");
 };

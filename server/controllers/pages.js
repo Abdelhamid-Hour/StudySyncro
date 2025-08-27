@@ -9,8 +9,6 @@ const handleRoutes = async (req, res) => {
   const payload = await fetchData(req.path, req.user);
   const pathName = req.path === '/home' ? payload.pathName : req.path;
 
-  if (pathName === '/home') console.log(payload);
-
   const template = `templates${
     pathName === '/home'
       ? payload.pathName

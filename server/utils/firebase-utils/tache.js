@@ -2,18 +2,18 @@ const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
 const tacheRef = db.collection("tache");
 
-const createTach = async (tacheData) => {
-  try {
+const getTasks = async (sessionId) => {
+  const taskRef = db.collection("tasks");
 
-    if (tacheData) {
-      await tacheRef.add(tacheData);
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.log(error.message);
-    return false;
-  }
+  const tasksSnap = await taskRef
+    .where("sessionId", "==", sessionId)
+    .orderBy("index", "asc")
+    .get();
+
+  return tasksSnap.docs.map((doc) => ({
+    UID: doc.id,
+    ...doc.data(),
+  }));
 };
 
 const modifieTache = async (propertie, newValue, tacheId) => {
@@ -75,25 +75,7 @@ const deleteTache = async (tacheId) => {
   }
 };
 
-const getTaches = async (sessionId) => {
-  try {
-    const taches = [];
-    const snaphsot = await tacheRef.where("sessionId", "==", sessionId).get();
-    if (snaphsot.empty) {
-      return 0;
-    } else {
-      snaphsot.forEach((doc) => {
-        taches.push({ id: doc.id, ...doc.data() });
-      });
-      return taches;
-    }
-  } catch (error) {
-    console.log(error.message);
-    return false;
-  }
-};
-
-const changeTaskState = async (status, taskId) => {
+const changeTaskStatus = async (status, taskId) => {
   try {
     const ref = db.collection("tasks").doc(taskId);
     const snap = await ref.get();
@@ -120,9 +102,8 @@ const changeTaskState = async (status, taskId) => {
 };
 
 module.exports = {
-  changeTaskState,
-  getTaches,
+  changeTaskStatus,
   deleteTache,
-  createTach,
+  getTasks,
   modifieTache,
 };

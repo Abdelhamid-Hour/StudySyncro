@@ -1,18 +1,18 @@
-import { showMessageBlock } from '../../../../../main_assets/js/utils.js';
-import { fetchData, sendData } from '../../../../main_assets/js/utils.js';
-import { openOverlayModal, scrollToView } from '../../global/js/utils.js';
+import { showMessageBlock } from "../../../../../main_assets/js/utils.js";
+import { fetchData, sendData } from "../../../../main_assets/js/utils.js";
+import { openQuizResultOverlay } from "../../shared/quiz-result/js/utils.js";
 import {
   hoursEl,
   minutesEl,
   nextBtn,
   secondsEl,
   timerEl,
-} from './dom-variables.js';
-import lottie from 'https://cdn.skypack.dev/lottie-web@5.12.0';
+} from "./dom-variables.js";
+import lottie from "https://cdn.skypack.dev/lottie-web@5.12.0";
 
 let quiz = {
   questions: [],
-  id: window.location.pathname.split('/').pop(),
+  id: window.location.pathname.split("/").pop(),
   duration: 0, // Duration in minutes
   passed: false,
 };
@@ -22,6 +22,7 @@ let quizResult = {
   correctAnswers: [],
   incorrectAnswers: [],
   skippedQuestions: [],
+  submittedAt: null,
 };
 let currentQuestionIndex = 0;
 
@@ -29,13 +30,13 @@ const drawArc = (
   canvas,
   ctx,
   percentage = 1,
-  color = 'red',
+  color = "red",
   step = 0.1,
   angle = 0
 ) => {
-  ctx.lineCap = 'round'; // Make the arc ends rounded
+  ctx.lineCap = "round"; // Make the arc ends rounded
   ctx.lineWidth = 0.01 * innerWidth; // Set line width relative to canvas size
-  ctx.strokeStyle = 'gray';
+  ctx.strokeStyle = "gray";
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.beginPath();
   ctx.arc(
@@ -78,20 +79,20 @@ function animateArc(canvas, ctx, percentage, color, duration = 1000) {
 
 const resultTypes = {
   excellent: {
-    title: 'Excellent work!',
-    description: 'You nailed it! Keep it up.',
+    title: "Excellent work!",
+    description: "You nailed it! Keep it up.",
   },
   good: {
-    title: 'Well done!',
-    description: 'Great job! You have a good grasp of the material.',
+    title: "Well done!",
+    description: "Great job! You have a good grasp of the material.",
   },
   average: {
-    title: 'Not bad, keep going!',
+    title: "Not bad, keep going!",
     description: "You're almost there! Keep up the good work.",
   },
   poor: {
-    title: 'Better luck next time!',
-    description: 'Try to review the material and keep practicing.',
+    title: "Better luck next time!",
+    description: "Try to review the material and keep practicing.",
   },
 };
 
@@ -136,7 +137,7 @@ const getQuizResultPage = (grade, correctCount, percentage) => {
                         ${correctCount} Questions
                     </span>
                 </div>
-                <button type="button" class="blue-btn get-result-btn">
+                <button type="button" class="blue-btn view-result-btn">
                     View Result Details
                 </button>
             </div>
@@ -151,30 +152,23 @@ export const setUpCanvas = (
   circleAnDuration
 ) => {
   const quizResultPage = getQuizResultPage(grade, correctCount, percentage);
-  const wrapper = document.querySelector('.quiz-view');
-  wrapper.querySelector('.questions-view').outerHTML = quizResultPage;
-  wrapper.querySelector('.get-result-btn').addEventListener('click', () =>
-    openOverlayModal(
-      'quiz-result-overlay',
-      ['.close-result-overlay-btn'],
-      getResultOverlay,
-      (backDrop) => {
-        backDrop
-          .querySelector('.questions-rects')
-          .addEventListener('click', (e) => {
-            const questionsLink = e.target.closest('a.status-rect');
-            if (questionsLink) scrollToView(e, questionsLink);
-          });
-      }
-    )
+  const wrapper = document.querySelector(".quiz-view");
+  wrapper.querySelector(".questions-view").outerHTML = quizResultPage;
+  wrapper.querySelector(".view-result-btn").addEventListener("click", () =>
+    openQuizResultOverlay({
+      quizData: {
+        quizResult,
+        questions: quiz.questions,
+      },
+    })
   );
-  const canvas = document.querySelector('canvas.percentage-circle');
-  const ctx = canvas.getContext('2d');
+  const canvas = document.querySelector("canvas.percentage-circle");
+  const ctx = canvas.getContext("2d");
   const colorMap = {
-    excellent: '#00ad0c',
-    good: '#1e77fd',
-    average: '#d45f00',
-    poor: '#eb3b43ff',
+    excellent: "#00ad0c",
+    good: "#1e77fd",
+    average: "#d45f00",
+    poor: "#eb3b43ff",
   };
 
   const updateSize = function () {
@@ -183,13 +177,13 @@ export const setUpCanvas = (
     animateArc(canvas, ctx, percentage, colorMap[grade], circleAnDuration);
   };
 
-  window.addEventListener('resize', updateSize);
+  window.addEventListener("resize", updateSize);
 
   updateSize();
 
   lottie.loadAnimation({
-    container: document.getElementById('lottie-animation'), // the HTML element
-    renderer: 'svg', // or 'canvas' or 'html'
+    container: document.getElementById("lottie-animation"), // the HTML element
+    renderer: "svg", // or 'canvas' or 'html'
     loop: true,
     autoplay: true,
     path: `/app/assets/quiz-play/characters/${grade}.json`, // path to your Lottie JSON file
@@ -197,25 +191,25 @@ export const setUpCanvas = (
 };
 
 const createChoiceElement = (choice, index) => {
-  const choiceElement = document.createElement('label');
-  choiceElement.className = 'choice';
+  const choiceElement = document.createElement("label");
+  choiceElement.className = "choice";
   choiceElement.innerHTML = `
     <input type="radio" value="${index}" name="choice">
     <span class="choice-label">${String.fromCharCode(65 + index)}</span>
     <span class="choice-text"></span>
   `;
-  choiceElement.querySelector('.choice-text').textContent = choice;
+  choiceElement.querySelector(".choice-text").textContent = choice;
   return choiceElement;
 };
 
 export const getQuestionTemplate = (
   {
-    questionText = 'A simple question text here, simple question text here, simple question text here, simple question text here',
-    choices = ['Choice A', 'Choice B', 'Choice C'],
+    questionText = "A simple question text here, simple question text here, simple question text here, simple question text here",
+    choices = ["Choice A", "Choice B", "Choice C"],
   },
   animationClass
 ) => {
-  const questionTemplate = document.createElement('div');
+  const questionTemplate = document.createElement("div");
   questionTemplate.className = `question-body ${animationClass}`;
   questionTemplate.innerHTML = `
   <div class="question-body">
@@ -227,9 +221,9 @@ export const getQuestionTemplate = (
     </div>
   </div>
   `;
-  const questionHeader = questionTemplate.querySelector('h4');
+  const questionHeader = questionTemplate.querySelector("h4");
   questionHeader.textContent = questionText;
-  const choicesList = questionTemplate.querySelector('.choices-list');
+  const choicesList = questionTemplate.querySelector(".choices-list");
   choices.forEach((choice, index) => {
     const choiceElement = createChoiceElement(choice, index);
     choicesList.appendChild(choiceElement);
@@ -272,13 +266,13 @@ const step = (direction) => {
   }
 
   const nextIsLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
-  if (nextIsLastQuestion) nextBtn.textContent = 'Finish';
-  else nextBtn.textContent = 'Next';
+  if (nextIsLastQuestion) nextBtn.textContent = "Finish";
+  else nextBtn.textContent = "Next";
 
-  const questionCounter = document.querySelector('.current-question-number');
+  const questionCounter = document.querySelector(".current-question-number");
   questionCounter.textContent = currentQuestionIndex + 1;
   const question = quiz.questions[currentQuestionIndex];
-  const animationClass = direction === 1 ? 'slide-in-right' : 'slide-in-left';
+  const animationClass = direction === 1 ? "slide-in-right" : "slide-in-left";
   const questionEl = getQuestionTemplate(
     {
       questionText: question.text,
@@ -287,7 +281,7 @@ const step = (direction) => {
     },
     animationClass
   );
-  const questionContainer = document.querySelector('.question-body');
+  const questionContainer = document.querySelector(".question-body");
   questionContainer.replaceWith(questionEl);
 };
 
@@ -295,8 +289,8 @@ export const toNextQuestion = () => {
   const checkedChoice = document.querySelector('input[type="radio"]:checked');
   if (!checkedChoice) {
     showMessageBlock(
-      'Please select an answer or click the Skip button to continue.',
-      'info'
+      "Please select an answer or click the Skip button to continue.",
+      "info"
     );
     return;
   }
@@ -333,7 +327,7 @@ export const toPreviousQuestion = () => step(-1);
 export const setUpQuiz = async () => {
   try {
     const { questions, duration, passed } = await fetchData(
-      '/quiz-play-details/' + quiz.id
+      "/quiz-play-details/" + quiz.id
     );
     quiz.duration = duration;
     quiz.questions = questions;
@@ -345,16 +339,16 @@ export const setUpQuiz = async () => {
         hoursEl.nextElementSibling?.remove();
         hoursEl.remove();
       }
-      document.addEventListener('keydown', handleKeyDown);
+      document.addEventListener("keydown", handleKeyDown);
       tick(finishedDate, shouldShowHours);
     } else {
       timerEl.remove();
     }
   } catch (error) {
-    console.error('Failed to fetch quiz questions:', error);
+    console.error("Failed to fetch quiz questions:", error);
     showMessageBlock(
-      'Failed to load quiz questions. Please try again later.',
-      'error'
+      "Failed to load quiz questions. Please try again later.",
+      "error"
     );
     return;
   }
@@ -364,13 +358,13 @@ const tick = (finishedDate, shouldShowHours) => {
   const timeLeft = finishedDate.getTime() - Date.now();
   const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60))
     .toString()
-    .padStart(2, '0');
+    .padStart(2, "0");
   const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
     .toString()
-    .padStart(2, '0');
+    .padStart(2, "0");
   const secondsLeft = Math.floor((timeLeft % (1000 * 60)) / 1000)
     .toString()
-    .padStart(2, '0');
+    .padStart(2, "0");
   updateTimerDisplay(hoursLeft, minutesLeft, secondsLeft, shouldShowHours);
   const nextTickDelay = Date.now() % 1000 || 1000; // Ensure at least 1s
   if (timeLeft <= 0) {
@@ -405,21 +399,23 @@ const getQuizGrade = () => {
   const correctAnswers = quizResult.correctAnswers.length;
   const percentage = (correctAnswers / totalQuestions).toFixed(2);
   const result = {
-    grade: '',
+    grade: "",
     percentage: percentage,
   };
-  if (percentage >= 0.8) result.grade = 'excellent';
-  else if (percentage >= 0.6) result.grade = 'good';
-  else if (percentage >= 0.4) result.grade = 'average';
-  else result.grade = 'poor';
+  if (percentage >= 0.8) result.grade = "excellent";
+  else if (percentage >= 0.6) result.grade = "good";
+  else if (percentage >= 0.4) result.grade = "average";
+  else result.grade = "poor";
 
   return result;
 };
 
 const finishQuiz = async () => {
-  document.removeEventListener('keydown', handleKeyDown);
+  document.removeEventListener("keydown", handleKeyDown);
   markSkipped();
   const { grade, percentage } = getQuizGrade();
+
+  quizResult.submittedAt = new Date().toISOString();
 
   if (!quiz.passed) submitExamenResult();
 
@@ -433,212 +429,28 @@ const finishQuiz = async () => {
 
 const submitExamenResult = async () => {
   try {
-    await sendData('/api/add-quiz-result', { quizResult });
+    await sendData("/api/add-quiz-result", { quizResult });
   } catch (error) {
-    console.error('Failed to submit examen result:', error);
+    console.error("Failed to submit examen result:", error);
     showMessageBlock(
-      'Failed to submit your quiz result. Please try again later.',
-      'error'
+      "Failed to submit your quiz result. Please try again later.",
+      "error"
     );
     return;
   }
 };
 
 export const handleKeyDown = (e) => {
-  if (window.location.pathname.includes('/quiz-play/')) {
-    if (e.key === 'ArrowRight') {
+  if (window.location.pathname.includes("/quiz-play/")) {
+    if (e.key === "ArrowRight") {
       e.preventDefault();
       toNextQuestion();
-    } else if (e.key === 'ArrowLeft') {
+    } else if (e.key === "ArrowLeft") {
       e.preventDefault();
       toPreviousQuestion();
-    } else if (e.key === 'Enter') {
+    } else if (e.key === "Enter") {
       e.preventDefault();
       toNextQuestion();
     }
   }
-};
-
-const getStatusClass = (questionId) => {
-  const isCorrect = quizResult.correctAnswers.includes(questionId);
-  const isSkipped = quizResult.skippedQuestions.includes(questionId);
-
-  return isCorrect ? 'correct' : isSkipped ? 'skipped' : 'incorrect';
-};
-
-const getPercentage = (count) =>
-  Math.round((count / quiz.questions.length) * 100);
-
-export const getResultOverlay = () => {
-  const submittedAt = new Date(quizResult.submittedAt);
-  const finishedDate = submittedAt.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-  const finishedTime = submittedAt.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-  const questionCount = quiz.questions.length;
-  const answeredCount =
-    quizResult.correctAnswers.length + quizResult.incorrectAnswers.length;
-  const correctCount = quizResult.correctAnswers.length;
-  const skippedCount = quizResult.skippedQuestions.length;
-  const incorrectCount = quizResult.incorrectAnswers.length;
-  const answeredPercent = getPercentage(answeredCount);
-  const incorrectPercent = getPercentage(incorrectCount);
-  const correctPercent = getPercentage(correctCount);
-  const skippedPercent = getPercentage(skippedCount);
-
-  const resultWrapper = document.createElement('div');
-  resultWrapper.className = 'overlay-model quiz-result-overlay';
-  resultWrapper.innerHTML = `
-  <header class="quiz-result-header">
-    <span class="finished-date">Finished: ${finishedDate}</span>
-    •
-    <span class="finished-time">${finishedTime}</span>
-    •
-    <span class="questions-count">
-      <span class="icon-box">
-        <i class="bi bi-patch-question"></i>
-      </span>
-      ${questionCount} Questions
-    </span>
-    <button type="button" class="exclude-btn close-result-overlay-btn">
-      <i class="bi bi-x-lg"></i>
-    </button>
-  </header>
-  <h3 class="quiz-title">JavaScript Basics Quiz</h3>
-  <div class="answered">
-    <span class="answered-title">Answered :</span>
-    <span class="answered-count">${answeredCount}/${questionCount} Questions</span>
-    •
-    <span class="answered-percent">${answeredPercent}%</span>
-  </div>
-  <div class="questions-rects">
-  ${quiz.questions
-    .map((question, index) => {
-      return `
-      <a href="#question-${index + 1}" class="status-rect ${getStatusClass(
-        question.id
-      )}">${index + 1}</a>`;
-    })
-    .join('')}
-  </div>
-  <div class="analytics">
-    <div class="analytics-item">
-      <span class="title">
-        <span class="green-rect rect"></span>
-        Correct :
-      </span>
-      <span class="questions-count">${correctCount}/${questionCount} Questions</span>
-      •
-      <span class="percent">${correctPercent}%</span>
-    </div>
-    <div class="analytics-item">
-      <span class="title">
-        <span class="gray-rect rect"></span>
-        Skipped :
-      </span>
-      <span class="questions-count">${skippedCount}/${questionCount} Questions</span>
-      •
-      <span class="percent">${skippedPercent}%</span>
-    </div>
-    <div class="analytics-item">
-      <span class="title">
-        <span class="red-rect rect"></span>
-        Incorrect :
-      </span>
-      <span class="questions-count">${incorrectCount}/${questionCount} Questions</span>
-      •
-      <span class="percent">${incorrectPercent}%</span>
-    </div>
-  </div>
-  <div class="questions-list">
-    ${getQuestionsCards()}
-  </div>
-  `;
-
-  return resultWrapper.outerHTML;
-};
-
-const getQuestionsCards = () => {
-  const questionsList = document.createElement('div');
-  questionsList.className = 'questions-list';
-  quiz.questions.forEach((question, index) => {
-    const rectColorClass =
-      getStatusClass(question.id) === 'correct'
-        ? 'green-rect'
-        : getStatusClass(question.id) === 'skipped'
-        ? 'gray-rect'
-        : 'red-rect';
-    const questionCard = document.createElement('div');
-    questionCard.className = 'question-card';
-    questionCard.id = `question-${index + 1}`;
-    questionCard.innerHTML = `
-      <header class="question-card-header">
-        <span class="question-number">
-          <i class="bi bi-patch-question"></i>
-          Question ${index + 1}
-        </span>
-        •
-        <span class="question-status">
-          <span class="${rectColorClass} rect"></span>
-          ${
-            getStatusClass(question.id).charAt(0).toUpperCase() +
-            getStatusClass(question.id).slice(1)
-          }
-        </span>
-        <label type="button" class="exclude-btn open-btn button">
-          <i class="bi bi-chevron-down"></i>
-          <input type="checkbox" id="drop-down" />
-        </label>
-      </header>
-      <p class="question-text"></p>
-      <div class="choices-list">
-        ${getChoicesList(question.id)}
-      </div>
-      <footer class="question-card-footer">
-        <span class="choices-count">${question.choices.length} Choices</span>
-      </footer>
-    `;
-    questionCard.querySelector('.question-text').textContent = question.text;
-    questionsList.appendChild(questionCard);
-  });
-
-  return questionsList.innerHTML;
-};
-
-const getChoicesList = (questionId) => {
-  const choicesList = document.createElement('div');
-  choicesList.className = 'choices-list';
-  const questions = quiz.questions.find((q) => q.id === questionId);
-
-  if (questions) {
-    questions.choices.forEach((choiceText, index) => {
-      const choice = document.createElement('label');
-      const Incorrect = quizResult.incorrectAnswers.find(
-        (q) => q.id === questionId
-      );
-      const incorrectAnswerIndex = Incorrect?.answerIndex || null;
-      const correctAnswerIndex = quiz.questions.find(
-        (q) => q.id === questionId
-      ).correctAnswerIndex;
-      const isCorrectChoice = correctAnswerIndex === index;
-      choice.className = `choice${isCorrectChoice ? ' correct-answer' : ''}${
-        incorrectAnswerIndex && incorrectAnswerIndex === index
-          ? ' incorrect-answer'
-          : ''
-      }`;
-      choice.innerHTML = `
-      <span class="choice-label">${String.fromCharCode(65 + index)}</span>
-      <span class="choice-text"></span>
-      `;
-      choice.querySelector('.choice-text').textContent = choiceText;
-      choicesList.appendChild(choice);
-    });
-  }
-
-  return choicesList.innerHTML;
 };
