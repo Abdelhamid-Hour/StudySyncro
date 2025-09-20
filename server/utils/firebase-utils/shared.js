@@ -1,4 +1,5 @@
-const { db } = require("../../firebase/firebaseAdmin");
+const { db, bucket } = require("../../firebase/firebaseAdmin");
+const { MAX_FILE_SIZE_50MB } = require("../global");
 
 const getGroupById = async (groupId) => {
   try {
@@ -16,6 +17,70 @@ const getGroupById = async (groupId) => {
   }
 };
 
+const refillSampleMembersIfNeeded = async (groupRef) => {
+  const groupAfterUpdate = (await groupRef.get()).data();
+  let sampleMembers = structuredClone(groupAfterUpdate.sampleMembers) || [];
+
+  if (sampleMembers.length < 2) {
+    // Get all current members
+    const membersSnap = await groupRef.collection("members").limit(2).get();
+    const members = membersSnap.docs.map((doc) => doc.data());
+    // Filter out already in sampleMembers
+    const sampleUids = new Set(sampleMembers.map((m) => m.uid));
+    for (const m of members) {
+      if (!sampleUids.has(m.uid)) {
+        sampleMembers.push({
+          uid: m.uid,
+          fullName: m.fullName,
+          email: m.email,
+          photoURL:
+            m.photoURL ||
+            "https://api.dicebear.com/7.x/identicon/svg?seed=" +
+              encodeURIComponent(m.uid),
+        });
+        if (sampleMembers.length === 2) break;
+      }
+    }
+    // Only update if sampleMembers actually changed
+    const prevSampleMembers = groupAfterUpdate.sampleMembers || [];
+
+    if (sampleMembers.length !== prevSampleMembers.length)
+      await groupRef.update({ sampleMembers });
+  }
+};
+
+const uploadFileToStorage = async (filePath, file) => {
+  try {
+    if (!file) throw new Error("No file provided for upload");
+    if (file.size === 0) throw new Error("File is empty");
+    if (file.size > MAX_FILE_SIZE_50MB)
+      throw new Error("The file should be less or equal to 50MB");
+
+    const fileUpload = bucket.file(
+      filePath + `/${Date.now()}-${file.originalname}`
+    );
+
+    await fileUpload.save(file.buffer, {
+      metadata: { contentType: file.mimetype },
+    });
+
+    const URL = await fileUpload.getSignedUrl({
+      action: "read",
+      expires: Date.now() + 1000 * 60 * 60 * 24 * 7, // 7 days
+      responseDisposition: `attachment; filename="${encodeURIComponent(
+        file.originalname
+      )}"`,
+    });
+
+    return { success: true, URL };
+  } catch (error) {
+    console.error("Error uploading file to storage:", error);
+    return { success: false, message: error.message };
+  }
+};
+
 module.exports = {
   getGroupById,
+  uploadFileToStorage,
+  refillSampleMembersIfNeeded,
 };

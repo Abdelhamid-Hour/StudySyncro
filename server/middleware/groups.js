@@ -21,10 +21,10 @@ const generateTemplateContext = async (req, res, next) => {
       res.payload = await getMembersListContext(req.params.id, req.user);
       break;
     case originalUrl.includes("/quizzes-list"):
-      res.payload = await getQuizzesListContext(req.params.id, req.user);
+      res.payload = await getQuizzesListContext(req.params.id, req.user.uid);
       break;
     case originalUrl.includes("/demandes-list"):
-      res.payload = await getDemandesListContext(req.params.id, req.user);
+      res.payload = await getDemandesListContext(req.params.id);
       break;
     default:
       res.payload = {};

@@ -1,6 +1,6 @@
 <div class="members-view demandes-view fade-in-template">
   <header>
-    <div class="users-search demandes-search">
+    <div class="users-search demandes-search search">
       <div class="search-icon-container">
         <i class="bi bi-person-fill"></i>
       </div>
@@ -18,16 +18,13 @@
         autocomplete="username"
       />
     </div>
-    <button
-      type="button"
-      data-tooltip="Sort Demandes"
-      class="exclude-btn sort-btn has-tooltip"
-    >
+    <label class="exclude-btn sort-button button has-tooltip" data-tooltip="Sort Demandes">
       <i class="bi bi-sort-down"></i>
-    </button>
+      <input type="checkbox" id="sort-checkbox" class="sort-checkbox" />
+    </label>
   </header>
-  <div class="members-list demandes-list">
-    <% demandes.forEach((demande) => { %>
+  <div class="demandes-list">
+    <% requests.forEach((demande) => { %>
     <div class="demande">
       <div class="avatar">
         <% if (demande.photoURL) { %>

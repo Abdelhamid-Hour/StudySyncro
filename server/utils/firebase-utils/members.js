@@ -1,35 +1,114 @@
 const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
-const { getGroupById } = require("./shared");
+const { getGroupById, refillSampleMembersIfNeeded } = require("./shared");
 
-const getFormattedMembers = (members) => {
+const getFormattedMembers = (members, creator, isAdmin) => {
   return members.map(({ photoURL, fullName, uid }) => ({
     photoURL,
     fullName,
     id: uid,
+    isAdmin: uid === creator,
+    userIsAdmin: isAdmin,
   }));
 };
 
-const getMembers = async (groupId, userId) => {
-  try {
-    const group = await getGroupById(groupId);
+const getFilteredMembers = (search, members, creator, isAdmin) => {
+  if (!search) return getFormattedMembers(members, creator, isAdmin);
+  const filteredMembers = members.filter((m) => m.fullName.includes(search));
+  return getFormattedMembers(filteredMembers, creator, isAdmin);
+};
 
-    if (!group) return { success: false, message: "Group not found" };
-    const members =
-      group.creator === userId
-        ? group.members.filter((m) => m.uid != group.creator)
-        : group.members;
-    const formattedMembers = getFormattedMembers(members);
+const getMembers = async (
+  search,
+  groupId,
+  userId,
+  limit = 20,
+  lastVisible = null
+) => {
+  try {
+    const groupRef = db.collection("groups").doc(groupId);
+    const groupSnap = await groupRef.get();
+
+    if (!groupSnap.exists) {
+      return { success: false, message: "Group not found" };
+    }
+    const creator = groupSnap.data().creator;
+    const isAdmin = creator === userId;
+    let members = [];
+
+    // Fast path: if search looks like a member id, try fetching that doc directly
+    if (search) {
+      const maybeDoc = await groupRef.collection("members").doc(search).get();
+      if (maybeDoc.exists) {
+        const m = { uid: maybeDoc.id, ...maybeDoc.data() };
+        const formatted = getFormattedMembers([m], creator, isAdmin);
+        return {
+          success: true,
+          isAdmin,
+          count: formatted.length,
+          cards: formatted,
+          lastVisible: null,
+        };
+      }
+    }
+
+    // Iteratively fetch batches until we collect `limit` filtered members or no more pages
+    do {
+      const batchSize = Number(limit) * 10;
+      // ORDER BY: adjust the field if your member docs don't have `fullName`
+      let query = groupRef
+        .collection("members")
+        .orderBy("fullName")
+        .limit(batchSize);
+
+      if (lastVisible) {
+        const lastDoc = await groupRef
+          .collection("members")
+          .doc(lastVisible)
+          .get();
+        if (lastDoc.exists) {
+          query = query.startAfter(lastDoc);
+        } else {
+          // can't page further if the provided lastVisible doesn't exist
+          lastVisible = null;
+          break;
+        }
+      }
+
+      const snapshot = await query.get();
+      const fetched = snapshot.docs.map((d) => ({ uid: d.id, ...d.data() }));
+
+      // Filter the fetched batch using your search criteria helper
+      const filteredBatch = getFilteredMembers(
+        search,
+        fetched,
+        creator,
+        isAdmin
+      );
+
+      // Add only what's remaining to reach `limit`
+      const remaining = limit - members.length;
+      members = members.concat(filteredBatch.slice(0, remaining));
+
+      // If we fetched a full batch, there may be more pages; else no more pages
+      lastVisible =
+        snapshot.docs.length === batchSize
+          ? snapshot.docs[snapshot.docs.length - 1].id
+          : null;
+    } while (members.length < limit && lastVisible !== null);
+
+    const finalLastVisible =
+      members.length === limit ? members[members.length - 1].id : null;
+
     return {
       success: true,
-      context: {
-        isAdmin: group.creator === userId,
-        count: formattedMembers.length,
-        formattedMembers,
-      },
+      isAdmin,
+      count: members.length,
+      cards: members,
+      lastVisible: finalLastVisible,
     };
   } catch (error) {
-    console.log(error);
+    console.error("Error in getMembers:", error);
     return {
       success: false,
       message: "An error occurred while fetching members",
@@ -37,51 +116,83 @@ const getMembers = async (groupId, userId) => {
   }
 };
 
-const addMember = async (groupId, userId) => {
+// const getMembers = async (search, groupId, userId) => {
+//   try {
+//     const groupRef = db.collection("groups").doc(groupId);
+//     const groupSnap = await groupRef.get();
+//     const creator = groupSnap.data().creator;
+//     const membersSnap = await groupRef.collection("members").get();
+
+//     if (!groupSnap.exists)
+//       return { success: false, message: "Group not found" };
+//     const members = membersSnap.docs.map((doc) => doc.data());
+//     const filteredMembers = getFilteredMembers(search, members, creator);
+//     return {
+//       success: true,
+//       context: {
+//         isAdmin: creator === userId,
+//         count: filteredMembers.length,
+//         filteredMembers,
+//       },
+//     };
+//   } catch (error) {
+//     console.error(error);
+//     return {
+//       success: false,
+//       message: "An error occurred while fetching members",
+//     };
+//   }
+// };
+
+const addMember = async (groupRef, userId) => {
   try {
-    const groupRef = db.collection("groups").doc(groupId);
     const userRef = db.collection("users").doc(userId);
     const userSnap = await userRef.get();
     const groupSnap = await groupRef.get();
-    // Check if group exists, user exists, and user is not already a member
-    if (!groupSnap.exists) {
-      return { message: "Group  does not exist", success: false };
-    } else if (!userSnap.exists) {
-      return { message: "User does not exist", success: false };
-    }
+
     const group = groupSnap.data();
     // Ensure members is always an array
-    const maxMembre = group.members.length >= group.maxMembers;
-    if (maxMembre) {
+    const membersCount = (
+      await groupRef.collection("members").count().get()
+    ).data().count;
+    const maxMembers = membersCount >= group.maxMembers;
+
+    if (maxMembers) {
       return { message: "Group is full", success: false };
     }
+
     const userData = userSnap.data();
 
-    const isAlreadyMember = group.members.some(
-      (membre) => membre.uid === userId
-    );
+    const isAlreadyMember = (
+      await groupRef.collection("members").doc(userId).get()
+    ).exists;
 
     if (isAlreadyMember) {
       return { message: "You are already a member", success: false };
     }
 
     // Add user to group members
-    await groupRef.update({
-      members: FieldValue.arrayUnion({
+    await groupRef
+      .collection("members")
+      .doc(userId)
+      .set({
         uid: userId,
-        fullName: userData.fullName || userData.displayName || "Utilisateur",
-        email: userData.email || "",
+        fullName: userData.fullName,
+        email: userData.email,
         photoURL:
-          userData.picture || userData.photoURL || "here//goes//a//photo//url",
-      }),
-      membersUids: FieldValue.arrayUnion(userId),
+          userData.picture ||
+          "https://api.dicebear.com/7.x/identicon/svg?seed=" +
+            encodeURIComponent(userData.uid),
+      });
+    await groupRef.update({
+      membersCount: FieldValue.increment(1),
     });
+    await userRef.update({
+      joinedGroupsIds: FieldValue.arrayUnion(groupRef.id),
+    });
+    await refillSampleMembersIfNeeded(groupRef);
 
-    return {
-      message: "Joined the group successfully",
-      status: "joined",
-      success: true,
-    };
+    return true;
   } catch (error) {
     console.error("Error in addMember function:", error);
     return { message: "Internal sever error", success: false };
@@ -90,25 +201,53 @@ const addMember = async (groupId, userId) => {
 
 const kickMember = async (groupId, userId) => {
   try {
-    const group = await groupId;
     const groupRef = db.collection("groups").doc(groupId);
-    const user = group.members.find((membre) => membre.uid === userId);
-    if (group && user) {
-      await groupRef.update({
-        members: FieldValue.arrayRemove(user),
-        membersUids: FieldValue.arrayRemove(userId),
-      });
+    const groupSnap = await groupRef.get();
+    const memberSnap = await groupRef.collection("members").doc(userId).get();
+    const userRef = db.collection("users").doc(userId);
+    const userSnap = await userRef.get();
+
+    if (!groupSnap.exists) {
       return {
-        success: true,
-        message: "Member kicked from group",
+        success: false,
+        message: "Group not found",
       };
     }
+    if (!memberSnap.exists) {
+      return {
+        success: false,
+        message: "User not found",
+      };
+    }
+    await memberSnap.ref.delete();
+    await db
+      .collection("users")
+      .doc(userId)
+      .update({
+        joinedGroupsIds: FieldValue.arrayRemove(groupId),
+      });
+    await groupRef.update({
+      membersCount: FieldValue.increment(-1),
+      sampleMembers: FieldValue.arrayRemove({
+        uid: userSnap.id,
+        fullName: userSnap.data().fullName,
+        email: userSnap.data().email,
+        photoURL:
+          userSnap.data().photoURL ||
+          "https://api.dicebear.com/7.x/identicon/svg?seed=" +
+            encodeURIComponent(userSnap.id),
+      }),
+    });
+
+    // Refill sampleMembers if less than 3
+    await refillSampleMembersIfNeeded(groupRef);
+
     return {
-      success: false,
-      message: "user not found",
+      success: true,
+      message: "Member kicked from group",
     };
   } catch (error) {
-    console.log(error.message);
+    console.error(error);
     return {
       success: false,
       message: "Something went wrong",
@@ -116,7 +255,7 @@ const kickMember = async (groupId, userId) => {
   }
 };
 
-const getFilteredUsers = (search, users) => {
+const getFilteredUsers = (search, users, groupId) => {
   if (!search) return users;
   const lowerCaseSearch = search.toLowerCase();
 
@@ -128,11 +267,15 @@ const getFilteredUsers = (search, users) => {
   return users.map((doc) => ({
     id: doc.id,
     fullName: doc.data().fullName || "N/A",
-    photoURL: doc.data().photoURL || "here//goes//a//photo//url",
+    photoURL:
+      doc.data().photoURL ||
+      "https://api.dicebear.com/7.x/identicon/svg?seed=" +
+        encodeURIComponent(doc.id),
+    isAlreadyMember: doc.data().joinedGroupsIds?.includes(groupId) || false,
   }));
 };
 
-const getUsers = async (search, count = 20, lastVisible) => {
+const getUsers = async (search, count = 20, lastVisible, groupId) => {
   // get user that its name and id match the search
   try {
     if (search) {
@@ -146,7 +289,10 @@ const getUsers = async (search, count = 20, lastVisible) => {
             {
               id: userById.id,
               fullName: data.fullName || "N/A",
-              photoURL: data.photoURL || "here//goes//a//photo//url",
+              photoURL:
+                data.photoURL ||
+                "https://api.dicebear.com/7.x/identicon/svg?seed=" +
+                  encodeURIComponent(userData.uid),
             },
           ],
           lastVisible: null,
@@ -154,9 +300,7 @@ const getUsers = async (search, count = 20, lastVisible) => {
       }
 
       let users = [];
-      let lastUserReached = false;
-
-      while (users.length < count && !lastUserReached) {
+      do {
         let query = db
           .collection("users")
           .orderBy("fullName")
@@ -169,29 +313,23 @@ const getUsers = async (search, count = 20, lastVisible) => {
             .get();
           if (lastVisibleDoc.exists) {
             query = query.startAfter(lastVisibleDoc);
+          } else {
+            lastVisible = null;
+            break;
           }
-          const usersSnapshot = await query.get();
-          lastVisible =
-            usersSnapshot.docs.length > 0
-              ? usersSnapshot.docs[usersSnapshot.docs.length - 1].id
-              : null;
-          if (usersSnapshot.docs.length > 0) {
-            lastUserReached = usersSnapshot.docs.length < count;
-          }
-          users = users.concat(
-            getFilteredUsers(search, usersSnapshot.docs).slice(
-              0,
-              count - users.length
-            )
-          );
-        } else {
-          const usersSnapshot = await query.get();
-          if (usersSnapshot.docs.length > 0)
-            lastUserReached = usersSnapshot.docs.length < count;
-          users = getFilteredUsers(search, usersSnapshot.docs).slice(0, count);
-          lastVisible = usersSnapshot.docs[usersSnapshot.docs.length - 1].id;
         }
-      }
+        const usersSnapshot = await query.get();
+        users = users.concat(
+          getFilteredUsers(search, usersSnapshot.docs, groupId).slice(
+            0,
+            count - users.length
+          )
+        );
+        lastVisible =
+          usersSnapshot.docs.length === Number(count) * 10
+            ? usersSnapshot.docs[usersSnapshot.docs.length - 1].id
+            : null;
+      } while (users.length < count && lastVisible !== null);
 
       lastVisible = users.length === count ? users[users.length - 1].id : null;
 

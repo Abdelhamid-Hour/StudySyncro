@@ -14,6 +14,13 @@
     visibility: hidden !important;
   }
 
+  .action-btns {
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    gap: var(--primary-gap);
+  }
+
   .settings-content {
     width: 50%;
     display: flex;
@@ -114,7 +121,8 @@
       font-size: var(--small-font-size);
     }
 
-    .modify-btn {
+    .modify-btn,
+    .add-btn {
       align-self: flex-end;
       font-weight: 500;
       min-width: 10rem;
@@ -239,6 +247,7 @@
               font-size: 5rem;
               translate: 0 0.5rem;
               transition: translate var(--primary-transition-style);
+              color: var(--primary-color);
             }
           }
 
@@ -273,24 +282,27 @@
     flex-direction: column;
     gap: calc(var(--primary-gap) / 2);
     padding-inline: calc(var(--primary-gap) * 2);
-    .modify-btn {
+    .modify-btn,
+    .add-btn,
+    .save-btn {
       margin-block: calc(var(--primary-gap) / 2);
     }
   }
 
   .email-tab-content {
-    .password-ckeck-fields,
+    .password-ckeck-field,
     .email-field-container {
       display: flex;
       flex-direction: column;
       gap: calc(var(--primary-gap) / 2);
     }
-
-    .email-action-btns {
-      align-self: flex-end;
+    .info-message {
+      color: var(--secondary-text-color);
+      font-size: var(--small-font-size);
+      margin-top: calc(var(--primary-gap) / 2);
       display: flex;
       align-items: center;
-      gap: var(--primary-gap);
+      gap: calc(var(--primary-gap) / 2);
     }
   }
 
@@ -302,11 +314,12 @@
     }
 
     .warning-block {
-      background-color: var(--orange-bg);
+      background-color: #ffc99c;
       color: var(--orange-color);
       padding: var(--primary-gap);
       border-radius: var(--primary-radius);
       margin-inline: var(--primary-gap);
+      border: 1px solid var(--orange-color);
       h4 {
         display: flex;
         align-items: center;

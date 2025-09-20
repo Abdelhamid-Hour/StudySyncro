@@ -232,7 +232,7 @@
 }
 
 .session-view-overlay {
-  min-width: 40rem;
+  max-width: 40rem;
   max-height: 80%;
   display: flex;
   flex-direction: column;

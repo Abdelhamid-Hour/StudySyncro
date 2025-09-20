@@ -325,7 +325,7 @@
     justify-content: space-evenly;
     header {
       & > div:last-child {
-        max-width: 80%;
+        width: 80%;
         display: flex;
         gap: var(--primary-gap);
 
@@ -343,7 +343,11 @@
           justify-content: flex-end;
           background-color: var(--btn-background-color);
           border-color: currentColor;
-          label {
+          min-width: 0;
+          flex: 0 0 calc(50% - var(--primary-gap) / 2);
+          text-align: center;
+
+          span.task-label {
             font-size: var(--small-font-size);
             position: absolute;
             padding-inline: calc(var(--primary-gap) / 4);
@@ -355,9 +359,16 @@
             background-color: var(--container-background-color);
             font-weight: 600;
           }
+          span.task-title {
+            font-size: var(--small-font-size);
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+          }
           &.active-task-container {
             background-color: var(--green-bg);
             color: var(--green-color);
+            margin-left: auto;
           }
           &.next-task-container {
             background-color: var(--blue-bg);

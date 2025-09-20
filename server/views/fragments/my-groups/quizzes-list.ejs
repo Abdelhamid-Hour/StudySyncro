@@ -1,6 +1,6 @@
 <div class="quizzes-view fade-in-template">
   <header>
-    <div class="quizzes-search">
+    <div class="quizzes-search search">
       <div class="search-icon-container">
         <i class="bi bi-clipboard-check-fill"></i>
       </div>
@@ -14,17 +14,17 @@
       <input
         type="search"
         id="search"
-        placeholder="Search By Title or Subject"
+        placeholder="Search By Title"
         autocomplete="username"
       />
     </div>
-    <button
-      type="button"
+    <label
+      class="exclude-btn sort-button button has-tooltip"
       data-tooltip="Sort Quizzes"
-      class="exclude-btn sort-btn has-tooltip"
     >
       <i class="bi bi-sort-down"></i>
-    </button>
+      <input type="checkbox" id="sort-checkbox" class="sort-checkbox" />
+    </label>
   </header>
   <div class="quizzes-list">
     <% quizzes.forEach( (quiz) => { %>
@@ -36,7 +36,7 @@
           </span>
           Quiz title
         </label>
-        <div class="quiz-title content"><%= quiz.quizTitle %></div>
+        <div class="quiz-title content"><%= quiz.title %></div>
       </div>
       <div class="session-name-container info-container">
         <label class="session-name-label">
@@ -46,7 +46,7 @@
           </span>
           Session name
         </label>
-        <div class="session-name content"><%= quiz.sessionName %></div>
+        <div class="session-name content"><%= quiz.sessionName || 'N/A' %></div>
       </div>
       <div class="questions-container info-container small-container">
         <label class="questions-label">
@@ -64,22 +64,29 @@
           <span class="icon-box">
             <i class="bi bi-calendar-event"></i>
           </span>
-          Quiz Date
+          submittedAt <% if (!quiz.submittedAt) { %>
+          <!-- info icon -->
+          <i
+            style="margin-left: auto;"
+            class="bi bi-info-circle has-tooltip"
+            data-tooltip="<%= isAdmin ? "Admin can't submit quizzes" : "You haven't submitted the quiz" %>"
+          ></i>
+          <% } %>
         </label>
         <div class="quiz-date content">
-          <span><%= quiz.quizDate %></span>
+          <span><%= quiz.submittedAt ? quiz.submittedAt : 'N/A' %></span>
         </div>
       </div>
       <div class="action-btns">
         <button
           type="button"
-          class="<%= isAdmin ? 'view-members-results-btn' : 'view-quiz-result-btn' %> should-fill"
+          class="view-result<%= isAdmin ? 's' : ''%>-btn should-fill"
         >
           <i class="bi bi-eye"></i>
           View <%= isAdmin ? 'Results' : 'Result' %>
         </button>
         <% if (!isAdmin) { %>
-        <button type="button" class="restart-quiz-btn">
+        <button type="button" class="retake-btn">
           <i class="bi bi-arrow-repeat"></i>
           Retake
         </button>

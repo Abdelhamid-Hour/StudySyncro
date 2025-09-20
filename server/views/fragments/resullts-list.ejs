@@ -56,30 +56,23 @@
         </tr>
       </thead>
       <tbody>
-        <% 
-          function getScoreClass(score) {
-            if (score >= 80) return 'excellent';
-            if (score >= 60) return 'good';
-            if (score >= 40) return 'average';
-            return 'poor';
-          }
-          results.forEach(result => { 
-        %>
+        <% results.forEach(result => { %>
         <tr>
           <td>
             <div class="avatar-cover">
-              <img
-                src="https://randomuser.me/api/portraits/men/32.jpg"
-                alt="Profile"
-                width="32"
-                height="32"
-              />
+              <% if (result.user.photoURL) { %>
+              <img src="<%= result.user.photoURL %>" alt="avatar" width="32" height="32"/>
+              <% } else { %>
+              <h4><%= result.user.fullName.charAt(0).toUpperCase() %></h4>
+              <% } %>
             </div>
           </td>
           <td><%= result.user.fullName %></td>
           <td><%= result.resultDetails.submittedAt %></td>
           <td><%= result.resultDetails.submittedCount %></td>
-          <td class="<%= getScoreClass(result.score) %>"><%= result.score %></td>
+          <td class="<%= getScoreClass(result.score) %>">
+            <%= result.score %>
+          </td>
           <td>
             <button
               class="small-btn show-result-btn"

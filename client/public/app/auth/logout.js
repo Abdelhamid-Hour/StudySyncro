@@ -1,8 +1,8 @@
 import { redirectTo } from '../../main_assets/js/utils.js';
 
-const logOut = async (url) => {
+const logOut = async () => {
   try {
-    await fetch(url, {
+    await fetch('/logout', {
       method: 'POST',
       credentials: 'include',
     });

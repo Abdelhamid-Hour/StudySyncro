@@ -1,4 +1,12 @@
-const { getExams } = require("../utils/firebase-utils/examen");
+const { getDemandesByGroupId } = require("../utils/firebase-utils/demandes");
+const {
+  getUserQuizzes,
+  isAdminOfQuiz,
+  isQuizPassed,
+  getQuizzesByGroupId,
+  deleteQuiz,
+  getPassedQuizzes,
+} = require("../utils/firebase-utils/examen");
 const {
   getJoinedGroups,
   getAvailableGroups,
@@ -6,19 +14,19 @@ const {
   createGroup,
   joinGroup,
   deleteGroup,
-  quitterGroup,
+  leaveGroup,
   inviteMembers,
+  updateGroupProperty,
 } = require("../utils/firebase-utils/group");
 const {
-  addMember,
   kickMember,
   getUsers,
+  getMembers,
 } = require("../utils/firebase-utils/members");
 const {
   getQuestions,
   getQuizDuration,
 } = require("../utils/firebase-utils/question");
-const { isQuizPassed } = require("../utils/firebase-utils/session");
 
 const getUserGroupsHandler = async (req, res) => {
   const { lastVisible, count, level, visibility, searchTerm, sort, role } =
@@ -72,13 +80,26 @@ const getAvailableGroupsHandler = async (req, res) => {
 };
 
 const getQuizzesHandler = async (req, res) => {
-  const { searchTerm, sort, lastVisible, count } = req.query;
+  const { searchTerm, sort, lastVisible, count, status } = req.query;
   const creteria = {
     searchTerm: searchTerm || "",
     sort: sort || "desc",
+    status: status ? status.toLowerCase().split(",") : [],
   };
-  const data = await getExams(req.user.uid, creteria, count, lastVisible);
-  return res.json(data);
+  const result = await getUserQuizzes(
+    req.user.uid,
+    creteria,
+    count,
+    lastVisible
+  );
+
+  if (result.success) {
+    return res
+      .status(200)
+      .json({ cards: result.cards, lastVisible: result.lastVisible });
+  }
+
+  return res.status(400).json({ message: result.message });
 };
 
 const groupFragmentHandler =
@@ -117,101 +138,19 @@ const groupFragmentHandler =
   };
 
 const getQuizPlayDetailsHandler = async (req, res) => {
-  // const userid = req.user.uid;
-  // const quizId = req.query.quizId;
+  try {
+    const userId = req.user.uid;
+    const quizId = req.params.quizId;
 
-  // const result = {
-  //   success: true,
-  //   quizData: {
-  //     questions: [
-  //       {
-  //         id: 'q1',
-  //         text: 'What is the capital of Morocco?',
-  //         choices: ['Casablanca', 'Marrakesh', 'Fez', 'Rabat'],
-  //         correctAnswerIndex: 3, // Rabat
-  //       },
-  //       {
-  //         id: 'q2',
-  //         text: 'How many planets are there in the solar system?',
-  //         choices: ['7', '8', '9', '10'],
-  //         correctAnswerIndex: 1, // 8
-  //       },
-  //       {
-  //         id: 'q3',
-  //         text: 'What is the result of 9 × 6?',
-  //         choices: ['54', '56', '59', '60'],
-  //         correctAnswerIndex: 0, // 54
-  //       },
-  //       {
-  //         id: 'q4',
-  //         text: 'Who invented the electric light bulb?',
-  //         choices: ['Einstein', 'Edison', 'Newton', 'Beethoven'],
-  //         correctAnswerIndex: 1, // Edison
-  //       },
-  //       {
-  //         id: 'q5',
-  //         text: 'What is 100 minus 47?',
-  //         choices: ['52', '53', '54', '55'],
-  //         correctAnswerIndex: 1, // 53
-  //       },
-  //       {
-  //         id: 'q6',
-  //         text: 'Which of these animals cannot fly?',
-  //         choices: ['Eagle', 'Ostrich', 'Bat', 'Pigeon'],
-  //         correctAnswerIndex: 1, // Ostrich
-  //       },
-  //       {
-  //         id: 'q7',
-  //         text: 'How many minutes are there in one hour?',
-  //         choices: ['60', '100', '45', '90'],
-  //         correctAnswerIndex: 0, // 60
-  //       },
-  //       {
-  //         id: 'q8',
-  //         text: 'What is the sum of 11 and 22?',
-  //         choices: ['31', '32', '33', '34'],
-  //         correctAnswerIndex: 2, // 33
-  //       },
-  //       {
-  //         id: 'q9',
-  //         text: 'What is the official language of Morocco?',
-  //         choices: ['French', 'Tamazight', 'Arabic', 'English'],
-  //         correctAnswerIndex: 2, // Arabic
-  //       },
-  //       {
-  //         id: 'q10',
-  //         text: 'Which continent is Egypt located in?',
-  //         choices: ['Asia', 'Europe', 'Africa', 'South America'],
-  //         correctAnswerIndex: 2, // Africa
-  //       },
-  //     ],
-  //     id: 'vghtyiTYivuyRXtiYUvTYX',
-  //     duration: 20, // Duration in minutes
-  //   },
-  // };
-
-  // if (result.success) {
-  //   return res.status(200).json({ ...result.quizData });
-  // } else {
-  //   return res.status(400).json({
-  //     message: result.message,
-  //   });
-  // }
-  const userId = req.user.uid;
-  const quizId = req.params.quizId;
-
-  const questions = await getQuestions(quizId, userId);
-  const duration = await getQuizDuration(req.user, quizId);
-  const passed = await isQuizPassed(userId, quizId);
-
-  console.log({ questions, duration, passed });
-
-  if (questions) {
+    const questions = await getQuestions(quizId, userId);
+    const passed =
+      (await isQuizPassed(userId, quizId)) ||
+      (await isAdminOfQuiz(userId, quizId));
+    const duration = passed ? null : await getQuizDuration(req.user);
     return res.status(200).json({ questions, duration, passed });
-  } else {
-    return res.status(400).json({
-      message: "Failed to load quiz questions. Please try again later.",
-    });
+  } catch (error) {
+    console.error("Error in getQuizPlayDetailsHandler:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -229,11 +168,9 @@ const createGroupHandler = async (req, res) => {
 };
 
 const joinGroupHandler = async (req, res) => {
-  console.log(req.body, "req body for join group");
   const groupId = req.body.groupId;
 
   const result = await joinGroup(groupId, req.user);
-  console.log(result, "this is the result");
   if (result.success) {
     return res.status(200).json({ status: result.status });
   }
@@ -285,21 +222,9 @@ const kickMemberHandler = async (req, res) => {
   }
 };
 
-const addMemberHandler = async (req, res) => {
-  const { memberId, groupId } = req.body; // !! check the userId
-  const result = await addMember(groupId, memberId);
-  // TODO: Implement addMembers logic
-
-  if (result.success) {
-    return res.status(200).json({ message: result.message });
-  } else {
-    return res.status(400).json({ message: result.message });
-  }
-};
-
 const leaveGroupHandler = async (req, res) => {
   const { groupId } = req.body;
-  const result = await quitterGroup(groupId, req.user.uid);
+  const result = await leaveGroup(groupId, req.user.uid);
 
   if (result.success) {
     return res.status(200).json({ message: result.message });
@@ -320,9 +245,8 @@ const removeGroupHandler = async (req, res) => {
 
 const getUsersHandler = async (req, res) => {
   try {
-    const { search, count, lastVisible } = req.query;
-    const result = await getUsers(search, count, lastVisible);
-    console.log("result: ", result);
+    const { search, count, lastVisible, groupId } = req.query;
+    const result = await getUsers(search, count, lastVisible, groupId);
 
     if (result.success) {
       res.json({ cards: result.users, lastVisible: result.lastVisible });
@@ -347,12 +271,88 @@ const inviteMembersHandler = async (req, res) => {
   }
 };
 
+const getQuizzesByGroup = async (req, res) => {
+  const { groupId, search, sort, date, count, lastVisible } = req.query;
+
+  const result = await getQuizzesByGroupId(
+    groupId,
+    req.user.uid,
+    count,
+    lastVisible,
+    { sort, date, search }
+  );
+  if (result.success) {
+    return res
+      .status(200)
+      .json({ cards: result.cards, lastVisible: result.lastVisible });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
+const getPassedQuizzesHandler = async (req, res) => {
+  const { searchTerm, date, sort, count, lastVisible } = req.query;
+
+  const result = await getPassedQuizzes(req.user.uid, count, lastVisible, {
+    sort,
+    searchTerm,
+    date,
+  });
+  if (result.success) {
+    return res
+      .status(200)
+      .json({ cards: result.cards, lastVisible: result.lastVisible });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
+const getDemandesByGroup = async (req, res) => {
+  const { groupId, search, sort, date, count, lastVisible } = req.query;
+
+  const result = await getDemandesByGroupId(groupId, count, lastVisible, {
+    sort,
+    date,
+    search,
+  });
+  if (result.success) {
+    return res
+      .status(200)
+      .json({ cards: result.cards, lastVisible: result.lastVisible });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
+const getMembersByGroup = async (req, res) => {
+  const { search, count, lastVisible, groupId } = req.query;
+
+  const result = await getMembers(
+    search,
+    groupId,
+    req.user.uid,
+    count,
+    lastVisible
+  );
+  if (result.success) {
+    return res
+      .status(200)
+      .json({ cards: result.cards, lastVisible: result.lastVisible });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
 module.exports = {
   getUserGroupsHandler,
   getQuizPlayDetailsHandler,
   getAvailableGroupsHandler,
+  getDemandesByGroup,
   inviteMembersHandler,
+  getMembersByGroup,
+  getQuizzesByGroup,
   groupFragmentHandler,
+  getPassedQuizzesHandler,
   getUsersHandler,
   getQuizzesHandler,
   patchGroupHandler,
@@ -360,7 +360,6 @@ module.exports = {
   createGroupHandler,
   transferRoleHandler,
   kickMemberHandler,
-  addMemberHandler,
   leaveGroupHandler,
   removeGroupHandler,
 };

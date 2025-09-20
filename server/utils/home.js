@@ -1,12 +1,16 @@
-const { getJoinedGroups } = require('./firebase-utils/group');
-const { getCurrentSessionInfo, getSessionInformations, getFetchActiveSessions } = require('./firebase-utils/session');
+const { getJoinedGroups } = require("./firebase-utils/group");
+const {
+  getCurrentSessionInfo,
+  getSessionInformations,
+  fetchActiveSessions,
+} = require("./firebase-utils/session");
 const {
   Task,
   Quiz,
   formatHoursMinutes,
   millisecondsToHMFormat,
   pathNames,
-} = require('./global');
+} = require("./global");
 
 const getTimeLeft = (durationInMins, endTime) => {
   const now = new Date().getTime();
@@ -19,8 +23,8 @@ const getTimeLeft = (durationInMins, endTime) => {
 };
 
 const getSessionDetails = async (sessionId) => {
-  const result = await getSessionInformations(sessionId)
-  return result 
+  const result = await getSessionInformations(sessionId);
+  return result;
   // const tasks = [
   //   new Task({
   //     title: 'Introduction to Ja      vaScript',
@@ -68,10 +72,10 @@ const getSessionDetails = async (sessionId) => {
   // };
 };
 
-const getActiveSessions = async(userId) => {
+const getActiveSessions = async (userId) => {
   // TODO: Fetch active sessions from the database
-   const sessions = await getFetchActiveSessions(userId)
-   return sessions
+  const sessions = await fetchActiveSessions(userId);
+  return sessions;
 };
 
 const fetchHomeData = async (userId) => {
@@ -82,9 +86,8 @@ const fetchHomeData = async (userId) => {
       payload: { templateContext: { session } },
     };
   }
-  
 
-  const availableSessions = await getActiveSessions(userId);  
+  const availableSessions = await getActiveSessions(userId);
 
   return {
     pathName: pathNames.home.inactive,

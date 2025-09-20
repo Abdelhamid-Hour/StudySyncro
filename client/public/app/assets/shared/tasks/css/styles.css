@@ -91,7 +91,7 @@
       scrollbar-width: none;
       overflow-y: auto;
     }
-    & div[class*='task-box'] {
+    & div[class*="task-box"] {
       position: relative;
       display: flex;
       align-items: center;
@@ -102,7 +102,8 @@
       border-radius: var(--primary-radius);
       border: var(--primary-border-style);
 
-      &.quiz-task-box, &.break-box {
+      &.quiz-task-box,
+      &.break-box {
         border-right: 0.4rem solid var(--primary-color);
       }
 
@@ -112,6 +113,10 @@
 
       &.break-box {
         border-color: var(--primary-color);
+
+        span.title {
+          flex-basis: 73%;
+        }
       }
 
       button {

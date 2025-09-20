@@ -44,7 +44,7 @@
   /* --inputs-outline-color: var(--primary-color); */
   --inputs-outline-color: #3284ffa9;
   --inputs-text-color: var(--btn-text-color);
-  --inputs-label-color: var(--primary-text-color);
+  --inputs-label-color: var(--secondary-text-color);
   --inputs-transition-label-color: var(--primary-color);
   --inputs-focus-border-color: var(--primary-color);
   /* inputs font and border size variables */

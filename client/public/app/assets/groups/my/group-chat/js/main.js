@@ -24,6 +24,7 @@ import {
   showInfoBtn,
 } from "./dom-variables.js";
 import {
+  getGroupId,
   handleAddMembersBtn,
   handleGroupInfo,
   handleGroupLeftSideBarContent,
@@ -46,7 +47,7 @@ export const init = (virtual = false) => {
   }
   initDomVariables();
 
-  iniChatMessageInput();
+  iniChatMessageInput(getGroupId());
 
   showInfoBtn.addEventListener("click", handleShowInfoBtnClick);
 

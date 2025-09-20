@@ -1,3 +1,5 @@
+import { AUTH_ERRORS } from "./variables.js";
+
 // Add Event listener for eye icon click to toggle password visibility
 export const handlEyeIconsClick = (eyeIcons) => {
   eyeIcons.forEach((e) => {
@@ -77,7 +79,6 @@ export const showMessageBlock = (message, type) => {
 };
 
 const fetchStructure = async (url, method, options, extraHeaders) => {
-
   const csrfToken = getCookie("csrfToken");
 
   const response = await fetch(url, {
@@ -121,13 +122,14 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
  * @param {String} url - The URL to send data to
  * @param {Object} data - The data to send
  */
-export const sendData = async (url, data, method = "POST") => {
-  const response = await fetchStructure(
-    url,
-    method,
-    { body: JSON.stringify(data) },
-    { "Content-Type": "application/json" }
-  );
+export const sendData = async (url, data, method = "POST", contentType = {
+  "Content-Type": "application/json"
+}) => {
+  const options = {};
+  if (data) {
+    options.body = data instanceof FormData ? data : JSON.stringify(data);
+  }
+  const response = await fetchStructure(url, method, options, contentType);
   return response;
 };
 
@@ -154,4 +156,20 @@ export const getCookie = (name) => {
   const cookies = document.cookie.split("; ");
   const cookie = cookies.find((c) => c.startsWith(name));
   return cookie ? cookie.split("=")[1] : null;
+};
+
+export const checkError = function (error) {
+  if (!error.code) {
+    return;
+  }
+  for (const key in AUTH_ERRORS) {
+    if (AUTH_ERRORS[key].code === error.code) {
+      error.message = AUTH_ERRORS[key].message;
+      return;
+    }
+  }
+  const code = error.code.split("/")[1];
+  const message = code.split("-").join(" ");
+  error.message = message;
+  return;
 };

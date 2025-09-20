@@ -1,18 +1,18 @@
-import { navigateTo } from '../../global/js/utils.js';
+import { navigateTo } from "../../global/js/utils.js";
 import {
   closeBtn,
   initDomVariables,
   nextBtn,
   prevBtn,
   skipBtn,
-} from './dom-variables.js';
+} from "./dom-variables.js";
 import {
   resetVars,
   setUpQuiz,
   skipQuestion,
   toNextQuestion,
   toPreviousQuestion,
-} from './utils.js';
+} from "./utils.js";
 
 let firstLoad = true;
 export const init = (virtual = false) => {
@@ -26,14 +26,14 @@ export const init = (virtual = false) => {
 
   setUpQuiz();
 
-  nextBtn.addEventListener('click', toNextQuestion);
+  nextBtn.addEventListener("click", toNextQuestion);
 
-  prevBtn.addEventListener('click', toPreviousQuestion);
+  prevBtn.addEventListener("click", toPreviousQuestion);
 
-  skipBtn.addEventListener('click', skipQuestion);
+  skipBtn.addEventListener("click", skipQuestion);
 
-  closeBtn.addEventListener('click', () => {
-    navigateTo('/home');
+  closeBtn.addEventListener("click", () => {
+    history.back();
   });
 };
 

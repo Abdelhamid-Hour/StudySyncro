@@ -193,6 +193,11 @@ button:not(.exclude-btn),
     height: fit-content;
     font-size: var(--small-font-size);
     padding: calc(var(--primary-gap) / 2);
+
+    .pencil {
+      width: 1rem;
+      height: 1rem;
+    }
   }
   &:hover {
     color: var(--btn-hover-text-color);

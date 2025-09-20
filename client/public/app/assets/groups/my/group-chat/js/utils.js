@@ -53,12 +53,17 @@ import {
 import {
   initFiltersInputListener,
   Loader,
+  setUpDatePicker,
 } from "../../../../shared/quizzes-groups/js/utils.js";
 import {
   endSession,
   joinSession,
   leaveSession,
 } from "../../../../shared/session/js/utils.js";
+import {
+  openQuizResultOverlay,
+  openQuizResultsOverlay,
+} from "../../../../shared/quiz-result/js/utils.js";
 
 export let groupInfo;
 export let lastVisible = null;
@@ -71,6 +76,8 @@ export const getGroupId = () => {
   return groupId;
 };
 
+let groupId = getGroupId();
+
 export const handleLeavingGroup = async (e) => {
   const res = await showConfirmationBox(
     "exclamation",
@@ -80,7 +87,6 @@ export const handleLeavingGroup = async (e) => {
     "Leave"
   );
   if (res) {
-    const groupId = getGroupId();
     handleApiAction("/leave-group", { groupId }, e.target, {
       successMsg: "Left group successfully",
       onSuccess: () => navigateTo("/groups/my"),
@@ -118,7 +124,6 @@ export const openGroupLeftSideBar = async (route) => {
   showInfoBtn.setAttribute("data-tooltip", "Close group info");
 
   try {
-    const groupId = getGroupId();
     const { template, title, count, info } = await fetchData(
       `${route}/${groupId}`
     );
@@ -156,7 +161,7 @@ export const openGroupLeftSideBar = async (route) => {
         joinSession(joinBtn.dataset.sessionId, joinBtn)
       );
   } catch (error) {
-    console.log(error);
+    console.error(error);
     showMessageBlock(
       error.message || "An error occurred while loading group info.",
       "error"
@@ -718,6 +723,7 @@ const setUpSessionForm = (wrapper, sessionStore) => {
     .addEventListener("input", countCharsTextarea);
   const form = wrapper.querySelector("form");
   const quizzesSelectTrigger = wrapper.querySelector(".select-trigger");
+
   setUpSelectMenu(
     quizzesSelectTrigger,
     () => `
@@ -750,7 +756,7 @@ const setUpSessionForm = (wrapper, sessionStore) => {
     quizzesMenu,
     "10px",
     createDropDownItem,
-    "/quizzes-list",
+    "/quizzes-list?",
     getQuizLoaderLoadingItem(),
     () => getQuizLoaderSearchParams(wrapper),
     1
@@ -791,7 +797,7 @@ const handleFinishBtnClick = async (sessionData, btn) => {
     btn.isCreating = true;
     btn.disabled = true;
     btn.innerHTML = getLoader();
-    sessionData.groupId = getGroupId();
+    sessionData.groupId = groupId;
     await sendData("/api/create-session", { sessionData });
     showMessageBlock("Session created successfully", "success");
     navigateTo("/home");
@@ -1094,33 +1100,43 @@ export const handleViewAllMembersBtn = (e) => {
 };
 
 // Sub-functions for group sidebar actions
-const handleKickMember = (kickBtn) => {
+const handleKickMember = async (kickBtn) => {
   const memberId = kickBtn
     .closest(".action-btns")
     .getAttribute("data-member-id");
-  const groupId = getGroupId();
+  const res = await showConfirmationBox(
+    "exclamation",
+    "Kick Member",
+    "Are you sure you want to kick this member?",
+    "Cancel",
+    "Kick"
+  );
+  if (!res) return;
   handleApiAction("/kick-member", { groupId, memberId }, kickBtn, {
     successMsg: "Member kicked successfully",
-    onSuccess: () => kickBtn.closest(".member").remove(), // Remove the member from the UI
+    onSuccess: () => {
+      kickBtn.closest(".member").remove();
+      const badgeCount = document.querySelector(".side-bar-title .badge");
+      badgeCount.textContent = parseInt(badgeCount.textContent, 10) - 1;
+    },
   });
 };
 
-const handleMoveAdminRole = (moveAdminRoleBtn) => {
+const handleMoveAdminRole = async (moveAdminRoleBtn) => {
   const memberId = moveAdminRoleBtn
     .closest(".action-btns")
     .getAttribute("data-member-id");
-  const groupId = getGroupId();
+  const res = await showConfirmationBox(
+    "exclamation",
+    "Move Admin Role",
+    "Are you sure you want to move this member to admin?",
+    "Cancel",
+    "Move"
+  );
+  if (!res) return;
   handleApiAction("/transfer-role", { groupId, memberId }, moveAdminRoleBtn, {
     successMsg: "Role transferred successfully",
     onSuccess: () => navigateTo(`/groups/my/${groupId}/chat`), // Refresh the page to reflect changes
-  });
-};
-
-const handleAddMember = (addMemberBtn, searchMemberInput) => {
-  const memberId = searchMemberInput.value.trim();
-  const groupId = getGroupId();
-  handleApiAction("/add-member", { memberId, groupId }, addMemberBtn, {
-    successMsg: "Member added successfully",
   });
 };
 
@@ -1128,9 +1144,13 @@ const handleAcceptDemande = (acceptBtn) => {
   const demandeId = acceptBtn
     .closest(".action-btns")
     .getAttribute("data-user-id");
-  const groupId = getGroupId();
   handleApiAction("/accept-demande", { demandeId, groupId }, acceptBtn, {
     successMsg: "Demande accepted",
+    onSuccess: () => {
+      acceptBtn.closest(".demande").remove();
+      const badgeCount = document.querySelector(".side-bar-title .badge");
+      badgeCount.textContent = parseInt(badgeCount.textContent, 10) - 1;
+    },
   });
 };
 
@@ -1138,9 +1158,13 @@ const handleRejectDemande = (rejectBtn) => {
   const demandeId = rejectBtn
     .closest(".action-btns")
     .getAttribute("data-user-id");
-  const groupId = getGroupId();
   handleApiAction("/reject-demande", { demandeId, groupId }, rejectBtn, {
     successMsg: "Demande rejected",
+    onSuccess: () => {
+      rejectBtn.closest(".demande").remove();
+      const badgeCount = document.querySelector(".side-bar-title .badge");
+      badgeCount.textContent = parseInt(badgeCount.textContent, 10) - 1;
+    },
   });
 };
 
@@ -1164,18 +1188,6 @@ export const handleGroupLeftSideBarContent = (e) => {
     return;
   }
 
-  // Add member
-  const addMemberBtn = e.target.closest(".add-member-btn");
-  const searchMemberInput = document.querySelector(".members-search #search");
-  if (
-    addMemberBtn &&
-    searchMemberInput &&
-    searchMemberInput.value.trim() !== ""
-  ) {
-    handleAddMember(addMemberBtn, searchMemberInput);
-    return;
-  }
-
   // Accept demande
   const acceptBtn = e.target.closest(".accept-btn");
   if (acceptBtn) {
@@ -1191,27 +1203,259 @@ export const handleGroupLeftSideBarContent = (e) => {
   }
 };
 
+const createQuizItem = (quiz) => {
+  const quizCard = document.createElement("div");
+  quizCard.className = "quiz-card";
+  quizCard.setAttribute("data-quiz-id", quiz.quizId || quiz.id);
+
+  quizCard.innerHTML = `
+    <div class="quiz-title-container info-container">
+      <label class="quiz-title-label">
+        <span class="icon-box">
+          <i class="bi bi-question-circle"></i>
+        </span>
+        Quiz title
+      </label>
+      <div class="quiz-title content"></div>
+    </div>
+    <div class="session-name-container info-container">
+      <label class="session-name-label">
+        <span class="icon-box">
+          <i class="bi bi-clock-history"></i>
+          <i class="bi bi-info-circle"></i>
+        </span>
+        Session name
+      </label>
+      <div class="session-name content"></div>
+    </div>
+    <div class="questions-container info-container small-container">
+      <label class="questions-label">
+        <span class="icon-box">
+          <i class="bi bi-question-circle"></i>
+        </span>
+        Questions
+      </label>
+      <div class="questions content">
+        <span></span>
+      </div>
+    </div>
+    <div class="quiz-date-container info-container small-container">
+      <label class="quiz-date-label">
+        <span class="icon-box">
+          <i class="bi bi-calendar-event"></i>
+        </span>
+        submittedAt
+        ${
+          !quiz.submittedAt
+            ? `<i style="margin-left: auto;" class="bi bi-info-circle has-tooltip" data-tooltip="${
+                quiz.isAdmin
+                  ? "Admin can't submit quizzes"
+                  : "You haven't submitted the quiz"
+              }"></i>`
+            : ""
+        }
+      </label>
+      <div class="quiz-date content">
+        <span></span>
+      </div>
+    </div>
+    <div class="action-btns">
+      <button
+        type="button"
+        class="view-result${quiz.isAdmin ? "s" : ""}-btn should-fill"
+      >
+        <i class="bi bi-eye"></i>
+        View ${quiz.isAdmin ? "Results" : "Result"}
+      </button>
+      ${
+        !quiz.isAdmin
+          ? `<button type="button" class="retake-btn">
+              <i class="bi bi-arrow-repeat"></i>
+              Retake
+            </button>`
+          : ""
+      }
+    </div>
+  `;
+
+  quizCard.querySelector(".quiz-title.content").textContent = quiz.title || "";
+  quizCard.querySelector(".session-name.content").textContent =
+    quiz.sessionName || "N/A";
+  quizCard.querySelector(".questions.content span").textContent =
+    quiz.questionsCount || 0;
+  quizCard.querySelector(".quiz-date.content span").textContent =
+    quiz.submittedAt || "N/A";
+
+  return quizCard;
+};
+
+const createQuizItemLoader = () => {
+  const quizCard = document.createElement("div");
+  quizCard.className = "quiz-card loading-card loading-animation";
+  quizCard.innerHTML = `
+    <div class="quiz-title-container info-container">
+      <label class="quiz-title-label">
+        <span class="icon-box">
+          <i class="bi bi-question-circle"></i>
+        </span>
+        Quiz title
+      </label>
+      <div class="quiz-title content loading-opacity-animation" style="width: 60%; height: 1.2em; border-radius: 0.5em;"></div>
+    </div>
+    <div class="questions-container info-container small-container">
+      <label class="questions-label">
+        <span class="icon-box">
+          <i class="bi bi-question-circle"></i>
+        </span>
+        Questions
+      </label>
+      <div class="questions content loading-opacity-animation" style="width: 30%; height: 1.2em; border-radius: 0.5em;"></div>
+    </div>
+    <div class="quiz-date-container info-container small-container">
+      <label class="quiz-date-label">
+        <span class="icon-box">
+          <i class="bi bi-calendar-event"></i>
+        </span>
+        submittedAt
+      </label>
+      <div class="quiz-date content loading-opacity-animation" style="width: 40%; height: 1.2em; border-radius: 0.5em;"></div>
+    </div>
+    <div class="action-btns loading-opacity-animation" style="width: 80px; height: 2em; border-radius: 1em; margin-top: 1em;"></div>
+  `;
+  return quizCard;
+};
+
+const getSearchCriteria = () => {
+  const search = groupLeftSideBar.querySelector("#search");
+  const date = groupLeftSideBar.querySelector('input[type="date"]');
+  const sort = groupLeftSideBar.querySelector('input[type="checkbox"]');
+  return `search=${search.value}${date ? "&date=" + date.value : ""}${
+    sort ? "&sort=" + (sort.checked ? "asc" : "desc") : ""
+  }`;
+};
+
+const handleQuizCardBtns = (e) => {
+  const quizId = e.target.closest(".quiz-card")?.dataset.quizId;
+  const viewResults = e.target.closest(".view-results-btn");
+  if (viewResults) openQuizResultsOverlay(quizId, groupId);
+  const viewResult = e.target.closest(".view-result-btn");
+  if (viewResult) openQuizResultOverlay({ quizId });
+  const retakeBtn = e.target.closest(".retake-btn");
+  if (retakeBtn) navigateTo(`/quiz-play/${quizId}`);
+};
+
 export const handleQuizzesListMenuBtn = async () => {
   await openGroupLeftSideBar("/quizzes-list");
-  setUpDatePicker();
+  setUpDatePicker(groupLeftSideBarContent);
+  const container = groupLeftSideBar.querySelector(".quizzes-list");
+  container.addEventListener("click", (e) => handleQuizCardBtns(e));
+  const loader = new Loader(
+    container,
+    "200px",
+    createQuizItem,
+    "/group-quizzes?groupId=" + groupId + "&",
+    createQuizItemLoader(),
+    getSearchCriteria,
+    1
+  );
+  initFiltersInputListener(loader, groupLeftSideBar);
+};
+
+const createMemberCard = (member) => {
+  const memberDiv = document.createElement("div");
+  memberDiv.className = "member";
+
+  memberDiv.innerHTML = `
+    <div class="avatar">
+      ${
+        member.photoURL
+          ? `<img src="${member.photoURL}" alt="avatar" />`
+          : `<h4>${
+              escapeHTML(member.fullName)?.charAt(0)?.toUpperCase() || ""
+            }</h4>`
+      }
+    </div>
+    <span class="username"></span>
+    ${
+      member.isAdmin
+        ? `<span ${
+            member.userIsAdmin ? 'style="margin-right: auto;"' : ""
+          } class="badge orange-badge"${
+            member.userIsAdmin ? ' style="margin-right:auto"' : ""
+          }>Host</span>`
+        : ""
+    }
+    ${
+      member.userIsAdmin && !member.isAdmin
+        ? `<div class="action-btns" data-member-id="${member.id}">
+            <button type="button" class="red-btn kick-btn small-btn">
+              <i class="bi bi-person-dash"></i> Kick
+            </button>
+            <button type="button" class="orange-btn move-admin-role-btn small-btn">
+              <i class="bi bi-person-gear"></i> Transfer Admin
+            </button>
+          </div>`
+        : ""
+    }
+  `;
+
+  memberDiv.querySelector(".username").textContent = member.fullName || "";
+  return memberDiv;
+};
+
+const createMemberCardLoader = () => {
+  const memberDiv = document.createElement("div");
+  memberDiv.className = "member loading-card loading-animation";
+  memberDiv.innerHTML = `
+    <div class="avatar loading-opacity-animation">
+      <div class="img loading-opacity-animation" style="width: 40px; height: 40px; border-radius: 50%; background: #eee;"></div>
+    </div>
+    <span class="username loading-opacity-animation" style="width: 80px; height: 1.2em; border-radius: 0.5em; display: inline-block;"></span>
+  `;
+  return memberDiv;
+};
+
+const handleMembersLoader = () => {
+  const membersList = groupLeftSideBar.querySelector(".members-list");
+  membersList.addEventListener("click", (e) => {
+    const kickBtn = e.target.closest(".kick-btn");
+    if (kickBtn) {
+      handleKickMember(kickBtn);
+      return;
+    }
+
+    // Move admin role
+    const moveAdminRoleBtn = e.target.closest(".move-admin-role-btn");
+    if (moveAdminRoleBtn) {
+      handleMoveAdminRole(moveAdminRoleBtn);
+      return;
+    }
+  });
 };
 
 export const handleMembersListMenuBtn = async () => {
   await openGroupLeftSideBar("/members-list");
   const inviteUserBtn = groupLeftSideBar.querySelector(".invite-user-btn");
+  const search = groupLeftSideBar.querySelector(".members-search #search");
+  const membersResults = groupLeftSideBar.querySelector(".members-list");
   inviteUserBtn?.addEventListener("click", handleAddMembersBtn);
+  const loader = new Loader(
+    membersResults,
+    "200px",
+    createMemberCard,
+    "/group-members?groupId=" + groupId + "&",
+    createMemberCardLoader(),
+    () => `search=${search.value}`,
+    1,
+    (data) => handleMembersLoader()
+  );
+
+  initFiltersInputListener(loader, search);
 };
 
 export const handleSessionInfoMenuBtn = async () => {
   await openGroupLeftSideBar("/session-info");
   handletTasksListners("session-info");
-};
-
-export const setUpDatePicker = () => {
-  const dateInput = groupLeftSideBarContent.querySelector('input[type="date"]');
-  dateInput.onclick = (e) => {
-    e.currentTarget.showPicker();
-  };
 };
 
 export const handleRemoveGroup = async (e) => {
@@ -1223,7 +1467,6 @@ export const handleRemoveGroup = async (e) => {
     "Remove"
   );
   if (res) {
-    const groupId = getGroupId();
     handleApiAction(`/remove-group/${groupId}`, {}, e.target, {
       successMsg: "Group removed successfully",
       onSuccess: () => navigateTo("/groups/my"),
@@ -1239,9 +1482,93 @@ export const handleDemandesBtn = async (e) => {
   }
 };
 
+const createDemandeCard = (demande) => {
+  const demandeDiv = document.createElement("div");
+  demandeDiv.className = "demande";
+
+  demandeDiv.innerHTML = `
+    <div class="avatar">
+      ${
+        demande.photoURL
+          ? `<img src="${demande.photoURL}" alt="avatar" />`
+          : `<h4>${
+              escapeHTML(demande.fullName)?.charAt(0)?.toUpperCase() || ""
+            }</h4>`
+      }
+    </div>
+    <div class="username-container">
+      <span class="username"></span>
+      <span class="request-date"></span>
+    </div>
+    <div class="action-btns" data-user-id="${demande.userId}">
+      <button type="button" class="red-btn reject-btn small-btn">
+        <i class="bi bi-x-circle"></i>
+        Reject
+      </button>
+      <button type="button" class="green-btn accept-btn small-btn">
+        <i class="bi bi-check-circle"></i>
+        Accept
+      </button>
+    </div>
+  `;
+
+  demandeDiv.querySelector(".username").textContent = demande.fullName || "";
+  demandeDiv.querySelector(".request-date").textContent =
+    demande.demandeDate || "";
+  return demandeDiv;
+};
+
+const createDemandeCardLoader = () => {
+  const loadingCard = document.createElement("div");
+  loadingCard.className = "demande loading-card loading-animation";
+  loadingCard.style.flex = "0 0 calc(((100% - 16 * 0.8rem) / 16))";
+  loadingCard.innerHTML = `
+    <div class="avatar loading-opacity-animation">
+      <div class="img loading-opacity-animation"></div>
+    </div>
+    <div style="height: 100%;display: flex;justify-content: space-around;flex: 0 0 40%" class="username-container">
+      <span style="width: 100%; border-radius: 1rem; flex: 0 0 50%;" class="username loading-opacity-animation"></span>
+      <span style="width: 100%; border-radius: 1rem; flex: 0 0 25%;" class="request-date loading-opacity-animation"></span>
+    </div>
+    <div style="height:100%; flex: 0 0 43%" class="action-btns">
+      <div style="width: 50%; height: 100%; border-radius: var(--primary-radius);" class="red-btn loading-opacity-animation"></div>
+      <div style="width: 50%; height: 100%; border-radius: var(--primary-radius);" class="green-btn loading-opacity-animation"></div>
+    </div>
+  `;
+  return loadingCard;
+};
+
+const handleDemandeCardBtns = (e) => {
+  // Accept demande
+  const acceptBtn = e.target.closest(".accept-btn");
+  if (acceptBtn) {
+    handleAcceptDemande(acceptBtn);
+    return;
+  }
+
+  // Reject demande
+  const rejectBtn = e.target.closest(".reject-btn");
+  if (rejectBtn) {
+    handleRejectDemande(rejectBtn);
+    return;
+  }
+};
+
 export const setUpDemandes = async () => {
   await openGroupLeftSideBar("/demandes-list");
-  setUpDatePicker();
+  setUpDatePicker(groupLeftSideBarContent);
+  const container = groupLeftSideBar.querySelector(".demandes-list");
+  container.addEventListener("click", (e) => handleDemandeCardBtns(e));
+  const loader = new Loader(
+    container,
+    "200px",
+    createDemandeCard,
+    "/group-demandes?groupId=" + groupId + "&",
+    createDemandeCardLoader(),
+    getSearchCriteria,
+    1
+  );
+  initFiltersInputListener(loader, groupLeftSideBar);
 };
 
 export const handleEditBtn = (e) => {
@@ -1356,7 +1683,6 @@ const handleSaveAction = async (
     saveBtn.disabled = true;
     saveBtn.isUpdating = true;
     resetTooltip(hoverTooltip);
-    const groupId = getGroupId();
 
     const updatedData = {
       fieldName: input.name ? input.name : input.getAttribute("name"),
@@ -1532,7 +1858,7 @@ const getAddMembersOverlay = () => {
       <header class="list-header">
       <h3 class="label">
         <i class="bi bi-people-fill"></i>
-        Add Members
+        Invite Members
       </h3>
       <!-- close btn -->
       <button type="button" class="close-overlay-btn exclude-btn">
@@ -1540,7 +1866,7 @@ const getAddMembersOverlay = () => {
       </button>
       </header>
       <section class="text-helper">
-      Enter the user’s ID or name to add them to the group
+      Enter the user’s ID or name to invite them to the group
       </section>
       <section class="search-sec">
       <div class="members-search users-search">
@@ -1638,15 +1964,10 @@ function createSelectedUsersDiv(container, searchSection, removeFromUsers) {
 }
 
 const inviteUsersToGroup = (users, confirmBtn) => {
-  handleApiAction(
-    "/invite-users",
-    { groupId: getGroupId(), users },
-    confirmBtn,
-    {
-      successMsg: "Users invited successfully!",
-      onSuccess: () => closeOverlayModal("add-members-overlay"),
-    }
-  );
+  handleApiAction("/invite-users", { groupId, users }, confirmBtn, {
+    successMsg: "Users invited successfully!",
+    onSuccess: () => closeOverlayModal("add-members-overlay"),
+  });
 };
 
 const handleConfirmClick = (users, confirmBtn) => {
@@ -1665,7 +1986,14 @@ const handleMembersResultsInput = (e, users, container, removeFromUsers) => {
     photoURL: card.querySelector("img").src,
     id: card.dataset.userId,
   };
+
   if (e.target.checked) {
+    if (users.length >= 5)
+      return showMessageBlock(
+        "You can only invite up to 5 users at a time.",
+        "info"
+      );
+
     users.push(user.id);
     updateSelectedUsers(container, user, "add", removeFromUsers);
   } else {
@@ -1674,20 +2002,20 @@ const handleMembersResultsInput = (e, users, container, removeFromUsers) => {
   }
 };
 
-const handleMembersLoader = (data, container, users) => {
-  const membersResults = container.querySelector(".users-result");
+const handleUsersLoader = (data, container, users) => {
+  const usersResults = container.querySelector(".users-result");
   const search = container.querySelector(".members-search input");
   let badgeCount = container.querySelector(".results-count");
   if (!badgeCount) {
     badgeCount = document.createElement("span");
     badgeCount.className = "badge simple-badge results-count";
-    membersResults.before(badgeCount);
+    usersResults.before(badgeCount);
   }
   if (search.value === "") return badgeCount.remove();
   badgeCount.textContent = `${data.cards.length} Users Found`;
   data.cards.forEach((card) => {
     if (users.includes(card.id)) {
-      const userInResult = membersResults.querySelector(
+      const userInResult = usersResults.querySelector(
         `.user-item[data-user-id="${card.id}"]`
       );
       if (userInResult) userInResult.querySelector("input").checked = true;
@@ -1695,11 +2023,12 @@ const handleMembersLoader = (data, container, users) => {
   });
 };
 
-const createMemberCard = (user) => {
+const createUserCard = (user) => {
   const card = document.createElement("label");
-  card.className = "container user-item";
+  card.className =
+    "container user-item" + (user.isAlreadyMember ? " disabled" : "");
   card.innerHTML = `
-  <input type="checkbox" />
+  <input type="checkbox" ${user.isAlreadyMember ? "disabled" : ""} />
   <svg viewBox="0 0 64 64" height="2em" width="2em">
     <path
       d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
@@ -1713,7 +2042,14 @@ const createMemberCard = (user) => {
       alt="Member Avatar"
     />
   </div>
-  <span class="full-name"></span>
+  <div class="wrapper">
+    <span class="full-name"></span>
+    ${
+      user.isAlreadyMember
+        ? `<span class="already-member">Already A member</span>`
+        : ""
+    }
+  </div>
   `;
 
   card.querySelector(".full-name").textContent = user.fullName || "N/A";
@@ -1721,7 +2057,7 @@ const createMemberCard = (user) => {
   return card;
 };
 
-const createMemberLoadingCard = () => {
+const createUserLoadingCard = () => {
   const loadingCard = document.createElement("label");
   loadingCard.className = "container user-item loading-card loading-animation";
   loadingCard.innerHTML = `
@@ -1747,26 +2083,26 @@ const setUpAddMembersOverlay = (container) => {
     users.splice(users.indexOf(userId), 1);
   };
   const search = container.querySelector(".members-search input");
-  const membersResults = container.querySelector(".users-result");
+  const usersResults = container.querySelector(".users-result");
   const confirmBtn = container.querySelector(".confirm-btn");
 
   confirmBtn.addEventListener("click", () =>
     handleConfirmClick(users, confirmBtn)
   );
 
-  membersResults.addEventListener("input", (e) =>
+  usersResults.addEventListener("input", (e) =>
     handleMembersResultsInput(e, users, container, removeFromUsers)
   );
 
   const loader = new Loader(
-    membersResults,
+    usersResults,
     "200px",
-    createMemberCard,
-    "/users",
-    createMemberLoadingCard(),
+    createUserCard,
+    "/users?groupId=" + groupId + "&",
+    createUserLoadingCard(),
     () => `search=${search.value}`,
     1,
-    (data) => handleMembersLoader(data, container, users)
+    (data) => handleUsersLoader(data, container, users)
   );
 
   initFiltersInputListener(loader, search);

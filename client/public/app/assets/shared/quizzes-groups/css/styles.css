@@ -19,19 +19,6 @@
     position: relative;
   }
 
-  .sort-checkbox {
-    display: none;
-  }
-
-  .sort-button {
-    transition: scale var(--primary-transition-style),
-      background-color var(--primary-transition-style),
-      box-shadow var(--primary-transition-style);
-    &:has(:checked) {
-      scale: 1 -1;
-    }
-  }
-
   .exclude-btn {
     height: fit-content;
     width: fit-content;
@@ -102,11 +89,11 @@
     border-radius: 0.2rem;
     cursor: pointer;
 
-    &:hover:not(.active) {
+    &:hover:not(.active-tab) {
       background-color: var(--btn-background-color);
     }
   }
-  .active {
+  .active-tab {
     background-color: var(--primary-color);
     color: white;
     border: 1px solid var(--info-border-color);

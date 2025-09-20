@@ -6,9 +6,9 @@ import {
   signInWithPopup,
   updateProfile,
   FacebookAuthProvider,
+  signOut,
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
-import { AUTH_ERRORS } from "./auth-variables.js";
-import { redirectTo, sendData } from "../../main_assets/js/utils.js";
+import { checkError, redirectTo, sendData } from "../../main_assets/js/utils.js";
 
 const googleProvider = new GoogleAuthProvider();
 const fbProvider = new FacebookAuthProvider();
@@ -18,19 +18,22 @@ const fbProvider = new FacebookAuthProvider();
  * @param {Auth} auth
  * @param {User} user
  */
-const handleUserSignIn = async (auth, user) => {
+const handleUserSignUp = async (auth, user) => {
   // Send the ID token to the server and get CSRF token
   await sendIdToken(auth, "/login");
   // Get CSRF token from the cookie
   const userInfo = {
     fullName: user.displayName,
-    fullNameLower: user.displayName.toLowerCase(),
     photoURL: user.photoURL,
     email: user.email,
     uid: user.uid,
   };
   // send user data to the server to save it in Firestore
   await sendData("/api/insert-user-data", { userInfo });
+
+  // Log out the user In the frontend to avoid persistence
+  signOut(auth);
+
   // Redirect to the main page
   redirectTo("/app/home");
 };
@@ -44,7 +47,7 @@ const signInWhithProvider = async function (auth, provider, callback) {
   const userCredential = await signInWithPopup(auth, provider);
   const user = userCredential.user;
   callback("Signed in successfully", "success");
-  await handleUserSignIn(auth, user);
+  await handleUserSignUp(auth, user);
 };
 
 /**
@@ -62,7 +65,7 @@ const InitializeGoogleOneTap = function (auth, callback) {
       const userCredential = await signInWithCredential(auth, credential);
       callback("Signed in successfully", "success");
       const user = userCredential.user;
-      await handleUserSignIn(auth, user);
+      await handleUserSignUp(auth, user);
     } catch (error) {
       checkError(error);
       callback(error.message, "error");
@@ -141,7 +144,7 @@ const createAuserWithEmailAndPassword = async function (
     await updateProfile(user, {
       displayName: fullName,
     });
-    await handleUserSignIn(auth, user);
+    await handleUserSignUp(auth, user);
   } catch (error) {
     checkError(error);
     callback(error.message, "error");
@@ -168,6 +171,8 @@ const signInAuserWithEmailAndPassword = async function (
     await signInWithEmailAndPassword(auth, email, password);
     callback("Signed in successfully", "success");
     await sendIdToken(auth, "/login");
+    // Log out the user In the frontend to avoid persistence
+    signOut(auth);
     redirectTo("/app/home");
   } catch (error) {
     checkError(error);
@@ -181,7 +186,7 @@ const signInAuserWithEmailAndPassword = async function (
  * @param {String} url
  * @returns The response from the server
  */
-export const sendIdToken = async function (auth, url) {
+const sendIdToken = async function (auth, url) {
   const idToken = await auth.currentUser.getIdToken();
   // Send the ID token to the server
   const response = await fetch(url, {
@@ -200,29 +205,10 @@ export const sendIdToken = async function (auth, url) {
   return response.json();
 };
 
-/**
- * Checks the error object and updates the message property
- * @param {Error} error - The error object
- */
-const checkError = function (error) {
-  if (!error.code) {
-    return;
-  }
-  for (const key in AUTH_ERRORS) {
-    if (AUTH_ERRORS[key].code === error.code) {
-      error.message = AUTH_ERRORS[key].message;
-      return;
-    }
-  }
-  const code = error.code.split("/")[1];
-  const message = code.split("-").join(" ");
-  error.message = message;
-  return;
-};
-
 export {
   InitializeGoogleOneTap,
   showGoogleOneTap,
+  sendIdToken,
   signInWithFacebookProviderWithPopUp,
   signInWithGoogleProviderWithPopUp,
   createAuserWithEmailAndPassword,

@@ -1,9 +1,9 @@
 .quizzes-list {
-  grid-auto-rows: 13.5rem;
+  grid-auto-rows: max-content;
 }
 
 .loading-btn {
- margin-left: auto;
+  margin-left: auto;
 }
 
 .quiz-card {
@@ -18,13 +18,36 @@
   border: var(--primary-border-style);
   transition: box-shadow var(--primary-transition-style),
     border-color var(--primary-transition-style);
+  cursor: pointer;
+
+  * {
+    cursor: pointer;
+  }
+
+  .quiz-card-header {
+    flex: 0 0 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .quiz-card-menu-btn {
+      margin-top: calc(var(--primary-gap) / -2);
+      margin-right: calc(var(--primary-gap) / -2);
+      border-radius: 0.4rem;
+      &:hover {
+        background-color: var(--btn-background-color);
+        box-shadow: var(--primary-shadow);
+      }
+    }
+  }
 
   &:hover {
     box-shadow: var(--primary-hover-shadow);
     border-color: var(--primary-color);
   }
 
-  .quiz-title-container {
+  .quiz-title-container,
+  .group-name-container {
     flex: 1 0 auto;
   }
 

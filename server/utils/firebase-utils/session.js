@@ -1,7 +1,7 @@
-const { FieldValue } = require("firebase-admin/firestore");
+const { FieldValue, FieldPath } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
 const { formatHoursMinutes, millisecondsToHMFormat } = require("../global");
-const { getQuizResult } = require("./examen");
+const { getQuizResult, isQuizPassed } = require("./examen");
 const { getTasks } = require("./tache");
 
 const createGroupSession = async (sessionData, userId) => {
@@ -15,11 +15,11 @@ const createGroupSession = async (sessionData, userId) => {
 
     const { name, description, duration, tasks, groupId } = sessionData;
 
-    let quizId = "";
-
-    if (sessionData.sessionQuiz && sessionData.sessionQuiz.UID) {
-      quizId = sessionData.sessionQuiz.UID || "";
-    }
+    if (!groupId)
+      return {
+        success: false,
+        message: "Group ID is required",
+      };
 
     const groupRef = db.collection("groups").doc(groupId);
     const groupSnap = await groupRef.get();
@@ -33,56 +33,104 @@ const createGroupSession = async (sessionData, userId) => {
       }
     }
 
+    if (!groupSnap.exists) {
+      return {
+        success: false,
+        message: "Group does not exist",
+      };
+    }
+
+    let quizId = "";
+
+    if (sessionData.sessionQuiz && sessionData.sessionQuiz.UID) {
+      quizId = sessionData.sessionQuiz.UID || "";
+      const quizRef = db.collection("quizzes").doc(quizId);
+      const quizSnap = await db.collection("quizzes").doc(quizId).get();
+      const existingQuizInGroup = await groupRef
+        .collection("quizzesList")
+        .doc(quizId)
+        .get();
+
+      if (!quizSnap.exists) {
+        return {
+          success: false,
+          message: "Quiz does not exist",
+        };
+      }
+
+      if (!existingQuizInGroup.exists) {
+        await groupRef.collection("quizzesList").doc(quizId).set({
+          title: quizSnap.data().title,
+          questionsCount: quizSnap.data().questionsCount,
+          createdAt: FieldValue.serverTimestamp(),
+        });
+        await quizRef.update({
+          groupsCount: FieldValue.increment(1),
+        });
+      }
+
+      await quizRef.update({
+        sessionsCount: FieldValue.increment(1),
+      });
+    }
+
     const newSessionData = {
       name: name || "",
       description: description || "",
       duration: duration || 0,
       startDate: new Date().toISOString(),
       groupId: groupId || "",
-      quizId: quizId || "",
+      quizId: quizId,
       status: "active",
     };
 
     const sessionRef = db.collection("sessions");
     const docRef = await sessionRef.add(newSessionData);
     const newSessionId = docRef.id;
+    if(quizId){
+      const quizQuestionsSnap = await db.collection("quizzes").doc(quizId).collection("questions").get();
+      const batch = db.batch();
+      quizQuestionsSnap.docs.forEach((question) => {
+        const destRef = sessionRef.doc(newSessionId).collection("quizQuestions").doc(question.id);
+        batch.set(destRef, question.data());
+      });
+      await batch.commit();
+    }
 
     const creator = db.collection("users").doc(userId);
     await creator.update({
       currentSession: newSessionId,
     });
 
-    if (groupId) {
-      await groupRef.update({
-        currentSession: newSessionId,
+    await groupRef.update({
+      currentSession: newSessionId,
+    });
+
+    if (tasks && tasks.length > 0) {
+      const taskRef = db.collection("tasks");
+      const taskPromises = tasks.map((task, index) => {
+        const taskDocData = {
+          title: task.title || "",
+          durationInMins: task.durationInMins || 0,
+          isBreak: task.isBreak || false,
+          isQuiz: task.isQuiz || false,
+          description: task.description || "",
+          groupId: groupId || "",
+          sessionId: newSessionId,
+          index: index + 1,
+          status: "pending",
+        };
+        return taskRef.add(taskDocData);
       });
-
-      if (tasks && tasks.length > 0) {
-        const taskRef = db.collection("tasks");
-        const taskPromises = tasks.map((task, index) => {
-          const taskDocData = {
-            title: task.title || "",
-            durationInMins: task.durationInMins || 0,
-            isBreak: task.isBreak || false,
-            isQuiz: task.isQuiz || false,
-            description: task.description || "",
-            groupId: groupId || "",
-            sessionId: newSessionId,
-            index: index + 1,
-            status: "pending",
-          };
-          return taskRef.add(taskDocData);
-        });
-        await Promise.all(taskPromises);
-      }
-
-      return {
-        success: true,
-        message: "Session created successfully",
-      };
+      await Promise.all(taskPromises);
     }
+
+    return {
+      success: true,
+      message: "Session created successfully",
+    };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {
       success: false,
       message: "Cant create session",
@@ -98,7 +146,7 @@ const modifieSessionPropertie = async (newValue, propertie, session_id) => {
       switch (propertie) {
         case "title":
           if (isNotEmpty) {
-            ref.update({
+            await ref.update({
               title: value,
             });
             return true;
@@ -107,7 +155,7 @@ const modifieSessionPropertie = async (newValue, propertie, session_id) => {
 
         case "description":
           if (isNotEmpty) {
-            ref.update({
+            await ref.update({
               description: value,
             });
             return true;
@@ -115,7 +163,7 @@ const modifieSessionPropertie = async (newValue, propertie, session_id) => {
           break;
         case "totalDuration":
           if (isNotEmpty) {
-            ref.update({
+            await ref.update({
               totalDuration: value,
             });
             return true;
@@ -280,7 +328,7 @@ const getCurrentSessionInfo = async (userId) => {
 
     let quizObj = null;
     if (session.quizId) {
-      const result = await getQuizResult("self", session.quizId, userId);
+      const result = await getQuizResult("self", session.quizId, session.groupId, userId);
       const quizSubmittedCount = result.success
         ? result.quizResult.submittedCount
         : 0;
@@ -323,14 +371,21 @@ const getCurrentSessionInfo = async (userId) => {
   }
 };
 
-const getFetchActiveSessions = async (userId) => {
+const fetchActiveSessions = async (userId) => {
   try {
     const groupRef = db.collection("groups");
     const sessionRef = db.collection("sessions");
     const taskRef = db.collection("tasks");
+    const userSnap = await db.collection("users").doc(userId).get();
+
+    const joinedGroupsIds = userSnap.data().joinedGroupsIds || [];
+
+    if (joinedGroupsIds.length === 0) {
+      return [];
+    }
 
     const userGroupsSnapshot = await groupRef
-      .where("membersUids", "array-contains", userId)
+      .where(FieldPath.documentId(), "in", joinedGroupsIds)
       .get();
 
     if (userGroupsSnapshot.empty) {
@@ -483,17 +538,6 @@ const getSessionInformations = async (sessionID) => {
   }
 };
 
-const isQuizPassed = async (userId, quizId) => {
-  try {
-    const quiz = await db.collection("quizzes").doc(quizId).get();
-    const usersIds = quiz.data().usersIds || [];
-    return usersIds.includes(userId);
-  } catch (error) {
-    console.error("Error checking if quiz is passed:", error);
-    return false;
-  }
-};
-
 const getActiveSession = async (userId) => {
   try {
     const userRef = db.collection("users").doc(userId);
@@ -589,7 +633,7 @@ const joinSession = async (sessionId, userId) => {
     const userRef = db.collection("users").doc(userId);
     const usSnap = await userRef.get();
     if (snap.exists && usSnap.exists) {
-      ref.update({
+      await ref.update({
         joinedUsers: FieldValue.arrayUnion(userId),
         joinedCount: FieldValue.increment(1),
       });
@@ -602,7 +646,7 @@ const joinSession = async (sessionId, userId) => {
       };
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
     return {
       success: false,
@@ -618,8 +662,7 @@ module.exports = {
   createGroupSession,
   cancelSession,
   getCurrentSessionInfo,
-  getFetchActiveSessions,
+  fetchActiveSessions,
   joinSession,
-  isQuizPassed,
   getSessionInformations,
 };

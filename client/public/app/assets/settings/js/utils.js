@@ -1,4 +1,4 @@
-import { showMessageBlock } from "../../../../main_assets/js/utils.js";
+import { redirectTo } from "../../../../main_assets/js/utils.js";
 import {
   emailRegex,
   passwordRegex,
@@ -10,30 +10,54 @@ import {
   profileAllowedFileTypes,
 } from "../../global/js/dom-variables.js";
 import {
-  getLoader,
+  handleApiAction,
+  navigateTo,
   resetTooltip,
+  showConfirmationBox,
   showErrorTooltip,
 } from "../../global/js/utils.js";
+import { handleFormSubmit } from "../../shared/forms/js/utils.js";
+import { getFreshTokenId } from "./auth.js";
 import {
   avatarCaption,
   avatarHover,
   avatarInput,
-  currentEmailInput,
-  emailBtnsCantainer,
   fullNameInput,
-  newEmailInput,
   passwordCheckContainer,
   passwordEmailInput,
-  emailModifyBtn,
-  profileModifyBtn,
   confirmPasswordInput,
   currentPasswordInput,
   newPasswordInput,
-  passwordModifyBtn,
   passwordDeleteInput,
   deleteAccountConfirmation,
+  emailInput,
 } from "./dom-variables.js";
-let isEditMode = false;
+
+const oldValues = {
+  fullName: "",
+  email: "",
+  password: "", // only at submit
+};
+
+const toSubmitBtn = (btn) => {
+  btn.type = "submit";
+  btn.className = "blue-btn save-btn";
+  btn.innerHTML = `
+        <i class="bi bi-floppy"></i>
+        Save Changes
+      `;
+};
+
+const toModifyBtn = (btn) => {
+  btn.type = "button";
+  btn.className = "blue-btn modify-btn";
+};
+
+export const initOldValues = () => {
+  oldValues.fullName = fullNameInput.value.trim();
+  oldValues.email = emailInput.value.trim();
+  oldValues.password = currentPasswordInput?.value; // only at submit
+};
 
 export const handlEyeIconsClick = (eyeIcon) => {
   const isChecked = eyeIcon.querySelector("input").checked;
@@ -45,30 +69,38 @@ export const handlEyeIconsClick = (eyeIcon) => {
   }
 };
 
-const enableProfilEditMode = () => {
-  isEditMode = true;
+export const enableProfileEditMode = (profileModifyBtn, e) => {
+  e.preventDefault();
   fullNameInput.readOnly = false;
   avatarInput.disabled = false;
   avatarHover.classList.remove("hidden");
   fullNameInput.focus();
   avatarCaption.classList.remove("hidden");
-  profileModifyBtn.innerHTML = `
-      <i class="bi bi-floppy"></i>
-      Save Changes
-    `;
+  const cancelBtn = document.createElement("button");
+  cancelBtn.className = "gray-btn cancel-btn";
+  cancelBtn.innerHTML = `
+        <i class="bi bi-x-lg"></i>
+        Cancel
+      `;
+  profileModifyBtn.before(cancelBtn);
+  toSubmitBtn(profileModifyBtn);
+  cancelBtn.addEventListener("click", (e) =>
+    disableProfileMode(profileModifyBtn)
+  );
 };
 
-const disableProfileMode = () => {
+const disableProfileMode = (profileSaveBtn) => {
+  if (!profileSaveBtn) return;
   fullNameInput.readOnly = true;
-  isEditMode = false;
   avatarInput.disabled = true;
   avatarCaption.classList.add("hidden");
   avatarHover.classList.add("hidden");
-  profileModifyBtn.innerHTML = `
+  document.querySelector(".profile-tab-content .cancel-btn")?.remove();
+  profileSaveBtn.innerHTML = `
       <i class="bi bi-pencil"></i >
       Modify Profile
     `;
-  profileModifyBtn.disabled = false;
+  toModifyBtn(profileSaveBtn);
   resetTooltip(globalTooltip);
 };
 
@@ -80,12 +112,13 @@ const checkValidation = () => {
     showErrorTooltip("Full name cannot be empty.", fullNameInput);
     return false;
   } else if (
+    (fullName.split(" ").length < 2 && fullName.split(" ").length > 3) ||
     fullName.length < 6 ||
     fullName.length > 50 ||
     !userNameRegex.test(fullName)
   ) {
     showErrorTooltip(
-      "Full name must be between 6 and 50 characters and can only contain letters, numbers, spaces, and underscores.",
+      "Full name must be 6-50 characters long, contain only letters and spaces, and include at least a first and last name.",
       fullNameInput
     );
     return false;
@@ -111,38 +144,41 @@ const checkValidation = () => {
     resetTooltip(globalTooltip, avatarInput.closest(".avatar"));
   }
 
+  if (fullName === oldValues.fullName && !avatarFile) {
+    showErrorTooltip("No changes made to save.", fullNameInput);
+    return false;
+  }
+
   return true;
 };
 
-const saveProfileChanges = async () => {
-  if (!checkValidation()) return;
-  const fullName = fullNameInput.value.trim();
-  const avatarFile = avatarInput.files[0];
+export const handleProfileSaveBtn = () => {
+  const form = document.querySelector(".profile-form");
+  handleFormSubmit(form, checkValidation, async (data) => {
+    const avatarFile = avatarInput.files[0];
 
-  profileModifyBtn.innerHTML = getLoader();
-  profileModifyBtn.disabled = false;
+    const profileSaveBtn = form.querySelector(".save-btn");
 
-  try {
-    // Simulate a save operation (replace with real API call if needed)
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    disableProfileMode();
-    showMessageBlock("Changes saved successfully!", "success");
-  } catch (error) {
-    console.error("Error saving changes:", error);
-    profileModifyBtn.innerHTML = `
-        <i class="bi bi-floppy"></i>
-        Save Changes
-      `;
-    showMessageBlock(
-      "An error occurred while saving changes. Please try again.",
-      "error"
+    return handleApiAction(
+      "/update-full-name",
+      {
+        fullName: data["full-name"],
+        avatar: avatarFile,
+      },
+      profileSaveBtn,
+      {
+        successMsg: "Profile updated successfully.",
+        onSuccess: () => disableProfileMode(profileSaveBtn),
+        method: "PATCH",
+        toOldBtn: false,
+      }
     );
-  }
+  });
 };
 
-const enableEmailEditMode = () => {
-  currentEmailInput.readOnly = false;
-  isEditMode = true;
+const enableEmailEditMode = (emailModifyBtn, e) => {
+  e.preventDefault();
+  emailInput.readOnly = false;
   passwordCheckContainer.classList.remove("hidden");
   const cancelBtn = document.createElement("button");
   cancelBtn.className = "gray-btn cancel-btn";
@@ -151,148 +187,160 @@ const enableEmailEditMode = () => {
         Cancel
       `;
   emailModifyBtn.before(cancelBtn);
-  cancelBtn.addEventListener("click", (e) => disableEmailEditMode());
-  currentEmailInput.focus();
-  emailModifyBtn.innerHTML = `
-        <i class="bi bi-floppy"></i>
-        Save Changes
-      `;
+  toSubmitBtn(emailModifyBtn);
+  cancelBtn.addEventListener("click", (e) =>
+    disableEmailEditMode(emailModifyBtn)
+  );
+  emailInput.focus();
 };
 
-const clearEmailInputs = () => {
-  newEmailInput.value = "";
-  passwordEmailInput.value = "";
-};
-
-const disableEmailEditMode = () => {
-  isEditMode = false;
-  currentEmailInput.readOnly = true;
+const disableEmailEditMode = (emailSaveBtn) => {
+  if (!emailSaveBtn) return;
+  emailInput.readOnly = true;
   passwordCheckContainer.classList.add("hidden");
-  emailModifyBtn.innerHTML = `
+  emailSaveBtn.innerHTML = `
           <i class="bi bi-pencil"></i>
           Modify Email
-        `;
-  emailModifyBtn.disabled = false;
-  emailBtnsCantainer.querySelector(".cancel-btn")?.remove();
+  `;
+  toModifyBtn(emailSaveBtn);
+  document.querySelector(".email-tab-content .cancel-btn")?.remove();
   clearEmailInputs();
   resetTooltip(globalTooltip);
 };
 
+const clearEmailInputs = () => {
+  passwordEmailInput.value = "";
+};
+
 const checkEmailValidation = () => {
-  const currentEmail = currentEmailInput.value.trim();
-  const newEmail = newEmailInput.value.trim();
-  const password = passwordEmailInput.value.trim();
+  const email = emailInput.value.trim();
+  const password = passwordEmailInput?.value.trim();
 
-  if (!currentEmail) {
-    showErrorTooltip("Current email cannot be empty.", currentEmailInput);
+  if (!email) {
+    showErrorTooltip("Email cannot be empty.", emailInput);
     return false;
-  } else if (!emailRegex.test(currentEmail)) {
-    showErrorTooltip("Invalid current email format.", currentEmailInput);
+  } else if (!emailRegex.test(email)) {
+    showErrorTooltip("Invalid email format.", emailInput);
     return false;
   } else {
-    resetTooltip(globalTooltip, currentEmailInput.closest(".field-container"));
+    resetTooltip(globalTooltip, emailInput.closest(".field-container"));
   }
 
-  if (!newEmail) {
-    showErrorTooltip("New email cannot be empty.", newEmailInput);
-    return false;
-  }
-  if (!emailRegex.test(newEmail)) {
-    showErrorTooltip("Invalid new email format.", newEmailInput);
-    return false;
-  } else {
-    resetTooltip(globalTooltip, newEmailInput.closest(".field-container"));
+  if (passwordEmailInput) {
+    if (!password) {
+      showErrorTooltip("Password cannot be empty.", passwordEmailInput);
+      return false;
+    } else if (!passwordRegex.test(password)) {
+      showErrorTooltip(
+        "Password must be between 8 and 16 characters and can include letters, numbers, and special characters.",
+        passwordEmailInput
+      );
+      return false;
+    } else {
+      resetTooltip(
+        globalTooltip,
+        passwordEmailInput.closest(".field-container")
+      );
+    }
   }
 
-  if (!password) {
-    showErrorTooltip("Password cannot be empty.", passwordEmailInput);
-    return false;
-  } else if (!passwordRegex.test(password)) {
+  if (oldValues.email === email) {
     showErrorTooltip(
-      "Password must be between 8 and 16 characters and can include letters, numbers, and special characters.",
-      passwordEmailInput
+      "New email cannot be the same as the current email.",
+      emailInput
     );
     return false;
-  } else {
-    resetTooltip(globalTooltip, passwordEmailInput.closest(".field-container"));
   }
+
   return true;
+};
+
+export const handleEmailSaveBtn = () => {
+  const form = document.querySelector(".email-form");
+  handleFormSubmit(form, checkEmailValidation, async (data) => {
+    const emailSaveBtn = form.querySelector(".save-btn");
+    const emailSubmitBtn = form.querySelector(".submit-modification-btn");
+    const emailAddBtn = form.querySelector(".add-btn");
+
+    if (emailSaveBtn || emailSubmitBtn)
+      return handleApiAction(
+        "/update-email",
+        {
+          newEmail: data["email"],
+        },
+        emailSaveBtn,
+        {
+          successMsg: "Email updated successfully. Please log in again.",
+          onSuccess: () => {
+            if (emailSaveBtn) disableEmailEditMode(emailSaveBtn);
+            redirectTo("/login");
+          },
+          method: "PATCH",
+          toOldBtn: emailSubmitBtn ? true : false,
+          getExtraData: async () => await getFreshTokenId(data["password"]),
+        }
+      );
+
+    if (emailAddBtn)
+      return handleApiAction(
+        "/add-email",
+        {
+          email: data["email"],
+        },
+        emailAddBtn,
+        {
+          successMsg: "Email added successfully. Please log in again.",
+          onSuccess: () => redirectTo("/login"),
+          method: "POST",
+          getExtraData: async () => await getFreshTokenId(data["password"]),
+        }
+      );
+  });
 };
 
 export const handleSettingsWrapperClick = (e) => {
   const tab = e.target.closest(".tab");
   if (tab) {
-    isEditMode = false;
-    disableEmailEditMode();
-    disableProfileMode();
+    const emailSaveBtn = document.querySelector(".email-tab-content .save-btn");
+    const profileSaveBtn = document.querySelector(
+      ".profile-tab-content .save-btn"
+    );
+    disableEmailEditMode(emailSaveBtn);
+    disableProfileMode(profileSaveBtn);
     clearPasswordFields();
   }
 
   const eyeIcon = e.target.closest(".eye-icon");
   if (eyeIcon) handlEyeIconsClick(eyeIcon);
-};
 
-export const handleProfileModifyClick = async (e) => {
-  if (!isEditMode) {
-    enableProfilEditMode();
-  } else {
-    await saveProfileChanges();
-  }
-};
+  const profileModifyBtn = e.target.closest(".profile-tab-content .modify-btn");
+  if (profileModifyBtn) enableProfileEditMode(profileModifyBtn, e);
 
-export const handleEmailModifyClick = async (e) => {
-  if (!isEditMode) {
-    enableEmailEditMode();
-  } else {
-    await saveEmailChanges();
-  }
-};
-
-const saveEmailChanges = async () => {
-  if (!checkEmailValidation()) return;
-  const currentEmail = currentEmailInput.value.trim();
-  const newEmail = newEmailInput.value.trim();
-  const password = passwordEmailInput.value.trim();
-
-  emailModifyBtn.innerHTML = getLoader();
-  emailModifyBtn.disabled = false;
-  try {
-    // Simulate a save operation (replace with real API call if needed)
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    disableEmailEditMode();
-    showMessageBlock("Email updated successfully!", "success");
-  } catch (error) {
-    console.error("Error updating email:", error);
-    emailModifyBtn.innerHTML = `
-        <i class="bi bi-floppy"></i>
-        Save Changes
-      `;
-    showMessageBlock(
-      "An error occurred while updating email. Please try again.",
-      "error"
-    );
-  }
+  const emailModifyBtn = e.target.closest(".email-tab-content .modify-btn");
+  if (emailModifyBtn) enableEmailEditMode(emailModifyBtn, e);
 };
 
 const checkPasswordFields = () => {
-  const currentPassword = currentPasswordInput.value.trim();
+  const currentPassword = currentPasswordInput?.value.trim();
   const newPassword = newPasswordInput.value.trim();
   const confirmPassword = confirmPasswordInput.value.trim();
 
-  if (!currentPassword) {
-    showErrorTooltip("Current password is required.", currentPasswordInput);
-    return false;
-  } else if (!passwordRegex.test(currentPassword)) {
-    showErrorTooltip(
-      "New password must be between 8 and 16 characters long.",
-      currentPasswordInput
-    );
-    return false;
-  } else {
-    resetTooltip(
-      globalTooltip,
-      currentPasswordInput.closest(".field-container")
-    );
+  if (currentPasswordInput) {
+    if (!currentPassword) {
+      showErrorTooltip("Current password is required.", currentPasswordInput);
+      return false;
+    } else if (!passwordRegex.test(currentPassword)) {
+      showErrorTooltip(
+        "New password must be between 8 and 16 characters long.",
+        currentPasswordInput
+      );
+      return false;
+    } else {
+      resetTooltip(
+        globalTooltip,
+        currentPasswordInput.closest(".field-container")
+      );
+    }
   }
 
   if (!newPassword) {
@@ -330,94 +378,97 @@ const checkPasswordFields = () => {
     );
   }
 
+  if (currentPassword === newPassword) {
+    showErrorTooltip(
+      "New password must be different from the current password.",
+      newPasswordInput
+    );
+    return false;
+  }
+
   return true;
 };
 
 const clearPasswordFields = () => {
-  currentPasswordInput.value = "";
+  if (currentPasswordInput) {
+    currentPasswordInput.value = "";
+  }
   newPasswordInput.value = "";
   confirmPasswordInput.value = "";
 };
 
-const savePasswordChange = async (
-  currentPassword,
-  newPassword,
-  confirmPassword
-) => {
-  passwordModifyBtn.innerHTML = getLoader();
-  passwordModifyBtn.disabled = true;
+export const handlePasswordModifyClick = () => {
+  const form = document.querySelector(".password-form");
+  handleFormSubmit(form, checkPasswordFields, async (data) => {
+    const passModifyBtn = form.querySelector(".modify-btn");
+    const passAddBtn = form.querySelector(".add-btn");
 
-  try {
-    await simulatePasswordChange(currentPassword, newPassword, confirmPassword);
-    clearPasswordFields();
-    showMessageBlock("Password changed successfully!", "success");
-  } catch (error) {
-    showMessageBlock(
-      "Error changing password. Please try again later.",
-      "error"
-    );
-    console.error("Error changing password:", error);
-  } finally {
-    resetPasswordModifyBtn();
-    passwordModifyBtn.disabled = false;
-  }
-};
+    if (passModifyBtn)
+      return handleApiAction(
+        "/update-password",
+        {
+          newPassword: data["new-password"],
+        },
+        passModifyBtn,
+        {
+          successMsg: "Password updated successfully. Please log in again.",
+          onSuccess: () => {
+            clearPasswordFields();
+            redirectTo("/login");
+          },
+          method: "PATCH",
+          getExtraData: async () =>
+            await getFreshTokenId(data["current-password"]),
+        }
+      );
 
-const simulatePasswordChange = (
-  currentPassword,
-  newPassword,
-  confirmPassword
-) => {
-  // Simulate an API call to change the password
-  return new Promise((resolve) => {
-    setTimeout(resolve, 2000);
+    if (passAddBtn)
+      return handleApiAction(
+        "/add-password",
+        {
+          password: data["new-password"],
+        },
+        passAddBtn,
+        {
+          successMsg: "Password added successfully. Please log in again.",
+          onSuccess: () => redirectTo("/login"),
+          method: "POST",
+          getExtraData: async () =>
+            await getFreshTokenId(data["current-password"]),
+        }
+      );
   });
 };
 
-const resetPasswordModifyBtn = () => {
-  passwordModifyBtn.innerHTML = `
-      <i class="bi bi-pencil"></i>
-      Modify Password`;
-};
-
-export const handlePasswordModifyClick = async () => {
-  if (!checkPasswordFields()) return;
-
-  const currentPassword = currentPasswordInput.value.trim();
-  const newPassword = newPasswordInput.value.trim();
-  const confirmPassword = confirmPasswordInput.value.trim();
-
-  await savePasswordChange(currentPassword, newPassword, confirmPassword);
-};
-
 const checkDeleteInputsValidity = () => {
-  const passwordDelete = passwordDeleteInput.value.trim();
+  const passwordDelete = passwordDeleteInput?.value.trim();
   const isConfirme = deleteAccountConfirmation.checked;
 
-  if (!passwordDelete) {
-    showErrorTooltip(
-      "Password is required to delete account.",
-      passwordDeleteInput
-    );
-    return false;
-  } else if (!passwordRegex.test(passwordDelete)) {
-    showErrorTooltip(
-      "Password must be between 8 and 16 characters long.",
-      passwordDeleteInput
-    );
-    return false;
-  } else {
-    resetTooltip(
-      globalTooltip,
-      passwordDeleteInput.closest(".field-container")
-    );
+  if (passwordDeleteInput) {
+    if (!passwordDelete) {
+      showErrorTooltip(
+        "Password is required to delete account.",
+        passwordDeleteInput
+      );
+      return false;
+    } else if (!passwordRegex.test(passwordDelete)) {
+      showErrorTooltip(
+        "Password must be between 8 and 16 characters long.",
+        passwordDeleteInput
+      );
+      return false;
+    } else {
+      resetTooltip(
+        globalTooltip,
+        passwordDeleteInput.closest(".field-container")
+      );
+    }
   }
-
   if (!isConfirme) {
     showErrorTooltip(
       "You must confirm account deletion.",
       deleteAccountConfirmation,
-      "confirmation-input"
+      "container"
     );
     return false;
   } else {
@@ -428,31 +479,24 @@ const checkDeleteInputsValidity = () => {
 };
 
 export const handleCloseAccountBtn = () => {
-  if (!checkDeleteInputsValidity()) return;
-
-  const passwordDelete = passwordDeleteInput.value.trim();
-  // simmulate password check
-  if (passwordDelete !== "correctPassword") {
-    showErrorTooltip(
-      "Incorrect password. Please try again.",
-      passwordDeleteInput
+  const form = document.querySelector(".delete-account-form");
+  handleFormSubmit(form, checkDeleteInputsValidity, async (data) => {
+    const res = await showConfirmationBox(
+      "exclamation",
+      "Are you sure you want to delete your account?",
+      "This action is irreversible and will result in the loss of all your data.",
+      "Cancel",
+      "Yes, delete my account"
     );
-    return;
-  }
 
-  // Simulate account deletion
-  try {
-    // Simulate an API call to delete the account
-    setTimeout(() => {
-      showMessageBlock("Account deleted successfully!", "success");
-      // Redirect to home or login page
-      window.location.href = "/login";
-    }, 1000);
-  } catch (error) {
-    console.error("Error deleting account:", error);
-    showMessageBlock(
-      "An error occurred while deleting the account. Please try again.",
-      "error"
-    );
-  }
+    if (!res) return;
+
+    const deleteAccountBtn = form.querySelector(".delete-account-btn");
+
+    return handleApiAction("/close-account", {}, deleteAccountBtn, {
+      successMsg: "Account closed successfully. Bye!👋",
+      method: "POST",
+      getExtraData: async () => await getFreshTokenId(data["password"]),
+    });
+  });
 };

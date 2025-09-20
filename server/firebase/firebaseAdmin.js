@@ -1,8 +1,16 @@
-const admin = require('firebase-admin');
-const serviceAccount = require('./firebaseConfig.json');
+const admin = require("firebase-admin");
+const { getStorage } = require("firebase-admin/storage");
+// const {} = require('');
+const serviceAccount = require("./firebaseConfig.json");
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
+  storageBucket: "studyhype-653c2.firebasestorage.app",
+  databaseURL: "https://studyhype-653c2-default-rtdb.firebaseio.com",
 });
+
 const db = admin.firestore();
-module.exports = { db, admin };
+const rDb = admin.database();
+const bucket = getStorage().bucket();
+
+module.exports = { db, admin, bucket, rDb };

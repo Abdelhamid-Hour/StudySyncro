@@ -34,6 +34,7 @@
 // dont forgot kick and transfer rule
 // make the firebase functions remove the finished sessions
 // add refresh btn to the inactive tabs (msgs and active sessions) or other update solution 
+// add a soft delete option
 
 - What you should do next : 
 
@@ -51,3 +52,7 @@ if the user has been passed the quiz dont let him repassed with new result *
 dont let the admin pass the exam by the url
 
 remove the quiz if is empty or without quetions
+
+
+// cancell button
+// add email form

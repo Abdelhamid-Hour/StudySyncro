@@ -1,0 +1,14 @@
+.quiz-title-container,
+.group-name-container {
+  min-width: 50%;
+}
+.session-name-container {
+  width: 100%;
+}
+
+.action-btns {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--primary-gap) / 2);
+  margin-left: auto;
+}

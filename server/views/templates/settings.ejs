@@ -40,26 +40,30 @@
         </div>
         <form class="delete-account-form">
           <div class="password-field-container">
-            <label for="password-delete">Password</label>
-            <div class="field-container password-field">
-              <div class="field-icon-container">
-                <span class="icon-box">
-                  <i class="bi bi-lock"></i>
-                </span>
+            
+            <% if (canChangePassword && canChangeEmail) { %>
+             <label for="password-delete">Password</label>
+              <div class="field-container password-field">
+                <div class="field-icon-container">
+                  <span class="icon-box">
+                    <i class="bi bi-lock"></i>
+                  </span>
+                </div>
+                <input
+                  type="password"
+                  id="password-delete"
+                  maxlength="16"
+                  name="password"
+                  class="input"
+                  placeholder="Confirm your password"
+                />
+                <label class="eye-icon">
+                  <input type="checkbox" />
+                  <i class="bi bi-eye-fill"></i>
+                  <div><hr /></div>
+                </label>
               </div>
-              <input
-                type="password"
-                id="password-delete"
-                name="password"
-                class="input"
-                placeholder="Confirm your password"
-              />
-              <label class="eye-icon">
-                <input type="checkbox" />
-                <i class="bi bi-eye-fill"></i>
-                <div><hr /></div>
-              </label>
-            </div>
+            <% } %>
 
             <label class="container">
               <input type="checkbox" class="confirmation-input" />
@@ -74,7 +78,7 @@
             </label>
           </div>
 
-          <button type="button" class="red-btn delete-account-btn">
+          <button type="submit" class="red-btn delete-account-btn">
             <i class="bi bi-trash3"></i>
             Close Account
           </button>
@@ -83,30 +87,34 @@
       <!-- Password -->
       <div class="password-tab-content tab-content">
         <header>
-          <h3>Change Password</h3>
-          <span>Choose a strong, new password.</span>
+          <h3><%= canChangePassword ? "Change" : "Add" %> Password</h3>
+          <span>Choose a strong, password.</span>
         </header>
         <form class="password-form">
-          <label for="current-password">Current Password</label>
-          <div class="field-container current-password-field">
-            <div class="field-icon-container">
-              <span class="icon-box">
-                <i class="bi bi-lock"></i>
-              </span>
+
+          <% if (canChangePassword && canChangeEmail) { %>
+           <label for="current-password">Current Password</label>
+            <div class="field-container current-password-field">
+              <div class="field-icon-container">
+                <span class="icon-box">
+                  <i class="bi bi-lock"></i>
+                </span>
+              </div>
+              <input
+                type="password"
+                maxlength="16"
+                id="current-password"
+                name="current-password"
+                class="input"
+                placeholder="Current password"
+              />
+              <label class="eye-icon">
+                <input type="checkbox" />
+                <i class="bi bi-eye-fill"></i>
+                <div><hr /></div>
+              </label>
             </div>
-            <input
-              type="password"
-              id="current-password"
-              name="current-password"
-              class="input"
-              placeholder="Current password"
-            />
-            <label class="eye-icon">
-              <input type="checkbox" />
-              <i class="bi bi-eye-fill"></i>
-              <div><hr /></div>
-            </label>
-          </div>
+          <% } %>
 
           <label for="new-password">New Password</label>
           <div class="field-container new-password-field">
@@ -117,6 +125,7 @@
             </div>
             <input
               type="password"
+              maxlength="16"
               id="new-password"
               name="new-password"
               class="input"
@@ -138,6 +147,7 @@
             </div>
             <input
               type="password"
+              maxlength="16"
               id="confirm-password"
               name="confirm-password"
               class="input"
@@ -150,21 +160,22 @@
             </label>
           </div>
 
-          <button type="button" class="modify-btn blue-btn">
+          <button type="submit" class="<%= canChangePassword ? "modify" : "add" %>-btn blue-btn">
             <i class="bi bi-pencil"></i>
-            Update Password
+            <%= canChangePassword ? "Change" : "Add" %> Password
           </button>
         </form>
       </div>
       <!-- Email Address -->
       <div class="email-tab-content tab-content">
         <header>
-          <h3>Change Email</h3>
-          <span>Switch to a new email address.</span>
+          <h3><%= canChangeEmail ? "Change" : "Add" %> Email</h3>
+          <span><%= canChangeEmail ? "Switch to a new" : "Add a" %> email address.</span>
         </header>
         <form class="email-form">
+          
           <div class="email-field-container">
-            <label for="current-email">Current Email</label>
+            <label for="email">Email</label>
             <div class="field-container email-field">
               <div class="field-icon-container">
                 <span class="icon-box">
@@ -173,34 +184,18 @@
               </div>
               <input
                 type="text"
-                id="current-email"
+                id="email"
                 name="email"
                 class="input"
-                value="hourabdelhamid403@gmail.com"
-                placeholder="Current email"
+                value="<%= email || "" %>"
+                placeholder="email"
                 readonly
               />
             </div>
-            <span class="caption">Email currently on file.</span>
           </div>
 
-          <div class="password-ckeck-fields hidden">
-            <label for="new-email">New Email</label>
-            <div class="field-container new-email-field">
-              <div class="field-icon-container">
-                <span class="icon-box">
-                  <i class="bi bi-envelope"></i>
-                </span>
-              </div>
-              <input
-                type="text"
-                id="new-email"
-                name="new-email"
-                class="input"
-                placeholder="Enter new email"
-              />
-            </div>
-
+          <% if (canChangePassword && canChangeEmail) { %>
+          <div class="password-ckeck-field hidden">
             <label for="password-email">Current Password</label>
             <div class="field-container password-field">
               <div class="field-icon-container">
@@ -211,6 +206,7 @@
               <input
                 type="password"
                 id="password-email"
+                maxlength="16"
                 name="password"
                 class="input"
                 placeholder="Enter your password"
@@ -222,13 +218,21 @@
               </label>
             </div>
           </div>
+          <% } %>
 
-          <div class="email-action-btns">
-            <button type="button" class="blue-btn modify-btn">
+          <% if (canChangeEmail || canAddEmail) { %>
+           <div class="action-btns">
+            <button type="<%= canAddEmail || canChangeEmail && !canChangePassword ? "submit" : "button" %>" class="blue-btn <%= canChangePassword && canChangeEmail ? "modify" : canChangeEmail ? "submit-modification" : "add" %>-btn">
               <i class="bi bi-pencil"></i>
-              Modify Email
+              <%= canChangeEmail ? "Change" : "Add" %> Email
             </button>
           </div>
+          <% } else { %>
+            <div class="info-message">
+              <i class="bi bi-info-circle"></i>
+              You cannot change your email as it is linked to an external provider.
+            </div>
+          <% } %>
         </form>
       </div>
       <!-- Personal Info -->
@@ -244,7 +248,11 @@
               <div class="avatar-hover hidden">
                 <i class="bi bi-upload"></i>
               </div>
-              <i class="bi bi-person-circle"></i>
+              <% if (photoURL) { %>
+                <img src="<%= photoURL %>" width="100" alt="User Avatar" />
+              <% } else { %>
+                <i class="bi bi-person-circle"></i>
+              <% } %>
             </label>
             <span class="caption hidden">
               Upload a JPG, PNG, or GIF (Max 1MB).
@@ -264,7 +272,7 @@
                   id="full-name"
                   name="full-name"
                   class="input"
-                  value="Abdelhamid Hour"
+                  value="<%= fullName %>"
                   placeholder="Enter your full name"
                   readonly
                 />
@@ -282,16 +290,17 @@
                   id="uid"
                   name="uid"
                   class="input"
-                  value="OiKJBajiosoOIPEqqu3"
+                  value="<%= userId %>"
                   disabled
                 />
               </div>
             </div>
-
-            <button type="button" class="blue-btn modify-btn">
-              <i class="bi bi-pencil"></i>
-              Modify Profile
-            </button>
+            <div class="action-btns">
+              <button type="button" class="blue-btn modify-btn">
+                <i class="bi bi-pencil"></i>
+                Modify Profile
+              </button>
+            </div>
           </div>
         </form>
       </div>

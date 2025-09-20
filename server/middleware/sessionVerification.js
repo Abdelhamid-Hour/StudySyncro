@@ -1,4 +1,4 @@
-const { admin } = require('../firebase/firebaseAdmin');
+const { admin, db } = require('../firebase/firebaseAdmin');
 const { clearCookies } = require('./clearCookies');
 const { verifyCSRFToken } = require('./csrfTokenVerification');
 // get
@@ -7,8 +7,7 @@ const verifySessionCookie = async function (req) {
   const decodedClaims = await admin
     .auth()
     .verifySessionCookie(sessionCookie, true);
-  const userDoc = await admin
-    .firestore()
+  const userDoc = await db
     .collection('users')
     .doc(decodedClaims.uid)
     .get();
@@ -38,7 +37,7 @@ const requireAuthForPages = async (req, res, next) => {
   } catch (error) {
     clearCookies(res, ['session', 'SECRET', 'csrfToken']);
     if (isFetch) return res.status(401).json({ message: 'Unauthorized' });
-    return res.redirect('/logout');
+    return res.redirect('/login');
   }
 };
 

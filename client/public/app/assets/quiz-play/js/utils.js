@@ -17,13 +17,17 @@ let quiz = {
   passed: false,
 };
 
+const url = new URL(window.location.href);
+
 let quizResult = {
   quizId: quiz.id,
   correctAnswers: [],
   incorrectAnswers: [],
   skippedQuestions: [],
+  groupId: "",
   submittedAt: null,
 };
+
 let currentQuestionIndex = 0;
 
 const drawArc = (
@@ -238,6 +242,7 @@ export const resetVars = () => {
     correctAnswers: [],
     incorrectAnswers: [],
     skippedQuestions: [],
+    groupId: url.searchParams.get("groupId") || "",
   };
   currentQuestionIndex = 0;
 };
@@ -429,6 +434,7 @@ const finishQuiz = async () => {
 
 const submitExamenResult = async () => {
   try {
+
     await sendData("/api/add-quiz-result", { quizResult });
   } catch (error) {
     console.error("Failed to submit examen result:", error);

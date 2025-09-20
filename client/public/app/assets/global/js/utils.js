@@ -27,50 +27,63 @@ export function getDebounceFunc(callback, TimeInterval) {
   };
 }
 
-/**
- * Helper to handle API requests with button state management and success/error messages.
- * @param {string} route - API route (without leading /api/).
- * @param {object} data - Data to send.
- * @param {HTMLElement} btn - Button element to show loading state.
- * @param {function} [onSuccess] - Optional callback on success: (data, response) => void.
- * @param {string} [successMsg] - Optional success message to display.
- */
+const isAsync = (fn) => {
+  return Object.getPrototypeOf(fn).constructor.name === "AsyncFunction";
+};
+
+const toOrginalBtn = (btn, toOldBtn, originalHtml) => {
+  btn.isCreating = false;
+  btn.disabled = false;
+  btn.style.width = "";
+  btn.style.height = "";
+  if (toOldBtn) btn.innerHTML = originalHtml;
+};
+
 export const handleApiAction = async (
   route,
   data,
   btn,
-  options = {
-    successMsg: "Operation successful",
-    onSuccess: () => {},
-    method: "POST",
-  }
+  {
+    successMsg = "Operation successful",
+    onSuccess = () => {},
+    method = "POST",
+    toOldBtn = true,
+    getExtraData = null,
+  } = {}
 ) => {
-  const btnRect = btn.getBoundingClientRect();
-  if (btn.isCreating) return;
-  const originalHtml = btn.innerHTML;
+  let btnRect = null;
+  let originalHtml = null;
+  if (btn) {
+    btnRect = btn.getBoundingClientRect();
+    if (btn.isCreating) return;
+    originalHtml = btn.innerHTML;
+  }
   try {
-    btn.isCreating = true;
-    btn.disabled = true;
-    btn.style.width = btnRect.width + "px";
-    btn.style.height = btnRect.height + "px";
-    btn.innerHTML = getLoader();
+    if (btn) {
+      btn.isCreating = true;
+      btn.disabled = true;
+      btn.style.width = btnRect.width + "px";
+      btn.style.height = btnRect.height + "px";
+      btn.innerHTML = getLoader();
+    }
+    let extraData = {};
+    if (getExtraData) {
+      extraData = isAsync(getExtraData) ? await getExtraData() : getExtraData();
+
+      if (!extraData) return toOrginalBtn(btn, toOldBtn, originalHtml);
+    }
     const response = await sendData(
       `/api${route}`,
-      { ...data },
-      options.method || "POST"
+      { ...data, ...extraData },
+      method || "POST"
     );
-    if (options.successMsg) showMessageBlock(options.successMsg, "success");
-    if (typeof options.onSuccess === "function")
-      options.onSuccess(data, response);
+    if (successMsg) showMessageBlock(successMsg, "success");
+    if (typeof onSuccess === "function") onSuccess(response);
   } catch (error) {
     console.error("Error:", error);
     showMessageBlock(error.message || "An error occurred.", "error");
   } finally {
-    btn.isCreating = false;
-    btn.disabled = false;
-    btn.style.width = "";
-    btn.style.height = "";
-    btn.innerHTML = originalHtml;
+    if (btn) toOrginalBtn(btn, toOldBtn, originalHtml);
   }
 };
 
@@ -82,18 +95,21 @@ export const handelIconsHover = (e, addFill) => {
     });
   }
 };
+
 export const dashedToCamelCase = (value) => {
   return value.replace(/-([a-z])/g, (_, l) => l.toUpperCase());
 };
-export const millisecondsToHMFormat = (time) => {
-  const hours = Math.floor(time / (1000 * 60 * 60));
-  const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
 
-  return hours !== 0
-    ? `${hours}h ${minutes.toString().padStart(2, "0")}m`
-    : hours === 0 && minutes !== 0
-    ? `${minutes}m`
-    : "0m";
+export const millisecondsToHMFormat = (ms) => {
+  if (typeof ms !== "number" || ms < 0) return "0m";
+  const hours = Math.floor(ms / 3_600_000);
+  const minutes = Math.floor((ms % 3_600_000) / 60_000);
+
+  if (hours && minutes)
+    return `${hours}h ${minutes.toString().padStart(2, "0")}m`;
+  if (hours) return `${hours}h`;
+  if (minutes) return `${minutes}m`;
+  return "0m";
 };
 
 export const closeAndOpenLeftSideBar = () => {
@@ -103,6 +119,7 @@ export const closeAndOpenLeftSideBar = () => {
     element.classList.toggle("hidden");
   });
 };
+
 export const openOverlayHandler = (e) => {
   const button = e.target.closest(".open-drop-down-btn");
   if (button) {
@@ -111,11 +128,13 @@ export const openOverlayHandler = (e) => {
     document.body.style.pointerEvents = "none";
   }
 };
+
 export const toggleClass = (array, className) => {
   array.forEach((e) => {
     e.classList.toggle(className);
   });
 };
+
 const animateFillIcon = (icon, addFill) => {
   const IconClass = getIconClassName(icon);
   if (addFill) {
@@ -136,7 +155,6 @@ const getIconClassName = (icon) => {
   return IconClass;
 };
 
-// this is for mouse down
 export const handleOverlayClose = (event) => {
   const overlayToClose = document.querySelector(".open-overlay");
   const isOpenBtn = event.target.closest(".open-drop-down-btn");
@@ -164,6 +182,8 @@ export const formatHoursMinutes = (TimeOrDate) => {
 let tooltipTimer = null;
 
 export const resetTooltip = (tooltip, target) => {
+  if (target && !target.dataset.tooltip) return;
+
   tooltip.classList.remove("show");
   if (target) {
     target.dataset.tooltip = "";
@@ -204,14 +224,17 @@ export const showTooltip = (tooltipTarget, tooltip, message, error) => {
 };
 export const tooltipSetup = () => {
   let currentTooltipTarget = null;
-  let timer = null;
+  let tooltipTimer = null;
 
   document.addEventListener("mouseover", (e) => {
     const tooltipTarget = e.target.closest(".has-tooltip");
     if (tooltipTarget && tooltipTarget !== currentTooltipTarget) {
-      clearTimeout(timer);
+      clearTimeout(tooltipTimer);
       currentTooltipTarget = tooltipTarget;
-      timer = setTimeout(() => showTooltip(tooltipTarget, hoverTooltip), 1000);
+      tooltipTimer = setTimeout(
+        () => showTooltip(tooltipTarget, hoverTooltip),
+        1000
+      );
     }
   });
 
@@ -220,11 +243,12 @@ export const tooltipSetup = () => {
     if (
       (currentTooltipTarget &&
         !currentTooltipTarget.contains(e.relatedTarget)) ||
-      timer
+      tooltipTimer
     ) {
       resetTooltip(hoverTooltip);
       currentTooltipTarget = null;
-      clearTimeout(timer);
+      clearTimeout(tooltipTimer);
+      tooltipTimer = null;
     }
   });
 };
@@ -233,7 +257,7 @@ const SHARED_STYLES_MAP = {
   "/home/inactive": ["/tasks"],
   "/home/active": ["/tasks", "/chat", "/quiz-result"],
   "/quizzes/my": ["/quizzes-groups", "/fields", "/forms", "/quizzes-my-groups"],
-  "/quizzes/groups": [
+  "/quizzes/passed": [
     "/quizzes-groups",
     "/fields",
     "/forms",
@@ -384,12 +408,12 @@ const createGreetingMsg = (fullName) => {
   return greetingMsg;
 };
 
-const createSearchContainer = (isQuizzesPage = false) => {
+const createSearchContainer = (isQuizPage = false) => {
   const searchContainer = document.createElement("div");
   searchContainer.className = "search-container fade-in-template";
 
   const search = document.createElement("div");
-  search.className = "main-search";
+  search.className = "main-search search";
 
   const searchIconContainer = document.createElement("div");
   searchIconContainer.className = "search-icon-container";
@@ -400,7 +424,7 @@ const createSearchContainer = (isQuizzesPage = false) => {
   const input = document.createElement("input");
   input.type = "search";
   input.id = "search-input";
-  input.placeholder = isQuizzesPage
+  input.placeholder = isQuizPage
     ? "Search By Quiz Title or Subject"
     : "Search By Group Name or Subject";
   // Create sort label as a button with checkbox
@@ -424,12 +448,12 @@ const createSearchContainer = (isQuizzesPage = false) => {
   search.appendChild(input);
   searchContainer.appendChild(search);
   searchContainer.appendChild(sortLabel);
-  if (!isQuizzesPage) searchContainer.appendChild(createFilterContainer());
+  searchContainer.appendChild(createFilterContainer(!isQuizPage));
 
   return searchContainer;
 };
 
-const createFilterContainer = () => {
+const createFilterContainer = (groups) => {
   const filterContainer = document.createElement("div");
   filterContainer.className = "filter-container";
 
@@ -441,7 +465,7 @@ const createFilterContainer = () => {
   const filterIcon = document.createElement("i");
   filterIcon.className = "bi bi-funnel";
 
-  const filterPanel = createFilterPanel();
+  const filterPanel = createFilterPanel(groups);
 
   filterButton.appendChild(filterIcon);
   filterContainer.appendChild(filterButton);
@@ -465,7 +489,7 @@ const createTabs = (tabContent, tabsClassName) => {
     }`.trim();
     tabLink.textContent = tab.textContent;
     if (tab.active) {
-      tabLink.classList.add("active");
+      tabLink.classList.add("active-tab");
     }
     navigationTabs.appendChild(tabLink);
   });
@@ -523,10 +547,6 @@ const pageConfig = {
       topSideBarFooter.prepend(createGroupBtn);
     },
   },
-  "/groups/available": {
-    title: "Groups",
-    middle: () => createSearchContainer(),
-  },
   "/quizzes/my": {
     title: "Quizzes",
     middle: () => createSearchContainer(true),
@@ -534,10 +554,6 @@ const pageConfig = {
       const createQuizBtn = createCreateBtn(true);
       topSideBarFooter.prepend(createQuizBtn);
     },
-  },
-  "/quizzes/groups": {
-    title: "Quizzes",
-    middle: () => createSearchContainer(true),
   },
   "/settings": {
     title: "Settings",
@@ -592,7 +608,7 @@ const updateTopSideBar = (pathName, extraData) => {
   removeSaveQuizBtn();
   // 5) ONLY groups get tabs
   const isGroups = ["/groups/my", "/groups/available"].includes(pathName);
-  const isQuizzes = ["/quizzes/my", "/quizzes/groups"].includes(pathName);
+  const isQuizzes = ["/quizzes/my", "/quizzes/passed"].includes(pathName);
   const existingTabs = document.querySelector(".navigation-tabs");
   if (existingTabs) {
     existingTabs.remove();
@@ -613,22 +629,22 @@ const updateTopSideBar = (pathName, extraData) => {
     ];
     topSideBarHeader.appendChild(createTabs(tabContent, "groups-tabs"));
   }
-  // if (isQuizzes) {
-  //   const tabContent = [
-  //     {
-  //       route: "/app/quizzes/my",
-  //       textContent: "My Quizzes",
-  //       active: true,
-  //     },
-  //     {
-  //       route: "/app/quizzes/groups",
-  //       className: "available-quizzes-tab",
-  //       textContent: "Groups Quizzes",
-  //       active: false,
-  //     },
-  //   ];
-  //   topSideBarHeader.appendChild(createTabs(tabContent, "quizzes-tabs"));
-  // }
+  if (isQuizzes) {
+    const tabContent = [
+      {
+        route: "/app/quizzes/my",
+        textContent: "My Quizzes",
+        active: true,
+      },
+      {
+        route: "/app/quizzes/passed",
+        className: "groups-quizzes-tab",
+        textContent: "Passed",
+        active: false,
+      },
+    ];
+    topSideBarHeader.appendChild(createTabs(tabContent, "quizzes-tabs"));
+  }
 
   // 6) add additional content if needed
   const { additional } = pageConfig[pathName] || {};
@@ -679,48 +695,32 @@ export const updateMain = async (path, isTabLinks) => {
   }
 };
 
-export const toggleActiveLink = (pathName) => {
-  const activeLinks = document.querySelectorAll(".active");
-  activeLinks.forEach((link) => {
-    link.classList.remove("active");
-    const icon = link.querySelector("i");
-    const isSideBarLink = link.closest(".side-bar-icons");
-    if (icon && isSideBarLink) {
-      animateFillIcon(icon, false);
-    }
-  });
-  let className = "";
-  switch (true) {
-    case pathName.includes("/app/home"):
-      className = '[href="/app/home"]';
-      break;
-    case pathName.includes("/app/groups/my"):
-      className = '[href="/app/groups/my"]';
-      break;
-    case pathName.includes("/app/groups/available"):
-      className = '[href="/app/groups/available"]';
-      break;
-    case pathName.includes("/app/quizzes/my"):
-      className = '[href="/app/quizzes/my"]';
-      break;
-    case pathName.includes("/app/quizzes/groups"):
-      className = '[href="/app/quizzes/groups"]';
-      break;
-    case pathName.includes("/app/settings"):
-      className = '[href="/app/settings"]';
-      break;
+export const toggleActiveLink = (pathName, tabLink) => {
+  const activeTabLink = document.querySelector(".active-tab");
+  if (tabLink) {
+    activeTabLink?.classList.remove("active-tab");
+    const pageLink = document.querySelector(`.tab[href="${pathName}"]`);
+    pageLink.classList.add("active-tab");
+    return;
   }
-
-  const links = className ? document.querySelectorAll(className) : [];
-  if (links.length) {
-    toggleClass(links, "active");
-    links.forEach((link) => {
-      const icon = link.querySelector("i");
-      const isSideBarLink = link.closest(".side-bar-icons");
-      if (icon && isSideBarLink) {
-        animateFillIcon(icon, true);
-      }
-    });
+  const tabLinkPathName = activeTabLink?.href
+    ? new URL(activeTabLink?.href).pathname
+    : "";
+  // Allow tab to remain active if pathName starts with tabLinkPathName (for subpages)
+  if (tabLinkPathName && pathName.startsWith(tabLinkPathName + "/")) return;
+  const activePageLink = document.querySelector(".active");
+  if (activePageLink) {
+    const activeIcon = activePageLink.querySelector("i");
+    activeIcon ? animateFillIcon(activeIcon, false) : null;
+    activePageLink?.classList.remove("active");
+  }
+  const pageLink = document.querySelector(
+    `.side-bar-icons [href="${pathName}"]`
+  );
+  if (pageLink) {
+    pageLink.classList.add("active");
+    const icon = pageLink.querySelector("i");
+    icon ? animateFillIcon(icon, true) : null;
   }
 };
 
@@ -763,45 +763,70 @@ export const navigateTo = (pathName) => {
   resetTooltip(globalTooltip);
 };
 
+const getDateInput = () => {
+  const dateLabel = document.createElement("label");
+  dateLabel.className = "date-label should-fill has-tooltip";
+  dateLabel.dataset.tooltip = "Filter By Date";
+  dateLabel.innerHTML = `<i class="bi bi-calendar"></i>
+    <input type="date" id="date-input">`;
+  return dateLabel;
+};
+
 export const handleNavigation = (e) => {
   const link = e.target.closest("a.route-link");
-  const tabLink = e.target.closest(".navigation-tabs a");
+  const tabLink = Boolean(e.target.closest(".navigation-tabs a"));
   if (link) {
     e.preventDefault();
     const pathName = new URL(link.href).pathname;
     if (pathName !== location.pathname) {
       isRouting = true;
-      toggleActiveLink(pathName);
-      updateMain(pathName, Boolean(tabLink));
+      toggleActiveLink(pathName, tabLink);
+      updateMain(pathName, tabLink);
       resetTooltip(hoverTooltip);
       history.pushState(null, "", pathName);
       clearAllTimeOuts();
-    }
 
-    if (tabLink) {
-      toggleActiveLink(pathName);
-      topSideBarMiddle.querySelector("#sort-checkbox").checked = false;
-      const isGroupsTabs = e.target.closest(".groups-tabs");
-      if (isGroupsTabs) {
-        topSideBarMiddle
-          .querySelector(".filter-panel")
-          .replaceWith(createFilterPanel());
-      }
-      if (
-        e.target.closest(".available-groups-tab") ||
-        e.target.closest(".groups-quizzes-tab")
-      ) {
-        removeCreateBtns();
-      } else {
-        const groupCreateBtn = document.querySelector(".create-group-btn");
-        const quizCreateBtn = document.querySelector(".create-quiz-btn");
-        if (!groupCreateBtn && isGroupsTabs) {
-          const createGroupBtn = createCreateBtn();
-          topSideBarFooter.prepend(createGroupBtn);
+      if (tabLink) {
+        topSideBarMiddle.querySelector("#sort-checkbox").checked = false;
+        const isGroupsTabs = e.target.closest(".groups-tabs");
+        const isUserQuizzesPage = location.pathname === "/app/quizzes/my";
+        if (isGroupsTabs) {
+          topSideBarMiddle
+            .querySelector(".filter-panel")
+            .replaceWith(createFilterPanel(true));
         }
-        if (!quizCreateBtn && !isGroupsTabs) {
-          const createQuizBtn = createCreateBtn(true);
-          topSideBarFooter.prepend(createQuizBtn);
+        const searchContainer =
+          topSideBarMiddle.querySelector(".search-container");
+        if (isUserQuizzesPage) {
+          topSideBarMiddle.querySelector(".date-label").remove();
+          searchContainer.appendChild(createFilterContainer());
+          searchContainer.querySelector("input").placeholder =
+            "Search By Quiz Title or Subject";
+        }
+        if (!isUserQuizzesPage && !isGroupsTabs) {
+          document.querySelector(".filter-container").remove();
+          searchContainer.querySelector("input").placeholder =
+            "Search By Quiz Title, Subject or Group Name";
+          searchContainer
+            .querySelector(".main-search")
+            .appendChild(getDateInput());
+        }
+        if (
+          e.target.closest(".available-groups-tab") ||
+          e.target.closest(".groups-quizzes-tab")
+        ) {
+          removeCreateBtns();
+        } else {
+          const groupCreateBtn = document.querySelector(".create-group-btn");
+          const quizCreateBtn = document.querySelector(".create-quiz-btn");
+          if (!groupCreateBtn && isGroupsTabs) {
+            const createGroupBtn = createCreateBtn();
+            topSideBarFooter.prepend(createGroupBtn);
+          }
+          if (!quizCreateBtn && !isGroupsTabs) {
+            const createQuizBtn = createCreateBtn(true);
+            topSideBarFooter.prepend(createQuizBtn);
+          }
         }
       }
     }
@@ -873,39 +898,49 @@ const createSection = (title, options) => {
   return section;
 };
 
-export const createFilterPanel = () => {
+export const createFilterPanel = (groups = false) => {
   const filterPanel = document.createElement("div");
-  filterPanel.className = "filter-panel overlay group-filter-panel";
-  const isMyGroupsPage = location.pathname === "/app/groups/my";
+  filterPanel.className = "filter-panel overlay";
 
-  if (isMyGroupsPage) {
-    const roleSection = createSection("Role", [
-      { id: "admin", label: "Admin", icon: "bi bi-person-gear" },
-      { id: "member", label: "Member", icon: "bi bi-person" },
+  if (groups) {
+    const isMyGroupsPage = location.pathname === "/app/groups/my";
+
+    if (isMyGroupsPage) {
+      const roleSection = createSection("Role", [
+        { id: "admin", label: "Admin", icon: "bi bi-person-gear" },
+        { id: "member", label: "Member", icon: "bi bi-person" },
+      ]);
+      filterPanel.appendChild(roleSection);
+    }
+
+    // Visibility Section
+    const visibilitySection = createSection("Visibility", [
+      { id: "private", label: "Private", icon: "bi bi-lock" },
+      { id: "public", label: "Public", icon: "bi bi-eye" },
     ]);
-    filterPanel.appendChild(roleSection);
-  }
+    filterPanel.appendChild(visibilitySection);
 
-  // Visibility Section
-  const visibilitySection = createSection("Visibility", [
-    { id: "private", label: "Private", icon: "bi bi-lock" },
-    { id: "public", label: "Public", icon: "bi bi-eye" },
-  ]);
-  filterPanel.appendChild(visibilitySection);
-
-  // Level Section
-  const levelSection = createSection("Level", [
-    { id: "advanced", label: "Advanced", icon: "bi bi-graph-up" },
-    { id: "intermediate", label: "Intermediate", icon: "bi bi-bar-chart" },
-    { id: "beginner", label: "Beginner", icon: "bi bi-lightbulb" },
-  ]);
-  filterPanel.appendChild(levelSection);
-
-  if (!isMyGroupsPage) {
-    const roleSection = createSection("View Options", [
-      { id: "joinable-only", label: "Joinable Only", icon: "bi bi-people" },
+    // Level Section
+    const levelSection = createSection("Level", [
+      { id: "advanced", label: "Advanced", icon: "bi bi-graph-up" },
+      { id: "intermediate", label: "Intermediate", icon: "bi bi-bar-chart" },
+      { id: "beginner", label: "Beginner", icon: "bi bi-lightbulb" },
     ]);
-    filterPanel.appendChild(roleSection);
+    filterPanel.appendChild(levelSection);
+
+    if (!isMyGroupsPage) {
+      const roleSection = createSection("View Options", [
+        { id: "joinable-only", label: "Joinable Only", icon: "bi bi-people" },
+      ]);
+      filterPanel.appendChild(roleSection);
+    }
+  } else {
+    // Status Section
+    const statusSection = createSection("Status", [
+      { id: "published", label: "Published", icon: "bi bi-check-circle" },
+      { id: "draft", label: "Draft", icon: "bi bi-pencil" },
+    ]);
+    filterPanel.appendChild(statusSection);
   }
 
   return filterPanel;
@@ -939,7 +974,7 @@ export const openOverlayModal = async (
       }
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     backdrop.innerHTML = "<h2>Error loading content</h2>";
     showMessageBlock(error.message, "error");
   }
@@ -1077,4 +1112,34 @@ export const scrollToView = (e, questionLink) => {
       clearTimeout(target.scrollHighlightTimer);
     }, 1000);
   }
+};
+
+export const formatNumber = (number) => {
+  if (number === null || number === undefined || isNaN(number)) return "0";
+  const absNum = Math.abs(number);
+  if (absNum >= 1e9) return (number / 1e9).toFixed(1).replace(/\.0$/, "") + "B";
+  if (absNum >= 1e6) return (number / 1e6).toFixed(1).replace(/\.0$/, "") + "M";
+  if (absNum >= 1e3) return (number / 1e3).toFixed(1).replace(/\.0$/, "") + "K";
+  return number.toString();
+};
+
+export const toReadableDate = (TimeOrDate, type) => {
+  const date = new Date(TimeOrDate);
+
+  if (type === "short") {
+    return date.toLocaleString([], {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  }
+
+  return date.toLocaleString([], {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 };

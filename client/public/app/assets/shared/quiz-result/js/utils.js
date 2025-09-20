@@ -181,10 +181,10 @@ export const getResultOverlay = (quizResult, questions) => {
   return resultWrapper.outerHTML;
 };
 
-const getQuizResult = async (quizId, userId) => {
+const getQuizResult = async (quizId, userId, groupId) => {
   try {
     const quizData = await fetchData(
-      `/examen-result?quizId=${quizId}&userId=${userId}`
+      `/examen-result?quizId=${quizId}&userId=${userId}&groupId=${groupId}`
     );
     return quizData;
   } catch (error) {
@@ -193,13 +193,18 @@ const getQuizResult = async (quizId, userId) => {
   }
 };
 
-export const openQuizResultOverlay = async ({ quizData, quizId, userId }) => {
+export const openQuizResultOverlay = async ({
+  quizData,
+  quizId,
+  userId = "self",
+  groupId,
+}) => {
   openOverlayModal(
     "quiz-result-overlay",
     [".close-result-overlay-btn"],
     async () => {
       if (!quizData) {
-        quizData = await getQuizResult(quizId, userId);
+        quizData = await getQuizResult(quizId, userId, groupId);
       }
       return getResultOverlay(quizData.quizResult, quizData.questions);
     },
@@ -214,12 +219,14 @@ export const openQuizResultOverlay = async ({ quizData, quizId, userId }) => {
   );
 };
 
-export const openQuizResultsOverlay = async (quizId) => {
+export const openQuizResultsOverlay = async (quizId, groupId) => {
   openOverlayModal(
     "results-list-overlay",
     [".close-results-overlay-btn"],
     async () => {
-      const { overlay } = await fetchData(`/results-list?quizId=${quizId}`);
+      const { overlay } = await fetchData(
+        `/results-list?quizId=${quizId}&groupId=${groupId}`
+      );
       return overlay;
     },
     (backDrop) => {
@@ -227,7 +234,7 @@ export const openQuizResultsOverlay = async (quizId) => {
         const resultBtn = e.target.closest(".show-result-btn");
         if (resultBtn) {
           const userId = resultBtn.getAttribute("data-user-id");
-          openQuizResultOverlay({ quizId, userId });
+          openQuizResultOverlay({ quizId, userId, groupId });
         }
       });
     }

@@ -18,7 +18,7 @@
     <% } %>
   </header>
   <div class="members-list">
-    <% formattedMembers.forEach((member) => { %>
+    <% members.forEach((member) => { %>
     <div class="member">
       <div class="avatar">
         <% if (member.photoURL) { %>
@@ -28,7 +28,11 @@
         <% } %>
       </div>
       <span class="username"><%= member.fullName %></span>
-      <% if (isAdmin) { %>
+      <% console.log(member); %>
+      <% if (member.isAdmin) { %>
+        <span class="badge orange-badge" <%- isAdmin ? 'style="margin-right: auto;"' : '' %> >Host</span>
+      <% } %>
+      <% if (isAdmin && !member.isAdmin) { %>
       <div class="action-btns" data-member-id="<%= member.id %>">
         <button type="button" class="red-btn kick-btn small-btn">
           <i class="bi bi-person-dash"></i>

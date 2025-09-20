@@ -19,6 +19,7 @@ import {
   QUIZSELECTORS,
   retakeBtn,
   SESSIONSSELECTORS,
+  tasksBadgesContainer,
   TASKSSELECTORS,
   viewResultBtn,
   viewResultsBtn,
@@ -170,6 +171,8 @@ export class Quiz extends Task {
     questionsCount,
     passed,
     status,
+    isAdmin,
+    groupId,
   }) {
     super({ UID, title, description, durationInMins });
     this.questionsCount = questionsCount;
@@ -183,12 +186,18 @@ export class Quiz extends Task {
     if (passed) {
       this.passed = passed;
     }
-  }
-  updateElapsedTime({ quizElapsedTime, status, isAdmin }) {
-    console.log({ quizElapsedTime, status, isAdmin });
 
-    if (status === "active" && !this.passed && !isAdmin) {
-      navigateTo(`/quiz-play/${this.UID}`);
+    if (groupId) {
+      Session.groupId = groupId;
+    }
+
+    if (isAdmin) {
+      this.isAdmin = isAdmin;
+    }
+  }
+  updateElapsedTime({ quizElapsedTime, status }) {
+    if (status === "active" && !this.passed && !this.isAdmin) {
+      navigateTo(`/quiz-play/${this.UID}?groupId=${Session.groupId}`);
     }
 
     if (quizElapsedTime) {
@@ -236,12 +245,13 @@ export class Quiz extends Task {
     if (!isAdmin) {
       button.addEventListener("click", () =>
         openQuizResultOverlay({
-          userId: "self",
           quizId: this.UID,
         })
       );
     } else {
-      button.addEventListener("click", () => openQuizResultsOverlay(this.UID));
+      button.addEventListener("click", () =>
+        openQuizResultsOverlay(this.UID, Session.groupId)
+      );
     }
     quizFooter.append(button);
   }
@@ -295,14 +305,14 @@ export const addQuizEventListnersBns = (quizId) => {
   if (viewResultBtn)
     viewResultBtn.addEventListener("click", () => {
       openQuizResultOverlay({
-        userId: "self",
         quizId: quizId,
+        groupId: Session.groupId,
       });
     });
 
   if (viewResultsBtn)
     viewResultsBtn.addEventListener("click", () =>
-      openQuizResultsOverlay(quizId)
+      openQuizResultsOverlay(quizId, Session.groupId)
     );
 
   if (retakeBtn)
@@ -310,6 +320,7 @@ export const addQuizEventListnersBns = (quizId) => {
       navigateTo(`/quiz-play/${quizId}`);
     });
 };
+
 export const startSession = async () => {
   try {
     const sessionData = await fetchData("/active-session");
@@ -326,8 +337,26 @@ export const startSession = async () => {
   }
 };
 
+const getBadgesContainer = (nextTask) => `
+          <div class="active-task-container">
+            <span class="task-label active-task-label">Active Task</span>
+            <span class="active-task-title task-title"></span>
+          </div>
+          ${
+            nextTask
+              ? `
+          <div class="next-task-container">
+            <span class="task-label next-task-label">Next Task</span>
+            <span class="next-task-title task-title"></span>
+          </div>
+          `
+              : ""
+          }
+`;
+
 export class Session {
   static id = null;
+  static groupId = null;
   constructor({
     tasks,
     startDate,
@@ -339,8 +368,7 @@ export class Session {
   }) {
     console.log("Initializing session with data:");
     Session.id = id; // Set the static id property
-    this.isAdmin = isAdmin;
-    this.groupId = groupId;
+    Session.groupId = groupId;
     this.startDate = startDate;
     this.durationInMins = durationInMins;
     this.tasks = tasks;
@@ -351,6 +379,8 @@ export class Session {
           questionsCount: quiz.questionsCount,
           status: quiz.status,
           passed: quiz.passed,
+          isAdmin,
+          groupId,
         })
       : null;
     this.initTime();
@@ -391,7 +421,6 @@ export class Session {
       if (this.quiz && this.quiz.status !== "completed") {
         this.quiz.updateElapsedTime({
           status: this.quiz.status,
-          isAdmin: this.isAdmin,
         });
         if (this.quiz.status == "active" && !this.quiz.passed && !this.isAdmin)
           return;
@@ -459,22 +488,47 @@ export class Session {
     this.completedTasks.push(complatedTask);
     this.displayComplatedTask(complatedTask);
     const nextTask = this.ongoingTasksContainer.firstElementChild;
-    if (nextTask && this.ongoingTasks[0]) {
-      new FlipTimer(this.ongoingTasks[0].durationInMins * 60 * 1000);
-      nextTask.firstElementChild.setAttribute("data-tooltip", "Active Task");
-      nextTask.firstElementChild.classList.add("first", "has-tooltip");
-      if (this.ongoingTasks[0].isQuiz) {
-        this.quiz.status = "active";
-        this.quiz.updateBadge("active");
-      }
-      await this.updateTaskStatus(this.ongoingTasks[0].UID, "active");
-    }
+    const nextTaskObj = this.ongoingTasks[0];
     if (complatedTask.isQuiz) {
       this.quiz.status = "completed";
       this.quiz.updateBadge("completed");
       this.quiz.addQuizBtns(this.isAdmin);
     }
+    this.updateTasksBadges(
+      nextTaskObj,
+      this.ongoingTasks[1],
+      this.ongoingTasks[1] && this.ongoingTasks[2]
+    );
+    if (nextTask && nextTaskObj) {
+      new FlipTimer(nextTaskObj.durationInMins * 60 * 1000);
+      nextTask.firstElementChild.setAttribute("data-tooltip", "Active Task");
+      nextTask.firstElementChild.classList.add("first", "has-tooltip");
+      if (nextTaskObj.isQuiz) {
+        this.quiz.status = "active";
+        this.quiz.updateBadge("active");
+      }
+      await this.updateTaskStatus(nextTaskObj.UID, "active");
+    }
     await this.updateTaskStatus(complatedTask.UID, "completed");
+  }
+
+  updateTasksBadges(activeTask, nextTask, nextTaskIsLast) {
+    if (!activeTask) {
+      return;
+    }
+    this.timerEls.activeTaskLabel.textContent =
+      "Active " +
+      (activeTask.isQuiz ? "Quiz" : activeTask.isBreak ? "Break" : "Task") +
+      (nextTask ? "" : " (Last Task)");
+    this.timerEls.activeTaskTitle.textContent = activeTask.title;
+
+    if (!nextTask) return this.timerEls.nextTaskContainer.remove();
+
+    this.timerEls.nextTaskLabel.textContent =
+      "Next " +
+      (nextTask.isQuiz ? "Quiz" : nextTask.isBreak ? "Break" : "Task") +
+      (nextTaskIsLast ? "" : " (Last Task)");
+    this.timerEls.nextTaskTitle.textContent = nextTask.title;
   }
 
   displayComplatedTask(task) {
@@ -502,9 +556,9 @@ export class Session {
             : `
         <div class="task-details">
           <h5>Title: </h5>
-          <p class="task-title">${task.title}</p>
+          <p class="task-title"></p>
           <h5>Details: </h5>
-          <p class="task-desc">${task.description}</p>
+          <p class="task-desc"></p>
         </div>`
         }
       `;
@@ -522,8 +576,6 @@ export class Session {
   }
 
   async initTasks() {
-    console.log("Initializing tasks...");
-
     let timeLeft = Math.floor(this.timeLeft / 1000 / 60);
     this.completedTasks = [];
     for (const task of this.tasks) {
@@ -551,9 +603,23 @@ export class Session {
     });
 
     const firstOngoingTask = this.ongoingTasks[0];
+    if (firstOngoingTask) {
+      tasksBadgesContainer.innerHTML = getBadgesContainer(this.ongoingTasks[1]);
+      this.timerEls = {
+        nextTaskLabel: document.querySelector(".next-task-label"),
+        nextTaskTitle: document.querySelector(".next-task-title"),
+        activeTaskLabel: document.querySelector(".active-task-label"),
+        activeTaskTitle: document.querySelector(".active-task-title"),
+        nextTaskContainer: document.querySelector(".next-task-container"),
+      };
+      this.updateTasksBadges(
+        firstOngoingTask,
+        this.ongoingTasks[1],
+        this.ongoingTasks[1] && this.ongoingTasks[2]
+      );
+    }
     if (this.ongoingTasks[0] && firstOngoingTask.status !== "active") {
       await this.updateTaskStatus(firstOngoingTask.UID, "active");
-      console.log("Setting first ongoing task status to active");
       firstOngoingTask.status = "active";
       if (firstOngoingTask.isQuiz) {
         this.quiz.status = "active";
@@ -695,7 +761,6 @@ export class Session {
       this.quiz.updateElapsedTime({
         quizElapsedTime: this.calculateQuizElapsedTime(),
         status: this.quiz.status,
-        isAdmin: this.isAdmin,
       });
     }
 

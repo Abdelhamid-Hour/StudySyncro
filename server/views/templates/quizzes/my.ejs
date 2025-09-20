@@ -3,7 +3,67 @@
   class="quizzes-list fade-in-template"
 >
   <% cards.forEach(function(quiz) { %>
-  <div class="quiz-card">
+  <div data-quiz-id="<%= quiz.id %>" class="quiz-card">
+    <header class="quiz-card-header">
+      <% if (quiz.status === "draft") { %>
+      <span
+        class="badge gray-badge has-tooltip"
+        data-tooltip="Add at least 1 question to publish"
+      >
+        <i class="bi bi-pencil"></i>
+        Draft
+      </span>
+      <% } else { %>
+      <span class="badge green-badge">
+        <i class="bi bi-check"></i>
+        Published
+      </span>
+      <% } %>
+      <div>
+        <button
+          type="button"
+          class="exclude-btn quiz-card-menu-btn open-drop-down-btn"
+        >
+          <i class="bi bi-three-dots-vertical"></i>
+        </button>
+        <div class="drop-down-menu overlay">
+          <div class="drop-down-group">
+            <button
+              type="button"
+              class="drop-down-item exclude-btn edit-quiz-menu-btn"
+              data-quiz-id="<%= quiz.id %>"
+            >
+              <i class="bi bi-pencil-square"></i>
+              Edit
+            </button>
+            <button
+              type="button"
+              class="drop-down-item exclude-btn preview-quiz-menu-btn"
+              data-quiz-id="<%= quiz.id %>"
+            >
+              <i class="bi bi-eye"></i>
+              Preview
+            </button>
+            <button
+              type="button"
+              class="drop-down-item exclude-btn duplicate-quiz-menu-btn"
+              data-quiz-id="<%= quiz.id %>"
+            >
+              <i class="bi bi-files"></i>
+              Duplicate
+            </button>
+            <button
+              type="button"
+              class="drop-down-item exclude-btn red-btn remove-quiz-menu-btn"
+              data-quiz-id="<%= quiz.id %>"
+            >
+              <i class="bi bi-trash3"></i>
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
     <div class="quiz-title-container info-container">
       <label class="quiz-title-label">
         <span class="icon-box"><i class="bi bi-card-text"></i></span>
@@ -25,7 +85,10 @@
       </label>
       <div class="content">
         <span class="count content">
-          <%= quiz.sharedGroups %> Groups | <%= quiz.sharedSessions %> Sessions
+          <%= formatNumber(quiz.sharedGroups) %>
+          <sup>Gr</sup>
+          | <%= formatNumber(quiz.sharedSessions) %>
+          <sup>Ses</sup>
         </span>
       </div>
     </div>
@@ -36,29 +99,6 @@
       </label>
       <span class="subject content"><%= quiz.subject %></span>
     </div>
-    <!-- <div class="action-btns">
-      <button
-        type="button"
-        class="<%# isAdmin ? 'view-members-results-btn' : 'view-quiz-result-btn' %> should-fill"
-      >
-        <i class="bi bi-eye"></i>
-        View <%# isAdmin ? 'Results' : 'Result' %>
-      </button>
-      <%# if (isAdmin) { %> -->
-      <a
-        href="/app/quizzes/my/<%= quiz.id _%>/edit"
-        class="button route-link edit-quiz-btn"
-      >
-        <i class="bi bi-pencil-square"></i>
-        Edit Quiz
-      </a>
-      <%# } else { %>
-      <!-- <button type="button" class="restart-quiz-btn">
-        <i class="bi bi-arrow-repeat"></i>
-        Retake
-      </button> -->
-      <%# } %>
-    <!-- </div> -->
   </div>
   <% }); %>
 </div>

@@ -93,7 +93,7 @@ const changeTaskStatus = async (status, taskId) => {
       message: "Task not found",
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {
       success: false,
       message: "Could not update task status",

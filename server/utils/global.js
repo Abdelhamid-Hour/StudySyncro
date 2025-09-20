@@ -1,3 +1,4 @@
+const MAX_FILE_SIZE_50MB = 50 * 1024 * 1024; // 50MB
 class Task {
   constructor({
     title,
@@ -37,7 +38,7 @@ const pathNames = {
   },
   quizzes: {
     my: "/quizzes/my",
-    groups: "/quizzes/groups",
+    passed: "/quizzes/passed",
   },
   settings: "/settings",
 };
@@ -51,8 +52,17 @@ const formatHoursMinutes = (TimeOrDate) => {
   });
 };
 
-const toReadableDate = (TimeOrDate) => {
+const toReadableDate = (TimeOrDate, type) => {
   const date = new Date(TimeOrDate);
+
+  if (type === "short") {
+    return date.toLocaleString([], {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  }
+
   return date.toLocaleString([], {
     year: "numeric",
     month: "2-digit",
@@ -63,21 +73,40 @@ const toReadableDate = (TimeOrDate) => {
   });
 };
 
-const millisecondsToHMFormat = (time) => {
-  const hours = Math.floor(time / (1000 * 60 * 60));
-  const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
+const millisecondsToHMFormat = (ms) => {
+  if (typeof ms !== "number" || ms < 0) return "0m";
+  const hours = Math.floor(ms / 3_600_000);
+  const minutes = Math.floor((ms % 3_600_000) / 60_000);
 
-  return hours !== 0
-    ? `${hours}h ${minutes.toString().padStart(2, "0")}m`
-    : hours === 0 && minutes !== 0
-    ? `${minutes}m`
-    : "0m";
+  if (hours && minutes)
+    return `${hours}h ${minutes.toString().padStart(2, "0")}m`;
+  if (hours) return `${hours}h`;
+  if (minutes) return `${minutes}m`;
+  return "0m";
 };
 
+const formatNumber = (number) => {
+  if (number === null || number === undefined || isNaN(number)) return "0";
+  const absNum = Math.abs(number);
+  if (absNum >= 1e9) return (number / 1e9).toFixed(1).replace(/\.0$/, "") + "B";
+  if (absNum >= 1e6) return (number / 1e6).toFixed(1).replace(/\.0$/, "") + "M";
+  if (absNum >= 1e3) return (number / 1e3).toFixed(1).replace(/\.0$/, "") + "K";
+  return number.toString();
+};
+
+const getScoreClass = (score) => {
+  if (score >= 80) return "excellent";
+  if (score >= 60) return "good";
+  if (score >= 40) return "average";
+  return "poor";
+};
 module.exports = {
   formatHoursMinutes,
   toReadableDate,
   millisecondsToHMFormat,
+  MAX_FILE_SIZE_50MB,
+  getScoreClass,
+  formatNumber,
   pathNames,
   Task,
   Quiz,

@@ -1,119 +1,138 @@
 const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
-const { getGroupById } = require("./shared");
+const { refillSampleMembersIfNeeded } = require("./shared");
+const { toReadableDate } = require("../global");
 
 const sendRequest = async (groupId, userData) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
     const groupSnap = await groupRef.get();
-    const data = groupSnap.data();
-    if (groupSnap.exists) {
-      const group = groupSnap.data();
 
-      if (group.maxMembers <= group.members.length) {
-        return {
-          message: "Can't send request the group is full",
-          success: false,
-        };
-      } else if (
-        group.requests.some((demande) => demande.uid === userData.uid)
-      ) {
-        return { message: "You have already sent a request", success: false };
-      } else if (group.members.some((member) => member.uid === userData.uid)) {
-        return {
-          message: "You are already a member ",
-          success: false,
-        };
-      } else if (data.showInSearch) {
-        await groupRef.update({
-          requests: FieldValue.arrayUnion({
-            uid: userData.uid,
-            name: userData.fullName,
-            email: userData.email,
-            photoURL: userData.picture || "here//goes//a//photo//url",
-            sentAt: new Date().toISOString(),
-          }),
-        });
-        return {
-          message: "Can't send request the group is full",
-          status: "requested",
-          success: true,
-        };
-      } else {
-      }
-    } else {
+    if (!groupSnap.exists) {
       return {
-        message: "Group does not exists",
         success: false,
+        message: "Group not found",
       };
     }
+
+    const group = groupSnap.data();
+    const membersCount = (
+      await groupRef.collection("members").count().get()
+    ).data().count;
+
+    if (group.maxMembers <= membersCount)
+      return {
+        success: false,
+        message: "Group is full",
+      };
+
+    const isRequestSent = (
+      await groupRef.collection("requests").doc(userData.uid).get()
+    ).exists;
+    if (isRequestSent)
+      return { message: "You have already sent a request", success: false };
+
+    const isAlreadyMember = (
+      await groupRef.collection("members").doc(userData.uid).get()
+    ).exists;
+    if (isAlreadyMember)
+      return {
+        message: "You are already a member ",
+        success: false,
+      };
+
+    if (!group.showInSearch)
+      return {
+        success: false,
+        message: "The Group Is Private and Not Visible",
+      };
+
+    await groupRef
+      .collection("requests")
+      .doc(userData.uid)
+      .set({
+        uid: userData.uid,
+        fullName: userData.fullName,
+        email: userData.email,
+        photoURL:
+          userData.photoURL ||
+          "https://api.dicebear.com/7.x/identicon/svg?seed=" +
+            encodeURIComponent(userData.uid),
+        demandeDate: new Date().toISOString(),
+      });
+
+    return {
+      success: true,
+      status: "requested",
+    };
   } catch (error) {
     console.log(error.message);
-    return false;
+    return {
+      success: false,
+      message: error.message || "An unexpected error occurred.",
+    };
   }
 };
 
 const acceptRequest = async (groupId, requestId, userId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
+    const groupSnap = await groupRef.get();
+    const groupData = groupSnap.data();
 
-    const result = await db.runTransaction(async (transaction) => {
-      const groupDocSnapshot = await transaction.get(groupRef);
-
-      if (!groupDocSnapshot.exists) {
-        return {
-          success: false,
-          message: `Group with ID ${groupId} not found.`,
-        };
-      }
-
-      const groupData = groupDocSnapshot.data();
-
-      if (groupData.creator !== userId) {
-        return {
-          success: false,
-          message: "Only the group creator can accept requests.",
-        };
-      }
-
-      const requestToAccept = groupData.requests.find(
-        (demande) => demande.uid === requestId
-      );
-
-      if (!requestToAccept) {
-        return { success: false, message: "Join request not found." };
-      }
-
-      const newMember = {
-        uid: requestToAccept.uid,
-        fullName: requestToAccept.name,
-        email: requestToAccept.email,
-        photoURL: requestToAccept.photoURL,
+    if (!groupSnap.exists) {
+      return {
+        success: false,
+        message: `Group not found.`,
       };
+    }
 
-      const isAlreadyMember = groupData.members.some(
-        (member) => member.uid === newMember.uid
-      );
+    if (groupData.creator !== userId) {
+      return {
+        success: false,
+        message: "Only the group creator can accept requests.",
+      };
+    }
 
-      if (isAlreadyMember) {
-        transaction.update(groupRef, {
-          requests: FieldValue.arrayRemove(requestToAccept),
-        });
-        return {
-          success: true,
-          message: "User is already a member, request removed.",
-        };
-      }
+    const requestToAcceptSnap = await groupRef
+      .collection("requests")
+      .doc(requestId)
+      .get();
 
-      transaction.update(groupRef, {
-        members: FieldValue.arrayUnion(newMember),
-        requests: FieldValue.arrayRemove(requestToAccept),
-      });
+    if (!requestToAcceptSnap.exists) {
+      return { success: false, message: "Join request not found." };
+    }
 
-      return { success: true, message: "Join request accepted successfully!" };
+    const requestToAccept = requestToAcceptSnap.data();
+
+    const newMember = {
+      uid: requestToAccept.uid,
+      fullName: requestToAccept.fullName,
+      email: requestToAccept.email,
+      photoURL: requestToAccept.photoURL,
+    };
+
+    const isAlreadyMember = (
+      await groupRef.collection("members").doc(newMember.uid).get()
+    ).exists;
+
+    if (isAlreadyMember) {
+      await requestToAcceptSnap.ref.delete();
+      return { success: false, message: "User is already a member." };
+    }
+
+    await groupRef.collection("members").doc(newMember.uid).set(newMember);
+    await groupRef.update({
+      membersCount: FieldValue.increment(1),
     });
+    const userRef = db.collection("users").doc(newMember.uid);
+    await userRef.update({
+      joinedGroupsIds: FieldValue.arrayUnion(groupRef.id),
+    });
+    await requestToAcceptSnap.ref.delete();
+    await refillSampleMembersIfNeeded(groupRef);
 
-    return result;
+    return { success: true, message: "Join request accepted successfully!" };
   } catch (error) {
     console.error("Error accepting request:", error.message);
     return {
@@ -128,64 +147,89 @@ const acceptRequest = async (groupId, requestId, userId) => {
 const rejectRequest = async (groupId, requestId, userId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
-    const group = await getGroupById(groupId);
-    if (group && group.creator === userId) {
-      const request = group.requests.find(
-        (demande) => demande.uid === requestId
-      );
-      if (request) {
-        await groupRef.update({
-          requests: FieldValue.arrayRemove(request),
-        });
-        return {
-          success: true,
-          message: "Request rejected successfully.",
-        };
-      } else {
-        return {
-          success: false,
-          message: "No Request match ",
-        };
-      }
-    } else {
+    const groupSnap = await groupRef.get();
+    const group = groupSnap.data();
+
+    if (!groupSnap.exists) {
       return {
         success: false,
-        message:
-          "No group found or user does not have the right to accomplish the action",
+        message: `Group not found.`,
       };
     }
+
+    if (group.creator !== userId) {
+      return {
+        success: false,
+        message: "Only the group creator can accept requests.",
+      };
+    }
+
+    const requestSnap = await groupRef
+      .collection("requests")
+      .doc(requestId)
+      .get();
+
+    if (!requestSnap.exists)
+      return { success: false, message: "Join request not found." };
+
+    await requestSnap.ref.delete();
+
+    return {
+      success: true,
+      message: "Request rejected successfully.",
+    };
   } catch (error) {
-    console.log(error.message);
+    console.error(error);
     return {
       success: false,
-      message: "Something wrong happened ",
+      message: "Something wrong happened",
     };
   }
 };
 
 const getFormatedRequests = (requests) =>
-  requests.map(({ id, name, photoURL, sentAt }) => ({
-    usuerId: id,
-    fullName: name,
-    photoURL,
-    demandeDate: sentAt,
+  requests.map((doc) => ({
+    userId: doc.id,
+    fullName: doc.data().fullName,
+    photoURL: doc.data().photoURL,
+    demandeDate: toReadableDate(doc.data().demandeDate),
   }));
+
+const getFilteredRequests = (criteria, demandes) => {
+  demandes = demandes.filter((doc) => {
+    const fullName = doc.data().fullName.toLowerCase();
+    const matchSearch = criteria.search
+      ? fullName.includes(criteria.search.toLowerCase())
+      : true;
+    const demandeDate = doc.data().demandeDate;
+    const matchDate = criteria.date
+      ? demandeDate && new Date(demandeDate) >= new Date(criteria.date)
+      : true;
+
+    return matchSearch && matchDate;
+  });
+  return getFormatedRequests(demandes);
+};
 
 const getRequests = async (groupId, userId) => {
   try {
-    const group = await getGroupById(groupId);
-    if (!group) return { success: false, message: "Group not found" };
-    const requests = getFormatedRequests(group.requests);
+    const groupRef = db.collection("groups").doc(groupId);
+    const groupSnap = await groupRef.get();
+    if (!groupSnap.exists)
+      return { success: false, message: "Group not found" };
+    const creator = groupSnap.data().creator;
+    const requestsSnap = await groupRef.collection("requests").get();
+    const requests = getFormatedRequests(requestsSnap.docs);
     return {
       success: true,
       context: {
         count: requests.length,
-        isAdmin: group.creator === userId,
+        isAdmin: creator === userId,
         demandes: requests,
       },
     };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return {
       success: false,
       message: "An error occurred while fetching requests",
@@ -193,8 +237,100 @@ const getRequests = async (groupId, userId) => {
   }
 };
 
+const getDemandesByGroupId = async (
+  groupId,
+  limit = 20,
+  lastVisible = null,
+  criteria = {}
+) => {
+  try {
+    const groupRef = db.collection("groups").doc(groupId);
+    const groupSnap = await groupRef.get();
+
+    if (!groupSnap.exists) {
+      return { success: false, message: "Group not found" };
+    }
+
+    let demandes = [];
+
+    // Fast path: if search looks like a member id, try fetching that doc directly
+    if (criteria.search) {
+      const maybeDoc = await groupRef
+        .collection("demandes")
+        .doc(criteria.search)
+        .get();
+      if (maybeDoc.exists) {
+        const formatted = getFormatedRequests([maybeDoc]);
+        return {
+          success: true,
+          count: formatted.length,
+          cards: formatted,
+          lastVisible: null,
+        };
+      }
+    }
+
+    // Iteratively fetch batches until we collect `limit` filtered demandes or no more pages
+    do {
+      const batchSize = Number(limit) * 10;
+      // ORDER BY: adjust the field if your member docs don't have `fullName`
+      let query = groupRef
+        .collection("requests")
+        .orderBy("demandeDate", criteria.sort || "desc")
+        .limit(batchSize);
+
+      if (lastVisible) {
+        const lastDoc = await groupRef
+          .collection("requests")
+          .doc(lastVisible)
+          .get();
+        if (lastDoc.exists) {
+          query = query.startAfter(lastDoc);
+        } else {
+          // can't page further if the provided lastVisible doesn't exist
+          lastVisible = null;
+          break;
+        }
+      }
+
+      const snapshot = await query.get();
+
+      // Filter the fetched batch using your search criteria helper
+      const filteredBatch = getFilteredRequests(criteria, snapshot.docs);
+
+      // Add only what's remaining to reach `limit`
+      const remaining = limit - demandes.length;
+      demandes = demandes.concat(filteredBatch.slice(0, remaining));
+
+      // If we fetched a full batch, there may be more pages; else no more pages
+      lastVisible =
+        snapshot.docs.length === batchSize
+          ? snapshot.docs[snapshot.docs.length - 1].id
+          : null;
+    } while (demandes.length < limit && lastVisible !== null);
+
+    const finalLastVisible =
+      demandes.length === limit ? demandes[demandes.length - 1].id : null;
+
+    return {
+      success: true,
+      count: demandes.length,
+      cards: demandes,
+      lastVisible: finalLastVisible,
+    };
+  } catch (error) {
+    console.error("Error in getDemandes:", error);
+    return {
+      success: false,
+      message: "An error occurred while fetching demandes",
+    };
+  }
+};
+
 module.exports = {
   getRequests,
+  sendRequest,
   acceptRequest,
   rejectRequest,
+  getDemandesByGroupId,
 };

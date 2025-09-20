@@ -1,6 +1,6 @@
-const { db, admin } = require('../firebase/firebaseAdmin');
-const { clearCookies } = require('../middleware/clearCookies');
-const { tokens } = require('../middleware/csrfTokenVerification');
+const { db, admin } = require("../firebase/firebaseAdmin");
+const { clearCookies } = require("../middleware/clearCookies");
+const { tokens } = require("../middleware/csrfTokenVerification");
 /**
  * Create a new user in firestore or update the user data
  * if the user is signed in with google or facebook
@@ -12,10 +12,10 @@ const createNewUser = async (req, res) => {
   const { uid, ...userData } = req.body.userInfo;
 
   try {
-    const userRef = db.collection('users').doc(uid);
+    const userRef = db.collection("users").doc(uid);
     // check if the user is signed in with google or facebook
     const userProvider = req.user?.firebase?.sign_in_provider;
-    if (userProvider !== 'password') {
+    if (userProvider !== "password") {
       const docSnap = await userRef.get();
       // check if the user data already exists in firestore
       if (docSnap.exists) {
@@ -29,19 +29,23 @@ const createNewUser = async (req, res) => {
         }, {});
         // check if the user data is empty
         if (Object.keys(updatedData).length === 0) {
-          return res.status(200).json({ message: 'User data already saved' });
+          return res.status(200).json({ message: "User data already saved" });
         }
 
         await userRef.update(updatedData);
-        return res.status(200).json({ message: 'User data updated' });
+        return res.status(200).json({ message: "User data updated" });
       }
     }
-    await userRef.set(userData);
-    return res.status(200).json({ message: 'User data saved' });
+    await userRef.set({
+      ...userData,
+      createdAt: new Date().toISOString(),
+      joinedGroupsIds: [],
+    });
+    return res.status(200).json({ message: "User data saved" });
   } catch (error) {
-    console.error('Error saving user data:', error);
+    console.error("Error saving user data:", error);
     return res.status(500).json({
-      message: 'Error saving user data',
+      message: "Error saving user data",
       error: error.message,
     });
   }
@@ -49,30 +53,32 @@ const createNewUser = async (req, res) => {
 
 const createSession = async function (req, res) {
   const idToken = req.body.idToken;
+  console.log(idToken);
+  
   const expiresIn = 60 * 60 * 24 * 5 * 1000;
   const options = { maxAge: expiresIn, httpOnly: true, secure: true };
   try {
     const secret = await tokens.secret();
     const csrfToken = tokens.create(secret);
-    res.cookie('SECRET', secret, options);
-    res.cookie('csrfToken', csrfToken, {
+    res.cookie("SECRET", secret, options);
+    res.cookie("csrfToken", csrfToken, {
       secure: true,
       maxAge: expiresIn,
     });
     const sessionCookie = await admin
       .auth()
       .createSessionCookie(idToken, { expiresIn });
-    res.cookie('session', sessionCookie, options);
-    return res.status(200).json({ message: 'Session created' });
+    res.cookie("session", sessionCookie, options);
+    return res.status(200).json({ message: "Session created" });
   } catch (error) {
     console.log(error.message);
-    return res.status(500).json({ message: 'Error creating session' });
+    return res.status(500).json({ message: "Error creating session" });
   }
 };
 
 const logOut = (req, res) => {
-  clearCookies(res, ['session', 'SECRET', 'csrfToken']);
-  return res.redirect('/login');
+  clearCookies(res, ["session", "SECRET", "csrfToken"]);
+  return res.redirect("/login");
 };
 
 module.exports = { createNewUser, createSession, logOut };

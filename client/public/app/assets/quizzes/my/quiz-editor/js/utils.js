@@ -45,6 +45,8 @@ const getQuizId = () => {
   return quizId;
 };
 
+let quizId = getQuizId();
+
 export const handleTextarea = (e) => {
   const textarea = e.target.closest('textarea');
   if (textarea) {
@@ -551,7 +553,6 @@ export const handleSaveBtn = async (type, btn) => {
     btn.isSaving = true;
     btn.innerHTML = getLoader();
     btn.disabled = true;
-    const quizId = getQuizId();
     await sendData('/api/update-quiz/' + quizId, { [type]: value }, 'PATCH');
     initialData[type] = value; // Update the initial data with the new value
     swapMode('getViewMode', type, value);
@@ -762,7 +763,6 @@ const saveQuizToServer = async (questions) => {
     saveQuizBtn.isSaving = true;
     // Extract quizId from URL: /app/quizzes/anything-here/edit (Firebase UID can contain chars)
 
-    const quizId = getQuizId();
     await sendData('/api/update-quiz/' + quizId, updatedData, 'PUT');
     showMessageBlock('Quiz saved successfully!', 'success');
     // update the initialData with the new questions
@@ -785,10 +785,6 @@ export const prepareQuizData = (checkValidity) => {
   const questions = collectQuestionsFromDOM(checkValidity);
   if (!questions) return null;
 
-  if (questions.length === 0) {
-    showMessageBlock('Please add at least one valid question.', 'error');
-    return null;
-  }
   const { newQuestions, updatedQuestions } = classifyQuestions(questions);
   updatedData.newQuestions = newQuestions;
   updatedData.updatedQuestions = updatedQuestions;

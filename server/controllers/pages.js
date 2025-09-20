@@ -1,24 +1,25 @@
 const {
   getQuizzPlayContext,
   getQuizEditContext,
-} = require('../utils/firebase-utils/examen');
-const { getGroupChatContext } = require('../utils/groups');
-const { fetchData, renderFragmentOrLayout } = require('../utils/routing');
+} = require("../utils/firebase-utils/examen");
+const { formatNumber } = require("../utils/global");
+const { getGroupChatContext } = require("../utils/groups");
+const { fetchData, renderFragmentOrLayout } = require("../utils/routing");
 
 const handleRoutes = async (req, res) => {
   const payload = await fetchData(req.path, req.user);
-  const pathName = req.path === '/home' ? payload.pathName : req.path;
+  const pathName = req.path === "/home" ? payload.pathName : req.path;
 
   const template = `templates${
-    pathName === '/home'
+    pathName === "/home"
       ? payload.pathName
-      : pathName === '/quizzes'
-      ? '/quizzes/quizzes-list'
+      : pathName === "/quizzes"
+      ? "/quizzes/quizzes-list"
       : pathName
   }`;
   return renderFragmentOrLayout(
     template,
-    req.path === '/home' ? payload.payload : payload,
+    req.path === "/home" ? payload.payload : payload,
     pathName,
     req,
     res
@@ -26,10 +27,15 @@ const handleRoutes = async (req, res) => {
 };
 
 const handleGroupChatRoute = async (req, res) => {
-  const templateContext = await getGroupChatContext(
-    req.user.uid,
-    req.params.groupId
-  ); // Replace with actual logic to get group chat context
+  const result = await getGroupChatContext(req.user.uid, req.params.groupId); // Replace with actual logic to get group chat context
+
+  if (!result.success) {
+    return res.status(result.statusCode).json({
+      message: result.message || "Failed to load group chat",
+    });
+  }
+
+  const templateContext = result.templateContext;
 
   const extraData = {
     groupName: templateContext.groupName,
@@ -40,9 +46,9 @@ const handleGroupChatRoute = async (req, res) => {
   };
 
   renderFragmentOrLayout(
-    'templates/groups/group-chat',
+    "templates/groups/group-chat",
     payload,
-    '/groups/my/group-chat',
+    "/groups/my/group-chat",
     req,
     res,
     extraData
@@ -55,12 +61,12 @@ const handleQuizEditRoute = async (req, res) => {
   const result = await getQuizEditContext(quizId, req.user.uid);
 
   if (!result.success) {
-    return res.status(500).json({
-      message: result.message || 'Failed to load quiz editor',
+    return res.status(result.statusCode).json({
+      message: result.message || "Failed to load quiz editor",
     });
   }
 
-  const templateContext = result.templateContext;
+  const templateContext = { ...result.templateContext, formatNumber };
 
   const extraData = {
     quizTitle: templateContext.title,
@@ -71,9 +77,9 @@ const handleQuizEditRoute = async (req, res) => {
   };
 
   renderFragmentOrLayout(
-    'templates/quizzes/quiz-editor',
+    "templates/quizzes/quiz-editor",
     payload,
-    '/quizzes/my/quiz-editor',
+    "/quizzes/my/quiz-editor",
     req,
     res,
     extraData
@@ -81,36 +87,26 @@ const handleQuizEditRoute = async (req, res) => {
 };
 
 const handleQuizPlayRoute = async (req, res) => {
-  // const templateContext = {
-  //   firstQuestion: {
-  //     id: 'q1',
-  //     text: 'What is the capital of Morocco?',
-  //     choices: ['Casablanca', 'Marrakesh', 'Fez', 'Rabat'],
-  //     correctAnswerIndex: 3, // Rabat
-  //   },
-  //   totalQuestions: 10,
-  //   quizTitle: 'Geography Quiz',
-  // }; // Replace with actual logic to get group chat context
-  console.log('request params:', req.params);
-  
-  const response = await getQuizzPlayContext(req.user, req.params.quizId);
+  const response = await getQuizzPlayContext(
+    req.user,
+    req.params.quizId,
+    req.query.groupId
+  );
   const templateContext = response.templateContext;
-
-  console.log('responce: ', response);
 
   const payload = {
     templateContext,
   };
 
   if (!response.success) {
-    const backUrl = req.header('Referer') || '/app/home';
+    const backUrl = req.header("Referer") || "/app/home";
     return res.redirect(backUrl);
   }
 
   renderFragmentOrLayout(
-    'templates/quiz-play',
+    "templates/quiz-play",
     payload,
-    '/quiz-play',
+    "/quiz-play",
     req,
     res
   );

@@ -1,7 +1,8 @@
 export let expandDescriptionBtn,
   SESSIONSSELECTORS,
   TASKSSELECTORS,
-  sesssionActionButtons,
+  sessionActionButtons,
+  tasksBadgesContainer,
   viewResultBtn,
   viewResultsBtn,
   retakeBtn,
@@ -10,13 +11,15 @@ export let expandDescriptionBtn,
 export const initDomVariables = () => {
   expandDescriptionBtn = document.querySelector(".expande-desc-btn");
 
-  sesssionActionButtons = document.querySelector(".session-action-btns");
+  sessionActionButtons = document.querySelector(".session-action-btns");
 
   retakeBtn = document.querySelector(".quiz-footer .retake-btn");
 
   viewResultBtn = document.querySelector(".quiz-footer .result-btn");
 
   viewResultsBtn = document.querySelector(".quiz-footer .results-btn");
+
+  tasksBadgesContainer = document.querySelector(".timer .info");
 
   SESSIONSSELECTORS = {
     name: ".session-name",

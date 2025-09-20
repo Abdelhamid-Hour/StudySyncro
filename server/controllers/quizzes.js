@@ -1,5 +1,5 @@
 const {
-  createExamen,
+  createQuiz,
   modifyQuizQuestions,
   updateQuizTitle,
   updateQuizSubject,
@@ -7,14 +7,16 @@ const {
   addQuizResult,
   getSessionQuizzes,
   getQuizzInfo,
-  getQuizResultsList,
+  getQuizResultsByGroup,
+  duplicateQuiz,
+  deleteQuiz,
 } = require("../utils/firebase-utils/examen");
+const { getScoreClass } = require("../utils/global");
 
 const createQuizHandler = async (req, res) => {
   const quizData = req.body.quizData;
   const userData = req.user;
-  console.log(quizData, "this is the quizz data");
-  const result = await createExamen(quizData, userData);
+  const result = await createQuiz(quizData, userData.uid);
   if (result.success) {
     console.log(result.quizId, "quizz id");
     return res.status(200).json({ quizId: result.quizId });
@@ -68,14 +70,14 @@ const patchQuizHandler = async (req, res) => {
 };
 
 const getResultsListHandler = async (req, res) => {
-  const { quizId } = req.query;
-  const result = await getQuizResultsList(quizId, req.user.uid);
+  const { quizId, groupId } = req.query;
+  const result = await getQuizResultsByGroup(quizId, groupId, req.user.uid);
 
   if (!result.success) return res.status(400).json({ message: result.message });
 
   return res.render(
     "fragments/resullts-list",
-    { results: result.results, quizTitle: result.quizTitle },
+    { results: result.results, quizTitle: result.quizTitle, getScoreClass },
     (err, html) => {
       if (err) {
         console.error(err);
@@ -130,9 +132,9 @@ const addQuizResultHandler = async (req, res) => {
 };
 
 const getExamenResultHandler = async (req, res) => {
-  const { userId, quizId } = req.query;
+  const { userId, quizId, groupId } = req.query;
 
-  const result = await getQuizResult(userId, quizId, req.user.uid);
+  const result = await getQuizResult(userId, quizId, groupId, req.user.uid);
 
   if (result.success) {
     return res
@@ -143,13 +145,35 @@ const getExamenResultHandler = async (req, res) => {
   }
 };
 
+const removeQuizHandler = async (req, res) => {
+  const { quizId } = req.params;
+  const result = await deleteQuiz(quizId);
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
+const duplicateQuizHandler = async (req, res) => {
+  const { quizId } = req.body;
+  const result = await duplicateQuiz(quizId, req.user.uid);
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({ message: result.message });
+  }
+};
+
 module.exports = {
   createQuizHandler,
+  removeQuizHandler,
   updateQuizHandler,
   patchQuizHandler,
   getResultsListHandler,
   getQuizDetailsHandler,
   getQuizzesListHandler,
   addQuizResultHandler,
-  getExamenResultHandler  
+  getExamenResultHandler,
+  duplicateQuizHandler,
 };

@@ -1,18 +1,16 @@
 import {
   deleteAccountBtn,
-  emailModifyBtn,
   initDomVariables,
-  passwordModifyBtn,
-  profileModifyBtn,
   settingsWrapper,
-} from './dom-variables.js';
+} from "./dom-variables.js";
 import {
   handleCloseAccountBtn,
-  handleEmailModifyClick,
+  handleEmailSaveBtn,
   handlePasswordModifyClick,
-  handleProfileModifyClick,
+  handleProfileSaveBtn,
   handleSettingsWrapperClick,
-} from './utils.js';
+  initOldValues,
+} from "./utils.js";
 
 let firstLoad = true;
 
@@ -21,16 +19,20 @@ export const init = (virtual = false) => {
     firstLoad = false; // Prevent re-initialization on subsequent calls
     return;
   }
+
   initDomVariables();
 
-  settingsWrapper.addEventListener('click', handleSettingsWrapperClick);
+  initOldValues();
 
-  profileModifyBtn.addEventListener('click', handleProfileModifyClick);
+  settingsWrapper.addEventListener("click", handleSettingsWrapperClick);
 
-  emailModifyBtn.addEventListener('click', handleEmailModifyClick);
+  handleProfileSaveBtn();
 
-  deleteAccountBtn.addEventListener('click', handleCloseAccountBtn);
+  handlePasswordModifyClick();
 
-  passwordModifyBtn.addEventListener('click', handlePasswordModifyClick);
+  handleEmailSaveBtn();
+
+  handleCloseAccountBtn();
 };
+
 init();

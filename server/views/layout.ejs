@@ -72,7 +72,7 @@
             ? "Home" 
             : ['/groups/my/', '/groups/available/'].includes(resourcesRoute) 
             ? 'Groups' 
-            : ['/quizzes/my/', '/quizzes/groups/'].includes(resourcesRoute) 
+            : ['/quizzes/my/', '/quizzes/passed/'].includes(resourcesRoute) 
             ? 'Quizzes' 
             : resourcesRoute === '/groups/my/group-chat/' 
             ? `<a href="/app/groups/my"><i class="bi bi-caret-left-fill"></i>Group Chat</a>`
@@ -80,20 +80,19 @@
             ? `<a href="/app/quizzes/my"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>`
             : '' %>
         </h2>
-        <!-- ? Navigation for Groups and Quizzes !!! add quizzes tabs also -->
-        <% if (['/groups/my/', '/groups/available/'].includes(resourcesRoute)) { %>
+        <% if (['/groups/my/', '/groups/available/', '/quizzes/my/', '/quizzes/passed/'].includes(resourcesRoute)) { %>
         <div class="navigation-tabs <%= resourcesRoute.includes('/quizzes/') ? 'quizzes-tabs' : 'groups-tabs' _%>">
           <a
             href="/app<%= resourcesRoute.includes('/quizzes/') ? '/quizzes' : '/groups' _%>/my"
-            class="tab route-link <% if (resourcesRoute === "/groups/my/" || resourcesRoute === "/quizzes/my/") { %> active<% } %> exclude-btn"
+            class="tab route-link <% if (resourcesRoute === "/groups/my/" || resourcesRoute === "/quizzes/my/") { %> active-tab<% } %> exclude-btn"
           >
             My <%= resourcesRoute.includes('/quizzes/') ? 'Quizzes' : 'Groups' %>
           </a>
           <a
-            href="/app<%= resourcesRoute.includes('/quizzes/') ? '/quizzes/groups' : '/groups/available' _%>"
-            class="tab route-link <%= resourcesRoute.includes('/quizzes/') ? 'groups-quizzes-tab' : 'available-groups-tab' %> <% if (resourcesRoute === "/groups/available/" || resourcesRoute === "/quizzes/groups/") { %> active<% } %> exclude-btn"
+            href="/app<%= resourcesRoute.includes('/quizzes/') ? '/quizzes/passed' : '/groups/available' _%>"
+            class="tab route-link <%= resourcesRoute.includes('/quizzes/') ? 'groups-quizzes-tab' : 'available-groups-tab' %> <% if (resourcesRoute === "/groups/available/" || resourcesRoute === "/quizzes/passed/") { %> active-tab<% } %> exclude-btn"
           >
-            <%= resourcesRoute.includes('/quizzes/') ? 'Groups' : 'Available Groups' %>
+            <%= resourcesRoute.includes('/quizzes/') ? 'Passed' : 'Available Groups' %>
           </a>
         </div>
         <% } %>
@@ -104,158 +103,201 @@
         <h2>Hello <%- user.fullName %> 👋</h2>
         <p>Have a good day !</p>
       </div>
-      <% } else if (['/quizzes/my/', '/quizzes/groups/', '/groups/my/', '/groups/available/'].includes(resourcesRoute)) { %>
+      <% } else if (['/quizzes/my/', '/quizzes/passed/', '/groups/my/', '/groups/available/'].includes(resourcesRoute)) { %>
       <div class="search-container fade-in-template">
-        <div class="main-search">
+        <div class="main-search search">
           <div class="search-icon-container">
             <i class="bi bi-search"></i>
           </div>
-          <input type="search" id="search-input" placeholder="<%- resourcesRoute.includes('/quizzes/') ? 'Search By Quiz Title or Subject' : 'Search By Group Name or Subject' %>" />
+          <input type="search" id="search-input" placeholder="<%- resourcesRoute.includes('/quizzes/my') ? 'Search By Quiz Title or Subject' : resourcesRoute.includes('/quizzes/passed') ? 'Search By Quiz Title, Subject or Group Name' : 'Search By Group Name or Subject' %>" />
+          <% if (resourcesRoute.includes('/quizzes/passed')) { %>
+            <label data-tooltip="Filter By Date" class="date-label should-fill has-tooltip">
+              <i class="bi bi-calendar"></i>
+              <input type="date" id="date-input">
+            </label>
+          <% } %> 
         </div>
         <!-- ? Filters -->
         <label type="button" class="exclude-btn sort-button button">
           <i class="bi bi-sort-down"></i>
           <input type="checkbox" id="sort-checkbox" class="sort-checkbox" />
         </label>
-        <% if (resourcesRoute.includes('/groups/')) { %>
+        <% if (resourcesRoute.includes('/groups/') || resourcesRoute.includes('/quizzes/my')) { %>
         <div class="filter-container">
           <button type="button" class="exclude-btn filter-button open-drop-down-btn should-fill">
             <i class="bi bi-funnel"></i>
           </button>
-            <div  class="filter-panel overlay group-filter-panel">
-            <% if (resourcesRoute === '/groups/my/') { %>
-              <!-- ? Role Filter -->
-              <section class="filter-section">
-              <h4 class="filter-title">Role</h4>
-              <div class="filter-option">
-              <!-- From Uiverse.io by SelfMadeSystem --> 
-              <label for="admin" class="container">
-              <input type="checkbox" id="admin" value="Admin" />
-              <svg viewBox="0 0 64 64" height="2em" width="2em">
-                <path
-                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                pathLength="575.0541381835938"
-                class="path"
-                ></path>
-              </svg>
-              <i class="bi bi-person-gear"></i>
-              Admin
-              </label>
-              </div>
-              <div class="filter-option">
-              <label for="member" class="container">
-              <input type="checkbox" id="member" value="Member" />
-              <svg viewBox="0 0 64 64" height="2em" width="2em">
-                <path
-                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                pathLength="575.0541381835938"
-                class="path"
-                ></path>
-              </svg>
-              <i class="bi bi-person"></i>
-              Member
-              </label>
-              </div>
-              </section>
+            <div  class="filter-panel overlay">
+            <% if (resourcesRoute.includes('/groups/')) { %>
+              <% if (resourcesRoute === '/groups/my/') { %>
+                <!-- ? Role Filter -->
+                <section class="filter-section">
+                <h4 class="filter-title">Role</h4>
+                <div class="filter-option">
+                <!-- From Uiverse.io by SelfMadeSystem --> 
+                <label for="admin" class="container">
+                <input type="checkbox" id="admin" value="Admin" />
+                <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                </svg>
+                <i class="bi bi-person-gear"></i>
+                Admin
+                </label>
+                </div>
+                <div class="filter-option">
+                <label for="member" class="container">
+                <input type="checkbox" id="member" value="Member" />
+                <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                </svg>
+                <i class="bi bi-person"></i>
+                Member
+                </label>
+                </div>
+                </section>
+                <% } %>
+                <!-- ? Visibility Filter -->
+                <section class="filter-section">
+                <h4 class="filter-title">Visibility</h4>
+                <div class="filter-option">
+                <label for="private" class="container">
+                <input type="checkbox" id="private" value="Private" />
+                <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                </svg>
+                <i class="bi bi-lock"></i>
+                Private
+                </label>
+                </div>
+                <div class="filter-option">
+                <label for="public" class="container">
+                <input type="checkbox" id="public" value="Public" />
+                <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                </svg>
+                <i class="bi bi-eye"></i>
+                Public
+                </label>
+                </div>
+                </section>
+                <!-- ? Level Filter -->
+                <section class="filter-section">
+                <h4 class="filter-title">Level</h4>
+                <div class="filter-option">
+                <label for="advanced" class="container">
+                  <input type="checkbox" id="advanced" value="Advanced" />
+                  <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                  </svg>
+                  <i class="bi bi-graph-up"></i>
+                  Advanced
+                </label>
+                </div>
+                <div class="filter-option">
+                <label for="intermediate" class="container">
+                  <input type="checkbox" id="intermediate" value="Intermediate" />
+                  <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                  </svg>
+                  <i class="bi bi-bar-chart"></i>
+                  Intermediate
+                </label>
+                </div>
+                <div class="filter-option">
+                <label for="beginner" class="container">
+                  <input type="checkbox" id="beginner" value="Beginner" />
+                  <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                  </svg>
+                  <i class="bi bi-lightbulb"></i>
+                  Beginner
+                </label>
+                </div>
+                </section>
+                <!-- ? View Options -->
+                <% if (resourcesRoute === '/groups/available/') { %>
+                <section class="filter-section">
+                <h4 class="filter-title">View Options</h4>
+                <div class="filter-option">
+                <label for="joinable-only" class="container">
+                  <input type="checkbox" id="joinable-only" value="Joinable Only" />
+                  <svg viewBox="0 0 64 64" height="2em" width="2em">
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
+                  </svg>
+                  <i class="bi bi-people"></i>
+                  Joinable Only
+                </label>
+                </div>
+                </section>
+                <% } %>
               <% } %>
-              <!-- ? Visibility Filter -->
-              <section class="filter-section">
-              <h4 class="filter-title">Visibility</h4>
-              <div class="filter-option">
-              <label for="private" class="container">
-              <input type="checkbox" id="private" value="Private" />
-              <svg viewBox="0 0 64 64" height="2em" width="2em">
-                <path
-                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                pathLength="575.0541381835938"
-                class="path"
-                ></path>
-              </svg>
-              <i class="bi bi-lock"></i>
-              Private
-              </label>
-              </div>
-              <div class="filter-option">
-              <label for="public" class="container">
-              <input type="checkbox" id="public" value="Public" />
-              <svg viewBox="0 0 64 64" height="2em" width="2em">
-                <path
-                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                pathLength="575.0541381835938"
-                class="path"
-                ></path>
-              </svg>
-              <i class="bi bi-eye"></i>
-              Public
-              </label>
-              </div>
-              </section>
-              <!-- ? Level Filter -->
-              <section class="filter-section">
-              <h4 class="filter-title">Level</h4>
-              <div class="filter-option">
-              <label for="advanced" class="container">
-                <input type="checkbox" id="advanced" value="Advanced" />
+                <% if (resourcesRoute.includes('/quizzes/my')) { %>
+                 <!-- ? Status Filter -->
+                <section class="filter-section">
+                <h4 class="filter-title">Status</h4>
+                <div class="filter-option">
+                <label for="published" class="container">
+                <input type="checkbox" id="published" value="published" />
                 <svg viewBox="0 0 64 64" height="2em" width="2em">
-                <path
-                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                pathLength="575.0541381835938"
-                class="path"
-                ></path>
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
                 </svg>
-                <i class="bi bi-graph-up"></i>
-                Advanced
-              </label>
-              </div>
-              <div class="filter-option">
-              <label for="intermediate" class="container">
-                <input type="checkbox" id="intermediate" value="Intermediate" />
+                <i class="bi bi-check-circle"></i>
+                Published
+                </label>
+                </div>
+                <div class="filter-option">
+                <label for="draft" class="container">
+                <input type="checkbox" id="draft" value="draft" />
                 <svg viewBox="0 0 64 64" height="2em" width="2em">
-                <path
-                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                pathLength="575.0541381835938"
-                class="path"
-                ></path>
+                  <path
+                  d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                  pathLength="575.0541381835938"
+                  class="path"
+                  ></path>
                 </svg>
-                <i class="bi bi-bar-chart"></i>
-                Intermediate
-              </label>
-              </div>
-              <div class="filter-option">
-              <label for="beginner" class="container">
-                <input type="checkbox" id="beginner" value="Beginner" />
-                <svg viewBox="0 0 64 64" height="2em" width="2em">
-                <path
-                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                pathLength="575.0541381835938"
-                class="path"
-                ></path>
-                </svg>
-                <i class="bi bi-lightbulb"></i>
-                Beginner
-              </label>
-              </div>
-              </section>
-              <!-- ? View Options -->
-              <% if (resourcesRoute === '/groups/available/') { %>
-              <section class="filter-section">
-              <h4 class="filter-title">View Options</h4>
-              <div class="filter-option">
-              <label for="joinable-only" class="container">
-                <input type="checkbox" id="joinable-only" value="Joinable Only" />
-                <svg viewBox="0 0 64 64" height="2em" width="2em">
-                <path
-                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                pathLength="575.0541381835938"
-                class="path"
-                ></path>
-                </svg>
-                <i class="bi bi-people"></i>
-                Joinable Only
-              </label>
-              </div>
-              </section>
-              <% } %>
+                <i class="bi bi-pencil"></i>
+                Draft
+                </label>
+                </div>
+
+                </section>
+                <% } %>
             </div>
         </div>  
         <% } %>

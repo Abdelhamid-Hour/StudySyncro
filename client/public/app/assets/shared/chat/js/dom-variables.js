@@ -1,7 +1,7 @@
 export const selectedFiles = new DataTransfer();
 export const PLAYBACK_RATE = [1, 1.5, 2, 0.5];
 
-export const MAXFILESIZE = 5 * 1024 * 1024; // 5MB
+export const MAXFILESIZE = 50 * 1024 * 1024; // 50MB
 
 export const FileTypes = {
   IMAGE: 'image/jpeg, image/png, image/gif, image/webp',

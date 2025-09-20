@@ -1,5 +1,7 @@
 const express = require("express");
-const { createNewUser } = require("../controllers/auth");
+const multer = require("multer");
+const upload = multer({ storage: multer.memoryStorage() });
+const { createNewUser, logOut } = require("../controllers/auth");
 const { setSessionDetails } = require("../middleware/home");
 const { sendSessionDetails } = require("../controllers/home");
 const {
@@ -13,11 +15,14 @@ const {
   patchGroupHandler,
   removeGroupHandler,
   leaveGroupHandler,
-  addMemberHandler,
   kickMemberHandler,
   transferRoleHandler,
   getUsersHandler,
   inviteMembersHandler,
+  getQuizzesByGroup,
+  getMembersByGroup,
+  getDemandesByGroup,
+  getPassedQuizzesHandler,
 } = require("../controllers/groups");
 const { generateTemplateContext } = require("../middleware/groups");
 const {
@@ -29,6 +34,8 @@ const {
   getQuizzesListHandler,
   addQuizResultHandler,
   getExamenResultHandler,
+  duplicateQuizHandler,
+  removeQuizHandler,
 } = require("../controllers/quizzes");
 const {
   getActiveSessionHandler,
@@ -43,6 +50,16 @@ const {
   rejectDemandeHandler,
 } = require("../controllers/demandes");
 const { GroupFragmentRoutes } = require("../utils/groups");
+const {
+  getUserInfoHandler,
+  updateEmailHandler,
+  addEmailHandler,
+  updateFullNameHandler,
+  updatePasswordHandler,
+  addPasswordHandler,
+  closeAccountHandler,
+} = require("../controllers/user");
+const { sendMessage } = require("../utils/firebase-utils/chat");
 
 const apiRouter = express.Router();
 
@@ -65,6 +82,10 @@ apiRouter.post("/create-quiz", createQuizHandler);
 apiRouter.put("/update-quiz/:quizId", updateQuizHandler);
 
 apiRouter.patch("/update-quiz/:quizId", patchQuizHandler);
+
+apiRouter.delete("/remove-quiz/:quizId", removeQuizHandler);
+
+apiRouter.post("/duplicate-quiz", duplicateQuizHandler);
 
 apiRouter.get("/quizzes", getQuizzesHandler);
 
@@ -95,9 +116,6 @@ apiRouter.delete("/remove-group/:groupId", removeGroupHandler);
 // Leave a group by userId and groupId
 apiRouter.post("/leave-group", leaveGroupHandler);
 
-// Add members to a group by userId(s) and groupId
-apiRouter.post("/add-member", addMemberHandler);
-
 // Kick a member from a group by groupId and userId
 apiRouter.post("/kick-member", kickMemberHandler);
 
@@ -120,6 +138,61 @@ apiRouter.get("/results-list", getResultsListHandler);
 apiRouter.get("/users", getUsersHandler);
 
 apiRouter.post("/invite-users", inviteMembersHandler);
+
+apiRouter.get("/group-quizzes", getQuizzesByGroup);
+
+apiRouter.get("/passed-quizzes", getPassedQuizzesHandler);
+
+apiRouter.get("/group-demandes", getDemandesByGroup);
+
+apiRouter.get("/group-members", getMembersByGroup);
+
+apiRouter.get("/user-info", getUserInfoHandler);
+
+apiRouter.patch("/update-email", updateEmailHandler);
+
+apiRouter.post("/add-email", addEmailHandler);
+
+apiRouter.patch("/update-full-name", updateFullNameHandler);
+
+apiRouter.patch("/update-password", updatePasswordHandler);
+
+apiRouter.post("/add-password", addPasswordHandler);
+
+apiRouter.post("/close-account", closeAccountHandler, logOut);
+
+apiRouter.post("/send-message", upload.single("file"), async (req, res) => {
+  const file = req.file;
+
+  const { sessionId, groupId, timestamp } = req.body;
+  const message = req.body.message || "";
+  console.log("Message Data: ", {
+    file,
+    message,
+    sessionId,
+    groupId,
+    timestamp,
+  });
+
+  const result = await sendMessage(
+    file,
+    message,
+    sessionId,
+    groupId,
+    timestamp,
+    req.user
+  );
+  if (result.success) {
+    return res
+      .status(200)
+      .json({ message: "Message sent successfully", ...result.data });
+  }
+  return res.status(500).json({
+    message: "Failed to send message",
+    error: result.message,
+    messageId: result.messageId,
+  });
+});
 
 GroupFragmentRoutes.forEach((config) => {
   apiRouter.get(
