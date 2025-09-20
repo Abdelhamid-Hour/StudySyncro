@@ -8,7 +8,11 @@ import {
   FacebookAuthProvider,
   signOut,
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
-import { checkError, redirectTo, sendData } from "../../main_assets/js/utils.js";
+import {
+  checkError,
+  redirectTo,
+  sendData,
+} from "../../main_assets/js/utils.js";
 
 const googleProvider = new GoogleAuthProvider();
 const fbProvider = new FacebookAuthProvider();
@@ -21,15 +25,16 @@ const fbProvider = new FacebookAuthProvider();
 const handleUserSignUp = async (auth, user) => {
   // Send the ID token to the server and get CSRF token
   await sendIdToken(auth, "/login");
-  // Get CSRF token from the cookie
-  const userInfo = {
-    fullName: user.displayName,
-    photoURL: user.photoURL,
-    email: user.email,
-    uid: user.uid,
-  };
+
+  const formData = new FormData();
+  formData.append("uid", user.uid);
+  formData.append("fullName", user.displayName);
+  formData.append("email", user.email);
+  formData.append("photoURL", user.photoURL);
+  if (user.avatar) formData.append("file", user.avatar);
+
   // send user data to the server to save it in Firestore
-  await sendData("/api/insert-user-data", { userInfo });
+  await sendData("/api/insert-user-data", formData, "POST");
 
   // Log out the user In the frontend to avoid persistence
   signOut(auth);
@@ -130,6 +135,7 @@ const createAuserWithEmailAndPassword = async function (
   auth,
   fullName,
   email,
+  avatar,
   password,
   callback
 ) {
@@ -144,6 +150,7 @@ const createAuserWithEmailAndPassword = async function (
     await updateProfile(user, {
       displayName: fullName,
     });
+    user.avatar = avatar;
     await handleUserSignUp(auth, user);
   } catch (error) {
     checkError(error);

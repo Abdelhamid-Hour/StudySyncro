@@ -1,13 +1,25 @@
-const { admin, db } = require("../../firebase/firebaseAdmin");
+const { admin, db, bucket } = require("../../firebase/firebaseAdmin");
+const { uploadFileToStorage } = require("./shared");
 
-const updateFullName = async (fullName, userId) => {
+const updateProfile = async (fullName, avatar, user) => {
   try {
-    await admin.auth().updateUser(userId, { displayName: fullName });
-    await db.collection("users").doc(userId).update({ fullName });
+    if (fullName) {
+      await admin.auth().updateUser(user.uid, { displayName: fullName });
+      await db.collection("users").doc(user.uid).update({ fullName });
+    }
+    if (avatar) {
+      const oldAvatarRef = bucket.file(`avatars/${user.uid}`);
+      const [exists] = await oldAvatarRef.exists();
+      if (exists) await oldAvatarRef.delete();
+      const result = await uploadFileToStorage(`avatars/${user.uid}`, avatar);
+      if (!result.success) return { success: false, message: result.message };
+      await admin.auth().updateUser(user.uid, { photoURL: result.URL });
+      await db.collection("users").doc(user.uid).update({ photoURL: result.URL });
+    }
     return { success: true };
   } catch (error) {
     console.error("Error updating full name:", error);
-    return { success: false };
+    return { success: false, message: "Failed to update full name."};
   }
 };
 
@@ -33,7 +45,7 @@ const getUserInfo = async (userId) => {
 };
 
 const verifyUser = async (userId, key) => {
-  try {    
+  try {
     const credentials = await admin.auth().verifyIdToken(key);
     const user = await db.collection("users").doc(credentials.uid).get();
     if (!user.exists) {
@@ -146,7 +158,7 @@ const addPassword = async (password, key, userId) => {
 const updatePassword = async (newPassword, key, userId) => {
   try {
     console.log("key:", key);
-    
+
     const res = await verifyUser(userId, key);
     if (!res.success) {
       return res;
@@ -188,7 +200,7 @@ const closeAccount = async (key, userId) => {
 };
 
 module.exports = {
-  updateFullName,
+  updateProfile,
   getUserInfo,
   verifyUser,
   addEmail,

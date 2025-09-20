@@ -80,7 +80,7 @@ const sendMessage = async (
     };
   } catch (error) {
     console.error("Error sending message:", error);
-    return { success: false, error: error.message };
+    return { success: false, message: error.message };
   }
 };
 

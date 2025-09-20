@@ -32,6 +32,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: var(--primary-shadow);
+      border-radius: var(--primary-radius);
 
       .download-btn,
       .expand-btn {
@@ -47,6 +49,18 @@
         top: calc(var(--primary-gap) / 2);
         left: calc(var(--primary-gap) / 2);
       }
+
+      .retry-btn {
+        position: absolute;
+        z-index: 1;
+        display: flex;
+        aspect-ratio: initial;
+        gap: calc(var(--primary-gap) / 2);
+      }
+    }
+
+    .media-div {
+      width: 100%;
     }
 
     .uploading {
@@ -105,11 +119,13 @@
         background-color: var(--background-color);
         border: initial;
         border-radius: 1rem;
+        margin-right: auto;
       }
     }
 
     .media-message {
       overflow: hidden;
+
       button {
         background-color: var(--background-color);
       }
@@ -124,7 +140,8 @@
     }
 
     .download-btn,
-    button.expand-btn {
+    button.expand-btn,
+    .retry-btn {
       border: none;
       background-color: var(--background-color);
       text-align: center;

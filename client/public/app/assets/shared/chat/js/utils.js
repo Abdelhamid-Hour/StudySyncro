@@ -152,7 +152,8 @@ class ChatMessage {
     avatarSrc,
     senderName,
     timestamp,
-    chatContainer
+    chatContainer,
+    send = false
   ) {
     this.text = text;
     this.attachments = attachments;
@@ -165,6 +166,7 @@ class ChatMessage {
       files: [],
       text: null,
     };
+    this.send = send;
   }
 
   async sendMessages({ groupId, sessionId }) {
@@ -182,6 +184,7 @@ class ChatMessage {
         for (let i = 0; i < this.attachments.length; i++) {
           formData.append("file", this.attachments[i]);
           this.sendMessage(formData, i);
+          formData.delete("file");
         }
       }
     } catch (error) {
@@ -197,9 +200,11 @@ class ChatMessage {
     const wrapper =
       fileIndex !== null ? this.wrappers.files[fileIndex] : this.wrappers.text;
     try {
-      const result = await sendData("/api/send-message", formData, "POST", {});
+      const result = await sendData("/api/send-message", formData, "POST");
       wrapper.dataset.messageId = result.messageId;
-      wrapper.querySelector(".message-info i").className = "bi bi-check";
+      const Icon = wrapper.querySelector(".message-info i");
+      Icon.className = "bi bi-check";
+      Icon.style.fontSize = "x-large";
 
       if (fileIndex !== null) {
         const file = this.attachments[fileIndex];
@@ -213,12 +218,12 @@ class ChatMessage {
           );
           mediaContainer.classList.remove("uploading");
 
-          mediaContainer.append(this.getExpandBtn());
+          mediaContainer.append(this.getBtn(true));
           mediaContainer.querySelector("video, img").src = file.URL;
           const video = mediaContainer.querySelector("video");
           if (video) video.controls = true;
         } else if (FileTypes.AUDIO.includes(file.type)) {
-          mediaContainer.querySelector("audio").src = file.URL;
+          wrapper.querySelector("audio").src = file.URL;
         }
         wrapper.querySelector(".three-body")?.remove();
         wrapper.querySelector(".pulsar")?.remove();
@@ -228,11 +233,36 @@ class ChatMessage {
       }
     } catch (error) {
       console.error(error);
-
       wrapper.dataset.messageId = error.data?.messageId;
       const Icon = wrapper.querySelector(".message-info i");
       Icon.className = "bi bi-exclamation-circle";
       Icon.style.color = "red";
+      if (fileIndex !== null) {
+        const loader =
+          wrapper.querySelector(".three-body") ||
+          wrapper.querySelector(".pulsar");
+        loader.remove();
+        const retryBtn = this.getBtn(false);
+        if (
+          FileTypes.IMAGE.includes(this.attachments[fileIndex].type) ||
+          FileTypes.VIDEO.includes(this.attachments[fileIndex].type)
+        ) {
+          retryBtn.append("Retry");
+        }
+        wrapper
+          .querySelector(".file-preview, .audio-player, .message-media-preview")
+          ?.appendChild(retryBtn);
+        retryBtn.addEventListener(
+          "click",
+          throttling(2000, () => {
+            retryBtn.replaceWith(loader);
+            const Icon = wrapper.querySelector(".message-info i");
+            Icon.className = "bi bi-clock";
+            Icon.style.color = "";
+            this.sendMessage(formData, fileIndex);
+          })
+        );
+      }
       showMessageBlock(
         error.message || "Failed to send message. Please try again.",
         "error"
@@ -240,9 +270,9 @@ class ChatMessage {
     }
   }
 
-  renderMessage(upload = false) {
+  renderMessage() {
     if (this.attachments.length > 0) {
-      this.renderAttachments(upload);
+      this.renderAttachments();
     }
     if (this.text) {
       this.renderTextMessage();
@@ -256,17 +286,17 @@ class ChatMessage {
     this.chatContainer.scrollTo(0, scrollHeight);
   }
 
-  appendToChat(messageBubble, isText, upload = false) {
+  appendToChat(messageBubble, isText) {
     let messageContainer = null;
     const isFirstMessage = this.isFirstMessage();
     if (isFirstMessage) {
-      messageContainer = this.createMessageContainer(messageBubble, upload);
+      messageContainer = this.createMessageContainer(messageBubble);
       this.chatContainer.append(messageContainer);
     } else {
-      messageWrapper = this.createMessageWrapper(messageBubble, false, upload);
+      messageContainer = this.createMessageWrapper(messageBubble, false);
       this.chatContainer.lastElementChild
         .querySelector(".messages")
-        .append(messageWrapper);
+        .append(messageContainer);
     }
     const wrapper = isFirstMessage
       ? messageContainer.querySelector(".first-message-sent-text")
@@ -275,16 +305,15 @@ class ChatMessage {
     else this.wrappers.files.push(wrapper);
   }
 
-  renderAttachments(upload) {
+  renderAttachments() {
     const renderers = {
-      image: (img) => this.createMediaTemplate(img, "img", upload),
-      video: (vid) => this.createMediaTemplate(vid, "video", upload),
-      audio: (aud) => this.createAudioPlayer(aud, upload),
+      image: (img) => this.createMediaTemplate(img, "img"),
+      video: (vid) => this.createMediaTemplate(vid, "video"),
+      audio: (aud) => this.createAudioPlayer(aud),
       document: (doc) =>
         this.createFilePreviewTemplate(
           doc,
-          `bi bi-filetype-${doc.name.split(".")[1]}`,
-          upload
+          `bi bi-filetype-${doc.name.split(".")[1]}`
         ),
     };
     this.attachments.forEach((attachment) => {
@@ -296,7 +325,7 @@ class ChatMessage {
         ? "audio"
         : "document";
       const wrapper = renderers[kind](attachment);
-      this.appendToChat(wrapper, false, upload);
+      this.appendToChat(wrapper, false);
     });
   }
 
@@ -326,7 +355,7 @@ class ChatMessage {
     return lastUser && lastUser !== this.senderName;
   }
 
-  createAudioPlayer(file, upload) {
+  createAudioPlayer(file) {
     const audioPreview = document.createElement("div");
     audioPreview.className = "media-message audio-player";
 
@@ -373,7 +402,7 @@ class ChatMessage {
       audioElement
     );
 
-    if (upload) {
+    if (this.send) {
       audioPreview.appendChild(this.getCircleLoader());
       this.getObjectURL(file, audioElement);
     } else audioPreview.appendChild(this.createDownloadLinkButton(file));
@@ -402,7 +431,7 @@ class ChatMessage {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   }
 
-  createFilePreviewTemplate(file, iconClass, upload) {
+  createFilePreviewTemplate(file, iconClass) {
     const filePreview = document.createElement("div");
     filePreview.className = "media-message file-preview";
 
@@ -423,7 +452,7 @@ class ChatMessage {
     fileDetails.append(fileNameBtn, fileSizeSpan);
 
     filePreview.append(fileThumbnail, fileDetails);
-    if (upload) {
+    if (this.send) {
       filePreview.appendChild(this.getCircleLoader());
     } else filePreview.appendChild(this.createDownloadLinkButton(file));
 
@@ -441,12 +470,14 @@ class ChatMessage {
     return downloadLinkBtn;
   }
 
-  getExpandBtn() {
+  getBtn(expand = true) {
     const expandBtn = document.createElement("button");
     expandBtn.type = "button";
-    expandBtn.className = "expand-btn";
+    expandBtn.className = expand ? "expand-btn" : "retry-btn";
     const expandIcon = document.createElement("i");
-    expandIcon.className = "bi bi-arrows-fullscreen";
+    expandIcon.className = expand
+      ? "bi bi-arrows-fullscreen"
+      : "bi bi-arrow-clockwise";
     expandBtn.append(expandIcon);
     return expandBtn;
   }
@@ -469,14 +500,14 @@ class ChatMessage {
     return wrapper;
   }
 
-  createMediaTemplate(file, type, upload) {
+  createMediaTemplate(file, type) {
     const mediaContainer = document.createElement("div");
     mediaContainer.className = "media-message message-media-preview";
     const mediaElement = document.createElement(type);
     mediaElement.src = file.URL || "";
 
     if (type === "img") mediaElement.alt = file.name;
-    if (type === "video") mediaElement.controls = !upload;
+    if (type === "video") mediaElement.controls = !this.send;
 
     const mediaDiv = document.createElement("div");
     mediaDiv.className = "media-div";
@@ -484,13 +515,13 @@ class ChatMessage {
 
     mediaContainer.append(mediaDiv);
 
-    if (upload) {
+    if (this.send) {
       mediaContainer.classList.add("uploading");
       mediaContainer.appendChild(this.getMediaLoader());
       this.getObjectURL(file, mediaElement);
     } else {
       mediaContainer.append(
-        getExpandBtn(),
+        this.getBtn(true),
         this.createDownloadLinkButton(file)
       );
     }
@@ -519,7 +550,7 @@ class ChatMessage {
     return p;
   }
 
-  createMessageWrapper(messageBubble, isFirstMessage, upload) {
+  createMessageWrapper(messageBubble, isFirstMessage) {
     const messageWrapper = document.createElement("div");
     messageWrapper.className = `${isFirstMessage ? "first-" : ""}message-${
       this.isSender ? "sent" : "received"
@@ -540,7 +571,7 @@ class ChatMessage {
     messageInfo.className = "message-info";
     messageInfo.textContent = formatHoursMinutes(this.timestamp);
 
-    if (upload) {
+    if (this.send) {
       const clockIcon = document.createElement("i");
       clockIcon.className = "bi bi-clock";
       messageInfo.appendChild(clockIcon);
@@ -554,7 +585,7 @@ class ChatMessage {
     return messageWrapper;
   }
 
-  createMessageContainer(messageBubble, upload) {
+  createMessageContainer(messageBubble) {
     const messageContainer = document.createElement("div");
     messageContainer.className = `message-${
       this.isSender ? "sent" : "received"
@@ -578,9 +609,7 @@ class ChatMessage {
 
     const messagesDiv = document.createElement("div");
     messagesDiv.className = "messages";
-    messagesDiv.appendChild(
-      this.createMessageWrapper(messageBubble, true, upload)
-    );
+    messagesDiv.appendChild(this.createMessageWrapper(messageBubble, true));
     messageContainer.appendChild(messagesDiv);
 
     return messageContainer;
@@ -712,9 +741,10 @@ const handleChatInput = async (sessionId, groupId) => {
       "",
       "Abdelwahed",
       new Date(),
-      messagesContainer
+      messagesContainer,
+      true
     )
-      .renderMessage(true)
+      .renderMessage()
       .sendMessages({
         sessionId,
         groupId,

@@ -33,7 +33,6 @@ const getSettingsContext = async (userId) => {
       photoURL: "",
       userId,
       canAddEmail: false,
-      canAddPassword: false,
       canChangePassword: true,
       canChangeEmail: true,
     };

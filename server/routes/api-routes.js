@@ -54,7 +54,7 @@ const {
   getUserInfoHandler,
   updateEmailHandler,
   addEmailHandler,
-  updateFullNameHandler,
+  updatePofileHandler,
   updatePasswordHandler,
   addPasswordHandler,
   closeAccountHandler,
@@ -63,7 +63,7 @@ const { sendMessage } = require("../utils/firebase-utils/chat");
 
 const apiRouter = express.Router();
 
-apiRouter.post("/insert-user-data", createNewUser);
+apiRouter.post("/insert-user-data", upload.single("file"), createNewUser);
 
 apiRouter.get("/session-details/:id", setSessionDetails, sendSessionDetails);
 
@@ -153,7 +153,7 @@ apiRouter.patch("/update-email", updateEmailHandler);
 
 apiRouter.post("/add-email", addEmailHandler);
 
-apiRouter.patch("/update-full-name", updateFullNameHandler);
+apiRouter.patch("/update-profile", upload.single("file"), updatePofileHandler);
 
 apiRouter.patch("/update-password", updatePasswordHandler);
 
@@ -188,8 +188,7 @@ apiRouter.post("/send-message", upload.single("file"), async (req, res) => {
       .json({ message: "Message sent successfully", ...result.data });
   }
   return res.status(500).json({
-    message: "Failed to send message",
-    error: result.message,
+    message: result.message || "Failed to send message",
     messageId: result.messageId,
   });
 });

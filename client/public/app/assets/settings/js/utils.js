@@ -11,7 +11,6 @@ import {
 } from "../../global/js/dom-variables.js";
 import {
   handleApiAction,
-  navigateTo,
   resetTooltip,
   showConfirmationBox,
   showErrorTooltip,
@@ -159,20 +158,18 @@ export const handleProfileSaveBtn = () => {
 
     const profileSaveBtn = form.querySelector(".save-btn");
 
-    return handleApiAction(
-      "/update-full-name",
-      {
-        fullName: data["full-name"],
-        avatar: avatarFile,
-      },
-      profileSaveBtn,
-      {
-        successMsg: "Profile updated successfully.",
-        onSuccess: () => disableProfileMode(profileSaveBtn),
-        method: "PATCH",
-        toOldBtn: false,
-      }
-    );
+    const formData = new FormData();
+    if (data["full-name"] !== oldValues.fullName)
+      formData.append("fullName", data["full-name"]);
+
+    if (avatarFile) formData.append("file", avatarFile);
+
+    return handleApiAction("/update-profile", formData, profileSaveBtn, {
+      successMsg: "Profile updated successfully.",
+      onSuccess: () => disableProfileMode(profileSaveBtn),
+      method: "PATCH",
+      toOldBtn: false,
+    });
   });
 };
 

@@ -72,10 +72,10 @@ const uploadFileToStorage = async (filePath, file) => {
       )}"`,
     });
 
-    return { success: true, URL };
+    return { success: true, URL: URL[0] };
   } catch (error) {
     console.error("Error uploading file to storage:", error);
-    return { success: false, message: error.message };
+    return { success: false, message: "here" };
   }
 };
 

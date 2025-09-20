@@ -72,9 +72,11 @@ export const handleApiAction = async (
 
       if (!extraData) return toOrginalBtn(btn, toOldBtn, originalHtml);
     }
+
+    const body = data instanceof FormData ? data : { ...data, ...extraData };
     const response = await sendData(
       `/api${route}`,
-      { ...data, ...extraData },
+      body,
       method || "POST"
     );
     if (successMsg) showMessageBlock(successMsg, "success");

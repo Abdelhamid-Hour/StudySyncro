@@ -379,21 +379,6 @@ const showAvatarError = (message) => {
     '.error'
   ).innerHTML = `<i class="bi bi-exclamation-circle"></i>${message}`;
 };
-const handleFileAndvisuallyShowAvatar = (file, inputFile) => {
-  if (file) {
-    const sizeKB = file.size / 1024;
-    if (sizeKB > MAX_FILE_SIZE) {
-      showAvatarError(`File size exceeds the limit of ${MAX_FILE_SIZE}.`);
-      return;
-    }
-    const reader = new FileReader();
-    avatarAside.querySelector('.error').innerHTML = '';
-    reader.readAsDataURL(file);
-    reader.onloadend = function () {
-      avatarAside.querySelector('img').src = reader.result;
-    };
-  }
-};
 
 export {
   swapAnimation,
@@ -407,7 +392,6 @@ export {
   userNameFormat,
   hideAvatarSide,
   showAvatarSide,
-  handleFileAndvisuallyShowAvatar,
   verifyEmail,
   showAvatarError,
 };

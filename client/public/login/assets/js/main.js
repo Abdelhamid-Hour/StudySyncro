@@ -5,7 +5,6 @@ import {
   lettersAnimation,
   showAvatarSide,
   swapAnimationThrottling,
-  handleFileAndvisuallyShowAvatar,
   showAvatarError,
 } from './utils.js';
 import {
@@ -20,6 +19,7 @@ import {
   avatarAside,
 } from './dom-variables.js';
 import '../../auth/auth.js';
+import { handleFileAndvisuallyShowAvatar } from '../../../app/assets/shared/avatar/js/utils.js';
 
 // prevets browser default validation rules
 document.getElementById('sign-in-form').setAttribute('novalidate', true);
@@ -72,7 +72,7 @@ fileinput.addEventListener('change', function () {
     return showAvatarError(
       'Invalid file type. Please select a valid image file.'
     );
-  handleFileAndvisuallyShowAvatar(file, this);
+  handleFileAndvisuallyShowAvatar(file, avatarAside);
 });
 
 document.addEventListener('dragenter', (e) => {
@@ -93,7 +93,7 @@ document.addEventListener('drop', (e) => {
     return showAvatarError(
       'Invalid file type. Please select a valid image file.'
     );
-  handleFileAndvisuallyShowAvatar(e.dataTransfer.files[0]);
+  handleFileAndvisuallyShowAvatar(e.dataTransfer.files[0], avatarAside);
 });
 
 document.addEventListener('dragover', (e) => {

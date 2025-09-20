@@ -145,7 +145,6 @@ const fetchData = async (pathName, user) => {
 
     case pathNames.settings:
       templateContext = await getSettingsContext(user.uid);
-      console.log(templateContext);
       
       return { templateContext };
 

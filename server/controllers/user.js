@@ -1,5 +1,5 @@
 const {
-  updateFullName,
+  updateProfile,
   getUserInfo,
   updateEmail,
   updatePassword,
@@ -21,14 +21,14 @@ const getUserInfoHandler = async (req, res) => {
 
 const updateEmailHandler = async (req, res) => {
   const { newEmail, idToken } = req.body;
-  
+
   const result = await updateEmail(newEmail, idToken, req.user.uid);
   if (!result.success) {
     return res.status(500).json({
       success: false,
       message: result.message || "Failed to update email.",
     });
-  }      
+  }
   res.json({ success: true, message: "Email updated successfully." });
 };
 
@@ -44,9 +44,10 @@ const addEmailHandler = async (req, res) => {
   res.json({ success: true, message: "Email added successfully." });
 };
 
-const updateFullNameHandler = async (req, res) => {
-  const { fullName } = req.body;
-  const result = await updateFullName(fullName, req.user.uid);
+const updatePofileHandler = async (req, res) => {
+  const avatar = req.file;
+  const fullName  = req.body.fullName;
+  const result = await updateProfile(fullName, avatar, req.user);
 
   if (!result.success) {
     return res
@@ -95,7 +96,7 @@ const closeAccountHandler = async (req, res, next) => {
 };
 
 module.exports = {
-  updateFullNameHandler,
+  updatePofileHandler,
   closeAccountHandler,
   getUserInfoHandler,
   updateEmailHandler,

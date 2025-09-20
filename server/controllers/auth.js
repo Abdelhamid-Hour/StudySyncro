@@ -1,6 +1,7 @@
 const { db, admin } = require("../firebase/firebaseAdmin");
 const { clearCookies } = require("../middleware/clearCookies");
 const { tokens } = require("../middleware/csrfTokenVerification");
+const { uploadFileToStorage } = require("../utils/firebase-utils/shared");
 /**
  * Create a new user in firestore or update the user data
  * if the user is signed in with google or facebook
@@ -9,13 +10,20 @@ const { tokens } = require("../middleware/csrfTokenVerification");
  * @returns
  */
 const createNewUser = async (req, res) => {
-  const { uid, ...userData } = req.body.userInfo;
+  const avatar = req.file;
+  const { uid, ...userData } = req.body;
+
+  console.log("userData:", req.body, "avatar:", avatar);
 
   try {
     const userRef = db.collection("users").doc(uid);
+    const userRecord = await admin.auth().getUser(uid);
+    const providers = userRecord.providerData.map((p) => p.providerId);
     // check if the user is signed in with google or facebook
-    const userProvider = req.user?.firebase?.sign_in_provider;
-    if (userProvider !== "password") {
+    if (
+      providers.includes("google.com") ||
+      providers.includes("facebook.com")
+    ) {
       const docSnap = await userRef.get();
       // check if the user data already exists in firestore
       if (docSnap.exists) {
@@ -35,6 +43,17 @@ const createNewUser = async (req, res) => {
         await userRef.update(updatedData);
         return res.status(200).json({ message: "User data updated" });
       }
+    } else {
+      console.log("User signed in with password");
+
+      if (avatar) {
+        const filePath = `avatars/${uid}`;
+        const result = await uploadFileToStorage(filePath, avatar);
+        if (!result.success)
+          return res.status(500).json({ message: result.message });
+        userData.photoURL = result.URL;
+        await admin.auth().updateUser(uid, { photoURL: userData.photoURL });
+      }
     }
     await userRef.set({
       ...userData,
@@ -53,8 +72,7 @@ const createNewUser = async (req, res) => {
 
 const createSession = async function (req, res) {
   const idToken = req.body.idToken;
-  console.log(idToken);
-  
+
   const expiresIn = 60 * 60 * 24 * 5 * 1000;
   const options = { maxAge: expiresIn, httpOnly: true, secure: true };
   try {

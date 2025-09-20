@@ -122,13 +122,17 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
  * @param {String} url - The URL to send data to
  * @param {Object} data - The data to send
  */
-export const sendData = async (url, data, method = "POST", contentType = {
-  "Content-Type": "application/json"
-}) => {
+export const sendData = async (
+  url,
+  data,
+  method = "POST"
+) => {
   const options = {};
   if (data) {
     options.body = data instanceof FormData ? data : JSON.stringify(data);
   }
+  const contentType =
+    data instanceof FormData ? {} : { "Content-Type": "application/json" };
   const response = await fetchStructure(url, method, options, contentType);
   return response;
 };

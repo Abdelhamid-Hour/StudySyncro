@@ -1,19 +1,19 @@
-import { auth } from '../../firebase/firebaseConfig.js';
-import { sendPasswordResetEmail } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
+import { auth } from "../../firebase/firebaseConfig.js";
+import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import {
   InitializeGoogleOneTap,
   signInWithFacebookProviderWithPopUp,
   signInWithGoogleProviderWithPopUp,
   createAuserWithEmailAndPassword,
   signInAuserWithEmailAndPassword,
-} from './auth-functions.js';
+} from "./auth-functions.js";
 import {
   inputsEmptying,
   validatesSignInForm,
   validatesSignUpForm,
   userNameFormat,
   verifyEmail,
-} from '../assets/js/utils.js';
+} from "../assets/js/utils.js";
 import {
   firstNameField as firstName,
   lastNameField as lastName,
@@ -27,21 +27,23 @@ import {
   googleBtn,
   formsContainer,
   forgotPasswordLink,
-} from '../assets/js/dom-variables.js';
-import { showMessageBlock } from '../../main_assets/js/utils.js';
+  fileinput,
+} from "../assets/js/dom-variables.js";
+import { showMessageBlock } from "../../main_assets/js/utils.js";
 
 InitializeGoogleOneTap(auth, showMessageBlock);
 
-formsContainer.addEventListener('keyup', (e) => {
-  if (e.key === 'Enter') {
-    if (e.target.matches('#sign-in-form input')) {
+formsContainer.addEventListener("keyup", (e) => {
+  if (e.key === "Enter") {
+    if (e.target.matches("#sign-in-form input")) {
       signInBtn.click();
     } else {
       signUpBtn.click();
     }
   }
 });
-signInBtn.addEventListener('click', async () => {
+
+signInBtn.addEventListener("click", async () => {
   if (!validatesSignInForm()) return;
   signInAuserWithEmailAndPassword(
     auth,
@@ -51,40 +53,44 @@ signInBtn.addEventListener('click', async () => {
   );
   inputsEmptying();
 });
-signUpBtn.addEventListener('click', () => {
+
+signUpBtn.addEventListener("click", () => {
   if (!validatesSignUpForm()) return;
   const fullName = `${userNameFormat(firstName.value)} ${userNameFormat(
     lastName.value
   )}`;
+
   createAuserWithEmailAndPassword(
     auth,
     fullName,
     signUpemailField.value,
+    fileinput.files[0],
     signUpPasswordField.value,
     showMessageBlock
   );
   inputsEmptying();
 });
 
-googleBtn.addEventListener('click', () => {
+googleBtn.addEventListener("click", () => {
   signInWithGoogleProviderWithPopUp(auth, showMessageBlock);
 });
 
-fbBtn.addEventListener('click', () => {
+fbBtn.addEventListener("click", () => {
   signInWithFacebookProviderWithPopUp(auth, showMessageBlock);
 });
-forgotPasswordLink.addEventListener('click', async () => {
+
+forgotPasswordLink.addEventListener("click", async () => {
   try {
     if (!verifyEmail()) {
       return;
     }
     await sendPasswordResetEmail(auth, signInemailField.value);
     showMessageBlock(
-      'If this email is registered, you will receive a password reset link.',
-      'success'
+      "If this email is registered, you will receive a password reset link.",
+      "success"
     );
-    signInPasswordField.value = '';
+    signInPasswordField.value = "";
   } catch (error) {
-    showMessageBlock(error.message, 'error');
+    showMessageBlock(error.message, "error");
   }
 });
