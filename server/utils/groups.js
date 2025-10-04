@@ -12,7 +12,6 @@ const { getGroupInfo, getChatContext } = require("./firebase-utils/group");
 const { getMembers } = require("./firebase-utils/members");
 const { getSessionInformations } = require("./firebase-utils/session");
 const { millisecondsToHMFormat, Task, Quiz } = require("./global");
-const INITIALE_LOADERS_COUNT = 20;
 const GroupFragmentRoutes = [
   { route: "/group-info", title: "Group Informations" },
   { route: "/session-info", title: "Session Informations" },
@@ -72,6 +71,7 @@ const getMembersListContext = async (groupId, user) => {
       count: result.count,
       isAdmin: result.isAdmin,
       members: result.cards,
+      lastVisible: result.lastVisible,
     },
   };
 };
@@ -85,6 +85,7 @@ const getQuizzesListContext = async (groupId, userId) => {
       count: result.count,
       isAdmin: result.isAdmin,
       quizzes: result.cards,
+      lastVisible: result.lastVisible,
     },
   };
 };
@@ -96,12 +97,12 @@ const getDemandesListContext = async (groupId) => {
     context: {
       count: result.count,
       requests: result.cards,
+      lastVisible: result.lastVisible,
     },
   };
 };
 
 module.exports = {
-  INITIALE_LOADERS_COUNT,
   GroupFragmentRoutes,
   getSessionInfoContext,
   getMembersListContext,

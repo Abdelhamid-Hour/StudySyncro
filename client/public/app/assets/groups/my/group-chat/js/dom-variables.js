@@ -5,7 +5,7 @@ import {
   MIN_MEMBERS,
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
-} from "../../../../global/js/dom-variables.js";
+} from "../../../../global/js/variables.js";
 import { createShowInSearchLabel } from "../../../../shared/forms/js/utils.js";
 
 export let groupLeftSideBar,

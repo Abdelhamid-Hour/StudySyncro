@@ -26,9 +26,9 @@
       <input type="checkbox" id="sort-checkbox" class="sort-checkbox" />
     </label>
   </header>
-  <div class="quizzes-list">
+  <div data-last-visible="<%= lastVisible || '' %>" class="quizzes-list">
     <% quizzes.forEach( (quiz) => { %>
-    <div class="quiz-card" data-quiz-id="<%= quiz.quizId %>">
+    <div class="quiz-card card-item" data-quiz-id="<%= quiz.quizId %>">
       <div class="quiz-title-container info-container">
         <label class="quiz-title-label">
           <span class="icon-box">
@@ -77,7 +77,8 @@
           <span><%= quiz.submittedAt ? quiz.submittedAt : 'N/A' %></span>
         </div>
       </div>
-      <div class="action-btns">
+      <% if (quiz.passed) { %>
+       <div class="action-btns">
         <button
           type="button"
           class="view-result<%= isAdmin ? 's' : ''%>-btn should-fill"
@@ -92,6 +93,7 @@
         </button>
         <% } %>
       </div>
+      <% } %>
     </div>
     <% }); %>
   </div>

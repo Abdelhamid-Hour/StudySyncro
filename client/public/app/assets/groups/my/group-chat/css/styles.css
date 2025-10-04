@@ -488,20 +488,16 @@
       .demandes-list {
         .avatar {
           height: 2rem;
-          width: 2rem;
+          min-width: 2rem;
         }
         .member,
         .demande {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: var(--primary-gap);
+          gap: calc(var(--primary-gap) / 2);
 
           &:has(.action-btns) {
-            justify-content: space-between;
-            gap: calc(var(--primary-gap) / 2);
-
-            &.member .username,
             &.demande .username-container {
               margin-right: auto;
             }
@@ -543,10 +539,10 @@
             overflow: hidden;
             text-overflow: ellipsis;
             font-size: var(--small-font-size);
-            flex: 0 1 38%;
+            margin-right: auto;
 
             &:has(+ span.badge) {
-              flex: initial;
+              margin-right: initial;
             }
           }
         }
@@ -615,10 +611,9 @@
     }
 
     .input-message-container {
-      margin-bottom: var(--primary-gap);
+      margin-block: var(--primary-gap);
       margin-inline: auto;
-      width: 50rem;
-      max-width: 100%;
+      width: 80%;
     }
   }
   border .emoji-list {

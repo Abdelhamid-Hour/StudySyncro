@@ -1,6 +1,7 @@
 const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
 const { getGroupById, refillSampleMembersIfNeeded } = require("./shared");
+const { INITIALE_LOADERS_COUNT } = require("../global");
 
 const getFormattedMembers = (members, creator, isAdmin) => {
   return members.map(({ photoURL, fullName, uid }) => ({
@@ -22,7 +23,7 @@ const getMembers = async (
   search,
   groupId,
   userId,
-  limit = 20,
+  limit = INITIALE_LOADERS_COUNT,
   lastVisible = null
 ) => {
   try {
@@ -180,9 +181,7 @@ const addMember = async (groupRef, userId) => {
         fullName: userData.fullName,
         email: userData.email,
         photoURL:
-          userData.picture ||
-          "https://api.dicebear.com/7.x/identicon/svg?seed=" +
-            encodeURIComponent(userData.uid),
+          userData.photoURL,
       });
     await groupRef.update({
       membersCount: FieldValue.increment(1),
@@ -233,9 +232,7 @@ const kickMember = async (groupId, userId) => {
         fullName: userSnap.data().fullName,
         email: userSnap.data().email,
         photoURL:
-          userSnap.data().photoURL ||
-          "https://api.dicebear.com/7.x/identicon/svg?seed=" +
-            encodeURIComponent(userSnap.id),
+          userSnap.data().photoURL,
       }),
     });
 
@@ -268,14 +265,12 @@ const getFilteredUsers = (search, users, groupId) => {
     id: doc.id,
     fullName: doc.data().fullName || "N/A",
     photoURL:
-      doc.data().photoURL ||
-      "https://api.dicebear.com/7.x/identicon/svg?seed=" +
-        encodeURIComponent(doc.id),
+      doc.data().photoURL,
     isAlreadyMember: doc.data().joinedGroupsIds?.includes(groupId) || false,
   }));
 };
 
-const getUsers = async (search, count = 20, lastVisible, groupId) => {
+const getUsers = async (search, count = INITIALE_LOADERS_COUNT, lastVisible, groupId) => {
   // get user that its name and id match the search
   try {
     if (search) {
@@ -290,9 +285,7 @@ const getUsers = async (search, count = 20, lastVisible, groupId) => {
               id: userById.id,
               fullName: data.fullName || "N/A",
               photoURL:
-                data.photoURL ||
-                "https://api.dicebear.com/7.x/identicon/svg?seed=" +
-                  encodeURIComponent(userData.uid),
+                data.photoURL,
             },
           ],
           lastVisible: null,

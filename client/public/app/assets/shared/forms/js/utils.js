@@ -2,7 +2,7 @@ import { showMessageBlock } from "../../../../../main_assets/js/utils.js";
 import {
   DESCRIPTION_MAX_LENGTH,
   hoverTooltip,
-} from "../../../global/js/dom-variables.js";
+} from "../../../global/js/variables.js";
 import { getDebounceFunc } from "../../../global/js/utils.js";
 import {
   levelValues,

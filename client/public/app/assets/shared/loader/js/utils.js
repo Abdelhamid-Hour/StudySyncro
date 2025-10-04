@@ -3,11 +3,11 @@ import {
   showMessageBlock,
 } from "../../../../../main_assets/js/utils.js";
 import {
-  boxRowCount,
-  boxTotalCount,
-  topSideBarMiddle,
-} from "../../../global/js/dom-variables.js";
-import { getDebounceFunc } from "../../../global/js/utils.js";
+  INITIALE_LOADERS_COUNT,
+  LOADER_COUNT,
+  LOADERS_COUNT,
+} from "../../../global/js/variables.js";
+import { getDebounceFunc, isAsync } from "../../../global/js/utils.js";
 
 const encodeCriteria = (criteria) => {
   return criteria
@@ -22,20 +22,24 @@ const encodeCriteria = (criteria) => {
 export class Loader {
   constructor(
     container,
-    rootMargin,
     createCard,
     route,
     loadingBox,
-    getCreteria,
-    loadersCount = boxRowCount,
-    afterAppendRes = () => {}
+    {
+      rootMargin = "200px",
+      getCriteria = () => "",
+      loadersCount = LOADERS_COUNT,
+      afterAppendRes = () => {},
+      append = true,
+    }
   ) {
-    this.getCreteria = () => {
-      const criteria = getCreteria() || "";
+    this.getCriteria = () => {
+      const criteria = getCriteria() || "";
       return encodeCriteria(criteria);
     };
     this.afterAppendRes = afterAppendRes;
-    this.creteria = this.getCreteria();
+    this.creteria = this.getCriteria();
+    this.append = append;
     this.rootMargin = rootMargin;
     this.createCard = createCard;
     this.route = route;
@@ -44,11 +48,11 @@ export class Loader {
     this.container = container;
     this.loadersCount = loadersCount;
     this.loadingBox = loadingBox;
-    this.lastVisible = this.container?.dataset.lastVisible;
-    this.count = boxTotalCount;
-    const cardsCount = this.container.children.length;
+    this.lastVisible = this.container?.dataset.lastVisible || "";
+    this.count = LOADER_COUNT;
+    const cardsCount = this.container.querySelectorAll(".card-item").length;
     this.container.removeAttribute("data-last-visible");
-    if (cardsCount >= 20) {
+    if (cardsCount >= INITIALE_LOADERS_COUNT) {
       this.initLoadingBoxes();
       this.initObserver();
     }
@@ -57,14 +61,14 @@ export class Loader {
   reset() {
     this.loading = false;
     this.lastVisible = "";
-    this.count = 20;
+    this.count = LOADER_COUNT;
     if (this.io) {
       this.io.disconnect();
     }
     clearLoadersBoxes();
     this.sentinel = null;
     this.container.innerHTML = "";
-    this.creteria = this.getCreteria();
+    this.creteria = this.getCriteria();
     this.initLoadingBoxes();
     this.initObserver();
   }
@@ -101,14 +105,15 @@ export class Loader {
 
       frag.appendChild(loadingBox);
     }
-    this.container.appendChild(frag);
+    if (this.append) this.container.appendChild(frag);
+    else this.container.prepend(frag);
     this.sentinel = document.querySelector(".first-loading-card");
   }
 
   async loadMore() {
     this.loading = true;
 
-    const endPoint = `${this.route}?lastVisible=${this.lastVisible}&count=${this.count}&${this.creteria}`;
+    const endPoint = `${this.route}lastVisible=${this.lastVisible}&count=${this.count}&${this.creteria}`;
 
     try {
       const { cards, lastVisible } = await fetchData(endPoint);
@@ -116,18 +121,28 @@ export class Loader {
       this.lastVisible = lastVisible;
 
       const frag = document.createDocumentFragment();
-      console.log({ cards, lastVisible });
 
-      cards.forEach((item) => {
-        const card = this.createCard(item, this.creteria.split("=")[1]);
-        frag.appendChild(card);
-      });
+      const initialHeight = this.container.scrollHeight;
+
+      let cardElements;
+      if (isAsync(this.createCard)) {
+        const promises = cards.map((item) =>
+          this.createCard(item, this.creteria.split("=")[1])
+        );
+        cardElements = await Promise.all(promises);
+      } else {
+        cardElements = cards.map((item) =>
+          this.createCard(item, this.creteria.split("=")[1])
+        );
+      }
+
+      frag.append(...cardElements);
 
       // insert the new cards before the last loader
-      this.sentinel.before(frag);
+      if (this.append) this.sentinel.before(frag);
+      else this.sentinel.after(frag);
 
-      this.afterAppendRes({ cards, lastVisible });
-
+      this.afterAppendRes({ cards, lastVisible, initialHeight });
       if (!lastVisible) {
         this.io.unobserve(this.sentinel);
         clearLoadersBoxes();

@@ -1,9 +1,9 @@
-import { throttling } from '../../../main_assets/js/utils.js';
+import { throttling } from "../../../main_assets/js/utils.js";
 import {
   passwordRegex,
   userNameRegex,
   emailRegex,
-} from '../../../main_assets/js/variables.js';
+} from "../../../main_assets/js/variables.js";
 import {
   stylsheet,
   signInemailField,
@@ -19,9 +19,9 @@ import {
   signInFormContainer,
   animationDuration,
   avatarAside,
-  avartarSpaceReserver,
-  MAX_FILE_SIZE,
-} from './dom-variables.js';
+  fileinput,
+  avatarSpaceReserver,
+} from "./dom-variables.js";
 
 let cssRulesLength = stylsheet.cssRules.length;
 
@@ -51,7 +51,7 @@ const getSwapAnimationRule = (targetFormHeight) => {
       transparent var(--mask-animation-end)
       );
       animation: signUpMaskAnimation var(--login-swap-animation-duration) linear
-      ${reverse ? 'reverse' : ''} forwards;
+      ${reverse ? "reverse" : ""} forwards;
       animation-duration: calc(var(--login-swap-animation-duration)*0.1/2);
       animation-delay: calc(var(--login-swap-animation-duration) * 0.95);
         &.sign-in-swap-animation {
@@ -65,8 +65,8 @@ const getSwapAnimationRule = (targetFormHeight) => {
           animation-duration: calc(var(--login-swap-animation-duration)/2);
           ${
             delay
-              ? ''
-              : 'animation-delay: calc(var(--login-swap-animation-duration)/2);'
+              ? ""
+              : "animation-delay: calc(var(--login-swap-animation-duration)/2);"
           }
         }
         &.sign-in-swap-animation {
@@ -78,7 +78,7 @@ const getSwapAnimationRule = (targetFormHeight) => {
       height: ${signInFormHeight}px;
       z-index: 1;      
       transition: height calc(var(--login-swap-animation-duration)/2)
-      ${delay ? 'calc(var(--login-swap-animation-duration)/2)' : ''} linear;
+      ${delay ? "calc(var(--login-swap-animation-duration)/2)" : ""} linear;
         }`,
   };
 };
@@ -95,13 +95,13 @@ const initializeSignUpForm = () => {
   );
 };
 const inputsEmptying = () => {
-  signInemailField.value = '';
-  signInPasswordField.value = '';
-  signUpemailField.value = '';
-  signUpPasswordField.value = '';
-  signUpConfirmPasswordField.value = '';
-  firstNameField.value = '';
-  lastNameField.value = '';
+  signInemailField.value = "";
+  signInPasswordField.value = "";
+  signUpemailField.value = "";
+  signUpPasswordField.value = "";
+  signUpConfirmPasswordField.value = "";
+  firstNameField.value = "";
+  lastNameField.value = "";
 };
 
 /**
@@ -118,25 +118,25 @@ const swapAnimation = (targetFormHeight) => {
       lastNameField,
       signUpemailField
     );
-    signInFormContainer.classList.add('active-form');
+    signInFormContainer.classList.add("active-form");
     signInFormContainer.onanimationstart = () => {
-      signUpFormContainer.style.zIndex = '1';
+      signUpFormContainer.style.zIndex = "1";
       signInFormContainer.onanimationstart = null;
     };
     signUpFormContainer.onanimationend = null;
     signInFormContainer.onanimationend = () => {
-      signUpFormContainer.classList.remove('active-form');
+      signUpFormContainer.classList.remove("active-form");
     };
   } else {
-    signUpFormContainer.classList.add('active-form');
+    signUpFormContainer.classList.add("active-form");
     hideErrors(signInPasswordField, signInemailField);
     signUpFormContainer.onanimationstart = () => {
-      signUpFormContainer.style.zIndex = '2';
+      signUpFormContainer.style.zIndex = "2";
       signUpFormContainer.onanimationstart = null;
     };
     signInFormContainer.onanimationend = null;
     signUpFormContainer.onanimationend = () => {
-      signInFormContainer.classList.remove('active-form');
+      signInFormContainer.classList.remove("active-form");
     };
   }
   // discharging inputs
@@ -147,8 +147,8 @@ const swapAnimation = (targetFormHeight) => {
   stylsheet.deleteRule(--cssRulesLength);
   // add the new Initial sign Up form height
   stylsheet.insertRule(signUpAnimationRules.initialRule, ++cssRulesLength);
-  signUpFormContainer.classList.remove('sign-up-swap-animation');
-  signInFormContainer.classList.remove('sign-in-swap-animation');
+  signUpFormContainer.classList.remove("sign-up-swap-animation");
+  signInFormContainer.classList.remove("sign-in-swap-animation");
   // delete the sign Up form animation rule
   stylsheet.deleteRule(--cssRulesLength);
   // add the new sign Up form animation rule to the stylesheet as a last style
@@ -159,8 +159,8 @@ const swapAnimation = (targetFormHeight) => {
   // force re-layout and repaint to apply the new animation
   void signInFormContainer.offsetWidth;
   void signUpFormContainer.offsetWidth;
-  signUpFormContainer.classList.add('sign-up-swap-animation');
-  signInFormContainer.classList.add('sign-in-swap-animation');
+  signUpFormContainer.classList.add("sign-up-swap-animation");
+  signInFormContainer.classList.add("sign-in-swap-animation");
 };
 
 export const swapAnimationThrottling = throttling(
@@ -170,15 +170,15 @@ export const swapAnimationThrottling = throttling(
 const hideErrors = (...elements) => {
   elements.forEach((element) => {
     const container = element.parentElement.parentElement;
-    container.classList.remove('error-input');
-    container.classList.remove('error-animation');
+    container.classList.remove("error-input");
+    container.classList.remove("error-animation");
     void container.offsetWidth;
     if ([firstNameField, lastNameField].includes(element)) {
       signUpFormContainer.querySelector(
-        '.user-name-container .error-container'
-      ).firstElementChild.innerHTML = '';
+        ".user-name-container .error-container"
+      ).firstElementChild.innerHTML = "";
     } else {
-      container.nextElementSibling.firstElementChild.innerHTML = '';
+      container.nextElementSibling.firstElementChild.innerHTML = "";
     }
   });
 };
@@ -187,13 +187,13 @@ const showError = (errorMessage, element) => {
   const errorIcon = '<i class="bi bi-exclamation-circle"></i>';
   if ([firstNameField, lastNameField].includes(element)) {
     signUpFormContainer.querySelector(
-      '.user-name-container .error-container'
+      ".user-name-container .error-container"
     ).firstElementChild.innerHTML = `${errorIcon} ${errorMessage}`;
   } else {
     container.nextElementSibling.firstElementChild.innerHTML = `${errorIcon} ${errorMessage}`;
   }
-  container.classList.add('error-input');
-  container.classList.add('error-animation');
+  container.classList.add("error-input");
+  container.classList.add("error-animation");
   element.focus();
 };
 
@@ -203,12 +203,12 @@ const validatesSignInForm = () => {
   const password = signInPasswordField.value.trim();
   if (!passwordRegex.test(password)) {
     showError(
-      'The password must be at least 8 characters',
+      "The password must be at least 8 characters",
       signInPasswordField
     );
   }
   if (!emailRegex.test(email)) {
-    showError('Please enter a valid email', signInemailField);
+    showError("Please enter a valid email", signInemailField);
   }
   if (!emailRegex.test(email) || !passwordRegex.test(password)) {
     return false;
@@ -220,7 +220,7 @@ const verifyEmail = () => {
   hideErrors(signInemailField);
   const email = signInemailField.value.trim();
   if (!emailRegex.test(email)) {
-    showError('Please enter a valid email', signInemailField);
+    showError("Please enter a valid email", signInemailField);
     return false;
   }
   return true;
@@ -240,27 +240,27 @@ const validatesSignUpForm = () => {
   const firstName = firstNameField.value.trim();
   const lastName = lastNameField.value.trim();
   if (password !== confirmPassword) {
-    showError('Passwords do not match', signUpConfirmPasswordField);
+    showError("Passwords do not match", signUpConfirmPasswordField);
   }
 
   if (!passwordRegex.test(password)) {
     showError(
-      'The password must be at least 8 characters',
+      "The password must be at least 8 characters",
       signUpPasswordField
     );
   }
 
   if (!emailRegex.test(email)) {
-    showError('Please enter a valid email', signUpemailField);
+    showError("Please enter a valid email", signUpemailField);
   }
 
   if (!userNameRegex.test(lastName)) {
-    showError('Last name must be 3-15 characters only letters', lastNameField);
+    showError("Last name must be 3-15 characters only letters", lastNameField);
   }
 
   if (!userNameRegex.test(firstName)) {
     showError(
-      'First name must be 3-15 characters only letters',
+      "First name must be 3-15 characters only letters",
       firstNameField
     );
   }
@@ -297,8 +297,8 @@ const validatesSignUpForm = () => {
  */
 export const getLettersAnimation = () => {
   let animating = false;
-  let originalWord = '';
-  let wordTarget = '';
+  let originalWord = "";
+  let wordTarget = "";
   let letterDuration = 0;
   let characters = [];
   const splitString = (string) =>
@@ -312,7 +312,7 @@ export const getLettersAnimation = () => {
     charactersString
   ) {
     if (word === wordTarget) {
-      wordTarget = '';
+      wordTarget = "";
       animating = false;
       return;
     }
@@ -321,23 +321,23 @@ export const getLettersAnimation = () => {
       originalWord = word;
       characters = charactersString
         ? splitString(charactersString)
-        : 'abcdefghijklmnopqrstuvwxyz'.split('');
+        : "abcdefghijklmnopqrstuvwxyz".split("");
       animating = true;
       const intervalLitterAnimation = setInterval(() => {
-        wordTarget += originalWord[0] || '';
+        wordTarget += originalWord[0] || "";
         originalWord = originalWord.substring(1);
-        if (originalWord === '') {
+        if (originalWord === "") {
           clearInterval(intervalLitterAnimation);
         }
       }, letterDuration);
     }
 
-    let wordArray = originalWord.split('');
+    let wordArray = originalWord.split("");
     for (let index = 0; index < originalWord.length; index++) {
       const randomIndex = Math.floor(Math.random() * characters.length);
       wordArray[index] = characters[randomIndex];
     }
-    const printedWord = wordTarget + wordArray.join('');
+    const printedWord = wordTarget + wordArray.join("");
     actionCallBack(printedWord);
     setTimeout(() => {
       requestAnimationFrame(() => {
@@ -356,28 +356,25 @@ const userNameFormat = (name) => {
 };
 
 const hideAvatarSide = () => {
-  avatarAside.style.zIndex = '-1';
-  avatarAside.classList.remove('shown');
-  avartarSpaceReserver.classList.remove('shown');
-  avatarAside.querySelector('img').src = './assets/images/user.png';
+  avatarAside.style.zIndex = "-1";
+  avatarAside.classList.remove("shown");
+  fileinput.value = "";
+  fileinput.disabled = true;
+  avatarSpaceReserver.classList.remove("shown");
+  avatarAside.querySelector("img").src = "./assets/images/user.png";
   setTimeout(() => {
-    avatarAside.querySelector('div').style.display = 'none';
+    avatarAside.querySelector("div").style.display = "none";
   }, animationDuration);
 };
 
 const showAvatarSide = () => {
-  avatarAside.querySelector('div').style.display = 'flex';
-  avatarAside.classList.add('shown');
-  avartarSpaceReserver.classList.add('shown');
+  avatarAside.querySelector("div").style.display = "flex";
+  avatarAside.classList.add("shown");
+  fileinput.disabled = false;
+  avatarSpaceReserver.classList.add("shown");
   setTimeout(() => {
-    avatarAside.style.zIndex = 'auto';
+    avatarAside.style.zIndex = "auto";
   }, animationDuration);
-};
-
-const showAvatarError = (message) => {
-  avatarAside.querySelector(
-    '.error'
-  ).innerHTML = `<i class="bi bi-exclamation-circle"></i>${message}`;
 };
 
 export {
@@ -393,7 +390,6 @@ export {
   hideAvatarSide,
   showAvatarSide,
   verifyEmail,
-  showAvatarError,
 };
 
 // home page style

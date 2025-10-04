@@ -3,7 +3,7 @@ import {
   sendData,
   showMessageBlock,
 } from "../../../../../main_assets/js/utils.js";
-import { timers } from "../../../global/js/dom-variables.js";
+import { timers } from "../../../global/js/variables.js";
 import {
   handleApiAction,
   millisecondsToHMFormat,

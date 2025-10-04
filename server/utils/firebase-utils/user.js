@@ -11,15 +11,22 @@ const updateProfile = async (fullName, avatar, user) => {
       const oldAvatarRef = bucket.file(`avatars/${user.uid}`);
       const [exists] = await oldAvatarRef.exists();
       if (exists) await oldAvatarRef.delete();
-      const result = await uploadFileToStorage(`avatars/${user.uid}`, avatar);
+      const result = await uploadFileToStorage(
+        `avatars/${user.uid}`,
+        avatar,
+        true
+      );
       if (!result.success) return { success: false, message: result.message };
       await admin.auth().updateUser(user.uid, { photoURL: result.URL });
-      await db.collection("users").doc(user.uid).update({ photoURL: result.URL });
+      await db
+        .collection("users")
+        .doc(user.uid)
+        .update({ photoURL: result.URL });
     }
     return { success: true };
   } catch (error) {
     console.error("Error updating full name:", error);
-    return { success: false, message: "Failed to update full name."};
+    return { success: false, message: "Failed to update full name." };
   }
 };
 

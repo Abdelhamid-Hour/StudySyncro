@@ -11,6 +11,7 @@ const messageStructure = {
     fileName: "",
     fileType: "",
     fileStatus: "", // uploading, uploaded, failed
+    fileSize: "", // in bytes
   },
 };
 

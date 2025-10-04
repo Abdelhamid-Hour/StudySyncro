@@ -3,6 +3,7 @@ const { db } = require("../../firebase/firebaseAdmin");
 const { getQuestions } = require("./question");
 const { toReadableDate } = require("../global");
 const { getGroupById } = require("./shared");
+const { INITIALE_LOADERS_COUNT } = require("../global");
 
 class QuizResult {
   constructor(resultDetails, user) {
@@ -100,7 +101,7 @@ const getUserQuizzes = async (
     sort: "desc",
     status: [],
   },
-  count = 20,
+  count = INITIALE_LOADERS_COUNT,
   lastVisible = null
 ) => {
   try {
@@ -170,7 +171,7 @@ const getUserQuizzes = async (
 
 const getPassedQuizzes = async (
   userId,
-  count = 20,
+  count = INITIALE_LOADERS_COUNT,
   lastVisible = null,
   criteria = {
     searchTerm: "",
@@ -278,7 +279,7 @@ const getFilteredQuizzes = (criteria, quizzes, passedQuizzes, isAdmin) => {
 const getQuizzesByGroupId = async (
   groupId,
   userId,
-  count = 20,
+  count = INITIALE_LOADERS_COUNT,
   lastVisible = null,
   criteria = {}
 ) => {
@@ -638,7 +639,7 @@ const getQuizzInfo = async (quizId, userId) => {
 const getSessionQuizzes = async (
   userId,
   lastVisible = null,
-  limit,
+  limit = INITIALE_LOADERS_COUNT,
   searchTerm = "",
   oldQuizzes = []
 ) => {

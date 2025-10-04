@@ -5,7 +5,7 @@ import {
   sessionActionButtons,
 } from "./dom-variables.js";
 import { handletTasksListners } from "../../../shared/tasks/js/utils.js";
-import { iniChatMessageInput } from "../../../shared/chat/js/utils.js";
+import { iniChat } from "../../../shared/chat/js/utils.js";
 import { throttling } from "../../../../../main_assets/js/utils.js";
 import { endSession, leaveSession } from "../../../shared/session/js/utils.js";
 
@@ -29,7 +29,7 @@ export const init = throttling(2000, () => {
 
   startSession();
 
-  iniChatMessageInput(Session.groupId, Session.id);
+  iniChat(Session.groupId, Session.id);
 });
 
 init();

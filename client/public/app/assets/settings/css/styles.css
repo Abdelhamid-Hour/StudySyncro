@@ -195,7 +195,7 @@
       display: flex;
       align-items: center;
 
-      .avatar-wrapper {
+      .avatar-container {
         width: 20rem;
         display: flex;
         flex-direction: column;
@@ -209,6 +209,15 @@
             visibility var(--primary-transition-style);
         }
 
+        .error {
+          color: var(--error-color);
+          text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
+          font-size: var(--error-font-size);
+          display: flex;
+          align-items: flex-end;
+          gap: 0.5rem;
+        }
+
         .avatar {
           display: block;
           background-color: var(--background-color);
@@ -219,15 +228,6 @@
             display: none;
           }
 
-          &:hover {
-            .avatar-hover {
-              visibility: visible;
-              opacity: 1;
-              i {
-                translate: 0 0;
-              }
-            }
-          }
           .avatar-hover {
             cursor: pointer;
             opacity: 0;
@@ -253,6 +253,17 @@
 
           i {
             font-size: 10rem;
+          }
+        }
+
+        .avatar:hover,
+        &.file-drag-start {
+          .avatar-hover {
+            visibility: visible;
+            opacity: 1;
+            i {
+              translate: 0 0;
+            }
           }
         }
       }

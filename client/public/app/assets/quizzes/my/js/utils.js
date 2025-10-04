@@ -7,7 +7,7 @@ import {
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
   topSideBarMiddle,
-} from "../../../global/js/dom-variables.js";
+} from "../../../global/js/variables.js";
 import {
   openOverlayModal,
   resetTooltip,
@@ -23,7 +23,7 @@ import {
 import {
   initFiltersInputListener,
   Loader,
-} from "../../../shared/quizzes-groups/js/utils.js";
+} from "../../../shared/loader/js/utils.js";
 
 export const handleQuizCreateClick = () => {
   openOverlayModal(
@@ -153,7 +153,7 @@ const getQuizOverlay = () => `<div class="overlay-model create-quiz-overlay">
         </form>
       </div>`;
 
-const getCreteria = () => {
+const getCriteria = () => {
   let creteria = "";
   const sortDate = topSideBarMiddle.querySelector("#sort-checkbox")?.checked;
   const search = topSideBarMiddle.querySelector("#search-input")?.value;
@@ -186,6 +186,7 @@ const getcreateQuizCardFunc = (quiz = {}) => {
 
   // Create a wrapper div
   const card = document.createElement("div");
+  card.className = "card-item";
   card.dataset.quizId = id;
   card.innerHTML = `
       <header class="quiz-card-header">
@@ -337,11 +338,12 @@ const createUserQuizLoadingCard = () => {
 export const initLazyLoadingLoader = () => {
   const loader = new Loader(
     document.querySelector(".quizzes-list"),
-    "200px",
     getcreateQuizCardFunc,
     "/quizzes?",
     createUserQuizLoadingCard(),
-    getCreteria
+    {
+      getCriteria,
+    }
   );
 
   initFiltersInputListener(loader, topSideBarMiddle);

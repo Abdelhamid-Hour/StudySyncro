@@ -1,5 +1,6 @@
+import { setUpFileInputListeners } from "../../shared/avatar/js/utils.js";
 import {
-  deleteAccountBtn,
+  avatarContainer,
   initDomVariables,
   settingsWrapper,
 } from "./dom-variables.js";
@@ -33,6 +34,8 @@ export const init = (virtual = false) => {
   handleEmailSaveBtn();
 
   handleCloseAccountBtn();
+
+  setUpFileInputListeners(avatarContainer);
 };
 
 init();

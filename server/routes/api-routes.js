@@ -59,7 +59,13 @@ const {
   addPasswordHandler,
   closeAccountHandler,
 } = require("../controllers/user");
-const { sendMessage } = require("../utils/firebase-utils/chat");
+const {
+  sendMessageHandler,
+  groupChatStreamHandler,
+  sessionChatStreamHandler,
+  chatStreamHandler,
+  getMessagesHandler,
+} = require("../controllers/chat");
 
 const apiRouter = express.Router();
 
@@ -93,7 +99,7 @@ apiRouter.get("/quiz-play-details/:quizId", getQuizPlayDetailsHandler);
 
 apiRouter.get("/quiz-details/:quizId", getQuizDetailsHandler);
 
-apiRouter.get("/quizzes-list", getQuizzesListHandler);
+apiRouter.get("/quizzes-list-menu", getQuizzesListHandler);
 
 apiRouter.get("/active-session", getActiveSessionHandler);
 
@@ -161,37 +167,11 @@ apiRouter.post("/add-password", addPasswordHandler);
 
 apiRouter.post("/close-account", closeAccountHandler, logOut);
 
-apiRouter.post("/send-message", upload.single("file"), async (req, res) => {
-  const file = req.file;
+apiRouter.post("/send-message", upload.single("file"), sendMessageHandler);
 
-  const { sessionId, groupId, timestamp } = req.body;
-  const message = req.body.message || "";
-  console.log("Message Data: ", {
-    file,
-    message,
-    sessionId,
-    groupId,
-    timestamp,
-  });
+apiRouter.get("/messages", getMessagesHandler);
 
-  const result = await sendMessage(
-    file,
-    message,
-    sessionId,
-    groupId,
-    timestamp,
-    req.user
-  );
-  if (result.success) {
-    return res
-      .status(200)
-      .json({ message: "Message sent successfully", ...result.data });
-  }
-  return res.status(500).json({
-    message: result.message || "Failed to send message",
-    messageId: result.messageId,
-  });
-});
+apiRouter.get("/chat-stream", chatStreamHandler);
 
 GroupFragmentRoutes.forEach((config) => {
   apiRouter.get(

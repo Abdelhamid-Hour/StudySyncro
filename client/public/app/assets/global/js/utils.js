@@ -2,20 +2,56 @@ import {
   globalTooltip,
   hoverTooltip,
   mainContainer,
+  PENDING_ONLINE_SYNC_OPS,
   timers,
   topSideBarFooter,
   topSideBarHeader,
   topSideBarMiddle,
-} from "./dom-variables.js";
-import {
-  fetchTemplate,
-  sendData,
-  throttling,
-} from "../../../../main_assets/js/utils.js";
+} from "./variables.js";
+import { fetchTemplate, sendData } from "../../../../main_assets/js/utils.js";
 import { showMessageBlock } from "../../../../main_assets/js/utils.js";
 import { initAndDiplayErrorTooltip } from "../../shared/chat/js/utils.js";
 
 let isRouting = false;
+// IndexedDB setup for storing chat files
+export let db = null;
+let dbReady = false;
+const pendingOps = [];
+const request = indexedDB.open("chatDB", 1);
+
+request.onupgradeneeded = (event) => {
+  db = event.target.result;
+  if (!db.objectStoreNames.contains("messages")) {
+    const store = db.createObjectStore("messages", { keyPath: "id" });
+    store.createIndex("timestamp", "timestamp", { unique: false });
+  }
+};
+
+request.onsuccess = (event) => {
+  db = event.target.result;
+  dbReady = true;
+
+  // Execute any pending operations
+  pendingOps.forEach((f) => f());
+  pendingOps.length = 0;
+};
+
+request.onerror = (event) => {
+  console.error("IndexedDB error:", event.target.error);
+};
+
+export const handleOnlineSync = () => {
+  PENDING_ONLINE_SYNC_OPS.forEach((f) => f());
+  PENDING_ONLINE_SYNC_OPS.length = 0;
+};
+
+export const runWhenDbReady = (fn) => {
+  if (dbReady) fn();
+  else pendingOps.push(fn);
+};
+
+export const getUUID = () =>
+  Date.now() + crypto.getRandomValues(new Uint32Array(1))[0];
 
 export function getDebounceFunc(callback, TimeInterval) {
   let timer;
@@ -27,7 +63,7 @@ export function getDebounceFunc(callback, TimeInterval) {
   };
 }
 
-const isAsync = (fn) => {
+export const isAsync = (fn) => {
   return Object.getPrototypeOf(fn).constructor.name === "AsyncFunction";
 };
 
@@ -74,11 +110,7 @@ export const handleApiAction = async (
     }
 
     const body = data instanceof FormData ? data : { ...data, ...extraData };
-    const response = await sendData(
-      `/api${route}`,
-      body,
-      method || "POST"
-    );
+    const response = await sendData(`/api${route}`, body, method || "POST");
     if (successMsg) showMessageBlock(successMsg, "success");
     if (typeof onSuccess === "function") onSuccess(response);
   } catch (error) {

@@ -6,60 +6,67 @@ import {
   handleRoutingClick,
   openOverlayHandler,
   toggleActiveLink,
+  handleOnlineSync,
   tooltipSetup,
   updateMain,
-} from './utils.js';
-import { closeLeftSideBarIcon, toggleModeBtn } from './dom-variables.js';
-import '../../../auth/auth.js';
+} from "./utils.js";
+import { closeLeftSideBarIcon, toggleModeBtn } from "./variables.js";
+import "../../../auth/auth.js";
 
 tooltipSetup();
 
-document.addEventListener('dragover', (e) => e.preventDefault());
+document.addEventListener("dragover", (e) => e.preventDefault());
 
-closeLeftSideBarIcon.addEventListener('click', closeAndOpenLeftSideBar);
+closeLeftSideBarIcon.addEventListener("click", closeAndOpenLeftSideBar);
 
-document.addEventListener('mouseover', (e) => handelIconsHover(e, true));
+window.addEventListener("online", handleOnlineSync);
 
-document.addEventListener('mouseout', (e) => handelIconsHover(e, false));
+document.addEventListener("mouseover", (e) => handelIconsHover(e, true));
 
-document.addEventListener('click', openOverlayHandler);
+document.addEventListener("mouseout", (e) => handelIconsHover(e, false));
 
-document.addEventListener('click', handleOverlayClose);
+document.addEventListener("click", openOverlayHandler);
 
-document.addEventListener('click', handleRoutingClick, true);
+document.addEventListener("click", handleOverlayClose);
 
-document.addEventListener('click', handleNavigation);
+document.addEventListener("click", handleRoutingClick, true);
 
-toggleModeBtn.addEventListener('click', () => {
+document.addEventListener("click", handleNavigation);
+
+toggleModeBtn.addEventListener("click", () => {
   const root = document.documentElement;
-  const isDark = root.style.getPropertyValue('--background-color') === '#1a1a1a';
+  const isDark =
+    root.style.getPropertyValue("--background-color") === "#1a1a1a";
 
   if (isDark) {
     // Switch to light mode
-    root.style.setProperty('--background-color', '#ebebeb');
-    root.style.setProperty('--container-background-color', '#fafafa');
-    root.style.setProperty('--container-border-color', '#cbced5');
-    root.style.setProperty('--primary-text-color', 'black');
-    root.style.setProperty('--btn-background-color', '#fdfdfd');
-    root.style.setProperty('--secondary-text-color', '#575757');
-    root.style.setProperty('--primary-shadow-color', 'rgba(195, 195, 195, 0.58)');
-    root.style.setProperty('--active-tab-bg', 'var(--btn-background-color)');
-    root.style.setProperty('--tab-hover-bg', 'var(--background-color)');
+    root.style.setProperty("--background-color", "#ebebeb");
+    root.style.setProperty("--container-background-color", "#fafafa");
+    root.style.setProperty("--container-border-color", "#cbced5");
+    root.style.setProperty("--primary-text-color", "black");
+    root.style.setProperty("--btn-background-color", "#fdfdfd");
+    root.style.setProperty("--secondary-text-color", "#575757");
+    root.style.setProperty(
+      "--primary-shadow-color",
+      "rgba(195, 195, 195, 0.58)"
+    );
+    root.style.setProperty("--active-tab-bg", "var(--btn-background-color)");
+    root.style.setProperty("--tab-hover-bg", "var(--background-color)");
   } else {
     // Switch to dark mode
-    root.style.setProperty('--background-color', '#1a1a1a');
-    root.style.setProperty('--container-background-color', '#242424');
-    root.style.setProperty('--container-border-color', '#818181');
-    root.style.setProperty('--primary-text-color', '#dbdbdb');
-    root.style.setProperty('--btn-background-color', '#2c2c2c');
-    root.style.setProperty('--secondary-text-color', '#c8c8c8');
-    root.style.setProperty('--primary-shadow-color', 'transparent');
-    root.style.setProperty('--active-tab-bg', 'var(--btn-background-color)');
-    root.style.setProperty('--tab-hover-bg', 'var(--btn-background-color)');
+    root.style.setProperty("--background-color", "#1a1a1a");
+    root.style.setProperty("--container-background-color", "#242424");
+    root.style.setProperty("--container-border-color", "#818181");
+    root.style.setProperty("--primary-text-color", "#dbdbdb");
+    root.style.setProperty("--btn-background-color", "#2c2c2c");
+    root.style.setProperty("--secondary-text-color", "#c8c8c8");
+    root.style.setProperty("--primary-shadow-color", "transparent");
+    root.style.setProperty("--active-tab-bg", "var(--btn-background-color)");
+    root.style.setProperty("--tab-hover-bg", "var(--btn-background-color)");
   }
 });
 
-window.addEventListener('popstate', () => {
+window.addEventListener("popstate", () => {
   toggleActiveLink(location.pathname);
   updateMain(location.pathname);
 });

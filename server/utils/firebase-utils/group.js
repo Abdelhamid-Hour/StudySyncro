@@ -3,7 +3,9 @@ const { db } = require("../../firebase/firebaseAdmin");
 const { getFormattedMembers, addMember } = require("./members");
 const { getGroupById, refillSampleMembersIfNeeded } = require("./shared");
 const { sendRequest } = require("./demandes");
-const { toReadableDate } = require("../global");
+const { toReadableDate, formatHoursMinutes } = require("../global");
+const { getMessages } = require("./chat");
+const { INITIALE_LOADERS_COUNT } = require("../global");
 
 const createGroup = async (groupdData, userData) => {
   try {
@@ -27,10 +29,7 @@ const createGroup = async (groupdData, userData) => {
           uid: userData.uid,
           fullName: userData.fullName,
           email: userData.email,
-          photoURL:
-            userData.photoURL ||
-            "https://api.dicebear.com/7.x/identicon/svg?seed=" +
-              encodeURIComponent(userData.uid),
+          photoURL: userData.photoURL,
         },
       ],
       showInSearch:
@@ -49,18 +48,12 @@ const createGroup = async (groupdData, userData) => {
     }
 
     const groupDoc = await groupRef.add(newGrop);
-    groupDoc
-      .collection("members")
-      .doc(userData.uid)
-      .set({
-        uid: userData.uid,
-        fullName: userData.fullName,
-        email: userData.email,
-        photoURL:
-          userData.photoURL ||
-          "https://api.dicebear.com/7.x/identicon/svg?seed=" +
-            encodeURIComponent(userData.email),
-      });
+    groupDoc.collection("members").doc(userData.uid).set({
+      uid: userData.uid,
+      fullName: userData.fullName,
+      email: userData.email,
+      photoURL: userData.photoURL,
+    });
     const userRef = db.collection("users").doc(userData.uid);
     await userRef.update({
       joinedGroupsIds: FieldValue.arrayUnion(groupDoc.id),
@@ -98,7 +91,7 @@ const getAvailableGroups = async (
     searchTerm: "",
     searchBy: "",
   },
-  limit = 20,
+  limit = INITIALE_LOADERS_COUNT,
   lastVisible = null
 ) => {
   try {
@@ -181,7 +174,7 @@ const getJoinedGroups = async (
     searchTerm: "",
     searchBy: "",
   },
-  limit = 20,
+  limit = INITIALE_LOADERS_COUNT,
   lastVisible = null
 ) => {
   try {

@@ -13,8 +13,6 @@ const createNewUser = async (req, res) => {
   const avatar = req.file;
   const { uid, ...userData } = req.body;
 
-  console.log("userData:", req.body, "avatar:", avatar);
-
   try {
     const userRef = db.collection("users").doc(uid);
     const userRecord = await admin.auth().getUser(uid);
@@ -44,16 +42,18 @@ const createNewUser = async (req, res) => {
         return res.status(200).json({ message: "User data updated" });
       }
     } else {
-      console.log("User signed in with password");
-
       if (avatar) {
         const filePath = `avatars/${uid}`;
-        const result = await uploadFileToStorage(filePath, avatar);
+        const result = await uploadFileToStorage(filePath, avatar, true);
         if (!result.success)
           return res.status(500).json({ message: result.message });
         userData.photoURL = result.URL;
-        await admin.auth().updateUser(uid, { photoURL: userData.photoURL });
+      } else {
+        userData.photoURL =
+          "https://api.dicebear.com/7.x/identicon/svg?seed=" +
+          encodeURIComponent(userData.uid);
       }
+      await admin.auth().updateUser(uid, { photoURL: userData.photoURL });
     }
     await userRef.set({
       ...userData,

@@ -14,7 +14,7 @@ import {
   NAME_TITLE_MIN_LENGTH,
   TASK_MAX_DURATION,
   TASK_MIN_DURATION,
-} from "../../../../global/js/dom-variables.js";
+} from "../../../../global/js/variables.js";
 import {
   getLoader,
   resetTooltip,
@@ -54,7 +54,7 @@ import {
   initFiltersInputListener,
   Loader,
   setUpDatePicker,
-} from "../../../../shared/quizzes-groups/js/utils.js";
+} from "../../../../shared/loader/js/utils.js";
 import {
   endSession,
   joinSession,
@@ -754,12 +754,14 @@ const setUpSessionForm = (wrapper, sessionStore) => {
 
   const loader = new Loader(
     quizzesMenu,
-    "10px",
     createDropDownItem,
-    "/quizzes-list?",
+    "/quizzes-list-menu?",
     getQuizLoaderLoadingItem(),
-    () => getQuizLoaderSearchParams(wrapper),
-    1
+    {
+      rootMargin: "10px",
+      getCriteria: () => getQuizLoaderSearchParams(wrapper),
+      loadersCount: 1,
+    }
   );
   loader.reset();
   initFiltersInputListener(loader, quizzesSelectTrigger);
@@ -1205,7 +1207,7 @@ export const handleGroupLeftSideBarContent = (e) => {
 
 const createQuizItem = (quiz) => {
   const quizCard = document.createElement("div");
-  quizCard.className = "quiz-card";
+  quizCard.className = "quiz-card card-item";
   quizCard.setAttribute("data-quiz-id", quiz.quizId || quiz.id);
 
   quizCard.innerHTML = `
@@ -1259,7 +1261,9 @@ const createQuizItem = (quiz) => {
         <span></span>
       </div>
     </div>
-    <div class="action-btns">
+    ${
+      quiz.passed
+        ? `<div class="action-btns">
       <button
         type="button"
         class="view-result${quiz.isAdmin ? "s" : ""}-btn should-fill"
@@ -1275,7 +1279,9 @@ const createQuizItem = (quiz) => {
             </button>`
           : ""
       }
-    </div>
+    </div>`
+        : ""
+    }
   `;
 
   quizCard.querySelector(".quiz-title.content").textContent = quiz.title || "";
@@ -1351,19 +1357,20 @@ export const handleQuizzesListMenuBtn = async () => {
   container.addEventListener("click", (e) => handleQuizCardBtns(e));
   const loader = new Loader(
     container,
-    "200px",
     createQuizItem,
     "/group-quizzes?groupId=" + groupId + "&",
     createQuizItemLoader(),
-    getSearchCriteria,
-    1
+    {
+      getCriteria: getSearchCriteria,
+      loadersCount: 1,
+    }
   );
   initFiltersInputListener(loader, groupLeftSideBar);
 };
 
 const createMemberCard = (member) => {
   const memberDiv = document.createElement("div");
-  memberDiv.className = "member";
+  memberDiv.className = "member card-item";
 
   memberDiv.innerHTML = `
     <div class="avatar">
@@ -1378,9 +1385,7 @@ const createMemberCard = (member) => {
     <span class="username"></span>
     ${
       member.isAdmin
-        ? `<span ${
-            member.userIsAdmin ? 'style="margin-right: auto;"' : ""
-          } class="badge orange-badge"${
+        ? `<span style="margin-right: auto;" class="badge orange-badge"${
             member.userIsAdmin ? ' style="margin-right:auto"' : ""
           }>Host</span>`
         : ""
@@ -1441,13 +1446,14 @@ export const handleMembersListMenuBtn = async () => {
   inviteUserBtn?.addEventListener("click", handleAddMembersBtn);
   const loader = new Loader(
     membersResults,
-    "200px",
     createMemberCard,
     "/group-members?groupId=" + groupId + "&",
     createMemberCardLoader(),
-    () => `search=${search.value}`,
-    1,
-    (data) => handleMembersLoader()
+    {
+      getCriteria: () => `search=${search.value}`,
+      loadersCount: 1,
+      afterAppendRes: () => handleMembersLoader(),
+    }
   );
 
   initFiltersInputListener(loader, search);
@@ -1484,7 +1490,7 @@ export const handleDemandesBtn = async (e) => {
 
 const createDemandeCard = (demande) => {
   const demandeDiv = document.createElement("div");
-  demandeDiv.className = "demande";
+  demandeDiv.className = "demande card-item";
 
   demandeDiv.innerHTML = `
     <div class="avatar">
@@ -1561,12 +1567,13 @@ export const setUpDemandes = async () => {
   container.addEventListener("click", (e) => handleDemandeCardBtns(e));
   const loader = new Loader(
     container,
-    "200px",
     createDemandeCard,
     "/group-demandes?groupId=" + groupId + "&",
     createDemandeCardLoader(),
-    getSearchCriteria,
-    1
+    {
+      getCriteria: getSearchCriteria,
+      loadersCount: 1,
+    }
   );
   initFiltersInputListener(loader, groupLeftSideBar);
 };
@@ -1825,7 +1832,7 @@ function escapeHTML(str) {
 
 const createDropDownItem = (quiz, searchTerm) => {
   const div = document.createElement("div");
-  div.className = "select-item drop-down-item";
+  div.className = "select-item drop-down-item card-item";
   div.setAttribute("data-value", quiz.id);
 
   const title = quiz.title;
@@ -2026,7 +2033,7 @@ const handleUsersLoader = (data, container, users) => {
 const createUserCard = (user) => {
   const card = document.createElement("label");
   card.className =
-    "container user-item" + (user.isAlreadyMember ? " disabled" : "");
+    "container card-item user-item" + (user.isAlreadyMember ? " disabled" : "");
   card.innerHTML = `
   <input type="checkbox" ${user.isAlreadyMember ? "disabled" : ""} />
   <svg viewBox="0 0 64 64" height="2em" width="2em">
@@ -2096,13 +2103,14 @@ const setUpAddMembersOverlay = (container) => {
 
   const loader = new Loader(
     usersResults,
-    "200px",
     createUserCard,
     "/users?groupId=" + groupId + "&",
     createUserLoadingCard(),
-    () => `search=${search.value}`,
-    1,
-    (data) => handleUsersLoader(data, container, users)
+    {
+      getCriteria: () => `search=${search.value}`,
+      loadersCount: 1,
+      afterAppendRes: (data) => handleUsersLoader(data, container, users),
+    }
   );
 
   initFiltersInputListener(loader, search);

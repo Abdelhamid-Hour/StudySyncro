@@ -1,4 +1,5 @@
 const MAX_FILE_SIZE_50MB = 50 * 1024 * 1024; // 50MB
+const INITIALE_LOADERS_COUNT = 20;
 class Task {
   constructor({
     title,
@@ -104,6 +105,7 @@ module.exports = {
   formatHoursMinutes,
   toReadableDate,
   millisecondsToHMFormat,
+  INITIALE_LOADERS_COUNT,
   MAX_FILE_SIZE_50MB,
   getScoreClass,
   formatNumber,

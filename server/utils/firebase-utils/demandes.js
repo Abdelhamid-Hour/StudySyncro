@@ -1,7 +1,7 @@
 const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
 const { refillSampleMembersIfNeeded } = require("./shared");
-const { toReadableDate } = require("../global");
+const { toReadableDate, INITIALE_LOADERS_COUNT } = require("../global");
 
 const sendRequest = async (groupId, userData) => {
   try {
@@ -55,9 +55,7 @@ const sendRequest = async (groupId, userData) => {
         fullName: userData.fullName,
         email: userData.email,
         photoURL:
-          userData.photoURL ||
-          "https://api.dicebear.com/7.x/identicon/svg?seed=" +
-            encodeURIComponent(userData.uid),
+          userData.photoURL,
         demandeDate: new Date().toISOString(),
       });
 
@@ -239,7 +237,7 @@ const getRequests = async (groupId, userId) => {
 
 const getDemandesByGroupId = async (
   groupId,
-  limit = 20,
+  limit = INITIALE_LOADERS_COUNT,
   lastVisible = null,
   criteria = {}
 ) => {

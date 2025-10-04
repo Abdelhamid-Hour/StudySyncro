@@ -17,9 +17,9 @@
     </button>
     <% } %>
   </header>
-  <div class="members-list">
+  <div data-last-visible="<%= lastVisible || '' %>" class="members-list">
     <% members.forEach((member) => { %>
-    <div class="member">
+    <div class="member card-item">
       <div class="avatar">
         <% if (member.photoURL) { %>
         <img src="<%= member.photoURL %>" alt="avatar" />
@@ -30,7 +30,7 @@
       <span class="username"><%= member.fullName %></span>
       <% console.log(member); %>
       <% if (member.isAdmin) { %>
-        <span class="badge orange-badge" <%- isAdmin ? 'style="margin-right: auto;"' : '' %> >Host</span>
+        <span class="badge orange-badge" style="margin-right: auto;">Host</span>
       <% } %>
       <% if (isAdmin && !member.isAdmin) { %>
       <div class="action-btns" data-member-id="<%= member.id %>">

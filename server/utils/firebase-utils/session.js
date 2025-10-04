@@ -354,6 +354,7 @@ const getCurrentSessionInfo = async (userId) => {
       new Date(startDate).getTime() + session.duration * 60 * 1000;
 
     return {
+      id: sessionSnap.id,
       name: session.name,
       description: session.description,
       startDate: formatHoursMinutes(startDate),

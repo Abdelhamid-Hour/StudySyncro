@@ -12,7 +12,7 @@ const { fetchHomeData } = require("./home");
 
 const {} = require("./firebase-utils/group");
 const { getUserQuizzes, getPassedQuizzes } = require("./firebase-utils/examen");
-const { INITIALE_LOADERS_COUNT } = require("./groups");
+const { INITIALE_LOADERS_COUNT } = require("./global");
 const { getSettingsContext } = require("./firebase-utils/settings");
 
 const SHARED_STYLES_MAP = {
@@ -94,8 +94,7 @@ const fetchData = async (pathName, user) => {
             role: [],
             searchTerm: "",
             searchBy: "",
-          },
-          INITIALE_LOADERS_COUNT
+          }
         )),
         userId: user.uid,
       };
@@ -113,8 +112,7 @@ const fetchData = async (pathName, user) => {
             role: [],
             searchTerm: "",
             searchBy: "",
-          },
-          INITIALE_LOADERS_COUNT
+          }
         )),
         userId: user.uid,
       };
@@ -133,10 +131,7 @@ const fetchData = async (pathName, user) => {
       return { templateContext };
 
     case pathNames.quizzes.passed:
-      templateContext = await getPassedQuizzes(user.uid, 20, null, {
-        searchTerm: "",
-        sort: "desc",
-      });
+      templateContext = await getPassedQuizzes(user.uid);
 
       templateContext.toReadableDate = toReadableDate;
       templateContext.getScoreClass = getScoreClass;

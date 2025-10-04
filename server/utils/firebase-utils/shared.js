@@ -1,5 +1,20 @@
 const { db, bucket } = require("../../firebase/firebaseAdmin");
 const { MAX_FILE_SIZE_50MB } = require("../global");
+const PROFILE_ALLOWED_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+];
+const FILE_ALLOWED_TYPES = {
+  IMAGE: "image/jpeg, image/png, image/gif, image/webp",
+  DOCUMENT:
+    "application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  TEXT: "text/plain",
+  ARCHIVE: "application/zip, application/x-tar, application/x-rar-compressed",
+  AUDIO: "audio/mpeg, audio/wav, audio/ogg",
+  VIDEO: "video/mp4, video/webm, video/x-msvideo",
+};
 
 const getGroupById = async (groupId) => {
   try {
@@ -33,10 +48,7 @@ const refillSampleMembersIfNeeded = async (groupRef) => {
           uid: m.uid,
           fullName: m.fullName,
           email: m.email,
-          photoURL:
-            m.photoURL ||
-            "https://api.dicebear.com/7.x/identicon/svg?seed=" +
-              encodeURIComponent(m.uid),
+          photoURL: m.photoURL,
         });
         if (sampleMembers.length === 2) break;
       }
@@ -49,12 +61,22 @@ const refillSampleMembersIfNeeded = async (groupRef) => {
   }
 };
 
-const uploadFileToStorage = async (filePath, file) => {
+const uploadFileToStorage = async (filePath, file, isAvatar = false) => {
   try {
     if (!file) throw new Error("No file provided for upload");
     if (file.size === 0) throw new Error("File is empty");
     if (file.size > MAX_FILE_SIZE_50MB)
       throw new Error("The file should be less or equal to 50MB");
+
+    const isSupportedAvatarType =
+      isAvatar && PROFILE_ALLOWED_TYPES.includes(file.mimetype);
+    const isSupportedFileType =
+      !isAvatar &&
+      Object.values(FILE_ALLOWED_TYPES).some((types) =>
+        types.includes(file.mimetype)
+      );
+    if (!isSupportedAvatarType && !isSupportedFileType)
+      throw new Error("Invalid file type");
 
     const fileUpload = bucket.file(
       filePath + `/${Date.now()}-${file.originalname}`
@@ -75,7 +97,7 @@ const uploadFileToStorage = async (filePath, file) => {
     return { success: true, URL: URL[0] };
   } catch (error) {
     console.error("Error uploading file to storage:", error);
-    return { success: false, message: "here" };
+    return { success: false, message: error.message };
   }
 };
 
@@ -83,4 +105,5 @@ module.exports = {
   getGroupById,
   uploadFileToStorage,
   refillSampleMembersIfNeeded,
+  PROFILE_ALLOWED_TYPES,
 };

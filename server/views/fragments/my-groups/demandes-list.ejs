@@ -23,9 +23,9 @@
       <input type="checkbox" id="sort-checkbox" class="sort-checkbox" />
     </label>
   </header>
-  <div class="demandes-list">
+  <div data-last-visible="<%= lastVisible || '' %>" class="demandes-list">
     <% requests.forEach((demande) => { %>
-    <div class="demande">
+    <div class="demande card-item">
       <div class="avatar">
         <% if (demande.photoURL) { %>
         <img src="<%= demande.photoURL %>" alt="avatar" />

@@ -1,11 +1,5 @@
-import {
-  boxRowCount,
-  topSideBarMiddle,
-} from "../../../global/js/dom-variables.js";
-import {
-  initFiltersInputListener,
-  Loader,
-} from "../../quizzes-groups/js/utils.js";
+import { topSideBarMiddle } from "../../../global/js/variables.js";
+import { initFiltersInputListener, Loader } from "../../loader/js/utils.js";
 
 export const createLoadingCard = (userGroup) => {
   const loadingCard = document.createElement("div");
@@ -50,7 +44,7 @@ export const getcreateGroupCardFunc = (userGroup) => {
   return (group) => {
     const groupCard = document.createElement("a");
     groupCard.href = `/app/groups/my/${group.id}/chat`;
-    groupCard.className = "group-card route-link";
+    groupCard.className = "group-card route-link card-item";
     groupCard.dataset.id = group.id;
     const groupLevel = `<span class="level-value badge ${
       group.level === "Intermediate"
@@ -127,18 +121,19 @@ export const initLazyLoadingLoader = (userGroup = false) => {
   const route = userGroup ? `/user-groups?` : `/available-groups?`;
   const loader = new Loader(
     document.querySelector(".groups-list"),
-    "200px",
     getcreateGroupCardFunc(userGroup),
     route,
     createLoadingCard(userGroup),
-    () => getCreteria(userGroup)
+    {
+      getCriteria: () => getCriteria(userGroup),
+    }
   );
 
   initFiltersInputListener(loader, topSideBarMiddle);
   return loader;
 };
 
-const getCreteria = (isUserGroups) => {
+const getCriteria = (isUserGroups) => {
   let creteria = "";
   const sortDate = topSideBarMiddle.querySelector("#sort-checkbox")?.checked;
   const search = topSideBarMiddle.querySelector("#search-input")?.value;

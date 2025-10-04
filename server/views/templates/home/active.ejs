@@ -425,7 +425,140 @@
           <h2>Chat</h2>
         </div>
       </header>
-      <div class="chat-messages"></div>
+      <div data-last-visible="<%= lastVisible %>" data-last-message-id="<%= messages[messages.length - 1].id %>" class="chat-messages">
+        <% if (messages && messages.length > 0) { %>
+        
+          <% messages.forEach((msg, index) => {
+              const isFirst = !messages[index - 1] || (messages[index - 1].sender.id !== msg.sender.id);
+              const isLast = !messages[index + 1] || (messages[index + 1].sender.id !== msg.sender.id); %>
+
+            <% if (isFirst) { %>
+              <div class="message-<%= msg.isSender ? 'sent' : 'received' %>">
+              <% if (!msg.isSender) { %>
+                <div class="avatar">
+                  <% if (msg.sender.photoURL) { %>
+                    <img src="<%= msg.sender.photoURL %>" alt="User Avatar" />
+                    <% } else { %>
+                      <i class="bi bi-person-circle"></i>
+                      <% } %>
+                </div>
+                <% } %>
+                
+                <div class="messages">
+            <% } %>
+                  <div class="<%= isFirst ? 'first-' : '' %>message-<%= msg.isSender ? 'sent' : 'received' %>-text card-item"
+                      data-message-id="<%= msg.id || '' %>" <%- msg.content.fileStatus && msg.content.fileStatus !== 'uploaded' ? `data-local-id="${msg.localId || ''}"` : '' %> >
+                    <% if (!msg.isSender && isFirst) { %>
+                      <span data-sender-id="<%= msg.sender.id %>" class="username"><%= msg.sender.fullName %></span>
+                    <% } %>
+
+                    <% if (msg.content.text) { %>
+                      <p><%= msg.content.text %></p>
+                    <% } else {
+                      const file = msg.content;  
+                      const formatFileSize = (sizeInBytes) => {
+                            if (sizeInBytes < 1024) {
+                              return `${sizeInBytes} bytes`;
+                            }
+                            const kb = sizeInBytes / 1024;
+                            if (kb < 1024) {
+                              return `${kb.toFixed(2)} KB`;
+                            }
+                            const mb = kb / 1024;
+                            if (mb < 1024) {
+                              return `${mb.toFixed(2)} MB`;
+                            }
+                      }
+                      const ext = file.fileName.split('.').pop();
+                      const fileIconClass = `bi bi-filetype-${ext}`;
+                      const formattedSize = formatFileSize(file.fileSize);
+                      const isImage = file.fileType.startsWith('image/');
+                      const isVideo = file.fileType.startsWith('video/');
+                      const isAudio = file.fileType.startsWith('audio/');
+                    %>
+                      <% if (isImage || isVideo) { %>
+                        <div class="media-message message-media-preview">
+                          <div class="media-div">
+                            <% if (isImage) { %>
+                              <img src="<%= file.filePath %>" alt="<%= file.fileName %>" />
+                            <% } else if (isVideo) { %>
+                              <video src="<%= file.filePath %>" <%- file.fileStatus === 'uploaded' ? "controls" : "" %>></video>
+                            <% } %>
+                          </div>
+                        <% if (file.fileStatus !== 'uploaded') { %>
+                          <button type="button" class="re-send-btn small-btn"><i class="bi bi-upload"></i>Retry</button>
+                        <% } %>
+                        <% if (file.fileStatus === 'uploaded') { %>
+                          <button type="button" class="expand-btn"><i class="bi bi-arrows-fullscreen"></i></button>
+                          <a class="download-btn button" href="<%= file.filePath %>" download="<%= file.fileName %>">
+                            <i class="bi bi-download"></i>
+                          </a>
+                        <% } %>
+                        </div>
+                      <% } else if (isAudio) { %>
+                        <div class="media-message audio-player">
+                          <button type="button" class="play-btn exclude-btn should-fill">
+                            <i class="bi bi-play"></i>
+                          </button>
+
+                          <div class="progress-container">
+                            <div class="progress-bar"></div>
+                          </div>
+
+                          <span class="time">00:00</span>
+                          <button class="exclude-btn play-back-rate">1x</button>
+
+                          <audio src="<%= file.filePath %>"></audio>
+
+                        <% if (file.fileStatus !== 'uploaded') { %>
+                          <button type="button" class="re-send-btn small-btn"><i class="bi bi-upload"></i></button>
+                        <% } %>
+                        <% if (file.fileStatus === 'uploaded') { %>
+                          <a class="download-btn button" href="<%= file.filePath %>" download="<%= file.fileName %>">
+                            <i class="bi bi-download"></i>
+                          </a>
+                        <% } %>
+                        </div>
+
+                      <% } else { %>
+                        <div class="media-message file-preview">
+                          <div class="file-thumbnail">
+                            <i class="<%= fileIconClass %>"></i>
+                          </div>
+                          <div class="file-details">
+                            <button class="exclude-btn file-name"><%= file.fileName %></button>
+                            <span class="file-size"><%= formattedSize %></span>
+                          </div>
+
+                        <% if (file.fileStatus !== 'uploaded') { %>
+                          <button type="button" class="re-send-btn small-btn"><i class="bi bi-upload"></i></button>
+                        <% } %>
+                        <% if (file.fileStatus === 'uploaded') { %>
+                          <a class="download-btn button" href="<%= file.filePath %>" download="<%= file.fileName %>">
+                            <i class="bi bi-download"></i>
+                          </a>
+                        <% } %>
+                        </div>
+                      <% } %>
+                    <% } %>
+
+                    <span class="message-info">
+                      <%= formatHoursMinutes(Number(msg.timestamp)) %>
+                      <% if (msg.isSender && (msg.content.fileStatus === 'uploaded' || msg.content.text)) { %>
+                        <i class="bi bi-check"></i>
+                      <% } %>
+                      <% if (msg.isSender && msg.content.fileStatus && msg.content.fileStatus !== 'uploaded') { %>
+                        <i class="bi bi-exclamation-circle"></i>
+                      <% } %>
+                    </span>
+                  </div>
+            <% if (isLast) { %>
+                </div>
+              </div>
+            <% } %>
+          <% }); %>
+        <% } %>
+      </div>
       <div class="input-message-container">
         <div class="icons">
           <label for="image-upload" class="should-fill">

@@ -1,10 +1,10 @@
-import { topSideBarMiddle } from "../../../global/js/dom-variables.js";
+import { topSideBarMiddle } from "../../../global/js/variables.js";
 import { navigateTo, toReadableDate } from "../../../global/js/utils.js";
 import { openQuizResultOverlay } from "../../../shared/quiz-result/js/utils.js";
 import {
   initFiltersInputListener,
   Loader,
-} from "../../../shared/quizzes-groups/js/utils.js";
+} from "../../../shared/loader/js/utils.js";
 
 const getScoreClass = (score) => {
   if (score >= 80) return "excellent";
@@ -24,7 +24,7 @@ const createPassedQuizCard = (quiz = {}) => {
   } = quiz;
 
   const card = document.createElement("div");
-  card.className = "quiz-card";
+  card.className = "quiz-card card-item";
   card.innerHTML = `
         <div class="quiz-title-container info-container">
             <label class="quiz-title-label">
@@ -151,7 +151,7 @@ const createPassedQuizLoadingCard = () => {
   return loadingCard;
 };
 
-const getCreteria = () => {
+const getCriteria = () => {
   let creteria = "";
   const sortDate = topSideBarMiddle.querySelector("#sort-checkbox")?.checked;
   const search = topSideBarMiddle.querySelector("#search-input")?.value;
@@ -170,11 +170,12 @@ const getCreteria = () => {
 export const initLazyLoadingLoader = () => {
   const loader = new Loader(
     document.querySelector(".quizzes-list"),
-    "200px",
     createPassedQuizCard,
     "/passed-quizzes?",
     createPassedQuizLoadingCard(),
-    getCreteria
+    {
+      getCriteria,
+    }
   );
 
   initFiltersInputListener(loader, topSideBarMiddle);

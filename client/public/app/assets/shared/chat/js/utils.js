@@ -2,9 +2,12 @@ import { emojiCategories } from "./emoji-list.js";
 
 import {
   clearTooltipWithTimeOut,
+  db,
   formatHoursMinutes,
   getDebounceFunc,
+  getUUID,
   resetTooltip,
+  runWhenDbReady,
   showTooltip,
 } from "../../../global/js/utils.js";
 
@@ -17,10 +20,14 @@ import {
 import {
   selectedFiles,
   PLAYBACK_RATE,
-  FileTypes,
+  FILE_ALLOWED_TYPES,
   MAXFILESIZE,
 } from "./dom-variables.js";
-import { globalTooltip } from "../../../global/js/dom-variables.js";
+import {
+  globalTooltip,
+  PENDING_ONLINE_SYNC_OPS,
+} from "../../../global/js/variables.js";
+import { Loader } from "../../loader/js/utils.js";
 
 let inputMessage,
   imageInput,
@@ -28,12 +35,88 @@ let inputMessage,
   sendBtn,
   messagesContainer,
   inputChatContainer,
-  emojiButton,
   emojiList,
   emojiesSearch,
   dragLeaveTimer,
   chatContainer,
   emojiesSearchResultContainer;
+
+const storeMsgIntoIndexedDB = ({ localId, timestamp, ...message }) => {
+  return new Promise((resolve, reject) => {
+    runWhenDbReady(() => {
+      const tx = db.transaction("messages", "readwrite");
+      const store = tx.objectStore("messages");
+      const req = store.add({
+        id: localId,
+        timestamp: Number(timestamp),
+        ...message,
+      });
+      req.onsuccess = (e) => resolve(e.target.result);
+      req.onerror = (e) => reject(e.target.error);
+    });
+  });
+};
+
+const removeMsgFromIndexedDB = (localId) => {
+  return new Promise((resolve, reject) => {
+    runWhenDbReady(() => {
+      const tx = db.transaction("messages", "readwrite");
+      const store = tx.objectStore("messages");
+      const req = store.delete(localId);
+      req.onsuccess = (e) => resolve(e.target.result);
+      req.onerror = (e) => reject(e.target.error);
+    });
+  });
+};
+
+const getMsgFromIndexedDB = (localId) => {
+  return new Promise((resolve, reject) => {
+    runWhenDbReady(() => {
+      const tx = db.transaction("messages", "readonly");
+      const store = tx.objectStore("messages");
+      const req = store.get(localId);
+      req.onsuccess = (e) => resolve(e.target.result);
+      req.onerror = (e) => reject(e.target.error);
+    });
+  });
+};
+
+const getMessagesByTimeRange = async (from, to) => {
+  return new Promise((resolve, reject) => {
+    runWhenDbReady(() => {
+      const tx = db.transaction("messages", "readonly");
+      const store = tx.objectStore("messages");
+      const index = store.index("timestamp");
+      const range = IDBKeyRange.bound(Number(from), Number(to));
+      const result = [];
+      index.openCursor(range).onsuccess = (e) => {
+        const cursor = e.target.result;
+        if (cursor) {
+          const message = {
+            sender: {
+              id: "self",
+            },
+            content: {},
+            isSender: true,
+            localId: cursor.value.id,
+            timestamp: cursor.value.timestamp,
+            isLocalMsg: true,
+          };
+          if (cursor.value.message) message.content.text = cursor.value.message;
+          if (cursor.value.file) {
+            message.content.file = cursor.value.file;
+          }
+
+          result.push(message);
+          cursor.continue();
+        } else {
+          resolve(result);
+        }
+      };
+      tx.onerror = (e) => reject(e.target.error);
+    });
+  });
+};
 
 const initDOMVariables = () => {
   inputMessage = document.querySelector(".input-message");
@@ -42,7 +125,6 @@ const initDOMVariables = () => {
   sendBtn = document.querySelector(".send-btn");
   messagesContainer = document.querySelector(".chat-messages");
   inputChatContainer = document.querySelector(".input-message-container");
-  emojiButton = document.querySelector(".emoji-button");
   emojiList = document.querySelector(".emoji-list");
   emojiesSearch = document.querySelector(".emojis-search-input");
   emojiesSearchResultContainer = document.querySelector("#search-result");
@@ -144,22 +226,178 @@ const handleEmojiListClick = (e, inputMessage, emojiList) => {
   }
 };
 
+const scrollToBottom = (container) => {
+  const scrollHeight = container.scrollHeight;
+  container.scroll({
+    top: scrollHeight,
+    behavior: "instant",
+  });
+};
+
+const setFileURL = async (file, mediaElement, mediaLoader = false) => {
+  try {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    const URL = await new Promise((resolve, reject) => {
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error);
+    });
+    mediaElement.src = URL;
+    if (mediaLoader) {
+      const loader = mediaElement
+        .closest(".media-preview")
+        ?.querySelector(".three-body");
+      if (loader) loader.remove();
+    }
+  } catch (error) {
+    console.error("Error reading image file:", error);
+    return "";
+  }
+};
+
+const createDownloadLinkButton = (file) => {
+  const downloadLinkBtn = document.createElement("a");
+  downloadLinkBtn.className = "download-btn button";
+  downloadLinkBtn.href = file.URL || "";
+  downloadLinkBtn.download = file.name;
+  const downloadIcon = document.createElement("i");
+  downloadIcon.className = "bi bi-download";
+  downloadLinkBtn.append(downloadIcon);
+  return downloadLinkBtn;
+};
+
+const getMediaBtn = (expand = true, reSend = false) => {
+  const expandBtn = document.createElement("button");
+  expandBtn.type = "button";
+  expandBtn.className = expand
+    ? "expand-btn"
+    : `${reSend ? "re-send" : "retry"}-btn small-btn`;
+  const expandIcon = document.createElement("i");
+  expandIcon.className = expand
+    ? "bi bi-arrows-fullscreen"
+    : "bi bi-arrow-clockwise";
+  expandBtn.append(expandIcon);
+  return expandBtn;
+};
+
+const getCircleLoader = () => {
+  const wrapper = document.createElement("div");
+  wrapper.className = "pulsar";
+  return wrapper;
+};
+
+const getMediaLoader = () => {
+  const wrapper = document.createElement("div");
+  wrapper.className = "three-body";
+  wrapper.innerHTML = `
+    <!-- From Uiverse.io by dovatgabriel -->
+        <div class="three-body__dot"></div>
+        <div class="three-body__dot"></div>
+        <div class="three-body__dot"></div>
+    `;
+  return wrapper;
+};
+
+const handleSendMessageSuccess = async (result, wrapper, formData, isFile) => {
+  wrapper.dataset.messageId = result.messageId;
+  const Icon = wrapper.querySelector(".message-info i");
+  Icon.className = "bi bi-check";
+  await removeMsgFromIndexedDB(formData.get("localId"));
+
+  if (isFile) {
+    const file = formData.get("file");
+    file.URL = result.filePath;
+    if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
+      const mediaContainer = wrapper.querySelector(".message-media-preview");
+      mediaContainer.classList.remove("uploading");
+
+      mediaContainer.append(getMediaBtn(true));
+      mediaContainer.querySelector("video, img").src = file.URL;
+      const video = mediaContainer.querySelector("video");
+      if (video) video.controls = true;
+    } else if (file.type.startsWith("audio/")) {
+      wrapper.querySelector("audio").src = file.URL;
+    }
+    wrapper.querySelector(".three-body")?.remove();
+    wrapper.querySelector(".pulsar")?.remove();
+    wrapper
+      .querySelector(".file-preview, .audio-player, .message-media-preview")
+      ?.appendChild(createDownloadLinkButton(file));
+  }
+};
+
+const handleSendMessageError = (error, wrapper, formData, isFile) => {
+  const file = formData.get("file");
+  console.error(error);
+  wrapper.dataset.messageId = error.data?.messageId;
+  const Icon = wrapper.querySelector(".message-info i");
+  Icon.className = "bi bi-exclamation-circle";
+  if (isFile) {
+    const loader =
+      wrapper.querySelector(".three-body") || wrapper.querySelector(".pulsar");
+    loader.remove();
+    const retryBtn = getMediaBtn(false);
+    if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
+      retryBtn.append("Retry");
+    }
+    wrapper
+      .querySelector(".file-preview, .audio-player, .message-media-preview")
+      ?.appendChild(retryBtn);
+    retryBtn.addEventListener(
+      "click",
+      throttling(2000, () => {
+        retryBtn.replaceWith(loader);
+        const Icon = wrapper.querySelector(".message-info i");
+        Icon.className = "bi bi-clock";
+        Icon.style.color = "";
+        formData.delete("file");
+        formData.append("file", file);
+
+        sendMessage(formData, wrapper, isFile);
+      })
+    );
+  }
+  showMessageBlock(
+    error.message || "Failed to send message. Please try again.",
+    "error"
+  );
+};
+
+const sendMessage = async (formData, wrapper, isFile = false) => {
+  try {
+    const result = await sendData("/api/send-message", formData, "POST");
+    handleSendMessageSuccess(result, wrapper, formData, isFile);
+  } catch (error) {
+    handleSendMessageError(error, wrapper, formData, isFile);
+  }
+};
+
 class ChatMessage {
   constructor(
     text,
     attachments = [],
-    isSender,
-    avatarSrc,
-    senderName,
+    senderId,
     timestamp,
     chatContainer,
-    send = false
+    {
+      isSender = false,
+      avatarSrc = "",
+      senderName = "",
+      messageId = "",
+      localId = "",
+      send = false,
+      isLocalMsg = false,
+    }
   ) {
     this.text = text;
+    this.messageId = messageId;
+    this.localId = localId;
+    this.isLocalMsg = isLocalMsg;
     this.attachments = attachments;
     this.isSender = isSender;
     this.avatarSrc = avatarSrc;
     this.senderName = senderName;
+    this.senderId = senderId;
     this.timestamp = timestamp;
     this.chatContainer = chatContainer;
     this.wrappers = {
@@ -169,100 +407,49 @@ class ChatMessage {
     this.send = send;
   }
 
-  async sendMessages({ groupId, sessionId }) {
-    try {
-      const formData = new FormData();
-      formData.append("sessionId", sessionId || "");
-      formData.append("groupId", groupId || "");
-      formData.append("timestamp", this.timestamp);
-      if (this.text) {
-        formData.append("message", this.text);
-        this.sendMessage(formData);
-      }
-      if (this.attachments.length > 0) {
-        formData.delete("message");
-        for (let i = 0; i < this.attachments.length; i++) {
-          formData.append("file", this.attachments[i]);
-          this.sendMessage(formData, i);
-          formData.delete("file");
-        }
-      }
-    } catch (error) {
-      console.error();
-      showMessageBlock(
-        error.message || "Failed to send message. Please try again.",
-        "error"
-      );
-    }
+  appendBaseData(formData, baseData) {
+    Object.entries(baseData).forEach(([k, v]) => formData.append(k, v));
   }
 
-  async sendMessage(formData, fileIndex = null) {
-    const wrapper =
-      fileIndex !== null ? this.wrappers.files[fileIndex] : this.wrappers.text;
+  async sendMessages({ groupId, sessionId }) {
     try {
-      const result = await sendData("/api/send-message", formData, "POST");
-      wrapper.dataset.messageId = result.messageId;
-      const Icon = wrapper.querySelector(".message-info i");
-      Icon.className = "bi bi-check";
-      Icon.style.fontSize = "x-large";
-
-      if (fileIndex !== null) {
-        const file = this.attachments[fileIndex];
-        file.URL = result.filePath;
-        if (
-          FileTypes.IMAGE.includes(file.type) ||
-          FileTypes.VIDEO.includes(file.type)
-        ) {
-          const mediaContainer = wrapper.querySelector(
-            ".message-media-preview"
+      const baseData = {
+        sessionId: sessionId || "",
+        groupId: groupId || "",
+        timestamp: this.timestamp,
+      };
+      if (this.text) {
+        const formData = new FormData();
+        this.appendBaseData(formData, baseData);
+        formData.append("message", this.text);
+        formData.append("localId", getUUID());
+        const message = Object.fromEntries(formData.entries());
+        await storeMsgIntoIndexedDB(message);
+        if (navigator.onLine) sendMessage(formData, this.wrappers.text);
+        else
+          PENDING_ONLINE_SYNC_OPS.push(() =>
+            sendMessage(formData, this.wrappers.text)
           );
-          mediaContainer.classList.remove("uploading");
-
-          mediaContainer.append(this.getBtn(true));
-          mediaContainer.querySelector("video, img").src = file.URL;
-          const video = mediaContainer.querySelector("video");
-          if (video) video.controls = true;
-        } else if (FileTypes.AUDIO.includes(file.type)) {
-          wrapper.querySelector("audio").src = file.URL;
+      }
+      if (this.attachments.length > 0) {
+        for (let i = 0; i < this.attachments.length; i++) {
+          const formData = new FormData();
+          this.appendBaseData(formData, baseData);
+          formData.append("localId", getUUID());
+          formData.append("file", this.attachments[i]);
+          const message = Object.fromEntries(formData.entries());
+          await storeMsgIntoIndexedDB(message);
+          if (navigator.onLine)
+            sendMessage(formData, this.wrappers.files[i], true);
+          else {
+            PENDING_ONLINE_SYNC_OPS.push(() =>
+              sendMessage(formData, this.wrappers.files[i], true)
+            );
+          }
         }
-        wrapper.querySelector(".three-body")?.remove();
-        wrapper.querySelector(".pulsar")?.remove();
-        wrapper
-          .querySelector(".file-preview, .audio-player, .message-media-preview")
-          ?.appendChild(this.createDownloadLinkButton(file));
       }
     } catch (error) {
       console.error(error);
-      wrapper.dataset.messageId = error.data?.messageId;
-      const Icon = wrapper.querySelector(".message-info i");
-      Icon.className = "bi bi-exclamation-circle";
-      Icon.style.color = "red";
-      if (fileIndex !== null) {
-        const loader =
-          wrapper.querySelector(".three-body") ||
-          wrapper.querySelector(".pulsar");
-        loader.remove();
-        const retryBtn = this.getBtn(false);
-        if (
-          FileTypes.IMAGE.includes(this.attachments[fileIndex].type) ||
-          FileTypes.VIDEO.includes(this.attachments[fileIndex].type)
-        ) {
-          retryBtn.append("Retry");
-        }
-        wrapper
-          .querySelector(".file-preview, .audio-player, .message-media-preview")
-          ?.appendChild(retryBtn);
-        retryBtn.addEventListener(
-          "click",
-          throttling(2000, () => {
-            retryBtn.replaceWith(loader);
-            const Icon = wrapper.querySelector(".message-info i");
-            Icon.className = "bi bi-clock";
-            Icon.style.color = "";
-            this.sendMessage(formData, fileIndex);
-          })
-        );
-      }
       showMessageBlock(
         error.message || "Failed to send message. Please try again.",
         "error"
@@ -277,23 +464,18 @@ class ChatMessage {
     if (this.text) {
       this.renderTextMessage();
     }
-    this.scrollToBottom();
+    scrollToBottom(this.chatContainer);
     return this;
   }
 
-  scrollToBottom() {
-    const scrollHeight = this.chatContainer.scrollHeight;
-    this.chatContainer.scrollTo(0, scrollHeight);
-  }
-
-  appendToChat(messageBubble, isText) {
+  appendToChat(messageBubble, file = null) {
     let messageContainer = null;
     const isFirstMessage = this.isFirstMessage();
     if (isFirstMessage) {
-      messageContainer = this.createMessageContainer(messageBubble);
+      messageContainer = this.createMessageContainer(messageBubble, file);
       this.chatContainer.append(messageContainer);
     } else {
-      messageContainer = this.createMessageWrapper(messageBubble, false);
+      messageContainer = this.createMessageWrapper(messageBubble, false, file);
       this.chatContainer.lastElementChild
         .querySelector(".messages")
         .append(messageContainer);
@@ -301,8 +483,14 @@ class ChatMessage {
     const wrapper = isFirstMessage
       ? messageContainer.querySelector(".first-message-sent-text")
       : messageContainer;
-    if (isText) this.wrappers.text = wrapper;
-    else this.wrappers.files.push(wrapper);
+    if (!file) {
+      if (this.isLocalMsg) {
+        wrapper.appendChild(getMediaBtn(false, true));
+      }
+      this.wrappers.text = wrapper;
+    } else {
+      this.wrappers.files.push(wrapper);
+    }
   }
 
   renderAttachments() {
@@ -313,24 +501,24 @@ class ChatMessage {
       document: (doc) =>
         this.createFilePreviewTemplate(
           doc,
-          `bi bi-filetype-${doc.name.split(".")[1]}`
+          `bi bi-filetype-${doc.name.split(".").pop()}`
         ),
     };
     this.attachments.forEach((attachment) => {
-      const kind = FileTypes.IMAGE.includes(attachment.type)
+      const kind = attachment.type.startsWith("image/")
         ? "image"
-        : FileTypes.VIDEO.includes(attachment.type)
+        : attachment.type.startsWith("video/")
         ? "video"
-        : FileTypes.AUDIO.includes(attachment.type)
+        : attachment.type.startsWith("audio/")
         ? "audio"
         : "document";
       const wrapper = renderers[kind](attachment);
-      this.appendToChat(wrapper, false);
+      this.appendToChat(wrapper, attachment);
     });
   }
 
   renderTextMessage() {
-    this.appendToChat(this.createMessageBubble(this.text), true);
+    this.appendToChat(this.createMessageBubble(this.text));
   }
 
   formatFileSize(sizeInBytes) {
@@ -350,9 +538,10 @@ class ChatMessage {
   isFirstMessage() {
     const lastMessage = this.chatContainer.lastElementChild;
     if (!lastMessage) return true;
-    const lastUser = lastMessage.querySelector(".username")?.textContent;
+    const lastUserId =
+      lastMessage.querySelector(".username")?.dataset.senderId || "self";
 
-    return lastUser && lastUser !== this.senderName;
+    return lastUserId !== this.senderId;
   }
 
   createAudioPlayer(file) {
@@ -383,17 +572,6 @@ class ChatMessage {
     const audioElement = document.createElement("audio");
     audioElement.src = file.URL || "";
 
-    audioElement.addEventListener("loadedmetadata", () => {
-      timeSpan.textContent = this.formatTime(audioElement.duration);
-    });
-
-    audioElement.addEventListener("ended", () =>
-      this.onAudioEnd(progressBar, audioElement, playIcon, timeSpan)
-    );
-    audioElement.addEventListener("timeupdate", () =>
-      this.updateAudioProgress(progressBar, audioElement, timeSpan)
-    );
-
     audioPreview.append(
       playButton,
       progressContainer,
@@ -403,32 +581,13 @@ class ChatMessage {
     );
 
     if (this.send) {
-      audioPreview.appendChild(this.getCircleLoader());
-      this.getObjectURL(file, audioElement);
-    } else audioPreview.appendChild(this.createDownloadLinkButton(file));
+      audioPreview.appendChild(getCircleLoader());
+      setFileURL(file, audioElement);
+    } else if (this.isLocalMsg || !file.URL) {
+      audioPreview.appendChild(getMediaBtn(false, true));
+    } else audioPreview.appendChild(createDownloadLinkButton(file));
 
     return audioPreview;
-  }
-
-  onAudioEnd(progressBar, audioElement, playIcon, timeSpan) {
-    audioElement.currentTime = 0;
-    this.updateAudioProgress(progressBar, audioElement, timeSpan);
-    playIcon.className = playIcon.className.replace("pause", "play");
-  }
-
-  updateAudioProgress(progressBar, audioElement, timeSpan) {
-    const progress = (audioElement.currentTime / audioElement.duration) * 100;
-    progressBar.style.width = `${progress}%`;
-
-    timeSpan.textContent = this.formatTime(
-      audioElement.duration - audioElement.currentTime
-    );
-  }
-
-  formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
   }
 
   createFilePreviewTemplate(file, iconClass) {
@@ -453,58 +612,22 @@ class ChatMessage {
 
     filePreview.append(fileThumbnail, fileDetails);
     if (this.send) {
-      filePreview.appendChild(this.getCircleLoader());
-    } else filePreview.appendChild(this.createDownloadLinkButton(file));
+      filePreview.appendChild(getCircleLoader());
+    } else if (this.isLocalMsg || !file.URL) {
+      filePreview.appendChild(getMediaBtn(false, true));
+    } else filePreview.appendChild(createDownloadLinkButton(file));
 
     return filePreview;
-  }
-
-  createDownloadLinkButton(file) {
-    const downloadLinkBtn = document.createElement("a");
-    downloadLinkBtn.className = "download-btn button";
-    downloadLinkBtn.href = file.URL || "";
-    downloadLinkBtn.download = file.name;
-    const downloadIcon = document.createElement("i");
-    downloadIcon.className = "bi bi-download";
-    downloadLinkBtn.append(downloadIcon);
-    return downloadLinkBtn;
-  }
-
-  getBtn(expand = true) {
-    const expandBtn = document.createElement("button");
-    expandBtn.type = "button";
-    expandBtn.className = expand ? "expand-btn" : "retry-btn";
-    const expandIcon = document.createElement("i");
-    expandIcon.className = expand
-      ? "bi bi-arrows-fullscreen"
-      : "bi bi-arrow-clockwise";
-    expandBtn.append(expandIcon);
-    return expandBtn;
-  }
-
-  getMediaLoader() {
-    const wrapper = document.createElement("div");
-    wrapper.className = "three-body";
-    wrapper.innerHTML = `
-    <!-- From Uiverse.io by dovatgabriel -->
-        <div class="three-body__dot"></div>
-        <div class="three-body__dot"></div>
-        <div class="three-body__dot"></div>
-    `;
-    return wrapper;
-  }
-
-  getCircleLoader() {
-    const wrapper = document.createElement("div");
-    wrapper.className = "pulsar";
-    return wrapper;
   }
 
   createMediaTemplate(file, type) {
     const mediaContainer = document.createElement("div");
     mediaContainer.className = "media-message message-media-preview";
     const mediaElement = document.createElement(type);
-    mediaElement.src = file.URL || "";
+    if (type === "img")
+      mediaElement.src =
+        file.URL || "/app/assets/shared/chat/imgs/img-placeholder.png";
+    else mediaElement.src = file.URL || "";
 
     if (type === "img") mediaElement.alt = file.name;
     if (type === "video") mediaElement.controls = !this.send;
@@ -514,34 +637,20 @@ class ChatMessage {
     mediaDiv.appendChild(mediaElement);
 
     mediaContainer.append(mediaDiv);
-
     if (this.send) {
       mediaContainer.classList.add("uploading");
-      mediaContainer.appendChild(this.getMediaLoader());
-      this.getObjectURL(file, mediaElement);
+      mediaContainer.appendChild(getMediaLoader());
+      setFileURL(file, mediaElement);
+    } else if (this.isLocalMsg || !file.URL) {
+      const reSendBtn = getMediaBtn(false, true);
+      reSendBtn.append("Retry");
+      mediaContainer.appendChild(reSendBtn);
+      if (file instanceof File) setFileURL(file, mediaElement);
     } else {
-      mediaContainer.append(
-        this.getBtn(true),
-        this.createDownloadLinkButton(file)
-      );
+      mediaContainer.append(getMediaBtn(true), createDownloadLinkButton(file));
     }
 
     return mediaContainer;
-  }
-
-  async getObjectURL(file, mediaElement) {
-    try {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      const URL = await new Promise((resolve, reject) => {
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(reader.error);
-      });
-      mediaElement.src = URL;
-    } catch (error) {
-      console.error("Error reading image file:", error);
-      return "";
-    }
   }
 
   createMessageBubble(text) {
@@ -550,17 +659,25 @@ class ChatMessage {
     return p;
   }
 
-  createMessageWrapper(messageBubble, isFirstMessage) {
+  createMessageWrapper(messageBubble, isFirstMessage, file) {
     const messageWrapper = document.createElement("div");
     messageWrapper.className = `${isFirstMessage ? "first-" : ""}message-${
       this.isSender ? "sent" : "received"
     }-text`;
 
-    messageWrapper.dataset.messageId = "";
+    messageWrapper.dataset.messageId = this.messageId || "";
+    if (
+      this.localId &&
+      this.isSender &&
+      (this.isLocalMsg || (file && !file.URL))
+    ) {
+      messageWrapper.dataset.localId = this.localId || "";
+    }
 
     if (!this.isSender && isFirstMessage) {
       const usernameSpan = document.createElement("span");
       usernameSpan.className = "username";
+      usernameSpan.dataset.senderId = this.senderId;
       usernameSpan.textContent = this.senderName;
       messageWrapper.appendChild(usernameSpan);
     }
@@ -569,12 +686,16 @@ class ChatMessage {
 
     const messageInfo = document.createElement("span");
     messageInfo.className = "message-info";
-    messageInfo.textContent = formatHoursMinutes(this.timestamp);
+    messageInfo.textContent = formatHoursMinutes(Number(this.timestamp));
 
     if (this.send) {
       const clockIcon = document.createElement("i");
       clockIcon.className = "bi bi-clock";
       messageInfo.appendChild(clockIcon);
+    } else if ((file && !file.URL) || this.isLocalMsg) {
+      const checkIcon = document.createElement("i");
+      checkIcon.className = "bi bi-exclamation-circle";
+      messageInfo.appendChild(checkIcon);
     } else if (this.isSender) {
       const checkIcon = document.createElement("i");
       checkIcon.className = "bi bi-check";
@@ -585,7 +706,7 @@ class ChatMessage {
     return messageWrapper;
   }
 
-  createMessageContainer(messageBubble) {
+  createMessageContainer(messageBubble, file) {
     const messageContainer = document.createElement("div");
     messageContainer.className = `message-${
       this.isSender ? "sent" : "received"
@@ -609,7 +730,9 @@ class ChatMessage {
 
     const messagesDiv = document.createElement("div");
     messagesDiv.className = "messages";
-    messagesDiv.appendChild(this.createMessageWrapper(messageBubble, true));
+    messagesDiv.appendChild(
+      this.createMessageWrapper(messageBubble, true, file)
+    );
     messageContainer.appendChild(messagesDiv);
 
     return messageContainer;
@@ -635,7 +758,7 @@ const handleFiles = (files) => {
         "error"
       );
     }
-    const isSupportedType = Object.values(FileTypes).find((types) =>
+    const isSupportedType = Object.values(FILE_ALLOWED_TYPES).find((types) =>
       types.includes(f.type)
     );
     if (!isSupportedType) {
@@ -678,32 +801,22 @@ const displayFile = async (file) => {
       }
     });
   }
-
   const closeBtn = document.createElement("button");
   closeBtn.type = "button";
   closeBtn.className = "exclude-btn remove-file-btn";
   const closIcon = document.createElement("i");
   closIcon.className = "bi bi-x-circle-fill";
   closeBtn.append(closIcon);
-  const isImg = FileTypes.IMAGE.includes(file.type);
-  const isVid = FileTypes.VIDEO.includes(file.type);
-  if (isImg || isVid) {
+  const isImg = file.type.startsWith("image/");
+  if (isImg) {
     const elementName = isImg ? "img" : "video";
     const mediaContainer = document.createElement("div");
     mediaContainer.className = "media-preview";
     const mediaElement = document.createElement(elementName);
     mediaElement.dataset.fileName = file.name;
-    const r = new FileReader();
-    r.readAsDataURL(file);
-    const mediaURL = await new Promise((res, rej) => {
-      r.onload = () => {
-        return res(r.result);
-      };
-      r.onerror = () => {
-        return rej(r.error);
-      };
-    });
-    mediaElement.src = mediaURL;
+    mediaElement.src = "/app/assets/shared/chat/imgs/img-placeholder.png";
+    mediaContainer.appendChild(getMediaLoader());
+    setFileURL(file, mediaElement, true);
     if (isImg) mediaElement.alt = file.name;
     mediaContainer.append(mediaElement, closeBtn);
 
@@ -713,7 +826,7 @@ const displayFile = async (file) => {
     filePreview.className = "file";
     const typeBadge = document.createElement("span");
     typeBadge.className = "badge badge-type";
-    typeBadge.textContent = file.name.split(".")[1].toUpperCase();
+    typeBadge.textContent = file.name.split(".").pop().toUpperCase();
     const fileName = document.createElement("span");
     fileName.className = "file-name";
     fileName.textContent = file.name;
@@ -723,7 +836,7 @@ const displayFile = async (file) => {
     filesView.append(filePreview);
   }
 };
-// !
+
 const handleChatInput = async (sessionId, groupId) => {
   let files = [];
 
@@ -734,21 +847,12 @@ const handleChatInput = async (sessionId, groupId) => {
   // Check if there is a message or files to send
   const inputValue = inputMessage.value.trim();
   if (inputValue || files.length > 0) {
-    new ChatMessage(
-      inputValue,
-      files,
-      true,
-      "",
-      "Abdelwahed",
-      new Date(),
-      messagesContainer,
-      true
-    )
+    new ChatMessage(inputValue, files, "self", Date.now(), messagesContainer, {
+      isSender: true,
+      send: true,
+    })
       .renderMessage()
-      .sendMessages({
-        sessionId,
-        groupId,
-      });
+      .sendMessages({ sessionId, groupId });
 
     clearChatInputs();
   }
@@ -834,8 +938,52 @@ const seek = (e, audio, progressContainer) => {
   }
 };
 
-const handleMessagesContainerClick = (e) => {
+const handleMessagesContainerClick = async (e) => {
   const target = e.target;
+
+  const reSendBtn = target.closest(".re-send-btn");
+  if (reSendBtn) {
+    try {
+      const messageContainer = reSendBtn.closest(
+        ".message-sent-text, .first-message-sent-text"
+      );
+      const messageId = messageContainer?.dataset.messageId;
+      const localId = messageContainer?.dataset.localId;
+      if (!localId) return showMessageBlock("Local ID not found.", "error");
+      const message = await getMsgFromIndexedDB(localId);
+      if (!message)
+        return showMessageBlock("Message not found in local storage.", "error");
+      reSendBtn.remove();
+      const Icon = messageContainer.querySelector(".message-info i");
+      Icon.className = "bi bi-clock";
+      if (message.file) {
+        const mediaContainer = messageContainer.querySelector(
+          ".message-media-preview"
+        );
+        if (mediaContainer) {
+          mediaContainer.classList.add("uploading");
+          mediaContainer.appendChild(getMediaLoader());
+        } else {
+          const doc_AudioPlayer = messageContainer.querySelector(
+            ".audio-player, .file-preview"
+          );
+          if (doc_AudioPlayer) doc_AudioPlayer.appendChild(getCircleLoader());
+        }
+      }
+      const formData = new FormData();
+      formData.append("sessionId", message.sessionId);
+      formData.append("groupId", message.groupId);
+      if (messageId) formData.append("messageId", messageId);
+      if (message.message) formData.append("message", message.message);
+      if (message.file) formData.append("file", message.file);
+      formData.append("localId", localId);
+      message.timestamp = Date.now();
+      formData.append("timestamp", message.timestamp);
+      sendMessage(formData, messageContainer, Boolean(message.file));
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const btn = target.closest(".expand-btn");
   if (btn || target.matches("img, video")) {
@@ -861,6 +1009,75 @@ const handleMessagesContainerClick = (e) => {
   if (playbackRate) {
     handleplaybackRate(playbackRate);
   }
+};
+
+const onAudioEnd = (progressBar, audioElement, playIcon, timeSpan) => {
+  audioElement.currentTime = 0;
+  updateAudioProgress(progressBar, audioElement, timeSpan);
+  playIcon.className = playIcon.className.replace("pause", "play");
+};
+
+const updateAudioProgress = (progressBar, audioElement, timeSpan) => {
+  const progress = (audioElement.currentTime / audioElement.duration) * 100;
+  progressBar.style.width = `${progress}%`;
+
+  timeSpan.textContent = formatTime(
+    audioElement.duration - audioElement.currentTime
+  );
+};
+
+const formatTime = (seconds) => {
+  const hours = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${hours >= 1 ? hours + ":" : ""}${mins}:${secs
+    .toString()
+    .padStart(2, "0")}`;
+};
+
+const getAudioElements = (audioEl) => {
+  const playerEl = audioEl.closest(".audio-player");
+  if (!playerEl) return null;
+  const progressBar = playerEl.querySelector(".progress-bar");
+  const timeSpan = playerEl.querySelector(".time");
+  const playIcon = playerEl.querySelector(".play-btn i");
+  return {
+    progressBar,
+    timeSpan,
+    playIcon,
+  };
+};
+
+export const handleLoadedMetadataCapture = (e) => {
+  if (e.target.tagName !== "AUDIO") return;
+  const audioElement = e.target;
+  const audioElements = getAudioElements(audioElement);
+  if (!audioElements) return;
+  const { timeSpan } = audioElements;
+  if (timeSpan) {
+    timeSpan.textContent = formatTime(audioElement.duration);
+  }
+};
+
+export const handleEndedCapture = (e) => {
+  if (e.target.tagName !== "AUDIO") return;
+  const audioElement = e.target;
+  const audioElements = getAudioElements(audioElement);
+  if (!audioElements) return;
+  const { progressBar, timeSpan, playIcon } = audioElements;
+  if (progressBar && playIcon && timeSpan) {
+    onAudioEnd(progressBar, audioElement, playIcon, timeSpan);
+  }
+};
+
+export const handleTimeUpdateCapture = (e) => {
+  if (e.target.tagName !== "AUDIO") return;
+  const audioElement = e.target;
+  const audioElements = getAudioElements(audioElement);
+  if (!audioElements) return;
+  const { progressBar, timeSpan } = audioElements;
+  if (progressBar && timeSpan)
+    updateAudioProgress(progressBar, audioElement, timeSpan);
 };
 
 const handleplaybackRate = (playbackRate) => {
@@ -944,8 +1161,211 @@ const handleDragLeave = (e) => {
   }
 };
 
-export const iniChatMessageInput = (groupId = "", sessionId = "") => {
+const openChatStream = (groupId, sessionId, lastMessageId) => {
+  const route = `/api/chat-stream?sessionId=${sessionId}&groupId=${groupId}&lastMessageId=${lastMessageId}`;
+  const eventSource = new EventSource(route, {
+    withCredentials: true,
+  });
+
+  eventSource.addEventListener("message", (e) => {
+    const message = JSON.parse(e.data);
+    const file = message.content.text
+      ? null
+      : {
+          URL: message.content.filePath,
+          name: message.content.fileName,
+          size: message.content.fileSize,
+          type: message.content.fileType,
+        };
+
+    new ChatMessage(
+      message.content.text,
+      file ? [file] : [],
+      message.sender.id,
+      message.timestamp,
+      messagesContainer,
+      {
+        messageId: message.id,
+        avatarSrc: message.sender.photoURL,
+        senderName: message.sender.fullName,
+      }
+    ).renderMessage();
+  });
+
+  eventSource.addEventListener("error", (e) => {
+    console.error("SSE error", e);
+  });
+
+  return eventSource;
+};
+
+const createChatFrag = async (messages) => {
+  try {
+    let unsentMessages = await getMessagesByTimeRange(
+      messages[0].timestamp,
+      messagesContainer.children.length <= 1
+        ? Date.now()
+        : messages[messages.length - 1].timestamp
+    );
+    unsentMessages = unsentMessages.filter((unSentMsg) => {
+      return !messages.some((msg) => {
+        const isAlreadyExists = msg.localId === unSentMsg.localId;
+        if (isAlreadyExists && msg.content.filePath === "") {
+          msg.content.file = unSentMsg.content.file;
+        } else if (
+          isAlreadyExists &&
+          (msg.content.filePath || msg.content.text)
+        ) {
+          removeMsgFromIndexedDB(unSentMsg.localId);
+        }
+        return isAlreadyExists;
+      });
+    }); // remove duplicates
+    if (unsentMessages.length) messages = messages.concat(unsentMessages);
+
+    messages.sort((a, b) => a.timestamp - b.timestamp);
+
+    const tempContainer = document.createElement("div");
+    messages.forEach((message) => {
+      const file = message.content.text
+        ? null
+        : message.content.file
+        ? message.content.file
+        : {
+            URL: message.content.filePath,
+            name: message.content.fileName,
+            size: message.content.fileSize,
+            type: message.content.fileType,
+          };
+
+      new ChatMessage(
+        message.content.text,
+        file ? [file] : [],
+        message.sender.id,
+        message.timestamp,
+        tempContainer,
+        {
+          isSender: message.isSender,
+          avatarSrc: message.sender.photoURL || "",
+          senderName: message.sender.fullName || "Unknown User",
+          localId: message.isSender ? message.localId : "",
+          messageId: message.id || "",
+          isLocalMsg: message.isLocalMsg || false,
+        }
+      ).renderMessage();
+    });
+
+    const fragment = document.createDocumentFragment();
+    fragment.append(...tempContainer.children);
+    return fragment;
+  } catch (error) {
+    console.error(error);
+    return document.createDocumentFragment();
+  }
+};
+
+const getMessageLoader = () => {
+  const loaderWrapper = document.createElement("div");
+  loaderWrapper.className = "loading-card";
+  loaderWrapper.innerHTML = `<div style="display: flex; flex-direction: column">
+  <div class="message-sent">
+    <div class="avatar loading-opacity-animation"></div>
+
+    <div class="messages">
+      <div class="first-message-sent-text loading-animation">
+        <p class="loading-opacity-animation" style="width: 5rem"></p>
+
+        <span
+          class="message-info loading-opacity-animation"
+          style="width: 2rem"
+        ></span>
+      </div>
+    </div>
+  </div>
+  <div class="message-received">
+    <div class="avatar loading-opacity-animation"></div>
+
+    <div class="messages">
+      <div class="first-message-received-text loading-animation">
+        <span
+          class="username loading-opacity-animation"
+          style="width: 60%"
+        ></span>
+
+        <div class="media-message message-media-preview">
+          <div
+            class="media-div loading-opacity-animation"
+            style="width: 100%; height: auto; aspect-ratio: 16/9"
+          ></div>
+
+          <button
+            type="button"
+            class="expand-btn loading-opacity-animation"
+            style="width: 2rem"
+          ></button>
+          <a
+            class="download-btn button loading-opacity-animation"
+            style="width: 2rem"
+          ></a>
+        </div>
+
+        <span
+          class="message-info loading-opacity-animation"
+          style="width: 10%"
+        ></span>
+      </div>
+
+      <div class="message-received-text card-item">
+        <p class="loading-opacity-animation" style="width: 5rem"></p>
+        <span
+          class="message-info loading-opacity-animation"
+          style="width: 2rem"
+        ></span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+  return loaderWrapper;
+};
+
+const initChatLoader = (groupId, sessionId) => {
+  let isFirstLoad = true;
+  const loader = new Loader(
+    messagesContainer,
+    createChatFrag,
+    `/messages?sessionId=${sessionId}&groupId=${groupId}&`,
+    getMessageLoader(),
+    {
+      loadersCount: 1,
+      append: false,
+      afterAppendRes: (data) => {
+        const targetScroll =
+          messagesContainer.scrollHeight - data.initialHeight;
+        messagesContainer.scroll({
+          top: targetScroll,
+          behavior: "instant",
+        });
+        if (isFirstLoad) {
+          const lastMessageIndex = data.cards[0].length - 1;
+          const lastMessageId = data.cards[0]
+            ? data.cards[0][lastMessageIndex].id
+            : "";
+          openChatStream(groupId, sessionId, lastMessageId);
+          isFirstLoad = false;
+        }
+      },
+    }
+  ).reset();
+  return loader;
+};
+
+export const iniChat = (groupId = "", sessionId = "") => {
   initDOMVariables();
+
+  initChatLoader(groupId, sessionId);
+
+  scrollToBottom(messagesContainer);
 
   chatContainer.addEventListener("dragenter", handleDragEnter);
 
@@ -970,6 +1390,20 @@ export const iniChatMessageInput = (groupId = "", sessionId = "") => {
   });
 
   messagesContainer.addEventListener("click", handleMessagesContainerClick);
+
+  messagesContainer.addEventListener(
+    "loadedmetadata",
+    handleLoadedMetadataCapture,
+    true
+  );
+
+  messagesContainer.addEventListener("ended", handleEndedCapture, true);
+
+  messagesContainer.addEventListener(
+    "timeupdate",
+    handleTimeUpdateCapture,
+    true
+  );
 
   initializeEmojiPicker(emojiList);
 

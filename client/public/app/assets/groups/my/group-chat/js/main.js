@@ -1,6 +1,6 @@
 import { showMessageBlock } from "../../../../../../main_assets/js/utils.js";
 import { openOverlayModal } from "../../../../global/js/utils.js";
-import { iniChatMessageInput } from "../../../../shared/chat/js/utils.js";
+import { iniChat } from "../../../../shared/chat/js/utils.js";
 import {
   endSession,
   joinSession,
@@ -47,7 +47,7 @@ export const init = (virtual = false) => {
   }
   initDomVariables();
 
-  iniChatMessageInput(getGroupId());
+  iniChat(getGroupId());
 
   showInfoBtn.addEventListener("click", handleShowInfoBtnClick);
 

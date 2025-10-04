@@ -14,6 +14,9 @@ import {
   sendData,
 } from "../../main_assets/js/utils.js";
 
+const SUCCESS_SIGN_UP_MESSAGE = "Account created successfully, redirecting...";
+const SUCCESS_SIGN_IN_MESSAGE = "Signed in successfully, redirecting...";
+
 const googleProvider = new GoogleAuthProvider();
 const fbProvider = new FacebookAuthProvider();
 
@@ -51,7 +54,7 @@ const handleUserSignUp = async (auth, user) => {
 const signInWhithProvider = async function (auth, provider, callback) {
   const userCredential = await signInWithPopup(auth, provider);
   const user = userCredential.user;
-  callback("Signed in successfully", "success");
+  callback(SUCCESS_SIGN_IN_MESSAGE, "success");
   await handleUserSignUp(auth, user);
 };
 
@@ -68,7 +71,7 @@ const InitializeGoogleOneTap = function (auth, callback) {
       // Convert Google credential to Firebase credential
       const credential = GoogleAuthProvider.credential(response.credential);
       const userCredential = await signInWithCredential(auth, credential);
-      callback("Signed in successfully", "success");
+      callback(SUCCESS_SIGN_IN_MESSAGE, "success");
       const user = userCredential.user;
       await handleUserSignUp(auth, user);
     } catch (error) {
@@ -145,7 +148,7 @@ const createAuserWithEmailAndPassword = async function (
       email,
       password
     );
-    callback("Account created! Welcome aboard.", "success");
+    callback(SUCCESS_SIGN_UP_MESSAGE, "success");
     const user = userCredential.user;
     await updateProfile(user, {
       displayName: fullName,
@@ -176,7 +179,7 @@ const signInAuserWithEmailAndPassword = async function (
 ) {
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    callback("Signed in successfully", "success");
+    callback(SUCCESS_SIGN_IN_MESSAGE, "success");
     await sendIdToken(auth, "/login");
     // Log out the user In the frontend to avoid persistence
     signOut(auth);

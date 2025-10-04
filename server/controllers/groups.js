@@ -31,7 +31,6 @@ const {
 const getUserGroupsHandler = async (req, res) => {
   const { lastVisible, count, level, visibility, searchTerm, sort, role } =
     req.query;
-  console.log("Query Parameters:", req.query);
 
   const creteria = {
     level: level ? level.split(",") : [],

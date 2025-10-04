@@ -1,3 +1,4 @@
+const { getMessages } = require("./firebase-utils/chat");
 const { getJoinedGroups } = require("./firebase-utils/group");
 const {
   getCurrentSessionInfo,
@@ -80,10 +81,19 @@ const getActiveSessions = async (userId) => {
 
 const fetchHomeData = async (userId) => {
   const session = await getCurrentSessionInfo(userId); // or null
+
   if (session) {
+    const result = await getMessages(session.id, session.groupId, userId);
     return {
       pathName: pathNames.home.active,
-      payload: { templateContext: { session } },
+      payload: {
+        templateContext: {
+          session,
+          messages: result.success ? result.messages : [],
+          lastVisible: result.success ? result.lastVisible : null,
+          formatHoursMinutes,
+        },
+      },
     };
   }
 

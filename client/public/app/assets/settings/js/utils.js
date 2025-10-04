@@ -1,14 +1,12 @@
 import { redirectTo } from "../../../../main_assets/js/utils.js";
 import {
   emailRegex,
+  MAX_AVATAR_SIZE,
   passwordRegex,
+  PROFILE_ALLOWED_TYPES,
   userNameRegex,
 } from "../../../../main_assets/js/variables.js";
-import {
-  avatarMaxSize,
-  globalTooltip,
-  profileAllowedFileTypes,
-} from "../../global/js/dom-variables.js";
+import { globalTooltip } from "../../global/js/variables.js";
 import {
   handleApiAction,
   resetTooltip,
@@ -30,6 +28,7 @@ import {
   passwordDeleteInput,
   deleteAccountConfirmation,
   emailInput,
+  avatarContainer,
 } from "./dom-variables.js";
 
 const oldValues = {
@@ -56,6 +55,7 @@ export const initOldValues = () => {
   oldValues.fullName = fullNameInput.value.trim();
   oldValues.email = emailInput.value.trim();
   oldValues.password = currentPasswordInput?.value; // only at submit
+  oldValues.avatar = avatarContainer.querySelector("img").src;
 };
 
 export const handlEyeIconsClick = (eyeIcon) => {
@@ -83,9 +83,13 @@ export const enableProfileEditMode = (profileModifyBtn, e) => {
       `;
   profileModifyBtn.before(cancelBtn);
   toSubmitBtn(profileModifyBtn);
-  cancelBtn.addEventListener("click", (e) =>
-    disableProfileMode(profileModifyBtn)
-  );
+  cancelBtn.addEventListener("click", (e) => {
+    disableProfileMode(profileModifyBtn);
+    fullNameInput.value = oldValues.fullName;
+    avatarInput.value = "";
+    avatarContainer.querySelector("img").src = oldValues.avatar;
+    avatarContainer.querySelector(".error").innerHTML = "";
+  });
 };
 
 const disableProfileMode = (profileSaveBtn) => {
@@ -125,16 +129,16 @@ const checkValidation = () => {
     resetTooltip(globalTooltip, fullNameInput.closest(".field-container"));
   }
 
-  if (avatarFile && !profileAllowedFileTypes.includes(avatarFile.type)) {
+  if (avatarFile && !PROFILE_ALLOWED_TYPES.includes(avatarFile.type)) {
     showErrorTooltip(
       "Invalid file type. Allowed types: JPEG, PNG, GIF, WEBP.",
       avatarInput,
       "avatar"
     );
     return false;
-  } else if (avatarFile && avatarFile.size > avatarMaxSize) {
+  } else if (avatarFile && avatarFile.size > MAX_AVATAR_SIZE) {
     showErrorTooltip(
-      `File size exceeds ${avatarMaxSize / (1024 * 1024)} MB.`,
+      `File size exceeds ${MAX_AVATAR_SIZE / (1024 * 1024)} MB.`,
       avatarInput,
       "avatar"
     );
@@ -185,9 +189,10 @@ const enableEmailEditMode = (emailModifyBtn, e) => {
       `;
   emailModifyBtn.before(cancelBtn);
   toSubmitBtn(emailModifyBtn);
-  cancelBtn.addEventListener("click", (e) =>
-    disableEmailEditMode(emailModifyBtn)
-  );
+  cancelBtn.addEventListener("click", (e) => {
+    disableEmailEditMode(emailModifyBtn);
+    emailInput.value = oldValues.email;
+  });
   emailInput.focus();
 };
 

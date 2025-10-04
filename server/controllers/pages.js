@@ -28,7 +28,7 @@ const handleRoutes = async (req, res) => {
 
 const handleGroupChatRoute = async (req, res) => {
   const result = await getGroupChatContext(req.user.uid, req.params.groupId); // Replace with actual logic to get group chat context
-
+  
   if (!result.success) {
     return res.status(result.statusCode).json({
       message: result.message || "Failed to load group chat",

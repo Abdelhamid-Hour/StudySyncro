@@ -3,7 +3,7 @@
   class="main-content groups-list fade-in-template"
 >
   <% cards.forEach(group => { %>
-  <div class="group-card route-link" data-id="<%= group.id %>">
+  <div class="group-card route-link card-item" data-id="<%= group.id %>">
     <header>
       <span
         class="badge <%= group.visibility.charAt(0).toLowerCase() + group.visibility.slice(1) _%>-badge"

@@ -11,7 +11,7 @@ import {
   MIN_MEMBERS,
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
-} from "../../../global/js/dom-variables.js";
+} from "../../../global/js/variables.js";
 import {
   openOverlayModal,
   resetTooltip,
@@ -163,7 +163,7 @@ const chechGroupValues = (inputs) => {
       groupName
     );
     return false;
-  } else { 
+  } else {
     resetTooltip(globalTooltip, groupName.closest(".field-container"));
   }
 
@@ -179,7 +179,7 @@ const chechGroupValues = (inputs) => {
       description
     );
     return false;
-  } else { 
+  } else {
     resetTooltip(globalTooltip, description.closest(".field-container"));
   }
 

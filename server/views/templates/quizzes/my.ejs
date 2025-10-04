@@ -3,7 +3,7 @@
   class="quizzes-list fade-in-template"
 >
   <% cards.forEach(function(quiz) { %>
-  <div data-quiz-id="<%= quiz.id %>" class="quiz-card">
+  <div data-quiz-id="<%= quiz.id %>" class="quiz-card card-item">
     <header class="quiz-card-header">
       <% if (quiz.status === "draft") { %>
       <span
