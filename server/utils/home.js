@@ -75,8 +75,7 @@ const getSessionDetails = async (sessionId) => {
 
 const getActiveSessions = async (userId) => {
   // TODO: Fetch active sessions from the database
-  const sessions = await fetchActiveSessions(userId);
-  return sessions;
+  return await fetchActiveSessions(userId);
 };
 
 const fetchHomeData = async (userId) => {
@@ -97,11 +96,11 @@ const fetchHomeData = async (userId) => {
     };
   }
 
-  const availableSessions = await getActiveSessions(userId);
+  const result = await getActiveSessions(userId);
 
   return {
     pathName: pathNames.home.inactive,
-    payload: { templateContext: { availableSessions } },
+    payload: { templateContext: { availableSessions: result.sessions } },
   };
 };
 

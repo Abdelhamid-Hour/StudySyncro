@@ -25,7 +25,7 @@ const sendMessage = async (
       throw new Error("You Are Unauthorized to send message to this group");
     }
 
-    if (sessionId && !user.currentSession !== sessionId) {
+    if (sessionId && user.currentSession !== sessionId) {
       throw new Error("You Are Unauthorized to send message to this session");
     }
 

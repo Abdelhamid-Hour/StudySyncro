@@ -114,6 +114,8 @@ const getQuizzesListHandler = async (req, res) => {
     searchTerm
   );
 
+  console.log("result in get quizzes list handler: ", result);
+
   return res.status(200).json({
     ...result,
   });

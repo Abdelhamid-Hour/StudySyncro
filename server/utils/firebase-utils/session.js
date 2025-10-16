@@ -21,17 +21,14 @@ const createGroupSession = async (sessionData, userId) => {
         message: "Group ID is required",
       };
 
+    if (!tasks || tasks.length === 0)
+      return {
+        success: false,
+        message: "At least one task is required to create a session",
+      };
+
     const groupRef = db.collection("groups").doc(groupId);
     const groupSnap = await groupRef.get();
-    if (groupSnap.exists) {
-      const groupData = groupSnap.data();
-      if (groupData.creator !== userId) {
-        return {
-          success: false,
-          message: "You are not the creator of this group",
-        };
-      }
-    }
 
     if (!groupSnap.exists) {
       return {
@@ -39,6 +36,14 @@ const createGroupSession = async (sessionData, userId) => {
         message: "Group does not exist",
       };
     }
+
+    const groupData = groupSnap.data();
+
+    if (groupData.creator !== userId)
+      return {
+        success: false,
+        message: "You are not the creator of this group",
+      };
 
     let quizId = "";
 
@@ -80,6 +85,9 @@ const createGroupSession = async (sessionData, userId) => {
       duration: duration || 0,
       startDate: new Date().toISOString(),
       groupId: groupId || "",
+      groupName: groupSnap.data().name || "",
+      tasksCount: tasks.length || 0,
+      joinedUsers: [],
       quizId: quizId,
       status: "active",
     };
@@ -87,11 +95,18 @@ const createGroupSession = async (sessionData, userId) => {
     const sessionRef = db.collection("sessions");
     const docRef = await sessionRef.add(newSessionData);
     const newSessionId = docRef.id;
-    if(quizId){
-      const quizQuestionsSnap = await db.collection("quizzes").doc(quizId).collection("questions").get();
+    if (quizId) {
+      const quizQuestionsSnap = await db
+        .collection("quizzes")
+        .doc(quizId)
+        .collection("questions")
+        .get();
       const batch = db.batch();
       quizQuestionsSnap.docs.forEach((question) => {
-        const destRef = sessionRef.doc(newSessionId).collection("quizQuestions").doc(question.id);
+        const destRef = sessionRef
+          .doc(newSessionId)
+          .collection("quizQuestions")
+          .doc(question.id);
         batch.set(destRef, question.data());
       });
       await batch.commit();
@@ -106,24 +121,22 @@ const createGroupSession = async (sessionData, userId) => {
       currentSession: newSessionId,
     });
 
-    if (tasks && tasks.length > 0) {
-      const taskRef = db.collection("tasks");
-      const taskPromises = tasks.map((task, index) => {
-        const taskDocData = {
-          title: task.title || "",
-          durationInMins: task.durationInMins || 0,
-          isBreak: task.isBreak || false,
-          isQuiz: task.isQuiz || false,
-          description: task.description || "",
-          groupId: groupId || "",
-          sessionId: newSessionId,
-          index: index + 1,
-          status: "pending",
-        };
-        return taskRef.add(taskDocData);
-      });
-      await Promise.all(taskPromises);
-    }
+    const taskRef = db.collection("tasks");
+    const taskPromises = tasks.map((task, index) => {
+      const taskDocData = {
+        title: task.title || "",
+        durationInMins: task.durationInMins || 0,
+        isBreak: task.isBreak || false,
+        isQuiz: task.isQuiz || false,
+        description: task.description || "",
+        groupId: groupId || "",
+        sessionId: newSessionId,
+        index: index + 1,
+        status: "pending",
+      };
+      return taskRef.add(taskDocData);
+    });
+    await Promise.all(taskPromises);
 
     return {
       success: true,
@@ -328,7 +341,12 @@ const getCurrentSessionInfo = async (userId) => {
 
     let quizObj = null;
     if (session.quizId) {
-      const result = await getQuizResult("self", session.quizId, session.groupId, userId);
+      const result = await getQuizResult(
+        "self",
+        session.quizId,
+        session.groupId,
+        userId
+      );
       const quizSubmittedCount = result.success
         ? result.quizResult.submittedCount
         : 0;
@@ -372,108 +390,70 @@ const getCurrentSessionInfo = async (userId) => {
   }
 };
 
-const fetchActiveSessions = async (userId) => {
+const formatSessions = (sessions) => {
+  return sessions.map((session) => {
+    const startTime = session.data().startDate;
+    const endTime =
+      new Date(startTime).getTime() + session.data().duration * 60 * 1000;
+
+    return {
+      ...session.data(),
+      UID: session.id,
+      startTime: formatHoursMinutes(startTime),
+      endTime: formatHoursMinutes(endTime),
+      duration: millisecondsToHMFormat(session.data().duration * 60 * 1000),
+      joinedCount: session.data().userIds ? session.data().userIds.length : 0,
+    };
+  });
+};
+
+const fetchActiveSessions = async (userId, count = 20, lastVisible = null) => {
   try {
-    const groupRef = db.collection("groups");
     const sessionRef = db.collection("sessions");
-    const taskRef = db.collection("tasks");
     const userSnap = await db.collection("users").doc(userId).get();
 
-    const joinedGroupsIds = userSnap.data().joinedGroupsIds || [];
+    const joinedGroupsIds = userSnap.data()?.joinedGroupsIds || [];
 
-    if (joinedGroupsIds.length === 0) {
-      return [];
-    }
+    if (joinedGroupsIds.length === 0) return [];
 
-    const userGroupsSnapshot = await groupRef
-      .where(FieldPath.documentId(), "in", joinedGroupsIds)
-      .get();
+    let sessions = [];
 
-    if (userGroupsSnapshot.empty) {
-      console.log(`User ${userId} is not a member of any groups.`);
-      return [];
-    }
+    // Paginate group fetching
+    do {
+      let query = sessionRef
+        .where("groupId", "in", joinedGroupsIds)
+        .where("status", "==", "active")
+        .limit(count);
 
-    const groupNamesMap = new Map();
-    userGroupsSnapshot.forEach((groupDoc) => {
-      const groupData = groupDoc.data();
-      groupNamesMap.set(groupDoc.id, groupData.name);
-    });
-
-    const sessionIdsToFetch = new Set();
-    userGroupsSnapshot.forEach((groupDoc) => {
-      const groupData = groupDoc.data();
-      if (groupData.currentSession && groupData.currentSession !== "") {
-        sessionIdsToFetch.add(groupData.currentSession);
-      }
-    });
-
-    if (sessionIdsToFetch.size === 0) {
-      return [];
-    }
-
-    const sessionIDsArray = Array.from(sessionIdsToFetch);
-
-    const [sessionSnapshots, taskQuerySnapshots] = await Promise.all([
-      Promise.all(
-        sessionIDsArray.map((sessionId) => sessionRef.doc(sessionId).get())
-      ),
-      Promise.all(
-        sessionIDsArray.map((sessionId) =>
-          taskRef.where("sessionId", "==", sessionId).get()
-        )
-      ),
-    ]);
-
-    const activeSessionsData = sessionSnapshots
-      .filter((sessionSnap) => sessionSnap.exists)
-      .map((sessionSnap) => ({
-        id: sessionSnap.id,
-        ...sessionSnap.data(),
-      }));
-
-    const tasksBySessionId = new Map();
-    taskQuerySnapshots.forEach((querySnap) => {
-      querySnap.forEach((taskDoc) => {
-        const taskData = taskDoc.data();
-        if (taskData.sessionId) {
-          if (!tasksBySessionId.has(taskData.sessionId)) {
-            tasksBySessionId.set(taskData.sessionId, []);
-          }
-          tasksBySessionId
-            .get(taskData.sessionId)
-            .push({ id: taskDoc.id, ...taskData });
+      if (lastVisible) {
+        const lastVisibleDoc = await sessionRef.doc(lastVisible).get();
+        if (lastVisibleDoc.exists) {
+          query = query.startAfter(lastVisibleDoc);
+        } else {
+          lastVisible = null;
+          break;
         }
-      });
-    });
+      }
 
-    const formattedSessions = activeSessionsData.map((session) => {
-      const startTime = session.startDate;
-      const endTime =
-        new Date(startTime).getTime() + session.duration * 60 * 1000;
+      const sessionSnaps = await query.get();
+      if (sessionSnaps.empty) {
+        lastVisible = null;
+        break;
+      }
 
-      console.log("End TIme: ", endTime, "Start Time: ", startTime);
+      sessions = sessions
+        .concat(formatSessions(sessionSnaps.docs))
+        .slice(0, count);
 
-      const groupName = groupNamesMap.get(session.groupId) || "Unknown Group";
-      const sessionTasks = tasksBySessionId.get(session.id) || [];
+      // Save lastVisible for next loop
+      lastVisible =
+        sessions.length === count ? sessions[sessions.length - 1].id : null;
+    } while (sessions.length < count && lastVisible);
 
-      return {
-        UID: session.id,
-        name: session.name || "",
-        groupName: groupName,
-        description: session.description || "",
-        startTime: formatHoursMinutes(startTime),
-        endTime: formatHoursMinutes(endTime),
-        duration: millisecondsToHMFormat(session.duration * 60 * 1000),
-        joinedCount: session.userIds ? session.userIds.length : 0,
-        tasksCount: sessionTasks.length,
-      };
-    });
-
-    return formattedSessions;
+    return { success: true, sessions, lastVisible };
   } catch (error) {
-    console.error("Error getting active sessions:", error);
-    return [];
+    console.error("Error fetching active sessions:", error);
+    return { success: false, sessions: [] };
   }
 };
 

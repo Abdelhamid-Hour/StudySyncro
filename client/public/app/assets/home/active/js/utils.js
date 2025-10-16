@@ -522,7 +522,11 @@ export class Session {
       (nextTask ? "" : " (Last Task)");
     this.timerEls.activeTaskTitle.textContent = activeTask.title;
 
-    if (!nextTask) return this.timerEls.nextTaskContainer.remove();
+    if (!nextTask) {
+      if (this.timerEls.nextTaskContainer)
+        this.timerEls.nextTaskContainer.remove();
+      return;
+    }
 
     this.timerEls.nextTaskLabel.textContent =
       "Next " +

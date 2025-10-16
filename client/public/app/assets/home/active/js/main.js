@@ -9,7 +9,7 @@ import { iniChat } from "../../../shared/chat/js/utils.js";
 import { throttling } from "../../../../../main_assets/js/utils.js";
 import { endSession, leaveSession } from "../../../shared/session/js/utils.js";
 
-export const init = throttling(2000, () => {
+export const init = throttling(2000, async () => {
   initDomVariables();
 
   expandDescriptionBtn.addEventListener("click", expandAndShrinkDescription);
@@ -27,7 +27,9 @@ export const init = throttling(2000, () => {
 
   handletTasksListners("completed-tasks", "ongoing-tasks");
 
-  startSession();
+  await startSession();
+
+  console.log(Session.groupId, Session.id);
 
   iniChat(Session.groupId, Session.id);
 });

@@ -3,8 +3,7 @@ const { db } = require("../../firebase/firebaseAdmin");
 const { getFormattedMembers, addMember } = require("./members");
 const { getGroupById, refillSampleMembersIfNeeded } = require("./shared");
 const { sendRequest } = require("./demandes");
-const { toReadableDate, formatHoursMinutes } = require("../global");
-const { getMessages } = require("./chat");
+const { toReadableDate } = require("../global");
 const { INITIALE_LOADERS_COUNT } = require("../global");
 
 const createGroup = async (groupdData, userData) => {
@@ -70,16 +69,90 @@ const createGroup = async (groupdData, userData) => {
   }
 };
 
-const getFormatedGroups = (groups, userId) =>
-  groups.map(({ membersCount, sampleMembers = [], creator, ...rest }) => ({
-    ...rest,
-    avatars: sampleMembers.map(({ photoURL, fullName }) => ({
-      photoURL,
-      fullName,
-    })),
-    isHost: creator === userId,
-    extraMembersCount: membersCount - 2,
-  }));
+const getFormatedGroups = (groups, userId, requestedGroupsIds) =>
+  groups.map(({ membersCount, sampleMembers = [], creator, id, ...rest }) => {
+    const group = {
+      ...rest,
+      id,
+      avatars: sampleMembers.map(({ photoURL, fullName }) => ({
+        photoURL,
+        fullName,
+      })),
+      isHost: creator === userId,
+      extraMembersCount: membersCount - 2,
+    };
+    if (group.visibility === "Private" && requestedGroupsIds) {
+      group.isRequested = requestedGroupsIds.includes(id);
+    }
+    if (group.name === "Private Group") console.log(group, requestedGroupsIds);
+
+    return group;
+  });
+
+const filterGroups = (
+  userId,
+  criteria,
+  groups,
+  availableGroups,
+  joinedGroupsIds
+) => {
+  return groups.filter((g) => {
+    const canBeVisible =
+      joinedGroupsIds && availableGroups
+        ? g.creator !== userId &&
+          !joinedGroupsIds.includes(g.id) &&
+          g.showInSearch === true
+        : true;
+
+    const matchLevel =
+      criteria.level?.length === 0 || criteria.level?.includes(g.level);
+
+    const matchVisibility =
+      criteria.visibility?.length === 0 ||
+      criteria.visibility?.includes(g.visibility);
+
+    let matchShowInSearch = true;
+
+    if (availableGroups) matchShowInSearch = g.showInSearch; // Default to true if undefined
+
+    let matchJoinable = true;
+
+    if (criteria.joinableOnly) {
+      matchJoinable = (g.maxMembers || Infinity) > (g.members?.length || 0);
+    }
+
+    let matchRole = true;
+
+    if (!availableGroups) {
+      matchRole =
+        criteria.role?.length === 0 ||
+        (criteria.role?.includes("admin") && userId === g.creator) ||
+        (criteria.role?.includes("member") &&
+          userSnap.data().joinedGroupsIds?.includes(g.id) &&
+          userId != g.creator);
+    }
+
+    let matchSearch = true;
+    const searchTerm = criteria.searchTerm?.trim().toLowerCase() || "";
+
+    if (searchTerm) {
+      matchSearch =
+        g.subject?.toLowerCase().includes(searchTerm) ||
+        g.name?.toLowerCase().includes(searchTerm);
+    }
+
+    const result =
+      canBeVisible &&
+      matchLevel &&
+      matchVisibility &&
+      matchShowInSearch &&
+      matchJoinable &&
+      matchSearch &&
+      matchRole;
+
+    return result;
+  });
+};
 
 const getAvailableGroups = async (
   userId,
@@ -96,9 +169,12 @@ const getAvailableGroups = async (
 ) => {
   try {
     let availableGroups = [];
-    const joinedGroupsIds =
-      (await db.collection("users").doc(userId).get()).data().joinedGroupsIds ||
-      [];
+    const userRef = db.collection("users").doc(userId);
+    const requestedGroupsSnap = await userRef.collection("sentRequests").get();
+    const requestedGroupsIds = requestedGroupsSnap.docs
+      .filter((doc) => doc.data().status === "pending")
+      .map((doc) => doc.id);
+    const joinedGroupsIds = (await userRef.get()).data().joinedGroupsIds || [];
     do {
       const batchSize = Number(limit) * 10;
       let query = db
@@ -129,17 +205,13 @@ const getAvailableGroups = async (
       }));
 
       // safe filter: guard membersUids and use strict equality
-      const visibleGroups = groups.filter((group) => {
-        return (
-          group.creator !== userId &&
-          !joinedGroupsIds.includes(group.id) &&
-          group.showInSearch === true
-        );
-      });
 
       const remaining = limit - availableGroups.length;
       availableGroups = availableGroups.concat(
-        filterGroups(userId, criteria, visibleGroups, true).slice(0, remaining)
+        filterGroups(userId, criteria, groups, true, joinedGroupsIds).slice(
+          0,
+          remaining
+        )
       );
 
       lastVisible =
@@ -149,7 +221,11 @@ const getAvailableGroups = async (
     } while (availableGroups.length < limit && lastVisible !== null);
 
     const groupsToReturn = availableGroups.slice(0, limit);
-    const finalCards = getFormatedGroups(groupsToReturn, userId);
+    const finalCards = getFormatedGroups(
+      groupsToReturn,
+      userId,
+      requestedGroupsIds
+    );
 
     // return id of last returned group if we filled the requested limit, else null
     const finalLastVisible =
@@ -250,57 +326,6 @@ const getJoinedGroups = async (
     console.error("Error in getJoinedGroups:", error);
     return { cards: [], lastVisible: null };
   }
-};
-
-const filterGroups = (userId, criteria, groups, availableGroups) => {
-  return groups.filter((g) => {
-    const matchLevel =
-      criteria.level?.length === 0 || criteria.level?.includes(g.level);
-
-    const matchVisibility =
-      criteria.visibility?.length === 0 ||
-      criteria.visibility?.includes(g.visibility);
-
-    let matchShowInSearch = true;
-
-    if (availableGroups) matchShowInSearch = g.showInSearch; // Default to true if undefined
-
-    let matchJoinable = true;
-
-    if (criteria.joinableOnly) {
-      matchJoinable = (g.maxMembers || Infinity) > (g.members?.length || 0);
-    }
-
-    let matchRole = true;
-
-    if (!availableGroups) {
-      matchRole =
-        criteria.role?.length === 0 ||
-        (criteria.role?.includes("admin") && userId === g.creator) ||
-        (criteria.role?.includes("member") &&
-          userSnap.data().joinedGroupsIds?.includes(g.id) &&
-          userId != g.creator);
-    }
-
-    let matchSearch = true;
-    const searchTerm = criteria.searchTerm?.trim().toLowerCase() || "";
-
-    if (searchTerm) {
-      matchSearch =
-        g.subject?.toLowerCase().includes(searchTerm) ||
-        g.name?.toLowerCase().includes(searchTerm);
-    }
-
-    const result =
-      matchLevel &&
-      matchVisibility &&
-      matchShowInSearch &&
-      matchJoinable &&
-      matchSearch &&
-      matchRole;
-
-    return result;
-  });
 };
 
 const leaveGroup = async (groupId, userId) => {
@@ -642,6 +667,15 @@ const getChatContext = async (userId, groupId) => {
         message: "Group Not Found",
       };
 
+    const sessionSnap = group.currentSession
+      ? await db.collection("sessions").doc(group.currentSession).get()
+      : null;
+
+    let joined = false;
+    if (sessionSnap && sessionSnap.exists) {
+      joined = sessionSnap.data().joinedUsers?.includes(userId);
+    }
+
     return {
       success: true,
       templateContext: {
@@ -649,6 +683,7 @@ const getChatContext = async (userId, groupId) => {
         isAdmin: group.creator === userId,
         sessionId: group.currentSession,
         isRequested: group.visibility === "Private" && group.showInSearch,
+        joined,
       },
     };
   } catch (error) {
@@ -660,6 +695,7 @@ const getChatContext = async (userId, groupId) => {
     };
   }
 };
+
 const joinGroup = async (groupId, userData) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);

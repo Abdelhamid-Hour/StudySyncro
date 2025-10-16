@@ -1347,8 +1347,10 @@ const initChatLoader = (groupId, sessionId) => {
           behavior: "instant",
         });
         if (isFirstLoad) {
-          const lastMessageIndex = data.cards[0].length - 1;
-          const lastMessageId = data.cards[0]
+          const lastMessageIndex = data.cards[0]
+            ? data.cards[0].length - 1
+            : null;
+          const lastMessageId = lastMessageIndex
             ? data.cards[0][lastMessageIndex].id
             : "";
           openChatStream(groupId, sessionId, lastMessageId);

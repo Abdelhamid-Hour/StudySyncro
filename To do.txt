@@ -35,6 +35,7 @@
 // make the firebase functions remove the finished sessions
 // add refresh btn to the inactive tabs (msgs and active sessions) or other update solution 
 // add a soft delete option
+// improve website operations with transactions
 
 - What you should do next : 
 

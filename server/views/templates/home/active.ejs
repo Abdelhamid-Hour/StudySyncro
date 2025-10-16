@@ -425,7 +425,7 @@
           <h2>Chat</h2>
         </div>
       </header>
-      <div data-last-visible="<%= lastVisible %>" data-last-message-id="<%= messages[messages.length - 1].id %>" class="chat-messages">
+      <div data-last-visible="<%= lastVisible %>" data-last-message-id="<%= messages[messages.length - 1]?.id || '' %>" class="chat-messages">
         <% if (messages && messages.length > 0) { %>
         
           <% messages.forEach((msg, index) => {

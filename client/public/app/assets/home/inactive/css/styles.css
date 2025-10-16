@@ -61,7 +61,7 @@
       position: relative;
       width: 100%;
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         background-color: rgba(128, 128, 128, 0.126);
         width: 100%;
@@ -233,6 +233,7 @@
 
 .session-view-overlay {
   max-width: 40rem;
+  min-width: 30rem;
   max-height: 80%;
   display: flex;
   flex-direction: column;
@@ -287,7 +288,7 @@
     background-color: var(--btn-background-color);
     border-radius: var(--primary-radius);
     gap: var(--primary-gap);
-    
+
     .quiz-info {
       display: flex;
       align-items: center;

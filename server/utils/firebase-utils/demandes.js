@@ -29,12 +29,14 @@ const sendRequest = async (groupId, userData) => {
     const isRequestSent = (
       await groupRef.collection("requests").doc(userData.uid).get()
     ).exists;
+
     if (isRequestSent)
       return { message: "You have already sent a request", success: false };
 
     const isAlreadyMember = (
       await groupRef.collection("members").doc(userData.uid).get()
     ).exists;
+
     if (isAlreadyMember)
       return {
         message: "You are already a member ",
@@ -47,16 +49,26 @@ const sendRequest = async (groupId, userData) => {
         message: "The Group Is Private and Not Visible",
       };
 
-    await groupRef
-      .collection("requests")
+    const demandeDate = new Date().toISOString();
+
+    await groupRef.collection("requests").doc(userData.uid).set({
+      uid: userData.uid,
+      fullName: userData.fullName,
+      email: userData.email,
+      photoURL: userData.photoURL,
+      demandeDate,
+    });
+
+    await db
+      .collection("users")
       .doc(userData.uid)
+      .collection("sentRequests")
+      .doc(groupRef.id)
       .set({
-        uid: userData.uid,
-        fullName: userData.fullName,
-        email: userData.email,
-        photoURL:
-          userData.photoURL,
-        demandeDate: new Date().toISOString(),
+        groupId: groupRef.id,
+        groupName: group.name,
+        status: "pending",
+        demandeDate,
       });
 
     return {
@@ -128,6 +140,10 @@ const acceptRequest = async (groupId, requestId, userId) => {
       joinedGroupsIds: FieldValue.arrayUnion(groupRef.id),
     });
     await requestToAcceptSnap.ref.delete();
+    await userRef
+      .collection("sentRequests")
+      .doc(groupRef.id)
+      .update({ status: "accepted" });
     await refillSampleMembersIfNeeded(groupRef);
 
     return { success: true, message: "Join request accepted successfully!" };
@@ -171,6 +187,14 @@ const rejectRequest = async (groupId, requestId, userId) => {
       return { success: false, message: "Join request not found." };
 
     await requestSnap.ref.delete();
+    await db
+      .collection("users")
+      .doc(requestId)
+      .collection("sentRequests")
+      .doc(groupRef.id)
+      .update({
+        status: "rejected",
+      });
 
     return {
       success: true,

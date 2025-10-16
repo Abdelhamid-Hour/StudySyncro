@@ -19,17 +19,17 @@
       </button>
       <h2 class="title">Real Time Chat</h2>
       <% if (sessionId) { %>
-      <% if (isAdmin) { %>
-        <button type="button" data-session-id="<%= sessionId %>" class="small-btn red-btn end-session">
-          <i class="bi bi-stop-circle"></i>
-          End Session
-        </button>
-      <% } else { %>
-        <button type="button" data-session-id="<%= sessionId %>" class="join-session small-btn blue-btn">
-          <i class="bi bi-box-arrow-in-right"></i>
-          Join Session
-        </button>
-      <% } %>
+        <% if (isAdmin) { %>
+          <button type="button" data-session-id="<%= sessionId %>" class="small-btn red-btn end-session">
+            <i class="bi bi-stop-circle"></i>
+            End Session
+          </button>
+        <% } else if (!joined) { %>
+          <button type="button" data-session-id="<%= sessionId %>" class="join-session small-btn blue-btn">
+            <i class="bi bi-box-arrow-in-right"></i>
+            Join Session
+          </button>
+        <% } %>
       <span
         class="session-active-badge badge circle-badge-1 green-badge has-tooltip"
         data-tooltip="Active Session"

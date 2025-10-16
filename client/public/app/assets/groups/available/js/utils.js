@@ -2,7 +2,11 @@ import {
   showMessageBlock,
   sendData,
 } from "../../../../../main_assets/js/utils.js";
-import { getLoader, showConfirmationBox } from "../../../global/js/utils.js";
+import {
+  getLoader,
+  handleApiAction,
+  showConfirmationBox,
+} from "../../../global/js/utils.js";
 
 export const handleJoinGroupClick = async (joinGroupBtn) => {
   joinGroupBtn.disabled = true;
@@ -23,24 +27,24 @@ export const handleJoinGroupClick = async (joinGroupBtn) => {
   const groupId = groupCard?.dataset.id;
   const groupName = groupCard.querySelector(".group-name").textContent;
   const groupFooter = groupCard.querySelector(".group-footer");
-
-  const loaderDiv = createLoaderDiv();
-  groupFooter.replaceChild(loaderDiv, joinGroupBtn);
-  try {
-    const { status } = await sendData("/api/join-group", { groupId });
-
-    const resultElement = getResultElement(status, groupId);
-    groupFooter.replaceChild(
-      document.createRange().createContextualFragment(resultElement),
-      loaderDiv
-    );
-    const successMessage = getSuccessMessage(status, groupName);
-    showMessageBlock(successMessage, "success");
-  } catch (error) {
-    console.error("Error joining group:", error);
-    showMessageBlock(error.message, "error");
-    groupFooter.replaceChild(joinGroupBtn, loaderDiv);
-  }
+  handleApiAction(
+    "/join-group",
+    {
+      groupId,
+    },
+    joinGroupBtn,
+    {
+      onSuccess: (data) => {
+        const successMessage = getSuccessMessage(data.status, groupName);
+        showMessageBlock(successMessage, "success");
+        const resultElement = getResultElement(data.status, groupId);
+        groupFooter.replaceChild(
+          document.createRange().createContextualFragment(resultElement),
+          joinGroupBtn
+        );
+      },
+    }
+  );
 };
 
 const createLoaderDiv = () => {

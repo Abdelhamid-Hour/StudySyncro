@@ -80,7 +80,7 @@ export const handleApiAction = async (
   data,
   btn,
   {
-    successMsg = "Operation successful",
+    successMsg,
     onSuccess = () => {},
     method = "POST",
     toOldBtn = true,
