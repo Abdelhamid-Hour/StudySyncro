@@ -58,7 +58,6 @@ const createNewUser = async (req, res) => {
     await userRef.set({
       ...userData,
       createdAt: new Date().toISOString(),
-      joinedGroupsIds: [],
     });
     return res.status(200).json({ message: "User data saved" });
   } catch (error) {

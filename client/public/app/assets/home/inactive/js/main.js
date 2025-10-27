@@ -1,6 +1,5 @@
 import { activeSessions, initDomVariables } from "./dom-variables.js";
-import { handleSessionBtns } from "./utils.js";
-
+import { handleSessionBtns, initSessionsLoader } from "./utils.js";
 
 let firstLoad = true;
 
@@ -12,8 +11,9 @@ export const init = (virtual = false) => {
 
   initDomVariables();
 
-  activeSessions.addEventListener('click', handleSessionBtns);
-  
+  activeSessions.addEventListener("click", handleSessionBtns);
+
+  initSessionsLoader();
 };
 
-init()
+init();

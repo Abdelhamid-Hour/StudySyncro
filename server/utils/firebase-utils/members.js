@@ -173,22 +173,16 @@ const addMember = async (groupRef, userId) => {
     }
 
     // Add user to group members
-    await groupRef
-      .collection("members")
-      .doc(userId)
-      .set({
-        uid: userId,
-        fullName: userData.fullName,
-        email: userData.email,
-        photoURL:
-          userData.photoURL,
-      });
+    await groupRef.collection("members").doc(userId).set({
+      uid: userId,
+      fullName: userData.fullName,
+      email: userData.email,
+      photoURL: userData.photoURL,
+    });
     await groupRef.update({
       membersCount: FieldValue.increment(1),
     });
-    await userRef.update({
-      joinedGroupsIds: FieldValue.arrayUnion(groupRef.id),
-    });
+    await userRef.collection("userGroupsIds").doc(groupRef.id).set({});
     await refillSampleMembersIfNeeded(groupRef);
 
     return true;
@@ -222,17 +216,16 @@ const kickMember = async (groupId, userId) => {
     await db
       .collection("users")
       .doc(userId)
-      .update({
-        joinedGroupsIds: FieldValue.arrayRemove(groupId),
-      });
+      .collection("userGroupsIds")
+      .doc(groupId)
+      .delete();
     await groupRef.update({
       membersCount: FieldValue.increment(-1),
       sampleMembers: FieldValue.arrayRemove({
         uid: userSnap.id,
         fullName: userSnap.data().fullName,
         email: userSnap.data().email,
-        photoURL:
-          userSnap.data().photoURL,
+        photoURL: userSnap.data().photoURL,
       }),
     });
 
@@ -252,7 +245,7 @@ const kickMember = async (groupId, userId) => {
   }
 };
 
-const getFilteredUsers = (search, users, groupId) => {
+const getFilteredUsers = (search, users, memberIds) => {
   if (!search) return users;
   const lowerCaseSearch = search.toLowerCase();
 
@@ -264,13 +257,17 @@ const getFilteredUsers = (search, users, groupId) => {
   return users.map((doc) => ({
     id: doc.id,
     fullName: doc.data().fullName || "N/A",
-    photoURL:
-      doc.data().photoURL,
-    isAlreadyMember: doc.data().joinedGroupsIds?.includes(groupId) || false,
+    photoURL: doc.data().photoURL,
+    isAlreadyMember: memberIds.includes(doc.id) || false,
   }));
 };
 
-const getUsers = async (search, count = INITIALE_LOADERS_COUNT, lastVisible, groupId) => {
+const getUsers = async (
+  search,
+  count = INITIALE_LOADERS_COUNT,
+  lastVisible,
+  groupId
+) => {
   // get user that its name and id match the search
   try {
     if (search) {
@@ -284,8 +281,7 @@ const getUsers = async (search, count = INITIALE_LOADERS_COUNT, lastVisible, gro
             {
               id: userById.id,
               fullName: data.fullName || "N/A",
-              photoURL:
-                data.photoURL,
+              photoURL: data.photoURL,
             },
           ],
           lastVisible: null,
@@ -293,6 +289,17 @@ const getUsers = async (search, count = INITIALE_LOADERS_COUNT, lastVisible, gro
       }
 
       let users = [];
+
+      const membersSnap = await db
+        .collection("groups")
+        .doc(groupId)
+        .collection("members")
+        .get();
+
+      const memberIds = membersSnap.empty
+        ? []
+        : membersSnap.docs.map((doc) => doc.id);
+
       do {
         let query = db
           .collection("users")
@@ -313,7 +320,7 @@ const getUsers = async (search, count = INITIALE_LOADERS_COUNT, lastVisible, gro
         }
         const usersSnapshot = await query.get();
         users = users.concat(
-          getFilteredUsers(search, usersSnapshot.docs, groupId).slice(
+          getFilteredUsers(search, usersSnapshot.docs, memberIds).slice(
             0,
             count - users.length
           )

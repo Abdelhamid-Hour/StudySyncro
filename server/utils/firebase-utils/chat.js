@@ -1,8 +1,8 @@
-const { rDb } = require("../../firebase/firebaseAdmin");
+const { rDb, db } = require("../../firebase/firebaseAdmin");
 const { INITIALE_LOADERS_COUNT } = require("../global");
 const { uploadFileToStorage } = require("./shared");
 
-const STREAM_MAP = new Map();
+const CHAT_STREAM_MAP = new Map();
 
 const FILE_STATUS = {
   UPLOADING: "uploading",
@@ -21,9 +21,15 @@ const sendMessage = async (
   user
 ) => {
   try {
-    if (!user.joinedGroupsIds.includes(groupId)) {
+    const joinedToGroup = await db
+      .collection("users")
+      .doc(user.uid)
+      .collection("userGroupsIds")
+      .doc(groupId)
+      .get();
+
+    if (!joinedToGroup.exists)
       throw new Error("You Are Unauthorized to send message to this group");
-    }
 
     if (sessionId && user.currentSession !== sessionId) {
       throw new Error("You Are Unauthorized to send message to this session");
@@ -187,7 +193,7 @@ const getMessages = async (
 };
 
 const roomStreamExists = (roomId) => {
-  return Array.from(STREAM_MAP.keys()).some((k) => k.startsWith(roomId));
+  return Array.from(CHAT_STREAM_MAP.keys()).some((k) => k.startsWith(roomId));
 };
 
 const startChildAddedListener = (
@@ -206,8 +212,8 @@ const startChildAddedListener = (
       const newStreamKey = `${roomId}-${messageData.id}`;
       const prevStreamKey = `${roomId}-${lastMessageId}`;
       lastMessageId = messageData.id;
-      const existingStream = STREAM_MAP.get(newStreamKey);
-      const oldStream = STREAM_MAP.get(prevStreamKey);
+      const existingStream = CHAT_STREAM_MAP.get(newStreamKey);
+      const oldStream = CHAT_STREAM_MAP.get(prevStreamKey);
 
       if (!oldStream) {
         try {
@@ -219,12 +225,12 @@ const startChildAddedListener = (
 
       if (roomAlreadyExists && existingStream) {
         // add users res objs to existing stream
-        const stream = STREAM_MAP.get(prevStreamKey);
+        const stream = CHAT_STREAM_MAP.get(prevStreamKey);
         stream.resMap.forEach((res, userId) => {
           existingStream.resMap.set(userId, res);
         });
         // delete old stream
-        STREAM_MAP.delete(prevStreamKey);
+        CHAT_STREAM_MAP.delete(prevStreamKey);
         try {
           query.off("child_added", onChildAdded);
         } catch (error) {
@@ -233,13 +239,13 @@ const startChildAddedListener = (
         return broadcastMessage(oldStream.resMap, newStreamKey, messageData);
       }
 
-      STREAM_MAP.delete(prevStreamKey);
-      STREAM_MAP.set(newStreamKey, oldStream);
+      CHAT_STREAM_MAP.delete(prevStreamKey);
+      CHAT_STREAM_MAP.set(newStreamKey, oldStream);
 
       return broadcastMessage(oldStream.resMap, newStreamKey, messageData);
     } catch (error) {
       console.error("Error in onChildAdded:", error);
-      const errEntry = STREAM_MAP.get(`${roomId}-${lastMessageId}`);
+      const errEntry = CHAT_STREAM_MAP.get(`${roomId}-${lastMessageId}`);
       if (errEntry)
         broadcastMessage(
           errEntry.resMap,
@@ -252,11 +258,11 @@ const startChildAddedListener = (
       } catch (e) {
         console.warn("Error detaching listener after onChildAdded error:", e);
       }
-      STREAM_MAP.delete(`${roomId}-${lastMessageId}`);
+      CHAT_STREAM_MAP.delete(`${roomId}-${lastMessageId}`);
     }
   };
   const streamKey = `${roomId}-${lastMessageId}`;
-  const entry = STREAM_MAP.get(streamKey);
+  const entry = CHAT_STREAM_MAP.get(streamKey);
   if (!entry) {
     console.warn("No stream entry found when starting listener for", streamKey);
     // optionally create it or return
@@ -267,7 +273,12 @@ const startChildAddedListener = (
   query.on("child_added", onChildAdded, (errorObject) => {
     console.error("Firebase listener error:", errorObject);
     const streamKey = `${roomId}-${lastMessageId}`;
-    broadcastMessage(STREAM_MAP.get(streamKey).resMap, streamKey, null, true);
+    broadcastMessage(
+      CHAT_STREAM_MAP.get(streamKey).resMap,
+      streamKey,
+      null,
+      true
+    );
   });
 };
 
@@ -304,5 +315,5 @@ module.exports = {
   getMessages,
   roomStreamExists,
   startChildAddedListener,
-  STREAM_MAP,
+  CHAT_STREAM_MAP,
 };

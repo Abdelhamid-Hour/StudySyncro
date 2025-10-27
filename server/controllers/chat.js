@@ -3,9 +3,21 @@ const {
   roomStreamExists,
   startChildAddedListener,
   getMessages,
-  STREAM_MAP,
+  CHAT_STREAM_MAP,
 } = require("../utils/firebase-utils/chat");
 const { rDb, db } = require("../firebase/firebaseAdmin");
+
+const cleanupClient = (res, userId) => {
+  const userStream = CHAT_STREAM_MAP.get(res.streamKey || streamKey);
+  if (userStream) {
+    userStream.resMap.delete(userId);
+    if (userStream.resMap.size === 0) {
+      CHAT_STREAM_MAP.delete(res.streamKey || streamKey);
+    }
+    userStream.query.off("child_added", userStream.listener);
+  }
+  res.end();
+};
 
 const sendMessageHandler = async (req, res) => {
   const file = req.file;
@@ -37,6 +49,8 @@ const sendMessageHandler = async (req, res) => {
 };
 
 const chatStreamHandler = async (req, res) => {
+  console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
+  
   const groupId = req.query.groupId;
   const sessionId = req.query.sessionId;
   const lastMessageId = req.query.lastMessageId || "";
@@ -46,7 +60,14 @@ const chatStreamHandler = async (req, res) => {
   if (!groupSnap.exists)
     return res.status(404).json({ error: "Group not found" });
 
-  if (!req.user.joinedGroupsIds.includes(groupId))
+  const joinedToGroup = await db
+    .collection("users")
+    .doc(req.user.uid)
+    .collection("userGroupsIds")
+    .doc(groupId)
+    .get();
+
+  if (!joinedToGroup.exists)
     return res.status(403).json({ error: "Access denied to this group chat" });
 
   if (sessionId && req.user.currentSession !== sessionId)
@@ -65,24 +86,24 @@ const chatStreamHandler = async (req, res) => {
   const query = lastMessageId
     ? rDb.ref(path).orderByKey().startAfter(lastMessageId)
     : rDb.ref(path).orderByKey();
-  if (STREAM_MAP.has(streamKey)) {
-    const existingStream = STREAM_MAP.get(streamKey);
+  if (CHAT_STREAM_MAP.has(streamKey)) {
+    const existingStream = CHAT_STREAM_MAP.get(streamKey);
     existingStream.resMap.set(req.user.uid, res);
   } else if (roomAlreadyExists) {
-    STREAM_MAP.set(streamKey, {
+    CHAT_STREAM_MAP.set(streamKey, {
       resMap: new Map(),
       query: null,
       listener: null,
     });
-    STREAM_MAP.get(streamKey).resMap.set(req.user.uid, res);
+    CHAT_STREAM_MAP.get(streamKey).resMap.set(req.user.uid, res);
     startChildAddedListener(true, roomId, lastMessageId, query, req.user.uid);
   } else {
-    STREAM_MAP.set(streamKey, {
+    CHAT_STREAM_MAP.set(streamKey, {
       resMap: new Map(),
       query: null,
       listener: null,
     });
-    STREAM_MAP.get(streamKey).resMap.set(req.user.uid, res);
+    CHAT_STREAM_MAP.get(streamKey).resMap.set(req.user.uid, res);
     startChildAddedListener(false, roomId, lastMessageId, query, req.user.uid);
   }
 
@@ -91,21 +112,14 @@ const chatStreamHandler = async (req, res) => {
       res.write(":\n\n");
     } catch (e) {
       clearInterval(heartbeat);
+      cleanupClient(res, req.user.uid);
     }
   }, 20 * 1000);
 
   req.on("close", () => {
     try {
       clearInterval(heartbeat);
-      const userStream = STREAM_MAP.get(res.streamKey || streamKey);
-      if (userStream) {
-        userStream.resMap.delete(req.user.uid);
-        if (userStream.resMap.size === 0) {
-          STREAM_MAP.delete(res.streamKey || streamKey);
-        }
-        userStream.query.off("child_added", userStream.listener);
-      }
-      res.end();
+      cleanupClient(res, req.user.uid);
     } catch (error) {
       console.warn("Error closing stream:", error);
     }

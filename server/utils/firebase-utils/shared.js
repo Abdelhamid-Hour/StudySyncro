@@ -19,11 +19,12 @@ const FILE_ALLOWED_TYPES = {
 const getGroupById = async (groupId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
-    const snaphsot = await groupRef.get();
-    if (snaphsot.empty) {
+    const snapshot = await groupRef.get();
+
+    if (!snapshot.exists) {
       return false;
     } else {
-      const group = { id: groupId, ...snaphsot.data() };
+      const group = { id: groupId, ...snapshot.data() };
       return group;
     }
   } catch (error) {

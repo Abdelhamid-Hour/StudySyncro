@@ -75,9 +75,9 @@
             : ['/quizzes/my/', '/quizzes/passed/'].includes(resourcesRoute) 
             ? 'Quizzes' 
             : resourcesRoute === '/groups/my/group-chat/' 
-            ? `<a href="/app/groups/my"><i class="bi bi-caret-left-fill"></i>Group Chat</a>`
+            ? `<a href="/app/groups/my" class="route-link"><i class="bi bi-caret-left-fill"></i>Group Chat</a>`
             : resourcesRoute === '/quizzes/my/quiz-editor/' 
-            ? `<a href="/app/quizzes/my"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>`
+            ? `<a href="/app/quizzes/my" class="route-link"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>`
             : '' %>
         </h2>
         <% if (['/groups/my/', '/groups/available/', '/quizzes/my/', '/quizzes/passed/'].includes(resourcesRoute)) { %>
