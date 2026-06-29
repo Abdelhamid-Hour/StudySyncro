@@ -182,9 +182,7 @@ const addMember = async (groupRef, userId) => {
     await groupRef.update({
       membersCount: FieldValue.increment(1),
     });
-    await userRef.update({
-      joinedGroupsIds: FieldValue.arrayUnion(groupRef.id),
-    });
+    await userRef.collection("userGroupsIds").doc(groupRef.id).set({});
     await refillSampleMembersIfNeeded(groupRef);
 
     return {
@@ -221,9 +219,9 @@ const kickMember = async (groupId, userId) => {
     await db
       .collection("users")
       .doc(userId)
-      .update({
-        joinedGroupsIds: FieldValue.arrayRemove(groupId),
-      });
+      .collection("userGroupsIds")
+      .doc(groupId)
+      .delete();
     await groupRef.update({
       membersCount: FieldValue.increment(-1),
       sampleMembers: FieldValue.arrayRemove({
@@ -250,7 +248,7 @@ const kickMember = async (groupId, userId) => {
   }
 };
 
-const getFilteredUsers = (search, users, groupId) => {
+const getFilteredUsers = (search, users, memberIds) => {
   if (!search) return users;
   const lowerCaseSearch = search.toLowerCase();
 
@@ -263,7 +261,7 @@ const getFilteredUsers = (search, users, groupId) => {
     id: doc.id,
     fullName: doc.data().fullName || "N/A",
     photoURL: doc.data().photoURL,
-    isAlreadyMember: doc.data().joinedGroupsIds?.includes(groupId) || false,
+    isAlreadyMember: memberIds.includes(doc.id) || false,
   }));
 };
 
@@ -271,7 +269,7 @@ const getUsers = async (
   search,
   count = INITIALE_LOADERS_COUNT,
   lastVisible,
-  groupId,
+  groupId
 ) => {
   // get user that its name and id match the search
   try {
@@ -294,6 +292,17 @@ const getUsers = async (
       }
 
       let users = [];
+
+      const membersSnap = await db
+        .collection("groups")
+        .doc(groupId)
+        .collection("members")
+        .get();
+
+      const memberIds = membersSnap.empty
+        ? []
+        : membersSnap.docs.map((doc) => doc.id);
+
       do {
         let query = db
           .collection("users")
@@ -314,7 +323,7 @@ const getUsers = async (
         }
         const usersSnapshot = await query.get();
         users = users.concat(
-          getFilteredUsers(search, usersSnapshot.docs, groupId).slice(
+          getFilteredUsers(search, usersSnapshot.docs, memberIds).slice(
             0,
             count - users.length,
           ),

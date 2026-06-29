@@ -136,13 +136,11 @@ const acceptRequest = async (groupId, requestId, userId) => {
       membersCount: FieldValue.increment(1),
     });
     const userRef = db.collection("users").doc(newMember.uid);
-    await userRef.update({
-      joinedGroupsIds: FieldValue.arrayUnion(groupRef.id),
-    });
+    await userRef.collection("userGroupsIds").doc(groupId).set({});
     await requestToAcceptSnap.ref.delete();
     await userRef
       .collection("sentRequests")
-      .doc(groupRef.id)
+      .doc(groupId)
       .update({ status: "accepted" });
     await refillSampleMembersIfNeeded(groupRef);
 

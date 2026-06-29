@@ -2,11 +2,13 @@ const {
   getQuizzPlayContext,
   getQuizEditContext,
 } = require("../utils/firebase-utils/examen");
+const { st } = require("../utils/firebase-utils/session");
 const { formatNumber } = require("../utils/global");
 const { getGroupChatContext } = require("../utils/groups");
 const { fetchData, renderFragmentOrLayout } = require("../utils/routing");
 
 const handleRoutes = async (req, res) => {
+  st()
   const payload = await fetchData(req.path, req.user);
   const pathName = req.path === "/home" ? payload.pathName : req.path;
 

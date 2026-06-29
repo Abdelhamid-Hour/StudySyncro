@@ -10,6 +10,7 @@ import {
 import { getDebounceFunc, isAsync } from "../../../global/js/utils.js";
 
 const encodeCriteria = (criteria) => {
+  if (!criteria) return "";
   return criteria
     .split("&")
     .map((param) => {
@@ -117,7 +118,11 @@ export class Loader {
   async loadMore(isFirstLoad = false) {    
     this.loading = true;
 
-    const endPoint = `${this.route}lastVisible=${this.lastVisible}&count=${this.count}&${this.creteria}`;
+    const endPoint = `${this.route}lastVisible=${this.lastVisible}&count=${this.count}`;
+
+    if (this.creteria) {
+      endPoint.concat(`&${this.creteria}`);
+    }
 
     try {
       let { cards, lastVisible } = await fetchData(endPoint);

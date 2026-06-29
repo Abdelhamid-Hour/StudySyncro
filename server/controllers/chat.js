@@ -3,9 +3,21 @@ const {
   roomStreamExists,
   startChildAddedListener,
   getMessages,
-  STREAM_MAP,
+  CHAT_STREAM_MAP,
 } = require("../utils/firebase-utils/chat");
 const { rDb, db } = require("../firebase/firebaseAdmin");
+
+const cleanupClient = (res, userId) => {
+  const userStream = CHAT_STREAM_MAP.get(res.streamKey || streamKey);
+  if (userStream) {
+    userStream.resMap.delete(userId);
+    if (userStream.resMap.size === 0) {
+      CHAT_STREAM_MAP.delete(res.streamKey || streamKey);
+    }
+    userStream.query.off("child_added", userStream.listener);
+  }
+  res.end();
+};
 
 const sendMessageHandler = async (req, res) => {
   const file = req.file;
@@ -37,6 +49,8 @@ const sendMessageHandler = async (req, res) => {
 };
 
 const chatStreamHandler = async (req, res) => {
+  console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
+  
   const groupId = req.query.groupId;
   const sessionId = req.query.sessionId;
   const groupSnap = await db.collection("groups").doc(groupId).get();
@@ -44,7 +58,14 @@ const chatStreamHandler = async (req, res) => {
   if (!groupSnap.exists)
     return res.status(404).json({ error: "Group not found" });
 
-  if (!req.user.joinedGroupsIds.includes(groupId))
+  const joinedToGroup = await db
+    .collection("users")
+    .doc(req.user.uid)
+    .collection("userGroupsIds")
+    .doc(groupId)
+    .get();
+
+  if (!joinedToGroup.exists)
     return res.status(403).json({ error: "Access denied to this group chat" });
 
   if (sessionId && req.user.currentSession !== sessionId)
@@ -77,6 +98,7 @@ const chatStreamHandler = async (req, res) => {
       res.write(":\n\n");
     } catch (e) {
       clearInterval(heartbeat);
+      cleanupClient(res, req.user.uid);
     }
   }, 20 * 1000);
 

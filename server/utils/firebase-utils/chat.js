@@ -1,8 +1,8 @@
-const { rDb } = require("../../firebase/firebaseAdmin");
+const { rDb, db } = require("../../firebase/firebaseAdmin");
 const { INITIALE_LOADERS_COUNT } = require("../global");
 const { uploadFileToStorage } = require("./shared");
 
-const STREAM_MAP = new Map();
+const CHAT_STREAM_MAP = new Map();
 
 const FILE_STATUS = {
   UPLOADING: "uploading",
@@ -21,9 +21,15 @@ const sendMessage = async (
   user,
 ) => {
   try {
-    if (!user.joinedGroupsIds.includes(groupId)) {
+    const joinedToGroup = await db
+      .collection("users")
+      .doc(user.uid)
+      .collection("userGroupsIds")
+      .doc(groupId)
+      .get();
+
+    if (!joinedToGroup.exists)
       throw new Error("You Are Unauthorized to send message to this group");
-    }
 
     if (sessionId && user.currentSession !== sessionId) {
       throw new Error("You Are Unauthorized to send message to this session");
@@ -267,5 +273,5 @@ module.exports = {
   getMessages,
   roomStreamExists,
   startChildAddedListener,
-  STREAM_MAP,
+  CHAT_STREAM_MAP,
 };

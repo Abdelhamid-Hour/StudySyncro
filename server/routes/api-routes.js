@@ -45,6 +45,7 @@ const {
   joinSessionHandler,
   endSessionHandler,
   leaveSessionHandler,
+  getActiveSessionsHandler,
 } = require("../controllers/session");
 const {
   acceptDemandeHandler,
@@ -105,6 +106,8 @@ apiRouter.get("/quiz-details/:quizId", getQuizDetailsHandler);
 apiRouter.get("/quizzes-list-menu", getQuizzesListHandler);
 
 apiRouter.get("/active-session", getActiveSessionHandler);
+
+apiRouter.get("/active-sessions", getActiveSessionsHandler);
 
 apiRouter.post("/update-task-status", updateTaskStatusHandler);
 

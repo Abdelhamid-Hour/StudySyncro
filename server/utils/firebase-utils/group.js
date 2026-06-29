@@ -6,20 +6,20 @@ const { sendRequest } = require("./demandes");
 const { toReadableDate } = require("../global");
 const { INITIALE_LOADERS_COUNT } = require("../global");
 
-const createGroup = async (groupdData, userData) => {
+const createGroup = async (groupData, userData) => {
   try {
     const groupRef = db.collection("groups");
     const snapshot = await groupRef
-      .where("name", "==", groupdData["group-name"])
+      .where("name", "==", groupData["group-name"])
       .get();
 
     const newGrop = {
-      name: groupdData["group-name"],
-      description: groupdData["group-description"],
-      subject: groupdData.subject,
-      level: groupdData.level,
-      maxMembers: groupdData["max-members"],
-      visibility: groupdData.visibility,
+      name: groupData["group-name"],
+      description: groupData["group-description"],
+      subject: groupData.subject,
+      level: groupData.level,
+      maxMembers: groupData["max-members"],
+      visibility: groupData.visibility,
       creationDate: new Date().toISOString(),
       creator: userData.uid,
       membersCount: 1,
@@ -32,7 +32,7 @@ const createGroup = async (groupdData, userData) => {
         },
       ],
       showInSearch:
-        groupdData.visibility === "Private" && !groupdData["show-in-search"]
+        groupData.visibility === "Private" && !groupData["show-in-search"]
           ? false
           : true,
       currentSession: "",
@@ -54,9 +54,7 @@ const createGroup = async (groupdData, userData) => {
       photoURL: userData.photoURL,
     });
     const userRef = db.collection("users").doc(userData.uid);
-    await userRef.update({
-      joinedGroupsIds: FieldValue.arrayUnion(groupDoc.id),
-    });
+    await userRef.collection("userGroupsIds").doc(groupDoc.id).set({});
     return {
       success: true,
     };
@@ -118,7 +116,7 @@ const filterGroups = (
     let matchJoinable = true;
 
     if (criteria.joinableOnly) {
-      matchJoinable = (g.maxMembers || Infinity) > (g.members?.length || 0);
+      matchJoinable = g.maxMembers > g.membersCount;
     }
 
     let matchRole = true;
@@ -128,7 +126,7 @@ const filterGroups = (
         criteria.role?.length === 0 ||
         (criteria.role?.includes("admin") && userId === g.creator) ||
         (criteria.role?.includes("member") &&
-          userSnap.data().joinedGroupsIds?.includes(g.id) &&
+          joinedGroupsIds.includes(g.id) &&
           userId != g.creator);
     }
 
@@ -174,7 +172,10 @@ const getAvailableGroups = async (
     const requestedGroupsIds = requestedGroupsSnap.docs
       .filter((doc) => doc.data().status === "pending")
       .map((doc) => doc.id);
-    const joinedGroupsIds = (await userRef.get()).data().joinedGroupsIds || [];
+    const joinedGroupsSnap = await userRef.collection("userGroupsIds").get();
+    const joinedGroupsIds = joinedGroupsSnap.empty
+      ? []
+      : joinedGroupsSnap.docs.map((doc) => doc.id);
     do {
       const batchSize = Number(limit) * 10;
       let query = db
@@ -257,9 +258,15 @@ const getJoinedGroups = async (
     let joinedGroups = [];
 
     const batchSize = Number(limit) * 10;
-    const joinedGroupsIds =
-      (await db.collection("users").doc(userId).get()).data().joinedGroupsIds ||
-      [];
+
+    const joinedGroupsSnap = await db
+      .collection("users")
+      .doc(userId)
+      .collection("userGroupsIds")
+      .get();
+    const joinedGroupsIds = joinedGroupsSnap.empty
+      ? []
+      : joinedGroupsSnap.docs.map((doc) => doc.id);
 
     if (joinedGroupsIds.length === 0)
       return {
@@ -328,6 +335,11 @@ const getJoinedGroups = async (
   }
 };
 
+/**
+ * [1, 2, 3, 4, 5, 6]
+ * [2, 4, 6]
+ */
+
 const leaveGroup = async (groupId, userId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
@@ -351,9 +363,7 @@ const leaveGroup = async (groupId, userId) => {
     await groupRef.update({
       membersCount: FieldValue.increment(-1),
     });
-    await userRef.update({
-      joinedGroupsIds: FieldValue.arrayRemove(groupId),
-    });
+    await userRef.collection("userGroupsIds").doc(groupId).delete();
     await refillSampleMembersIfNeeded(groupRef);
 
     return {
@@ -593,6 +603,7 @@ const getGroupInfo = async (groupId, userId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
     const groupSnap = await groupRef.get();
+
     if (!groupSnap.exists)
       return { success: false, message: "Group not found" };
     const group = groupSnap.data();
@@ -657,6 +668,27 @@ const getChatContext = async (userId, groupId) => {
     const isMember = userSnap.data().joinedGroupsIds?.includes(groupId);
 
     if (!isMember)
+      return {
+        success: false,
+        statusCode: 401,
+        message: "You are not a member of this group",
+      };
+
+    if (!group)
+      return {
+        success: false,
+        statusCode: 404,
+        message: "Group Not Found",
+      };
+
+    const userRef = db.collection("users").doc(userId);
+
+    const isMember = await userRef
+      .collection("userGroupsIds")
+      .doc(groupId)
+      .get();
+
+    if (!isMember.exists)
       return {
         success: false,
         statusCode: 401,
