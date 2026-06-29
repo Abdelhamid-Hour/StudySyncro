@@ -107,6 +107,7 @@ export const getResultOverlay = (quizResult, questions) => {
   const incorrectPercent = getPercentage(incorrectCount);
   const correctPercent = getPercentage(correctCount);
   const skippedPercent = getPercentage(skippedCount);
+  
 
   const resultWrapper = document.createElement("div");
   resultWrapper.className = "overlay-model quiz-result-overlay";
@@ -126,7 +127,8 @@ export const getResultOverlay = (quizResult, questions) => {
       <i class="bi bi-x-lg"></i>
     </button>
   </header>
-  <h3 class="quiz-title">JavaScript Basics Quiz</h3>
+  <h3 class="quiz-title">${quizResult.quizTitle || 'QUIZ TITLE'}</h3>
+  <span class="session-name"><i class="bi bi-clock-history"></i> ${quizResult.sessionName || ''}</span>
   <div class="answered">
     <span class="answered-title">Answered :</span>
     <span class="answered-count">${answeredCount}/${questionCount} Questions</span>

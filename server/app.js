@@ -32,6 +32,7 @@ routes.forEach(({ paths, redirect }) => {
 // Routes
 // authentification route
 app.use("/", authRouter);
+
 // Serve the static files
 app.use(express.static(path.join(__dirname, "../client/public")));
 // application route
@@ -39,7 +40,9 @@ app.use("/app", requireAuthForPages, appRouter);
 // api route
 app.use("/api", requireAuthForAPI, apiRouter);
 
+
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

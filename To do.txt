@@ -36,6 +36,7 @@
 // add refresh btn to the inactive tabs (msgs and active sessions) or other update solution 
 // add a soft delete option
 // improve website operations with transactions
+/ retrn a page when the user want to acccess a group that not join to it
 
 - What you should do next : 
 
@@ -57,3 +58,22 @@ remove the quiz if is empty or without quetions
 
 // cancell button
 // add email form
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/** need verification 
+
+Groups:
+quizzes tab
+invite a member

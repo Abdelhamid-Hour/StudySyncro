@@ -1,5 +1,5 @@
 const { FieldValue, FieldPath } = require("firebase-admin/firestore");
-const { db } = require("../../firebase/firebaseAdmin");
+const { db, admin } = require("../../firebase/firebaseAdmin");
 const { getQuestions } = require("./question");
 const { toReadableDate } = require("../global");
 const { getGroupById } = require("./shared");
@@ -88,7 +88,7 @@ const filterQuizzes = (criteria, quizzes, passedQuizzes = false) => {
         sharedSessions: sessionsCount,
         subject,
         status,
-      })
+      }),
     );
 
   return quizzes;
@@ -102,7 +102,7 @@ const getUserQuizzes = async (
     status: [],
   },
   count = INITIALE_LOADERS_COUNT,
-  lastVisible = null
+  lastVisible = null,
 ) => {
   try {
     let quizzes = [];
@@ -142,8 +142,8 @@ const getUserQuizzes = async (
       quizzes = quizzes.concat(
         filterQuizzes(criteria, batchQuizzes, true).slice(
           0,
-          count - quizzes.length
-        )
+          count - quizzes.length,
+        ),
       );
 
       lastVisible =
@@ -154,7 +154,6 @@ const getUserQuizzes = async (
 
     lastVisible =
       quizzes.length === count ? quizzes[quizzes.length - 1].id : null;
-
     return {
       success: true,
       cards: quizzes,
@@ -177,7 +176,7 @@ const getPassedQuizzes = async (
     searchTerm: "",
     sort: "desc",
     date: "",
-  }
+  },
 ) => {
   try {
     let quizzes = [];
@@ -215,7 +214,7 @@ const getPassedQuizzes = async (
       }));
 
       quizzes = quizzes.concat(
-        filterQuizzes(criteria, batchQuizzes).slice(0, count - quizzes.length)
+        filterQuizzes(criteria, batchQuizzes).slice(0, count - quizzes.length),
       );
 
       lastVisible =
@@ -259,7 +258,6 @@ const getFilteredQuizzes = (criteria, quizzes, passedQuizzes, isAdmin) => {
   return quizzes.map((doc) => {
     const resultInfo = passedQuizzes.find((quiz) => quiz.id === doc.id);
     const submittedAtString = resultInfo?.data().submittedAt;
-    const sessionName = resultInfo?.data().sessionName;
     const submittedAt = submittedAtString
       ? toReadableDate(submittedAtString)
       : null;
@@ -271,7 +269,7 @@ const getFilteredQuizzes = (criteria, quizzes, passedQuizzes, isAdmin) => {
       isAdmin,
       passed: Boolean(submittedAt),
       submittedAt,
-      sessionName,
+      sessionName: doc.data().sessionName,
     };
   });
 };
@@ -281,7 +279,7 @@ const getQuizzesByGroupId = async (
   userId,
   count = INITIALE_LOADERS_COUNT,
   lastVisible = null,
-  criteria = {}
+  criteria = {},
 ) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
@@ -333,8 +331,8 @@ const getQuizzesByGroupId = async (
           criteria,
           quizzesSnap.docs,
           passedQuizzes,
-          isAdmin
-        ).slice(0, count - quizzes.length)
+          isAdmin,
+        ).slice(0, count - quizzes.length),
       );
       lastVisible =
         quizzesSnap.docs.length === Number(count) * 10
@@ -363,18 +361,19 @@ const getQuizzesByGroupId = async (
 
 const createQuiz = async (examenData, userId) => {
   try {
-    const examenRef = db.collection("quizzes");
-    const snapshot = await examenRef
-      .where("title", "==", examenData["quiz-title"])
-      .where("creator", "==", userId)
-      .get();
+    const titleAvailability = await isQuizTitleAvailable(
+      examenData["quiz-title"],
+      userId,
+    );
 
-    if (!snapshot.empty) {
+    if (!titleAvailability.available) {
       return {
         success: false,
-        message: "You already have a quiz with this title",
+        message: titleAvailability.message,
       };
     }
+
+    const examenRef = db.collection("quizzes");
     const newExamen = {
       title: examenData["quiz-title"],
       subject: examenData.subject,
@@ -397,6 +396,47 @@ const createQuiz = async (examenData, userId) => {
     return {
       success: false,
       message: "Error creating the quizz",
+    };
+  }
+};
+
+const isQuizTitleAvailable = async (title, userId, excludedQuizId = null) => {
+  try {
+    if (!title || !title.trim()) {
+      return {
+        success: false,
+        available: false,
+        message: "Quiz Title is required",
+      };
+    }
+
+    const quizzesRef = db.collection("quizzes");
+    const snapshot = await quizzesRef
+      .where("title", "==", title)
+      .where("creator", "==", userId)
+      .get();
+
+    const hasConflict = snapshot.docs.some((doc) => doc.id !== excludedQuizId);
+
+    if (hasConflict) {
+      return {
+        success: true,
+        available: false,
+        message: "You already have a quiz with this title",
+      };
+    }
+
+    return {
+      success: true,
+      available: true,
+      message: "Quiz title is available",
+    };
+  } catch (error) {
+    console.error("Error checking quiz title availability:", error);
+    return {
+      success: false,
+      available: false,
+      message: "Failed to check quiz title availability",
     };
   }
 };
@@ -501,6 +541,7 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
     if (!quizSnap) {
       return {
         success: false,
+        message: "Error getting quiz data"
       };
     }
 
@@ -511,6 +552,7 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
     if (questions.length === 0) {
       return {
         success: false,
+        message: "No questions found in the quiz"
       };
     }
 
@@ -532,11 +574,13 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
 
     return {
       success: false,
+      message: "Error getting quiz play context"
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
+      message: "Error getting quiz play context"
     };
   }
 };
@@ -641,7 +685,7 @@ const getSessionQuizzes = async (
   lastVisible = null,
   limit = INITIALE_LOADERS_COUNT,
   searchTerm = "",
-  oldQuizzes = []
+  oldQuizzes = [],
 ) => {
   try {
     let accumulatedQuizzes = [...oldQuizzes];
@@ -689,7 +733,7 @@ const getSessionQuizzes = async (
     const filteredQuizzes =
       searchTerm.trim() != ""
         ? quizzes.filter((q) =>
-            q.title.toLowerCase().includes(searchTerm.toLowerCase().trim())
+            q.title.toLowerCase().includes(searchTerm.toLowerCase().trim()),
           )
         : quizzes;
 
@@ -714,7 +758,7 @@ const getSessionQuizzes = async (
       newLastVisible.id,
       limit,
       searchTerm,
-      accumulatedQuizzes
+      accumulatedQuizzes,
     );
   } catch (error) {
     console.error("Error fetching quizzes:", error.message);
@@ -730,7 +774,7 @@ const modifyQuizQuestions = async (
   newQuestions,
   deletedQuestions,
   quizzId,
-  userId
+  userId,
 ) => {
   try {
     const quizzRef = db.collection("quizzes").doc(quizzId);
@@ -879,13 +923,21 @@ const addQuizResult = async (userId, quizResult) => {
   try {
     const userRef = db.collection("users").doc(userId);
     const userData = (await userRef.get()).data();
+    const quizSnap = await db.collection("quizzes").doc(quizResult.quizId).get();
+
+    if (!quizSnap.exists)
+      return {
+        success: false,
+        message: "Quiz not found",
+      };
+
+    const quizTitle = quizSnap.data().title;
+
     const quizResultRef = db.collection("quizResults");
     const existingResult = await quizResultRef
       .where("userId", "==", userId)
       .where("quizId", "==", quizResult.quizId)
       .get();
-
-    let sessionName = "";
 
     if (!userData.currentSession)
       return {
@@ -904,6 +956,14 @@ const addQuizResult = async (userId, quizResult) => {
         message: "Session not found",
       };
 
+    const session = sessionSnap.data();
+
+    if (!session.quizId || session.quizId != quizResult.quizId)
+      return {
+        success: false,
+        message: "You are not in a session with this quiz",
+      };
+
     const questionsCount = (
       await sessionSnap.ref.collection("quizQuestions").count().get()
     ).data().count;
@@ -914,9 +974,10 @@ const addQuizResult = async (userId, quizResult) => {
       userId,
       ...quizResult,
       submittedCount,
-      sessionName: sessionSnap.data().name,
+      sessionName: session.name,
       sessionId: userData.currentSession,
-      groupId: sessionSnap.data().groupId,
+      groupId: session.groupId,
+      quizTitle
     };
 
     if (existingResult.empty) {
@@ -925,8 +986,11 @@ const addQuizResult = async (userId, quizResult) => {
         .collection("quizzes")
         .doc(quizResult.quizId)
         .get();
-      const group = getGroupById(sessionSnap.data().groupId);
+      const groupRes = await getGroupById(sessionSnap.data().groupId);
       const quiz = quizSnap.data();
+      if (!groupRes.success) return groupRes;
+      const group = groupRes.group;
+      
       await userRef
         .collection("passedQuizzes")
         .doc(quizResult.groupId)
@@ -936,13 +1000,17 @@ const addQuizResult = async (userId, quizResult) => {
           title: quiz.title,
           submittedAt: quizResult.submittedAt,
           groupName: group.name,
-          sessionName,
           score: Math.round(
-            (quizResult.correctAnswers.length / questionsCount) * 100
+            (quizResult.correctAnswers.length / questionsCount) * 100,
           ),
           questionsCount,
           userId,
         });
+    } else  {
+      return {
+        success: true,
+        message: "You have already submitted this quiz",
+      }
     }
 
     return {
@@ -982,7 +1050,7 @@ const getQuizResultsByGroup = async (quizId, groupId, userId) => {
       .get();
 
     const results = await Promise.all(
-      quizResults.docs.map((doc) => QuizResult.create(doc.data()))
+      quizResults.docs.map((doc) => QuizResult.create(doc.data())),
     );
 
     return {
@@ -999,7 +1067,7 @@ const getQuizResultsByGroup = async (quizId, groupId, userId) => {
   }
 };
 
-const duplicateQuiz = async (quizId, userId) => {
+const duplicateQuiz = async (quizId, userId, title) => {
   try {
     if (!quizId) {
       return {
@@ -1010,8 +1078,6 @@ const duplicateQuiz = async (quizId, userId) => {
 
     const quizRef = db.collection("quizzes");
     const quizSnap = await quizRef.doc(quizId).get();
-    const quiz = quizSnap.data();
-    quizRef.where();
 
     if (!quizSnap.exists)
       return {
@@ -1019,19 +1085,42 @@ const duplicateQuiz = async (quizId, userId) => {
         message: "Quiz not found",
       };
 
+    const quiz = quizSnap.data();
     if (quiz.creator !== userId)
       return {
         success: false,
         message: "You are not authorized to duplicate this quiz.",
       };
 
+    const newTitle = title || `${quiz.title} (Copy)`;
+    const titleAvailability = await isQuizTitleAvailable(newTitle, userId);
+
+    if (!titleAvailability.available) {
+      return {
+        success: false,
+        message: titleAvailability.message,
+      };
+    }
+
     const newQuiz = {
       ...quiz,
-      title: `${quiz.title} (Copy)`,
+      title: newTitle,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
-    const newQuizRef = await db.collection("quizzes").add(newQuiz);
+    // add also the questions subcollection to the new quiz
+    const questionsSnap = await quizRef
+      .doc(quizId)
+      .collection("questions")
+      .get();
+    const newQuizRef = await quizRef.add(newQuiz);
+    const newQuestionsRef = newQuizRef.collection("questions");
+    await Promise.all(
+      questionsSnap.docs.map((doc) => {
+        const questionData = doc.data();
+        return newQuestionsRef.doc(doc.id).set(questionData);
+      }),
+    );
 
     return {
       success: true,
@@ -1049,6 +1138,7 @@ const duplicateQuiz = async (quizId, userId) => {
 //fucntion for updated question and questions
 module.exports = {
   createQuiz,
+  isQuizTitleAvailable,
   isAdminOfQuiz,
   duplicateQuiz,
   deleteQuiz,

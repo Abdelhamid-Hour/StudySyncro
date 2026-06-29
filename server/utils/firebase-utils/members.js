@@ -24,7 +24,7 @@ const getMembers = async (
   groupId,
   userId,
   limit = INITIALE_LOADERS_COUNT,
-  lastVisible = null
+  lastVisible = null,
 ) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
@@ -84,7 +84,7 @@ const getMembers = async (
         search,
         fetched,
         creator,
-        isAdmin
+        isAdmin,
       );
 
       // Add only what's remaining to reach `limit`
@@ -173,16 +173,12 @@ const addMember = async (groupRef, userId) => {
     }
 
     // Add user to group members
-    await groupRef
-      .collection("members")
-      .doc(userId)
-      .set({
-        uid: userId,
-        fullName: userData.fullName,
-        email: userData.email,
-        photoURL:
-          userData.photoURL,
-      });
+    await groupRef.collection("members").doc(userId).set({
+      uid: userId,
+      fullName: userData.fullName,
+      email: userData.email,
+      photoURL: userData.photoURL,
+    });
     await groupRef.update({
       membersCount: FieldValue.increment(1),
     });
@@ -191,7 +187,10 @@ const addMember = async (groupRef, userId) => {
     });
     await refillSampleMembersIfNeeded(groupRef);
 
-    return true;
+    return {
+      success: true,
+      status: "joined",
+    };
   } catch (error) {
     console.error("Error in addMember function:", error);
     return { message: "Internal sever error", success: false };
@@ -231,8 +230,7 @@ const kickMember = async (groupId, userId) => {
         uid: userSnap.id,
         fullName: userSnap.data().fullName,
         email: userSnap.data().email,
-        photoURL:
-          userSnap.data().photoURL,
+        photoURL: userSnap.data().photoURL,
       }),
     });
 
@@ -264,13 +262,17 @@ const getFilteredUsers = (search, users, groupId) => {
   return users.map((doc) => ({
     id: doc.id,
     fullName: doc.data().fullName || "N/A",
-    photoURL:
-      doc.data().photoURL,
+    photoURL: doc.data().photoURL,
     isAlreadyMember: doc.data().joinedGroupsIds?.includes(groupId) || false,
   }));
 };
 
-const getUsers = async (search, count = INITIALE_LOADERS_COUNT, lastVisible, groupId) => {
+const getUsers = async (
+  search,
+  count = INITIALE_LOADERS_COUNT,
+  lastVisible,
+  groupId,
+) => {
   // get user that its name and id match the search
   try {
     if (search) {
@@ -284,8 +286,7 @@ const getUsers = async (search, count = INITIALE_LOADERS_COUNT, lastVisible, gro
             {
               id: userById.id,
               fullName: data.fullName || "N/A",
-              photoURL:
-                data.photoURL,
+              photoURL: data.photoURL,
             },
           ],
           lastVisible: null,
@@ -315,8 +316,8 @@ const getUsers = async (search, count = INITIALE_LOADERS_COUNT, lastVisible, gro
         users = users.concat(
           getFilteredUsers(search, usersSnapshot.docs, groupId).slice(
             0,
-            count - users.length
-          )
+            count - users.length,
+          ),
         );
         lastVisible =
           usersSnapshot.docs.length === Number(count) * 10

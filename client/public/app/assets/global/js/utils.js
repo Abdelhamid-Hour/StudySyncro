@@ -154,12 +154,41 @@ export const closeAndOpenLeftSideBar = () => {
   });
 };
 
+export const adjustMenuDirection = (button, menu) => {
+  // Reset previous positioning
+  menu.style.left = "";
+  menu.style.right = "";
+  menu.style.top = "";
+  menu.style.bottom = "";
+  menu.style.translate = "";
+
+  const buttonRect = button.getBoundingClientRect();
+  const menuWidth = menu.offsetWidth;
+  const menuHeight = menu.offsetHeight;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+
+  // Check right overflow
+  if (buttonRect.left + menuWidth > viewportWidth) {
+    menu.style.left = "auto";
+    menu.style.right = "0";
+  }
+
+  // Check bottom overflow
+  if (buttonRect.bottom + menuHeight + 8 > viewportHeight) {
+    menu.style.top = "auto";
+    menu.style.bottom = "100%";
+    menu.style.translate = "0 calc(-0.5rem)";
+  }
+};
+
 export const openOverlayHandler = (e) => {
   const button = e.target.closest(".open-drop-down-btn");
   if (button) {
     const overlay = button.parentElement.querySelector(".overlay");
     overlay.classList.add("open-overlay");
     document.body.style.pointerEvents = "none";
+    adjustMenuDirection(button, overlay);
   }
 };
 
@@ -197,6 +226,14 @@ export const handleOverlayClose = (event) => {
   if ((isDropDownItem || !isOnOverlay) && overlayToClose && !isOpenBtn) {
     overlayToClose.classList.remove("open-overlay");
     document.body.style.pointerEvents = "auto";
+    // Reset positioning
+    setTimeout(() => {
+      overlayToClose.style.left = "";
+      overlayToClose.style.right = "";
+      overlayToClose.style.top = "";
+      overlayToClose.style.bottom = "";
+      overlayToClose.style.translate = "";
+    }, 300); // Wait for transition
   }
   if (!overlayToClose) {
     document.body.style.pointerEvents = "auto";

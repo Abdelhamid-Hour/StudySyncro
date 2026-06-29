@@ -151,7 +151,7 @@ const initializeEmojiPicker = (emojiList) => {
       });
 
       const emojisWrapper = emojiList.querySelector(
-        `#${category.toLowerCase()} > div`
+        `#${category.toLowerCase()} > div`,
       );
       initSection(emojisWrapper);
       emojisWrapper.appendChild(fr);
@@ -354,12 +354,12 @@ const handleSendMessageError = (error, wrapper, formData, isFile) => {
         formData.append("file", file);
 
         sendMessage(formData, wrapper, isFile);
-      })
+      }),
     );
   }
   showMessageBlock(
     error.message || "Failed to send message. Please try again.",
-    "error"
+    "error",
   );
 };
 
@@ -387,7 +387,7 @@ class ChatMessage {
       localId = "",
       send = false,
       isLocalMsg = false,
-    }
+    },
   ) {
     this.text = text;
     this.messageId = messageId;
@@ -428,7 +428,7 @@ class ChatMessage {
         if (navigator.onLine) sendMessage(formData, this.wrappers.text);
         else
           PENDING_ONLINE_SYNC_OPS.push(() =>
-            sendMessage(formData, this.wrappers.text)
+            sendMessage(formData, this.wrappers.text),
           );
       }
       if (this.attachments.length > 0) {
@@ -443,7 +443,7 @@ class ChatMessage {
             sendMessage(formData, this.wrappers.files[i], true);
           else {
             PENDING_ONLINE_SYNC_OPS.push(() =>
-              sendMessage(formData, this.wrappers.files[i], true)
+              sendMessage(formData, this.wrappers.files[i], true),
             );
           }
         }
@@ -452,7 +452,7 @@ class ChatMessage {
       console.error(error);
       showMessageBlock(
         error.message || "Failed to send message. Please try again.",
-        "error"
+        "error",
       );
     }
   }
@@ -501,17 +501,17 @@ class ChatMessage {
       document: (doc) =>
         this.createFilePreviewTemplate(
           doc,
-          `bi bi-filetype-${doc.name.split(".").pop()}`
+          `bi bi-filetype-${doc.name.split(".").pop()}`,
         ),
     };
     this.attachments.forEach((attachment) => {
       const kind = attachment.type.startsWith("image/")
         ? "image"
         : attachment.type.startsWith("video/")
-        ? "video"
-        : attachment.type.startsWith("audio/")
-        ? "audio"
-        : "document";
+          ? "video"
+          : attachment.type.startsWith("audio/")
+            ? "audio"
+            : "document";
       const wrapper = renderers[kind](attachment);
       this.appendToChat(wrapper, attachment);
     });
@@ -577,7 +577,7 @@ class ChatMessage {
       progressContainer,
       timeSpan,
       playBackRate,
-      audioElement
+      audioElement,
     );
 
     if (this.send) {
@@ -731,7 +731,7 @@ class ChatMessage {
     const messagesDiv = document.createElement("div");
     messagesDiv.className = "messages";
     messagesDiv.appendChild(
-      this.createMessageWrapper(messageBubble, true, file)
+      this.createMessageWrapper(messageBubble, true, file),
     );
     messageContainer.appendChild(messagesDiv);
 
@@ -755,11 +755,11 @@ const handleFiles = (files) => {
     if (selectedFiles.items.length >= 5) {
       return showMessageBlock(
         "You can only upload a maximum of 5 files",
-        "error"
+        "error",
       );
     }
     const isSupportedType = Object.values(FILE_ALLOWED_TYPES).find((types) =>
-      types.includes(f.type)
+      types.includes(f.type),
     );
     if (!isSupportedType) {
       showMessageBlock("Invalid file type. Please select other file.", "error");
@@ -770,7 +770,7 @@ const handleFiles = (files) => {
         `File "${f.name}" size exceeds the maximum limit of ${
           MAXFILESIZE / (1024 * 1024)
         } MB.`,
-        "error"
+        "error",
       );
       continue;
     }
@@ -945,7 +945,7 @@ const handleMessagesContainerClick = async (e) => {
   if (reSendBtn) {
     try {
       const messageContainer = reSendBtn.closest(
-        ".message-sent-text, .first-message-sent-text"
+        ".message-sent-text, .first-message-sent-text",
       );
       const messageId = messageContainer?.dataset.messageId;
       const localId = messageContainer?.dataset.localId;
@@ -958,14 +958,14 @@ const handleMessagesContainerClick = async (e) => {
       Icon.className = "bi bi-clock";
       if (message.file) {
         const mediaContainer = messageContainer.querySelector(
-          ".message-media-preview"
+          ".message-media-preview",
         );
         if (mediaContainer) {
           mediaContainer.classList.add("uploading");
           mediaContainer.appendChild(getMediaLoader());
         } else {
           const doc_AudioPlayer = messageContainer.querySelector(
-            ".audio-player, .file-preview"
+            ".audio-player, .file-preview",
           );
           if (doc_AudioPlayer) doc_AudioPlayer.appendChild(getCircleLoader());
         }
@@ -1022,7 +1022,7 @@ const updateAudioProgress = (progressBar, audioElement, timeSpan) => {
   progressBar.style.width = `${progress}%`;
 
   timeSpan.textContent = formatTime(
-    audioElement.duration - audioElement.currentTime
+    audioElement.duration - audioElement.currentTime,
   );
 };
 
@@ -1161,8 +1161,8 @@ const handleDragLeave = (e) => {
   }
 };
 
-const openChatStream = (groupId, sessionId, lastMessageId) => {
-  const route = `/api/chat-stream?sessionId=${sessionId}&groupId=${groupId}&lastMessageId=${lastMessageId}`;
+const openChatStream = (groupId, sessionId) => {
+  const route = `/api/chat-stream?sessionId=${sessionId}&groupId=${groupId}`;
   const eventSource = new EventSource(route, {
     withCredentials: true,
   });
@@ -1188,7 +1188,7 @@ const openChatStream = (groupId, sessionId, lastMessageId) => {
         messageId: message.id,
         avatarSrc: message.sender.photoURL,
         senderName: message.sender.fullName,
-      }
+      },
     ).renderMessage();
   });
 
@@ -1205,7 +1205,7 @@ const createChatFrag = async (messages) => {
       messages[0].timestamp,
       messagesContainer.children.length <= 1
         ? Date.now()
-        : messages[messages.length - 1].timestamp
+        : messages[messages.length - 1].timestamp,
     );
     unsentMessages = unsentMessages.filter((unSentMsg) => {
       return !messages.some((msg) => {
@@ -1230,13 +1230,13 @@ const createChatFrag = async (messages) => {
       const file = message.content.text
         ? null
         : message.content.file
-        ? message.content.file
-        : {
-            URL: message.content.filePath,
-            name: message.content.fileName,
-            size: message.content.fileSize,
-            type: message.content.fileType,
-          };
+          ? message.content.file
+          : {
+              URL: message.content.filePath,
+              name: message.content.fileName,
+              size: message.content.fileSize,
+              type: message.content.fileType,
+            };
 
       new ChatMessage(
         message.content.text,
@@ -1251,7 +1251,7 @@ const createChatFrag = async (messages) => {
           localId: message.isSender ? message.localId : "",
           messageId: message.id || "",
           isLocalMsg: message.isLocalMsg || false,
-        }
+        },
       ).renderMessage();
     });
 
@@ -1329,8 +1329,49 @@ const getMessageLoader = () => {
   return loaderWrapper;
 };
 
+const getMessagesIds = () => {
+  const messageIds = Array.from(
+    messagesContainer.querySelectorAll(
+      ".message-sent-text, .first-message-sent-text, .message-received-text, .first-message-received-text",
+    ),
+  ).map((message) => {
+    return message.dataset.messageId || "";
+  });
+
+  return messageIds;
+};
+
+const firstLoadFunc = (cards, groupId, sessionId) => {
+  openChatStream(groupId, sessionId);
+  const messageIds = getMessagesIds();
+
+  // Remove cards that already exist in the chat container based on messageId
+  cards = cards.filter((card) => !messageIds.includes(card.id));
+
+  let lastVisible;
+  // if the chat stream add new messages that are already in the chat container and > cards.length, that mean we need to update the lastVisible variable
+  if (cards.length === 0) {
+    const lastVisibleMessage = messagesContainer.querySelector(
+      ".message-sent-text[data-message-id], .first-message-sent-text[data-message-id], .message-received-text[data-message-id], .first-message-received-text[data-message-id]",
+    );
+    lastVisible = lastVisibleMessage
+      ? lastVisibleMessage.dataset.messageId
+      : "";
+  }
+  return {
+    cards,
+    lastVisible,
+  };
+}
+const afterAppendRes = (data) => {
+  const targetScroll =
+    messagesContainer.scrollHeight - data.initialHeight;
+  messagesContainer.scroll({
+    top: targetScroll,
+    behavior: "instant",
+  });
+}
 const initChatLoader = (groupId, sessionId) => {
-  let isFirstLoad = true;
   const loader = new Loader(
     messagesContainer,
     createChatFrag,
@@ -1339,25 +1380,10 @@ const initChatLoader = (groupId, sessionId) => {
     {
       loadersCount: 1,
       append: false,
-      afterAppendRes: (data) => {
-        const targetScroll =
-          messagesContainer.scrollHeight - data.initialHeight;
-        messagesContainer.scroll({
-          top: targetScroll,
-          behavior: "instant",
-        });
-        if (isFirstLoad) {
-          const lastMessageIndex = data.cards[0]
-            ? data.cards[0].length - 1
-            : null;
-          const lastMessageId = lastMessageIndex
-            ? data.cards[0][lastMessageIndex].id
-            : "";
-          openChatStream(groupId, sessionId, lastMessageId);
-          isFirstLoad = false;
-        }
-      },
-    }
+      afterAppendRes,
+      firstLoadFunc: (cards) => firstLoadFunc(cards, groupId, sessionId),
+      rootMargin: "30px"
+    },
   ).reset();
   return loader;
 };
@@ -1396,7 +1422,7 @@ export const iniChat = (groupId = "", sessionId = "") => {
   messagesContainer.addEventListener(
     "loadedmetadata",
     handleLoadedMetadataCapture,
-    true
+    true,
   );
 
   messagesContainer.addEventListener("ended", handleEndedCapture, true);
@@ -1404,7 +1430,7 @@ export const iniChat = (groupId = "", sessionId = "") => {
   messagesContainer.addEventListener(
     "timeupdate",
     handleTimeUpdateCapture,
-    true
+    true,
   );
 
   initializeEmojiPicker(emojiList);

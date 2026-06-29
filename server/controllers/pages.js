@@ -93,7 +93,7 @@ const handleQuizPlayRoute = async (req, res) => {
     req.query.groupId
   );
   const templateContext = response.templateContext;
-
+  
   const payload = {
     templateContext,
   };

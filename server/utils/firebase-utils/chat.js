@@ -18,7 +18,7 @@ const sendMessage = async (
   localId,
   groupId,
   timestamp,
-  user
+  user,
 ) => {
   try {
     if (!user.joinedGroupsIds.includes(groupId)) {
@@ -128,7 +128,7 @@ const getFormatedMessages = (messages, userId) => {
           !msg.isSender &&
           msg.content.fileStatus &&
           msg.content.fileStatus !== FILE_STATUS.UPLOADED
-        )
+        ),
     );
 };
 
@@ -137,7 +137,7 @@ const getMessages = async (
   groupId,
   userId,
   limit = INITIALE_LOADERS_COUNT,
-  lastVisible = null
+  lastVisible = null,
 ) => {
   try {
     const chatPath = sessionId
@@ -187,78 +187,36 @@ const getMessages = async (
 };
 
 const roomStreamExists = (roomId) => {
-  return Array.from(STREAM_MAP.keys()).some((k) => k.startsWith(roomId));
+  return Array.from(STREAM_MAP.keys()).some((k) => k === roomId);
 };
 
-const startChildAddedListener = (
-  roomAlreadyExists,
-  roomId,
-  lastMessageId,
-  query
-) => {
+const startChildAddedListener = (roomId, query) => {
   const onChildAdded = (snapshot) => {
+
     try {
       const messageData = {
         id: snapshot.key,
         ...snapshot.val(),
       };
+
       if (messageData.content.fileStatus === FILE_STATUS.UPLOADING) return; // skip messages that are still uploading
-      const newStreamKey = `${roomId}-${messageData.id}`;
-      const prevStreamKey = `${roomId}-${lastMessageId}`;
-      lastMessageId = messageData.id;
-      const existingStream = STREAM_MAP.get(newStreamKey);
-      const oldStream = STREAM_MAP.get(prevStreamKey);
 
-      if (!oldStream) {
-        try {
-          return query.off("child_added", onChildAdded);
-        } catch (error) {
-          return console.warn("Error detaching listener:", error);
-        }
-      }
-
-      if (roomAlreadyExists && existingStream) {
-        // add users res objs to existing stream
-        const stream = STREAM_MAP.get(prevStreamKey);
-        stream.resMap.forEach((res, userId) => {
-          existingStream.resMap.set(userId, res);
-        });
-        // delete old stream
-        STREAM_MAP.delete(prevStreamKey);
-        try {
-          query.off("child_added", onChildAdded);
-        } catch (error) {
-          console.warn("Error detaching listener:", error);
-        }
-        return broadcastMessage(oldStream.resMap, newStreamKey, messageData);
-      }
-
-      STREAM_MAP.delete(prevStreamKey);
-      STREAM_MAP.set(newStreamKey, oldStream);
-
-      return broadcastMessage(oldStream.resMap, newStreamKey, messageData);
+      return broadcastMessage(roomId, messageData);
     } catch (error) {
       console.error("Error in onChildAdded:", error);
-      const errEntry = STREAM_MAP.get(`${roomId}-${lastMessageId}`);
-      if (errEntry)
-        broadcastMessage(
-          errEntry.resMap,
-          `${roomId}-${lastMessageId}`,
-          { message: "Server error" },
-          true
-        );
+      const errEntry = STREAM_MAP.get(roomId);
+      if (errEntry) broadcastMessage(roomId, { message: "Server error" }, true);
       try {
         query.off("child_added", onChildAdded);
       } catch (e) {
         console.warn("Error detaching listener after onChildAdded error:", e);
       }
-      STREAM_MAP.delete(`${roomId}-${lastMessageId}`);
+      STREAM_MAP.delete(roomId);
     }
   };
-  const streamKey = `${roomId}-${lastMessageId}`;
-  const entry = STREAM_MAP.get(streamKey);
+  const entry = STREAM_MAP.get(roomId);
   if (!entry) {
-    console.warn("No stream entry found when starting listener for", streamKey);
+    console.warn("No stream entry found when starting listener for", roomId);
     // optionally create it or return
     return;
   }
@@ -266,28 +224,33 @@ const startChildAddedListener = (
   entry.query = query;
   query.on("child_added", onChildAdded, (errorObject) => {
     console.error("Firebase listener error:", errorObject);
-    const streamKey = `${roomId}-${lastMessageId}`;
-    broadcastMessage(STREAM_MAP.get(streamKey).resMap, streamKey, null, true);
+    broadcastMessage(roomId, null, true);
   });
 };
 
-const broadcastMessage = (resMap, streamKey, messageData, error = false) => {
+const broadcastMessage = (roomId, messageData, error = false) => {
+  const streamEntry = STREAM_MAP.get(roomId);
+  if (!streamEntry) {
+    console.warn("No stream entry found for broadcasting message:", roomId);
+    return;
+  }
+  const resMap = streamEntry.resMap;
   if (!resMap) return;
   resMap.forEach((res, userId) => {
     try {
-      if (streamKey) res.streamKey = streamKey;
+      res.roomId = roomId;
       if (messageData && messageData.sender.id === userId) return; // don't send the message to the sender
       res.write(`event: ${error ? "error" : "message"}\n`);
       res.write(
         `data: ${JSON.stringify(
-          error ? { message: "DB listener error" } : messageData
-        )}\n\n`
+          error ? { message: "DB listener error" } : messageData,
+        )}\n\n`,
       );
     } catch (err) {
       // broken socket — remove it and continue
       console.warn(
         `Failed to write to client ${userId}; removing connection:`,
-        err
+        err,
       );
       try {
         res.end();

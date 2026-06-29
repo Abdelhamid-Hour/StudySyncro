@@ -593,7 +593,6 @@
       }
 
       .drop-down-menu {
-        transform: translateX(-100%);
         padding-top: 0;
 
         .drop-down-group-label:first-child {

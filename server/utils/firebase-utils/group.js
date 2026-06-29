@@ -371,17 +371,13 @@ const leaveGroup = async (groupId, userId) => {
 
 const modifyGroup = async (userId, groupId, formData) => {
   try {
-    const group = await getGroupById(groupId);
+    const groupRes = await getGroupById(groupId);
     const groupRef = db.collection("groups").doc(groupId);
     const snaphsot = await groupRef.get();
+    if (!groupRes.success) return groupRes;
+    const group = groupRes.group;
     let isAdmin = true;
     isAdmin = group.creator === userId;
-    if (!group) {
-      return {
-        success: false,
-        message: `Id : ${groupId} does not match any group.`,
-      };
-    }
     if (!isAdmin) {
       return {
         success: false,
@@ -580,13 +576,13 @@ const updateGroupProperty = async (groupId, propertie, newValue) => {
 const deleteGroup = async (groupId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
-    const group = await getGroupById(groupId);
-    if (group) {
-      await groupRef.delete();
-      return { success: true, message: "Group removed" };
-    } else {
-      return { success: true, message: "Group removed" };
-    }
+    const groupRes = await getGroupById(groupId);
+
+    if (!groupRes.success) return groupRes;
+
+    await groupRef.delete();
+    return { success: true, message: "Group removed" };
+
   } catch (error) {
     console.log(error.message);
     return { success: false, message: "Group removed" };
@@ -647,7 +643,14 @@ const getGroupInfo = async (groupId, userId) => {
 
 const getChatContext = async (userId, groupId) => {
   try {
-    const group = await getGroupById(groupId);
+    const groupRes = await getGroupById(groupId);
+
+    if(!groupRes.success) return {
+      ...groupRes,
+      statusCode: 404
+    };
+
+    const group = groupRes.group;
 
     const userSnap = await db.collection("users").doc(userId).get();
 
@@ -658,13 +661,6 @@ const getChatContext = async (userId, groupId) => {
         success: false,
         statusCode: 401,
         message: "You are not a member of this group",
-      };
-
-    if (!group)
-      return {
-        success: false,
-        statusCode: 404,
-        message: "Group Not Found",
       };
 
     const sessionSnap = group.currentSession
@@ -712,9 +708,10 @@ const joinGroup = async (groupId, userData) => {
 
     if (group.visibility === "Public") {
       // Directly add member for public groups
+      
       return await addMember(groupRef, userData.uid);
     }
-
+    
     if (group.visibility === "Private" && group.showInSearch) {
       // Send join request for private groups that are discoverable
       return await sendRequest(groupId, userData);

@@ -190,10 +190,8 @@ export class Quiz extends Task {
     if (groupId) {
       Session.groupId = groupId;
     }
-
-    if (isAdmin) {
-      this.isAdmin = isAdmin;
-    }
+    
+    this.isAdmin = isAdmin;
   }
   updateElapsedTime({ quizElapsedTime, status }) {
     if (status === "active" && !this.passed && !this.isAdmin) {
@@ -218,17 +216,17 @@ export class Quiz extends Task {
     }%`;
   }
 
-  addQuizBtns(isAdmin) {
+  addQuizBtns() {
     const quizFooter = document.querySelector(QUIZSELECTORS.quizFooter);
     if (!quizFooter) return;
 
-    this.addViewResultBtn(quizFooter, isAdmin);
-    if (!isAdmin) {
+    this.addViewResultBtn(quizFooter);
+    if (!this.isAdmin) {
       this.addRetakeBtn(quizFooter);
     }
   }
 
-  addViewResultBtn(quizFooter, isAdmin) {
+  addViewResultBtn(quizFooter) {
     const existedButton1 = quizFooter.querySelector(".result-btn");
     const existedButton2 = quizFooter.querySelector(".results-btn");
     if (existedButton1) return;
@@ -236,13 +234,13 @@ export class Quiz extends Task {
 
     const button = document.createElement("button");
     button.type = "button";
-    button.className = `result${isAdmin ? "s" : ""}-btn should-fill`;
+    button.className = `result${this.isAdmin ? "s" : ""}-btn should-fill`;
     button.innerHTML = `
       <i class="bi bi-eye"></i>
-      View ${isAdmin ? "Results" : "Result"}
+      View ${this.isAdmin ? "Results" : "Result"}
     `;
 
-    if (!isAdmin) {
+    if (!this.isAdmin) {
       button.addEventListener("click", () =>
         openQuizResultOverlay({
           quizId: this.UID,
@@ -422,7 +420,7 @@ export class Session {
         this.quiz.updateElapsedTime({
           status: this.quiz.status,
         });
-        if (this.quiz.status == "active" && !this.quiz.passed && !this.isAdmin)
+        if (this.quiz.status == "active" && !this.quiz.passed && !this.quiz.isAdmin)
           return;
       }
 
@@ -492,7 +490,7 @@ export class Session {
     if (complatedTask.isQuiz) {
       this.quiz.status = "completed";
       this.quiz.updateBadge("completed");
-      this.quiz.addQuizBtns(this.isAdmin);
+      this.quiz.addQuizBtns();
     }
     this.updateTasksBadges(
       nextTaskObj,
@@ -773,9 +771,9 @@ export class Session {
     return this;
   }
 
-  addQuizBtns(isAdmin) {
+  addQuizBtns() {
     if (this.quiz) {
-      this.quiz.addQuizBtns(isAdmin);
+      this.quiz.addQuizBtns();
     }
   }
 }

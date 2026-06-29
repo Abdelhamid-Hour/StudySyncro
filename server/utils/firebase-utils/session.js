@@ -68,6 +68,7 @@ const createGroupSession = async (sessionData, userId) => {
           title: quizSnap.data().title,
           questionsCount: quizSnap.data().questionsCount,
           createdAt: FieldValue.serverTimestamp(),
+          sessionName: name
         });
         await quizRef.update({
           groupsCount: FieldValue.increment(1),
@@ -414,7 +415,7 @@ const fetchActiveSessions = async (userId, count = 20, lastVisible = null) => {
 
     const joinedGroupsIds = userSnap.data()?.joinedGroupsIds || [];
 
-    if (joinedGroupsIds.length === 0) return [];
+    if (joinedGroupsIds.length === 0) return { success: true, sessions: [] };
 
     let sessions = [];
 

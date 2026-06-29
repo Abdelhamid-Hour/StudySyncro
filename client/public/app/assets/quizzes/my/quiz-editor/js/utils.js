@@ -836,8 +836,8 @@ export const handleSidebarTitleLinkClick = async (e) => {
       "exclamation",
       "Are you sure you want to leave?",
       "You will lose all unsaved changes.",
-      "Leave",
-      "Save & Leave"
+      "Discard",
+      "Save and Leave"
     );
 
     if (res) {

@@ -1,6 +1,7 @@
 .create-group-overlay,
 .create-session-overlay,
-.create-quiz-overlay {
+.create-quiz-overlay,
+.duplicate-quiz-overlay {
   display: flex;
   flex-direction: column;
   gap: var(--primary-gap);

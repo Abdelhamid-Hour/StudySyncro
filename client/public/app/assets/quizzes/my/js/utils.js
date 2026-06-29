@@ -15,6 +15,7 @@ import {
   navigateTo,
   getLoader,
   handleApiAction,
+  formatNumber,
 } from "../../../global/js/utils.js";
 import {
   handleFormSubmit,
@@ -34,29 +35,55 @@ export const handleQuizCreateClick = () => {
   );
 };
 
+const handleQuizDuplicateClick = (quizId) => {
+  openOverlayModal(
+    "duplicate-quiz-overlay",
+    [".close-duplicate-quiz-overlay"],
+    getDuplicateQuizOverlay,
+    (backdropElement) => setUpDuplicateQuizOverlay(backdropElement, quizId)
+  );
+};
+
 const setUpQuizOverlay = (backdropElement) => {
   setUpSelectMenu(backdropElement.querySelector(".subject-field"));
   initQuizForm();
 };
 
+const setUpDuplicateQuizOverlay = (backdropElement, quizId) => {
+  const form = backdropElement.querySelector("form");
+  const quizTitle = form.querySelector(".quiz-title-field input");
+  const duplicateBtn = form.querySelector(".duplicate-btn");
+
+  quizTitle.focus();
+
+  handleFormSubmit(
+    form,
+    () => validateQuizTitleField(quizTitle),
+    (quizData) =>
+      handleDuplicateQuizSubmit(quizData, form, duplicateBtn, quizId, quizTitle)
+  );
+};
+
 const handleCreateQuizSubmit = async (quizData, form, createBtn) => {
-  if (form.isCreating) return;
-  try {
-    form.isCreating = true;
-    createBtn.disabled = true;
-    createBtn.innerHTML = getLoader();
-    const { quizId } = await sendData("/api/create-quiz", { quizData });
-    showMessageBlock("Quiz created successfully.", "success");
-    navigateTo(`/quizzes/my/${quizId}/edit`);
-  } catch (error) {
-    console.error("Error: ", error);
-    showMessageBlock(error.message, "error");
-  } finally {
-    form.isCreating = false;
-    createBtn.disabled = false;
-    createBtn.innerHTML = "Create";
-  }
-  // ? its not necessary to reset the form here, as the overlay will be closed
+  const quizTitleInput = form.querySelector(".quiz-title-field input");
+
+  return handleApiAction("/create-quiz", { quizData }, createBtn, {
+    successMsg: "Quiz created successfully.",
+    getExtraData: async () => {
+      const quizTitle = quizData["quiz-title"] ?? "";
+      const titleIsAvailable = await checkQuizTitleAvailability(
+        quizTitle,
+        quizTitleInput
+      );
+
+      if (!titleIsAvailable) return null;
+
+      return {};
+    },
+    onSuccess: ({ quizId }) => {
+      navigateTo(`/quizzes/my/${quizId}/edit`);
+    },
+  });
 };
 
 export const initQuizForm = () => {
@@ -76,25 +103,84 @@ export const initQuizForm = () => {
   );
 };
 
-const chechQuizValues = (inputs) => {
-  const { quizTitle, subject } = inputs;
-  const quizTitleValue = quizTitle?.value ?? "";
-  const subjectValue = subject?.value ?? "";
+const handleDuplicateQuizSubmit = async (
+  quizData,
+  form,
+  duplicateBtn,
+  quizId,
+  quizTitleInput
+) => {
+  const title = quizData.title ?? "";
+
+  return handleApiAction("/duplicate-quiz", { quizId }, duplicateBtn, {
+    successMsg: "Quiz duplicated successfully.",
+    getExtraData: async () => {
+      const titleIsAvailable = await checkQuizTitleAvailability(
+        title,
+        quizTitleInput
+      );
+
+      if (!titleIsAvailable) return null;
+
+      return { title };
+    },
+    onSuccess: (res) => {
+      navigateTo(`/quizzes/my/${res.newQuizId}/edit`);
+    },
+  });
+};
+
+const validateQuizTitleField = (quizTitleInput) => {
+  const quizTitleValue = quizTitleInput?.value ?? "";
 
   if (!quizTitleValue.trim()) {
-    showErrorTooltip("Quiz Title is required.", quizTitle);
+    showErrorTooltip("Quiz Title is required.", quizTitleInput);
     return false;
-  } else if (
+  }
+
+  if (
     quizTitleValue.length < NAME_TITLE_MIN_LENGTH ||
     quizTitleValue.length > NAME_TITLE_MAX_LENGTH
   ) {
     showErrorTooltip(
       `Quiz Title must be between ${NAME_TITLE_MIN_LENGTH} and ${NAME_TITLE_MAX_LENGTH} characters.`,
-      quizTitle
+      quizTitleInput
     );
     return false;
-  } else {
-    resetTooltip(globalTooltip, quizTitle.closest(".field-container"));
+  }
+
+  resetTooltip(globalTooltip, quizTitleInput.closest(".field-container"));
+  return true;
+};
+
+const checkQuizTitleAvailability = async (title, quizTitleInput) => {
+  if (!validateQuizTitleField(quizTitleInput)) return false;
+
+  try {
+    const { available, message } = await sendData("/api/check-quiz-title", {
+      title,
+    });
+
+    if (!available) {
+      showErrorTooltip(message, quizTitleInput);
+      return false;
+    }
+
+    resetTooltip(globalTooltip, quizTitleInput.closest(".field-container"));
+    return true;
+  } catch (error) {
+    console.error("Error: ", error);
+    showMessageBlock(error.message, "error");
+    return false;
+  }
+};
+
+const chechQuizValues = (inputs) => {
+  const { quizTitle, subject } = inputs;
+  const subjectValue = subject?.value ?? "";
+
+  if (!validateQuizTitleField(quizTitle)) {
+    return false;
   }
 
   if (!subjectValue.trim()) {
@@ -153,6 +239,37 @@ const getQuizOverlay = () => `<div class="overlay-model create-quiz-overlay">
         </form>
       </div>`;
 
+const getDuplicateQuizOverlay = () => `<div class="overlay-model duplicate-quiz-overlay">
+        <header>
+          <h3>Duplicate Quiz</h3>
+          <button
+            type="button"
+            class="exclude-btn close-duplicate-quiz-overlay"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </header>
+        <form novalidate>
+          <div class="field-container quiz-title-field">
+            <div class="field-icon-container">
+              <span class="icon-box">
+                <i class="bi bi-files"></i>
+                <i class="bi bi-info-circle"></i>
+              </span>
+            </div>
+            <input
+              type="text"
+              required
+              id="duplicate-quiz-title"
+              name="title"
+              class="input"
+              placeholder="New title"
+            />
+          </div>
+          <button type="submit" class="blue-btn create-btn duplicate-btn">Duplicate</button>
+        </form>
+      </div>`;
+
 const getCriteria = () => {
   let creteria = "";
   const sortDate = topSideBarMiddle.querySelector("#sort-checkbox")?.checked;
@@ -186,7 +303,7 @@ const getcreateQuizCardFunc = (quiz = {}) => {
 
   // Create a wrapper div
   const card = document.createElement("div");
-  card.className = "card-item";
+  card.className = "quiz-card card-item";
   card.dataset.quizId = id;
   card.innerHTML = `
       <header class="quiz-card-header">
@@ -266,7 +383,7 @@ const getcreateQuizCardFunc = (quiz = {}) => {
           Shared in
         </label>
         <div class="content">
-          <span class="count content">
+          <span class="count content has-tooltip" data-tooltip="Groups | Sessions">
             ${formatNumber(sharedGroups)}
             <sup>Gr</sup>
             | ${formatNumber(sharedSessions)}
@@ -378,13 +495,6 @@ export const handleQuizCardBtns = (e) => {
 
   const duplicateBtn = e.target.closest(".duplicate-quiz-menu-btn");
   if (duplicateBtn) {
-    const quizId = duplicateBtn.dataset.quizId;
-    handleApiAction("/duplicate-quiz/", { quizId }, null, {
-      successMsg: "Quiz duplicated successfully.",
-      onSuccess: (res) => {
-        navigateTo(`/quizzes/my/${res.newQuizId}/edit`);
-      },
-      method: "POST",
-    });
+    handleQuizDuplicateClick(duplicateBtn.dataset.quizId);
   }
 };

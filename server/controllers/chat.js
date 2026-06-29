@@ -22,7 +22,7 @@ const sendMessageHandler = async (req, res) => {
     localId,
     groupId,
     timestamp,
-    req.user
+    req.user,
   );
 
   if (result.success) {
@@ -39,8 +39,6 @@ const sendMessageHandler = async (req, res) => {
 const chatStreamHandler = async (req, res) => {
   const groupId = req.query.groupId;
   const sessionId = req.query.sessionId;
-  const lastMessageId = req.query.lastMessageId || "";
-
   const groupSnap = await db.collection("groups").doc(groupId).get();
 
   if (!groupSnap.exists)
@@ -59,31 +57,19 @@ const chatStreamHandler = async (req, res) => {
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders && res.flushHeaders(); // flush the headers to establish SSE with client
   const roomId = sessionId || groupId;
-  const streamKey = `${roomId}-${lastMessageId}`;
-  const roomAlreadyExists = roomStreamExists(roomId);
   const path = sessionId ? `sessions/${roomId}/chat` : `groups/${roomId}/chat`;
-  const query = lastMessageId
-    ? rDb.ref(path).orderByKey().startAfter(lastMessageId)
-    : rDb.ref(path).orderByKey();
-  if (STREAM_MAP.has(streamKey)) {
-    const existingStream = STREAM_MAP.get(streamKey);
-    existingStream.resMap.set(req.user.uid, res);
-  } else if (roomAlreadyExists) {
-    STREAM_MAP.set(streamKey, {
-      resMap: new Map(),
-      query: null,
-      listener: null,
-    });
-    STREAM_MAP.get(streamKey).resMap.set(req.user.uid, res);
-    startChildAddedListener(true, roomId, lastMessageId, query, req.user.uid);
+  const timestamp = Date.now();
+  const query = rDb.ref(path).orderByChild("timestamp").startAt(timestamp);
+  if (STREAM_MAP.has(roomId)) {
+    STREAM_MAP.get(roomId).resMap.set(req.user.uid, res);
   } else {
-    STREAM_MAP.set(streamKey, {
+    STREAM_MAP.set(roomId, {
       resMap: new Map(),
       query: null,
       listener: null,
     });
-    STREAM_MAP.get(streamKey).resMap.set(req.user.uid, res);
-    startChildAddedListener(false, roomId, lastMessageId, query, req.user.uid);
+    STREAM_MAP.get(roomId).resMap.set(req.user.uid, res);
+    startChildAddedListener(roomId, query);
   }
 
   const heartbeat = setInterval(() => {
@@ -97,13 +83,13 @@ const chatStreamHandler = async (req, res) => {
   req.on("close", () => {
     try {
       clearInterval(heartbeat);
-      const userStream = STREAM_MAP.get(res.streamKey || streamKey);
+      const userStream = STREAM_MAP.get(res.roomId || roomId);
       if (userStream) {
         userStream.resMap.delete(req.user.uid);
         if (userStream.resMap.size === 0) {
-          STREAM_MAP.delete(res.streamKey || streamKey);
+          STREAM_MAP.delete(res.roomId || roomId);
+          userStream.query.off("child_added", userStream.listener);
         }
-        userStream.query.off("child_added", userStream.listener);
       }
       res.end();
     } catch (error) {
@@ -120,7 +106,7 @@ const getMessagesHandler = async (req, res) => {
     groupId,
     req.user.uid,
     Number(count),
-    lastVisible
+    lastVisible,
   );
 
   console.log("Get messages result:", result.messages);

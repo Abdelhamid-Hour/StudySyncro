@@ -605,7 +605,7 @@
         gap: calc(var(--primary-gap) / 2);
         top: 0;
         left: 50%;
-        translate: -100% calc(-100% - 1rem);
+        translate: 0 calc(-100% - 1rem);
         width: 20rem;
         height: 25rem;
         background-color: var(--btn-background-color);

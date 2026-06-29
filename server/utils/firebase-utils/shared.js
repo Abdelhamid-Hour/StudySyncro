@@ -21,14 +21,23 @@ const getGroupById = async (groupId) => {
     const groupRef = db.collection("groups").doc(groupId);
     const snaphsot = await groupRef.get();
     if (snaphsot.empty) {
-      return false;
+      return {
+        success: false,
+        message: "Group not found",
+      };
     } else {
       const group = { id: groupId, ...snaphsot.data() };
-      return group;
+      return {
+        success: true,
+        group,
+      };
     }
   } catch (error) {
     console.log(error.message);
-    return false;
+    return {
+      success: false,
+      message: error.message,
+    };
   }
 };
 

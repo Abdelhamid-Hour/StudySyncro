@@ -43,6 +43,14 @@
     color: var(--primary-color);
   }
 
+  .session-name {
+    font-size: var(--small-font-size);
+    color: var(--secondary-text-color);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
   .answered {
     font-size: var(--small-font-size);
     color: var(--secondary-text-color);

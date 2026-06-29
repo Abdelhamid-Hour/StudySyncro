@@ -34,6 +34,7 @@ const {
   getQuizzesListHandler,
   addQuizResultHandler,
   getExamenResultHandler,
+  checkQuizTitleHandler,
   duplicateQuizHandler,
   removeQuizHandler,
 } = require("../controllers/quizzes");
@@ -84,6 +85,8 @@ apiRouter.post("/join-group", joinGroupHandler);
 apiRouter.patch("/update-group/:groupId", patchGroupHandler);
 
 apiRouter.post("/create-quiz", createQuizHandler);
+
+apiRouter.post("/check-quiz-title", checkQuizTitleHandler);
 
 apiRouter.put("/update-quiz/:quizId", updateQuizHandler);
 
@@ -177,7 +180,7 @@ GroupFragmentRoutes.forEach((config) => {
   apiRouter.get(
     `${config.route}/:id`,
     generateTemplateContext,
-    groupFragmentHandler(config)
+    groupFragmentHandler(config),
   );
 });
 

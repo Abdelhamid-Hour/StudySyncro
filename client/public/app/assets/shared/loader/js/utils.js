@@ -26,17 +26,19 @@ export class Loader {
     route,
     loadingBox,
     {
-      rootMargin = "200px",
+      rootMargin = "30px",
       getCriteria = () => "",
       loadersCount = LOADERS_COUNT,
       afterAppendRes = () => {},
       append = true,
-    }
+      firstLoadFunc = () => {},
+    },
   ) {
     this.getCriteria = () => {
       const criteria = getCriteria() || "";
       return encodeCriteria(criteria);
     };
+    this.firstLoadFunc = firstLoadFunc;
     this.afterAppendRes = afterAppendRes;
     this.creteria = this.getCriteria();
     this.append = append;
@@ -74,6 +76,7 @@ export class Loader {
   }
 
   initObserver() {
+    let isFirstLoad = true;
     this.io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -82,14 +85,15 @@ export class Loader {
             !this.loading &&
             this.lastVisible !== null
           ) {
-            this.loadMore();
+            this.loadMore(isFirstLoad);
+            if (isFirstLoad) isFirstLoad = false;
           }
         });
       },
       {
         root: this.container,
         rootMargin: this.rootMargin,
-      }
+      },
     );
 
     if (this.sentinel) {
@@ -110,13 +114,13 @@ export class Loader {
     this.sentinel = document.querySelector(".first-loading-card");
   }
 
-  async loadMore() {
+  async loadMore(isFirstLoad = false) {    
     this.loading = true;
 
     const endPoint = `${this.route}lastVisible=${this.lastVisible}&count=${this.count}&${this.creteria}`;
 
     try {
-      const { cards, lastVisible } = await fetchData(endPoint);
+      let { cards, lastVisible } = await fetchData(endPoint);
 
       this.lastVisible = lastVisible;
 
@@ -124,15 +128,21 @@ export class Loader {
 
       const initialHeight = this.container.scrollHeight;
 
+      if (isFirstLoad) {
+        const res = this.firstLoadFunc(cards);
+        if (res && res.cards) cards = res.cards;
+        if (res && res.lastVisible) lastVisible = res.lastVisible || lastVisible;
+      }
+
       let cardElements;
       if (isAsync(this.createCard)) {
         const promises = cards.map((item) =>
-          this.createCard(item, this.creteria.split("=")[1])
+          this.createCard(item, this.creteria.split("=")[1]),
         );
         cardElements = await Promise.all(promises);
       } else {
         cardElements = cards.map((item) =>
-          this.createCard(item, this.creteria.split("=")[1])
+          this.createCard(item, this.creteria.split("=")[1]),
         );
       }
 
@@ -152,7 +162,7 @@ export class Loader {
       // Optionally, you can show an error message to the user
       showMessageBlock(
         "Error loading more items. Please try again later.",
-        "error"
+        "error",
       );
     }
 

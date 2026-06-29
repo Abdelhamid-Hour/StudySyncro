@@ -170,6 +170,7 @@ const joinGroupHandler = async (req, res) => {
   const groupId = req.body.groupId;
 
   const result = await joinGroup(groupId, req.user);
+    
   if (result.success) {
     return res.status(200).json({ status: result.status });
   }
