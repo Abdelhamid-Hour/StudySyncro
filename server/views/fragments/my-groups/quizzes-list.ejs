@@ -77,14 +77,14 @@
           <span><%= quiz.submittedAt ? quiz.submittedAt : 'N/A' %></span>
         </div>
       </div>
-      <% if (quiz.passed) { %>
+      <% if (quiz.passed || isAdmin) { %>
        <div class="action-btns">
         <button
           type="button"
-          class="view-result<%= isAdmin ? 's' : ''%>-btn should-fill"
+          class="view-result<% if(isAdmin) { %>s<% } %>-btn should-fill"
         >
           <i class="bi bi-eye"></i>
-          View <%= isAdmin ? 'Results' : 'Result' %>
+          View <% if(isAdmin) { %>Results<% } else { %>Result<% } %>
         </button>
         <% if (!isAdmin) { %>
         <button type="button" class="retake-btn">

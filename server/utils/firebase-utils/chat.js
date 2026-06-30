@@ -2,7 +2,7 @@ const { rDb, db } = require("../../firebase/firebaseAdmin");
 const { INITIALE_LOADERS_COUNT } = require("../global");
 const { uploadFileToStorage } = require("./shared");
 
-const CHAT_STREAM_MAP = new Map();
+const STREAM_MAP = new Map();
 
 const FILE_STATUS = {
   UPLOADING: "uploading",
@@ -192,10 +192,6 @@ const getMessages = async (
   }
 };
 
-const roomStreamExists = (roomId) => {
-  return Array.from(STREAM_MAP.keys()).some((k) => k === roomId);
-};
-
 const startChildAddedListener = (roomId, query) => {
   const onChildAdded = (snapshot) => {
 
@@ -271,7 +267,6 @@ const broadcastMessage = (roomId, messageData, error = false) => {
 module.exports = {
   sendMessage,
   getMessages,
-  roomStreamExists,
   startChildAddedListener,
-  CHAT_STREAM_MAP,
+  STREAM_MAP,
 };

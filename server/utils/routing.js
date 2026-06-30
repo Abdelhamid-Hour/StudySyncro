@@ -24,6 +24,7 @@ const SHARED_STYLES_MAP = {
     "/fields",
     "/forms",
     "/quizzes-my-groups",
+    "/quiz-result"
   ],
   "/groups/my": [
     "/groups-my-available",
@@ -132,6 +133,9 @@ const fetchData = async (pathName, user) => {
 
     case pathNames.quizzes.passed:
       templateContext = await getPassedQuizzes(user.uid);
+
+      console.log(templateContext);
+      
 
       templateContext.toReadableDate = toReadableDate;
       templateContext.getScoreClass = getScoreClass;

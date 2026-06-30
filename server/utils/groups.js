@@ -78,7 +78,7 @@ const getMembersListContext = async (groupId, user) => {
 
 const getQuizzesListContext = async (groupId, userId) => {
   const result = await getQuizzesByGroupId(groupId, userId);
-  
+
   return {
     success: result.success,
     context: {

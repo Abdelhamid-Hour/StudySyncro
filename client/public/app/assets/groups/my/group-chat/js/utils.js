@@ -1308,6 +1308,16 @@ const createQuizItemLoader = () => {
       </label>
       <div class="quiz-title content loading-opacity-animation" style="width: 60%; height: 1.2em; border-radius: 0.5em;"></div>
     </div>
+    <div class="session-name-container info-container">
+      <label class="session-name-label">
+        <span class="icon-box">
+          <i class="bi bi-clock-history"></i>
+          <i class="bi bi-info-circle"></i>
+        </span>
+        Session name
+      </label>
+      <div class="session-name content loading-opacity-animation" style="width: 50%; height: 1.2em; border-radius: 0.5em;"></div>
+    </div>
     <div class="questions-container info-container small-container">
       <label class="questions-label">
         <span class="icon-box">

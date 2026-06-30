@@ -47,6 +47,7 @@ export class Loader {
     this.createCard = createCard;
     this.route = route;
     this.loading = false;
+    this.currentRequestId = 0;
     this.io = null;
     this.container = container;
     this.loadersCount = loadersCount;
@@ -115,17 +116,22 @@ export class Loader {
     this.sentinel = document.querySelector(".first-loading-card");
   }
 
-  async loadMore(isFirstLoad = false) {    
+  async loadMore(isFirstLoad = false) {  
     this.loading = true;
+    const requestId = ++this.currentRequestId;
 
-    const endPoint = `${this.route}lastVisible=${this.lastVisible}&count=${this.count}`;
+    let endPoint = `${this.route}lastVisible=${this.lastVisible}&count=${this.count}`;
 
     if (this.creteria) {
-      endPoint.concat(`&${this.creteria}`);
+      endPoint += this.creteria;
     }
 
     try {
       let { cards, lastVisible } = await fetchData(endPoint);
+
+      if (requestId !== this.currentRequestId) {
+        return;
+      }
 
       this.lastVisible = lastVisible;
 
@@ -186,7 +192,11 @@ export const initFiltersInputListener = (loader, container) => {
   const resetLoader = getDebounceFunc(() => loader.reset(), 300);
   const handleInputChange = (e) => {
     const isInput = e.target.tagName === "INPUT";
-    if (isInput) resetLoader();
+    if (isInput) {
+      console.log(" resetLoader();");
+      
+       resetLoader();
+    }
   };
   container.addEventListener("input", handleInputChange);
 };

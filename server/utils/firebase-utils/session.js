@@ -3,7 +3,6 @@ const { db } = require("../../firebase/firebaseAdmin");
 const { formatHoursMinutes, millisecondsToHMFormat } = require("../global");
 const { getQuizResult, isQuizPassed } = require("./examen");
 const { getTasks } = require("./tache");
-const { createGroup } = require("./group");
 
 const SESSION_STREAM_MAP = new Map();
 const LAST_VISIBLE_SESSION_MAP = new Map();
@@ -461,46 +460,19 @@ const fetchActiveSessions = async (userId, count = 20, lastVisible = null) => {
         sessions.length === count ? sessions[sessions.length - 1].id : null;
     } while (sessions.length < count && lastVisible);
 
-    if (SESSION_STREAM_MAP.has(userId) && sessions[sessions.length - 1]) {
-      SESSION_STREAM_MAP.get(userId).lastVisible =
-        sessions[sessions.length - 1].id;
-    } else {
-      LAST_VISIBLE_SESSION_MAP.set(userId, sessions[sessions.length - 1].id);
-    }
-
+    if(sessions.length){        
+      if (SESSION_STREAM_MAP.has(userId) && sessions[sessions.length - 1]) {
+        SESSION_STREAM_MAP.get(userId).lastVisible =
+          sessions[sessions.length - 1].id;
+      } else {
+        LAST_VISIBLE_SESSION_MAP.set(userId, sessions[sessions.length - 1].id);
+      }
+    } 
     return { success: true, sessions, lastVisible };
   } catch (error) {
     console.error("Error fetching active sessions:", error);
     return { success: false, sessions: [] };
   }
-};
-
-const userData = {
-  uid: "hpx1GOaF19NYNiCWGyp7PmNXIak1",
-  email: "bimariossama@gmail.com",
-  createdAt: "2025-10-26T19:11:54.600Z",
-  photoURL:
-    "https://lh3.googleusercontent.com/a/ACg8ocIcVY6C0BsRtBbPzabGwSUni93LoVpoTxkruOs_T58xxhzxUA=s96-c",
-  fullName: "Abdelhamid Hour",
-  currentSession: "",
-};
-
-const groupData = {
-  "group-name": "name",
-  "group-description": "group description",
-  subject: "Probability",
-  level: "Beginner",
-  "max-members": "12",
-  visibility: "Public",
-};
-
-const st = async () => {
-  // for (let index = 40; index <= 100; index++) {
-  //   console.log(`Creating Group ${index + 1}`);
-
-  //   groupData["group-name"] = `Group ${index + 1}`;
-  //   await createGroup(groupData, userData);
-  // }
 };
 
 const getSessionInformations = async (sessionID) => {
@@ -684,7 +656,6 @@ const joinSession = async (sessionId, userId) => {
 
 module.exports = {
   leavSession,
-  st,
   getActiveSession,
   modifieSessionPropertie,
   createGroupSession,

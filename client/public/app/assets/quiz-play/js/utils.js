@@ -15,6 +15,7 @@ let quiz = {
   id: window.location.pathname.split("/").pop(),
   duration: 0, // Duration in minutes
   passed: false,
+  title: document.querySelector(".quiz-title")?.textContent.trim(),
 };
 
 const url = new URL(window.location.href);
@@ -26,6 +27,7 @@ let quizResult = {
   skippedQuestions: [],
   groupId: "",
   submittedAt: null,
+  quizTitle: quiz.title
 };
 
 let currentQuestionIndex = 0;

@@ -333,6 +333,7 @@ const SHARED_STYLES_MAP = {
     "/fields",
     "/forms",
     "quizzes-my-groups",
+    "/quiz-result"
   ],
   "/groups/my": [
     "/groups-my-available",

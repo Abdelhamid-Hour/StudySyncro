@@ -662,18 +662,7 @@ const getChatContext = async (userId, groupId) => {
     };
 
     const group = groupRes.group;
-
-    const userSnap = await db.collection("users").doc(userId).get();
-
-    const isMember = userSnap.data().joinedGroupsIds?.includes(groupId);
-
-    if (!isMember)
-      return {
-        success: false,
-        statusCode: 401,
-        message: "You are not a member of this group",
-      };
-
+    
     if (!group)
       return {
         success: false,

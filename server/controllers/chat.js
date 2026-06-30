@@ -1,20 +1,19 @@
 const {
   sendMessage,
-  roomStreamExists,
   startChildAddedListener,
   getMessages,
-  CHAT_STREAM_MAP,
+  STREAM_MAP,
 } = require("../utils/firebase-utils/chat");
 const { rDb, db } = require("../firebase/firebaseAdmin");
 
-const cleanupClient = (res, userId) => {
-  const userStream = CHAT_STREAM_MAP.get(res.streamKey || streamKey);
+const cleanUpClient = (res, userId) => {
+  const userStream = STREAM_MAP.get(res.roomId);
   if (userStream) {
     userStream.resMap.delete(userId);
     if (userStream.resMap.size === 0) {
-      CHAT_STREAM_MAP.delete(res.streamKey || streamKey);
+      STREAM_MAP.delete(res.roomId);
+      userStream.query.off("child_added", userStream.listener);
     }
-    userStream.query.off("child_added", userStream.listener);
   }
   res.end();
 };
@@ -49,7 +48,6 @@ const sendMessageHandler = async (req, res) => {
 };
 
 const chatStreamHandler = async (req, res) => {
-  console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
   
   const groupId = req.query.groupId;
   const sessionId = req.query.sessionId;
@@ -98,22 +96,14 @@ const chatStreamHandler = async (req, res) => {
       res.write(":\n\n");
     } catch (e) {
       clearInterval(heartbeat);
-      cleanupClient(res, req.user.uid);
+      cleanUpClient(res, req.user.uid);
     }
   }, 20 * 1000);
 
   req.on("close", () => {
     try {
       clearInterval(heartbeat);
-      const userStream = STREAM_MAP.get(res.roomId || roomId);
-      if (userStream) {
-        userStream.resMap.delete(req.user.uid);
-        if (userStream.resMap.size === 0) {
-          STREAM_MAP.delete(res.roomId || roomId);
-          userStream.query.off("child_added", userStream.listener);
-        }
-      }
-      res.end();
+      cleanUpClient(res, req.user.uid)
     } catch (error) {
       console.warn("Error closing stream:", error);
     }

@@ -84,6 +84,7 @@ const getChoicesList = (question, quizResult) => {
 };
 
 export const getResultOverlay = (quizResult, questions) => {
+  
   const getPercentage = (count) => Math.round((count / questions.length) * 100);
 
   const submittedAt = new Date(quizResult.submittedAt);
@@ -128,7 +129,7 @@ export const getResultOverlay = (quizResult, questions) => {
     </button>
   </header>
   <h3 class="quiz-title">${quizResult.quizTitle || 'QUIZ TITLE'}</h3>
-  <span class="session-name"><i class="bi bi-clock-history"></i> ${quizResult.sessionName || ''}</span>
+  ${quizResult.sessionName ? `<span class="session-name"><i class="bi bi-clock-history"></i> ${quizResult.sessionName}</span>` : ''}
   <div class="answered">
     <span class="answered-title">Answered :</span>
     <span class="answered-count">${answeredCount}/${questionCount} Questions</span>

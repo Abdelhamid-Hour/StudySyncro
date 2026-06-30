@@ -47,7 +47,7 @@ const isQuizPassed = async (userId, quizId) => {
   }
 };
 
-const filterQuizzes = (criteria, quizzes, passedQuizzes = false) => {
+const filterQuizzes = (criteria, quizzes) => {
   quizzes = quizzes.filter((ex) => {
     let matchSearch = true;
     let matchStatus =
@@ -57,7 +57,7 @@ const filterQuizzes = (criteria, quizzes, passedQuizzes = false) => {
     let matchDate = criteria.date
       ? new Date(criteria.date) <= new Date(ex.submittedAt)
       : true;
-
+    
     const searchTerm = criteria.searchTerm.trim().toLowerCase();
     if (searchTerm) {
       matchSearch =
@@ -69,27 +69,6 @@ const filterQuizzes = (criteria, quizzes, passedQuizzes = false) => {
 
     return matchSearch && matchDate && matchStatus;
   });
-
-  if (!passedQuizzes)
-    quizzes = quizzes.map(
-      ({
-        id,
-        title,
-        subject,
-        questionsCount,
-        sessionsCount,
-        groupsCount,
-        status,
-      }) => ({
-        id,
-        title,
-        questionsCount,
-        sharedGroups: groupsCount,
-        sharedSessions: sessionsCount,
-        subject,
-        status,
-      }),
-    );
 
   return quizzes;
 };
@@ -140,7 +119,7 @@ const getUserQuizzes = async (
       }));
 
       quizzes = quizzes.concat(
-        filterQuizzes(criteria, batchQuizzes, true).slice(
+        filterQuizzes(criteria, batchQuizzes).slice(
           0,
           count - quizzes.length,
         ),
@@ -225,6 +204,10 @@ const getPassedQuizzes = async (
 
     lastVisible =
       quizzes.length === count ? quizzes[quizzes.length - 1].id : null;
+
+
+      console.log("da fsff quizzes", quizzes);
+      
 
     return {
       success: true,
@@ -1005,6 +988,7 @@ const addQuizResult = async (userId, quizResult) => {
           ),
           questionsCount,
           userId,
+          sessionName: session.name
         });
     } else  {
       return {
