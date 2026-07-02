@@ -23,7 +23,7 @@ export const handleSessionBtns = async (e) => {
   }
 
   const joinBtn = e.target.closest(".join-session");
-  if (joinBtn) {
+  if (joinBtn) {    
     joinSession(sessionId, joinBtn);
   }
 };
@@ -152,6 +152,7 @@ const createSessionCard = (session) => {
       </div>
     </footer>
   `;
+  
 
   card.querySelector(".session-title").textContent = session.name || "";
   card.querySelector(".joined-count-value").textContent =
@@ -169,9 +170,17 @@ const createSessionCard = (session) => {
     session.endTime || "N/A";
   card
     .querySelector(".action-buttons")
-    .setAttribute("data-session-id", session.UID || session.id || "");
+    .setAttribute("data-session-id", session.id || "");
 
   return card;
+};
+
+import { initFiltersInputListener } from "../../../shared/loader/js/utils.js";
+
+const getSearchCriteria = () => {
+  const searchInput = document.querySelector("#active-sessions-search-input");
+  const search = searchInput ? searchInput.value.toLowerCase().trim() : "";
+  return search ? `search=${search}` : "";
 };
 
 export const initSessionsLoader = () => {
@@ -182,6 +191,89 @@ export const initSessionsLoader = () => {
     getSessionLoader(),
     {
       loadersCount: 1,
+      getCriteria: getSearchCriteria,
+      emptyState: {
+        noFilter: {
+          icon: "bi-clock-history",
+          title: "No Active Sessions",
+          desc: "There are no study sessions currently active. You can start one or wait for others to join.",
+        },
+        filtered: {
+          icon: "bi-clock-history",
+          title: "No Active Sessions Found",
+          desc: "We couldn't find any active sessions matching your search query.",
+        },
+      },
     }
   );
+  
+  const searchContainer = document.querySelector(".active-sessions-search");
+  if (searchContainer) {
+    initFiltersInputListener(loader, searchContainer);
+  }
+
+  initActiveSessionsStream();
+};
+
+let sessionsEventSource = null;
+
+const initActiveSessionsStream = () => {
+  if (sessionsEventSource) {
+    sessionsEventSource.close();
+  }
+
+  const lastQueryTime = new Date().toISOString();
+  sessionsEventSource = new EventSource(`/api/stream-sessions?lastQueryTime=${lastQueryTime}`);
+  
+  sessionsEventSource.onmessage = (event) => {
+    try {
+      
+      const data = JSON.parse(event.data);
+      
+      if (data.newSession) {
+        // Apply current search filter
+        const searchInput = document.querySelector("#active-sessions-search-input");
+        const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : "";
+        
+        if (searchTerm && (!data.newSession.name || !data.newSession.name.toLowerCase().includes(searchTerm))) {
+          return; // Skip prepending if it doesn't match the current search
+        }
+
+        const existingCard = sessionsContainer.querySelector(`.action-buttons[data-session-id="${data.newSession.id}"]`);
+        if (!existingCard) {
+          const card = createSessionCard(data.newSession);
+          const emptyState = sessionsContainer.querySelector(".icon-wrapper");
+          if (emptyState) emptyState.remove();
+          sessionsContainer.prepend(card);
+        }
+      }
+
+      if (data.modifiedSession) {
+        const cardActionButtons = sessionsContainer.querySelector(`.action-buttons[data-session-id="${data.modifiedSession.id}"]`);
+        if (cardActionButtons) {
+          const card = cardActionButtons.closest(".active-session");
+          if (card) {
+            card.querySelector(".joined-count-value").textContent = data.modifiedSession.joinedCount ?? 0;
+          }
+        }
+      }
+
+      if (data.removedSession) {
+        const cardActionButtons = sessionsContainer.querySelector(`.action-buttons[data-session-id="${data.removedSession}"]`);
+        if (cardActionButtons) {
+          const card = cardActionButtons.closest(".active-session");
+          if (card) card.remove();
+        }
+      }
+    } catch (e) {
+      // Ignore heartbeat/parsing errors
+    }
+  };
+
+  sessionsEventSource.onerror = (error) => {
+    console.error("SSE stream error:", error);
+    sessionsEventSource.close();
+    // Reconnect after 5 seconds
+    setTimeout(initActiveSessionsStream, 5000);
+  };
 };

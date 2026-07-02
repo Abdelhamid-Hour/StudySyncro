@@ -434,6 +434,7 @@ i {
 
 .main-search,
 .users-search,
+.active-sessions-search,
 .quizzes-search {
   position: relative;
   display: flex;
@@ -1469,7 +1470,7 @@ label.container svg {
   width: 100%;
   border-radius: 50%;
   background-color: var(--uib-color);
-  animation: pulse9173412 var(--uib-speed) ease-in-out infinite;
+  animation: pulse var(--uib-speed) ease-in-out infinite;
   transform: scale(0);
 }
 
@@ -1477,7 +1478,7 @@ label.container svg {
   animation-delay: calc(var(--uib-speed) / -2);
 }
 
-@keyframes pulse9173412 {
+@keyframes pulse {
   0%,
   100% {
     transform: scale(0);
@@ -1487,5 +1488,87 @@ label.container svg {
   50% {
     transform: scale(1);
     opacity: 0.25;
+  }
+}
+/* When any grid or list container is empty and showing .icon-wrapper, switch to flex centering so grid-auto-rows and columns don't constrain it to one line/row! */
+.quizzes-list:has(.icon-wrapper),
+.groups-list:has(.icon-wrapper),
+.members-list:has(.icon-wrapper),
+.demandes-list:has(.icon-wrapper),
+.users-list:has(.icon-wrapper),
+.sessions-container:has(.icon-wrapper),
+.messages-container:has(.icon-wrapper),
+[class*="-list"]:has(.icon-wrapper) {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* Global No Results / Empty State UI */
+.icon-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: var(--primary-gap);
+  text-align: center;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100%;
+  min-height: 20rem;
+  margin: auto !important;
+  padding: calc(var(--primary-gap) * 2);
+  flex-grow: 1;
+  grid-column: 1 / -1 !important;
+  grid-row: 1 / -1 !important;
+  justify-self: center !important;
+  align-self: center !important;
+
+  .empty-icon-container {
+    width: 6.5rem;
+    height: 6.5rem;
+    border-radius: 50%;
+    background-color: var(--btn-background-color, rgba(30, 119, 253, 0.1));
+    border: 1px solid var(--inputs-border-color, rgba(30, 119, 253, 0.2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--primary-shadow);
+    margin-bottom: calc(var(--primary-gap) / 2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    i {
+      font-size: 3rem !important;
+      color: var(--primary-color);
+      margin: 0;
+    }
+  }
+
+  /* Support standalone i if container is missing */
+  > i {
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: calc(var(--primary-gap) / 2);
+  }
+
+  h3 {
+    color: var(--heading-color, var(--primary-color));
+    font-weight: 600;
+    font-size: var(--large-font-size, 1.5rem);
+    margin: 0;
+  }
+
+  p {
+    color: var(--secondary-text-color, gray);
+    margin: 0;
+    max-width: 30rem;
+    font-size: var(--medium-font-size, 1rem);
+    line-height: 1.5;
   }
 }

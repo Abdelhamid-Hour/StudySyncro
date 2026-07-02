@@ -51,19 +51,18 @@ const filterQuizzes = (criteria, quizzes) => {
   quizzes = quizzes.filter((ex) => {
     let matchSearch = true;
     let matchStatus =
-      criteria.status && criteria.status.length > 0
-        ? criteria.status.includes(ex.status)
-        : true;
+      !criteria.status || criteria.status.length === 0
+        ? true
+        : criteria.status.some((s) => s?.toLowerCase() === ex.status?.toLowerCase());
     let matchDate = criteria.date
       ? new Date(criteria.date) <= new Date(ex.submittedAt)
       : true;
     
-    const searchTerm = criteria.searchTerm.trim().toLowerCase();
+    const searchTerm = criteria.searchTerm?.trim().toLowerCase() || "";
     if (searchTerm) {
       matchSearch =
-        searchTerm.trim() === "" ||
         (ex.subject && ex.subject.toLowerCase().includes(searchTerm)) ||
-        ex.title.toLowerCase().includes(searchTerm) ||
+        (ex.title && ex.title.toLowerCase().includes(searchTerm)) ||
         (ex.groupName && ex.groupName.toLowerCase().includes(searchTerm));
     }
 
@@ -204,11 +203,6 @@ const getPassedQuizzes = async (
 
     lastVisible =
       quizzes.length === count ? quizzes[quizzes.length - 1].id : null;
-
-
-      console.log("da fsff quizzes", quizzes);
-      
-
     return {
       success: true,
       cards: quizzes,
@@ -225,9 +219,11 @@ const getPassedQuizzes = async (
 
 const getFilteredQuizzes = (criteria, quizzes, passedQuizzes, isAdmin) => {
   quizzes = quizzes.filter((doc) => {
-    const title = doc.data().title.toLowerCase();
-    const matchSearch = criteria.search
-      ? title.includes(criteria.search.toLowerCase())
+    const title = doc.data().title?.toLowerCase() || "";
+    const subject = doc.data().subject?.toLowerCase() || "";
+    const searchTerm = criteria.search?.trim().toLowerCase() || "";
+    const matchSearch = searchTerm
+      ? title.includes(searchTerm) || subject.includes(searchTerm)
       : true;
     const submittedAt = passedQuizzes
       .find((quiz) => quiz.id === doc.id)

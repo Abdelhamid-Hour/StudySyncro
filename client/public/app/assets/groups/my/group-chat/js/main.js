@@ -38,24 +38,18 @@ import {
   setUpDemandes,
 } from "./utils.js";
 
-let firstLoad = true;
-
 export const init = (virtual = false) => {
-  if (virtual && firstLoad) {
-    firstLoad = false; // Prevent re-initialization on subsequent calls
-    return;
-  }
   initDomVariables();
 
   iniChat(getGroupId());
 
-  showInfoBtn.addEventListener("click", handleShowInfoBtnClick);
+  showInfoBtn?.addEventListener("click", handleShowInfoBtnClick);
 
-  groupInfoMenuBtn.addEventListener("click", handleGroupInfo);
+  groupInfoMenuBtn?.addEventListener("click", handleGroupInfo);
 
-  quizzesListMenuBtn.addEventListener("click", handleQuizzesListMenuBtn);
+  quizzesListMenuBtn?.addEventListener("click", handleQuizzesListMenuBtn);
 
-  membersListMenuBtn.addEventListener("click", handleMembersListMenuBtn);
+  membersListMenuBtn?.addEventListener("click", handleMembersListMenuBtn);
 
   sessionInfoMenuBtn?.addEventListener("click", handleSessionInfoMenuBtn);
 
@@ -77,7 +71,7 @@ export const init = (virtual = false) => {
     endSession(e.target, e.target.dataset.sessionId)
   );
 
-  groupLeftSideBarContent.addEventListener(
+  groupLeftSideBarContent?.addEventListener(
     "click",
     handleGroupLeftSideBarContent
   );

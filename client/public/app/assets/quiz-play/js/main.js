@@ -14,25 +14,20 @@ import {
   toPreviousQuestion,
 } from "./utils.js";
 
-let firstLoad = true;
 export const init = (virtual = false) => {
-  if (virtual && firstLoad) {
-    firstLoad = false; // Prevent re-initialization on subsequent calls
-    return;
-  }
   initDomVariables();
 
   resetVars();
 
   setUpQuiz();
 
-  nextBtn.addEventListener("click", toNextQuestion);
+  nextBtn?.addEventListener("click", toNextQuestion);
 
-  prevBtn.addEventListener("click", toPreviousQuestion);
+  prevBtn?.addEventListener("click", toPreviousQuestion);
 
-  skipBtn.addEventListener("click", skipQuestion);
+  skipBtn?.addEventListener("click", skipQuestion);
 
-  closeBtn.addEventListener("click", () => {
+  closeBtn?.addEventListener("click", () => {
     history.back();
   });
 };

@@ -2,10 +2,6 @@
   grid-auto-rows: max-content;
 }
 
-.loading-btn {
-  margin-left: auto;
-}
-
 .quiz-card {
   background-color: var(--btn-background-color);
   border-radius: var(--primary-radius);
@@ -34,6 +30,7 @@
       margin-top: calc(var(--primary-gap) / -2);
       margin-right: calc(var(--primary-gap) / -2);
       border-radius: 0.4rem;
+
       &:hover {
         background-color: var(--btn-background-color);
         box-shadow: var(--primary-shadow);

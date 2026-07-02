@@ -62,8 +62,8 @@ button,
     scale var(--primary-transition-style);
   color: var(--btn-text-color);
 
-  &:disabled,
-  &:disabled:hover {
+  &:disabled:not(.loading-opacity-animation),
+  &:disabled:hover:not(.loading-opacity-animation) {
     cursor: not-allowed !important;
     color: var(--disabled-text-color) !important;
     border-color: var(--disabled-text-color) !important;
@@ -176,7 +176,7 @@ button:not(.exclude-btn),
     }
   }
 
-  &:disabled {
+  &:disabled:not(.loading-opacity-animation) {
     color: var(--disabled-text-color) !important;
     border-color: var(--disabled-text-color) !important;
     background-color: var(--disabled-background-color) !important;
@@ -337,7 +337,11 @@ button:not(.exclude-btn),
   );
   animation: loading-animation 1s ease-in-out infinite both;
 }
-.loading-opacity-animation {
+.loading-opacity-animation,
+button.loading-opacity-animation,
+button:disabled.loading-opacity-animation,
+.button:disabled.loading-opacity-animation,
+[disabled].loading-opacity-animation {
   display: flex;
   height: 1.2rem;
   border-radius: 0.2rem;

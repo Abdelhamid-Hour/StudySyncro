@@ -768,7 +768,37 @@ export class Session {
 
     this.displayComplatedTasks();
     this.displayOngoingTasks();
+    this.initSessionStream();
     return this;
+  }
+
+  initSessionStream() {
+    const sessionId = Session.id;
+    if (!sessionId) return;
+    if (this.sessionStream) {
+      this.sessionStream.close();
+    }
+    this.sessionStream = new EventSource(`/api/stream-single-session?sessionId=${sessionId}`);
+    this.sessionStream.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.joinedCount !== undefined) {
+          const joinedEl = document.querySelector(SESSIONSSELECTORS.joinedCount);
+          if (joinedEl) {
+            joinedEl.textContent = data.joinedCount;
+          }
+        }
+        if (data.removed || data.status === "ended" || data.status === "cancelled") {
+          this.sessionStream.close();
+          navigateTo("/home");
+        }
+      } catch (e) {
+        console.error("Error parsing session stream:", e);
+      }
+    };
+    this.sessionStream.onerror = (e) => {
+      console.warn("Session stream error:", e);
+    };
   }
 
   addQuizBtns() {

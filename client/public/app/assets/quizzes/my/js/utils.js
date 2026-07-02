@@ -283,7 +283,7 @@ const getCriteria = () => {
 
   const sort = sortDate ? "asc" : "desc";
   creteria += `sort=${sort}`;
-  const searchTerm = search ? search.trim() : "";
+  const searchTerm = search ? search.toLowerCase().trim() : "";
   creteria += `&searchTerm=${searchTerm}`;
   creteria += `&status=${status.join(",")}`;
 
@@ -414,6 +414,12 @@ const createUserQuizLoadingCard = () => {
   const loadingCard = document.createElement("div");
   loadingCard.className = "quiz-card loading-animation loading-card";
   loadingCard.innerHTML = `
+      <header class="quiz-card-header">
+        <span class="badge gray-badge loading-opacity-animation" style="width: 5rem; height: 1.5rem;"></span>
+        <button type="button" class="exclude-btn quiz-card-menu-btn" disabled>
+          <i class="bi bi-three-dots-vertical"></i>
+        </button>
+      </header>
       <div class="quiz-title-container info-container">
         <label class="quiz-title-label">
           <span class="icon-box"><i class="bi bi-card-text"></i></span>
@@ -444,10 +450,6 @@ const createUserQuizLoadingCard = () => {
         </label>
         <span class="subject content loading-opacity-animation"></span>
       </div>
-      <button class="button loading-btn" disabled>
-        <i class="bi bi-pencil-square"></i>
-        Edit Quiz
-      </button>
   `;
   return loadingCard;
 };
@@ -460,6 +462,18 @@ export const initLazyLoadingLoader = () => {
     createUserQuizLoadingCard(),
     {
       getCriteria,
+      emptyState: {
+        noFilter: {
+          icon: "bi-file-earmark-plus",
+          title: "No Quizzes Created",
+          desc: "You haven't created any quizzes yet. Click the 'Create Quiz' button to get started!",
+        },
+        filtered: {
+          icon: "bi-file-earmark-plus",
+          title: "No Quizzes Found",
+          desc: "No quizzes match your filter criteria. Try adjusting your search or filters.",
+        },
+      },
     }
   );
 

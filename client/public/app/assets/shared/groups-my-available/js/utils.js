@@ -3,37 +3,36 @@ import { initFiltersInputListener, Loader } from "../../loader/js/utils.js";
 
 export const createLoadingCard = (userGroup) => {
   const loadingCard = document.createElement("div");
-  loadingCard.className = "loading-animation loading-card";
+  loadingCard.className = "group-card loading-animation loading-card";
   loadingCard.innerHTML = `
       <header>
+        <span class="badge loading-opacity-animation" style="width: 5rem; height: 1.5rem;"></span>
+        <span class="badge loading-opacity-animation" style="width: 5rem; height: 1.5rem;"></span>
+      </header>
+      <div class="group-meta">
+        <h3 class="group-name loading-opacity-animation" style="width: 60%; height: 1.4rem; border-radius: 0.4rem;"></h3>
+        <span class="subject-value badge simple-badge loading-opacity-animation" style="width: 4rem; height: 1.4rem;"></span>
+      </div>
+      <div class="group-description">
+        <div class="loading-opacity-animation" style="width: 100%; height: 0.9rem; margin-bottom: 0.4rem; border-radius: 0.3rem;"></div>
+        <div class="loading-opacity-animation" style="width: 80%; height: 0.9rem; border-radius: 0.3rem;"></div>
+      </div>
+      <footer class="group-footer">
         ${
           userGroup
-            ? '<span class="badge loading-opacity-animation"></span>'
+            ? '<span class="level-value badge loading-opacity-animation" style="width: 6rem; height: 1.5rem;"></span>'
             : ""
         }
-        <span class="badge loading-opacity-animation"></span>
-      </header>
-      <div class="loading-meta">
-        <h3 class="loading-title loading-opacity-animation"></h3>
-        <div class="loading-subject">
-          Subject: <span class="subject-value loading-opacity-animation"></span>
-        </div>
-      </div>
-      <div class="loading-description">
-        <div class="loading-opacity-animation"></div>
-        <div class="loading-opacity-animation"></div>
-        <div class="loading-opacity-animation"></div>
-      </div>
-      <footer class="loading-footer">
-        <div class="loading-level">
-          <span class="level-label">Level:</span>
-          <span class="level-value loading-opacity-animation"></span>
-        </div>
         <div class="avatars">
           <div class="avatar loading-opacity-animation"></div>
           <div class="avatar loading-opacity-animation"></div>
           <div class="avatar loading-opacity-animation"></div>
         </div>
+        ${
+          !userGroup
+            ? '<button class="btn-join loading-btn loading-opacity-animation" disabled style="width: 7rem; height: 2.2rem; border: none;"></button>'
+            : ""
+        }
       </footer>
   `;
 
@@ -126,6 +125,24 @@ export const initLazyLoadingLoader = (userGroup = false) => {
     createLoadingCard(userGroup),
     {
       getCriteria: () => getCriteria(userGroup),
+      emptyState: {
+        noFilter: userGroup
+          ? {
+              icon: "bi-people-fill",
+              title: "No Groups Joined",
+              desc: "You are not a member of any study groups yet. Create or join a group to begin collaborating!",
+            }
+          : {
+              icon: "bi-people-fill",
+              title: "No Groups Available",
+              desc: "There are currently no public study groups available to join. Check back later!",
+            },
+        filtered: {
+          icon: "bi-people-fill",
+          title: "No Groups Found",
+          desc: "No study groups match your search or filter criteria.",
+        },
+      },
     }
   );
 
@@ -146,7 +163,7 @@ const getCriteria = (isUserGroups) => {
 
   const sort = sortDate ? "asc" : "desc";
   creteria += `sort=${sort}`;
-  const searchTerm = search ? search.trim() : "";
+  const searchTerm = search ? search.toLowerCase().trim() : "";
   creteria += `&searchTerm=${searchTerm}`;
 
   const level = [];

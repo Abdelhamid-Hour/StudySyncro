@@ -1,6 +1,6 @@
 const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
-const { getGroupById, refillSampleMembersIfNeeded } = require("./shared");
+const { refillSampleMembersIfNeeded } = require("./shared");
 const { INITIALE_LOADERS_COUNT } = require("../global");
 
 const getFormattedMembers = (members, creator, isAdmin) => {
@@ -15,7 +15,10 @@ const getFormattedMembers = (members, creator, isAdmin) => {
 
 const getFilteredMembers = (search, members, creator, isAdmin) => {
   if (!search) return getFormattedMembers(members, creator, isAdmin);
-  const filteredMembers = members.filter((m) => m.fullName.includes(search));
+  const lowerSearch = search.trim().toLowerCase();
+  const filteredMembers = members.filter((m) =>
+    m.fullName?.toLowerCase().includes(lowerSearch)
+  );
   return getFormattedMembers(filteredMembers, creator, isAdmin);
 };
 
@@ -185,6 +188,22 @@ const addMember = async (groupRef, userId) => {
     await userRef.collection("userGroupsIds").doc(groupRef.id).set({});
     await refillSampleMembersIfNeeded(groupRef);
 
+    if (group.currentSession) {
+      const sessionSnap = await db.collection("sessions").doc(group.currentSession).get();
+      if (sessionSnap.exists) {
+        const sData = sessionSnap.data();
+        await userRef.collection("activeSessions").doc(group.currentSession).set({
+          name: sData.name || "",
+          description: sData.description || "",
+          duration: sData.duration || 0,
+          startDate: sData.startDate || "",
+          groupName: sData.groupName || "",
+          tasksCount: sData.tasksCount || 0,
+          joinedCount: sData.joinedCount || 0,
+         });
+      }
+    }
+
     return {
       success: true,
       status: "joined",
@@ -235,6 +254,10 @@ const kickMember = async (groupId, userId) => {
     // Refill sampleMembers if less than 3
     await refillSampleMembersIfNeeded(groupRef);
 
+    if (groupSnap.data().currentSession) {
+      await userRef.collection("activeSessions").doc(groupSnap.data().currentSession).delete();
+    }
+
     return {
       success: true,
       message: "Member kicked from group",
@@ -250,10 +273,10 @@ const kickMember = async (groupId, userId) => {
 
 const getFilteredUsers = (search, users, memberIds) => {
   if (!search) return users;
-  const lowerCaseSearch = search.toLowerCase();
+  const lowerCaseSearch = search.trim().toLowerCase();
 
   users = users.filter((doc) => {
-    const fullName = doc.data().fullName.toLowerCase();
+    const fullName = doc.data().fullName?.toLowerCase() || "";
     return fullName.includes(lowerCaseSearch);
   });
 

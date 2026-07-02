@@ -1345,7 +1345,7 @@ const getSearchCriteria = () => {
   const search = groupLeftSideBar.querySelector("#search");
   const date = groupLeftSideBar.querySelector('input[type="date"]');
   const sort = groupLeftSideBar.querySelector('input[type="checkbox"]');
-  return `search=${search.value}${date ? "&date=" + date.value : ""}${
+  return `search=${search?.value?.toLowerCase().trim() || ""}${date ? "&date=" + date.value : ""}${
     sort ? "&sort=" + (sort.checked ? "asc" : "desc") : ""
   }`;
 };
@@ -1460,7 +1460,7 @@ export const handleMembersListMenuBtn = async () => {
     "/group-members?groupId=" + groupId + "&",
     createMemberCardLoader(),
     {
-      getCriteria: () => `search=${search.value}`,
+      getCriteria: () => `search=${search?.value?.toLowerCase().trim() || ""}`,
       loadersCount: 1,
       afterAppendRes: () => handleMembersLoader(),
     }
@@ -2117,7 +2117,7 @@ const setUpAddMembersOverlay = (container) => {
     "/users?groupId=" + groupId + "&",
     createUserLoadingCard(),
     {
-      getCriteria: () => `search=${search.value}`,
+      getCriteria: () => `search=${search?.value?.toLowerCase().trim() || ""}`,
       loadersCount: 1,
       afterAppendRes: (data) => handleUsersLoader(data, container, users),
     }

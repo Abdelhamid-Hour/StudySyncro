@@ -4,9 +4,6 @@ const { formatHoursMinutes, millisecondsToHMFormat } = require("../global");
 const { getQuizResult, isQuizPassed } = require("./examen");
 const { getTasks } = require("./tache");
 
-const SESSION_STREAM_MAP = new Map();
-const LAST_VISIBLE_SESSION_MAP = new Map();
-
 const createGroupSession = async (sessionData, userId) => {
   try {
     if (!sessionData) {
@@ -91,6 +88,7 @@ const createGroupSession = async (sessionData, userId) => {
       groupId: groupId || "",
       groupName: groupSnap.data().name || "",
       tasksCount: tasks.length || 0,
+      joinedCount: 0,
       joinedUsers: [],
       quizId: quizId,
       status: "active",
@@ -143,6 +141,39 @@ const createGroupSession = async (sessionData, userId) => {
     });
     await Promise.all(taskPromises);
 
+    // --- Active Sessions Fan-Out ---
+    const membersSnap = await groupRef.collection("members").get();
+    const fanoutBatches = [];
+    let currentBatch = db.batch();
+    let batchCount = 0;
+
+    const activeSessionCardData = {
+      name: newSessionData.name,
+      description: newSessionData.description,
+      startDate: newSessionData.startDate,
+      groupName: newSessionData.groupName,
+      tasksCount: newSessionData.tasksCount,
+      joinedCount: 0,
+      duration: newSessionData.duration,
+    };
+
+    membersSnap.docs.forEach((memberDoc) => {
+      const activeSessionRef = db.collection("users").doc(memberDoc.id).collection("activeSessions").doc(newSessionId);
+      currentBatch.set(activeSessionRef, activeSessionCardData);
+      batchCount++;
+      if (batchCount === 500) {
+        fanoutBatches.push(currentBatch.commit());
+        currentBatch = db.batch();
+        batchCount = 0;
+      }
+    });
+
+    if (batchCount > 0) {
+      fanoutBatches.push(currentBatch.commit());
+    }
+    await Promise.all(fanoutBatches);
+    // -------------------------------
+
     return {
       success: true,
       message: "Session created successfully",
@@ -155,47 +186,51 @@ const createGroupSession = async (sessionData, userId) => {
     };
   }
 };
-const modifieSessionPropertie = async (newValue, propertie, session_id) => {
-  try {
-    const sessionRef = db.collection("sessions").doc(session_id);
-    const snapshot = await sessionRef.get();
-    const session = snapshot.data();
-    if (session) {
-      switch (propertie) {
-        case "title":
-          if (isNotEmpty) {
-            await ref.update({
-              title: value,
-            });
-            return true;
-          }
-          break;
 
-        case "description":
-          if (isNotEmpty) {
-            await ref.update({
-              description: value,
-            });
-            return true;
-          }
-          break;
-        case "totalDuration":
-          if (isNotEmpty) {
-            await ref.update({
-              totalDuration: value,
-            });
-            return true;
-          }
-          break;
-        default:
-          return false;
+const deleteActiveSessionFanOut = async (groupId, sessionId) => {
+  try {
+    const membersSnap = await db.collection("groups").doc(groupId).collection("members").get();
+    const fanoutBatches = [];
+    let currentBatch = db.batch();
+    let batchCount = 0;
+    membersSnap.docs.forEach((memberDoc) => {
+      const activeSessionRef = db.collection("users").doc(memberDoc.id).collection("activeSessions").doc(sessionId);
+      currentBatch.delete(activeSessionRef);
+      batchCount++;
+      if (batchCount === 500) {
+        fanoutBatches.push(currentBatch.commit());
+        currentBatch = db.batch();
+        batchCount = 0;
       }
-    } else {
-      return false;
-    }
+    });
+    if (batchCount > 0) fanoutBatches.push(currentBatch.commit());
+    await Promise.all(fanoutBatches);
   } catch (error) {
-    console.log(error.message);
-    return false;
+    console.error("Error fanning out active session deletion:", error);
+  }
+};
+
+const updateActiveSessionFanOut = async (groupId, sessionId, data) => {
+  try {
+    const membersSnap = await db.collection("groups").doc(groupId).collection("members").get();
+    const fanoutBatches = [];
+    let currentBatch = db.batch();
+    let batchCount = 0;
+    membersSnap.docs.forEach((memberDoc) => {
+      const activeSessionRef = db.collection("users").doc(memberDoc.id).collection("activeSessions").doc(sessionId);
+      // We can only update if the document exists, set with merge is safer
+      currentBatch.set(activeSessionRef, data, { merge: true });
+      batchCount++;
+      if (batchCount === 500) {
+        fanoutBatches.push(currentBatch.commit());
+        currentBatch = db.batch();
+        batchCount = 0;
+      }
+    });
+    if (batchCount > 0) fanoutBatches.push(currentBatch.commit());
+    await Promise.all(fanoutBatches);
+  } catch (error) {
+    console.error("Error fanning out active session update:", error);
   }
 };
 
@@ -203,16 +238,26 @@ const cancelSession = async (sessionId, userId) => {
   try {
     const sessionRef = db.collection("sessions").doc(sessionId);
     const snapshot = await sessionRef.get();
+    
+    if(!snapshot.exists){
+      return {
+        success: false,
+        message: "Session not found",
+      }
+    }
+
     const usRef = db.collection("users");
-    const groupRef = db.collection("groups");
     const usersRef = usRef.where("currentSession", "==", sessionId);
     const snap = await usersRef.get();
+
+    const groupRef = db.collection("groups");
+
     const session = snapshot.data();
 
     const isAdmin = session.creator === userId;
 
     if (!isAdmin) {
-      const time = new Date(session.startDate).getTime() + duration * 1000 * 60;
+      const time = new Date(session.startDate).getTime() + session.duration * 1000 * 60;
       const timestamp = Date.now();
 
       if (timestamp >= time) {
@@ -220,6 +265,7 @@ const cancelSession = async (sessionId, userId) => {
           status: "finished",
           updatedAt: FieldValue.serverTimestamp(),
         });
+        await deleteActiveSessionFanOut(session.groupId, sessionId);
         return { success: true, message: "Session ended" };
       } else {
         return {
@@ -229,44 +275,56 @@ const cancelSession = async (sessionId, userId) => {
       }
     }
 
-    if (session) {
-      if (!snap.empty) {
-        const promises = snap.docs.map((doc) => {
-          const reference = usRef.doc(doc.id);
-          sessionRef.update({
-            status: "aborted",
-            updatedAt: FieldValue.serverTimestamp(),
-          });
-          return reference.update({
-            currentSession: "",
-          });
-        });
-        const gRefernce = groupRef.doc(session.groupId);
-        const fetch = await gRefernce.get();
+    sessionRef.update({
+      status: "aborted",
+      updatedAt: FieldValue.serverTimestamp(),
+    });
 
-        if (fetch.exists) {
-          promises.push(
-            gRefernce.update({
-              currentSession: "",
-            })
-          );
-        }
+    let promises = []
 
-        await Promise.all(promises);
-      }
-
-      return { success: true, message: "Session ended" };
+    if(!snap.empty){
+       promises = snap.docs.map((doc) => {
+      const reference = usRef.doc(doc.id);
+      return reference.update({
+        currentSession: "",
+      });
+    });
     }
-    return { success: false, message: "Cant end session" };
+
+    const gRefernce = groupRef.doc(session.groupId);
+    const gSnap = await gRefernce.get();
+
+    if (gSnap.exists) {
+      promises.push(
+        gRefernce.update({
+          currentSession: "",
+        })
+      );
+    }
+    
+    await Promise.all(promises);
+
+    await deleteActiveSessionFanOut(session.groupId, sessionId);
+
+    return { success: true, message: "Session ended" };
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
     return { success: false, message: "Somethign went wrong" };
   }
 };
 
 const leavSession = async (userId) => {
   const userSnap = db.collection("users").doc(userId);
+
+  
   const user = await userSnap.get();
+    if(!user.data().currentSession){
+      return{
+        success: false,
+        message: "User is not in any session",
+      }
+    }
+
   const sessionSnap = await db
     .collection("sessions")
     .doc(user.data().currentSession)
@@ -275,6 +333,11 @@ const leavSession = async (userId) => {
   if (sessionSnap.exists) {
     await sessionSnap.ref.update({
       joinedUsers: FieldValue.arrayRemove(userId),
+      joinedCount: FieldValue.increment(-1),
+    });
+    // Fan out joinedCount decrement
+    await updateActiveSessionFanOut(sessionSnap.data().groupId, user.data().currentSession, { 
+      joinedCount: FieldValue.increment(-1) 
     });
   }
 
@@ -306,7 +369,7 @@ const getCurrentSessionInfo = async (userId) => {
 
     const user = userSnap.data();
 
-    if (!user || !user.currentSession || user.currentSession === "") {
+    if (!user || !user.currentSession) {
       console.log("The user Not has any active session");
       return null;
     }
@@ -404,39 +467,26 @@ const formatSessions = (sessions) => {
 
     return {
       ...session.data(),
-      UID: session.id,
+      id: session.id,
       startTime: formatHoursMinutes(startTime),
       endTime: formatHoursMinutes(endTime),
-      duration: millisecondsToHMFormat(session.data().duration * 60 * 1000),
-      joinedCount: session.data().userIds ? session.data().userIds.length : 0,
+      duration: millisecondsToHMFormat(session.data().duration * 60 * 1000)
     };
   });
 };
 
-const fetchActiveSessions = async (userId, count = 20, lastVisible = null) => {
+const fetchActiveSessions = async (userId, count = 20, lastVisible = null, criteria = {}) => {
   try {
-    const sessionRef = db.collection("sessions");
     const userRef = db.collection("users").doc(userId);
-
-    const joinedGroupIdsSnap = await userRef.collection("userGroupsIds").get();
-    const joinedGroupsIds = joinedGroupIdsSnap.empty
-      ? []
-      : joinedGroupIdsSnap.docs.map((doc) => doc.id);
-
-    if (joinedGroupsIds.length === 0) return { success: true, sessions: [] };
-
     let sessions = [];
 
-    // Paginate group fetching
     do {
-      let query = sessionRef
+      let query = userRef.collection("activeSessions")
         .orderBy(FieldPath.documentId(), "desc")
-        .where("groupId", "in", joinedGroupsIds)
-        .where("status", "==", "active")
-        .limit(count);
+        .limit(count * 5); // fetch more to allow for client-side filtering
 
       if (lastVisible) {
-        const lastVisibleDoc = await sessionRef.doc(lastVisible).get();
+        const lastVisibleDoc = await userRef.collection("activeSessions").doc(lastVisible).get();
         if (lastVisibleDoc.exists) {
           query = query.startAfter(lastVisibleDoc);
         } else {
@@ -451,23 +501,24 @@ const fetchActiveSessions = async (userId, count = 20, lastVisible = null) => {
         break;
       }
 
+      let batchSessions = formatSessions(sessionSnaps.docs);
+
+      if (criteria.search) {
+        const searchTerm = criteria.search.trim().toLowerCase();
+        batchSessions = batchSessions.filter(s => 
+          (s.name && s.name.toLowerCase().includes(searchTerm)) ||
+          (s.groupName && s.groupName.toLowerCase().includes(searchTerm))
+        );
+      }
+
       sessions = sessions
-        .concat(formatSessions(sessionSnaps.docs))
+        .concat(batchSessions)
         .slice(0, count);
 
-      // Save lastVisible for next loop
       lastVisible =
-        sessions.length === count ? sessions[sessions.length - 1].id : null;
+        sessionSnaps.docs.length === count * 5 ? sessionSnaps.docs[sessionSnaps.docs.length - 1].id : null;
     } while (sessions.length < count && lastVisible);
 
-    if(sessions.length){        
-      if (SESSION_STREAM_MAP.has(userId) && sessions[sessions.length - 1]) {
-        SESSION_STREAM_MAP.get(userId).lastVisible =
-          sessions[sessions.length - 1].id;
-      } else {
-        LAST_VISIBLE_SESSION_MAP.set(userId, sessions[sessions.length - 1].id);
-      }
-    } 
     return { success: true, sessions, lastVisible };
   } catch (error) {
     console.error("Error fetching active sessions:", error);
@@ -639,6 +690,12 @@ const joinSession = async (sessionId, userId) => {
       await userRef.update({
         currentSession: sessionId,
       });
+
+      // Fan out joinedCount increment
+      await updateActiveSessionFanOut(snap.data().groupId, sessionId, { 
+        joinedCount: FieldValue.increment(1) 
+      });
+
       return {
         success: true,
         message: "You joined the session succcessfully",
@@ -657,7 +714,6 @@ const joinSession = async (sessionId, userId) => {
 module.exports = {
   leavSession,
   getActiveSession,
-  modifieSessionPropertie,
   createGroupSession,
   cancelSession,
   getCurrentSessionInfo,
@@ -666,6 +722,4 @@ module.exports = {
   getSessionInformations,
   fetchActiveSessions,
   formatSessions,
-  SESSION_STREAM_MAP,
-  LAST_VISIBLE_SESSION_MAP,
 };

@@ -274,6 +274,9 @@ const inviteMembersHandler = async (req, res) => {
 const getQuizzesByGroup = async (req, res) => {
   const { groupId, search, sort, date, count, lastVisible } = req.query;
 
+  console.log("Count count : ccout", count);
+  
+
   const result = await getQuizzesByGroupId(
     groupId,
     req.user.uid,

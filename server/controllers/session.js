@@ -7,14 +7,10 @@ const {
   leavSession,
   fetchActiveSessions,
   formatSessions,
-  SESSION_STREAM_MAP,
-  LAST_VISIBLE_SESSION_MAP,
 } = require("../utils/firebase-utils/session");
 
 const { changeTaskStatus } = require("../utils/firebase-utils/tache");
-
-let unSubscribe = null;
-const lastSentSession = "";
+const { formatHoursMinutes, millisecondsToHMFormat } = require("../utils/global");
 
 const leaveSessionHandler = async (req, res) => {
   const { sessionId } = req.body;
@@ -39,7 +35,9 @@ const endSessionHandler = async (req, res) => {
 };
 
 const joinSessionHandler = async (req, res) => {
+  
   const { sessionId } = req.body;
+  console.log(sessionId);
   const result = await joinSession(sessionId, req.user.uid);
   if (result.success) {
     return res.status(200).json({ message: result.message });
@@ -77,13 +75,15 @@ const getActiveSessionHandler = async (req, res) => {
 };
 
 const getActiveSessionsHandler = async (req, res) => {
-  const { lastVisible, count } = req.query;
+  const { lastVisible, count, search } = req.query;
 
   const result = await fetchActiveSessions(
     req.user.uid,
     Number(count),
-    lastVisible
+    lastVisible,
+    { search }
   );
+  
 
   if (result.success) {
     return res
@@ -112,7 +112,9 @@ const updateTaskStatusHandler = async (req, res) => {
 // send lastQueryTime
 
 const sessionStreamHandler = async (req, res) => {
-  const { lastQueryTime, lastNewSession } = req.query;
+  console.log("start sessions stream");
+  
+  const { lastQueryTime } = req.query;
 
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -120,129 +122,118 @@ const sessionStreamHandler = async (req, res) => {
   res.flushHeaders && res.flushHeaders(); // flush the headers to establish SSE with client
 
   const userId = req.user.uid;
-  const joinedGroupsIdsSnap = await db
-    .collection("users")
-    .doc(userId)
-    .collection("userGroupsIds")
-    .get();
-  const joinedGroupsIds = joinedGroupsIdsSnap.empty
-    ? []
-    : joinedGroupsIdsSnap.docs.map((doc) => doc.id);
 
-  const lastVisibleSession = LAST_VISIBLE_SESSION_MAP.get(userId) || null;
+  // Build the query against the fan-out subcollection without startDate filter
+  // Why? If we filter by startDate > lastQueryTime, any existing session created before page load
+  // is ignored by Firestore, so modifications (like joinedCount updating) or removals are never received!
+  const query = db.collection("users").doc(userId).collection("activeSessions");
 
-  const missedUpdatedSessionsSnap = lastVisibleSession
-    ? await db
-        .collection("sessions")
-        .where("groupId", "in", joinedGroupsIds)
-        .where("updatedAt", ">=", Number(lastQueryTime))
-        .orderBy(db.FieldPath.documentId(), "asc")
-        .startAfter(lastVisibleSession)
-        .get()
-    : null;
+  const unSubscribe = query.onSnapshot((snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      const sessionData = change.doc.data();
+      const sessionId = change.doc.id;
+      
+      const startTimeVal = sessionData.startDate;
+      const endTimeVal = startTimeVal ? new Date(startTimeVal).getTime() + (sessionData.duration || 0) * 60 * 1000 : null;
 
-  if (missedUpdatedSessionsSnap && !missedUpdatedSessionsSnap.empty) {
-    const missedUpdatedSessions = missedUpdatedSessionsSnap.docs.map(
-      (doc) => doc.id
-    );
-    res.write(
-      `data: ${JSON.stringify({ updatedSessions: missedUpdatedSessions })}\n\n`
-    );
-  }
-
-  if (lastNewSession && lastNewSession !== lastSentSession) {
-    const missedNewSessionsSnap = lastSentSession
-      ? await db
-          .collection("sessions")
-          .where("groupId", "in", joinedGroupsIds)
-          .orderBy(db.FieldPath.documentId(), "asc") // order from the old to the new
-          .startAfter(lastNewSession)
-          .endAt(lastSentSession)
-          .get()
-      : await db
-          .collection("sessions")
-          .where("groupId", "in", joinedGroupsIds)
-          .orderBy(db.FieldPath.documentId(), "asc")
-          .startAfter(lastNewSession)
-          .get();
-
-    if (!missedNewSessionsSnap.empty) {
-      const missedNewSessions = formatSessions(missedNewSessionsSnap.docs);
-      res.write(
-        `data: ${JSON.stringify({ newSessions: missedNewSessions })}\n\n`
-      );
-    }
-  }
-
-  SESSION_STREAM_MAP.set(userId, {
-    res,
-    groupIds: new Set(joinedGroupsIds),
-    lastVisible: lastVisibleSession,
+      // We manually construct the session object so it perfectly matches the client model
+      const session = {
+        ...sessionData,
+        id: sessionId,
+        duration: millisecondsToHMFormat((sessionData.duration || 0) * 60 * 1000),
+        startTime: startTimeVal ? formatHoursMinutes(startTimeVal) : "N/A",
+        endTime: endTimeVal ? formatHoursMinutes(endTimeVal) : "N/A",
+      };
+      console.log("change type,: ", change.type);
+      
+      if (change.type === "added") {
+        // Only send 'added' if the session started AFTER lastQueryTime to avoid duplicates of initial lazy-loaded sessions
+        if (!lastQueryTime || new Date(sessionData.startDate) > new Date(lastQueryTime)) {
+          console.log("added session: ", session);
+          res.write(`data: ${JSON.stringify({ newSession: session })}\n\n`);
+        } else {
+          console.log("ignored initial added session (already loaded): ", sessionId);
+        }
+      } else if (change.type === "modified") {
+        console.log("modif: ", session);
+        res.write(`data: ${JSON.stringify({ modifiedSession: session })}\n\n`);
+      } else if (change.type === "removed") {
+        console.log("removed sess::  ", session);
+        res.write(`data: ${JSON.stringify({ removedSession: sessionId })}\n\n`);
+      }
+    });
+  }, (error) => {
+    console.error("Error in session stream:", error);
+    res.end();
   });
 
-  LAST_VISIBLE_SESSION_MAP.delete(userId);
+  const heartbeat = setInterval(() => {
+    try {
+      res.write(":\n\n");
+    } catch (e) {
+      console.log("error in hear: ", e);
+      
+      clearInterval(heartbeat);
+      unSubscribe();
+      res.end();
+    }
+  }, 20 * 1000);
 
-  if (SESSION_STREAM_MAP.size === 1) {
-    const query = db
-      .collection("sessions")
-      .orderBy(db.FieldPath.documentId(), "asc")
-      .startAfter(lastNewSession || "");
-    unSubscribe = query.onSnapshot((snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === "added") {
-          for (const [_, client] of SESSION_STREAM_MAP) {
-            if (client.groupIds.has(change.doc.data().groupId)) {
-              const newSession = formatSessions([change.doc])[0];
-              client.res.write(
-                `data: ${JSON.stringify({ newSession: newSession })}\n\n`
-              );
-              lastSentSession = change.doc.id;
-            }
-          }
-        }
+  req.on("close", () => {
+    try {
+      console.log("closing sess stream");
+      
+      clearInterval(heartbeat);
+      unSubscribe();
+      res.end();
+    } catch (error) {
+      console.warn("Error closing stream:", error);
+    }
+  });
+};
 
-        if (
-          change.type === "modified" &&
-          change.doc.data().status !== "active"
-        ) {
-          for (const [_, client] of SESSION_STREAM_MAP) {
-            if (
-              client.groupIds.has(change.doc.data().groupId) &&
-              client.lastVisible &&
-              change.doc.id >= client.lastVisible // only send modified sessions that are after the client's last visible session
-            ) {
-              client.res.write(
-                `data: ${JSON.stringify({
-                  modifiedSession: change.doc.id,
-                })}\n\n`
-              );
-            }
-          }
-        }
-      });
-    });
+const streamSingleSessionHandler = async (req, res) => {
+  const { sessionId } = req.query;
+  if (!sessionId) {
+    return res.status(400).json({ error: "sessionId required" });
   }
+
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders && res.flushHeaders();
+
+  const sessionRef = db.collection("sessions").doc(sessionId);
+  const unSubscribe = sessionRef.onSnapshot((docSnap) => {
+    if (docSnap.exists) {
+      
+      const data = docSnap.data();
+      res.write(`data: ${JSON.stringify({ joinedCount: data.joinedCount || 0, status: data.status })}\n\n`);
+    } else {
+      res.write(`data: ${JSON.stringify({ removed: true })}\n\n`);
+    }
+  }, (error) => {
+    console.error("Error streaming single session:", error);
+    res.end();
+  });
 
   const heartbeat = setInterval(() => {
     try {
       res.write(":\n\n");
     } catch (e) {
       clearInterval(heartbeat);
-      cleanupClient(res, userId);
+      unSubscribe();
+      res.end();
     }
-  }, 20 * 1000);
+  }, 20000);
 
   req.on("close", () => {
     try {
       clearInterval(heartbeat);
-      SESSION_STREAM_MAP.delete(userId);
-      if (SESSION_STREAM_MAP.size === 0) {
-        unSubscribe && unSubscribe();
-        LAST_VISIBLE_SESSION_MAP.clear();
-      }
+      unSubscribe();
       res.end();
     } catch (error) {
-      console.warn("Error closing stream:", error);
+      console.warn("Error closing single session stream:", error);
     }
   });
 };
@@ -255,4 +246,6 @@ module.exports = {
   getActiveSessionHandler,
   getActiveSessionsHandler,
   updateTaskStatusHandler,
+  sessionStreamHandler,
+  streamSingleSessionHandler,
 };

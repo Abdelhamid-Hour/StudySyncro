@@ -103,11 +103,12 @@ const filterGroups = (
         : true;
 
     const matchLevel =
-      criteria.level?.length === 0 || criteria.level?.includes(g.level);
+      !criteria.level?.length ||
+      criteria.level.some((l) => l?.toLowerCase() === g.level?.toLowerCase());
 
     const matchVisibility =
-      criteria.visibility?.length === 0 ||
-      criteria.visibility?.includes(g.visibility);
+      !criteria.visibility?.length ||
+      criteria.visibility.some((v) => v?.toLowerCase() === g.visibility?.toLowerCase());
 
     let matchShowInSearch = true;
 
@@ -123,9 +124,9 @@ const filterGroups = (
 
     if (!availableGroups) {
       matchRole =
-        criteria.role?.length === 0 ||
-        (criteria.role?.includes("admin") && userId === g.creator) ||
-        (criteria.role?.includes("member") &&
+        !criteria.role?.length ||
+        (criteria.role.some((r) => r?.toLowerCase() === "admin") && userId === g.creator) ||
+        (criteria.role.some((r) => r?.toLowerCase() === "member") &&
           joinedGroupsIds.includes(g.id) &&
           userId != g.creator);
     }
@@ -365,6 +366,10 @@ const leaveGroup = async (groupId, userId) => {
     });
     await userRef.collection("userGroupsIds").doc(groupId).delete();
     await refillSampleMembersIfNeeded(groupRef);
+
+    if (groupSnap.data().currentSession) {
+      await userRef.collection("activeSessions").doc(groupSnap.data().currentSession).delete();
+    }
 
     return {
       success: true,

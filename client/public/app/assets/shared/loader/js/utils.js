@@ -33,6 +33,7 @@ export class Loader {
       afterAppendRes = () => {},
       append = true,
       firstLoadFunc = () => {},
+      emptyState = null,
     },
   ) {
     this.getCriteria = () => {
@@ -41,6 +42,7 @@ export class Loader {
     };
     this.firstLoadFunc = firstLoadFunc;
     this.afterAppendRes = afterAppendRes;
+    this.emptyState = emptyState;
     this.creteria = this.getCriteria();
     this.append = append;
     this.rootMargin = rootMargin;
@@ -123,7 +125,7 @@ export class Loader {
     let endPoint = `${this.route}lastVisible=${this.lastVisible}&count=${this.count}`;
 
     if (this.creteria) {
-      endPoint += this.creteria;
+      endPoint += `&${this.creteria}`;
     }
 
     try {
@@ -167,6 +169,7 @@ export class Loader {
       if (!lastVisible) {
         this.io.unobserve(this.sentinel);
         clearLoadersBoxes();
+        this.checkEmptyState();
       }
     } catch (error) {
       console.error("Error loading more items:", error);
@@ -178,6 +181,57 @@ export class Loader {
     }
 
     this.loading = false;
+  }
+
+  checkEmptyState() {
+    const existingEmpty = this.container.querySelector(".icon-wrapper");
+    if (existingEmpty) existingEmpty.remove();
+
+    if (this.container.children.length === 0) {
+      const iconWrapper = document.createElement("div");
+      iconWrapper.className = "icon-wrapper";
+
+      let icon = "bi-search";
+      let title = "No Results Found";
+      let desc = "No matches found for your search or filters.";
+
+      if (this.emptyState) {
+        let isFiltered = false;
+        if (this.creteria) {
+          const params = new URLSearchParams(this.creteria);
+          for (const [key, value] of params.entries()) {
+            const val = value.trim();
+            if (
+              key !== "sort" &&
+              key !== "groupId" &&
+              key !== "sessionId" &&
+              key !== "userId" &&
+              val !== "" &&
+              val !== "false"
+            ) {
+              isFiltered = true;
+              break;
+            }
+          }
+        }
+
+        const stateObj = isFiltered ? (this.emptyState.filtered || null) : (this.emptyState.noFilter || null);
+        if (stateObj) {
+          icon = stateObj.icon || icon;
+          title = stateObj.title || title;
+          desc = stateObj.desc || desc;
+        }
+      }
+
+      iconWrapper.innerHTML = `
+        <div class="empty-icon-container">
+          <i class="bi ${icon}"></i>
+        </div>
+        <h3>${title}</h3>
+        <p>${desc}</p>
+      `;
+      this.container.appendChild(iconWrapper);
+    }
   }
 }
 

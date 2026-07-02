@@ -21,13 +21,7 @@ import {
   saveQuiz,
 } from './utils.js';
 
-let firstLoad = true;
-
 export const init = (virtual = false) => {
-  if (virtual && firstLoad) {
-    firstLoad = false; // Prevent re-initialization on subsequent calls
-    return;
-  }
   initDomVariables();
 
   initializeInitialData();
@@ -36,17 +30,17 @@ export const init = (virtual = false) => {
 
   setUpDragAndDrop('.questions-list', '.question', handleEditorListDragEnd);
 
-  questionsPanelList.addEventListener('click', handleQuestionsPanelListClick);
+  questionsPanelList?.addEventListener('click', handleQuestionsPanelListClick);
 
-  panelAddQuestionBtn.addEventListener('click', handleAddQuestion);
+  panelAddQuestionBtn?.addEventListener('click', handleAddQuestion);
 
-  editorQuestionsList.addEventListener('click', handleEditorQuestionsListClick);
+  editorQuestionsList?.addEventListener('click', handleEditorQuestionsListClick);
 
-  editorQuestionsList.addEventListener('input', handleTextarea);
+  editorQuestionsList?.addEventListener('input', handleTextarea);
 
-  sidebarTitleLink.addEventListener('click', handleSidebarTitleLinkClick);
+  sidebarTitleLink?.addEventListener('click', handleSidebarTitleLinkClick);
 
-  editorHeader.addEventListener('click', (e) => {
+  editorHeader?.addEventListener('click', (e) => {
     const editSubjectBtn = e.target.closest('.edit-subject-btn');
     if (editSubjectBtn) handleEditBtn('subject');
 

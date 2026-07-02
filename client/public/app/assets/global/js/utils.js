@@ -13,6 +13,30 @@ import { showMessageBlock } from "../../../../main_assets/js/utils.js";
 import { initAndDiplayErrorTooltip } from "../../shared/chat/js/utils.js";
 
 let isRouting = false;
+
+window.__activeEventSources = window.__activeEventSources || [];
+const OriginalEventSource = window.EventSource;
+if (OriginalEventSource && !window.__esWrapped) {
+  window.__esWrapped = true;
+  window.EventSource = class extends OriginalEventSource {
+    constructor(url, options) {
+      super(url, options);
+      window.__activeEventSources.push(this);
+    }
+  };
+}
+
+export const closeAllEventSources = () => {
+  if (window.__activeEventSources) {
+    window.__activeEventSources.forEach((es) => {
+      try {
+        es.close();
+      } catch (e) {}
+    });
+    window.__activeEventSources = [];
+  }
+};
+
 // IndexedDB setup for storing chat files
 export let db = null;
 let dbReady = false;
@@ -744,12 +768,23 @@ export const clearAllTimeOuts = () => {
 export const updateMain = async (path, isTabLinks) => {
   const thisNav = ++navCounter;
   try {
-    if (thisNav !== navCounter) return;
+    if (thisNav !== navCounter) {
+      isRouting = false;
+      return;
+    }
+    clearAllTimeOuts();
+    closeAllEventSources();
     mainContainer.innerHTML = getLoader();
     clearOverlaysModals();
     const { pathName, htmlFragment, extraData } = await fetchTemplate(path);
 
-    if (thisNav !== navCounter) return;
+    if (thisNav !== navCounter) {
+      isRouting = false;
+      return;
+    }
+    
+    clearAllTimeOuts();
+    closeAllEventSources();
     mainContainer.innerHTML = htmlFragment;
     removePreviousRessources();
     setStyleRoute(pathName);
@@ -760,10 +795,11 @@ export const updateMain = async (path, isTabLinks) => {
         pathName.includes("/home") ? "/home" : pathName,
         extraData
       );
-    isRouting = false;
   } catch (error) {
     console.error(error);
     showMessageBlock(error.message, "error");
+  } finally {
+    isRouting = false;
   }
 };
 
@@ -811,6 +847,8 @@ export const clearTooltipWithTimeOut = getDebounceFunc((input) => {
 }, 2000);
 
 export const handleRoutingClick = (event) => {
+  console.log("isRouuting: ", isRouting);
+  
   if (isRouting) {
     event.preventDefault(); // Prevent default action (like link navigation)
     event.stopPropagation(); // Optional: stop event from bubbling up

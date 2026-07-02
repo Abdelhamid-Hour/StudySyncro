@@ -138,13 +138,9 @@ const createPassedQuizLoadingCard = () => {
             <div class="session-name content loading-opacity-animation"></div>
         </div>
         <div class="action-btns">
-            <button style="pointer-events: none;" disabled class="loading-btn" disabled>
-                <i class="bi bi-eye"></i>
-                View Result
+            <button style="pointer-events: none; height: 2.2rem; width: 7rem;" disabled class="loading-btn loading-opacity-animation">
             </button>
-            <button style="pointer-events: none;" disabled class="loading-btn" disabled>
-                <i class="bi bi-arrow-repeat"></i>
-                Retake
+            <button style="pointer-events: none; height: 2.2rem; width: 7rem;" disabled class="loading-btn loading-opacity-animation" >
             </button>
         </div>
     `;
@@ -159,7 +155,7 @@ const getCriteria = () => {
 
   const sort = sortDate ? "asc" : "desc";
   creteria += `sort=${sort}`;
-  const searchTerm = search ? search.trim() : "";
+  const searchTerm = search ? search.toLowerCase().trim() : "";
   creteria += `&searchTerm=${searchTerm}`;
   const selectedDate = date ? date.value : "";
   creteria += `&date=${selectedDate}`;
@@ -175,6 +171,18 @@ export const initLazyLoadingLoader = () => {
     createPassedQuizLoadingCard(),
     {
       getCriteria,
+      emptyState: {
+        noFilter: {
+          icon: "bi-award",
+          title: "No Passed Quizzes",
+          desc: "You haven't completed any quizzes yet. Join a study session and take a quiz to see your achievements here!",
+        },
+        filtered: {
+          icon: "bi-award",
+          title: "No Passed Quizzes Found",
+          desc: "No passed quizzes match your filter criteria.",
+        },
+      },
     }
   );
 

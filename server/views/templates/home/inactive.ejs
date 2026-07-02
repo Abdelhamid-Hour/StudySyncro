@@ -194,72 +194,94 @@
           <h2>Active Sessions</h2>
           <p>Ongoing study sessions you can join now</p>
         </div>
+        <div class="active-sessions-search search">
+          <div class="search-icon-container">
+            <i class="bi bi-search"></i>
+          </div>
+          <input
+            type="search"
+            id="active-sessions-search-input"
+            placeholder="Search by session or group name"
+            autocomplete="off"
+          />
+        </div>
       </header>
       <div class="sessions-container">
-        <% if (availableSessions.length) { %> 
-        <% availableSessions.forEach(session => { %>
-        <div class="active-session">
-          <header>
-            <div class="session-info">
-              <h3 class="session-name">
-                <%= session.name %>
-                <span class="joined-count badge simple-badge">
-                  <%= session.joinedCount %> Joined Users
-                </span>
-              </h3>
-              <span class="group badge">
-                <i class="bi bi-book-fill"></i>
-                <%= session.groupName %>
-              </span>
+        <% if (availableSessions.length) { %>
+          <% availableSessions.forEach(session=> { %>
+            <div class="active-session">
+              <header>
+                <div class="session-info">
+                  <h3 class="session-name">
+                    <%= session.name %>
+                      <span class="joined-count badge simple-badge">
+                        <span class="joined-count-value">
+                          <%= session.joinedCount %>
+                        </span>
+                        Joined Users
+                      </span>
+                  </h3>
+                  <span class="group badge">
+                    <i class="bi bi-book-fill"></i>
+                    <%= session.groupName %>
+                  </span>
+                </div>
+                <div class="meta-info">
+                  <span class="badge blue-badge">
+                    <i class="bi bi-clock-fill"></i>
+                    Duration
+                    <span class="duration">
+                      <%= session.duration %>
+                    </span>
+                  </span>
+                  <span class="badge simple-badge">
+                    <i class="bi bi-list-task"></i>
+                    <%= session.tasksCount %> Tasks
+                  </span>
+                </div>
+              </header>
+              <p class="session-description">
+                <%= session.description %>
+              </p>
+              <footer class="footer">
+                <div class="footer-meta-info">
+                  <span class="badge green-badge">
+                    <i class="bi bi-play-circle"></i>
+                    Start At:
+                    <span class="duration">
+                      <%= session.startTime %>
+                    </span>
+                  </span>
+                  <span class="badge orange-badge">
+                    <i class="bi bi-stopwatch"></i>
+                    End At:
+                    <span class="duration">
+                      <%= session.endTime %>
+                    </span>
+                  </span>
+                </div>
+                <div class="action-buttons" data-session-id="<%= session.id %>">
+                  <button type="button" class="join-session blue-btn">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Join Session
+                  </button>
+                  <button type="button" class="should-fill view-details">
+                    <i class="bi bi-info-circle"></i>
+                    View Details
+                  </button>
+                </div>
+              </footer>
             </div>
-            <div class="meta-info">
-              <span class="badge blue-badge">
-                <i class="bi bi-clock-fill"></i>
-                Duration
-                <span class="duration"><%= session.duration %></span>
-              </span>
-              <span class="badge simple-badge">
-                <i class="bi bi-list-task"></i>
-                <%= session.tasksCount %> Tasks
-              </span>
-            </div>
-          </header>
-          <p class="session-description"><%= session.description %></p>
-          <footer class="footer">
-            <div class="footer-meta-info">
-              <span class="badge green-badge">
-                <i class="bi bi-play-circle"></i>
-                Start At:
-                <span class="duration"><%= session.startTime %></span>
-              </span>
-              <span class="badge orange-badge">
-                <i class="bi bi-stopwatch"></i>
-                End At:
-                <span class="duration"><%= session.endTime %></span>
-              </span>
-            </div>
-            <div class="action-buttons" data-session-id="<%= session.UID %>">
-              <button type="button" class="join-session blue-btn">
-                <i class="bi bi-box-arrow-in-right"></i>
-                Join Session
-              </button>
-              <button
-                type="button"
-                class="should-fill view-details"
-              >
-                <i class="bi bi-info-circle"></i>
-                View Details
-              </button>
-            </div>
-          </footer>
-        </div>
-        <% }); %> <% } else { %>
-        <div class="icon-wrapper">
-          <i class="bi bi-clock-history"></i>
-          <h3>No Active Sessions</h3>
-          <p>There are no study sessions currently active.</p>
-        </div>
-        <% } %>
+            <% }); %>
+              <% } else { %>
+                <div class="icon-wrapper">
+                  <div class="empty-icon-container">
+                    <i class="bi bi-clock-history"></i>
+                  </div>
+                  <h3>No Active Sessions</h3>
+                  <p>There are no study sessions currently active. You can start one or wait for others to join.</p>
+                </div>
+                <% } %>
       </div>
     </section>
   </div>

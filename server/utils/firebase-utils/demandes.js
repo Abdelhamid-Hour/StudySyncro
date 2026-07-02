@@ -144,6 +144,22 @@ const acceptRequest = async (groupId, requestId, userId) => {
       .update({ status: "accepted" });
     await refillSampleMembersIfNeeded(groupRef);
 
+    if (groupData.currentSession) {
+      const sessionSnap = await db.collection("sessions").doc(groupData.currentSession).get();
+      if (sessionSnap.exists) {
+        const sData = sessionSnap.data();
+        await userRef.collection("activeSessions").doc(groupData.currentSession).set({
+          name: sData.name || "",
+          description: sData.description || "",
+          duration: sData.duration || 0,
+          startDate: sData.startDate || "",
+          groupName: sData.groupName || "",
+          tasksCount: sData.tasksCount || 0,
+          joinedCount: sData.joinedCount || 0,
+         });
+      }
+    }
+
     return { success: true, message: "Join request accepted successfully!" };
   } catch (error) {
     console.error("Error accepting request:", error.message);
@@ -217,9 +233,10 @@ const getFormatedRequests = (requests) =>
 
 const getFilteredRequests = (criteria, demandes) => {
   demandes = demandes.filter((doc) => {
-    const fullName = doc.data().fullName.toLowerCase();
-    const matchSearch = criteria.search
-      ? fullName.includes(criteria.search.toLowerCase())
+    const fullName = doc.data().fullName?.toLowerCase() || "";
+    const searchTerm = criteria.search?.trim().toLowerCase() || "";
+    const matchSearch = searchTerm
+      ? fullName.includes(searchTerm)
       : true;
     const demandeDate = doc.data().demandeDate;
     const matchDate = criteria.date
