@@ -41,13 +41,17 @@ export const closeAllEventSources = () => {
 export let db = null;
 let dbReady = false;
 const pendingOps = [];
-const request = indexedDB.open("chatDB", 1);
+const request = indexedDB.open("chatDB", 2);
 
 request.onupgradeneeded = (event) => {
   db = event.target.result;
   if (!db.objectStoreNames.contains("messages")) {
     const store = db.createObjectStore("messages", { keyPath: "id" });
     store.createIndex("timestamp", "timestamp", { unique: false });
+  }
+  if (!db.objectStoreNames.contains("lastSeenMessages")) {
+    const store = db.createObjectStore("lastSeenMessages", { keyPath: "chatId" });
+    store.createIndex("updatedAt", "updatedAt", { unique: false });
   }
 };
 

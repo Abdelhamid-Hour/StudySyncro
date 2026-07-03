@@ -34,6 +34,7 @@ export class Loader {
       append = true,
       firstLoadFunc = () => {},
       emptyState = null,
+      threshold = 0,
     },
   ) {
     this.getCriteria = () => {
@@ -46,6 +47,7 @@ export class Loader {
     this.creteria = this.getCriteria();
     this.append = append;
     this.rootMargin = rootMargin;
+    this.threshold = threshold;
     this.createCard = createCard;
     this.route = route;
     this.loading = false;
@@ -97,6 +99,7 @@ export class Loader {
       {
         root: this.container,
         rootMargin: this.rootMargin,
+        threshold: this.threshold,
       },
     );
 
@@ -165,7 +168,7 @@ export class Loader {
       if (this.append) this.sentinel.before(frag);
       else this.sentinel.after(frag);
 
-      this.afterAppendRes({ cards, lastVisible, initialHeight });
+      this.afterAppendRes({ cards, lastVisible, initialHeight, isFirstLoad });
       if (!lastVisible) {
         this.io.unobserve(this.sentinel);
         clearLoadersBoxes();

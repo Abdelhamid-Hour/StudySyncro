@@ -33,6 +33,21 @@ document.addEventListener("click", handleRoutingClick, true);
 
 document.addEventListener("click", handleNavigation);
 
+// Load saved theme from localStorage
+const savedAppTheme = localStorage.getItem("theme") || localStorage.getItem("mode") || localStorage.getItem("studyhype_theme");
+if (savedAppTheme === "dark") {
+  const root = document.documentElement;
+  root.style.setProperty("--background-color", "#1a1a1a");
+  root.style.setProperty("--container-background-color", "#242424");
+  root.style.setProperty("--container-border-color", "#818181");
+  root.style.setProperty("--primary-text-color", "#dbdbdb");
+  root.style.setProperty("--btn-background-color", "#2c2c2c");
+  root.style.setProperty("--secondary-text-color", "#c8c8c8");
+  root.style.setProperty("--primary-shadow-color", "transparent");
+  root.style.setProperty("--active-tab-bg", "var(--btn-background-color)");
+  root.style.setProperty("--tab-hover-bg", "var(--btn-background-color)");
+}
+
 toggleModeBtn.addEventListener("click", () => {
   const root = document.documentElement;
   const isDark =
@@ -52,6 +67,9 @@ toggleModeBtn.addEventListener("click", () => {
     );
     root.style.setProperty("--active-tab-bg", "var(--btn-background-color)");
     root.style.setProperty("--tab-hover-bg", "var(--background-color)");
+    localStorage.setItem("theme", "light");
+    localStorage.setItem("mode", "light");
+    localStorage.setItem("studyhype_theme", "light");
   } else {
     // Switch to dark mode
     root.style.setProperty("--background-color", "#1a1a1a");
@@ -63,6 +81,9 @@ toggleModeBtn.addEventListener("click", () => {
     root.style.setProperty("--primary-shadow-color", "transparent");
     root.style.setProperty("--active-tab-bg", "var(--btn-background-color)");
     root.style.setProperty("--tab-hover-bg", "var(--btn-background-color)");
+    localStorage.setItem("theme", "dark");
+    localStorage.setItem("mode", "dark");
+    localStorage.setItem("studyhype_theme", "dark");
   }
 });
 

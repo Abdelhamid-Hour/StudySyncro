@@ -3,18 +3,336 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home Page</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>StudyHype — Elevate Your Learning with Real-Time Collaboration</title>
+    <meta
+      name="description"
+      content="StudyHype is a collaborative learning platform featuring real-time group study sessions, interactive chat, custom quiz editors, and productivity timers."
+    />
+    <meta
+      name="keywords"
+      content="StudyHype, study groups, online learning, collaborative studying, real-time chat, quizzes, exam editor, study timer"
+    />
+    <meta name="author" content="StudyHype Team" />
+    <meta name="robots" content="index, follow" />
+    <meta name="application-name" content="StudyHype" />
+    <meta name="theme-color" content="#1e77fd" />
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:title" content="StudyHype — Collaborative Study Spaces" />
+    <meta
+      property="og:description"
+      content="Join study groups, take interactive quizzes, and collaborate in real-time with peers around the world."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://app.studyhype.com/" />
+    <meta property="og:image" content="./main_assets/images/hero-dashboard.svg" />
+
+    <!-- Favicon and Icons -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+    <!-- Google Fonts & Bootstrap Icons -->
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
     />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-    />
+
+    <!-- Global Website Styles & Native Tokens -->
+    <link rel="stylesheet" href="./main_assets/css/variables_and_fonts.css" />
+    <link rel="stylesheet" href="./main_assets/css/styles.css" />
+    <link rel="stylesheet" href="./main_assets/css/landing.css" />
   </head>
   <body>
-    <h1>Welcome</h1>
-    <a href="/login">Register</a>
+    <main class="landing-wrapper fade-in-template">
+      <!-- Navigation Bar -->
+      <nav class="landing-nav">
+        <a href="/" class="landing-brand">
+          <i class="bi bi-lightning-charge-fill"></i>
+          <span>StudyHype</span>
+        </a>
+
+        <ul class="landing-nav-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#workflow">How It Works</a></li>
+          <li><a href="#stats">Community</a></li>
+        </ul>
+
+        <div class="landing-nav-actions">
+          <button class="button exclude-btn toggle-theme-btn" id="theme-toggle-btn" title="Toggle Dark/Light Mode" aria-label="Toggle Dark or Light Mode">
+            <i class="bi bi-toggle-off" id="theme-toggle-icon"></i>
+          </button>
+          <a href="/login" class="button blue-btn">
+            <span>Login</span>
+            <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </nav>
+
+      <!-- Hero Section -->
+      <header class="landing-hero">
+        <h1>Elevate Your Study Sessions with Real-Time Collaboration</h1>
+        <p>
+          Connect with peers in structured study spaces, engage in live group discussions, test your knowledge with interactive quizzes, and master complex subjects together.
+        </p>
+
+        <div class="hero-actions">
+          <a href="/login" class="button blue-btn">
+            <span>Get Started Now</span>
+            <i class="bi bi-box-arrow-in-right"></i>
+          </a>
+          <a href="#features" class="button">
+            <span>Explore Features</span>
+            <i class="bi bi-chevron-down"></i>
+          </a>
+        </div>
+
+        <!-- Hero Showcase Mockup -->
+        <div class="hero-showcase-box">
+          <!-- Placeholder screenshot: Replace this file later with your actual website screenshot -->
+          <img
+            src="./main_assets/images/hero-dashboard.svg"
+            alt="StudyHype Dashboard Interface Preview"
+          />
+        </div>
+      </header>
+
+      <!-- Live Community Stats -->
+      <section class="landing-stats" id="stats">
+        <div class="stat-box">
+          <h3>15,000+</h3>
+          <p>Active Students &amp; Learners</p>
+        </div>
+        <div class="stat-box">
+          <h3>50,000+</h3>
+          <p>Quizzes Completed &amp; Graded</p>
+        </div>
+        <div class="stat-box">
+          <h3>3,500+</h3>
+          <p>Collaborative Study Groups</p>
+        </div>
+        <div class="stat-box">
+          <h3>98%</h3>
+          <p>Reported Productivity Boost</p>
+        </div>
+      </section>
+
+      <!-- Features Grid Section -->
+      <section id="features">
+        <div class="section-title-box">
+          <h2>Everything You Need to Ace Your Exams</h2>
+          <p>
+            StudyHype brings all your essential study tools into one cohesive, distraction-free environment designed for maximum focus and team productivity.
+          </p>
+        </div>
+
+        <div class="landing-features-grid">
+          <!-- Feature 1 -->
+          <div class="feature-item-card">
+            <div class="feature-item-header">
+              <h3>
+                <i class="bi bi-people-fill"></i>
+                <span>Collaborative Study Spaces</span>
+              </h3>
+              <p>
+                Join or create dedicated study groups tailored to your academic courses or exam goals. Invite peers, manage membership, and collaborate in structured workspaces.
+              </p>
+            </div>
+            <div class="feature-item-img">
+              <img
+                src="./main_assets/images/feature-groups.svg"
+                alt="Study Groups Interface"
+              />
+            </div>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="feature-item-card">
+            <div class="feature-item-header">
+              <h3>
+                <i class="bi bi-chat-dots-fill"></i>
+                <span>Real-Time Chat &amp; File Sharing</span>
+              </h3>
+              <p>
+                Engage in dynamic group discussions with instant messaging. Share lecture notes, code snippets, PDF summaries, and solve challenging homework questions together.
+              </p>
+            </div>
+            <div class="feature-item-img">
+              <img
+                src="./main_assets/images/feature-chat.svg"
+                alt="Real-Time Chat Interface"
+              />
+            </div>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="feature-item-card">
+            <div class="feature-item-header">
+              <h3>
+                <i class="bi bi-patch-question-fill"></i>
+                <span>Interactive Quizzes &amp; Exam Editor</span>
+              </h3>
+              <p>
+                Test your mastery with timed quizzes and instant grading. Use our built-in Quiz Editor to create custom practice exams and challenge your entire study group.
+              </p>
+            </div>
+            <div class="feature-item-img">
+              <img
+                src="./main_assets/images/feature-quizzes.svg"
+                alt="Interactive Quizzes Preview"
+              />
+            </div>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="feature-item-card">
+            <div class="feature-item-header">
+              <h3>
+                <i class="bi bi-stopwatch-fill"></i>
+                <span>Smart Timers &amp; Task Tracking</span>
+              </h3>
+              <p>
+                Stay accountable with integrated study session countdowns and objective tracking. Organize your study goals, track completed tasks, and maintain momentum.
+              </p>
+            </div>
+            <div class="feature-item-img">
+              <img
+                src="./main_assets/images/feature-timer.svg"
+                alt="Study Timer & Tasks Preview"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Workflow / How It Works -->
+      <section id="workflow">
+        <div class="section-title-box">
+          <h2>How StudyHype Works</h2>
+          <p>
+            Get started in less than two minutes and transform how you prepare for exams and coursework.
+          </p>
+        </div>
+
+        <div class="landing-workflow-grid">
+          <!-- Step 1 -->
+          <div class="workflow-step-box">
+            <div class="workflow-step-number">1</div>
+            <h3>Join or Create a Group</h3>
+            <p>
+              Browse available study groups in your field or launch your own private workspace for your classmates and study buddies.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="workflow-step-box">
+            <div class="workflow-step-number">2</div>
+            <h3>Collaborate &amp; Discuss</h3>
+            <p>
+              Hop into active study sessions, exchange ideas in real-time chat, upload study materials, and answer each other's questions.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="workflow-step-box">
+            <div class="workflow-step-number">3</div>
+            <h3>Master with Quizzes</h3>
+            <p>
+              Solidify your retention by playing community quizzes, tracking your exam scores, and building practice tests with the Exam Editor.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Call to Action Section -->
+      <section class="landing-cta-box">
+        <h2>Ready to Transform Your Study Experience?</h2>
+        <p>
+          Join thousands of students and learners who are already collaborating, sharing knowledge, and achieving higher exam scores on StudyHype.
+        </p>
+        <a href="/login" class="button blue-btn">
+          <span>Launch StudyHype Now</span>
+          <i class="bi bi-arrow-right-circle-fill"></i>
+        </a>
+      </section>
+
+      <!-- Footer -->
+      <footer class="landing-footer">
+        <div class="landing-brand" style="font-size: 1.1rem;">
+          <i class="bi bi-lightning-charge-fill"></i>
+          <span>StudyHype</span>
+        </div>
+
+        <div class="landing-footer-links">
+          <a href="#features">Features</a>
+          <a href="#workflow">How It Works</a>
+          <a href="/login">Login</a>
+        </div>
+
+        <p>StudyHype Team &copy; 2026. All rights reserved.</p>
+      </footer>
+    </main>
+
+    <!-- Native Theme Switcher Script -->
+    <script>
+      (function() {
+        const toggleBtn = document.getElementById("theme-toggle-btn");
+        const toggleIcon = document.getElementById("theme-toggle-icon");
+        const root = document.documentElement;
+
+        // Check if user previously set theme in localStorage or default to light mode
+        const savedTheme = localStorage.getItem("theme") || localStorage.getItem("mode") || localStorage.getItem("studyhype_theme") || "light";
+        applyTheme(savedTheme === "dark");
+
+        toggleBtn.addEventListener("click", () => {
+          const isDark = root.style.getPropertyValue("--background-color") === "#1a1a1a";
+          applyTheme(!isDark);
+        });
+
+        function applyTheme(toDark) {
+          if (toDark) {
+            root.style.setProperty("--background-color", "#1a1a1a");
+            root.style.setProperty("--container-background-color", "#242424");
+            root.style.setProperty("--container-border-color", "#818181");
+            root.style.setProperty("--primary-text-color", "#dbdbdb");
+            root.style.setProperty("--btn-background-color", "#2c2c2c");
+            root.style.setProperty("--secondary-text-color", "#c8c8c8");
+            root.style.setProperty("--primary-shadow-color", "transparent");
+            root.style.setProperty("--active-tab-bg", "var(--btn-background-color)");
+            root.style.setProperty("--tab-hover-bg", "var(--btn-background-color)");
+            toggleIcon.className = "bi bi-toggle-on";
+            localStorage.setItem("theme", "dark");
+            localStorage.setItem("mode", "dark");
+            localStorage.setItem("studyhype_theme", "dark");
+          } else {
+            root.style.setProperty("--background-color", "#ebebeb");
+            root.style.setProperty("--container-background-color", "#fafafa");
+            root.style.setProperty("--container-border-color", "#cbced5");
+            root.style.setProperty("--primary-text-color", "black");
+            root.style.setProperty("--btn-background-color", "#fdfdfd");
+            root.style.setProperty("--secondary-text-color", "#575757");
+            root.style.setProperty("--primary-shadow-color", "rgba(195, 195, 195, 0.58)");
+            root.style.setProperty("--active-tab-bg", "var(--btn-background-color)");
+            root.style.setProperty("--tab-hover-bg", "var(--background-color)");
+            toggleIcon.className = "bi bi-toggle-off";
+            localStorage.setItem("theme", "light");
+            localStorage.setItem("mode", "light");
+            localStorage.setItem("studyhype_theme", "light");
+          }
+        }
+      })();
+    </script>
   </body>
 </html>

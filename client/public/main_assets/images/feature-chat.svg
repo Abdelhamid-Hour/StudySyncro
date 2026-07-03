@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%" style="background:#16191f; font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;">
+  <defs>
+    <linearGradient id="c-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e77fd"/>
+      <stop offset="100%" stop-color="#9235e8"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <rect x="40" y="40" width="520" height="320" rx="16" fill="#1f232d" stroke="#2e3440" stroke-width="1.5" filter="url(#shadow)"/>
+  
+  <!-- Chat Header -->
+  <rect x="40" y="40" width="520" height="60" rx="16" fill="#242832"/>
+  <rect x="40" y="80" width="520" height="20" fill="#242832"/>
+  <circle cx="75" cy="70" r="15" fill="#27c93f"/>
+  <text x="75" y="75" fill="#fff" font-size="12" font-weight="700" text-anchor="middle">#</text>
+  <text x="105" y="65" fill="#ffffff" font-size="16" font-weight="700">Algorithms Discussion</text>
+  <text x="105" y="82" fill="#8e96a8" font-size="11">24 members • 5 online</text>
+  <line x1="40" y1="100" x2="560" y2="100" stroke="#2e3440" stroke-width="1"/>
+
+  <!-- Message 1 -->
+  <circle cx="75" cy="135" r="14" fill="#9235e8"/>
+  <text x="75" y="140" fill="#fff" font-size="11" font-weight="600" text-anchor="middle">AL</text>
+  <text x="100" y="130" fill="#ffffff" font-size="13" font-weight="600">Alex Lin</text>
+  <text x="160" y="130" fill="#6c7380" font-size="11">14:20</text>
+  <rect x="100" y="140" width="350" height="40" rx="8" fill="#292e3a"/>
+  <text x="115" y="165" fill="#d1d5db" font-size="13">Can someone explain Dijkstra's algorithm complexity?</text>
+
+  <!-- Message 2 (Reply with File) -->
+  <circle cx="75" cy="210" r="14" fill="#1e77fd"/>
+  <text x="75" y="215" fill="#fff" font-size="11" font-weight="600" text-anchor="middle">ME</text>
+  <text x="100" y="205" fill="#ffffff" font-size="13" font-weight="600">You</text>
+  <text x="130" y="205" fill="#6c7380" font-size="11">14:22</text>
+  <rect x="100" y="215" width="400" height="70" rx="8" fill="#1e3a68" fill-opacity="0.5" stroke="#1e77fd" stroke-width="0.5"/>
+  <text x="115" y="238" fill="#ffffff" font-size="13">With a Fibonacci heap, it runs in O(E + V log V)! 🚀</text>
+  <!-- File Attachment Badge -->
+  <rect x="115" y="248" width="180" height="26" rx="4" fill="#191c24"/>
+  <text x="130" y="265" fill="#4fa0ff" font-size="11" font-weight="600">📄 Dijkstra_Notes.pdf</text>
+
+  <!-- Input Area -->
+  <rect x="60" y="305" width="480" height="40" rx="20" fill="#15181f" stroke="#363c4b" stroke-width="1"/>
+  <text x="80" y="330" fill="#6c7380" font-size="13">Message #Algorithms Discussion...</text>
+  <circle cx="515" cy="325" r="15" fill="url(#c-grad)"/>
+  <path d="M511 325 L519 325 M516 322 L519 325 L516 328" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

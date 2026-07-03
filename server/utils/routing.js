@@ -162,6 +162,9 @@ const renderFragmentOrLayout = (
 ) => {
   const isFetch = req.headers?.["x-requested-with"] === "fetch"; // should I add it in front end
 
+  res.setHeader("Vary", "X-Requested-With");
+  res.setHeader("Cache-Control", "private, no-cache");
+
   return res.render(template, payload.templateContext, (err, htmlFragment) => {
     if (err) {
       console.error("Error rendering template:", err);

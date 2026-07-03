@@ -81,6 +81,65 @@ const getMsgFromIndexedDB = (localId) => {
   });
 };
 
+export const storeLastSeenMessage = (groupId, messageData) => {
+  return new Promise((resolve, reject) => {
+    runWhenDbReady(() => {
+      try {
+        const tx = db.transaction("lastSeenMessages", "readwrite");
+        const store = tx.objectStore("lastSeenMessages");
+        const req = store.put({
+          chatId: groupId,
+          ...messageData,
+          updatedAt: Date.now(),
+        });
+        req.onsuccess = (e) => resolve(e.target.result);
+        req.onerror = (e) => reject(e.target.error);
+      } catch (err) {
+        console.error("Error storing lastSeenMessage:", err);
+        resolve(null);
+      }
+    });
+  });
+};
+
+export const getLastSeenMessage = (groupId) => {
+  return new Promise((resolve, reject) => {
+    runWhenDbReady(() => {
+      try {
+        const tx = db.transaction("lastSeenMessages", "readonly");
+        const store = tx.objectStore("lastSeenMessages");
+        const req = store.get(groupId);
+        req.onsuccess = (e) => resolve(e.target.result);
+        req.onerror = (e) => reject(e.target.error);
+      } catch (err) {
+        console.error("Error getting lastSeenMessage:", err);
+        resolve(null);
+      }
+    });
+  });
+};
+
+export const updateLastSeenFromDOM = async (groupId) => {
+  if (!groupId || !messagesContainer) return;
+  const newestEl = messagesContainer.querySelector(".message-sent:last-child [data-message-id]:last-child, .message-received:last-child [data-message-id]:last-child") ||
+                   messagesContainer.querySelector("[data-message-id]:last-of-type");
+  if (!newestEl) return;
+  const messageId = newestEl.dataset.messageId || "";
+  const timestamp = Number(newestEl.dataset.timestamp || Date.now());
+  const textEl = newestEl.querySelector("p");
+  const text = textEl ? textEl.textContent : (newestEl.querySelector(".media-container") ? "Attachment" : "");
+  const usernameEl = newestEl.querySelector(".username");
+  const senderName = usernameEl ? usernameEl.textContent : (newestEl.className.includes("sent") ? "You" : "");
+
+  await storeLastSeenMessage(groupId, {
+    groupId,
+    messageId,
+    timestamp,
+    text,
+    senderName,
+  });
+};
+
 const getMessagesByTimeRange = async (from, to) => {
   return new Promise((resolve, reject) => {
     runWhenDbReady(() => {
@@ -387,12 +446,14 @@ class ChatMessage {
       localId = "",
       send = false,
       isLocalMsg = false,
+      groupId = "",
     },
   ) {
     this.text = text;
     this.messageId = messageId;
     this.localId = localId;
     this.isLocalMsg = isLocalMsg;
+    this.groupId = groupId;
     this.attachments = attachments;
     this.isSender = isSender;
     this.avatarSrc = avatarSrc;
@@ -448,6 +509,11 @@ class ChatMessage {
           }
         }
       }
+      if (groupId) {
+        const banner = messagesContainer.querySelector(".unread-messages-banner");
+        if (banner) banner.remove();
+        updateLastSeenFromDOM(groupId);
+      }
     } catch (error) {
       console.error(error);
       showMessageBlock(
@@ -458,13 +524,36 @@ class ChatMessage {
   }
 
   renderMessage() {
+    const threshold = 50;
+    const isScrolledUp = !this.isSender &&
+      Boolean(this.groupId) &&
+      Boolean(this.chatContainer) &&
+      this.chatContainer.scrollHeight - this.chatContainer.scrollTop - this.chatContainer.clientHeight > threshold;
+
+    if (isScrolledUp) {
+      const existingBanner = this.chatContainer.querySelector(".unread-messages-banner");
+      if (!existingBanner) {
+        const banner = document.createElement("div");
+        banner.className = "unread-messages-banner";
+        banner.innerHTML = `<span>Unread Messages</span>`;
+        this.chatContainer.append(banner);
+      }
+    }
+
     if (this.attachments.length > 0) {
       this.renderAttachments();
     }
     if (this.text) {
       this.renderTextMessage();
     }
-    scrollToBottom(this.chatContainer);
+
+    if (!isScrolledUp) {
+      scrollToBottom(this.chatContainer);
+    }
+    if (this.isSender && this.chatContainer) {
+      const banner = this.chatContainer.querySelector(".unread-messages-banner");
+      if (banner) banner.remove();
+    }
     return this;
   }
 
@@ -666,6 +755,7 @@ class ChatMessage {
     }-text`;
 
     messageWrapper.dataset.messageId = this.messageId || "";
+    messageWrapper.dataset.timestamp = this.timestamp || "";
     if (
       this.localId &&
       this.isSender &&
@@ -850,6 +940,7 @@ const handleChatInput = async (sessionId, groupId) => {
     new ChatMessage(inputValue, files, "self", Date.now(), messagesContainer, {
       isSender: true,
       send: true,
+      groupId: groupId || "",
     })
       .renderMessage()
       .sendMessages({ sessionId, groupId });
@@ -1188,8 +1279,13 @@ const openChatStream = (groupId, sessionId) => {
         messageId: message.id,
         avatarSrc: message.sender.photoURL,
         senderName: message.sender.fullName,
+        groupId: groupId || "",
       },
     ).renderMessage();
+    if (groupId) {
+      const isScrolledUp = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight > 50;
+      if (!isScrolledUp) updateLastSeenFromDOM(groupId);
+    }
   });
 
   eventSource.addEventListener("error", (e) => {
@@ -1359,18 +1455,73 @@ const firstLoadFunc = (cards, groupId, sessionId) => {
       : "";
   }
   return {
-    cards,
+    cards: [cards],
     lastVisible,
   };
 }
-const afterAppendRes = (data) => {
-  const targetScroll =
-    messagesContainer.scrollHeight - data.initialHeight;
-  messagesContainer.scroll({
-    top: targetScroll,
-    behavior: "instant",
-  });
-}
+
+const handleInitialUnreadBannerAndScroll = async (groupId, isFirstLoad, cards = []) => {
+  debugger
+  if (!isFirstLoad) return;
+  if (!groupId) {
+    scrollToBottom(messagesContainer);
+    return;
+  }
+
+  const lastSeenMsg = await getLastSeenMessage(groupId);
+  if (!lastSeenMsg || !cards.length) {
+    scrollToBottom(messagesContainer);
+    await updateLastSeenFromDOM(groupId);
+    return;
+  }
+
+  let firstUnseenMsg = null;
+  const lastSeenIdx = cards.findIndex(c => c.id === lastSeenMsg.messageId);
+  if (lastSeenIdx !== -1 && lastSeenIdx + 1 < cards.length) {
+    firstUnseenMsg = cards[lastSeenIdx + 1];
+  } else if (lastSeenIdx === -1) {
+    firstUnseenMsg = cards.find(c => Number(c.timestamp) > lastSeenMsg.timestamp);
+  }
+
+  const existingBanner = messagesContainer.querySelector(".unread-messages-banner");
+  if (existingBanner) existingBanner.remove();
+
+  if (firstUnseenMsg) {
+    const firstUnseenEl = messagesContainer.querySelector(`[data-message-id="${firstUnseenMsg.id}"]`);
+    if (firstUnseenEl) {
+      const banner = document.createElement("div");
+      banner.className = "unread-messages-banner";
+      banner.innerHTML = `<span>Unread Messages</span>`;
+      
+      const bubbleContainer = firstUnseenEl.closest(".message-sent, .message-received") || firstUnseenEl;
+      bubbleContainer.before(banner);
+
+      const bannerTop = banner.offsetTop;
+      messagesContainer.scroll({
+        top: Math.max(0, bannerTop - 20),
+        behavior: "instant",
+      });
+      await updateLastSeenFromDOM(groupId);
+      return;
+    }
+  }
+
+  scrollToBottom(messagesContainer);
+  await updateLastSeenFromDOM(groupId);
+};
+
+const afterAppendRes = (data, groupId) => {
+  if (data.isFirstLoad) {
+    handleInitialUnreadBannerAndScroll(groupId, data.isFirstLoad, data.cards[0] || []);
+  } else {
+    const targetScroll =
+      messagesContainer.scrollHeight - data.initialHeight;
+    messagesContainer.scroll({
+      top: targetScroll,
+      behavior: "instant",
+    });
+  }
+};
 const initChatLoader = (groupId, sessionId) => {
   const loader = new Loader(
     messagesContainer,
@@ -1380,9 +1531,10 @@ const initChatLoader = (groupId, sessionId) => {
     {
       loadersCount: 1,
       append: false,
-      afterAppendRes,
-      firstLoadFunc: (cards) => firstLoadFunc(cards, groupId, sessionId),
-      rootMargin: "30px"
+      afterAppendRes: (data) => afterAppendRes(data, groupId),
+      firstLoadFunc: (cards) => firstLoadFunc(cards[0], groupId, sessionId),
+      rootMargin: "0px",
+      threshold: 0.15
     },
   ).reset();
   return loader;
@@ -1393,7 +1545,15 @@ export const iniChat = (groupId = "", sessionId = "") => {
 
   initChatLoader(groupId, sessionId);
 
-  scrollToBottom(messagesContainer);
+  if (groupId) {
+    messagesContainer.addEventListener("scroll", () => {
+      const threshold = 50;
+      const isNearBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight <= threshold;
+      if (isNearBottom) {
+        updateLastSeenFromDOM(groupId);
+      }
+    }, { passive: true });
+  }
 
   chatContainer.addEventListener("dragenter", handleDragEnter);
 

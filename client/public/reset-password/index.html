@@ -63,6 +63,15 @@
     />
   </head>
   <body>
+    <div class="top-nav-bar" style="position: absolute; top: 1.5rem; right: 1.5rem; display: flex; gap: 0.8rem; z-index: 9999;">
+      <a href="/" class="button exclude-btn" title="Back to Home" aria-label="Back to Home" style="padding: 0.5rem 1rem; border-radius: 5px; border: 1px solid var(--btn-border-color); background-color: var(--btn-background-color); color: var(--btn-text-color); display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+        <i class="bi bi-house-door-fill"></i>
+        <span>Home</span>
+      </a>
+      <button class="button exclude-btn toggle-theme-btn" id="theme-toggle-btn" title="Toggle Dark/Light Mode" aria-label="Toggle Dark or Light Mode" style="padding: 0.5rem 0.8rem; border-radius: 5px; border: 1px solid var(--btn-border-color); background-color: var(--btn-background-color); color: var(--btn-text-color); font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+        <i class="bi bi-toggle-off" id="theme-toggle-icon"></i>
+      </button>
+    </div>
     <main>
       <h2>Reset Your Password</h2>
       <form>
@@ -134,5 +143,56 @@
       src="./assets/js/main.js"
       crossorigin="anonymous"
     ></script>
+
+    <!-- Native Theme Switcher Script -->
+    <script>
+      (function() {
+        const toggleBtn = document.getElementById("theme-toggle-btn");
+        const toggleIcon = document.getElementById("theme-toggle-icon");
+        const root = document.documentElement;
+
+        const savedTheme = localStorage.getItem("theme") || localStorage.getItem("mode") || localStorage.getItem("studyhype_theme") || "light";
+        applyTheme(savedTheme === "dark");
+
+        if (toggleBtn) {
+          toggleBtn.addEventListener("click", () => {
+            const isDark = root.style.getPropertyValue("--background-color") === "#1a1a1a";
+            applyTheme(!isDark);
+          });
+        }
+
+        function applyTheme(toDark) {
+          if (toDark) {
+            root.style.setProperty("--background-color", "#1a1a1a");
+            root.style.setProperty("--container-background-color", "#242424");
+            root.style.setProperty("--container-border-color", "#818181");
+            root.style.setProperty("--primary-text-color", "#dbdbdb");
+            root.style.setProperty("--btn-background-color", "#2c2c2c");
+            root.style.setProperty("--secondary-text-color", "#c8c8c8");
+            root.style.setProperty("--primary-shadow-color", "transparent");
+            root.style.setProperty("--active-tab-bg", "var(--btn-background-color)");
+            root.style.setProperty("--tab-hover-bg", "var(--btn-background-color)");
+            if (toggleIcon) toggleIcon.className = "bi bi-toggle-on";
+            localStorage.setItem("theme", "dark");
+            localStorage.setItem("mode", "dark");
+            localStorage.setItem("studyhype_theme", "dark");
+          } else {
+            root.style.setProperty("--background-color", "#ebebeb");
+            root.style.setProperty("--container-background-color", "#fafafa");
+            root.style.setProperty("--container-border-color", "#cbced5");
+            root.style.setProperty("--primary-text-color", "black");
+            root.style.setProperty("--btn-background-color", "#fdfdfd");
+            root.style.setProperty("--secondary-text-color", "#575757");
+            root.style.setProperty("--primary-shadow-color", "rgba(195, 195, 195, 0.58)");
+            root.style.setProperty("--active-tab-bg", "var(--btn-background-color)");
+            root.style.setProperty("--tab-hover-bg", "var(--background-color)");
+            if (toggleIcon) toggleIcon.className = "bi bi-toggle-off";
+            localStorage.setItem("theme", "light");
+            localStorage.setItem("mode", "light");
+            localStorage.setItem("studyhype_theme", "light");
+          }
+        }
+      })();
+    </script>
   </body>
 </html>
