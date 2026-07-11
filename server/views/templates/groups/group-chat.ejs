@@ -60,14 +60,14 @@
               class="drop-down-item exclude-btn group-info-menu-btn"
             >
               <i class="bi bi-info-circle"></i>
-              View Group Info
+              Group Info
             </button>
             <button
               type="button"
               class="drop-down-item exclude-btn quizzes-list-menu-btn"
             >
               <i class="bi bi-clipboard-check"></i>
-              View Quizzes
+              Quizzes
             </button>
             <% if (sessionId) { %>
             <button
@@ -75,7 +75,7 @@
               class="drop-down-item exclude-btn session-info-menu-btn"
             >
               <i class="bi bi-clock-history"></i>
-              View Session Info
+              Session Info
             </button>
             <% } %> <% if (isAdmin) { %>
             <button type="button" class="drop-down-item exclude-btn add-members-menu-btn">
@@ -96,7 +96,7 @@
               class="drop-down-item exclude-btn members-list-menu-btn"
             >
               <i class="bi bi-people"></i>
-              <%= isAdmin ? 'Manage' : 'View' %> Members
+              <%= isAdmin ? 'Manage' : '' %> Members
             </button>
             <% if (isAdmin) { %>
             <button

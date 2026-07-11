@@ -18,6 +18,7 @@ import {
   scrollToView,
   showConfirmationBox,
   showErrorTooltip,
+  openDropDownMenu,
 } from "../../../../global/js/utils.js";
 import { setUpSelectMenu } from "../../../../shared/forms/js/utils.js";
 import {
@@ -461,6 +462,13 @@ export const handleQuestionsPanelListClick = (e) => {
 };
 
 export const handleEditorQuestionsListClick = (e) => {
+  // Handle Open Menu (Correct Answer Select / Dropdowns)
+  const openMenuBtn = e.target.closest(".open-drop-down-btn");
+  if (openMenuBtn) {
+    openDropDownMenu(openMenuBtn);
+    return;
+  }
+
   // Handle Select Correct Answer
   const radioInput = e.target.closest('input[type="radio"]');
   if (radioInput) handleSelectCorrectAnswer(radioInput);

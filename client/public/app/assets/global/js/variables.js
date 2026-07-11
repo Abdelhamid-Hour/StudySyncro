@@ -10,10 +10,8 @@ export const hoverTooltip = document.getElementById("hover-tooltip");
 export const globalTooltip = document.getElementById("global-tooltip");
 export const mainContainer = document.querySelector("main");
 export const toggleModeBtn = document.querySelector(".toggle-container");
-const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-export let LOADERS_COUNT;
 export const timers = {};
-export const LOADER_COUNT = 12;
+export const LOADER_COUNT = 20;
 export const INITIALE_LOADERS_COUNT = 20;
 export const DESCRIPTION_MAX_LENGTH = 1000;
 export const DESCRIPTION_MIN_LENGTH = 10;
@@ -29,15 +27,3 @@ export const QUESTION_TEXT_MAX_LENGTH = 500;
 export const QUESTION_TEXT_MIN_LENGTH = 10;
 export const CHOICE_TEXT_MAX_LENGTH = 200;
 export const PENDING_ONLINE_SYNC_OPS = [];
-
-function calculateBoxCounts() {
-  LOADERS_COUNT = Math.floor(
-    (mainContainer.clientWidth + 0.8 * rem) / (24.8 * rem)
-  );
-}
-
-// Initial calculation
-calculateBoxCounts();
-
-// Recalculate on window resize
-window.addEventListener("resize", calculateBoxCounts);

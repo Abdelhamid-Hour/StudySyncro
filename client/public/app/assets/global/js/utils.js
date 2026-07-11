@@ -12,6 +12,10 @@ import { fetchTemplate, sendData } from "../../../../main_assets/js/utils.js";
 import { showMessageBlock } from "../../../../main_assets/js/utils.js";
 import { initAndDiplayErrorTooltip } from "../../shared/chat/js/utils.js";
 
+export let _loadersCount = 4;
+export const updateLoaderCountVar = (val) => {
+  _loadersCount = val
+}
 let isRouting = false;
 
 window.__activeEventSources = window.__activeEventSources || [];
@@ -21,6 +25,7 @@ if (OriginalEventSource && !window.__esWrapped) {
   window.EventSource = class extends OriginalEventSource {
     constructor(url, options) {
       super(url, options);
+      if(url.includes("/notifications/stream")) return;
       window.__activeEventSources.push(this);
     }
   };
@@ -48,10 +53,6 @@ request.onupgradeneeded = (event) => {
   if (!db.objectStoreNames.contains("messages")) {
     const store = db.createObjectStore("messages", { keyPath: "id" });
     store.createIndex("timestamp", "timestamp", { unique: false });
-  }
-  if (!db.objectStoreNames.contains("lastSeenMessages")) {
-    const store = db.createObjectStore("lastSeenMessages", { keyPath: "chatId" });
-    store.createIndex("updatedAt", "updatedAt", { unique: false });
   }
 };
 
@@ -174,12 +175,45 @@ export const millisecondsToHMFormat = (ms) => {
   return "0m";
 };
 
+export const getLoadersCount = () => {
+  const list = document.querySelector('.quizzes-list, .groups-list');
+  if(!list) return _loadersCount;
+
+  const computedStyles = window.getComputedStyle(list);
+  const gridTemplateColumnsValue = computedStyles.getPropertyValue('grid-template-columns');
+  const loadersCount = gridTemplateColumnsValue.includes("repeat") ? parseInt(gridTemplateColumnsValue.match(/\d+/)[0]) : gridTemplateColumnsValue.split(' ').length;
+  updateLoaderCountVar(loadersCount);
+  
+  return loadersCount
+}
+
+export const updateSkletonCount = () => {
+  
+  const skeletonCards = document.querySelectorAll(".quizzes-list .loading-card, .groups-list .loading-card");
+
+  if(!skeletonCards.length) return;
+  const skeletonCount = getLoadersCount();
+
+  if(skeletonCards.length == skeletonCount) return;
+
+  if(skeletonCards.length > skeletonCount) {
+    skeletonCards[0]?.remove();
+    return;
+  }
+
+  skeletonCards[skeletonCards.length - 1].after(skeletonCards[0].cloneNode(true));
+}
+
 export const closeAndOpenLeftSideBar = () => {
   const shouldHideElements = document.querySelectorAll(".should-hide");
 
   shouldHideElements.forEach((element) => {
     element.classList.toggle("hidden");
   });
+
+  updateSkletonCount();
+  const isHidden = shouldHideElements[0]?.classList.contains("hidden");
+  localStorage.setItem("sidebar-collapsed", Boolean(isHidden));
 };
 
 export const adjustMenuDirection = (button, menu) => {
@@ -210,13 +244,32 @@ export const adjustMenuDirection = (button, menu) => {
   }
 };
 
-export const openOverlayHandler = (e) => {
-  const button = e.target.closest(".open-drop-down-btn");
-  if (button) {
-    const overlay = button.parentElement.querySelector(".overlay");
+export const openDropDownMenu = (button, customOverlay = null) => {
+  if (!button) return;
+  const overlay =
+    customOverlay ||
+    button.parentElement?.querySelector(".overlay") ||
+    button.closest(".select-trigger, .quiz-card-header, div")?.querySelector(".overlay");
+  if (overlay) {
+    if (overlay.classList.contains("open-overlay")) {
+      overlay.classList.remove("open-overlay");
+      document.body.style.pointerEvents = "auto";
+      return;
+    }
+    const existingOverlay = document.querySelector(".open-overlay");
+    if (existingOverlay && existingOverlay !== overlay) {
+      existingOverlay.classList.remove("open-overlay");
+    }
     overlay.classList.add("open-overlay");
     document.body.style.pointerEvents = "none";
     adjustMenuDirection(button, overlay);
+  }
+};
+
+export const openOverlayHandler = (e) => {
+  const button = e.target.closest(".open-drop-down-btn");
+  if (button) {
+    openDropDownMenu(button);
   }
 };
 
@@ -353,14 +406,14 @@ export const tooltipSetup = () => {
 };
 
 const SHARED_STYLES_MAP = {
-  "/home/inactive": ["/tasks"],
+  "/home/inactive": ["/tasks", "/chat"],
   "/home/active": ["/tasks", "/chat", "/quiz-result"],
   "/quizzes/my": ["/quizzes-groups", "/fields", "/forms", "/quizzes-my-groups"],
   "/quizzes/passed": [
     "/quizzes-groups",
     "/fields",
     "/forms",
-    "quizzes-my-groups",
+    "/quizzes-my-groups",
     "/quiz-result"
   ],
   "/groups/my": [
@@ -382,7 +435,7 @@ const SHARED_STYLES_MAP = {
   "/settings": ["/fields"],
 };
 
-const setSharedStylesResources = (pathName) => {
+const setSharedStylesResources = async (pathName, removeOld = true) => {
   const sharedStylesRoutes = SHARED_STYLES_MAP[pathName];
   if (sharedStylesRoutes) {
     const sharedStylesLinks = document.querySelectorAll(
@@ -391,32 +444,37 @@ const setSharedStylesResources = (pathName) => {
     const sharedPreloadLinks = document.querySelectorAll(
       'link[data-dynamic][rel="preload"][href*="shared"]'
     );
-    // add new shared resources if not already in Use
-    sharedStylesRoutes.forEach((styleRoute) => {
-      if (
-        !Array.from(sharedStylesLinks).find((l) => l.href.includes(styleRoute))
-      ) {
-        setStyleRoute(`/shared${styleRoute}`);
-      }
-    });
+    // add new shared resources and wait for their load
+    await Promise.all(
+      sharedStylesRoutes.map((styleRoute) => {
+        if (
+          !Array.from(sharedStylesLinks).find((l) => l.href.includes(styleRoute))
+        ) {
+          return setStyleRoute(`/shared${styleRoute}`);
+        }
+        return Promise.resolve();
+      })
+    );
 
-    // Remove previous shared resources that new ones are not using
-    sharedStylesLinks.forEach((l) => {
-      const prevStyleRoute = sharedStylesRoutes.find((route) =>
-        l.href.includes(route)
-      );
-      if (!prevStyleRoute) {
-        l.remove();
-      }
-    });
-    sharedPreloadLinks.forEach((l) => {
-      const prevStyleRoute = sharedStylesRoutes.find((route) =>
-        l.href.includes(route)
-      );
-      if (!prevStyleRoute) {
-        l.remove();
-      }
-    });
+    if (removeOld) {
+      // Remove previous shared resources that new ones are not using
+      sharedStylesLinks.forEach((l) => {
+        const prevStyleRoute = sharedStylesRoutes.find((route) =>
+          l.href.includes(route)
+        );
+        if (!prevStyleRoute) {
+          l.remove();
+        }
+      });
+      sharedPreloadLinks.forEach((l) => {
+        const prevStyleRoute = sharedStylesRoutes.find((route) =>
+          l.href.includes(route)
+        );
+        if (!prevStyleRoute) {
+          l.remove();
+        }
+      });
+    }
   }
 };
 
@@ -439,7 +497,6 @@ const setScriptRoute = async (pathName, thisNav) => {
     const module = await import(modulePath);
     if (thisNav !== navCounter) return;
     module.init?.(true);
-    console.log(`Module loaded: ${modulePath}`);
   } catch (error) {
     console.error(error);
     showMessageBlock(error.message, "error");
@@ -447,18 +504,25 @@ const setScriptRoute = async (pathName, thisNav) => {
 };
 
 const setStyleRoute = (pathName) => {
-  const stylesLink = document.createElement("link");
-  const href = `/app/assets${pathName}/css/styles.css`;
-  stylesLink.rel = "stylesheet";
-  stylesLink.href = href;
-  stylesLink.as = "style";
-  stylesLink.setAttribute("data-dynamic", "");
-  const preloadLink = createPreloadLink(href);
-  document.head.appendChild(stylesLink);
-  document.head.appendChild(preloadLink);
+  return new Promise((resolve) => {
+    const href = `/app/assets${pathName}/css/styles.css`;
+    if (document.querySelector(`link[rel="stylesheet"][href="${href}"]`)) {
+      return resolve();
+    }
+    const stylesLink = document.createElement("link");
+    stylesLink.rel = "stylesheet";
+    stylesLink.href = href;
+    stylesLink.as = "style";
+    stylesLink.setAttribute("data-dynamic", "");
+    const preloadLink = createPreloadLink(href);
+    stylesLink.onload = () => resolve();
+    stylesLink.onerror = () => resolve();
+    document.head.appendChild(stylesLink);
+    document.head.appendChild(preloadLink);
+  });
 };
 
-const removePreviousRessources = () => {
+const removePreviousRessources = (keepPathName = null) => {
   const stylesLinks = document.querySelectorAll(
     'link[data-dynamic][rel="stylesheet"]:not([href*="shared"])'
   );
@@ -468,8 +532,16 @@ const removePreviousRessources = () => {
   const script = document.querySelector("script[data-dynamic]");
 
   script?.remove();
-  stylesLinks.forEach((l) => l.remove());
-  preloadLinks.forEach((l) => l.remove());
+  stylesLinks.forEach((l) => {
+    if (!keepPathName || !l.href.includes(keepPathName)) {
+      l.remove();
+    }
+  });
+  preloadLinks.forEach((l) => {
+    if (!keepPathName || !l.href.includes(keepPathName)) {
+      l.remove();
+    }
+  });
 };
 
 const createGreetingMsg = (fullName) => {
@@ -600,14 +672,22 @@ const createTabs = (tabContent, tabsClassName) => {
 const setGroupName = (groupName) => {
   const groupNameEl = document.createElement("h1");
   groupNameEl.className = "fade-in-template";
-  groupNameEl.textContent = groupName;
+  if (groupName) {
+    groupNameEl.textContent = groupName;
+  } else {
+    groupNameEl.innerHTML = '<span class="loading-opacity-animation" style="width: 10rem; height: 1.5rem; display: inline-block; border-radius: 0.3rem;"></span>';
+  }
   return groupNameEl;
 };
 
 const setQuizTitle = (quizTitle) => {
   const quizTitleEl = document.createElement("h1");
   quizTitleEl.className = "fade-in-template";
-  quizTitleEl.textContent = quizTitle;
+  if (quizTitle) {
+    quizTitleEl.textContent = quizTitle;
+  } else {
+    quizTitleEl.innerHTML = '<span class="loading-opacity-animation" style="width: 12rem; height: 1.5rem; display: inline-block; border-radius: 0.3rem;"></span>';
+  }
   return quizTitleEl;
 };
 
@@ -690,25 +770,66 @@ const removeSaveQuizBtn = () => {
 };
 
 const updateTopSideBar = (pathName, extraData) => {
+  let normalizedPath = pathName;
+  if (normalizedPath.includes("/chat") || normalizedPath.includes("/group-chat")) {
+    normalizedPath = "/groups/my/group-chat";
+  } else if (normalizedPath.includes("/edit") || normalizedPath.includes("/quiz-editor")) {
+    normalizedPath = "/quizzes/my/quiz-editor";
+  } else if (normalizedPath.includes("/home") || normalizedPath === "/" || normalizedPath === "/app") {
+    normalizedPath = "/home";
+  }
+
   const {
     title: headerTitle = "",
     middle: makeMiddle = () => document.createDocumentFragment(),
-  } = pageConfig[pathName] || {};
+  } = pageConfig[normalizedPath] || {};
 
   // 2) update header
   updateTopSideBarHeader(headerTitle);
 
   // 3) update middle content
-  const middleContent = makeMiddle(extraData);
+  const topSideBar = document.querySelector("aside.top-side-bar");
+  if (topSideBar && !topSideBar.contains(topSideBarMiddle)) {
+    topSideBar.appendChild(topSideBarMiddle);
+  }
+  const activeSessionsHeader = document.querySelector(".active-sessions header");
+  const activeSearchEl = document.querySelector(".active-sessions-search.search");
+  if (activeSessionsHeader && activeSearchEl && !activeSessionsHeader.contains(activeSearchEl)) {
+    activeSessionsHeader.appendChild(activeSearchEl);
+  }
+
+  const middleContent = makeMiddle(extraData || {});
 
   topSideBarMiddle.replaceChildren(middleContent);
+
+  const mobileSearchBtn = document.querySelector(".mobile-search-btn");
+  const mobileSearchBox = document.getElementById("mobile-search-box");
+  const mobileTabsContainer = document.getElementById("mobile-tabs-container");
+  if (mobileTabsContainer && normalizedPath !== "/home" && !normalizedPath.startsWith("/groups") && !normalizedPath.startsWith("/quizzes")) {
+    mobileTabsContainer.classList.add("hidden");
+    mobileTabsContainer.innerHTML = "";
+  }
+  if (mobileSearchBox) {
+    mobileSearchBox.classList.add("hidden");
+    mobileSearchBox.innerHTML = "";
+  }
+  if (mobileSearchBtn) {
+    const hasSearch =
+      topSideBarMiddle.querySelector(".search-container") ||
+      document.querySelector(".active-sessions-search.search");
+    if (hasSearch) {
+      mobileSearchBtn.classList.remove("hidden");
+    } else {
+      mobileSearchBtn.classList.add("hidden");
+    }
+  }
 
   removeCreateBtns();
 
   removeSaveQuizBtn();
   // 5) ONLY groups get tabs
-  const isGroups = ["/groups/my", "/groups/available"].includes(pathName);
-  const isQuizzes = ["/quizzes/my", "/quizzes/passed"].includes(pathName);
+  const isGroups = ["/groups/my", "/groups/available"].includes(normalizedPath);
+  const isQuizzes = ["/quizzes/my", "/quizzes/passed"].includes(normalizedPath);
   const existingTabs = document.querySelector(".navigation-tabs");
   if (existingTabs) {
     existingTabs.remove();
@@ -747,14 +868,33 @@ const updateTopSideBar = (pathName, extraData) => {
   }
 
   // 6) add additional content if needed
-  const { additional } = pageConfig[pathName] || {};
+  const { additional } = pageConfig[normalizedPath] || {};
   if (additional) {
     additional();
   }
 };
 
 const updateTopSideBarHeader = (Title) => {
-  topSideBarHeader.querySelector("h2").innerHTML = Title;
+  const topH2 = topSideBarHeader?.querySelector("h2");
+  if (topH2) topH2.innerHTML = Title;
+
+  const mobileTitleEl = document.querySelector(".mobile-page-title");
+  const mobileBackBtn = document.querySelector(".mobile-back-btn");
+  if (!mobileTitleEl) return;
+
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = Title;
+  const linkEl = tempDiv.querySelector("a");
+
+  if (linkEl && mobileBackBtn) {
+    const returnHref = linkEl.getAttribute("href") || "/app/home";
+    mobileBackBtn.setAttribute("href", returnHref);
+    mobileBackBtn.classList.remove("hidden");
+    mobileTitleEl.textContent = linkEl.textContent.trim() || tempDiv.textContent.trim();
+  } else {
+    if (mobileBackBtn) mobileBackBtn.classList.add("hidden");
+    mobileTitleEl.innerHTML = Title;
+  }
 };
 
 let navCounter = 0;
@@ -770,6 +910,7 @@ export const clearAllTimeOuts = () => {
 };
 
 export const updateMain = async (path, isTabLinks) => {
+  
   const thisNav = ++navCounter;
   try {
     if (thisNav !== navCounter) {
@@ -778,8 +919,37 @@ export const updateMain = async (path, isTabLinks) => {
     }
     clearAllTimeOuts();
     closeAllEventSources();
-    mainContainer.innerHTML = getLoader();
+
+    let predRoute = path;
+    try {
+      if (predRoute.startsWith("http")) predRoute = new URL(predRoute).pathname;
+      if (predRoute.startsWith("/app")) predRoute = predRoute.slice(4);
+      if (predRoute === "/" || predRoute === "" || predRoute === "/home") predRoute = "/home/inactive";
+      predRoute = predRoute.split("?")[0].replace(/\/$/, "");
+      if (!predRoute.startsWith("/")) predRoute = "/" + predRoute;
+      if (predRoute.includes("/chat") || predRoute.includes("/group-chat")) {
+        predRoute = "/groups/my/group-chat";
+      } else if (predRoute.includes("/edit") || predRoute.includes("/quiz-editor")) {
+        predRoute = "/quizzes/my/quiz-editor";
+      } else if (predRoute.includes("/quiz-play")) {
+        predRoute = "/quiz-play";
+      }
+      await Promise.all([
+        setStyleRoute(predRoute),
+        setSharedStylesResources(predRoute, false),
+      ]);
+      removePreviousRessources(predRoute);
+      setSharedStylesResources(predRoute, true);
+    } catch (e) {}
+
+    mainContainer.innerHTML = getPageSkeleton(path);
     clearOverlaysModals();
+    if (!isTabLinks) {
+      updateTopSideBar(
+        predRoute.includes("/home") ? "/home" : predRoute,
+        window.lastExtraData || {}
+      );
+    }
     const { pathName, htmlFragment, extraData } = await fetchTemplate(path);
 
     if (thisNav !== navCounter) {
@@ -789,16 +959,31 @@ export const updateMain = async (path, isTabLinks) => {
     
     clearAllTimeOuts();
     closeAllEventSources();
-    mainContainer.innerHTML = htmlFragment;
-    removePreviousRessources();
-    setStyleRoute(pathName);
+    const cleanFragment = typeof htmlFragment === "string" ? htmlFragment.replace(/\bfade-in-template\b/g, "") : htmlFragment;
+
+    await Promise.all([
+      setStyleRoute(pathName),
+      setSharedStylesResources(pathName, false),
+    ]);
+
+    if (thisNav !== navCounter) {
+      isRouting = false;
+      return;
+    }
+
+    mainContainer.innerHTML = cleanFragment;
+    removePreviousRessources(pathName);
+    setSharedStylesResources(pathName, true);
     setScriptRoute(pathName, thisNav);
-    setSharedStylesResources(pathName);
-    if (!isTabLinks)
+    if (extraData) window.lastExtraData = { ...window.lastExtraData, ...extraData };
+    const isDynamicTitleRoute = pathName.includes("/chat") || pathName.includes("/group-chat") || pathName.includes("/edit") || pathName.includes("/quiz-editor");
+    const isFirstTimeHome = pathName.includes("/home") && !window.lastExtraData?.fullName;
+    if (!isTabLinks && (isDynamicTitleRoute || isFirstTimeHome)) {
       updateTopSideBar(
         pathName.includes("/home") ? "/home" : pathName,
-        extraData
+        window.lastExtraData || extraData
       );
+    }
   } catch (error) {
     console.error(error);
     showMessageBlock(error.message, "error");
@@ -820,19 +1005,35 @@ export const toggleActiveLink = (pathName, tabLink) => {
     : "";
   // Allow tab to remain active if pathName starts with tabLinkPathName (for subpages)
   if (tabLinkPathName && pathName.startsWith(tabLinkPathName + "/")) return;
-  const activePageLink = document.querySelector(".active");
-  if (activePageLink) {
+  document.querySelectorAll(".side-bar-icons a.active, .mobile-bottomnav a.active, .nav-link.active, .route-link.active").forEach((activePageLink) => {
     const activeIcon = activePageLink.querySelector("i");
     activeIcon ? animateFillIcon(activeIcon, false) : null;
-    activePageLink?.classList.remove("active");
-  }
-  const pageLink = document.querySelector(
-    `.side-bar-icons [href="${pathName}"]`
+    activePageLink.classList.remove("active");
+  });
+  const pageLinks = document.querySelectorAll(
+    `.side-bar-icons [href="${pathName}"], .mobile-bottomnav [href="${pathName}"]`
   );
-  if (pageLink) {
-    pageLink.classList.add("active");
-    const icon = pageLink.querySelector("i");
-    icon ? animateFillIcon(icon, true) : null;
+  if (pageLinks.length > 0) {
+    pageLinks.forEach((pageLink) => {
+      pageLink.classList.add("active");
+      const icon = pageLink.querySelector("i");
+      icon ? animateFillIcon(icon, true) : null;
+    });
+  } else {
+    const allLinks = document.querySelectorAll(".side-bar-icons a[href], .mobile-bottomnav a[href]");
+    allLinks.forEach((link) => {
+      const href = link.getAttribute("href");
+      if (
+        (href.includes("/home") && pathName.includes("/home")) ||
+        (href.includes("/groups") && pathName.includes("/groups")) ||
+        (href.includes("/quizzes") && pathName.includes("/quizzes")) ||
+        (href.includes("/settings") && pathName.includes("/settings"))
+      ) {
+        link.classList.add("active");
+        const icon = link.querySelector("i");
+        icon ? animateFillIcon(icon, true) : null;
+      }
+    });
   }
 };
 
@@ -851,7 +1052,6 @@ export const clearTooltipWithTimeOut = getDebounceFunc((input) => {
 }, 2000);
 
 export const handleRoutingClick = (event) => {
-  console.log("isRouuting: ", isRouting);
   
   if (isRouting) {
     event.preventDefault(); // Prevent default action (like link navigation)
@@ -905,9 +1105,10 @@ export const handleNavigation = (e) => {
         const isGroupsTabs = e.target.closest(".groups-tabs");
         const isUserQuizzesPage = location.pathname === "/app/quizzes/my";
         if (isGroupsTabs) {
-          topSideBarMiddle
-            .querySelector(".filter-panel")
-            .replaceWith(createFilterPanel(true));
+          const filterPanel = topSideBarMiddle.querySelector(".filter-panel");
+          if (filterPanel) {
+            filterPanel.replaceWith(createFilterPanel(true));
+          }
         }
         const searchContainer =
           topSideBarMiddle.querySelector(".search-container");
@@ -1017,7 +1218,7 @@ export const createFilterPanel = (groups = false) => {
   filterPanel.className = "filter-panel overlay";
 
   if (groups) {
-    const isMyGroupsPage = location.pathname === "/app/groups/my";
+    const isMyGroupsPage = location.pathname.includes("/groups/my");
 
     if (isMyGroupsPage) {
       const roleSection = createSection("Role", [
@@ -1140,6 +1341,809 @@ export const getLoader = () => {
 		</g>
 	</g>
 </svg>`;
+};
+
+export const getHomeSkeleton = () => {
+  if (typeof window !== "undefined" && window.matchMedia("(max-width: 48rem)").matches) {
+    const headerContainer = document.getElementById("mobile-tabs-container");
+    if (headerContainer) {
+      headerContainer.classList.remove("hidden");
+      headerContainer.innerHTML = `
+        <div class="mobile-inactive-tabs navigation-tabs" style="width: 100%;">
+          <button type="button" class="tab active-tab" style="pointer-events: none;">Active Sessions</button>
+          <button type="button" class="tab" style="pointer-events: none;">Recent Messages</button>
+        </div>
+      `;
+    }
+  }
+  const sessionCard = `
+  <div class="active-session loading-animation loading-card">
+    <header>
+      <div class="session-info" style="width: 50%">
+        <h3 class="session-name" style="">
+          <span
+            class="loading-opacity-animation"
+            style="height: 1.4rem; width: 50%"
+          ></span>
+          <span
+            class="joined-count badge simple-badge loading-opacity-animation"
+            style="height: 1.3rem; width: 30%; border-radius: 5rem"
+          ></span>
+        </h3>
+        <span
+          class="group badge loading-opacity-animation"
+          style="width: 30%; margin-top: 0.2rem; justify-content: left"
+        ></span>
+      </div>
+      <div class="meta-info" style="width: 50%">
+        <span
+          class="badge simple-badge loading-opacity-animation"
+          style="height: 1.3rem; width: 30%; border-radius: 5rem"
+        ></span>
+        <span
+          class="badge simple-badge loading-opacity-animation"
+          style="height: 1.3rem; width: 20%; border-radius: 5rem"
+        ></span>
+      </div>
+    </header>
+    <p
+      class="session-description loading-opacity-animation"
+      style="width: 80%; height: 1rem"
+    ></p>
+    <p
+      class="session-description loading-opacity-animation"
+      style="width: 30%; height: 1rem"
+    ></p>
+    <footer class="footer">
+      <div class="footer-meta-info" style="width: 50%">
+        <span
+          class="badge simple-badge loading-opacity-animation"
+          style="height: 1.3rem; width: 30%; border-radius: 5rem"
+        ></span>
+        <span
+          class="badge simple-badge loading-opacity-animation"
+          style="height: 1.3rem; width: 30%; border-radius: 5rem"
+        ></span>
+      </div>
+      <div
+        class="action-buttons"
+        data-session-id="IniGoJHQ1eLAVpUcux0D"
+      >
+        <div
+          class="loading-opacity-animation"
+          style="width: 50%; height: 2.3rem; border-radius: 0.4rem;"
+        ></div>
+        <div
+          class="should-fill loading-opacity-animation"
+          style="width: 50%; height: 2.3rem; border-radius: 0.4rem;"
+        ></div>
+      </div>
+    </footer>
+  </div>`;
+  const messageCard = `
+  <div
+    class="recent-message card-item loading-animation loading-card"
+    data-group-id="S443aQzWvV2lVz8vG4D0"
+  >
+    <header class="card-header">
+      <div class="left">
+        <h4
+          class="loading-opacity-animation"
+          style="width: 60%; height: 1.3rem"
+        ></h4>
+      </div>
+      <div class="right" style="width: 25%">
+        <span
+          class="time loading-opacity-animation"
+          style="width: 100%; height: 1rem"
+        ></span>
+      </div>
+    </header>
+    <div
+      class="sender-info loading-opacity-animation"
+      style="width: 40%; height: 1rem; margin: 0.5rem 0"
+    ></div>
+    <div class="message-preview">
+      <p
+        class="loading-opacity-animation"
+        style="width: 80%; height: 1rem"
+      ></p>
+    </div>
+    <div
+      class="action-buttons"
+      style="margin-top: 1rem"
+    >
+      <div
+        class="loading-opacity-animation"
+        style="width: 100%; height: 2.2rem; border-radius: 0.4rem;"
+      ></div>
+    </div>
+  </div>`;
+  return `
+    <div class="overview-session-inactive" style="width: 100%; height: 100%; box-sizing: border-box; overflow-y: auto;">
+      <div class="ready-message-container">
+        <div class="ready-message">
+          <h2>Ready to start learning together?</h2>
+          <p>Join a study session to connect with peers, participate in discussions, and enhance your learning experience. StudyHype makes collaborative learning easy and effective!</p>
+        </div>
+      </div>
+      <div class="content-blocks">
+        <section class="recent-messages">
+          <header>
+            <h2>Recent Messages</h2>
+            <p>Latest conversations from your study groups</p>
+          </header>
+          <div class="messages-container">
+            ${messageCard.repeat(3)}
+          </div>
+        </section>
+        <section class="active-sessions">
+          <header>
+            <div class="header-text">
+              <h2>Active Sessions</h2>
+              <p>Ongoing study sessions you can join now</p>
+            </div>
+            <div class="active-sessions-search search">
+              <div class="search-icon-container">
+                <i class="bi bi-search"></i>
+              </div>
+              <input type="search" placeholder="Search by session or group name" disabled />
+            </div>
+          </header>
+          <div class="sessions-container">
+            ${sessionCard.repeat(3)}
+          </div>
+        </section>
+      </div>
+    </div>
+  `;
+};
+
+export const getGroupsSkeleton = (path = "") => {
+  const userGroup = path.includes("/groups/my");
+  if (typeof window !== "undefined" && window.matchMedia("(max-width: 48rem)").matches) {
+    const headerContainer = document.getElementById("mobile-tabs-container");
+    if (headerContainer) {
+      headerContainer.classList.remove("hidden");
+      headerContainer.innerHTML = `
+        <div class="mobile-groups-tabs navigation-tabs groups-tabs" style="width: 100%;">
+          <a href="/app/groups/my" class="tab route-link ${userGroup ? 'active-tab' : ''} exclude-btn">My Groups</a>
+          <a href="/app/groups/available" class="tab route-link ${!userGroup ? 'active-tab' : ''} exclude-btn">Available Groups</a>
+        </div>
+      `;
+    }
+  }
+  const groupCard = `
+    <div class="group-card loading-animation loading-card" style="pointer-events: none;">
+      <header>
+        <span class="badge loading-opacity-animation" style="width: 5rem; height: 1.5rem;"></span>
+        <span class="badge loading-opacity-animation" style="width: 5rem; height: 1.5rem;"></span>
+      </header>
+      <div class="group-meta">
+        <h3 class="group-name loading-opacity-animation" style="width: 60%; height: 1.4rem; border-radius: 0.4rem;"></h3>
+        <span class="subject-value badge simple-badge loading-opacity-animation" style="width: 4rem; height: 1.4rem;"></span>
+      </div>
+      <div class="group-description">
+        <div class="loading-opacity-animation" style="width: 100%; height: 0.9rem; margin-bottom: 0.4rem; border-radius: 0.3rem;"></div>
+        <div class="loading-opacity-animation" style="width: 80%; height: 0.9rem; border-radius: 0.3rem;"></div>
+      </div>
+      <footer class="group-footer">
+        ${
+          userGroup
+            ? '<span class="level-value badge loading-opacity-animation" style="width: 6rem; height: 1.5rem;"></span>'
+            : ""
+        }
+        <div class="avatars">
+          <div class="avatar loading-opacity-animation"></div>
+          <div class="avatar loading-opacity-animation"></div>
+          <div class="avatar loading-opacity-animation"></div>
+        </div>
+        ${
+          !userGroup
+            ? '<button class="btn-join loading-btn loading-opacity-animation" disabled style="width: 7rem; height: 2.2rem; border: none;"></button>'
+            : ""
+        }
+      </footer>
+    </div>
+  `;
+  return `
+    <div class="main-content groups-list" style="width: 100%; height: 100%; box-sizing: border-box; overflow-y: auto;">
+      ${groupCard.repeat(getLoadersCount())}
+    </div>
+    ${
+      userGroup
+        ? '<button type="button" class="mobile-create-group-btn create-group-btn exclude-btn" title="Create Group" aria-label="Create Group"><i class="bi bi-plus-lg"></i></button>'
+        : ""
+    }
+  `;
+};
+
+export const getQuizzesSkeleton = (path = "") => {
+  const isPassed = path.includes("/quizzes/passed") || path.includes("/passed");
+  const quizCard = isPassed
+    ? `
+    <div class="quiz-card loading-animation loading-card" style="pointer-events: none;">
+        <div class="quiz-title-container info-container">
+            <label class="quiz-title-label">
+                <span class="icon-box"><i class="bi bi-card-text"></i></span>
+                Quiz Title
+            </label>
+            <div class="quiz-title content loading-opacity-animation"></div>
+        </div>
+        <div class="group-name-container info-container">
+            <label class="group-name-label">
+                <span class="icon-box">
+                    <i class="bi bi-people"></i>
+                </span>
+                Group Name
+            </label>
+            <div class="group-name content loading-opacity-animation"></div>
+        </div>
+        <div class="session-name-container info-container">
+        <label class="session-name-label">
+        <span class="icon-box">
+        <i class="bi bi-journal-bookmark"></i>
+        </span>
+        Session Name
+        </label>
+        <div class="session-name content loading-opacity-animation"></div>
+        </div>
+        <div class="submitted-at-container info-container">
+            <label class="submitted-at-label">
+                <span class="icon-box">
+                    <i class="bi bi-calendar-check"></i>
+                </span>
+                Submitted At
+            </label>
+            <div class="submitted-at content loading-opacity-animation"></div>
+        </div>
+        <div class="score-container info-container">
+            <label class="score-label">
+                <span class="icon-box">
+                    <i class="bi bi-trophy"></i>
+                </span>
+                Score
+            </label>
+            <div class="score content loading-opacity-animation"></div>
+        </div>
+        <div class="action-btns">
+            <button style="pointer-events: none; height: 2.2rem; width: 7rem;" disabled class="loading-btn loading-opacity-animation">
+            </button>
+            <button style="pointer-events: none; height: 2.2rem; width: 7rem;" disabled class="loading-btn loading-opacity-animation" >
+            </button>
+        </div>
+    </div>`
+    : `
+    <div class="quiz-card loading-animation loading-card" style="pointer-events: none;">
+      <header class="quiz-card-header">
+        <span class="badge gray-badge loading-opacity-animation" style="width: 5rem; height: 1.5rem;"></span>
+        <button type="button" class="exclude-btn quiz-card-menu-btn" disabled>
+          <i class="bi bi-three-dots-vertical"></i>
+        </button>
+      </header>
+      <div class="quiz-title-container info-container">
+        <label class="quiz-title-label">
+          <span class="icon-box"><i class="bi bi-card-text"></i></span>
+          Quiz title
+        </label>
+        <div class="quiz-title content loading-opacity-animation"></div>
+      </div>
+      <div class="questions-count-container info-container small-container">
+        <label class="questions-count-label">
+          <span class="icon-box"><i class="bi bi-question-circle"></i></span>
+          Questions
+        </label>
+        <span class="count content loading-opacity-animation"></span>
+      </div>
+      <div class="shared-in-container info-container">
+        <label class="shared-in-label">
+          <span class="icon-box"><i class="bi bi-people"></i></span>
+          Shared in
+        </label>
+        <div class="content">
+          <span class="count content loading-opacity-animation"></span>
+        </div>
+      </div>
+      <div class="subject-container info-container small-container">
+        <label class="subject-label">
+          <span class="icon-box"><i class="bi bi-book"></i></span>
+          Subject
+        </label>
+        <span class="subject content loading-opacity-animation"></span>
+      </div>
+    </div>`;
+  return `
+    <div class="quizzes-list" style="width: 100%; height: 100%; box-sizing: border-box; overflow-y: auto;">
+      ${quizCard.repeat(getLoadersCount())}
+    </div>
+  `;
+};
+
+export const getSettingsSkeleton = () => {
+  return `
+    <div class="settings-wrapper">
+      <div class="settings-content">
+        <header class="settings-header">
+          <h2>My Account</h2>
+          <div class="tabs" style="pointer-events: none;">
+            <label class="exclude-btn active tab profile-tab">
+              <input type="radio" name="tab" class="profile" checked disabled />
+              Personal Info
+            </label>
+            <label class="exclude-btn tab email-tab">
+              <input type="radio" name="tab" class="email" disabled />
+              Email Address
+            </label>
+            <label class="exclude-btn tab password-tab">
+              <input type="radio" name="tab" class="password" disabled />
+              Password
+            </label>
+            <label class="exclude-btn tab delete-account-tab">
+              <input type="radio" name="tab" class="delete-account" disabled />
+              Close Account
+            </label>
+          </div>
+        </header>
+
+        <div class="content">
+          <!-- Personal Info -->
+          <div class="profile-tab-content tab-content" style="pointer-events: none;">
+            <header>
+              <h3>Personal Details</h3>
+              <span>Keep your information up to date.</span>
+            </header>
+            <form class="profile-form">
+              <div class="avatar-container">
+                <label class="avatar">
+                  <div class="loading-opacity-animation" style="width: 100%; height: 100%; border-radius: 0.5rem;"></div>
+                </label>
+                <span class="caption hidden" style="visibility: hidden;">
+                  Upload a JPG, PNG, or GIF (Max 1MB).
+                </span>
+                <span class="error"></span>
+              </div>
+              <div class="info-fields">
+                <div class="fields">
+                  <label for="full-name">Full Name</label>
+                  <div class="field-container full-name-field">
+                    <div class="field-icon-container">
+                      <span class="icon-box">
+                        <i class="bi bi-person"></i>
+                      </span>
+                    </div>
+                    <div class="input">
+                      <span class="loading-opacity-animation" style="width: 60%; height: 1.2rem; border-radius: 0.3rem;"></span>
+                    </div>
+                  </div>
+
+                  <label for="uid">User ID</label>
+                  <div class="field-container uid-field">
+                    <div class="field-icon-container">
+                      <span class="icon-box">
+                        <i class="bi bi-fingerprint"></i>
+                      </span>
+                    </div>
+                    <div class="input">
+                      <span class="loading-opacity-animation" style="width: 40%; height: 1.2rem; border-radius: 0.3rem;"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="action-btns">
+                  <button type="button" class="blue-btn modify-btn" disabled>
+                    <i class="bi bi-pencil"></i>
+                    Modify Profile
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+export const getMainSkeleton = () => {
+  return `
+    <div class="main-skeleton-container" style="display: flex; flex-direction: column; gap: var(--primary-gap, 1.5rem); padding: var(--primary-gap, 1.5rem); width: 100%; height: 100%; box-sizing: border-box; overflow: hidden;">
+      <!-- Top banner / header skeleton -->
+      <div class="loading-animation" style="width: 100%; height: 5rem; border-radius: 0.75rem; border: 1px solid var(--container-border-color); flex-shrink: 0;"></div>
+      
+      <!-- Divided content skeleton (2 column layout) -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--primary-gap, 1.5rem); flex: 1;">
+        <!-- Left block -->
+        <div style="display: flex; flex-direction: column; gap: 1rem; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid var(--container-border-color);">
+          <div class="loading-animation" style="width: 35%; height: 1.5rem; border-radius: 0.4rem;"></div>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+            <div class="loading-animation" style="width: 100%; height: 4.5rem; border-radius: 0.5rem;"></div>
+            <div class="loading-animation" style="width: 100%; height: 4.5rem; border-radius: 0.5rem;"></div>
+            <div class="loading-animation" style="width: 85%; height: 4.5rem; border-radius: 0.5rem;"></div>
+          </div>
+        </div>
+        
+        <!-- Right block -->
+        <div style="display: flex; flex-direction: column; gap: 1rem; padding: 1.25rem; border-radius: 0.75rem; border: 1px solid var(--container-border-color);">
+          <div class="loading-animation" style="width: 45%; height: 1.5rem; border-radius: 0.4rem;"></div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+            <div class="loading-animation" style="height: 6rem; border-radius: 0.5rem;"></div>
+            <div class="loading-animation" style="height: 6rem; border-radius: 0.5rem;"></div>
+          </div>
+          <div class="loading-animation" style="width: 100%; height: 5.5rem; border-radius: 0.5rem; margin-top: 0.5rem;"></div>
+          <div class="loading-animation" style="width: 75%; height: 4rem; border-radius: 0.5rem;"></div>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+export const getGroupChatSkeleton = () => {
+  return `
+    <div class="group-container" style="pointer-events: none;">
+      <aside class="group-left-side-bar close">
+        <aside class="top-bar">
+          <h2 class="side-bar-title">
+            <span class="badge simple-badge"></span>
+          </h2>
+        </aside>
+        <div class="left-side-bar-content"></div>
+      </aside>
+      <div class="chat">
+        <div class="top-bar">
+          <button
+            type="button"
+            class="exclude-btn show-info-btn"
+            disabled
+          >
+            <i class="bi bi-info-circle"></i>
+          </button>
+          <h2 class="title"><span class="loading-opacity-animation" style="width: 12rem; height: 1.5rem; display: inline-block; border-radius: 0.3rem;"></span></h2>
+          <div>
+            <button
+              type="button"
+              class="exclude-btn group-chat-menu-btn"
+              disabled
+            >
+              <i class="bi bi-three-dots-vertical"></i>
+            </button>
+          </div>
+        </div>
+        <div class="chat-messages" style="padding-block: var(--primary-gap); padding-inline: 15%;">
+          <div class="loading-card first-loading-card">
+            <div style="display: flex; flex-direction: column">
+              <div class="message-sent">
+                <div class="avatar loading-opacity-animation"></div>
+
+                <div class="messages">
+                  <div class="first-message-sent-text loading-animation">
+                    <p class="loading-opacity-animation" style="width: 5rem"></p>
+
+                    <span class="message-info loading-opacity-animation" style="width: 2rem"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="message-received">
+                <div class="avatar loading-opacity-animation"></div>
+
+                <div class="messages">
+                  <div class="first-message-received-text loading-animation">
+                    <span class="username loading-opacity-animation" style="width: 60%"></span>
+
+                    <div class="media-message message-media-preview">
+                      <div class="media-div loading-opacity-animation" style="width: 100%; height: auto; aspect-ratio: 16/9">
+                      </div>
+
+                      <button type="button" class="expand-btn loading-opacity-animation" style="width: 2rem"></button>
+                      <a class="download-btn button loading-opacity-animation" style="width: 2rem"></a>
+                    </div>
+
+                    <span class="message-info loading-opacity-animation" style="width: 10%"></span>
+                  </div>
+
+                  <div class="message-received-text card-item">
+                    <p class="loading-opacity-animation" style="width: 5rem"></p>
+                    <span class="message-info loading-opacity-animation" style="width: 2rem"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="input-message-container">
+          <div class="icons">
+            <label class="should-fill">
+              <i class="bi bi-image"></i>
+            </label>
+            <label>
+              <i class="bi bi-paperclip"></i>
+            </label>
+            <div class="emoji-picker">
+              <button
+                type="button"
+                class="exclude-btn should-fill emoji-button"
+                disabled
+              >
+                <i class="bi bi-emoji-smile"></i>
+              </button>
+            </div>
+          </div>
+          <div class="input-message" style="display: flex; align-items: center; border: none; background: transparent;">
+            <span class="loading-opacity-animation" style="width: 40%; height: 1.2rem; border-radius: 0.3rem;"></span>
+          </div>
+          <button type="button" class="send-btn exclude-btn should-fill" disabled>
+            <i class="bi bi-send"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+};
+
+export const getQuizEditorSkeleton = () => {
+  return `
+    <div class="quiz-editor" style="pointer-events: none;">
+      <section class="questions-panel">
+        <header class="questions-header">
+          <h4 class="panel-title">
+            Questions
+            <span class="count badge simple-badge">0</span>
+          </h4>
+          <button
+            type="button"
+            class="add-question-btn exclude-btn should-fill"
+            disabled
+          >
+            <i class="bi bi-plus-circle"></i>
+          </button>
+        </header>
+        <div class="questions-list">
+          ${[1, 2, 3].map((idx) => `
+            <div class="question">
+              ${idx === 1 ? '<div class="drop-target"></div>' : ''}
+              <a class="question-card" style="pointer-events: none;">
+                <header class="question-card-header">
+                  <h4>
+                    <span class="icon-box">
+                      <i class="bi bi-patch-question"></i>
+                    </span>
+                    <span class="question-count counter">Question ${idx}</span>
+                  </h4>
+                  <button
+                    type="button"
+                    class="exclude-btn drag-handle"
+                    disabled
+                  >
+                    <i class="drag-icon"></i>
+                  </button>
+                </header>
+                <div class="loading-opacity-animation" style="width: 90%; height: 0.9rem; margin: 0.5rem 0; border-radius: 0.3rem;"></div>
+                <footer class="question-card-footer">
+                  <span class="choices-count">4 Choices</span>
+                  <button
+                    type="button"
+                    class="delete-question-btn exclude-btn"
+                    disabled
+                  >
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </footer>
+              </a>
+              <div class="drop-target"></div>
+            </div>
+          `).join("")}
+        </div>
+      </section>
+      <section class="question-editor-panel">
+        <header class="editor-header">
+          <div class="subject">
+            <div class="container">
+              <span class="subject-label label">
+                <span class="icon-box">
+                  <i class="bi bi-book"></i>
+                </span>
+                Subject:
+              </span>
+              <span class="loading-opacity-animation" style="width: 6rem; height: 1.2rem; border-radius: 0.3rem;"></span>
+              <button
+                class="exclude-btn edit-subject-btn"
+                type="button"
+                disabled
+              >
+                <i class="bi bi-pencil-square"></i>
+              </button>
+            </div>
+          </div>
+          <div class="title">
+            <div class="container">
+              <div class="loading-opacity-animation" style="width: 12rem; height: 1.4rem; border-radius: 0.3rem;"></div>
+              <button
+                class="exclude-btn edit-title-btn"
+                type="button"
+                disabled
+              >
+                <i class="bi bi-pencil-square"></i>
+              </button>
+            </div>
+          </div>
+          <span class="shared-in">
+            <span class="shared-in-label label">
+              <span class="icon-box">
+                <i class="bi bi-people"></i>
+              </span>
+              Shared In:
+            </span>
+            <span class="loading-opacity-animation" style="width: 5rem; height: 1.2rem; border-radius: 0.3rem;"></span>
+          </span>
+        </header>
+        <div class="questions-list">
+          ${[1, 2].map((idx) => `
+            <div class="question-editor-box">
+              <header class="question-header">
+                <h4>
+                  <span class="icon-box">
+                    <i class="bi bi-patch-question"></i>
+                  </span>
+                  <span class="question-count counter">Question ${idx}</span>
+                </h4>
+                <button
+                  type="button"
+                  class="delete-question-btn exclude-btn"
+                  disabled
+                >
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </header>
+              <div class="loading-opacity-animation" style="width: 100%; height: 45px; border-radius: 0.4rem; margin-bottom: 1rem;"></div>
+              <div class="choices-section">
+                <h5 class="choices-title section-title">
+                  <span class="icon-box">
+                    <i class="bi bi-list-ol"></i>
+                  </span>
+                  Choices
+                </h5>
+                <div class="choices-list">
+                  ${[0, 1].map((cidx) => `
+                    <div class="choice">
+                      <span class="choice-label">${String.fromCharCode(65 + cidx)}</span>
+                      <div class="choice-input input" style="display: flex; align-items: center;">
+                        <span class="loading-opacity-animation" style="width: ${cidx === 0 ? '55%' : '40%'}; height: 1.2rem; border-radius: 0.3rem;"></span>
+                      </div>
+                      <button
+                        type="button"
+                        class="delete-choice-btn exclude-btn"
+                        disabled
+                      >
+                        <i class="bi bi-trash3"></i>
+                      </button>
+                    </div>
+                  `).join("")}
+                </div>
+                <button type="button" class="add-choice-btn small-btn" disabled>
+                  <i class="bi bi-plus-circle"></i>
+                  Add Choice
+                </button>
+                <hr />
+                <h5 class="correct-answer-title section-title">
+                  <span class="icon-box">
+                    <i class="bi bi-check-circle"></i>
+                  </span>
+                  Correct Answer
+                </h5>
+                <div class="correct-answer-select">
+                  <div class="icon-box">
+                    <i class="bi bi-check-circle"></i>
+                  </div>
+                  <div class="select-trigger input" style="display: flex; align-items: center;">
+                    <button type="button" class="exclude-btn open-drop-down-btn" disabled style="display: flex; align-items: center; gap: 0.5rem;">
+                      <span class="loading-opacity-animation" style="width: 1.5rem; height: 1.2rem; border-radius: 0.2rem;"></span>
+                      <i class="bi bi-chevron-down"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `).join("")}
+          <button type="button" class="exclude-btn add-question-btn" disabled>
+            <i class="bi bi-plus-circle"></i>
+            <hr />
+          </button>
+        </div>
+      </section>
+    </div>
+  `;
+};
+
+export const getPageSkeleton = (path = "") => {
+  const isHome = path.includes("/home") || path === "/" || path === "/app" || path === "/app/";
+  const isGroups = path.includes("/groups");
+  const isQuizzes = path.includes("/quizzes");
+  if (!isHome && !isGroups && !isQuizzes && typeof document !== "undefined") {
+    const headerContainer = document.getElementById("mobile-tabs-container");
+    if (headerContainer) {
+      headerContainer.classList.add("hidden");
+      headerContainer.innerHTML = "";
+    }
+  }
+  if (isHome) {
+    return getHomeSkeleton();
+  }
+  if (path.includes("/chat")) {
+    return getGroupChatSkeleton();
+  }
+  if (path.includes("/edit")) {
+    return getQuizEditorSkeleton();
+  }
+  if (path.includes("/quiz-play")) {
+    return getQuizPlaySkeleton();
+  }
+  if (path.includes("/groups")) {
+    return getGroupsSkeleton(path);
+  }
+  if (path.includes("/quizzes")) {
+    return getQuizzesSkeleton(path);
+  }
+  if (path.includes("/settings")) {
+    return getSettingsSkeleton();
+  }
+  return getMainSkeleton();
+};
+
+export const getQuizPlaySkeleton = () => {
+  return `
+    <div class="quiz-view" style="pointer-events: none;">
+      <a class="button close-btn exclude-btn">
+        <i class="bi bi-x-lg"></i>
+      </a>
+      <div class="questions-view">
+        <header class="quiz-header">
+          <div class="timer">
+            <span class="time-left">
+              <span class="icon-box"><i class="bi bi-stopwatch-fill"></i></span>
+              Time Left :
+            </span>
+            <div class="timer-digits">
+              <span class="loading-opacity-animation" style="width: 4rem; height: 1.2rem; border-radius: 0.2rem; display: inline-block;"></span>
+            </div>
+          </div>
+          <h3 class="quiz-title"><span class="loading-opacity-animation" style="width: 15rem; height: 1.5rem; border-radius: 0.3rem; display: inline-block;"></span></h3>
+        </header>
+        <div class="question-view">
+          <header class="question-view-header">
+            <h4>
+              <span class="icon-box">
+                <i class="bi bi-patch-question"></i>
+              </span>
+              <span class="loading-opacity-animation" style="width: 8rem; height: 1.2rem; border-radius: 0.3rem; display: inline-block;"></span>
+            </h4>
+            <button type="button" class="gray-btn skip-btn" disabled>Skip</button>
+          </header>
+          <div class="question-body">
+            <h4><span class="loading-opacity-animation" style="width: 80%; height: 1.4rem; border-radius: 0.3rem; display: inline-block; margin-bottom: 1rem;"></span></h4>
+            <div class="question-choices">
+              <span class="select-answer-label">Select the correct Answer</span>
+              <div class="choices-list">
+                ${[0, 1, 2, 3].map((idx) => `
+                  <label class="choice" style="pointer-events: none;">
+                    <input type="radio" disabled />
+                    <span class="choice-label">${String.fromCharCode(65 + idx)}</span>
+                    <span class="choice-text loading-opacity-animation" style="width: ${60 - idx * 10}%; height: 1.2rem; border-radius: 0.3rem; display: inline-block;"></span>
+                  </label>
+                `).join("")}
+              </div>
+            </div>
+          </div>
+          <footer class="question-actions-row">
+            <div class="prev action">
+              <button class="prev-btn gray-btn" disabled>Previous</button>
+            </div>
+            <div class="next action">
+              <button class="next-btn blue-btn" disabled>Next</button>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+  `;
 };
 
 const createConfirmationBox = (

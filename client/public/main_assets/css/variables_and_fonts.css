@@ -1,19 +1,18 @@
-:root {
+:root,
+html[data-theme="dark"] {
   --primary-color: #1e77fd;
-  /* DARK MODE colors: */
-
-  /* --background-color: #1a1a1a;
-   --container-background-color: #242424; 
-   --container-border-color: #818181;
-   --primary-text-color: #dbdbdb; 
-   --btn-background-color: #2c2c2c;
-   --secondary-text-color: #c8c8c8;
-     --active-tab-bg: var(--btn-background-color);
+  --background-color: #1a1a1a;
+  --container-background-color: #242424;
+  --container-border-color: #818181;
+  --primary-text-color: #dbdbdb;
+  --btn-background-color: #2c2c2c;
+  --secondary-text-color: #c8c8c8;
+  --active-tab-bg: var(--btn-background-color);
   --tab-hover-bg: var(--btn-background-color);
-   --primary-shadow-color: transparent; */
+  --primary-shadow-color: transparent;
+}
 
-  /* LIGHT MODE colors: */
-
+html[data-theme="light"] {
   --background-color: #ebebeb;
   --container-background-color: #fafafa;
   --container-border-color: #cbced5;
@@ -23,7 +22,10 @@
   --primary-shadow-color: rgba(195, 195, 195, 0.58);
   --active-tab-bg: var(--btn-background-color);
   --tab-hover-bg: var(--background-color);
-  
+}
+
+:root {
+
   /* h1 color */
   --heading-color: var(--primary-color);
   /* buttons color variables */
@@ -107,4 +109,33 @@
   --disabled-text-color: var(--btn-border-color);
   --disabled-background-color: var(--btn-background-color);
   --primary-transition-style: 300ms ease-out;
+}
+
+/* Telegram-style circular reveal transition */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 9999;
+}
+
+html[data-theme]::view-transition-new(root) {
+  animation: theme-reveal .7s ease-in-out;
+}
+
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%));
+  }
+
+  to {
+    clip-path: circle(150% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%));
+  }
 }

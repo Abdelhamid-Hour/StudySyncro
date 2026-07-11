@@ -3,14 +3,21 @@
   grid-template-columns: repeat(2, calc(50% - var(--primary-gap) / 2));
   gap: var(--primary-gap);
 
-  &:has(.group-subject-field) {
-    z-index: 4;
+  &:has(.group-subject-field),
+  &:has(.drop-down-menu) {
+    position: relative !important;
+    z-index: 100 !important;
   }
 }
 
 .field-container {
   z-index: 2;
   position: relative;
+
+  &:has(.drop-down-menu),
+  &:has(.select-menu) {
+    z-index: 100 !important;
+  }
   display: flex;
   align-items: center;
   border: 1px solid var(--inputs-border-color);

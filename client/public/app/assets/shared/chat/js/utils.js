@@ -12,6 +12,7 @@ import {
 } from "../../../global/js/utils.js";
 
 import {
+  fetchData,
   sendData,
   showMessageBlock,
   throttling,
@@ -81,42 +82,20 @@ const getMsgFromIndexedDB = (localId) => {
   });
 };
 
-export const storeLastSeenMessage = (groupId, messageData) => {
-  return new Promise((resolve, reject) => {
-    runWhenDbReady(() => {
-      try {
-        const tx = db.transaction("lastSeenMessages", "readwrite");
-        const store = tx.objectStore("lastSeenMessages");
-        const req = store.put({
-          chatId: groupId,
-          ...messageData,
-          updatedAt: Date.now(),
-        });
-        req.onsuccess = (e) => resolve(e.target.result);
-        req.onerror = (e) => reject(e.target.error);
-      } catch (err) {
-        console.error("Error storing lastSeenMessage:", err);
-        resolve(null);
-      }
-    });
-  });
-};
-
-export const getLastSeenMessage = (groupId) => {
-  return new Promise((resolve, reject) => {
-    runWhenDbReady(() => {
-      try {
-        const tx = db.transaction("lastSeenMessages", "readonly");
-        const store = tx.objectStore("lastSeenMessages");
-        const req = store.get(groupId);
-        req.onsuccess = (e) => resolve(e.target.result);
-        req.onerror = (e) => reject(e.target.error);
-      } catch (err) {
-        console.error("Error getting lastSeenMessage:", err);
-        resolve(null);
-      }
-    });
-  });
+export const getLastSeenMessage = async (groupId) => {
+  try {
+    const res = await fetchData(`/chat/state/${groupId}`);
+    if (res && res.lastSeenTimestamp) {
+      return {
+        chatId: groupId,
+        messageId: res.lastSeenMessageId || null,
+        timestamp: res.lastSeenTimestamp,
+      };
+    }
+  } catch (err) {
+    console.error("Error getting lastSeenMessage from API:", err);
+  }
+  return null;
 };
 
 export const updateLastSeenFromDOM = async (groupId) => {
@@ -126,18 +105,12 @@ export const updateLastSeenFromDOM = async (groupId) => {
   if (!newestEl) return;
   const messageId = newestEl.dataset.messageId || "";
   const timestamp = Number(newestEl.dataset.timestamp || Date.now());
-  const textEl = newestEl.querySelector("p");
-  const text = textEl ? textEl.textContent : (newestEl.querySelector(".media-container") ? "Attachment" : "");
-  const usernameEl = newestEl.querySelector(".username");
-  const senderName = usernameEl ? usernameEl.textContent : (newestEl.className.includes("sent") ? "You" : "");
 
-  await storeLastSeenMessage(groupId, {
-    groupId,
-    messageId,
-    timestamp,
-    text,
-    senderName,
-  });
+  try {
+    await sendData("/api/chat/mark-read", { groupId, messageId, timestamp }, "POST");
+  } catch (err) {
+    console.error("Failed to mark chat as read on server:", err);
+  }
 };
 
 const getMessagesByTimeRange = async (from, to) => {
@@ -190,7 +163,7 @@ const initDOMVariables = () => {
   chatContainer = document.querySelector(".chat");
 };
 
-const initializeEmojiPicker = (emojiList) => {
+export const initializeEmojiPicker = (emojiList) => {
   const initSection = (emojisWrapper) => {
     emojisWrapper.style.backgroundImage = "initial";
     emojisWrapper.style.backgroundColor = "initial";
@@ -218,7 +191,7 @@ const initializeEmojiPicker = (emojiList) => {
   }, 500);
 };
 
-const handleEmojisSearch = (e, emojiesSearchResultContainer) => {
+export const handleEmojisSearch = (e, emojiesSearchResultContainer) => {
   const searchValue = e.currentTarget.value.trim();
   if (searchValue) {
     emojiesSearchResultContainer.classList.add("search-result");
@@ -266,7 +239,7 @@ const createEmojiBtn = (emoji) => {
   return emojiItemBtn;
 };
 
-const handleEmojiListClick = (e, inputMessage, emojiList) => {
+export const handleEmojiListClick = (e, inputMessage, emojiList) => {
   const emojibtn = e.target.closest(".emoji-btn");
   if (emojibtn) {
     const pickedEmoji = emojibtn.textContent;
@@ -486,7 +459,7 @@ class ChatMessage {
         formData.append("localId", getUUID());
         const message = Object.fromEntries(formData.entries());
         await storeMsgIntoIndexedDB(message);
-        if (navigator.onLine) sendMessage(formData, this.wrappers.text);
+        if (navigator.onLine) await sendMessage(formData, this.wrappers.text);
         else
           PENDING_ONLINE_SYNC_OPS.push(() =>
             sendMessage(formData, this.wrappers.text),
@@ -501,18 +474,23 @@ class ChatMessage {
           const message = Object.fromEntries(formData.entries());
           await storeMsgIntoIndexedDB(message);
           if (navigator.onLine)
-            sendMessage(formData, this.wrappers.files[i], true);
+            await sendMessage(formData, this.wrappers.files[i], true);
           else {
             PENDING_ONLINE_SYNC_OPS.push(() =>
               sendMessage(formData, this.wrappers.files[i], true),
             );
           }
         }
+        
       }
       if (groupId) {
         const banner = messagesContainer.querySelector(".unread-messages-banner");
         if (banner) banner.remove();
-        updateLastSeenFromDOM(groupId);
+        if(!navigator.onLine) {
+          PENDING_ONLINE_SYNC_OPS.push(() => updateLastSeenFromDOM(groupId));
+        } else {
+          updateLastSeenFromDOM(groupId);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -558,6 +536,8 @@ class ChatMessage {
   }
 
   appendToChat(messageBubble, file = null) {
+    const emptyStateUI = document.querySelector(".icon-wrapper");
+    if(emptyStateUI) emptyStateUI.remove();
     let messageContainer = null;
     const isFirstMessage = this.isFirstMessage();
     if (isFirstMessage) {
@@ -1219,7 +1199,7 @@ const handleAudioSeek = (e, progressContainer) => {
   seek(e, audio, progressContainer);
 };
 
-const handleCategoryClick = (e) => {
+export const handleCategoryClick = (e) => {
   const categoryLink = e.target.closest("a[data-section-id]");
   if (categoryLink) {
     e.preventDefault(); // stop the browser from adding #sectionX
@@ -1283,8 +1263,7 @@ const openChatStream = (groupId, sessionId) => {
       },
     ).renderMessage();
     if (groupId) {
-      const isScrolledUp = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight > 50;
-      if (!isScrolledUp) updateLastSeenFromDOM(groupId);
+      updateLastSeenFromDOM(groupId);
     }
   });
 
@@ -1438,6 +1417,7 @@ const getMessagesIds = () => {
 };
 
 const firstLoadFunc = (cards, groupId, sessionId) => {
+  
   openChatStream(groupId, sessionId);
   const messageIds = getMessagesIds();
 
@@ -1461,7 +1441,6 @@ const firstLoadFunc = (cards, groupId, sessionId) => {
 }
 
 const handleInitialUnreadBannerAndScroll = async (groupId, isFirstLoad, cards = []) => {
-  debugger
   if (!isFirstLoad) return;
   if (!groupId) {
     scrollToBottom(messagesContainer);
@@ -1534,7 +1513,14 @@ const initChatLoader = (groupId, sessionId) => {
       afterAppendRes: (data) => afterAppendRes(data, groupId),
       firstLoadFunc: (cards) => firstLoadFunc(cards[0], groupId, sessionId),
       rootMargin: "0px",
-      threshold: 0.15
+      threshold: 0.15,
+      emptyState: {
+        noFilter: {
+          icon: "bi-chat",
+          title: "No Messages",
+          desc: "No messages in this chat.",
+        }
+      }
     },
   ).reset();
   return loader;
@@ -1544,16 +1530,6 @@ export const iniChat = (groupId = "", sessionId = "") => {
   initDOMVariables();
 
   initChatLoader(groupId, sessionId);
-
-  if (groupId) {
-    messagesContainer.addEventListener("scroll", () => {
-      const threshold = 50;
-      const isNearBottom = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight <= threshold;
-      if (isNearBottom) {
-        updateLastSeenFromDOM(groupId);
-      }
-    }, { passive: true });
-  }
 
   chatContainer.addEventListener("dragenter", handleDragEnter);
 

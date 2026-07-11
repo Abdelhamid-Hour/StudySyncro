@@ -8,8 +8,9 @@ export const init = (virtual = false) => {
 
   const loader = initLazyLoadingLoader(true);
 
-  console.log('Active Module start: my.js');
-  groupCreateBtn?.addEventListener('click', handleGroupCreateClick);
+  document.querySelectorAll('.create-group-btn').forEach(btn => {
+    btn.addEventListener('click', handleGroupCreateClick);
+  });
 };
 
 init();

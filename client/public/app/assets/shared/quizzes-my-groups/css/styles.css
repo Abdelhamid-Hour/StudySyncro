@@ -45,7 +45,7 @@
 
   .quiz-title-container,
   .group-name-container {
-    flex-basis: calc(70% - (var(--primary-gap) / 2));
+    flex-grow: 1;
   }
 
   .shared-in-container {

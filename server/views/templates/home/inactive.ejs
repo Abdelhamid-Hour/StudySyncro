@@ -15,177 +15,61 @@
         <h2>Recent Messages</h2>
         <p>Latest conversations from your study groups</p>
       </header>
-      <div class="messages-container">
-        <!-- no recent messaeges -->
-        <!-- <div class="icon-wrapper">
-        <i class="bi bi-chat-text-fill"></i>
-        <h3>No Messages Yet</h3>
-        <p>
-      No recent messages yet. Join or create a study group to start
-      collaborating and sharing messages!
-        </p>
-        <a href="/groups" class="find-groups-link button">Find Study Groups</a>
-      </div> -->
-        <div data-group-name="Web Development Basics" class="recent-message">
-          <header>
-            <div class="profile-info">
-              <i class="bi bi-person-circle icon"></i>
-              <div class="details">
-                <span class="user">Abdelhamid Hour</span>
-                <span class="group">Web Development Basics</span>
+      <div class="messages-container" data-last-visible="<%= lastVisible || '' %>">
+        <% if (recentMessages && recentMessages.length) { %>
+          <% recentMessages.forEach(msg => { %>
+            <% const hasUnread = msg.hasUnreadMessages && msg.unreadCount > 0; %>
+            <div class="recent-message card-item <%= hasUnread ? 'has-unread' : '' %>" data-group-id="<%= msg.groupId || '' %>" data-last-update="<%= msg.lastUpdate || 0 %>">
+              <header>
+                <div class="profile-info">
+                  <% const photoURL = msg.lastMessage?.senderPhotoURL || msg.lastMessage?.photoURL || msg.senderPhotoURL || msg.photoURL; %>
+                  <% if (photoURL) { %>
+                    <img src="<%= photoURL %>" alt="avatar" class="icon" />
+                  <% } else { %>
+                    <i class="bi bi-person-circle icon"></i>
+                  <% } %>
+                  <div class="details">
+                    <span class="user"><%= msg.lastMessage?.senderName || msg.lastMessageSender || "Someone" %></span>
+                    <span class="group"><%= msg.groupName || "Study Group" %></span>
+                  </div>
+                </div>
+                <div class="meta-info">
+                  <span class="timestamp"><%= formatTimeAgo(msg.lastUpdate) %></span>
+                  <% if (hasUnread) { %>
+                    <span class="unread-count blue-badge badge"><%= msg.unreadCount %> New Message<%= msg.unreadCount > 1 ? "s" : "" %></span>
+                  <% } %>
+                </div>
+              </header>
+              <p class="text-message">
+                <%= msg.lastMessage?.text || msg.lastMessageText || "No messages yet" %>
+              </p>
+              <div class="action-buttons" data-group-id="<%= msg.groupId || '' %>">
+                <button type="button" class="should-fill reply-group">
+                  <i class="bi bi-reply"></i>
+                  Reply In Group
+                </button>
+                <button type="button" class="should-fill reply">
+                  <i class="bi bi-reply"></i>
+                  Reply
+                </button>
+                <% if (hasUnread) { %>
+                <button type="button" class="mark-read">
+                  <i class="bi bi-check2-all"></i>
+                  Mark as read
+                </button>
+                <% } %>
               </div>
             </div>
-            <div class="meta-info">
-              <span class="timestamp">2m ago</span>
-              <span class="unread-count blue-badge badge">8 New Messages</span>
+          <% }); %>
+        <% } else { %>
+          <div class="icon-wrapper">
+            <div class="empty-icon-container">
+              <i class="bi bi-chat-text-fill"></i>
             </div>
-          </header>
-          <p class="text-message">
-            Has anyone completed the CSS Grid exercise yet?
-          </p>
-          <div class="action-buttons">
-            <button type="button" class="should-fill reply-group">
-              <i class="bi bi-reply"></i>
-              Reply In Group
-            </button>
-            <button type="button" class="should-fill reply">
-              <i class="bi bi-reply"></i>
-              Reply
-            </button>
-            <button type="button" class="mark-read">
-              <i class="bi bi-check2-all"></i>
-              Mark as read
-            </button>
+            <h3>No Messages Yet</h3>
+            <p>No recent messages yet. Join or create a study group to start collaborating and sharing messages!</p>
           </div>
-        </div>
-        <div data-group-name="Web Development Basics" class="recent-message">
-          <header>
-            <div class="profile-info">
-              <i class="bi bi-person-circle icon"></i>
-              <div class="details">
-                <span class="user">Abdelhamid Hour</span>
-                <span class="group">Web Development Basics</span>
-              </div>
-            </div>
-            <div class="meta-info">
-              <span class="timestamp">2m ago</span>
-              <span class="unread-count blue-badge badge">8 New Messages</span>
-            </div>
-          </header>
-          <p class="text-message">
-            Has anyone completed the CSS Grid exercise yet?
-          </p>
-          <div class="action-buttons">
-            <button type="button" class="should-fill reply-group">
-              <i class="bi bi-reply"></i>
-              Reply In Group
-            </button>
-            <button type="button" class="should-fill reply">
-              <i class="bi bi-reply"></i>
-              Reply
-            </button>
-            <button type="button" class="mark-read">
-              <i class="bi bi-check2-all"></i>
-              Mark as read
-            </button>
-          </div>
-        </div>
-        <div data-group-name="Web Development Basics" class="recent-message">
-          <header>
-            <div class="profile-info">
-              <i class="bi bi-person-circle icon"></i>
-              <div class="details">
-                <span class="user">Abdelhamid Hour</span>
-                <span class="group">Web Development Basics</span>
-              </div>
-            </div>
-            <div class="meta-info">
-              <span class="timestamp">2m ago</span>
-              <span class="unread-count blue-badge badge">8 New Messages</span>
-            </div>
-          </header>
-          <p class="text-message">
-            Has anyone completed the CSS Grid exercise yet?
-          </p>
-          <div class="action-buttons">
-            <button type="button" class="should-fill reply-group">
-              <i class="bi bi-reply"></i>
-              Reply In Group
-            </button>
-            <button type="button" class="should-fill reply">
-              <i class="bi bi-reply"></i>
-              Reply
-            </button>
-            <button type="button" class="mark-read">
-              <i class="bi bi-check2-all"></i>
-              Mark as read
-            </button>
-          </div>
-        </div>
-        <div data-group-name="Web Development Basics" class="recent-message">
-          <header>
-            <div class="profile-info">
-              <i class="bi bi-person-circle icon"></i>
-              <div class="details">
-                <span class="user">Abdelhamid Hour</span>
-                <span class="group">Web Development Basics</span>
-              </div>
-            </div>
-            <div class="meta-info">
-              <span class="timestamp">2m ago</span>
-              <span class="unread-count blue-badge badge">8 New Messages</span>
-            </div>
-          </header>
-          <p class="text-message">
-            Has anyone completed the CSS Grid exercise yet?
-          </p>
-          <div class="action-buttons">
-            <button type="button" class="should-fill reply-group">
-              <i class="bi bi-reply"></i>
-              Reply In Group
-            </button>
-            <button type="button" class="should-fill reply">
-              <i class="bi bi-reply"></i>
-              Reply
-            </button>
-            <button type="button" class="mark-read">
-              <i class="bi bi-check2-all"></i>
-              Mark as read
-            </button>
-          </div>
-        </div>
-        <div data-group-name="Web Development Basics" class="recent-message">
-          <header>
-            <div class="profile-info">
-              <i class="bi bi-person-circle icon"></i>
-              <div class="details">
-                <span class="user">Abdelhamid Hour</span>
-                <span class="group">Web Development Basics</span>
-              </div>
-            </div>
-            <div class="meta-info">
-              <span class="timestamp">2m ago</span>
-              <span class="unread-count blue-badge badge">8 New Messages</span>
-            </div>
-          </header>
-          <p class="text-message">
-            Has anyone completed the CSS Grid exercise yet?
-          </p>
-          <div class="action-buttons">
-            <button type="button" class="should-fill reply-group">
-              <i class="bi bi-reply"></i>
-              Reply In Group
-            </button>
-            <button type="button" class="should-fill reply">
-              <i class="bi bi-reply"></i>
-              Reply
-            </button>
-            <button type="button" class="mark-read">
-              <i class="bi bi-check2-all"></i>
-              Mark as read
-            </button>
-          </div>
-        </div>
+        <% } %>
       </div>
     </section>
     <section class="active-sessions">

@@ -6,6 +6,10 @@
   width: 100%;
 }
 
+.submitted-at-container {
+  flex-grow: 1;
+}
+
 .action-btns {
   display: flex;
   align-items: center;

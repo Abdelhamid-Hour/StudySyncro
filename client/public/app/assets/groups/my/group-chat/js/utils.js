@@ -728,19 +728,31 @@ const setUpSessionForm = (wrapper, sessionStore) => {
     quizzesSelectTrigger,
     () => `
     <div class="select-search">
-      <input id="select-search" type="search" />
+      <input id="select-search" type="search" placeholder="Search quizzes..." />
     </div>
+    <div class="select-item drop-down-item" data-value="">No Quiz (Optional)</div>
+    <hr class="separator" />
     <div class="select-group quizzes-menu drop-down-group"></div>
   `,
     true,
     (selectButtonValue, selectedItem, selectedValue) => {
-      selectButtonValue.textContent = selectedItem.textContent;
-      quizzesSelectTrigger.querySelector(
-        'input[name="session-quiz-title"]'
-      ).value = selectedItem.textContent;
-      quizzesSelectTrigger.querySelector(
-        'input[name="session-quiz-id"]'
-      ).value = selectedValue;
+      if (!selectedValue) {
+        selectButtonValue.textContent = "Quiz Title (Optional)";
+        quizzesSelectTrigger.querySelector(
+          'input[name="session-quiz-title"]'
+        ).value = "";
+        quizzesSelectTrigger.querySelector(
+          'input[name="session-quiz-id"]'
+        ).value = "";
+      } else {
+        selectButtonValue.textContent = selectedItem.textContent;
+        quizzesSelectTrigger.querySelector(
+          'input[name="session-quiz-title"]'
+        ).value = selectedItem.textContent;
+        quizzesSelectTrigger.querySelector(
+          'input[name="session-quiz-id"]'
+        ).value = selectedValue;
+      }
     }
   );
 
@@ -761,6 +773,18 @@ const setUpSessionForm = (wrapper, sessionStore) => {
       rootMargin: "10px",
       getCriteria: () => getQuizLoaderSearchParams(wrapper),
       loadersCount: 1,
+      emptyState: {
+        noFilter: {
+          icon: "bi-clipboard-x",
+          title: "No Quizzes Available",
+          desc: "No quizzes have been created for this group yet.",
+        },
+        filtered: {
+          icon: "bi-search",
+          title: "No Quizzes Match",
+          desc: "No quizzes match your search.",
+        },
+      },
     }
   );
   loader.reset();
@@ -1821,7 +1845,7 @@ const checkRadioValidity = (input, valideValues) => {
 
 const getQuizLoaderLoadingItem = () => {
   const div = document.createElement("div");
-  div.className = "select-item drop-down-item loading-card";
+  div.className = "drop-down-item loading-card";
   div.innerHTML = `<div class="loading-opacity-animation"></div>`;
   return div;
 };

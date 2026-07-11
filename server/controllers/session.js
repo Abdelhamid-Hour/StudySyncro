@@ -37,7 +37,6 @@ const endSessionHandler = async (req, res) => {
 const joinSessionHandler = async (req, res) => {
   
   const { sessionId } = req.body;
-  console.log(sessionId);
   const result = await joinSession(sessionId, req.user.uid);
   if (result.success) {
     return res.status(200).json({ message: result.message });
@@ -62,8 +61,6 @@ const createSessionHandler = async (req, res) => {
 
 const getActiveSessionHandler = async (req, res) => {
   const result = await getActiveSession(req.user.uid);
-
-  console.log("active session result", result);
 
   if (result.success) {
     return res.status(200).json({ ...result.sessionData });
@@ -99,7 +96,6 @@ const getActiveSessionsHandler = async (req, res) => {
 const updateTaskStatusHandler = async (req, res) => {
   const { taskId, status } = req.body;
   const result = await changeTaskStatus(status, taskId);
-  console.log(result);
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
@@ -111,9 +107,7 @@ const updateTaskStatusHandler = async (req, res) => {
 
 // send lastQueryTime
 
-const sessionStreamHandler = async (req, res) => {
-  console.log("start sessions stream");
-  
+const sessionStreamHandler = async (req, res) => {  
   const { lastQueryTime } = req.query;
 
   res.setHeader("Content-Type", "text/event-stream");
@@ -144,21 +138,16 @@ const sessionStreamHandler = async (req, res) => {
         startTime: startTimeVal ? formatHoursMinutes(startTimeVal) : "N/A",
         endTime: endTimeVal ? formatHoursMinutes(endTimeVal) : "N/A",
       };
-      console.log("change type,: ", change.type);
       
       if (change.type === "added") {
         // Only send 'added' if the session started AFTER lastQueryTime to avoid duplicates of initial lazy-loaded sessions
         if (!lastQueryTime || new Date(sessionData.startDate) > new Date(lastQueryTime)) {
-          console.log("added session: ", session);
           res.write(`data: ${JSON.stringify({ newSession: session })}\n\n`);
         } else {
-          console.log("ignored initial added session (already loaded): ", sessionId);
         }
       } else if (change.type === "modified") {
-        console.log("modif: ", session);
         res.write(`data: ${JSON.stringify({ modifiedSession: session })}\n\n`);
       } else if (change.type === "removed") {
-        console.log("removed sess::  ", session);
         res.write(`data: ${JSON.stringify({ removedSession: sessionId })}\n\n`);
       }
     });
@@ -180,9 +169,7 @@ const sessionStreamHandler = async (req, res) => {
   }, 20 * 1000);
 
   req.on("close", () => {
-    try {
-      console.log("closing sess stream");
-      
+    try {      
       clearInterval(heartbeat);
       unSubscribe();
       res.end();

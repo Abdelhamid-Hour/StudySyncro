@@ -116,7 +116,26 @@ export const getcreateGroupCardFunc = (userGroup) => {
   };
 };
 
+export const initMobileGroupsTabs = (userGroup) => {
+  const headerContainer = document.getElementById("mobile-tabs-container");
+  if (!headerContainer) return;
+  const isMobile = window.matchMedia("(max-width: 48rem)").matches;
+  if (isMobile) {
+    headerContainer.classList.remove("hidden");
+    headerContainer.innerHTML = `
+      <div class="mobile-groups-tabs navigation-tabs groups-tabs" style="width: 100%;">
+        <a href="/app/groups/my" class="tab route-link ${userGroup ? 'active-tab' : ''} exclude-btn">My Groups</a>
+        <a href="/app/groups/available" class="tab route-link ${!userGroup ? 'active-tab' : ''} exclude-btn">Available Groups</a>
+      </div>
+    `;
+  } else {
+    headerContainer.classList.add("hidden");
+    headerContainer.innerHTML = "";
+  }
+};
+
 export const initLazyLoadingLoader = (userGroup = false) => {
+  initMobileGroupsTabs(userGroup);
   const route = userGroup ? `/user-groups?` : `/available-groups?`;
   const loader = new Loader(
     document.querySelector(".groups-list"),

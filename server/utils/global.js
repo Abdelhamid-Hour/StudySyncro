@@ -98,11 +98,27 @@ const formatNumber = (number) => {
 const getScoreClass = (score) => {
   if (score >= 80) return "excellent";
   if (score >= 60) return "good";
-  if (score >= 40) return "average";
   return "poor";
 };
+
+const formatTimeAgo = (timestamp) => {
+  if (!timestamp) return "";
+  const diff = Date.now() - Number(timestamp);
+  const seconds = Math.floor(diff / 1000);
+  if (seconds < 60) return "Just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  const date = new Date(Number(timestamp));
+  return date.toLocaleDateString();
+};
+
 module.exports = {
   formatHoursMinutes,
+  formatTimeAgo,
   toReadableDate,
   millisecondsToHMFormat,
   INITIALE_LOADERS_COUNT,

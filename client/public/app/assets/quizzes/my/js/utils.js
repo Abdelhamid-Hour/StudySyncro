@@ -16,6 +16,7 @@ import {
   getLoader,
   handleApiAction,
   formatNumber,
+  openDropDownMenu,
 } from "../../../global/js/utils.js";
 import {
   handleFormSubmit,
@@ -482,6 +483,12 @@ export const initLazyLoadingLoader = () => {
 };
 
 export const handleQuizCardBtns = (e) => {
+  const menuBtn = e.target.closest(".quiz-card-menu-btn");
+  if (menuBtn) {
+    openDropDownMenu(menuBtn);
+    return;
+  }
+
   const quizCard = e.target.closest(".quiz-card");
   if (quizCard && !e.target.closest(".quiz-card-menu-btn, .drop-down-menu")) {
     navigateTo(`/quizzes/my/${quizCard.dataset.quizId}/edit`);

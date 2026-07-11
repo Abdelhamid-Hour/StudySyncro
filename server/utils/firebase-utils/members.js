@@ -1,7 +1,8 @@
 const { FieldValue } = require("firebase-admin/firestore");
-const { db } = require("../../firebase/firebaseAdmin");
+const { db, rDb } = require("../../firebase/firebaseAdmin");
 const { refillSampleMembersIfNeeded } = require("./shared");
 const { INITIALE_LOADERS_COUNT } = require("../global");
+const { notifyMemberRemoved } = require("./notifications");
 
 const getFormattedMembers = (members, creator, isAdmin) => {
   return members.map(({ photoURL, fullName, uid }) => ({
@@ -257,6 +258,9 @@ const kickMember = async (groupId, userId) => {
     if (groupSnap.data().currentSession) {
       await userRef.collection("activeSessions").doc(groupSnap.data().currentSession).delete();
     }
+    await rDb.ref(`userGroupChats/${userId}/${groupId}`).remove().catch((e) => console.error(e));
+
+    await notifyMemberRemoved(userId, groupId, groupSnap.data().name);
 
     return {
       success: true,

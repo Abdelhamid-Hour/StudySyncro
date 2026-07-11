@@ -160,9 +160,17 @@
     .profile-info {
       display: flex;
       gap: calc(var(--primary-gap) / 2);
+      align-items: center;
 
       i {
         font-size: xx-large;
+      }
+
+      img.icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        object-fit: cover;
       }
     }
 
@@ -210,6 +218,12 @@
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+
+    .icon-box {
+      display: inline-flex;
+      vertical-align: middle;
+      margin-right: calc(var(--primary-gap) / 4);
+    }
   }
 
   .action-buttons {
@@ -223,6 +237,26 @@
       &:hover i {
         color: white;
       }
+    }
+  }
+
+  .card-reply-container {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      margin-top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    margin-top: 0;
+
+    &.show {
+      max-height: 10rem;
+      opacity: 1;
+      transform: translateY(0);
+      margin-top: calc(var(--primary-gap) / 2);
     }
   }
 }
@@ -364,5 +398,240 @@
     div.icons {
       flex-basis: initial !important;
     }
+  }
+}
+
+@media (max-width: 48rem) {
+  .overview-session-inactive {
+    padding: 0.5rem !important;
+    gap: 0.75rem !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: transparent !important;
+    border: none !important;
+  }
+
+  .ready-message-container {
+    display: none !important;
+  }
+
+  .mobile-inactive-tabs.navigation-tabs {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    background-color: var(--background-color) !important;
+    border-radius: var(--primary-radius) !important;
+    padding: calc(var(--primary-gap) / 4) !important;
+    flex-shrink: 0 !important;
+  }
+
+  .mobile-inactive-tabs.navigation-tabs .tab {
+    flex: 1 !important;
+    padding: calc(var(--primary-gap) / 2) !important;
+    border-radius: 0.2rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    border: none !important;
+    background: transparent !important;
+    color: var(--secondary-text-color) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .shared-recent-messages-reply {
+    width: 100%;
+    margin-top: 0.75rem;
+    border: var(--primary-border-style, 1px solid rgba(255, 255, 255, 0.1));
+    background-color: var(--card-background-color, #1e1e24);
+    overflow: hidden;
+
+    .input-message-container {
+      border-radius: initial;
+    }
+  }
+
+  .shared-reply-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1rem;
+    background-color: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.85rem;
+    color: var(--secondary-font-color, #aaa);
+  }
+
+  .shared-reply-header strong {
+    color: var(--primary-font-color, #fff);
+  }
+
+  .mobile-inactive-tabs.navigation-tabs .tab:hover:not(.active-tab) {
+    background-color: var(--btn-background-color) !important;
+  }
+
+  .mobile-inactive-tabs.navigation-tabs .tab.active-tab {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+    border: 1px solid var(--info-border-color) !important;
+  }
+
+  .shared-recent-messages-reply .emoji-picker {
+    display: none !important;
+  }
+
+  .shared-recent-messages-reply {
+    position: fixed !important;
+    bottom: 4rem !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    margin-top: 0 !important;
+    z-index: 1001 !important;
+  }
+
+  .content-blocks {
+    flex-direction: column !important;
+    overflow: visible !important;
+    width: 100% !important;
+    gap: 0.75rem !important;
+  }
+
+  .content-blocks .recent-messages,
+  .content-blocks .active-sessions {
+    max-width: 100% !important;
+    flex-basis: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .content-blocks .recent-messages>header,
+  .content-blocks .active-sessions>header {
+    display: none !important;
+  }
+
+  .content-blocks .messages-container,
+  .content-blocks .sessions-container {
+    padding: 0.25rem 0 5rem 0 !important;
+    width: 100% !important;
+    gap: 0.85rem !important;
+  }
+
+  .content-blocks .messages-container:has(.icon-wrapper),
+  .content-blocks .sessions-container:has(.icon-wrapper) {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-height: calc(100vh - 12rem) !important;
+  }
+
+  .content-blocks .icon-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin: auto !important;
+  }
+
+  #mobile-search-box .active-sessions-search.search {
+    display: flex !important;
+    width: 100% !important;
+    height: 2.375rem !important;
+    background-color: var(--btn-background-color) !important;
+    border: 1px solid var(--primary-border-color) !important;
+    border-radius: var(--primary-radius) !important;
+    padding: 0 0.625rem !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+
+  #mobile-search-box .active-sessions-search.search .search-icon-container {
+    display: none !important;
+  }
+
+  #mobile-search-box .active-sessions-search.search input {
+    flex: 1 !important;
+    border: none !important;
+    background: transparent !important;
+    outline: none !important;
+    color: var(--primary-text-color) !important;
+    font-size: 0.875rem !important;
+    padding: 0 0.25rem !important;
+  }
+
+  .content-blocks .active-session header,
+  .content-blocks .recent-message.card-item header {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  .content-blocks .active-session .meta-info,
+  .content-blocks .recent-message.card-item .meta-info {
+    flex-wrap: wrap !important;
+    gap: 0.375rem !important;
+  }
+
+  .content-blocks .active-session footer.footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+
+  .content-blocks .active-session footer.footer .footer-meta-info {
+    flex-wrap: wrap !important;
+    gap: 0.375rem !important;
+  }
+
+  .content-blocks .active-session footer.footer .action-buttons,
+  .content-blocks .recent-message.card-item .action-buttons {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+
+  .content-blocks .active-session footer.footer .action-buttons button,
+  .content-blocks .recent-message.card-item .action-buttons button {
+    flex: 1 !important;
+    min-height: 2.25rem !important;
+    justify-content: center !important;
+  }
+
+  .content-blocks .active-session,
+  .content-blocks .recent-message.card-item {
+    background-color: var(--container-background-color) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 0.85rem !important;
+    padding: 1rem !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  }
+
+  .content-blocks .active-session:hover,
+  .content-blocks .recent-message.card-item:hover {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .mobile-skeleton-tabs {
+    display: flex !important;
+  }
+
+  .overview-session-inactive .content-blocks:has(.active-session.loading-card) .recent-messages {
+    display: none !important;
+  }
+
+  .overview-session-inactive .content-blocks:has(.active-session.loading-card) .active-sessions {
+    display: flex !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-basis: 100% !important;
   }
 }

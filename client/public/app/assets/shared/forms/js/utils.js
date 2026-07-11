@@ -38,9 +38,34 @@ export const setUpSelectMenu = (
     ".subject-value, .quiz-value"
   );
 
+  const closeMenuBtn = selectMenu.querySelector(".close-select-menu-btn");
+  if (closeMenuBtn) {
+    closeMenuBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      selectMenu.classList.remove("open-overlay");
+      document.body.style.pointerEvents = "auto";
+    });
+  }
+
   // Debounced search input handler
   searchInput.addEventListener("input", (e) => {
     getDebounceFunc(handleSelectSearchInput, 200)(e, selectMenu);
+  });
+
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const otherSubjectInput = selectMenu.querySelector(".other-subject-input");
+      if (otherSubjectInput && otherSubjectInput.value.trim().length > 1) {
+        handleOtherSubjectInputKeydown(
+          { key: "Enter", currentTarget: otherSubjectInput },
+          selectButtonValue,
+          selectMenu
+        );
+        selectMenu.classList.remove("open-overlay");
+        document.body.style.pointerEvents = "auto";
+      }
+    }
   });
 
   // Handle subject selection from the list
@@ -51,7 +76,7 @@ export const setUpSelectMenu = (
   // Handle custom subject input
   if (!isGlobalSelect) {
     const otherSubjectInput = selectMenu.querySelector(".other-subject-input");
-    otherSubjectInput.addEventListener("keydown", (e) =>
+    otherSubjectInput?.addEventListener("keydown", (e) =>
       handleOtherSubjectInputKeydown(e, selectButtonValue, selectMenu)
     );
   }
@@ -59,7 +84,7 @@ export const setUpSelectMenu = (
 
 const HandleSelection = (e, selectButtonValue, isGlobalSelect, onSelect) => {
   const selectedItem = e.target.closest(".select-item");
-  if (!selectedItem) return;
+  if (!selectedItem || selectedItem.classList.contains("loading-card") || e.target.closest(".loading-card")) return;
 
   if (!selectButtonValue.style.color) {
     selectButtonValue.style.color = "var(--primary-text-color)";
@@ -82,8 +107,12 @@ const HandleSelection = (e, selectButtonValue, isGlobalSelect, onSelect) => {
 
 export const createSubjectSelectMenu = () => {
   let html = `
+    <div class="mobile-select-menu-header">
+      <h4>Select Subject</h4>
+      <button type="button" class="exclude-btn close-select-menu-btn" title="Close"><i class="bi bi-x-lg"></i></button>
+    </div>
     <div class="select-search">
-      <input id="select-search" type="search" />
+      <input id="select-search" type="search" placeholder="Search subject..." />
     </div>
   `;
 
@@ -143,28 +172,26 @@ const setSelectValue = (selectButtonValue, value) => {
   }
 };
 
-const clearOtherSubjectInput = (input, selectMenu) => {
-  input.value = "";
-  selectMenu.classList.remove("open-overlay");
-  document.body.style.pointerEvents = "auto";
-};
-
-const removeErrorMessage = () => {
-  const errorMessage = document.querySelector(".error-message");
-  if (errorMessage) {
-    errorMessage.remove();
+const clearOtherSubjectInput = (otherSubjectInput, selectMenu) => {
+  otherSubjectInput.value = "";
+  const searchInput = selectMenu.querySelector(".select-search input");
+  if (searchInput) {
+    searchInput.value = "";
   }
 };
 
-const showSubjectInputError = (input) => {
-  let errorMessage = document.querySelector(".error-message");
-  if (!errorMessage) {
-    errorMessage = document.createElement("p");
-    errorMessage.className = "error-message";
-    errorMessage.textContent =
-      "Please enter a valid subject name (2-50 characters).";
-    input.before(errorMessage);
-    input.scrollIntoView({ block: "nearest" });
+const showSubjectInputError = (otherSubjectInput) => {
+  otherSubjectInput.style.borderColor = "var(--error-color)";
+  showMessageBlock(
+    "Please enter a valid subject between 2 and 50 characters long.",
+    "error"
+  );
+};
+
+const removeErrorMessage = () => {
+  const errorBox = document.querySelector(".error-box");
+  if (errorBox) {
+    errorBox.remove();
   }
 };
 
@@ -180,25 +207,38 @@ export const toCapitalizeFirstLetter = (str) => {
 
 export const handleSelectSearchInput = (e, selectMenu) => {
   const searchValue = e.target.value.trim().toLowerCase();
-  const items = document.querySelectorAll(".select-menu .select-item");
+  const rawSearchValue = e.target.value;
+  const items = selectMenu.querySelectorAll(".select-item");
+  let foundMatch = false;
+
   items.forEach((item) => {
     const itemText = item.textContent.toLowerCase();
-    if (itemText.includes(searchValue)) {
-      // Highlight the matched text
+    if (searchValue && itemText.includes(searchValue)) {
+      if (!foundMatch) {
+        foundMatch = true;
+        const searchRect = e.target.getBoundingClientRect();
+        const margin = searchRect.height + 8;
+        selectMenu.scrollTop = Math.max(0, item.offsetTop - margin);
+      }
       const regex = new RegExp(`(${searchValue})`, "gi");
       item.innerHTML = item.textContent.replace(regex, "<mark>$1</mark>");
-
-      // Add margin so the item is not hidden behind the search bar
-      const searchRect = e.target.getBoundingClientRect();
-      const margin = searchRect.height + 8; // 8px extra margin
-      selectMenu.scrollTop = item.offsetTop - margin;
-      return;
     } else {
       item.innerHTML = item.textContent;
     }
   });
+
+  const otherInput = selectMenu.querySelector(".other-subject-input");
+
   if (!searchValue) {
     selectMenu.scrollTo(0, 0);
+    if (otherInput) {
+      otherInput.value = "";
+    }
+  } else if (!foundMatch && otherInput) {
+    otherInput.value = rawSearchValue;
+    const searchRect = e.target.getBoundingClientRect();
+    const margin = searchRect.height + 8;
+    selectMenu.scrollTop = Math.max(0, otherInput.offsetTop - margin);
   }
 };
 

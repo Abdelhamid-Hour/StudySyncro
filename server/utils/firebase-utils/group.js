@@ -1,10 +1,11 @@
 const { FieldValue, FieldPath } = require("firebase-admin/firestore");
-const { db } = require("../../firebase/firebaseAdmin");
+const { db, rDb } = require("../../firebase/firebaseAdmin");
 const { getFormattedMembers, addMember } = require("./members");
 const { getGroupById, refillSampleMembersIfNeeded } = require("./shared");
 const { sendRequest } = require("./demandes");
 const { toReadableDate } = require("../global");
 const { INITIALE_LOADERS_COUNT } = require("../global");
+const { notifyGroupDeleted, notifyRoleTransfer } = require("./notifications");
 
 const createGroup = async (groupData, userData) => {
   try {
@@ -82,7 +83,6 @@ const getFormatedGroups = (groups, userId, requestedGroupsIds) =>
     if (group.visibility === "Private" && requestedGroupsIds) {
       group.isRequested = requestedGroupsIds.includes(id);
     }
-    if (group.name === "Private Group") console.log(group, requestedGroupsIds);
 
     return group;
   });
@@ -370,6 +370,7 @@ const leaveGroup = async (groupId, userId) => {
     if (groupSnap.data().currentSession) {
       await userRef.collection("activeSessions").doc(groupSnap.data().currentSession).delete();
     }
+    await rDb.ref(`userGroupChats/${userId}/${groupId}`).remove().catch((e) => console.error(e));
 
     return {
       success: true,
@@ -448,142 +449,162 @@ const modifyGroup = async (userId, groupId, formData) => {
   }
 };
 
-const getAllGroups = async () => {
-  try {
-    const groupRef = db.collection("groups");
-    const snapshot = await groupRef.get();
-    const groups = [];
-    if (snapshot.empty) {
-      return false;
-    } else {
-      snapshot.forEach((doc) => {
-        groups.push({ id: doc.id, ...doc.data() });
-      });
-      return groups;
-    }
-  } catch (error) {
-    console.log(error.message);
-    return false;
-  }
-};
-
-const updateGroupProperty = async (groupId, propertie, newValue) => {
+const updateGroupProperty = async (groupId, property, newValue) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
-    const groups = await getAllGroups();
-    const group = await groupRef.get();
-    if (group.exists) {
-      const isNotEmpty = newValue.trim() != "";
-
-      switch (propertie) {
-        case "name": {
-          const isDuplicated = groups.some(
-            (group) => group.id != groupId && group.nom_groupe === newValue
-          );
-          if (isDuplicated === false && isNotEmpty) {
-            await groupRef.update({
-              nom_groupe: newValue,
-            });
-            return {
-              success: true,
-              message: "Updated successfully",
-            };
-          }
-          break;
-        }
-        case "description":
-          if (isNotEmpty) {
-            await groupRef.update({
-              description: newValue,
-            });
-            return {
-              success: true,
-              message: "Updated successfully",
-            };
-          }
-          break;
-        case "creator":
-          if (isNotEmpty) {
-            await groupRef.update({
-              creator: newValue,
-            });
-            return {
-              success: true,
-              message: "Updated successfully",
-            };
-          }
-          break;
-        case "subject":
-          if (isNotEmpty) {
-            await groupRef.update({
-              matiere: newValue,
-            });
-            return {
-              success: true,
-              message: "Updated successfully",
-            };
-          }
-          break;
-        case "level":
-          if (isNotEmpty) {
-            await groupRef.update({
-              niveau: newValue,
-            });
-            return {
-              success: true,
-              message: "Updated successfully",
-            };
-          }
-          break;
-        case "visibility":
-          if (isNotEmpty) {
-            await groupRef.update({
-              visibility: newValue,
-            });
-            return {
-              success: true,
-              message: "Updated successfully",
-            };
-          }
-          break;
-        case "MaxMembres":
-          if (newValue != null) {
-            await groupRef.update({
-              maxMembers: newValue,
-            });
-            return {
-              success: true,
-              message: "Updated successfully",
-            };
-          }
-          break;
-        case "showInSearch":
-          if (isNotEmpty) {
-            await groupRef.update({
-              apparaitre_recherche: newValue,
-            });
-            return {
-              success: true,
-              message: "Updated successfully",
-            };
-          }
-          break;
-        default:
-          return {
-            success: false,
-            message: "cant update",
-          };
-      }
+    const groupDoc = await groupRef.get();
+    if (!groupDoc.exists) {
+      return {
+        success: false,
+        message: "Group not found",
+      };
     }
+
+    // Map of valid properties, their Firestore field name, and verification/sanitization logic
+    const propertyMap = {
+      name: {
+        field: "name",
+        validate: async (val) => {
+          if (typeof val !== "string" || val.trim() === "") {
+            return { valid: false, message: "Group name cannot be empty" };
+          }
+          const cleaned = val.trim();
+          const snapshot = await db.collection("groups")
+            .where("name", "==", cleaned)
+            .limit(2)
+            .get();
+          const isDuplicated = snapshot.docs.some(doc => doc.id !== groupId);
+          if (isDuplicated) {
+            return { valid: false, message: "A group with this name already exists" };
+          }
+          return { valid: true, value: cleaned };
+        }
+      },
+      description: {
+        field: "description",
+        validate: (val) => {
+          if (typeof val !== "string" || val.trim() === "") {
+            return { valid: false, message: "Description cannot be empty" };
+          }
+          return { valid: true, value: val.trim() };
+        }
+      },
+      creator: {
+        field: "creator",
+        validate: (val) => {
+          if (typeof val !== "string" || val.trim() === "") {
+            return { valid: false, message: "Creator ID cannot be empty" };
+          }
+          return { valid: true, value: val.trim() };
+        }
+      },
+      subject: {
+        field: "subject",
+        validate: (val) => {
+          if (typeof val !== "string" || val.trim() === "") {
+            return { valid: false, message: "Subject cannot be empty" };
+          }
+          return { valid: true, value: val.trim() };
+        }
+      },
+      level: {
+        field: "level",
+        validate: (val) => {
+          if (typeof val !== "string" || val.trim() === "") {
+            return { valid: false, message: "Level cannot be empty" };
+          }
+          return { valid: true, value: val.trim() };
+        }
+      },
+      visibility: {
+        field: "visibility",
+        validate: (val) => {
+          if (typeof val !== "string" || val.trim() === "") {
+            return { valid: false, message: "Visibility cannot be empty" };
+          }
+          return { valid: true, value: val.trim() };
+        }
+      },
+      MaxMembres: {
+        field: "maxMembers",
+        validate: (val) => {
+          if (val === null || val === undefined || val === "") {
+            return { valid: false, message: "Max members cannot be empty" };
+          }
+          const num = Number(val);
+          if (isNaN(num) || num <= 0) {
+            return { valid: false, message: "Max members must be a positive number" };
+          }
+          return { valid: true, value: num };
+        }
+      },
+      maxMembers: {
+        field: "maxMembers",
+        validate: (val) => {
+          if (val === null || val === undefined || val === "") {
+            return { valid: false, message: "Max members cannot be empty" };
+          }
+          const num = Number(val);
+          if (isNaN(num) || num <= 0) {
+            return { valid: false, message: "Max members must be a positive number" };
+          }
+          return { valid: true, value: num };
+        }
+      },
+      showInSearch: {
+        field: "showInSearch",
+        validate: (val) => {
+          let boolValue;
+          if (typeof val === "boolean") {
+            boolValue = val;
+          } else if (typeof val === "string") {
+            boolValue = val.toLowerCase() === "true";
+          } else {
+            return { valid: false, message: "Invalid value for showInSearch" };
+          }
+          return { valid: true, value: boolValue };
+        }
+      }
+    };
+
+    const propConfig = propertyMap[property];
+    if (!propConfig) {
+      return {
+        success: false,
+        message: "Invalid property type",
+      };
+    }
+
+    const validation = await propConfig.validate(newValue);
+    if (!validation.valid) {
+      return {
+        success: false,
+        message: validation.message,
+      };
+    }
+
+    await groupRef.update({
+      [propConfig.field]: validation.value,
+    });
+
+    if (propConfig.field === "creator") {
+      await notifyRoleTransfer(
+        groupId,
+        groupDoc.data().name,
+        groupDoc.data().creator,
+        validation.value
+      );
+    }
+
     return {
-      success: false,
-      message: "cant update",
+      success: true,
+      message: "Updated successfully",
     };
   } catch (error) {
-    console.log(error.message);
+    console.error(`Error in updateGroupProperty: ${error.message}`);
     return {
       success: false,
-      message: "cant update",
+      message: "An error occurred while updating the group property",
     };
   }
 };
@@ -595,7 +616,16 @@ const deleteGroup = async (groupId) => {
 
     if (!groupRes.success) return groupRes;
 
+    const membersSnap = await groupRef.collection("members").get();
+    const memberIds = membersSnap.docs.map((doc) => doc.id);
+
     await groupRef.delete();
+    await notifyGroupDeleted(memberIds, groupId, groupRes.group.name);
+    await rDb.ref(`groups/${groupId}/chat`).remove().catch((e) => console.error(e));
+    for (const memberId of memberIds) {
+      await rDb.ref(`userGroupChats/${memberId}/${groupId}`).remove().catch((e) => console.error(e));
+    }
+
     return { success: true, message: "Group removed" };
 
   } catch (error) {
@@ -766,7 +796,6 @@ module.exports = {
   getAvailableGroups,
   getJoinedGroups,
   modifyGroup,
-  getAllGroups,
   updateGroupProperty,
   deleteGroup,
   getChatContext,

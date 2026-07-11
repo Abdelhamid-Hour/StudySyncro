@@ -364,7 +364,6 @@ export class Session {
     quiz,
     isAdmin,
   }) {
-    console.log("Initializing session with data:");
     Session.id = id; // Set the static id property
     Session.groupId = groupId;
     this.startDate = startDate;
@@ -788,8 +787,13 @@ export class Session {
             joinedEl.textContent = data.joinedCount;
           }
         }
-        if (data.removed || data.status === "ended" || data.status === "cancelled") {
+        if (
+          data.removed ||
+          data.status === "finished" ||
+          data.status === "aborted"
+        ) {
           this.sessionStream.close();
+          showMessageBlock(data.status === "finished" ? "Session ended" : "Session aborted", "info");
           navigateTo("/home");
         }
       } catch (e) {

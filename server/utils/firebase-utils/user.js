@@ -164,8 +164,6 @@ const addPassword = async (password, key, userId) => {
 
 const updatePassword = async (newPassword, key, userId) => {
   try {
-    console.log("key:", key);
-
     const res = await verifyUser(userId, key);
     if (!res.success) {
       return res;

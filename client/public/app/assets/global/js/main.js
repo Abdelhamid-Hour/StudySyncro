@@ -12,8 +12,10 @@ import {
 } from "./utils.js";
 import { closeLeftSideBarIcon, toggleModeBtn } from "./variables.js";
 import "../../../auth/auth.js";
+import { initNotificationsManager } from "./notifications.js";
 
 tooltipSetup();
+initNotificationsManager();
 
 document.addEventListener("dragover", (e) => e.preventDefault());
 
@@ -33,61 +35,142 @@ document.addEventListener("click", handleRoutingClick, true);
 
 document.addEventListener("click", handleNavigation);
 
-// Load saved theme from localStorage
-const savedAppTheme = localStorage.getItem("theme") || localStorage.getItem("mode") || localStorage.getItem("studyhype_theme");
-if (savedAppTheme === "dark") {
-  const root = document.documentElement;
-  root.style.setProperty("--background-color", "#1a1a1a");
-  root.style.setProperty("--container-background-color", "#242424");
-  root.style.setProperty("--container-border-color", "#818181");
-  root.style.setProperty("--primary-text-color", "#dbdbdb");
-  root.style.setProperty("--btn-background-color", "#2c2c2c");
-  root.style.setProperty("--secondary-text-color", "#c8c8c8");
-  root.style.setProperty("--primary-shadow-color", "transparent");
-  root.style.setProperty("--active-tab-bg", "var(--btn-background-color)");
-  root.style.setProperty("--tab-hover-bg", "var(--btn-background-color)");
-}
+const updateThemeToggleIcons = (theme) => {
+  const icons = document.querySelectorAll(".theme-toggle-icon");
+  icons.forEach((icon) => {
+    if (theme === "dark") {
+      icon.classList.remove("bi-moon", "bi-moon-fill");
+      icon.classList.add("bi-sun");
+    } else {
+      icon.classList.remove("bi-sun", "bi-sun-fill");
+      icon.classList.add("bi-moon");
+    }
+  });
+};
 
-toggleModeBtn.addEventListener("click", () => {
-  const root = document.documentElement;
-  const isDark =
-    root.style.getPropertyValue("--background-color") === "#1a1a1a";
+// Sync theme with HTML data-theme attribute
+const savedAppTheme = localStorage.getItem("theme") || "light";
+document.documentElement.setAttribute("data-theme", savedAppTheme);
+updateThemeToggleIcons(savedAppTheme);
 
-  if (isDark) {
-    // Switch to light mode
-    root.style.setProperty("--background-color", "#ebebeb");
-    root.style.setProperty("--container-background-color", "#fafafa");
-    root.style.setProperty("--container-border-color", "#cbced5");
-    root.style.setProperty("--primary-text-color", "black");
-    root.style.setProperty("--btn-background-color", "#fdfdfd");
-    root.style.setProperty("--secondary-text-color", "#575757");
-    root.style.setProperty(
-      "--primary-shadow-color",
-      "rgba(195, 195, 195, 0.58)"
-    );
-    root.style.setProperty("--active-tab-bg", "var(--btn-background-color)");
-    root.style.setProperty("--tab-hover-bg", "var(--background-color)");
-    localStorage.setItem("theme", "light");
-    localStorage.setItem("mode", "light");
-    localStorage.setItem("studyhype_theme", "light");
-  } else {
-    // Switch to dark mode
-    root.style.setProperty("--background-color", "#1a1a1a");
-    root.style.setProperty("--container-background-color", "#242424");
-    root.style.setProperty("--container-border-color", "#818181");
-    root.style.setProperty("--primary-text-color", "#dbdbdb");
-    root.style.setProperty("--btn-background-color", "#2c2c2c");
-    root.style.setProperty("--secondary-text-color", "#c8c8c8");
-    root.style.setProperty("--primary-shadow-color", "transparent");
-    root.style.setProperty("--active-tab-bg", "var(--btn-background-color)");
-    root.style.setProperty("--tab-hover-bg", "var(--btn-background-color)");
-    localStorage.setItem("theme", "dark");
-    localStorage.setItem("mode", "dark");
-    localStorage.setItem("studyhype_theme", "dark");
-  }
+const themeBtns = document.querySelectorAll(".toggle-container, #mobile-theme-toggle-btn");
+themeBtns.forEach((btn) => {
+  btn?.addEventListener("click", () => {
+    const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+    const rect = btn.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    document.documentElement.style.setProperty("--theme-toggle-x", `${x}px`);
+    document.documentElement.style.setProperty("--theme-toggle-y", `${y}px`);
+
+    const applyTheme = () => {
+      document.documentElement.setAttribute("data-theme", newTheme);
+      updateThemeToggleIcons(newTheme);
+      try {
+        localStorage.setItem("theme", newTheme);
+        localStorage.setItem("mode", newTheme);
+        localStorage.setItem("studyhype_theme", newTheme);
+      } catch (e) {}
+    };
+
+    if (document.startViewTransition) {
+      document.startViewTransition(applyTheme);
+    } else {
+      applyTheme();
+    }
+  });
+});
+
+// Mobile Shell Drawer Handlers
+const mobileMasterMenuBtn = document.querySelector(".mobile-master-menu-btn");
+const mobileMasterDrawer = document.querySelector(".mobile-master-drawer");
+const mobileDrawerCloseBtn = document.querySelector(".mobile-drawer-close-btn");
+const mobileLogoutBtn = document.getElementById("mobile-logout-button");
+const mobileNotifBtn = document.querySelector(".mobile-notif-btn");
+
+mobileMasterMenuBtn?.addEventListener("click", () => {
+  mobileMasterDrawer?.classList.add("open");
+});
+
+mobileDrawerCloseBtn?.addEventListener("click", () => {
+  mobileMasterDrawer?.classList.remove("open");
+});
+
+mobileLogoutBtn?.addEventListener("click", () => {
+  document.getElementById("logout-button")?.click();
+});
+
+mobileNotifBtn?.addEventListener("click", () => {
+  mobileMasterDrawer?.classList.remove("open");
+  const desktopNotifBtn = document.querySelector(".notification-container .open-drop-down-btn");
+  desktopNotifBtn?.click();
 });
 
 window.addEventListener("popstate", () => {
   toggleActiveLink(location.pathname);
   updateMain(location.pathname);
+});
+
+// Auto-sync any direct changes to .sidebar-title with .mobile-page-title and mobile return btn
+const sidebarTitleEl = document.querySelector(".sidebar-title");
+const mobilePageTitleEl = document.querySelector(".mobile-page-title");
+const mobileBackBtn = document.querySelector(".mobile-back-btn");
+
+if (sidebarTitleEl && mobilePageTitleEl) {
+  const syncTitle = () => {
+    const linkEl = sidebarTitleEl.querySelector("a");
+    if (linkEl && mobileBackBtn) {
+      const returnHref = linkEl.getAttribute("href") || "/app/home";
+      mobileBackBtn.setAttribute("href", returnHref);
+      mobileBackBtn.classList.remove("hidden");
+      mobilePageTitleEl.textContent = linkEl.textContent.trim();
+    } else {
+      if (mobileBackBtn) mobileBackBtn.classList.add("hidden");
+      mobilePageTitleEl.innerHTML = sidebarTitleEl.innerHTML;
+    }
+  };
+  const observer = new MutationObserver(syncTitle);
+  observer.observe(sidebarTitleEl, { childList: true, subtree: true, characterData: true });
+}
+
+// Handle mobile topbar search button click to toggle horizontal search bar
+const mobileSearchBtn = document.querySelector(".mobile-search-btn");
+const mobileSearchBox = document.getElementById("mobile-search-box");
+mobileSearchBtn?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  const isHomeInactive = document.querySelector("main .active-sessions");
+  const topSideBarMiddle = document.querySelector(".top-side-bar-middele");
+
+  let searchContentEl = null;
+  if (isHomeInactive) {
+    searchContentEl =
+      mobileSearchBox?.querySelector(".active-sessions-search.search") ||
+      document.querySelector(".active-sessions-search.search");
+  } else if (topSideBarMiddle && topSideBarMiddle.querySelector(".search-container")) {
+    searchContentEl = topSideBarMiddle;
+  }
+
+  if (mobileSearchBox && searchContentEl) {
+    if (!mobileSearchBox.contains(searchContentEl)) {
+      mobileSearchBox.appendChild(searchContentEl);
+    }
+    mobileSearchBox.classList.toggle("hidden");
+    if (!mobileSearchBox.classList.contains("hidden")) {
+      const searchInput = mobileSearchBox.querySelector("input[type='search']");
+      searchInput?.focus();
+    }
+  }
+});
+
+document.addEventListener("click", (e) => {
+  if (
+    mobileSearchBox &&
+    !mobileSearchBox.classList.contains("hidden") &&
+    !mobileSearchBox.contains(e.target) &&
+    !mobileSearchBtn?.contains(e.target)
+  ) {
+    mobileSearchBox.classList.add("hidden");
+  }
 });

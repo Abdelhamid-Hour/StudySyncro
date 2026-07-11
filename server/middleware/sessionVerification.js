@@ -40,7 +40,14 @@ const requireAuthForPages = async (req, res, next) => {
 const requireAuthForAPI = async (req, res, next) => {
   try {
     // Allow SSE GET streams to use cookie-based auth only (no CSRF header)
-    if (req.method === "GET" && (req.path.endsWith("/chat-stream") || req.path.endsWith("/stream-sessions") || req.path.endsWith("/stream-single-session"))) {
+    if (
+      req.method === "GET" &&
+      (req.path.endsWith("/chat-stream") ||
+        req.path.endsWith("/stream-sessions") ||
+        req.path.endsWith("/stream-single-session") ||
+        req.path.endsWith("/recent-messages/stream") ||
+        req.path.endsWith("/notifications/stream"))
+    ) {
       await verifySessionCookie(req); // only auth
       return next();
     }

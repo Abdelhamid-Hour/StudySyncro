@@ -1,6 +1,7 @@
 const { FieldValue, FieldPath } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
-const { formatHoursMinutes, millisecondsToHMFormat } = require("../global");
+const { formatHoursMinutes, millisecondsToHMFormat, INITIALE_LOADERS_COUNT } = require("../global");
+const { notifySessionStatus } = require("./notifications");
 const { getQuizResult, isQuizPassed } = require("./examen");
 const { getTasks } = require("./tache");
 
@@ -39,6 +40,8 @@ const createGroupSession = async (sessionData, userId) => {
 
     const groupData = groupSnap.data();
 
+    console.log(groupData.creator, userId);
+    
     if (groupData.creator !== userId)
       return {
         success: false,
@@ -174,6 +177,16 @@ const createGroupSession = async (sessionData, userId) => {
     await Promise.all(fanoutBatches);
     // -------------------------------
 
+    const memberIds = membersSnap.docs.map((doc) => doc.id);
+    await notifySessionStatus(
+      groupId,
+      newSessionData.groupName,
+      newSessionData.name,
+      newSessionId,
+      true,
+      memberIds
+    );
+
     return {
       success: true,
       message: "Session created successfully",
@@ -266,6 +279,9 @@ const cancelSession = async (sessionId, userId) => {
           updatedAt: FieldValue.serverTimestamp(),
         });
         await deleteActiveSessionFanOut(session.groupId, sessionId);
+        const membersSnap = await db.collection("groups").doc(session.groupId).collection("members").get();
+        const memberIds = membersSnap.docs.map((doc) => doc.id);
+        await notifySessionStatus(session.groupId, session.groupName, session.name, sessionId, false, memberIds);
         return { success: true, message: "Session ended" };
       } else {
         return {
@@ -305,6 +321,10 @@ const cancelSession = async (sessionId, userId) => {
     await Promise.all(promises);
 
     await deleteActiveSessionFanOut(session.groupId, sessionId);
+
+    const membersSnap = await db.collection("groups").doc(session.groupId).collection("members").get();
+    const memberIds = membersSnap.docs.map((doc) => doc.id);
+    await notifySessionStatus(session.groupId, session.groupName, session.name, sessionId, false, memberIds);
 
     return { success: true, message: "Session ended" };
   } catch (error) {
@@ -370,7 +390,6 @@ const getCurrentSessionInfo = async (userId) => {
     const user = userSnap.data();
 
     if (!user || !user.currentSession) {
-      console.log("The user Not has any active session");
       return null;
     }
 
@@ -475,7 +494,7 @@ const formatSessions = (sessions) => {
   });
 };
 
-const fetchActiveSessions = async (userId, count = 20, lastVisible = null, criteria = {}) => {
+const fetchActiveSessions = async (userId, count = INITIALE_LOADERS_COUNT, lastVisible = null, criteria = {}) => {
   try {
     const userRef = db.collection("users").doc(userId);
     let sessions = [];

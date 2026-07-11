@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem("theme") || "light";
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch(e) {}
+      })();
+    </script>
     
     <!-- Preloading Critical Resources -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -78,6 +86,8 @@
             ? `<a href="/app/groups/my" class="route-link"><i class="bi bi-caret-left-fill"></i>Group Chat</a>`
             : resourcesRoute === '/quizzes/my/quiz-editor/' 
             ? `<a href="/app/quizzes/my" class="route-link"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>`
+            : resourcesRoute.includes('/settings/')
+            ? 'Settings'
             : '' %>
         </h2>
         <% if (['/groups/my/', '/groups/available/', '/quizzes/my/', '/quizzes/passed/'].includes(resourcesRoute)) { %>
@@ -325,6 +335,7 @@
           <span>Create Quiz</span>
         </button>
         <% } %>
+
         <div class="profile-container">
           <button type="button" class="profile-btn open-drop-down-btn exclude-btn should-fill">
             <div class="avatar">
@@ -396,14 +407,140 @@
           </a>
         </div>
         <div class="bottom-side-bar-icons">
-          <button class="exclude-btn toggle-container nav-btn">
-            <i class="bi bi-toggle-off"></i>
+          <button type="button" class="exclude-btn toggle-container nav-btn should-fill" title="Toggle Theme">
+            <i class="bi bi-moon theme-toggle-icon"></i>
           </button>
-          <button
-            class="exclude-btn notification-container should-fill nav-btn"
-          >
-            <i class="bi bi-bell"></i>
-          </button>
+          <div class="notification-container" style="position: relative; display: flex; align-items: center; width: fit-content;">
+            <% const unreadCount = (typeof notificationsData !== 'undefined' && notificationsData.unreadCount) ? notificationsData.unreadCount : 0; %>
+            <button
+              type="button"
+              class="exclude-btn open-drop-down-btn should-fill nav-btn has-tooltip"
+              data-tooltip="Notifications"
+              style="position: relative;"
+            >
+              <i class="bi bi-bell"></i>
+              <span class="badge notification-badge <%= unreadCount > 0 ? '' : 'hidden' %>"><%= unreadCount > 99 ? '99+' : unreadCount %></span>
+            </button>
+            <div class="notifications-overlay overlay">
+              <header class="notifications-header">
+                <div class="header-title">
+                  <i class="bi bi-bell-fill"></i>
+                  <span>Notifications</span>
+                </div>
+              </header>
+              <div class="notifications-categories">
+                <button type="button" class="notif-category-btn exclude-btn active" data-category="All">All</button>
+                <button type="button" class="notif-category-btn exclude-btn" data-category="Join Request">Requests</button>
+                <button type="button" class="notif-category-btn exclude-btn" data-category="Groups">Groups</button>
+                <button type="button" class="notif-category-btn exclude-btn" data-category="Sessions">Sessions</button>
+              </div>
+              <div class="notifications-list" id="notifications-list" data-last-visible="<%= (typeof notificationsData !== 'undefined' && notificationsData.lastVisible) ? notificationsData.lastVisible : '' %>">
+                <% if (typeof notificationsData !== 'undefined' && notificationsData.cards && notificationsData.cards.length > 0) { %>
+                  <%
+                    const formatNotifDate = (ts) => {
+                      try {
+                        const d = new Date(ts || Date.now());
+                        if (isNaN(d.getTime())) return "Recent";
+                        return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                      } catch (e) {
+                        return "Recent";
+                      }
+                    };
+                    const formatNotifMsg = (notif) => {
+                      let msg = notif.message || "";
+                      if (msg.startsWith("Admin role") || msg.includes("Admin role")) {
+                        msg = msg.replace("Admin role", "<strong>Admin</strong> role");
+                      }
+
+                      const termsMap = [
+                        { term: "successfully joined", cls: "bold-success" },
+                        { term: "accepted", cls: "bold-success" },
+                        { term: "started", cls: "bold-success" },
+                        { term: "ended", cls: "bold-success" },
+                        { term: "rejected", cls: "bold-danger" },
+                        { term: "removed", cls: "bold-danger" },
+                        { term: "deleted", cls: "bold-danger" },
+                        { term: "demoted from Admin", cls: "bold-danger" },
+                        { term: "demoted", cls: "bold-danger" },
+                        { term: "pending approval", cls: "bold-warning" },
+                        { term: "transferred", cls: "bold-warning" },
+                        { term: notif.metadata?.senderName, cls: "" },
+                        { term: notif.metadata?.groupName, cls: "" },
+                        { term: notif.metadata?.sessionName, cls: "" }
+                      ].filter(item => item.term && typeof item.term === "string");
+
+                      termsMap.sort((a, b) => b.term.length - a.term.length);
+
+                      termsMap.forEach(({ term, cls }) => {
+                        const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const regex = new RegExp(`(?<!>|<strong class="[^"]*">)(${escaped})(?!<\\/strong>)`, 'g');
+                        const classAttr = cls ? ` class="${cls}"` : "";
+                        msg = msg.replace(regex, `<strong${classAttr}>$1</strong>`);
+                      });
+
+                      return msg;
+                    };
+                  %>
+                  <% notificationsData.cards.forEach(notif => { %>
+                    <%
+                      const type = notif.type || "general";
+                      let iconHtml = `<i class="bi bi-bell-fill"></i>`;
+                      if (notif.metadata && notif.metadata.senderPhotoURL && (type === "join_request" || type === "member_removed")) {
+                        iconHtml = `<img src="${notif.metadata.senderPhotoURL}" alt="avatar" />`;
+                      } else if (type === "join_request") {
+                        iconHtml = `<i class="bi bi-person-fill"></i>`;
+                      } else if (type === "join_accepted") {
+                        iconHtml = `<i class="bi bi-link-45deg"></i>`;
+                      } else if (type === "join_pending") {
+                        iconHtml = `<i class="bi bi-three-dots"></i>`;
+                      } else if (type === "join_rejected") {
+                        iconHtml = `<i class="bi bi-x-lg"></i>`;
+                      } else if (type === "member_removed") {
+                        iconHtml = `<i class="bi bi-person-dash-fill"></i>`;
+                      } else if (type === "role_transferred") {
+                        iconHtml = `<i class="bi bi-arrow-left-right"></i>`;
+                      } else if (type === "role_demoted") {
+                        iconHtml = `<i class="bi bi-person-down"></i>`;
+                      } else if (type === "group_deleted") {
+                        iconHtml = `<i class="bi bi-people-fill"></i>`;
+                      } else if (type === "session_started") {
+                        iconHtml = `<i class="bi bi-clock-fill"></i>`;
+                      } else if (type === "session_ended") {
+                        iconHtml = `<i class="bi bi-check-lg"></i>`;
+                      }
+                      const timeStr = formatNotifDate(notif.timestamp);
+                      const categoryLabel = notif.category || "General";
+                    %>
+                    <div class="notif-card card-item <%= notif.read ? '' : 'unread' %>" data-id="<%= notif.id %>" data-type="<%= notif.type %>" data-category="<%= notif.category || 'All' %>" data-demande-id="<%= notif.metadata?.demandeId || '' %>" data-group-id="<%= notif.metadata?.groupId || '' %>" data-sender-name="<%= notif.metadata?.senderName || '' %>" data-group-name="<%= notif.metadata?.groupName || '' %>">
+                      <div class="notif-icon <%= notif.type %>">
+                        <%- iconHtml %>
+                      </div>
+                      <div class="notif-content">
+                        <div class="notif-message"><%- formatNotifMsg(notif) %></div>
+                        <div class="notif-footer">
+                          <span class="notif-meta"><%= timeStr %> • <%= categoryLabel %></span>
+                          <% if (notif.type === 'join_request') { %>
+                            <div class="notif-actions">
+                              <button type="button" class="reject-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> Reject</button>
+                              <button type="button" class="accept-btn exclude-btn small-btn" data-action="accept"><i class="bi bi-check-circle"></i> Accept</button>
+                            </div>
+                          <% } %>
+                        </div>
+                      </div>
+                    </div>
+                  <% }) %>
+                <% } else { %>
+                  <div class="icon-wrapper">
+                    <div class="empty-icon-container">
+                      <i class="bi bi-bell-slash"></i>
+                    </div>
+                    <h3>No notifications yet</h3>
+                    <p>You don't have any notifications right now.</p>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
           <button class="exclude-btn open-close-side-bar-btn nav-btn">
             <div>
               <i class="bi bi-chevron-left"></i>
@@ -433,7 +570,125 @@
         </div>
       </div>
     </aside>
+    <script>
+      if (localStorage.getItem("sidebar-collapsed") === "true") {
+        document.querySelectorAll(".should-hide").forEach(function(el) {
+          el.classList.add("hidden");
+        });
+      }
+    </script>
+    <!-- MOBILE TOPBAR HEADER (<= 48rem) -->
+    <header class="mobile-topbar">
+      <div class="mobile-topbar-left">
+        <% const isSearchPage = ['/groups/my/', '/groups/available/', '/quizzes/my/', '/quizzes/passed/'].includes(resourcesRoute); %>
+        <button type="button" class="exclude-btn mobile-icon-btn mobile-search-btn <%= isSearchPage ? '' : 'hidden' %>" title="Search">
+          <i class="bi bi-search"></i>
+        </button>
+        <% const isSubpageReturn = resourcesRoute === '/groups/my/group-chat/' || resourcesRoute === '/quizzes/my/quiz-editor/'; %>
+        <a href="<%= resourcesRoute === '/groups/my/group-chat/' ? '/app/groups/my' : '/app/quizzes/my' %>" class="mobile-back-btn route-link <%= isSubpageReturn ? '' : 'hidden' %>" title="Return">
+          <i class="bi bi-arrow-left"></i>
+        </a>
+      </div>
+      <div class="mobile-topbar-center">
+        <h1 class="mobile-page-title">
+          <% if (resourcesRoute === '/groups/my/group-chat/') { %>
+            Group Chat
+          <% } else if (resourcesRoute === '/quizzes/my/quiz-editor/') { %>
+            Quiz Editor
+          <% } else if (resourcesRoute.includes("/home/")) { %>
+            Home
+          <% } else if (resourcesRoute.includes("/groups/")) { %>
+            Groups
+          <% } else if (resourcesRoute.includes("/quizzes/")) { %>
+            Quizzes
+          <% } else if (resourcesRoute.includes("/settings/")) { %>
+            Account Settings
+          <% } else { %>
+            StudyHype
+          <% } %>
+        </h1>
+      </div>
+      <div class="mobile-topbar-right">
+        <button type="button" class="exclude-btn mobile-master-menu-btn" title="Menu">
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- MOBILE SEARCH BOX (<= 48rem) -->
+    <div id="mobile-search-box" class="mobile-search-box hidden"></div>
+
+    <!-- MOBILE NAVIGATION TABS CONTAINER (<= 48rem) -->
+    <div id="mobile-tabs-container" class="mobile-tabs-container hidden"></div>
+
+    <!-- MOBILE MASTER MENU DRAWER -->
+    <div class="mobile-master-drawer">
+      <header class="mobile-drawer-header">
+        <button type="button" id="mobile-theme-toggle-btn" class="exclude-btn toggle-container nav-btn should-fill" title="Toggle Theme">
+          <i class="bi bi-moon theme-toggle-icon"></i>
+        </button>
+        <button type="button" class="exclude-btn mobile-drawer-close-btn" title="Close">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </header>
+      <div class="mobile-drawer-body">
+        <div class="mobile-drawer-section">
+          <span class="mobile-drawer-section-title">App Controls</span>
+          <button type="button" class="exclude-btn mobile-drawer-btn mobile-notif-btn should-fill">
+            <i class="bi bi-bell"></i>
+            <span>Notifications</span>
+            <% const mUnreadCount = (typeof notificationsData !== 'undefined' && notificationsData.unreadCount) ? notificationsData.unreadCount : 0; %>
+            <span class="badge notification-badge <%= mUnreadCount > 0 ? '' : 'hidden' %>"><%= mUnreadCount > 99 ? '99+' : mUnreadCount %></span>
+          </button>
+        </div>
+        <div class="mobile-drawer-section mobile-group-chat-actions hidden">
+          <span class="mobile-drawer-section-title">Group Actions</span>
+          <div id="mobile-drawer-group-actions-list"></div>
+        </div>
+      </div>
+      <footer class="mobile-drawer-footer">
+        <div class="mobile-user-info">
+          <div class="avatar">
+            <% if (user.photoURL) { %>
+              <img src="<%= user.photoURL %>" alt="avatar" />
+            <% } else { %>
+              <h4><%= user.fullName.charAt(0).toUpperCase() %></h4>
+            <% } %>
+          </div>
+          <div class="profile-info">
+            <span><%= user.fullName %></span>
+            <span><%= user.email %></span>
+          </div>
+        </div>
+        <button type="button" id="mobile-logout-button" class="red-btn mobile-logout-btn">
+          <i class="bi bi-box-arrow-in-left"></i>
+          <span>Logout</span>
+        </button>
+      </footer>
+    </div>
+
     <main><%- content %></main>
+
+    <!-- MOBILE BOTTOM NAVBAR (Sticky Footer, <= 48rem) -->
+    <nav class="mobile-bottomnav">
+      <a href="/app/home" class="mobile-nav-item should-fill route-link<% if (resourcesRoute.includes("/home/")) { %> active<% } %>">
+        <i class="bi bi-house<%_ if (resourcesRoute.includes("/home/")) { %>-fill<% } %>"></i>
+        <span>Home</span>
+      </a>
+      <a href="/app/groups/my" class="mobile-nav-item should-fill route-link<% if (resourcesRoute.includes("/groups/")) { %> active<% } %>">
+        <i class="bi bi-people<%_ if (resourcesRoute.includes("/groups/")) { %>-fill<% } %>"></i>
+        <span>Groups</span>
+      </a>
+      <a href="/app/quizzes/my" class="mobile-nav-item should-fill route-link<% if (resourcesRoute.includes("/quizzes/")) { %> active<% } %>">
+        <i class="bi bi-clipboard-check<% if (resourcesRoute.includes("/quizzes/")) { %>-fill<% } %>"></i>
+        <span>Quizzes</span>
+      </a>
+      <a href="/app/settings" class="mobile-nav-item should-fill route-link<% if (resourcesRoute.includes("/settings/")) { %> active<% } %>">
+        <i class="bi bi-person<%_ if (resourcesRoute.includes("/settings/")) { %>-fill<% } %>"></i>
+        <span>Settings</span>
+      </a>
+    </nav>
+
     <div id="hover-tooltip" class="tooltip" role="tooltip"></div>
     <div id="global-tooltip" class="tooltip" role="tooltip"></div>
     <script

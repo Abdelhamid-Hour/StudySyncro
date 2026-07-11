@@ -2,12 +2,20 @@
 .quizzes-list {
   padding: 3rem;
   display: grid;
-  grid-template-columns: repeat(4, minmax(24rem, 1fr));
+  grid-template-columns: repeat(3, minmax(24rem, 1fr));
   gap: var(--primary-gap);
   height: 100%;
   overflow: auto;
   scrollbar-width: none;
   padding: 0.4rem;
+}
+
+.left-side-bar:has(.should-hide.hidden)~main {
+
+  .groups-list,
+  .quizzes-list {
+    grid-template-columns: repeat(4, minmax(24rem, 1fr));
+  }
 }
 
 .search-container {
@@ -108,3 +116,13 @@
   margin-left: auto;
   background-color: #88888A !important;
 }
+
+@media (max-width: 48rem) {
+  .groups-list,
+  .quizzes-list {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+}
+
+

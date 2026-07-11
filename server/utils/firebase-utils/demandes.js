@@ -2,6 +2,11 @@ const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
 const { refillSampleMembersIfNeeded } = require("./shared");
 const { toReadableDate, INITIALE_LOADERS_COUNT } = require("../global");
+const {
+  notifyJoinRequest,
+  notifyJoinResult,
+  updateJoinRequestNotificationStatus,
+} = require("./notifications");
 
 const sendRequest = async (groupId, userData) => {
   try {
@@ -70,6 +75,14 @@ const sendRequest = async (groupId, userData) => {
         status: "pending",
         demandeDate,
       });
+
+    await notifyJoinRequest(
+      groupRef.id,
+      group.name,
+      group.creator,
+      userData,
+      userData.uid
+    );
 
     return {
       success: true,
@@ -160,6 +173,14 @@ const acceptRequest = async (groupId, requestId, userId) => {
       }
     }
 
+    await updateJoinRequestNotificationStatus(
+      userId,
+      groupId,
+      requestId,
+      "accepted"
+    );
+    await notifyJoinResult(requestId, groupId, groupData.name, true);
+
     return { success: true, message: "Join request accepted successfully!" };
   } catch (error) {
     console.error("Error accepting request:", error.message);
@@ -209,6 +230,14 @@ const rejectRequest = async (groupId, requestId, userId) => {
       .update({
         status: "rejected",
       });
+
+    await updateJoinRequestNotificationStatus(
+      userId,
+      groupId,
+      requestId,
+      "rejected"
+    );
+    await notifyJoinResult(requestId, groupId, group.name, false);
 
     return {
       success: true,

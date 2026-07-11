@@ -52,8 +52,6 @@ export const setUpFileInputListeners = (avatarContainer, avatarAside) => {
       e.target === avatarContainer &&
       !avatarContainer.contains(e.relatedTarget)
     ) {
-      console.log("drag enter");
-
       avatarContainer.classList.add("file-drag-start");
     }
   });
@@ -63,8 +61,6 @@ export const setUpFileInputListeners = (avatarContainer, avatarAside) => {
       e.target === avatarContainer &&
       !avatarContainer.contains(e.relatedTarget)
     ) {
-      console.log("drag leave");
-
       avatarContainer.classList.remove("file-drag-start");
     }
   });

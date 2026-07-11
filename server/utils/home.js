@@ -1,4 +1,4 @@
-const { getMessages } = require("./firebase-utils/chat");
+const { getMessages, getRecentMessagesHelper } = require("./firebase-utils/chat");
 const {
   getCurrentSessionInfo,
   getSessionInformations,
@@ -6,6 +6,7 @@ const {
 } = require("./firebase-utils/session");
 const {
   formatHoursMinutes,
+  formatTimeAgo,
   pathNames,
 } = require("./global");
 
@@ -33,10 +34,18 @@ const fetchHomeData = async (userId) => {
   }
 
   const result = await fetchActiveSessions(userId);
+  const messagesResult = await getRecentMessagesHelper(userId);
 
   return {
     pathName: pathNames.home.inactive,
-    payload: { templateContext: { availableSessions: result.sessions } },
+    payload: {
+      templateContext: {
+        availableSessions: result.sessions,
+        recentMessages: messagesResult.success ? messagesResult.data.cards : [],
+        lastVisible: messagesResult.success ? messagesResult.data.lastVisible : null,
+        formatTimeAgo,
+      },
+    },
   };
 };
 

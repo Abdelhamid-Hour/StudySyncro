@@ -3,6 +3,11 @@ const {
   startChildAddedListener,
   getMessages,
   STREAM_MAP,
+  markGroupAsReadHelper,
+  getUserGroupChatStateHelper,
+  getRecentMessagesHelper,
+  startRecentMessagesListener,
+  RECENT_MESSAGES_STREAM_MAP,
 } = require("../utils/firebase-utils/chat");
 const { rDb, db } = require("../firebase/firebaseAdmin");
 
@@ -121,11 +126,9 @@ const getMessagesHandler = async (req, res) => {
     lastVisible,
   );
 
-  console.log("Get messages result:", result.messages);
-
   if (result.success) {
     return res.status(200).json({
-      cards: result.messages.length ? [result.messages] : [],
+      cards: result.messages.length ? [result.messages] : [[]],
       lastVisible: result.lastVisible,
     });
   } else {
@@ -133,8 +136,117 @@ const getMessagesHandler = async (req, res) => {
   }
 };
 
+const cleanUpRecentMessagesClient = (res, userId) => {
+  const streamEntry = RECENT_MESSAGES_STREAM_MAP.get(userId);
+  if (streamEntry) {
+    if (streamEntry.query) {
+      try {
+        if (streamEntry.listener) {
+          streamEntry.query.off("child_added", streamEntry.listener);
+          streamEntry.query.off("child_changed", streamEntry.listener);
+        }
+        if (streamEntry.removedListener) {
+          streamEntry.query.off("child_removed", streamEntry.removedListener);
+        }
+      } catch (e) {}
+    }
+    RECENT_MESSAGES_STREAM_MAP.delete(userId);
+  }
+  try {
+    res.end();
+  } catch (e) {}
+};
+
+const markGroupAsReadHandler = async (req, res) => {
+  const { groupId, messageId, timestamp } = req.body;
+  if (!groupId) return res.status(400).json({ message: "groupId is required" });
+  const result = await markGroupAsReadHelper(req.user.uid, groupId, messageId, timestamp);
+  if (result.success) {
+    return res.status(200).json({ message: "Marked as read" });
+  }
+  return res
+    .status(500)
+    .json({ message: result.message || "Failed to mark as read" });
+};
+
+const getUserGroupChatStateHandler = async (req, res) => {
+  const { groupId } = req.params;
+  if (!groupId) return res.status(400).json({ message: "groupId is required" });
+  const result = await getUserGroupChatStateHelper(req.user.uid, groupId);
+  if (result.success) {
+    return res.status(200).json(result.data);
+  }
+  return res
+    .status(500)
+    .json({ message: result.message || "Failed to get state" });
+};
+
+const getRecentMessagesHandler = async (req, res) => {
+  const { limit = 10, lastVisible = null } = req.query;
+  const result = await getRecentMessagesHelper(
+    req.user.uid,
+    Number(limit),
+    lastVisible,
+  );
+  if (result.success) {
+    return res.status(200).json({
+      cards: result.data.cards,
+      lastVisible: result.data.lastVisible,
+    });
+  }
+  return res.status(500).json({ message: result.message });
+};
+
+const recentMessagesStreamHandler = async (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders && res.flushHeaders();
+
+  const userId = req.user.uid;
+  const path = `userGroupChats/${userId}`;
+  const query = rDb.ref(path).orderByChild("lastUpdate");
+
+  if (RECENT_MESSAGES_STREAM_MAP.has(userId)) {
+    cleanUpRecentMessagesClient(
+      RECENT_MESSAGES_STREAM_MAP.get(userId).res,
+      userId,
+    );
+  }
+
+  RECENT_MESSAGES_STREAM_MAP.set(userId, {
+    res,
+    query: null,
+    listener: null,
+  });
+
+  startRecentMessagesListener(userId, query);
+
+  const heartbeat = setInterval(() => {
+    try {
+      res.write(":\n\n");
+    } catch (e) {
+      clearInterval(heartbeat);
+      cleanUpRecentMessagesClient(res, userId);
+    }
+  }, 20 * 1000);
+
+  req.on("close", () => {
+    try {
+      clearInterval(heartbeat);
+      cleanUpRecentMessagesClient(res, userId);
+    } catch (error) {
+      console.warn("Error closing recent messages stream:", error);
+    }
+  });
+};
+
 module.exports = {
   sendMessageHandler,
   getMessagesHandler,
   chatStreamHandler,
+  markGroupAsReadHandler,
+  getUserGroupChatStateHandler,
+  getRecentMessagesHandler,
+  recentMessagesStreamHandler,
 };

@@ -181,7 +181,6 @@ const patchGroupHandler = async (req, res) => {
   const updatedData = req.body.updatedData;
 
   const userData = req.user;
-  console.log(updatedData, "group data for update group");
 
   const result = await modifyGroup(
     userData.uid,
@@ -261,7 +260,6 @@ const getUsersHandler = async (req, res) => {
 
 const inviteMembersHandler = async (req, res) => {
   const { groupId, users } = req.body;
-  console.log({ groupId, users });
 
   const result = await inviteMembers(groupId, users);
   if (result.success) {
@@ -272,10 +270,7 @@ const inviteMembersHandler = async (req, res) => {
 };
 
 const getQuizzesByGroup = async (req, res) => {
-  const { groupId, search, sort, date, count, lastVisible } = req.query;
-
-  console.log("Count count : ccout", count);
-  
+  const { groupId, search, sort, date, count, lastVisible } = req.query;  
 
   const result = await getQuizzesByGroupId(
     groupId,

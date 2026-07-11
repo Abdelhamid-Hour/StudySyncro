@@ -33,15 +33,6 @@ const createPassedQuizCard = (quiz = {}) => {
             </label>
             <div class="quiz-title content"></div>
         </div>
-        <div class="score-container info-container">
-            <label class="score-label">
-                <span class="icon-box">
-                    <i class="bi bi-trophy"></i>
-                </span>
-                Score
-            </label>
-            <div class="score ${getScoreClass(score)} content">%</div>
-        </div>
         <div class="group-name-container info-container">
             <label class="group-name-label">
                 <span class="icon-box">
@@ -50,6 +41,15 @@ const createPassedQuizCard = (quiz = {}) => {
                 Group Name
             </label>
             <div class="group-name content"></div>
+        </div>
+        <div class="session-name-container info-container">
+        <label class="session-name-label">
+        <span class="icon-box">
+        <i class="bi bi-journal-bookmark"></i>
+        </span>
+        Session Name
+        </label>
+        <div class="session-name content"></div>
         </div>
         <div class="submitted-at-container info-container">
             <label class="submitted-at-label">
@@ -60,14 +60,14 @@ const createPassedQuizCard = (quiz = {}) => {
             </label>
             <div class="submitted-at content"></div>
         </div>
-        <div class="session-name-container info-container">
-            <label class="session-name-label">
+        <div class="score-container info-container">
+            <label class="score-label">
                 <span class="icon-box">
-                    <i class="bi bi-journal-bookmark"></i>
+                    <i class="bi bi-trophy"></i>
                 </span>
-                Session Name
+                Score
             </label>
-            <div class="session-name content"></div>
+            <div class="score ${getScoreClass(score)} content">%</div>
         </div>
         <div class="action-btns">
             <button class="view-quiz-result-btn" data-quiz-id="${id}">

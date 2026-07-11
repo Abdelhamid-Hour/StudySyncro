@@ -5,9 +5,8 @@ import {
 import {
   INITIALE_LOADERS_COUNT,
   LOADER_COUNT,
-  LOADERS_COUNT,
 } from "../../../global/js/variables.js";
-import { getDebounceFunc, isAsync } from "../../../global/js/utils.js";
+import { getDebounceFunc, getLoadersCount, isAsync } from "../../../global/js/utils.js";
 
 const encodeCriteria = (criteria) => {
   if (!criteria) return "";
@@ -29,7 +28,7 @@ export class Loader {
     {
       rootMargin = "30px",
       getCriteria = () => "",
-      loadersCount = LOADERS_COUNT,
+      loadersCount = getLoadersCount(),
       afterAppendRes = () => {},
       append = true,
       firstLoadFunc = () => {},
@@ -67,6 +66,7 @@ export class Loader {
   }
 
   reset() {
+    this.loadersCount = this.loadersCount === 1 ? 1 : getLoadersCount();
     this.loading = false;
     this.lastVisible = "";
     this.count = LOADER_COUNT;
@@ -121,7 +121,7 @@ export class Loader {
     this.sentinel = document.querySelector(".first-loading-card");
   }
 
-  async loadMore(isFirstLoad = false) {  
+  async loadMore(isFirstLoad = false) { 
     this.loading = true;
     const requestId = ++this.currentRequestId;
 
@@ -132,6 +132,7 @@ export class Loader {
     }
 
     try {
+      
       let { cards, lastVisible } = await fetchData(endPoint);
 
       if (requestId !== this.currentRequestId) {
@@ -139,6 +140,13 @@ export class Loader {
       }
 
       this.lastVisible = lastVisible;
+
+      if(!cards.length || (cards[0].length != undefined && !cards[0].length)){
+        this.io.unobserve(this.sentinel);
+        clearLoadersBoxes();
+        this.checkEmptyState();
+        return
+      }
 
       const frag = document.createDocumentFragment();
 
@@ -249,9 +257,7 @@ export const initFiltersInputListener = (loader, container) => {
   const resetLoader = getDebounceFunc(() => loader.reset(), 300);
   const handleInputChange = (e) => {
     const isInput = e.target.tagName === "INPUT";
-    if (isInput) {
-      console.log(" resetLoader();");
-      
+    if (isInput) {      
        resetLoader();
     }
   };

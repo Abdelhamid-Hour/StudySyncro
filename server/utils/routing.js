@@ -14,9 +14,10 @@ const {} = require("./firebase-utils/group");
 const { getUserQuizzes, getPassedQuizzes } = require("./firebase-utils/examen");
 const { INITIALE_LOADERS_COUNT } = require("./global");
 const { getSettingsContext } = require("./firebase-utils/settings");
+const { getUserNotifications } = require("./firebase-utils/notifications");
 
 const SHARED_STYLES_MAP = {
-  "/home/inactive": ["/tasks"],
+  "/home/inactive": ["/tasks", "/chat"],
   "/home/active": ["/tasks", "/chat", "/quiz-result"],
   "/quizzes/my": ["/quizzes-groups", "/fields", "/forms", "/quizzes-my-groups"],
   "/quizzes/passed": [
@@ -134,9 +135,6 @@ const fetchData = async (pathName, user) => {
     case pathNames.quizzes.passed:
       templateContext = await getPassedQuizzes(user.uid);
 
-      console.log(templateContext);
-      
-
       templateContext.toReadableDate = toReadableDate;
       templateContext.getScoreClass = getScoreClass;
 
@@ -165,7 +163,7 @@ const renderFragmentOrLayout = (
   res.setHeader("Vary", "X-Requested-With");
   res.setHeader("Cache-Control", "private, no-cache");
 
-  return res.render(template, payload.templateContext, (err, htmlFragment) => {
+  return res.render(template, payload.templateContext, async (err, htmlFragment) => {
     if (err) {
       console.error("Error rendering template:", err);
       return res
@@ -180,6 +178,18 @@ const renderFragmentOrLayout = (
         extraData: payload.extraData,
       });
 
+    let notificationsData = { cards: [], count: 0, lastVisible: null, unreadCount: 0 };
+    if (req.user && req.user.uid) {
+      try {
+        const notifRes = await getUserNotifications(req.user.uid, INITIALE_LOADERS_COUNT);
+        if (notifRes && notifRes.success) {
+          notificationsData = notifRes;
+        }
+      } catch (e) {
+        console.error("Error fetching initial notifications for layout:", e);
+      }
+    }
+
     return res.render(
       "layout",
       {
@@ -187,6 +197,8 @@ const renderFragmentOrLayout = (
         resourcesRoute: `${pathName}/`,
         content: htmlFragment,
         user: req.user,
+        notificationsData,
+        toReadableDate,
         ...extraProps,
       },
       (layoutErr, fullPage) => {

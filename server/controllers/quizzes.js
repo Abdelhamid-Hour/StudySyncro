@@ -19,7 +19,6 @@ const createQuizHandler = async (req, res) => {
   const userData = req.user;
   const result = await createQuiz(quizData, userData.uid);
   if (result.success) {
-    console.log(result.quizId, "quizz id");
     return res.status(200).json({ quizId: result.quizId });
   } else {
     return res.status(400).json({
@@ -73,7 +72,6 @@ const patchQuizHandler = async (req, res) => {
   const subject = req.body.subject;
   const quizId = req.params.quizId;
   const userData = req.user;
-  console.log(title, subject, "quiz data for update quiz");
   const response = title
     ? await updateQuizTitle(title, quizId, userData.uid)
     : await updateQuizSubject(subject, quizId, userData.uid);
@@ -131,8 +129,8 @@ const getQuizzesListHandler = async (req, res) => {
     count,
     searchTerm,
   );
-
-  console.log("result in get quizzes list handler: ", result);
+  console.log("result  result result: ", result);
+  
 
   return res.status(200).json({
     ...result,

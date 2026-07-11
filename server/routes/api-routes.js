@@ -53,6 +53,11 @@ const {
   acceptDemandeHandler,
   rejectDemandeHandler,
 } = require("../controllers/demandes");
+const {
+  getUserNotificationsHandler,
+  markNotificationsAsReadHandler,
+  streamNotificationsHandler,
+} = require("../controllers/notifications");
 const { GroupFragmentRoutes } = require("../utils/groups");
 const {
   getUserInfoHandler,
@@ -65,10 +70,12 @@ const {
 } = require("../controllers/user");
 const {
   sendMessageHandler,
-  groupChatStreamHandler,
-  sessionChatStreamHandler,
   chatStreamHandler,
   getMessagesHandler,
+  markGroupAsReadHandler,
+  getUserGroupChatStateHandler,
+  getRecentMessagesHandler,
+  recentMessagesStreamHandler,
 } = require("../controllers/chat");
 
 const apiRouter = express.Router();
@@ -185,6 +192,11 @@ apiRouter.get("/messages", getMessagesHandler);
 
 apiRouter.get("/chat-stream", chatStreamHandler);
 
+apiRouter.get("/recent-messages", getRecentMessagesHandler);
+apiRouter.post("/chat/mark-read", markGroupAsReadHandler);
+apiRouter.get("/chat/state/:groupId", getUserGroupChatStateHandler);
+apiRouter.get("/recent-messages/stream", recentMessagesStreamHandler);
+
 GroupFragmentRoutes.forEach((config) => {
   apiRouter.get(
     `${config.route}/:id`,
@@ -192,5 +204,9 @@ GroupFragmentRoutes.forEach((config) => {
     groupFragmentHandler(config),
   );
 });
+
+apiRouter.get("/notifications", getUserNotificationsHandler);
+apiRouter.get("/notifications/stream", streamNotificationsHandler);
+apiRouter.post("/notifications/mark-read", markNotificationsAsReadHandler);
 
 module.exports = apiRouter;

@@ -67,6 +67,10 @@ const sendMessage = async (
       messageData.timestamp = Date.now();
       const chatRef = await ref.push(messageData);
 
+      if (!sessionId && groupId) {
+        await updateUserGroupChatState(groupId, messageData, chatRef.key);
+      }
+
       return {
         success: true,
         data: {
@@ -98,6 +102,9 @@ const sendMessage = async (
     messageData.timestamp = Date.now();
 
     chatRef = await ref.push(messageData);
+    if (!sessionId && groupId) {
+      await updateUserGroupChatState(groupId, messageData, chatRef.key);
+    }
     return {
       success: true,
       data: {
@@ -264,9 +271,237 @@ const broadcastMessage = (roomId, messageData, error = false) => {
   });
 };
 
+const updateUserGroupChatState = async (groupId, messageData, messageId) => {
+  try {
+    const groupDoc = await db.collection("groups").doc(groupId).get();
+    if (!groupDoc.exists) return;
+    const groupData = groupDoc.data();
+    const groupName = groupData.name || "Study Group";
+    const membersSnap = await groupDoc.ref.collection("members").get();
+
+    const now = Date.now();
+    const text =
+      messageData.content.text ||
+      (messageData.content.fileName
+        ? "Attachment: " + messageData.content.fileName
+        : "Sent a message");
+    const senderName = messageData.sender.fullName || "User";
+    const senderId = messageData.sender.id;
+    const senderPhotoURL = messageData.sender.photoURL || null;
+
+    const updates = {};
+    for (const doc of membersSnap.docs) {
+      const memberId = doc.id;
+      const refPath = `userGroupChats/${memberId}/${groupId}`;
+
+      if (memberId === senderId) {
+        updates[refPath] = {
+          groupId,
+          groupName,
+          lastUpdate: now,
+          lastMessage: {
+            id: messageId,
+            text,
+            senderName,
+            senderId,
+            senderPhotoURL,
+            timestamp: now,
+          },
+          unreadCount: 0,
+          hasUnreadMessages: false,
+        };
+      } else {
+        const userGroupRef = rDb.ref(refPath);
+        const snapshot = await userGroupRef.once("value");
+        const currentData = snapshot.val() || {};
+        const currentUnread = (currentData.unreadCount || 0) + 1;
+
+        updates[refPath] = {
+          groupId,
+          groupName,
+          lastUpdate: now,
+          lastMessage: {
+            id: messageId,
+            text,
+            senderName,
+            senderId,
+            senderPhotoURL,
+            timestamp: now,
+          },
+          unreadCount: currentUnread,
+          hasUnreadMessages: currentUnread > 0,
+          lastSeenTimestamp: currentData.lastSeenTimestamp || 0,
+          lastSeenMessageId: currentData.lastSeenMessageId || null,
+        };
+      }
+    }
+    await rDb.ref().update(updates);
+  } catch (error) {
+    console.error("Error updating userGroupChatState:", error);
+  }
+};
+
+const markGroupAsReadHelper = async (userId, groupId, messageId = null, timestamp = null) => {
+  try {
+    const ref = rDb.ref(`userGroupChats/${userId}/${groupId}`);
+    const snap = await ref.once("value");
+    if (!snap.exists()) {
+      return { success: false, message: "Group chat state not found" };
+    }
+    const now = Date.now();
+    const updates = {
+      unreadCount: 0,
+      hasUnreadMessages: false,
+      lastSeenTimestamp: timestamp || now,
+    };
+    if (messageId) {
+      updates.lastSeenMessageId = messageId;
+    }
+    await ref.update(updates);
+    return { success: true };
+  } catch (error) {
+    console.error("Error marking group as read:", error);
+    return { success: false, message: error.message };
+  }
+};
+
+const getUserGroupChatStateHelper = async (userId, groupId) => {
+  try {
+    const ref = rDb.ref(`userGroupChats/${userId}/${groupId}`);
+    const snap = await ref.once("value");
+    if (!snap.exists()) {
+      return { success: false, message: "Group chat state not found" };
+    }
+    return { success: true, data: snap.val() };
+  } catch (error) {
+    console.error("Error getting user group chat state:", error);
+    return { success: false, message: error.message };
+  }
+};
+
+const getRecentMessagesHelper = async (userId, limit = INITIALE_LOADERS_COUNT, lastVisible = null) => {
+  try {
+    const baseRef = rDb.ref(`userGroupChats/${userId}`);
+    let query = baseRef.orderByChild("lastUpdate");
+
+    if (lastVisible) {
+      const cursorSnap = await baseRef
+        .child(lastVisible)
+        .child("lastUpdate")
+        .once("value");
+      const cursorTimestamp = cursorSnap.val();
+
+      if (cursorTimestamp == null) {
+        return { success: true, data: { cards: [], lastVisible: null } };
+      }
+
+      query = query.endBefore(cursorTimestamp, lastVisible).limitToLast(limit);
+    } else {
+      query = query.limitToLast(limit);
+    }
+
+    const snap = await query.once("value");
+
+    let results = [];
+    snap.forEach((child) => {
+      const chat = child.val();
+      results.push(chat);
+    });
+
+    // Reverse to get descending order (RTDB returns ascending)
+    results.reverse();
+
+    const nextLastVisible = results.length === limit
+      ? results[results.length - 1]?.groupId
+      : null;
+
+
+    return {
+      success: true,
+      data: {
+        cards: results,
+        lastVisible: nextLastVisible,
+      },
+    };
+  } catch (error) {
+    console.error("Error getting recent messages:", error);
+    return { success: false, message: error.message };
+  }
+
+};
+
+
+const RECENT_MESSAGES_STREAM_MAP = new Map();
+
+const startRecentMessagesListener = (userId, query) => {
+  const onChildAddedOrChanged = (snapshot) => {
+    try {
+      const data = snapshot.val();
+      broadcastRecentMessage(userId, data);
+    } catch (error) {
+      console.error("Error in recent messages listener:", error);
+    }
+  };
+
+  const onChildRemoved = (snapshot) => {
+    try {
+      const data = snapshot.val() || {};
+      const groupId = snapshot.key || data.groupId;
+      if (groupId) {
+        broadcastRecentMessage(userId, { ...data, groupId, removed: true });
+      }
+    } catch (error) {
+      console.error("Error in recent messages removed listener:", error);
+    }
+  };
+
+  const entry = RECENT_MESSAGES_STREAM_MAP.get(userId);
+  if (!entry) return;
+
+  entry.listener = onChildAddedOrChanged;
+  entry.removedListener = onChildRemoved;
+  entry.query = query;
+
+  query.on("child_added", onChildAddedOrChanged);
+  query.on("child_changed", onChildAddedOrChanged);
+  query.on("child_removed", onChildRemoved);
+};
+
+const broadcastRecentMessage = (userId, data) => {
+  const streamEntry = RECENT_MESSAGES_STREAM_MAP.get(userId);
+  if (!streamEntry || !streamEntry.res) return;
+  const res = streamEntry.res;
+  try {
+    res.write(`event: message\n`);
+    res.write(`data: ${JSON.stringify(data)}\n\n`);
+  } catch (err) {
+    console.warn(`Failed to write to recent messages client ${userId}:`, err);
+    try {
+      res.end();
+    } catch (e) {}
+    if (streamEntry.query) {
+      try {
+        if (streamEntry.listener) {
+          streamEntry.query.off("child_added", streamEntry.listener);
+          streamEntry.query.off("child_changed", streamEntry.listener);
+        }
+        if (streamEntry.removedListener) {
+          streamEntry.query.off("child_removed", streamEntry.removedListener);
+        }
+      } catch (e) {}
+    }
+    RECENT_MESSAGES_STREAM_MAP.delete(userId);
+  }
+};
+
 module.exports = {
   sendMessage,
   getMessages,
   startChildAddedListener,
   STREAM_MAP,
+  markGroupAsReadHelper,
+  getUserGroupChatStateHelper,
+  getRecentMessagesHelper,
+  startRecentMessagesListener,
+  RECENT_MESSAGES_STREAM_MAP,
 };

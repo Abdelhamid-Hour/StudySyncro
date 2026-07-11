@@ -29,8 +29,6 @@ export const init = throttling(2000, async () => {
 
   await startSession();
 
-  console.log(Session.groupId, Session.id);
-
   iniChat(Session.groupId, Session.id);
 });
 
