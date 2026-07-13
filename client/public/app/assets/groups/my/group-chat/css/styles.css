@@ -777,6 +777,10 @@
     width: 100% !important;
     padding-top: 0;
 
+    .mobile-select-menu-header {
+      display: none !important;
+    }
+
     .icon-wrapper {
       min-height: 9rem !important;
       padding: 1rem !important;

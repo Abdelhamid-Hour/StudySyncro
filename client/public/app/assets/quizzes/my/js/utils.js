@@ -455,7 +455,26 @@ const createUserQuizLoadingCard = () => {
   return loadingCard;
 };
 
+export const initMobileQuizzesTabs = (isPassed = false) => {
+  const headerContainer = document.getElementById("mobile-tabs-container");
+  if (!headerContainer) return;
+  const isMobile = window.matchMedia("(max-width: 48rem)").matches;
+  if (isMobile) {
+    headerContainer.classList.remove("hidden");
+    headerContainer.innerHTML = `
+      <div class="mobile-quizzes-tabs navigation-tabs quizzes-tabs" style="width: 100%;">
+        <a href="/app/quizzes/my" class="tab route-link ${!isPassed ? 'active-tab' : ''} exclude-btn">My Quizzes</a>
+        <a href="/app/quizzes/passed" class="tab route-link ${isPassed ? 'active-tab' : ''} exclude-btn">Passed</a>
+      </div>
+    `;
+  } else {
+    headerContainer.classList.add("hidden");
+    headerContainer.innerHTML = "";
+  }
+};
+
 export const initLazyLoadingLoader = () => {
+  initMobileQuizzesTabs(false);
   const loader = new Loader(
     document.querySelector(".quizzes-list"),
     getcreateQuizCardFunc,

@@ -76,8 +76,6 @@ export const getGroupId = () => {
   return groupId;
 };
 
-let groupId = getGroupId();
-
 export const handleLeavingGroup = async (e) => {
   const res = await showConfirmationBox(
     "exclamation",
@@ -87,7 +85,7 @@ export const handleLeavingGroup = async (e) => {
     "Leave"
   );
   if (res) {
-    handleApiAction("/leave-group", { groupId }, e.target, {
+    handleApiAction("/leave-group", { groupId: getGroupId() }, e.target, {
       successMsg: "Left group successfully",
       onSuccess: () => navigateTo("/groups/my"),
     });
@@ -125,7 +123,7 @@ export const openGroupLeftSideBar = async (route) => {
 
   try {
     const { template, title, count, info } = await fetchData(
-      `${route}/${groupId}`
+      `${route}/${getGroupId()}`
     );
 
     if (info) {
@@ -727,6 +725,10 @@ const setUpSessionForm = (wrapper, sessionStore) => {
   setUpSelectMenu(
     quizzesSelectTrigger,
     () => `
+    <div class="mobile-select-menu-header">
+      <h4>Select Quiz</h4>
+      <button type="button" class="exclude-btn close-select-menu-btn" title="Close"><i class="bi bi-x-lg"></i></button>
+    </div>
     <div class="select-search">
       <input id="select-search" type="search" placeholder="Search quizzes..." />
     </div>
@@ -823,7 +825,7 @@ const handleFinishBtnClick = async (sessionData, btn) => {
     btn.isCreating = true;
     btn.disabled = true;
     btn.innerHTML = getLoader();
-    sessionData.groupId = groupId;
+    sessionData.groupId = getGroupId()
     await sendData("/api/create-session", { sessionData });
     showMessageBlock("Session created successfully", "success");
     navigateTo("/home");
@@ -1138,7 +1140,7 @@ const handleKickMember = async (kickBtn) => {
     "Kick"
   );
   if (!res) return;
-  handleApiAction("/kick-member", { groupId, memberId }, kickBtn, {
+  handleApiAction("/kick-member", { groupId: getGroupId(), memberId }, kickBtn, {
     successMsg: "Member kicked successfully",
     onSuccess: () => {
       kickBtn.closest(".member").remove();
@@ -1160,9 +1162,9 @@ const handleMoveAdminRole = async (moveAdminRoleBtn) => {
     "Move"
   );
   if (!res) return;
-  handleApiAction("/transfer-role", { groupId, memberId }, moveAdminRoleBtn, {
+  handleApiAction("/transfer-role", { groupId: getGroupId(), memberId }, moveAdminRoleBtn, {
     successMsg: "Role transferred successfully",
-    onSuccess: () => navigateTo(`/groups/my/${groupId}/chat`), // Refresh the page to reflect changes
+    onSuccess: () => navigateTo(`/groups/my/${getGroupId()}/chat`), // Refresh the page to reflect changes
   });
 };
 
@@ -1170,7 +1172,7 @@ const handleAcceptDemande = (acceptBtn) => {
   const demandeId = acceptBtn
     .closest(".action-btns")
     .getAttribute("data-user-id");
-  handleApiAction("/accept-demande", { demandeId, groupId }, acceptBtn, {
+  handleApiAction("/accept-demande", { demandeId, groupId: getGroupId() }, acceptBtn, {
     successMsg: "Demande accepted",
     onSuccess: () => {
       acceptBtn.closest(".demande").remove();
@@ -1184,7 +1186,7 @@ const handleRejectDemande = (rejectBtn) => {
   const demandeId = rejectBtn
     .closest(".action-btns")
     .getAttribute("data-user-id");
-  handleApiAction("/reject-demande", { demandeId, groupId }, rejectBtn, {
+  handleApiAction("/reject-demande", { demandeId, groupId: getGroupId() }, rejectBtn, {
     successMsg: "Demande rejected",
     onSuccess: () => {
       rejectBtn.closest(".demande").remove();
@@ -1377,7 +1379,7 @@ const getSearchCriteria = () => {
 const handleQuizCardBtns = (e) => {
   const quizId = e.target.closest(".quiz-card")?.dataset.quizId;
   const viewResults = e.target.closest(".view-results-btn");
-  if (viewResults) openQuizResultsOverlay(quizId, groupId);
+  if (viewResults) openQuizResultsOverlay(quizId, getGroupId());
   const viewResult = e.target.closest(".view-result-btn");
   if (viewResult) openQuizResultOverlay({ quizId });
   const retakeBtn = e.target.closest(".retake-btn");
@@ -1392,7 +1394,7 @@ export const handleQuizzesListMenuBtn = async () => {
   const loader = new Loader(
     container,
     createQuizItem,
-    "/group-quizzes?groupId=" + groupId + "&",
+    "/group-quizzes?groupId=" + getGroupId() + "&",
     createQuizItemLoader(),
     {
       getCriteria: getSearchCriteria,
@@ -1481,7 +1483,7 @@ export const handleMembersListMenuBtn = async () => {
   const loader = new Loader(
     membersResults,
     createMemberCard,
-    "/group-members?groupId=" + groupId + "&",
+    "/group-members?groupId=" + getGroupId() + "&",
     createMemberCardLoader(),
     {
       getCriteria: () => `search=${search?.value?.toLowerCase().trim() || ""}`,
@@ -1507,7 +1509,7 @@ export const handleRemoveGroup = async (e) => {
     "Remove"
   );
   if (res) {
-    handleApiAction(`/remove-group/${groupId}`, {}, e.target, {
+    handleApiAction(`/remove-group/${getGroupId()}`, {}, e.target, {
       successMsg: "Group removed successfully",
       onSuccess: () => navigateTo("/groups/my"),
       method: "DELETE",
@@ -1602,7 +1604,7 @@ export const setUpDemandes = async () => {
   const loader = new Loader(
     container,
     createDemandeCard,
-    "/group-demandes?groupId=" + groupId + "&",
+    "/group-demandes?groupId=" + getGroupId() + "&",
     createDemandeCardLoader(),
     {
       getCriteria: getSearchCriteria,
@@ -1743,7 +1745,7 @@ const handleSaveAction = async (
         ? input.value.trim()
         : input?.dataset.value;
     }
-    await sendData("/api/update-group/" + groupId, { updatedData }, "PATCH");
+    await sendData("/api/update-group/" + getGroupId(), { updatedData }, "PATCH");
     const updatedValue =
       typeof updatedData.value === "object"
         ? updatedData.value.visibility
@@ -2005,7 +2007,7 @@ function createSelectedUsersDiv(container, searchSection, removeFromUsers) {
 }
 
 const inviteUsersToGroup = (users, confirmBtn) => {
-  handleApiAction("/invite-users", { groupId, users }, confirmBtn, {
+  handleApiAction("/invite-users", { groupId: getGroupId(), users }, confirmBtn, {
     successMsg: "Users invited successfully!",
     onSuccess: () => closeOverlayModal("add-members-overlay"),
   });
@@ -2138,7 +2140,7 @@ const setUpAddMembersOverlay = (container) => {
   const loader = new Loader(
     usersResults,
     createUserCard,
-    "/users?groupId=" + groupId + "&",
+    "/users?groupId=" + getGroupId() + "&",
     createUserLoadingCard(),
     {
       getCriteria: () => `search=${search?.value?.toLowerCase().trim() || ""}`,

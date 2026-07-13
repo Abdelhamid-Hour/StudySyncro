@@ -30,7 +30,7 @@
 // the change of the main content: make the top side bar changed directly, and the contein of main with skeleton loading relative to page 
 // allow user to deselect alll lquizzes in session creation quiz input
 // add join session btn in notificatipon session started
-
+// modify the chat input inactive home page to use the pre existing func for initialization
 
 No Results Found
 No matches found for your search or filters. || this is used for chat 

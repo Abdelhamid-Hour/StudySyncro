@@ -142,7 +142,7 @@
     background-color: var(--container-background-color) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
-    border-radius: 0.85rem !important;
+    border-radius: var(--primary-radius) !important;
   }
 
   .groups-list .group-card:hover {

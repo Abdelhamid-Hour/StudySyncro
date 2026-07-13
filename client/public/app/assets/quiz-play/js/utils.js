@@ -18,8 +18,6 @@ let quiz = {
   title: document.querySelector(".quiz-title")?.textContent.trim(),
 };
 
-const url = new URL(window.location.href);
-
 let quizResult = {
   quizId: quiz.id,
   correctAnswers: [],
@@ -244,7 +242,7 @@ export const resetVars = () => {
     correctAnswers: [],
     incorrectAnswers: [],
     skippedQuestions: [],
-    groupId: url.searchParams.get("groupId") || "",
+    groupId: new URL(window.location.href).searchParams.get("groupId") || "",
   };
   currentQuestionIndex = 0;
 };

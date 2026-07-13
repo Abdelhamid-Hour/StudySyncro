@@ -69,6 +69,7 @@ const streamNotificationsHandler = async (req, res) => {
         const data = change.doc.data();
         const notif = {
           id: change.doc.id,
+          changeType: change.type,
           ...data,
           timestamp: resolveTimestamp(data.timestamp),
         };

@@ -11,10 +11,111 @@ import {
   handleEmojisSearch,
 } from "../../../shared/chat/js/utils.js";
 
+export const sessionViewSkeleton = `<div class="loading-animation overlay-model session-view-overlay">
+  <header>
+    <h3>Session Details</h3>
+    <button
+      type="button"
+      class="exclude-btn close-session-view-overlay should-fill"
+    >
+      <i class="bi bi-x-circle"></i>
+    </button>
+  </header>
+  <div class="session-overlay-content">
+    <div class="overlay-top">
+      <div class="group-name-wrapper">
+        <span
+          class="loading-opacity-animation badge blue-badge"
+          style="width: 7rem"
+        >
+        </span>
+      </div>
+      <div>
+        <h3 class="session-name">
+          <div class="loading-opacity-animation" style="width: 9rem"></div>
+          <span
+            class="loading-opacity-animation badge simple-badge users-count"
+            style="width: 6rem"
+          ></span>
+        </h3>
+      </div>
+      <p class="loading-opacity-animation session-description"></p>
+      <p
+        class="loading-opacity-animation session-description"
+        style="width: 60%"
+      ></p>
+      <div class="session-info">
+        <span
+          class="loading-opacity-animation badge green-badge start-badge"
+          style="width: 5rem"
+        ></span>
+        <span
+          class="loading-opacity-animation badge orange-badge end-badge"
+          style="width: 5rem"
+        ></span>
+        <span
+          class="loading-opacity-animation badge blue-badge duration-badge"
+          style="width: 5rem"
+        ></span>
+      </div>
+    </div>
+
+    <div class="session-tasks">
+      <header>
+        <h3 class="title"><i class="bi bi-ui-checks"></i>Tasks</h3>
+        <div class="btns">
+          <button
+            type="button"
+            data-tooltip="Scroll To Top"
+            class="exclude-btn scroll-to-top has-tooltip"
+          >
+            <i class="bi bi-arrow-up-short"></i>
+          </button>
+          <button
+            type="button"
+            data-tooltip="Collapse All"
+            class="exclude-btn collapse-all has-tooltip"
+          >
+            <i class="bi bi-arrows-expand"></i>
+          </button>
+        </div>
+      </header>
+      <!-- ongoing tasks list is just for get the same style as in the active page -->
+      <div class="tasks-list">
+        <div class="task-wrapper">
+          <div class="loading-opacity-animation task-box"></div>
+        </div>
+
+        <div class="task-wrapper">
+          <div class="loading-opacity-animation task-box"></div>
+        </div>
+        <div class="task-wrapper">
+          <div class="loading-opacity-animation task-box"></div>
+        </div>
+        <div class="task-wrapper">
+          <div class="loading-opacity-animation task-box"></div>
+        </div>
+        <div class="task-wrapper">
+          <div class="loading-opacity-animation task-box"></div>
+        </div>
+        <div class="task-wrapper">
+          <div class="loading-opacity-animation task-box"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button
+    type="button"
+    class="loading-opacity-animation"
+    style="width: 40%; height: 2rem; margin-left: auto"
+  ></button>
+</div>
+`;
+
 export const handleSessionBtns = async (e) => {
-  const sessionId = e.target
-    .closest(".action-buttons")
-    .getAttribute("data-session-id");
+  const actionBtns = e.target.closest(".action-buttons");
+  if (!actionBtns) return;
+  const sessionId = actionBtns.getAttribute("data-session-id");
   const viewDetailsBtn = e.target.closest(".view-details");
   if (viewDetailsBtn) {
     openOverlayModal(
@@ -24,12 +125,21 @@ export const handleSessionBtns = async (e) => {
         const { overlay } = await fetchData("/session-details/" + sessionId);
         return overlay;
       },
-      () => handletTasksListners("session-tasks")
+      (overlayContainer) => {
+        handletTasksListners("session-tasks");
+        const joinOverlayBtn = overlayContainer.querySelector(".join-session");
+        if (joinOverlayBtn) {
+          joinOverlayBtn.addEventListener("click", () =>
+            joinSession(sessionId, joinOverlayBtn),
+          );
+        }
+      },
+      sessionViewSkeleton,
     );
   }
 
   const joinBtn = e.target.closest(".join-session");
-  if (joinBtn) {    
+  if (joinBtn) {
     joinSession(sessionId, joinBtn);
   }
 };
@@ -158,7 +268,6 @@ const createSessionCard = (session) => {
       </div>
     </footer>
   `;
-  
 
   card.querySelector(".session-title").textContent = session.name || "";
   card.querySelector(".joined-count-value").textContent =
@@ -210,9 +319,9 @@ export const initSessionsLoader = () => {
           desc: "We couldn't find any active sessions matching your search query.",
         },
       },
-    }
+    },
   );
-  
+
   const searchContainer = document.querySelector(".active-sessions-search");
   if (searchContainer) {
     initFiltersInputListener(loader, searchContainer);
@@ -229,23 +338,34 @@ const initActiveSessionsStream = () => {
   }
 
   const lastQueryTime = new Date().toISOString();
-  sessionsEventSource = new EventSource(`/api/stream-sessions?lastQueryTime=${lastQueryTime}`);
-  
+  sessionsEventSource = new EventSource(
+    `/api/stream-sessions?lastQueryTime=${lastQueryTime}`,
+  );
+
   sessionsEventSource.onmessage = (event) => {
     try {
-      
       const data = JSON.parse(event.data);
-      
+
       if (data.newSession) {
         // Apply current search filter
-        const searchInput = document.querySelector("#active-sessions-search-input");
-        const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : "";
-        
-        if (searchTerm && (!data.newSession.name || !data.newSession.name.toLowerCase().includes(searchTerm))) {
+        const searchInput = document.querySelector(
+          "#active-sessions-search-input",
+        );
+        const searchTerm = searchInput
+          ? searchInput.value.trim().toLowerCase()
+          : "";
+
+        if (
+          searchTerm &&
+          (!data.newSession.name ||
+            !data.newSession.name.toLowerCase().includes(searchTerm))
+        ) {
           return; // Skip prepending if it doesn't match the current search
         }
 
-        const existingCard = sessionsContainer.querySelector(`.action-buttons[data-session-id="${data.newSession.id}"]`);
+        const existingCard = sessionsContainer.querySelector(
+          `.action-buttons[data-session-id="${data.newSession.id}"]`,
+        );
         if (!existingCard) {
           const card = createSessionCard(data.newSession);
           const emptyState = sessionsContainer.querySelector(".icon-wrapper");
@@ -255,20 +375,43 @@ const initActiveSessionsStream = () => {
       }
 
       if (data.modifiedSession) {
-        const cardActionButtons = sessionsContainer.querySelector(`.action-buttons[data-session-id="${data.modifiedSession.id}"]`);
+        const cardActionButtons = sessionsContainer.querySelector(
+          `.action-buttons[data-session-id="${data.modifiedSession.id}"]`,
+        );
         if (cardActionButtons) {
           const card = cardActionButtons.closest(".active-session");
           if (card) {
-            card.querySelector(".joined-count-value").textContent = data.modifiedSession.joinedCount ?? 0;
+            card.querySelector(".joined-count-value").textContent =
+              data.modifiedSession.joinedCount ?? 0;
           }
         }
       }
 
       if (data.removedSession) {
-        const cardActionButtons = sessionsContainer.querySelector(`.action-buttons[data-session-id="${data.removedSession}"]`);
+        const cardActionButtons = sessionsContainer.querySelector(
+          `.action-buttons[data-session-id="${data.removedSession}"]`,
+        );
         if (cardActionButtons) {
           const card = cardActionButtons.closest(".active-session");
           if (card) card.remove();
+        }
+        if (
+          sessionsContainer &&
+          sessionsContainer.querySelectorAll(".active-session").length === 0
+        ) {
+          const existingEmptyState =
+            sessionsContainer.querySelector(".icon-wrapper");
+          if (!existingEmptyState) {
+            sessionsContainer.innerHTML = `
+              <div class="icon-wrapper">
+                <div class="empty-icon-container">
+                  <i class="bi bi-clock-history"></i>
+                </div>
+                <h3>No Active Sessions</h3>
+                <p>There are no study sessions currently active. You can start one or wait for others to join.</p>
+              </div>
+            `;
+          }
         }
       }
     } catch (e) {
@@ -335,13 +478,19 @@ export const handleRecentMessageBtns = async (e) => {
     const groupId = card?.getAttribute("data-group-id");
     if (!groupId || !card) return;
 
-    if (replyBtn.classList.contains("active-reply")) {
-      replyBtn.classList.remove("active-reply");
-      replyBtn.removeAttribute("data-reply-open");
-      replyBtn.innerHTML = '<i class="bi bi-reply"></i> Reply';
+    const prevBtn = document.querySelector(
+      ".recent-message .reply.active-reply",
+    );
 
+    if (prevBtn) {
+      prevBtn.classList.remove("active-reply");
+      prevBtn.removeAttribute("data-reply-open");
+      prevBtn.innerHTML = '<i class="bi bi-reply"></i> Reply';
+    }
+
+    if (replyBtn == prevBtn) {
       const sharedReplyBox = document.querySelector(
-        ".shared-recent-messages-reply"
+        ".shared-recent-messages-reply",
       );
       if (sharedReplyBox) {
         const textarea = sharedReplyBox.querySelector(".shared-reply-input");
@@ -351,19 +500,9 @@ export const handleRecentMessageBtns = async (e) => {
       return;
     }
 
-    document.querySelectorAll(".recent-message .reply").forEach((btn) => {
-      btn.classList.remove("active-reply");
-      btn.removeAttribute("data-reply-open");
-      btn.innerHTML = '<i class="bi bi-reply"></i> Reply';
-    });
-
     replyBtn.classList.add("active-reply");
     replyBtn.setAttribute("data-reply-open", "true");
     replyBtn.innerHTML = '<i class="bi bi-x-circle"></i> Close';
-
-    document
-      .querySelectorAll(".card-reply-container")
-      .forEach((el) => el.remove());
 
     const sharedReplyBox = ensureSharedRecentMessagesReplyBox();
     if (!sharedReplyBox) return;
@@ -389,7 +528,7 @@ const ensureSharedRecentMessagesReplyBox = () => {
   if (!recentMessagesSection) return null;
 
   let sharedReplyBox = recentMessagesSection.querySelector(
-    ".shared-recent-messages-reply"
+    ".shared-recent-messages-reply",
   );
   if (sharedReplyBox) return sharedReplyBox;
 
@@ -402,7 +541,7 @@ const ensureSharedRecentMessagesReplyBox = () => {
   sharedReplyBox.style.display = "none";
   sharedReplyBox.style.width = "100%";
   sharedReplyBox.innerHTML = `
-    <div class="input-message-container" style="border: none;">
+    <div class="input-message-container">
       <div class="icons">
         <label for="shared-image-upload" class="should-fill">
           <i class="bi bi-image"></i>
@@ -525,7 +664,7 @@ const ensureSharedRecentMessagesReplyBox = () => {
   recentMessagesSection.appendChild(sharedReplyBox);
 
   const inputMessageContainer = sharedReplyBox.querySelector(
-    ".input-message-container"
+    ".input-message-container",
   );
   const sendBtn = sharedReplyBox.querySelector(".shared-send-btn");
   const textarea = sharedReplyBox.querySelector(".shared-reply-input");
@@ -563,7 +702,7 @@ const ensureSharedRecentMessagesReplyBox = () => {
           const fileIndex = Array.from(sharedFilesInstance.items).findIndex(
             (f) =>
               f.name === targetFileName ||
-              f.getAsFile?.()?.name === targetFileName
+              f.getAsFile?.()?.name === targetFileName,
           );
           if (fileIndex !== -1) {
             sharedFilesInstance.items.remove(fileIndex);
@@ -586,7 +725,7 @@ const ensureSharedRecentMessagesReplyBox = () => {
       const mediaContainer = document.createElement("div");
       mediaContainer.className = "media-preview";
       const mediaElement = document.createElement(
-        file.type.startsWith("video/") ? "video" : "img"
+        file.type.startsWith("video/") ? "video" : "img",
       );
       mediaElement.dataset.fileName = file.name;
       mediaElement.src = URL.createObjectURL(file);
@@ -656,14 +795,14 @@ const ensureSharedRecentMessagesReplyBox = () => {
 
     const text = textarea.value.trim();
     const filesToSend = Array.from(sharedFilesInstance.items).map((f) =>
-      f.getAsFile ? f.getAsFile() : f
+      f.getAsFile ? f.getAsFile() : f,
     );
     if (!text && filesToSend.length === 0) return;
 
     closeSharedReplyBox();
 
     const card = document.querySelector(
-      `.recent-message[data-group-id="${groupId}"]`
+      `.recent-message[data-group-id="${groupId}"]`,
     );
     const textMsgEl = card?.querySelector(".text-message");
     const originalContent = textMsgEl ? textMsgEl.innerHTML : "";
@@ -684,7 +823,7 @@ const ensureSharedRecentMessagesReplyBox = () => {
           "localId",
           typeof crypto !== "undefined" && crypto.randomUUID
             ? crypto.randomUUID()
-            : Date.now().toString()
+            : Date.now().toString(),
         );
         await sendData("/api/send-message", formData, "POST");
       }
@@ -698,7 +837,7 @@ const ensureSharedRecentMessagesReplyBox = () => {
           "localId",
           typeof crypto !== "undefined" && crypto.randomUUID
             ? crypto.randomUUID()
-            : Date.now().toString()
+            : Date.now().toString(),
         );
         await sendData("/api/send-message", formData, "POST");
       }
@@ -815,7 +954,9 @@ const insertCardInOrder = (card) => {
   if (emptyState) emptyState.remove();
 
   const cardTime = Number(card.getAttribute("data-last-update") || 0);
-  const allCards = Array.from(messagesContainer.querySelectorAll(".recent-message")).filter(c => c !== card);
+  const allCards = Array.from(
+    messagesContainer.querySelectorAll(".recent-message"),
+  ).filter((c) => c !== card);
   let inserted = false;
 
   for (const existing of allCards) {
@@ -853,7 +994,7 @@ export const initRecentMessagesLoader = () => {
           desc: "No recent messages yet. Join or create a study group to start collaborating and sharing messages!",
         },
       },
-    }
+    },
   );
 
   initRecentMessagesStream();
@@ -874,12 +1015,34 @@ const initRecentMessagesStream = () => {
       const data = JSON.parse(event.data);
       if (!data || !data.groupId) return;
 
-      const existingCard = messagesContainer.querySelector(`.recent-message[data-group-id="${data.groupId}"]`);
+      const existingCard = messagesContainer.querySelector(
+        `.recent-message[data-group-id="${data.groupId}"]`,
+      );
       if (existingCard) {
         existingCard.remove();
       }
 
-      if (data.removed) return;
+      if (data.removed) {
+        if (
+          messagesContainer &&
+          messagesContainer.querySelectorAll(".recent-message").length === 0
+        ) {
+          const existingEmptyState =
+            messagesContainer.querySelector(".icon-wrapper");
+          if (!existingEmptyState) {
+            messagesContainer.innerHTML = `
+              <div class="icon-wrapper">
+                <div class="empty-icon-container">
+                  <i class="bi bi-chat-text-fill"></i>
+                </div>
+                <h3>No Messages Yet</h3>
+                <p>No recent messages yet. Join or create a study group to start collaborating and sharing messages!</p>
+              </div>
+            `;
+          }
+        }
+        return;
+      }
 
       const newCard = createRecentMessageCard(data);
       insertCardInOrder(newCard);
@@ -896,9 +1059,15 @@ const initRecentMessagesStream = () => {
 };
 
 export const initMobileInactiveTabs = (forceReset = false) => {
-  const contentBlocks = document.querySelector(".overview-session-inactive .content-blocks");
-  const activeSessionsSection = document.querySelector(".content-blocks .active-sessions");
-  const recentMessagesSection = document.querySelector(".content-blocks .recent-messages");
+  const contentBlocks = document.querySelector(
+    ".overview-session-inactive .content-blocks",
+  );
+  const activeSessionsSection = document.querySelector(
+    ".content-blocks .active-sessions",
+  );
+  const recentMessagesSection = document.querySelector(
+    ".content-blocks .recent-messages",
+  );
   const mobileSearchBtn = document.querySelector(".mobile-search-btn");
   const mobileSearchBox = document.getElementById("mobile-search-box");
   const headerContainer = document.getElementById("mobile-tabs-container");
@@ -937,8 +1106,8 @@ export const initMobileInactiveTabs = (forceReset = false) => {
     headerContainer.classList.remove("hidden");
     headerContainer.innerHTML = `
       <div class="mobile-inactive-tabs navigation-tabs" style="width: 100%;">
-        <button type="button" class="tab active-tab" data-target="active-sessions">Active Sessions</button>
-        <button type="button" class="tab" data-target="recent-messages">Recent Messages</button>
+        <button type="button" class="tab active-tab exclude-btn" data-target="active-sessions">Active Sessions</button>
+        <button type="button" class="tab exclude-btn" data-target="recent-messages">Recent Messages</button>
       </div>
     `;
     const tabsBar = headerContainer.querySelector(".mobile-inactive-tabs");
@@ -950,11 +1119,17 @@ export const initMobileInactiveTabs = (forceReset = false) => {
       const btn = e.target.closest(".tab");
       if (!btn) return;
 
-      tabsBar.querySelectorAll(".tab").forEach((t) => t.classList.remove("active-tab"));
+      tabsBar
+        .querySelectorAll(".tab")
+        .forEach((t) => t.classList.remove("active-tab"));
       btn.classList.add("active-tab");
 
-      const currActiveSessions = document.querySelector(".content-blocks .active-sessions");
-      const currRecentMessages = document.querySelector(".content-blocks .recent-messages");
+      const currActiveSessions = document.querySelector(
+        ".content-blocks .active-sessions",
+      );
+      const currRecentMessages = document.querySelector(
+        ".content-blocks .recent-messages",
+      );
 
       const target = btn.getAttribute("data-target");
       if (target === "active-sessions") {

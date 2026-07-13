@@ -1,9 +1,12 @@
 <div class="overlay-model session-view-overlay" data-id="<%= session.id %>">
-  <button type="button" class="exclude-btn close-session-view-overlay should-fill">
-    <i class="bi bi-x-circle"></i>
-  </button>
+  <header>
+    <h3>Session Details</h3>
+    <button type="button" class="exclude-btn close-session-view-overlay should-fill">
+      <i class="bi bi-x-circle"></i>
+    </button>
+  </header>
   <div class="session-overlay-content">
-    <header class="overlay-header">
+    <div class="overlay-top">
       <div class="group-name-wrapper">
         <span class="badge blue-badge">
           <i class="bi bi-book-fill"></i>
@@ -26,7 +29,7 @@
           Duration: <%= session.duration %>
         </span>
       </div>
-    </header>
+    </div>
     <% if (session.quiz) { %>
     <div class="quiz">
       <h3>

@@ -258,25 +258,27 @@ const notifyJoinResult = async (
 const markSessionStartedNotificationsEnded = async (members = [], sessionId) => {
   try {
     if (!sessionId || !members || !members.length) return;
-    for (const userId of members) {
-      if (!userId) continue;
-      const notifsRef = db
-        .collection("notifications")
-        .doc(userId)
-        .collection("notifications")
-        .where("metadata.sessionId", "==", sessionId)
-        .where("type", "==", "session_started");
-      const snap = await notifsRef.get();
-      if (!snap.empty) {
-        const batch = db.batch();
-        snap.docs.forEach((doc) => {
-          batch.update(doc.ref, {
-            "metadata.sessionEnded": true,
+    await Promise.all(
+      members.map(async (userId) => {
+        if (!userId) return;
+        const notifsRef = db
+          .collection("notifications")
+          .doc(userId)
+          .collection("notifications")
+          .where("metadata.sessionId", "==", sessionId)
+          .where("type", "==", "session_started");
+        const snap = await notifsRef.get();
+        if (!snap.empty) {
+          const batch = db.batch();
+          snap.docs.forEach((doc) => {
+            batch.update(doc.ref, {
+              "metadata.sessionEnded": true,
+            });
           });
-        });
-        await batch.commit();
-      }
-    }
+          await batch.commit();
+        }
+      })
+    );
   } catch (err) {
     console.error("Error updating session_started notifications:", err);
   }
@@ -288,20 +290,69 @@ const notifySessionStatus = async (
   sessionName,
   sessionId,
   isStarted,
-  members = []
+  members = [],
+  creatorId = null
 ) => {
   if (!isStarted && sessionId) {
     await markSessionStartedNotificationsEnded(members, sessionId);
   }
-  await addNotificationsToUsers(members, {
-    type: isStarted ? "session_started" : "session_ended",
-    title: isStarted ? "Session Started" : "Session Ended",
-    message: isStarted
-      ? `A new session "${sessionName}" has started in ${groupName}.`
-      : `The session "${sessionName}" in ${groupName} has ended.`,
-    category: "Sessions",
-    metadata: { groupId, groupName, sessionId, sessionName, sessionEnded: !isStarted },
-  });
+  const batch = db.batch();
+  const now = Date.now();
+  for (const userId of members) {
+    if (!userId) continue;
+    const isAdmin = Boolean(creatorId && userId === creatorId);
+    const joined = isAdmin;
+    const notifRef = db
+      .collection("notifications")
+      .doc(userId)
+      .collection("notifications")
+      .doc();
+    batch.set(notifRef, {
+      type: isStarted ? "session_started" : "session_ended",
+      title: isStarted ? "Session Started" : "Session Ended",
+      message: isStarted
+        ? `A new session "${sessionName}" has started in ${groupName}.`
+        : `The session "${sessionName}" in ${groupName} has ended.`,
+      category: "Sessions",
+      metadata: {
+        groupId,
+        groupName,
+        sessionId,
+        sessionName,
+        sessionEnded: !isStarted,
+        creatorId: creatorId || "",
+        isAdmin,
+        joined,
+      },
+      timestamp: now,
+      read: false,
+    });
+  }
+  await batch.commit();
+};
+
+const updateSessionNotificationJoined = async (userId, sessionId, joined) => {
+  try {
+    if (!userId || !sessionId) return;
+    const notifsRef = db
+      .collection("notifications")
+      .doc(userId)
+      .collection("notifications")
+      .where("metadata.sessionId", "==", sessionId)
+      .where("type", "==", "session_started");
+    const snap = await notifsRef.get();
+    if (!snap.empty) {
+      const batch = db.batch();
+      snap.docs.forEach((doc) => {
+        batch.update(doc.ref, {
+          "metadata.joined": joined,
+        });
+      });
+      await batch.commit();
+    }
+  } catch (err) {
+    console.error("Error updating session notification joined status:", err);
+  }
 };
 
 const notifyRoleTransfer = async (
@@ -364,6 +415,7 @@ module.exports = {
   notifyJoinRequest,
   notifyJoinResult,
   notifySessionStatus,
+  updateSessionNotificationJoined,
   notifyRoleTransfer,
   notifyMemberRemoved,
   notifyGroupDeleted,

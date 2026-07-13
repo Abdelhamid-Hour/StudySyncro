@@ -15,6 +15,7 @@ import "../../../auth/auth.js";
 import { initNotificationsManager } from "./notifications.js";
 
 tooltipSetup();
+
 initNotificationsManager();
 
 document.addEventListener("dragover", (e) => e.preventDefault());
@@ -53,10 +54,13 @@ const savedAppTheme = localStorage.getItem("theme") || "light";
 document.documentElement.setAttribute("data-theme", savedAppTheme);
 updateThemeToggleIcons(savedAppTheme);
 
-const themeBtns = document.querySelectorAll(".toggle-container, #mobile-theme-toggle-btn");
+const themeBtns = document.querySelectorAll(
+  ".toggle-container, #mobile-theme-toggle-btn",
+);
 themeBtns.forEach((btn) => {
   btn?.addEventListener("click", () => {
-    const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+    const currentTheme =
+      document.documentElement.getAttribute("data-theme") || "dark";
     const newTheme = currentTheme === "dark" ? "light" : "dark";
 
     const rect = btn.getBoundingClientRect();
@@ -104,7 +108,9 @@ mobileLogoutBtn?.addEventListener("click", () => {
 
 mobileNotifBtn?.addEventListener("click", () => {
   mobileMasterDrawer?.classList.remove("open");
-  const desktopNotifBtn = document.querySelector(".notification-container .open-drop-down-btn");
+  const desktopNotifBtn = document.querySelector(
+    ".notification-container .open-drop-down-btn",
+  );
   desktopNotifBtn?.click();
 });
 
@@ -132,7 +138,11 @@ if (sidebarTitleEl && mobilePageTitleEl) {
     }
   };
   const observer = new MutationObserver(syncTitle);
-  observer.observe(sidebarTitleEl, { childList: true, subtree: true, characterData: true });
+  observer.observe(sidebarTitleEl, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
 }
 
 // Handle mobile topbar search button click to toggle horizontal search bar
@@ -148,7 +158,10 @@ mobileSearchBtn?.addEventListener("click", (e) => {
     searchContentEl =
       mobileSearchBox?.querySelector(".active-sessions-search.search") ||
       document.querySelector(".active-sessions-search.search");
-  } else if (topSideBarMiddle && topSideBarMiddle.querySelector(".search-container")) {
+  } else if (
+    topSideBarMiddle &&
+    topSideBarMiddle.querySelector(".search-container")
+  ) {
     searchContentEl = topSideBarMiddle;
   }
 

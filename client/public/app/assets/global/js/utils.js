@@ -14,8 +14,8 @@ import { initAndDiplayErrorTooltip } from "../../shared/chat/js/utils.js";
 
 export let _loadersCount = 4;
 export const updateLoaderCountVar = (val) => {
-  _loadersCount = val
-}
+  _loadersCount = val;
+};
 let isRouting = false;
 
 window.__activeEventSources = window.__activeEventSources || [];
@@ -25,7 +25,7 @@ if (OriginalEventSource && !window.__esWrapped) {
   window.EventSource = class extends OriginalEventSource {
     constructor(url, options) {
       super(url, options);
-      if(url.includes("/notifications/stream")) return;
+      if (url.includes("/notifications/stream")) return;
       window.__activeEventSources.push(this);
     }
   };
@@ -114,7 +114,7 @@ export const handleApiAction = async (
     method = "POST",
     toOldBtn = true,
     getExtraData = null,
-  } = {}
+  } = {},
 ) => {
   let btnRect = null;
   let originalHtml = null;
@@ -176,33 +176,40 @@ export const millisecondsToHMFormat = (ms) => {
 };
 
 export const getLoadersCount = () => {
-  const list = document.querySelector('.quizzes-list, .groups-list');
-  if(!list) return _loadersCount;
+  const list = document.querySelector(".quizzes-list, .groups-list");
+  if (!list) return _loadersCount;
 
   const computedStyles = window.getComputedStyle(list);
-  const gridTemplateColumnsValue = computedStyles.getPropertyValue('grid-template-columns');
-  const loadersCount = gridTemplateColumnsValue.includes("repeat") ? parseInt(gridTemplateColumnsValue.match(/\d+/)[0]) : gridTemplateColumnsValue.split(' ').length;
+  const gridTemplateColumnsValue = computedStyles.getPropertyValue(
+    "grid-template-columns",
+  );
+  const loadersCount = gridTemplateColumnsValue.includes("repeat")
+    ? parseInt(gridTemplateColumnsValue.match(/\d+/)[0])
+    : gridTemplateColumnsValue.split(" ").length;
   updateLoaderCountVar(loadersCount);
-  
-  return loadersCount
-}
+
+  return loadersCount;
+};
 
 export const updateSkletonCount = () => {
-  
-  const skeletonCards = document.querySelectorAll(".quizzes-list .loading-card, .groups-list .loading-card");
+  const skeletonCards = document.querySelectorAll(
+    ".quizzes-list .loading-card, .groups-list .loading-card",
+  );
 
-  if(!skeletonCards.length) return;
+  if (!skeletonCards.length) return;
   const skeletonCount = getLoadersCount();
 
-  if(skeletonCards.length == skeletonCount) return;
+  if (skeletonCards.length == skeletonCount) return;
 
-  if(skeletonCards.length > skeletonCount) {
+  if (skeletonCards.length > skeletonCount) {
     skeletonCards[0]?.remove();
     return;
   }
 
-  skeletonCards[skeletonCards.length - 1].after(skeletonCards[0].cloneNode(true));
-}
+  skeletonCards[skeletonCards.length - 1].after(
+    skeletonCards[0].cloneNode(true),
+  );
+};
 
 export const closeAndOpenLeftSideBar = () => {
   const shouldHideElements = document.querySelectorAll(".should-hide");
@@ -244,12 +251,13 @@ export const adjustMenuDirection = (button, menu) => {
   }
 };
 
-export const openDropDownMenu = (button, customOverlay = null) => {
+export const openDropDownMenu = (button) => {
   if (!button) return;
   const overlay =
-    customOverlay ||
     button.parentElement?.querySelector(".overlay") ||
-    button.closest(".select-trigger, .quiz-card-header, div")?.querySelector(".overlay");
+    button
+      .closest(".select-trigger, .quiz-card-header, div")
+      ?.querySelector(".overlay");
   if (overlay) {
     if (overlay.classList.contains("open-overlay")) {
       overlay.classList.remove("open-overlay");
@@ -315,6 +323,7 @@ export const handleOverlayClose = (event) => {
       overlayToClose.style.bottom = "";
       overlayToClose.style.translate = "";
     }, 300); // Wait for transition
+    event.stopImmediatePropagation();
   }
   if (!overlayToClose) {
     document.body.style.pointerEvents = "auto";
@@ -385,7 +394,7 @@ export const tooltipSetup = () => {
       currentTooltipTarget = tooltipTarget;
       tooltipTimer = setTimeout(
         () => showTooltip(tooltipTarget, hoverTooltip),
-        1000
+        1000,
       );
     }
   });
@@ -414,7 +423,7 @@ const SHARED_STYLES_MAP = {
     "/fields",
     "/forms",
     "/quizzes-my-groups",
-    "/quiz-result"
+    "/quiz-result",
   ],
   "/groups/my": [
     "/groups-my-available",
@@ -439,28 +448,30 @@ const setSharedStylesResources = async (pathName, removeOld = true) => {
   const sharedStylesRoutes = SHARED_STYLES_MAP[pathName];
   if (sharedStylesRoutes) {
     const sharedStylesLinks = document.querySelectorAll(
-      'link[data-dynamic][rel="stylesheet"][href*="shared"]'
+      'link[data-dynamic][rel="stylesheet"][href*="shared"]',
     );
     const sharedPreloadLinks = document.querySelectorAll(
-      'link[data-dynamic][rel="preload"][href*="shared"]'
+      'link[data-dynamic][rel="preload"][href*="shared"]',
     );
     // add new shared resources and wait for their load
     await Promise.all(
       sharedStylesRoutes.map((styleRoute) => {
         if (
-          !Array.from(sharedStylesLinks).find((l) => l.href.includes(styleRoute))
+          !Array.from(sharedStylesLinks).find((l) =>
+            l.href.includes(styleRoute),
+          )
         ) {
           return setStyleRoute(`/shared${styleRoute}`);
         }
         return Promise.resolve();
-      })
+      }),
     );
 
     if (removeOld) {
       // Remove previous shared resources that new ones are not using
       sharedStylesLinks.forEach((l) => {
         const prevStyleRoute = sharedStylesRoutes.find((route) =>
-          l.href.includes(route)
+          l.href.includes(route),
         );
         if (!prevStyleRoute) {
           l.remove();
@@ -468,7 +479,7 @@ const setSharedStylesResources = async (pathName, removeOld = true) => {
       });
       sharedPreloadLinks.forEach((l) => {
         const prevStyleRoute = sharedStylesRoutes.find((route) =>
-          l.href.includes(route)
+          l.href.includes(route),
         );
         if (!prevStyleRoute) {
           l.remove();
@@ -524,10 +535,10 @@ const setStyleRoute = (pathName) => {
 
 const removePreviousRessources = (keepPathName = null) => {
   const stylesLinks = document.querySelectorAll(
-    'link[data-dynamic][rel="stylesheet"]:not([href*="shared"])'
+    'link[data-dynamic][rel="stylesheet"]:not([href*="shared"])',
   );
   const preloadLinks = document.querySelectorAll(
-    'link[data-dynamic][rel="preload"]:not([href*="shared"]), link[data-dynamic][rel="modulepreload"]'
+    'link[data-dynamic][rel="preload"]:not([href*="shared"]), link[data-dynamic][rel="modulepreload"]',
   );
   const script = document.querySelector("script[data-dynamic]");
 
@@ -675,7 +686,8 @@ const setGroupName = (groupName) => {
   if (groupName) {
     groupNameEl.textContent = groupName;
   } else {
-    groupNameEl.innerHTML = '<span class="loading-opacity-animation" style="width: 10rem; height: 1.5rem; display: inline-block; border-radius: 0.3rem;"></span>';
+    groupNameEl.innerHTML =
+      '<span class="loading-opacity-animation" style="width: 10rem; height: 1.5rem; display: inline-block; border-radius: 0.3rem;"></span>';
   }
   return groupNameEl;
 };
@@ -686,7 +698,8 @@ const setQuizTitle = (quizTitle) => {
   if (quizTitle) {
     quizTitleEl.textContent = quizTitle;
   } else {
-    quizTitleEl.innerHTML = '<span class="loading-opacity-animation" style="width: 12rem; height: 1.5rem; display: inline-block; border-radius: 0.3rem;"></span>';
+    quizTitleEl.innerHTML =
+      '<span class="loading-opacity-animation" style="width: 12rem; height: 1.5rem; display: inline-block; border-radius: 0.3rem;"></span>';
   }
   return quizTitleEl;
 };
@@ -757,7 +770,7 @@ const pageConfig = {
 
 const removeCreateBtns = () => {
   const createBtns = document.querySelectorAll(
-    ".create-quiz-btn, .create-group-btn"
+    ".create-quiz-btn, .create-group-btn",
   );
   createBtns.forEach((btn) => {
     btn.remove();
@@ -771,11 +784,21 @@ const removeSaveQuizBtn = () => {
 
 const updateTopSideBar = (pathName, extraData) => {
   let normalizedPath = pathName;
-  if (normalizedPath.includes("/chat") || normalizedPath.includes("/group-chat")) {
+  if (
+    normalizedPath.includes("/chat") ||
+    normalizedPath.includes("/group-chat")
+  ) {
     normalizedPath = "/groups/my/group-chat";
-  } else if (normalizedPath.includes("/edit") || normalizedPath.includes("/quiz-editor")) {
+  } else if (
+    normalizedPath.includes("/edit") ||
+    normalizedPath.includes("/quiz-editor")
+  ) {
     normalizedPath = "/quizzes/my/quiz-editor";
-  } else if (normalizedPath.includes("/home") || normalizedPath === "/" || normalizedPath === "/app") {
+  } else if (
+    normalizedPath.includes("/home") ||
+    normalizedPath === "/" ||
+    normalizedPath === "/app"
+  ) {
     normalizedPath = "/home";
   }
 
@@ -792,9 +815,17 @@ const updateTopSideBar = (pathName, extraData) => {
   if (topSideBar && !topSideBar.contains(topSideBarMiddle)) {
     topSideBar.appendChild(topSideBarMiddle);
   }
-  const activeSessionsHeader = document.querySelector(".active-sessions header");
-  const activeSearchEl = document.querySelector(".active-sessions-search.search");
-  if (activeSessionsHeader && activeSearchEl && !activeSessionsHeader.contains(activeSearchEl)) {
+  const activeSessionsHeader = document.querySelector(
+    ".active-sessions header",
+  );
+  const activeSearchEl = document.querySelector(
+    ".active-sessions-search.search",
+  );
+  if (
+    activeSessionsHeader &&
+    activeSearchEl &&
+    !activeSessionsHeader.contains(activeSearchEl)
+  ) {
     activeSessionsHeader.appendChild(activeSearchEl);
   }
 
@@ -805,7 +836,12 @@ const updateTopSideBar = (pathName, extraData) => {
   const mobileSearchBtn = document.querySelector(".mobile-search-btn");
   const mobileSearchBox = document.getElementById("mobile-search-box");
   const mobileTabsContainer = document.getElementById("mobile-tabs-container");
-  if (mobileTabsContainer && normalizedPath !== "/home" && !normalizedPath.startsWith("/groups") && !normalizedPath.startsWith("/quizzes")) {
+  if (
+    mobileTabsContainer &&
+    normalizedPath !== "/home" &&
+    !normalizedPath.startsWith("/groups") &&
+    !normalizedPath.startsWith("/quizzes")
+  ) {
     mobileTabsContainer.classList.add("hidden");
     mobileTabsContainer.innerHTML = "";
   }
@@ -830,7 +866,7 @@ const updateTopSideBar = (pathName, extraData) => {
   // 5) ONLY groups get tabs
   const isGroups = ["/groups/my", "/groups/available"].includes(normalizedPath);
   const isQuizzes = ["/quizzes/my", "/quizzes/passed"].includes(normalizedPath);
-  const existingTabs = document.querySelector(".navigation-tabs");
+  const existingTabs = topSideBarHeader?.querySelector(".navigation-tabs");
   if (existingTabs) {
     existingTabs.remove();
   }
@@ -890,7 +926,8 @@ const updateTopSideBarHeader = (Title) => {
     const returnHref = linkEl.getAttribute("href") || "/app/home";
     mobileBackBtn.setAttribute("href", returnHref);
     mobileBackBtn.classList.remove("hidden");
-    mobileTitleEl.textContent = linkEl.textContent.trim() || tempDiv.textContent.trim();
+    mobileTitleEl.textContent =
+      linkEl.textContent.trim() || tempDiv.textContent.trim();
   } else {
     if (mobileBackBtn) mobileBackBtn.classList.add("hidden");
     mobileTitleEl.innerHTML = Title;
@@ -910,7 +947,6 @@ export const clearAllTimeOuts = () => {
 };
 
 export const updateMain = async (path, isTabLinks) => {
-  
   const thisNav = ++navCounter;
   try {
     if (thisNav !== navCounter) {
@@ -919,17 +955,22 @@ export const updateMain = async (path, isTabLinks) => {
     }
     clearAllTimeOuts();
     closeAllEventSources();
+    clearOverlaysModals();
 
     let predRoute = path;
     try {
       if (predRoute.startsWith("http")) predRoute = new URL(predRoute).pathname;
       if (predRoute.startsWith("/app")) predRoute = predRoute.slice(4);
-      if (predRoute === "/" || predRoute === "" || predRoute === "/home") predRoute = "/home/inactive";
+      if (predRoute === "/" || predRoute === "" || predRoute === "/home")
+        predRoute = "/home/inactive";
       predRoute = predRoute.split("?")[0].replace(/\/$/, "");
       if (!predRoute.startsWith("/")) predRoute = "/" + predRoute;
       if (predRoute.includes("/chat") || predRoute.includes("/group-chat")) {
         predRoute = "/groups/my/group-chat";
-      } else if (predRoute.includes("/edit") || predRoute.includes("/quiz-editor")) {
+      } else if (
+        predRoute.includes("/edit") ||
+        predRoute.includes("/quiz-editor")
+      ) {
         predRoute = "/quizzes/my/quiz-editor";
       } else if (predRoute.includes("/quiz-play")) {
         predRoute = "/quiz-play";
@@ -938,7 +979,6 @@ export const updateMain = async (path, isTabLinks) => {
         setStyleRoute(predRoute),
         setSharedStylesResources(predRoute, false),
       ]);
-      removePreviousRessources(predRoute);
       setSharedStylesResources(predRoute, true);
     } catch (e) {}
 
@@ -947,7 +987,7 @@ export const updateMain = async (path, isTabLinks) => {
     if (!isTabLinks) {
       updateTopSideBar(
         predRoute.includes("/home") ? "/home" : predRoute,
-        window.lastExtraData || {}
+        window.lastExtraData || {},
       );
     }
     const { pathName, htmlFragment, extraData } = await fetchTemplate(path);
@@ -956,10 +996,13 @@ export const updateMain = async (path, isTabLinks) => {
       isRouting = false;
       return;
     }
-    
+
     clearAllTimeOuts();
     closeAllEventSources();
-    const cleanFragment = typeof htmlFragment === "string" ? htmlFragment.replace(/\bfade-in-template\b/g, "") : htmlFragment;
+    const cleanFragment =
+      typeof htmlFragment === "string"
+        ? htmlFragment.replace(/\bfade-in-template\b/g, "")
+        : htmlFragment;
 
     await Promise.all([
       setStyleRoute(pathName),
@@ -975,13 +1018,19 @@ export const updateMain = async (path, isTabLinks) => {
     removePreviousRessources(pathName);
     setSharedStylesResources(pathName, true);
     setScriptRoute(pathName, thisNav);
-    if (extraData) window.lastExtraData = { ...window.lastExtraData, ...extraData };
-    const isDynamicTitleRoute = pathName.includes("/chat") || pathName.includes("/group-chat") || pathName.includes("/edit") || pathName.includes("/quiz-editor");
-    const isFirstTimeHome = pathName.includes("/home") && !window.lastExtraData?.fullName;
+    if (extraData)
+      window.lastExtraData = { ...window.lastExtraData, ...extraData };
+    const isDynamicTitleRoute =
+      pathName.includes("/chat") ||
+      pathName.includes("/group-chat") ||
+      pathName.includes("/edit") ||
+      pathName.includes("/quiz-editor");
+    const isFirstTimeHome =
+      pathName.includes("/home") && !window.lastExtraData?.fullName;
     if (!isTabLinks && (isDynamicTitleRoute || isFirstTimeHome)) {
       updateTopSideBar(
         pathName.includes("/home") ? "/home" : pathName,
-        window.lastExtraData || extraData
+        window.lastExtraData || extraData,
       );
     }
   } catch (error) {
@@ -1005,13 +1054,17 @@ export const toggleActiveLink = (pathName, tabLink) => {
     : "";
   // Allow tab to remain active if pathName starts with tabLinkPathName (for subpages)
   if (tabLinkPathName && pathName.startsWith(tabLinkPathName + "/")) return;
-  document.querySelectorAll(".side-bar-icons a.active, .mobile-bottomnav a.active, .nav-link.active, .route-link.active").forEach((activePageLink) => {
-    const activeIcon = activePageLink.querySelector("i");
-    activeIcon ? animateFillIcon(activeIcon, false) : null;
-    activePageLink.classList.remove("active");
-  });
+  document
+    .querySelectorAll(
+      ".side-bar-icons a.active, .mobile-bottomnav a.active, .nav-link.active, .route-link.active",
+    )
+    .forEach((activePageLink) => {
+      const activeIcon = activePageLink.querySelector("i");
+      activeIcon ? animateFillIcon(activeIcon, false) : null;
+      activePageLink.classList.remove("active");
+    });
   const pageLinks = document.querySelectorAll(
-    `.side-bar-icons [href="${pathName}"], .mobile-bottomnav [href="${pathName}"]`
+    `.side-bar-icons [href="${pathName}"], .mobile-bottomnav [href="${pathName}"]`,
   );
   if (pageLinks.length > 0) {
     pageLinks.forEach((pageLink) => {
@@ -1020,7 +1073,9 @@ export const toggleActiveLink = (pathName, tabLink) => {
       icon ? animateFillIcon(icon, true) : null;
     });
   } else {
-    const allLinks = document.querySelectorAll(".side-bar-icons a[href], .mobile-bottomnav a[href]");
+    const allLinks = document.querySelectorAll(
+      ".side-bar-icons a[href], .mobile-bottomnav a[href]",
+    );
     allLinks.forEach((link) => {
       const href = link.getAttribute("href");
       if (
@@ -1052,14 +1107,13 @@ export const clearTooltipWithTimeOut = getDebounceFunc((input) => {
 }, 2000);
 
 export const handleRoutingClick = (event) => {
-  
   if (isRouting) {
     event.preventDefault(); // Prevent default action (like link navigation)
     event.stopPropagation(); // Optional: stop event from bubbling up
   }
 };
 
-const clearOverlaysModals = () => {
+export const clearOverlaysModals = () => {
   const overlaysModals = document.querySelectorAll(".backdrop");
   overlaysModals.forEach((oM) => {
     const className = oM
@@ -1170,7 +1224,7 @@ const createFilterOption = (id, label, iconClass) => {
   const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
   path.setAttribute(
     "d",
-    "M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+    "M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16",
   );
   path.setAttribute("pathLength", "575.0541381835938");
   path.setAttribute("class", "path");
@@ -1205,7 +1259,7 @@ const createSection = (title, options) => {
     const filterOption = createFilterOption(
       option.id,
       option.label,
-      option.icon
+      option.icon,
     );
     section.appendChild(filterOption);
   });
@@ -1265,11 +1319,12 @@ export const openOverlayModal = async (
   overlayModalCustomClassName,
   closeBtnClasses = [],
   loadContentCallback,
-  afterLoadCallback
+  afterLoadCallback,
+  skeleton = getLoader(),
 ) => {
   const backdrop = document.createElement("div");
   backdrop.className = "backdrop";
-  backdrop.innerHTML = getLoader();
+  backdrop.innerHTML = skeleton;
   document.body.appendChild(backdrop);
 
   try {
@@ -1280,7 +1335,7 @@ export const openOverlayModal = async (
         backdrop
           .querySelector(c)
           .addEventListener("click", () =>
-            closeOverlayModal(overlayModalCustomClassName)
+            closeOverlayModal(overlayModalCustomClassName),
           );
       });
 
@@ -1297,7 +1352,7 @@ export const openOverlayModal = async (
 
 export const closeOverlayModal = (overlayModalClassName) => {
   const backdrop = document.querySelector(
-    `.backdrop:has(.${overlayModalClassName})`
+    `.backdrop:has(.${overlayModalClassName})`,
   );
   if (backdrop) {
     backdrop.classList.add("fade-out");
@@ -1344,14 +1399,17 @@ export const getLoader = () => {
 };
 
 export const getHomeSkeleton = () => {
-  if (typeof window !== "undefined" && window.matchMedia("(max-width: 48rem)").matches) {
+  if (
+    typeof window !== "undefined" &&
+    window.matchMedia("(max-width: 48rem)").matches
+  ) {
     const headerContainer = document.getElementById("mobile-tabs-container");
     if (headerContainer) {
       headerContainer.classList.remove("hidden");
       headerContainer.innerHTML = `
         <div class="mobile-inactive-tabs navigation-tabs" style="width: 100%;">
-          <button type="button" class="tab active-tab" style="pointer-events: none;">Active Sessions</button>
-          <button type="button" class="tab" style="pointer-events: none;">Recent Messages</button>
+          <button type="button" class="tab active-tab exclude-btn" style="pointer-events: none;">Active Sessions</button>
+          <button type="button" class="tab exclude-btn" style="pointer-events: none;">Recent Messages</button>
         </div>
       `;
     }
@@ -1501,14 +1559,17 @@ export const getHomeSkeleton = () => {
 
 export const getGroupsSkeleton = (path = "") => {
   const userGroup = path.includes("/groups/my");
-  if (typeof window !== "undefined" && window.matchMedia("(max-width: 48rem)").matches) {
+  if (
+    typeof window !== "undefined" &&
+    window.matchMedia("(max-width: 48rem)").matches
+  ) {
     const headerContainer = document.getElementById("mobile-tabs-container");
     if (headerContainer) {
       headerContainer.classList.remove("hidden");
       headerContainer.innerHTML = `
         <div class="mobile-groups-tabs navigation-tabs groups-tabs" style="width: 100%;">
-          <a href="/app/groups/my" class="tab route-link ${userGroup ? 'active-tab' : ''} exclude-btn">My Groups</a>
-          <a href="/app/groups/available" class="tab route-link ${!userGroup ? 'active-tab' : ''} exclude-btn">Available Groups</a>
+          <a href="/app/groups/my" class="tab route-link ${userGroup ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">My Groups</a>
+          <a href="/app/groups/available" class="tab route-link ${!userGroup ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">Available Groups</a>
         </div>
       `;
     }
@@ -1560,6 +1621,21 @@ export const getGroupsSkeleton = (path = "") => {
 
 export const getQuizzesSkeleton = (path = "") => {
   const isPassed = path.includes("/quizzes/passed") || path.includes("/passed");
+  if (
+    typeof window !== "undefined" &&
+    window.matchMedia("(max-width: 48rem)").matches
+  ) {
+    const headerContainer = document.getElementById("mobile-tabs-container");
+    if (headerContainer) {
+      headerContainer.classList.remove("hidden");
+      headerContainer.innerHTML = `
+        <div class="mobile-quizzes-tabs navigation-tabs quizzes-tabs" style="width: 100%;">
+          <a href="/app/quizzes/my" class="tab route-link ${!isPassed ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">My Quizzes</a>
+          <a href="/app/quizzes/passed" class="tab route-link ${isPassed ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">Passed</a>
+        </div>
+      `;
+    }
+  }
   const quizCard = isPassed
     ? `
     <div class="quiz-card loading-animation loading-card" style="pointer-events: none;">
@@ -1897,9 +1973,11 @@ export const getQuizEditorSkeleton = () => {
           </button>
         </header>
         <div class="questions-list">
-          ${[1, 2, 3].map((idx) => `
+          ${[1, 2, 3]
+            .map(
+              (idx) => `
             <div class="question">
-              ${idx === 1 ? '<div class="drop-target"></div>' : ''}
+              ${idx === 1 ? '<div class="drop-target"></div>' : ""}
               <a class="question-card" style="pointer-events: none;">
                 <header class="question-card-header">
                   <h4>
@@ -1930,7 +2008,9 @@ export const getQuizEditorSkeleton = () => {
               </a>
               <div class="drop-target"></div>
             </div>
-          `).join("")}
+          `,
+            )
+            .join("")}
         </div>
       </section>
       <section class="question-editor-panel">
@@ -1976,7 +2056,9 @@ export const getQuizEditorSkeleton = () => {
           </span>
         </header>
         <div class="questions-list">
-          ${[1, 2].map((idx) => `
+          ${[1, 2]
+            .map(
+              (idx) => `
             <div class="question-editor-box">
               <header class="question-header">
                 <h4>
@@ -2002,11 +2084,13 @@ export const getQuizEditorSkeleton = () => {
                   Choices
                 </h5>
                 <div class="choices-list">
-                  ${[0, 1].map((cidx) => `
+                  ${[0, 1]
+                    .map(
+                      (cidx) => `
                     <div class="choice">
                       <span class="choice-label">${String.fromCharCode(65 + cidx)}</span>
                       <div class="choice-input input" style="display: flex; align-items: center;">
-                        <span class="loading-opacity-animation" style="width: ${cidx === 0 ? '55%' : '40%'}; height: 1.2rem; border-radius: 0.3rem;"></span>
+                        <span class="loading-opacity-animation" style="width: ${cidx === 0 ? "55%" : "40%"}; height: 1.2rem; border-radius: 0.3rem;"></span>
                       </div>
                       <button
                         type="button"
@@ -2016,7 +2100,9 @@ export const getQuizEditorSkeleton = () => {
                         <i class="bi bi-trash3"></i>
                       </button>
                     </div>
-                  `).join("")}
+                  `,
+                    )
+                    .join("")}
                 </div>
                 <button type="button" class="add-choice-btn small-btn" disabled>
                   <i class="bi bi-plus-circle"></i>
@@ -2042,7 +2128,9 @@ export const getQuizEditorSkeleton = () => {
                 </div>
               </div>
             </div>
-          `).join("")}
+          `,
+            )
+            .join("")}
           <button type="button" class="exclude-btn add-question-btn" disabled>
             <i class="bi bi-plus-circle"></i>
             <hr />
@@ -2054,7 +2142,11 @@ export const getQuizEditorSkeleton = () => {
 };
 
 export const getPageSkeleton = (path = "") => {
-  const isHome = path.includes("/home") || path === "/" || path === "/app" || path === "/app/";
+  const isHome =
+    path.includes("/home") ||
+    path === "/" ||
+    path === "/app" ||
+    path === "/app/";
   const isGroups = path.includes("/groups");
   const isQuizzes = path.includes("/quizzes");
   if (!isHome && !isGroups && !isQuizzes && typeof document !== "undefined") {
@@ -2122,13 +2214,17 @@ export const getQuizPlaySkeleton = () => {
             <div class="question-choices">
               <span class="select-answer-label">Select the correct Answer</span>
               <div class="choices-list">
-                ${[0, 1, 2, 3].map((idx) => `
+                ${[0, 1, 2, 3]
+                  .map(
+                    (idx) => `
                   <label class="choice" style="pointer-events: none;">
                     <input type="radio" disabled />
                     <span class="choice-label">${String.fromCharCode(65 + idx)}</span>
                     <span class="choice-text loading-opacity-animation" style="width: ${60 - idx * 10}%; height: 1.2rem; border-radius: 0.3rem; display: inline-block;"></span>
                   </label>
-                `).join("")}
+                `,
+                  )
+                  .join("")}
               </div>
             </div>
           </div>
@@ -2151,7 +2247,7 @@ const createConfirmationBox = (
   title,
   message,
   cancelButtonText,
-  confirmButtonText
+  confirmButtonText,
 ) => {
   return `<div class="overlay-model confirmation-box ${type}">
         <i class="bi bi-${
@@ -2175,7 +2271,7 @@ export const showConfirmationBox = async (
   title,
   message,
   cancelButtonText,
-  confirmButtonText
+  confirmButtonText,
 ) => {
   const promise = new Promise((res, rej) => {
     openOverlayModal(
@@ -2187,16 +2283,16 @@ export const showConfirmationBox = async (
           title,
           message,
           cancelButtonText,
-          confirmButtonText
+          confirmButtonText,
         );
         return confirmationBox;
       },
       () => {
         const canselBtn = document.querySelector(
-          ".confirmation-box-btn-cancel"
+          ".confirmation-box-btn-cancel",
         );
         const confirmBtn = document.querySelector(
-          ".confirmation-box-btn-confirm"
+          ".confirmation-box-btn-confirm",
         );
 
         canselBtn.addEventListener("click", () => {
@@ -2206,7 +2302,7 @@ export const showConfirmationBox = async (
         confirmBtn.addEventListener("click", () => {
           res(true);
         });
-      }
+      },
     );
   });
 

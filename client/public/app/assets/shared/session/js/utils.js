@@ -1,13 +1,7 @@
 import { handleApiAction, navigateTo } from "../../../global/js/utils.js";
 
 export const endSession = (btn, sessionId) => {
-  handleApiAction("/end-session", { sessionId }, btn, {
-    onSuccess: () => {
-      history.pushState({}, "", "/app/home");
-      window.dispatchEvent(new PopStateEvent("popstate", { state: {} }));
-    },
-    successMsg: "Session ended successfully.",
-  });
+  handleApiAction("/end-session", { sessionId }, btn);
 };
 
 export const leaveSession = (btn, sessionId) => {

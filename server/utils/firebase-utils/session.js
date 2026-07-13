@@ -1,7 +1,7 @@
 const { FieldValue, FieldPath } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
 const { formatHoursMinutes, millisecondsToHMFormat, INITIALE_LOADERS_COUNT } = require("../global");
-const { notifySessionStatus } = require("./notifications");
+const { notifySessionStatus, updateSessionNotificationJoined } = require("./notifications");
 const { getQuizResult, isQuizPassed } = require("./examen");
 const { getTasks } = require("./tache");
 
@@ -39,8 +39,6 @@ const createGroupSession = async (sessionData, userId) => {
     }
 
     const groupData = groupSnap.data();
-
-    console.log(groupData.creator, userId);
     
     if (groupData.creator !== userId)
       return {
@@ -184,7 +182,8 @@ const createGroupSession = async (sessionData, userId) => {
       newSessionData.name,
       newSessionId,
       true,
-      memberIds
+      memberIds,
+      userId
     );
 
     return {
@@ -362,9 +361,13 @@ const leavSession = async (userId) => {
   }
 
   if (user.exists) {
+    const leftSessionId = user.data().currentSession;
     await userSnap.update({
       currentSession: "",
     });
+    if (leftSessionId) {
+      await updateSessionNotificationJoined(userId, leftSessionId, false);
+    }
     return {
       success: true,
       message: "left the session ",
@@ -714,6 +717,7 @@ const joinSession = async (sessionId, userId) => {
       await updateActiveSessionFanOut(snap.data().groupId, sessionId, { 
         joinedCount: FieldValue.increment(1) 
       });
+      await updateSessionNotificationJoined(userId, sessionId, true);
 
       return {
         success: true,

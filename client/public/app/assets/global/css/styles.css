@@ -1113,7 +1113,8 @@ textarea {
                           }
                         }
 
-                        &.accept-btn {
+                        &.accept-btn,
+                        &.join-session-btn {
                           border: 1px solid #3b82f6;
                           color: #3b82f6;
 
@@ -1997,6 +1998,36 @@ label.container svg {
   transform: rotate(20deg) scale(1.15);
 }
 
+.navigation-tabs {
+  opacity: 1 !important;
+  width: 20rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--primary-radius);
+  padding: calc(var(--primary-gap) / 4);
+  background-color: var(--background-color);
+
+  .tab {
+    color: var(--secondary-text-color);
+    flex-basis: 50%;
+    padding: calc(var(--primary-gap) / 2);
+    text-align: center;
+    border-radius: 0.2rem;
+    cursor: pointer;
+
+    &:hover:not(.active-tab) {
+      background-color: var(--btn-background-color);
+    }
+  }
+
+  .active-tab {
+    background-color: var(--primary-color);
+    color: white;
+    border: 1px solid var(--info-border-color);
+  }
+}
+
 /* ==========================================================================
    MOBILE SHELL (Phone Screens <= 48rem)
    Strictly rem units (1rem = 16px)
@@ -2147,7 +2178,7 @@ nav.mobile-bottomnav {
     border-color: var(--primary-color) !important;
   }
 
-  .mobile-search-box .main-search.search input {
+  .mobile-search-box .main-search.search input:not(#date-input) {
     flex: 1 !important;
     border: none !important;
     background: transparent !important;
@@ -2284,7 +2315,6 @@ nav.mobile-bottomnav {
     color: var(--secondary-text-color);
     font-size: 0.7rem;
     padding: 0.25rem 0.5rem;
-    border-radius: 0.5rem;
     transition: color var(--primary-transition-style);
     gap: initial !important;
   }

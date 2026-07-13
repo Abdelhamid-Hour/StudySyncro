@@ -6,6 +6,8 @@ import {
   Loader,
 } from "../../../shared/loader/js/utils.js";
 
+import { initMobileQuizzesTabs } from "../../my/js/utils.js";
+
 const getScoreClass = (score) => {
   if (score >= 80) return "excellent";
   if (score >= 60) return "good";
@@ -164,6 +166,7 @@ const getCriteria = () => {
 };
 
 export const initLazyLoadingLoader = () => {
+  initMobileQuizzesTabs(true);
   const loader = new Loader(
     document.querySelector(".quizzes-list"),
     createPassedQuizCard,

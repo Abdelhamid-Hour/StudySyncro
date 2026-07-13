@@ -369,6 +369,11 @@ const leaveGroup = async (groupId, userId) => {
 
     if (groupSnap.data().currentSession) {
       await userRef.collection("activeSessions").doc(groupSnap.data().currentSession).delete();
+      const userSnap = await userRef.get();
+      if (userSnap.exists && userSnap.data().currentSession === groupSnap.data().currentSession) {
+        const { leavSession } = require("./session");
+        await leavSession(userId);
+      }
     }
     await rDb.ref(`userGroupChats/${userId}/${groupId}`).remove().catch((e) => console.error(e));
 
@@ -615,6 +620,13 @@ const deleteGroup = async (groupId) => {
     const groupRes = await getGroupById(groupId);
 
     if (!groupRes.success) return groupRes;
+
+    if (groupRes.group.currentSession && groupRes.group.currentSession !== "") {
+      return {
+        success: false,
+        message: "You cannot delete this group while an active study session is running. Please end the session first.",
+      };
+    }
 
     const membersSnap = await groupRef.collection("members").get();
     const memberIds = membersSnap.docs.map((doc) => doc.id);

@@ -327,11 +327,7 @@ export const startSession = async () => {
     addQuizEventListnersBns(session.quiz?.UID);
     session.startSession();
   } catch (error) {
-    console.error("Error starting session:", error);
-    showMessageBlock(
-      "Error starting session. Please try again later.",
-      "error"
-    );
+    navigateTo("/home");
   }
 };
 
@@ -793,7 +789,7 @@ export class Session {
           data.status === "aborted"
         ) {
           this.sessionStream.close();
-          showMessageBlock(data.status === "finished" ? "Session ended" : "Session aborted", "info");
+          showMessageBlock("Session ended", "info");
           navigateTo("/home");
         }
       } catch (e) {

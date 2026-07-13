@@ -105,7 +105,7 @@ html[data-theme="light"] {
   --loading-color-dark: rgb(75, 75, 75);
   --loading-color-light: rgba(238, 238, 238, 0.823);
   --primary-gap: 0.8rem;
-  --primary-radius: 5px;
+  --primary-radius: 0.5rem;
   --disabled-text-color: var(--btn-border-color);
   --disabled-background-color: var(--btn-background-color);
   --primary-transition-style: 300ms ease-out;

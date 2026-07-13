@@ -8,10 +8,7 @@
   border: var(--primary-border-style);
 
   .hidden {
-    height: 0;
-    scale: 0.95 !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
+    display: none;
   }
 
   .action-btns {
@@ -200,12 +197,10 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: var(--primary-gap);
+        flex-basis: 30%;
 
         .caption {
-          transition: scale var(--primary-transition-style),
-            opacity var(--primary-transition-style),
-            visibility var(--primary-transition-style);
+          margin-top: var(--primary-gap);
         }
 
         .error {
@@ -257,7 +252,7 @@
 
         .avatar:hover,
         &.file-drag-start {
-          .avatar-hover {
+          .avatar-hover:not(.hidden) {
             visibility: visible;
             opacity: 1;
             i {
@@ -330,7 +325,12 @@
       border-radius: var(--primary-radius);
       margin-inline: var(--primary-gap);
       border: 1px solid var(--orange-color);
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--primary-gap) / 2);
+
       h4 {
+        font-weight: 500;
         display: flex;
         align-items: center;
         gap: calc(var(--primary-gap) / 2);
@@ -350,5 +350,151 @@
       align-self: flex-end;
       margin-block: calc(var(--primary-gap) / 2);
     }
+  }
+}
+
+@media (max-width: 48rem) {
+  .settings-wrapper {
+    width: 100%;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    align-items: stretch;
+  }
+
+  .settings-wrapper .settings-content {
+    width: 100%;
+    gap: var(--primary-gap);
+  }
+
+  .settings-wrapper .settings-content .settings-header {
+    display: none;
+  }
+
+  .settings-wrapper .settings-content .settings-header h2 {
+    margin-bottom: 0.75rem;
+  }
+
+  .settings-wrapper .settings-content .settings-header .tabs {
+    display: none;
+  }
+
+  .settings-wrapper .content {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: var(--primary-gap);
+  }
+
+  .settings-wrapper .tab-content {
+    position: static;
+    width: 100%;
+    visibility: visible !important;
+    opacity: 1 !important;
+    padding: 1rem;
+    border-radius: var(--primary-radius);
+    box-shadow: 0 0.5rem 1.25rem var(--primary-shadow-color);
+    order: 0;
+  }
+
+  .settings-wrapper .profile-tab-content {
+    order: 1;
+  }
+
+  .settings-wrapper .email-tab-content {
+    order: 2;
+  }
+
+  .settings-wrapper .password-tab-content {
+    order: 3;
+  }
+
+  .settings-wrapper .delete-account-tab-content {
+    order: 4;
+
+    .warning-block {
+      margin-inline: initial;
+    }
+  }
+
+  .settings-wrapper .tab-content header {
+    text-align: left;
+  }
+
+  .settings-wrapper .tab-content header h3 {
+    font-size: 1.1rem;
+  }
+
+  .settings-wrapper .tab-content header span {
+    display: block;
+    margin-top: 0.25rem;
+  }
+
+  .settings-wrapper .profile-tab-content .profile-form {
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--primary-gap);
+  }
+
+  .settings-wrapper .profile-tab-content .profile-form .avatar-container {
+    width: 100%;
+  }
+
+  .settings-wrapper .profile-tab-content .profile-form .avatar-container .avatar {
+    width: 7.5rem;
+    height: 7.5rem;
+  }
+
+  .settings-wrapper .profile-tab-content .profile-form .avatar-container .avatar i {
+    font-size: 7.5rem;
+  }
+
+  .settings-wrapper .profile-tab-content .profile-form .info-fields {
+    padding: 0;
+    width: 100%;
+  }
+
+  .settings-wrapper .email-form,
+  .settings-wrapper .delete-account-form,
+  .settings-wrapper .password-form {
+    padding-inline: 0;
+    gap: var(--primary-gap);
+  }
+
+  .settings-wrapper .action-btns {
+    width: 100%;
+    align-self: stretch;
+  }
+
+  .settings-wrapper .modify-btn,
+  .settings-wrapper .add-btn,
+  .settings-wrapper .save-btn,
+  .settings-wrapper .delete-account-btn {
+    width: 100%;
+    min-width: 0;
+    align-self: stretch;
+  }
+
+  .settings-wrapper .warning-block {
+    margin-inline: 0;
+    padding: 0.875rem;
+  }
+
+  .settings-wrapper .email-tab-content .password-ckeck-field,
+  .settings-wrapper .email-tab-content .email-field-container,
+  .settings-wrapper .delete-account-tab-content .password-field-container,
+  .settings-wrapper .profile-tab-content .info-fields .fields {
+    gap: var(--primary-gap) !important;
+  }
+
+  .settings-wrapper .tab-content label {
+    font-size: 0.8125rem;
+  }
+
+  .settings-wrapper .tab-content .caption,
+  .settings-wrapper .email-tab-content .info-message {
+    font-size: 0.8125rem;
   }
 }

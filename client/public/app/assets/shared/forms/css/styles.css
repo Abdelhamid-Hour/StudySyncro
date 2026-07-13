@@ -269,11 +269,13 @@
     margin-top: auto !important;
     height: 3.25rem !important;
     font-size: 1.05rem !important;
-    border-radius: 0.6rem !important;
+    border-radius: var(--primary-radius) !important;
   }
 
   .create-group-overlay .group-subject-select-menu.open-overlay,
-  .create-group-overlay .drop-down-menu.open-overlay {
+  .create-group-overlay .drop-down-menu.open-overlay,
+  .create-session-overlay .drop-down-menu.open-overlay,
+  .create-quiz-overlay .drop-down-menu.open-overlay {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
@@ -297,7 +299,9 @@
     overflow-y: auto !important;
   }
 
-  .create-group-overlay .mobile-select-menu-header {
+  .create-group-overlay .mobile-select-menu-header,
+  .create-session-overlay .mobile-select-menu-header,
+  .create-quiz-overlay .mobile-select-menu-header {
     display: flex !important;
     align-items: center;
     justify-content: space-between;
@@ -305,13 +309,17 @@
     border-bottom: 1px solid var(--primary-border-color);
   }
 
-  .create-group-overlay .mobile-select-menu-header h4 {
+  .create-group-overlay .mobile-select-menu-header h4,
+  .create-session-overlay .mobile-select-menu-header h4,
+  .create-quiz-overlay .mobile-select-menu-header h4 {
     margin: 0;
     font-size: 1.2rem;
     color: var(--primary-text-color);
   }
 
-  .create-group-overlay .mobile-select-menu-header .close-select-menu-btn {
+  .create-group-overlay .mobile-select-menu-header .close-select-menu-btn,
+  .create-session-overlay .mobile-select-menu-header .close-select-menu-btn,
+  .create-quiz-overlay .mobile-select-menu-header .close-select-menu-btn {
     width: 2.4rem;
     height: 2.4rem;
     display: flex;
@@ -320,7 +328,9 @@
     font-size: 1.2rem;
   }
 
-  .create-group-overlay .drop-down-menu.open-overlay .select-search {
+  .create-group-overlay .drop-down-menu.open-overlay .select-search,
+  .create-session-overlay .drop-down-menu.open-overlay .select-search,
+  .create-quiz-overlay .drop-down-menu.open-overlay .select-search {
     display: block !important;
     width: 100% !important;
     flex-shrink: 0 !important;
@@ -342,7 +352,7 @@
     background-color: var(--inputs-background-color) !important;
     color: var(--primary-text-color) !important;
     border: 1px solid var(--inputs-border-color) !important;
-    border-radius: 0.5rem !important;
+    border-radius: var(--primary-radius) !important;
   }
 
   .create-group-overlay .drop-down-menu.open-overlay .drop-down-item {

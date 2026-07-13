@@ -434,14 +434,14 @@
                 <button type="button" class="notif-category-btn exclude-btn" data-category="Groups">Groups</button>
                 <button type="button" class="notif-category-btn exclude-btn" data-category="Sessions">Sessions</button>
               </div>
-              <div class="notifications-list" id="notifications-list" data-last-visible="<%= (typeof notificationsData !== 'undefined' && notificationsData.lastVisible) ? notificationsData.lastVisible : '' %>">
+              <div class="notifications-list" id="notifications-list" data-last-visible="<%= (typeof notificationsData !== 'undefined' && notificationsData.lastVisible) ? notificationsData.lastVisible : '' %>" data-current-session="<%= (typeof user !== 'undefined' && user && user.currentSession) ? user.currentSession : '' %>" data-current-user-id="<%= (typeof user !== 'undefined' && user && user.uid) ? user.uid : '' %>">
                 <% if (typeof notificationsData !== 'undefined' && notificationsData.cards && notificationsData.cards.length > 0) { %>
                   <%
                     const formatNotifDate = (ts) => {
                       try {
                         const d = new Date(ts || Date.now());
                         if (isNaN(d.getTime())) return "Recent";
-                        return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                        return d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                       } catch (e) {
                         return "Recent";
                       }
@@ -511,7 +511,7 @@
                       const timeStr = formatNotifDate(notif.timestamp);
                       const categoryLabel = notif.category || "General";
                     %>
-                    <div class="notif-card card-item <%= notif.read ? '' : 'unread' %>" data-id="<%= notif.id %>" data-type="<%= notif.type %>" data-category="<%= notif.category || 'All' %>" data-demande-id="<%= notif.metadata?.demandeId || '' %>" data-group-id="<%= notif.metadata?.groupId || '' %>" data-sender-name="<%= notif.metadata?.senderName || '' %>" data-group-name="<%= notif.metadata?.groupName || '' %>">
+                    <div class="notif-card card-item <%= notif.read ? '' : 'unread' %>" data-id="<%= notif.id %>" data-type="<%= notif.type %>" data-category="<%= notif.category || 'All' %>" data-demande-id="<%= notif.metadata?.demandeId || '' %>" data-group-id="<%= notif.metadata?.groupId || '' %>" data-sender-name="<%= notif.metadata?.senderName || '' %>" data-group-name="<%= notif.metadata?.groupName || '' %>" data-session-id="<%= notif.metadata?.sessionId || '' %>">
                       <div class="notif-icon <%= notif.type %>">
                         <%- iconHtml %>
                       </div>
@@ -519,10 +519,18 @@
                         <div class="notif-message"><%- formatNotifMsg(notif) %></div>
                         <div class="notif-footer">
                           <span class="notif-meta"><%= timeStr %> • <%= categoryLabel %></span>
+                          <%
+                            const isAlreadyJoined = Boolean((notif.metadata && notif.metadata.joined) || (typeof user !== 'undefined' && user && user.currentSession && user.currentSession === (notif.metadata && notif.metadata.sessionId)));
+                            const isCreator = Boolean((notif.metadata && notif.metadata.isAdmin) || (typeof user !== 'undefined' && user && notif.metadata && notif.metadata.creatorId && user.uid === notif.metadata.creatorId));
+                          %>
                           <% if (notif.type === 'join_request') { %>
                             <div class="notif-actions">
                               <button type="button" class="reject-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> Reject</button>
                               <button type="button" class="accept-btn exclude-btn small-btn" data-action="accept"><i class="bi bi-check-circle"></i> Accept</button>
+                            </div>
+                          <% } else if (notif.type === 'session_started' && !(notif.metadata && notif.metadata.sessionEnded) && !isAlreadyJoined && !isCreator) { %>
+                            <div class="notif-actions">
+                              <button type="button" class="join-session-btn exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> Join</button>
                             </div>
                           <% } %>
                         </div>

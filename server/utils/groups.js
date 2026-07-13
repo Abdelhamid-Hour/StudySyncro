@@ -24,7 +24,7 @@ const getGroupChatContext = async (userId, groupId) => {
   return await getChatContext(userId, groupId);
 };
 // Group Left Side Bar Contexts
-const getGroupInfoContext = async (groupId, user) => {
+const getGroupInfoContext = async (groupId, user) => {  
   const groupInfo = await getGroupInfo(groupId, user.uid);
   return groupInfo;
 };

@@ -277,8 +277,8 @@ const createDateBadge = (dateInput) => {
     dateInput.value = "";
     dateInput.dispatchEvent(new Event("input", { bubbles: true }));
   });
-  badge.appendChild(removeBtn);
   badge.appendChild(textSpan);
+  badge.appendChild(removeBtn);
   return badge;
 };
 
@@ -295,6 +295,7 @@ export const setUpDatePicker = (container) => {
       dateBadge = createDateBadge(dateInput);
       searchContainer.appendChild(dateBadge);
     }
-    dateBadge.querySelector(".text").innerText = selectedDate;
+    if(!selectedDate) dateBadge.remove();
+    else dateBadge.querySelector(".text").innerText = selectedDate;
   });
 };

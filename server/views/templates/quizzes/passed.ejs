@@ -4,6 +4,7 @@
 >
   <% if (cards && cards.length > 0) { %>
     <% cards.forEach(function(quiz) { %>
+    <% console.log(quiz); %>
     <div class="quiz-card card-item">
       <div class="quiz-title-container info-container">
         <label class="quiz-title-label">
@@ -11,6 +12,35 @@
           Quiz Title
         </label>
         <div class="quiz-title content"><%= quiz.title %></div>
+      </div>
+      <div class="group-name-container info-container">
+        <label class="group-name-label">
+          <span class="icon-box">
+            <i class="bi bi-people"></i>
+          </span>
+          Group Name
+        </label>
+        <div class="group-name content"><%= quiz.groupName %></div>
+      </div>
+      <div class="session-name-container info-container">
+        <label class="session-name-label">
+          <span class="icon-box">
+            <i class="bi bi-journal-bookmark"></i>
+          </span>
+          Session Name
+        </label>
+        <div class="session-name content"><%= quiz.sessionName || "N/A" %></div>
+      </div>
+            <div class="submitted-at-container info-container">
+        <label class="submitted-at-label">
+          <span class="icon-box">
+            <i class="bi bi-calendar-check"></i>
+          </span>
+          Submitted At
+        </label>
+        <div class="submitted-at content">
+          <%= toReadableDate(quiz.submittedAt) %>
+        </div>
       </div>
       <div class="score-container info-container">
         <label class="score-label">
@@ -22,35 +52,6 @@
         <div class="score <%= getScoreClass(quiz.score) %> content">
           <%= quiz.score %>%
         </div>
-      </div>
-      <div class="group-name-container info-container">
-        <label class="group-name-label">
-          <span class="icon-box">
-            <i class="bi bi-people"></i>
-          </span>
-          Group Name
-        </label>
-        <div class="group-name content"><%= quiz.groupName %></div>
-      </div>
-      <div class="submitted-at-container info-container">
-        <label class="submitted-at-label">
-          <span class="icon-box">
-            <i class="bi bi-calendar-check"></i>
-          </span>
-          Submitted At
-        </label>
-        <div class="submitted-at content">
-          <%= toReadableDate(quiz.submittedAt) %>
-        </div>
-      </div>
-      <div class="session-name-container info-container">
-        <label class="session-name-label">
-          <span class="icon-box">
-            <i class="bi bi-journal-bookmark"></i>
-          </span>
-          Session Name
-        </label>
-        <div class="session-name content"><%= quiz.sessionName %></div>
       </div>
       <div class="action-btns">
         <button class="view-quiz-result-btn" data-quiz-id="<%= quiz.id %>">
