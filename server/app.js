@@ -8,6 +8,7 @@ const {
   requireAuthForPages,
   requireAuthForAPI,
 } = require("./middleware/sessionVerification");
+const { renderFragmentOrLayout } = require("./utils/routing");
 const app = express();
 
 app.set("view engine", "ejs");
@@ -40,6 +41,23 @@ app.use("/app", requireAuthForPages, appRouter);
 // api route
 app.use("/api", requireAuthForAPI, apiRouter);
 
+// 404 Page not Found
+app.all('*', async (req, res) => {
+  if (req.path.startsWith('/app') && req.user) {
+    return renderFragmentOrLayout(
+      "templates/not-found",
+      { templateContext: { isStandalone: false, user: req.user } },
+      "/not-found",
+      req,
+      res
+    );
+  }
+
+  return res.status(404).render("templates/not-found", {
+    isStandalone: true,
+    user: req.user || null
+  });
+});
 
 const PORT = process.env.PORT || 5000;
 

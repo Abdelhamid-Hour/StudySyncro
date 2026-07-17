@@ -50,8 +50,7 @@ const handleGroupChatRoute = async (req, res) => {
     payload,
     "/groups/my/group-chat",
     req,
-    res,
-    extraData
+    res
   );
 }; // ! should implement with firebase
 
@@ -81,8 +80,7 @@ const handleQuizEditRoute = async (req, res) => {
     payload,
     "/quizzes/my/quiz-editor",
     req,
-    res,
-    extraData
+    res
   );
 };
 

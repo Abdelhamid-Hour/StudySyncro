@@ -42,6 +42,25 @@ export const closeAllEventSources = () => {
   }
 };
 
+export const registerPageListener = (target, event, handler, options) => {
+  if (!window.__activePageListeners) window.__activePageListeners = [];
+  target?.addEventListener(event, handler, options);
+  window.__activePageListeners.push({ target, event, handler, options });
+};
+
+export const clearAllPageListeners = () => {
+  if (window.__activePageListeners) {
+    window.__activePageListeners.forEach(
+      ({ target, event, handler, options }) => {
+        try {
+          target?.removeEventListener(event, handler, options);
+        } catch (e) {}
+      },
+    );
+    window.__activePageListeners = [];
+  }
+};
+
 // IndexedDB setup for storing chat files
 export let db = null;
 let dbReady = false;
@@ -224,6 +243,7 @@ export const closeAndOpenLeftSideBar = () => {
 };
 
 export const adjustMenuDirection = (button, menu) => {
+  if (menu.classList.contains("notifications-overlay")) return;
   // Reset previous positioning
   menu.style.left = "";
   menu.style.right = "";
@@ -253,11 +273,20 @@ export const adjustMenuDirection = (button, menu) => {
 
 export const openDropDownMenu = (button) => {
   if (!button) return;
-  const overlay =
+  let overlay =
     button.parentElement?.querySelector(".overlay") ||
     button
       .closest(".select-trigger, .quiz-card-header, div")
       ?.querySelector(".overlay");
+
+  if (
+    !overlay &&
+    (button.dataset.tooltip === "Notifications" ||
+      button.classList.contains("mobile-notif-btn"))
+  ) {
+    overlay = document.querySelector(".notifications-overlay");
+  }
+
   if (overlay) {
     if (overlay.classList.contains("open-overlay")) {
       overlay.classList.remove("open-overlay");
@@ -310,9 +339,14 @@ const getIconClassName = (icon) => {
 export const handleOverlayClose = (event) => {
   const overlayToClose = document.querySelector(".open-overlay");
   const isOpenBtn = event.target.closest(".open-drop-down-btn");
+  const isCloseBtn = event.target.closest(".close-overlay-btn");
   const isDropDownItem = event.target.closest(`.drop-down-item`);
   const isOnOverlay = event.target.closest(`.open-overlay`);
-  if ((isDropDownItem || !isOnOverlay) && overlayToClose && !isOpenBtn) {
+  if (
+    (isDropDownItem || !isOnOverlay || isCloseBtn) &&
+    overlayToClose &&
+    !isOpenBtn
+  ) {
     overlayToClose.classList.remove("open-overlay");
     document.body.style.pointerEvents = "auto";
     // Reset positioning
@@ -323,7 +357,6 @@ export const handleOverlayClose = (event) => {
       overlayToClose.style.bottom = "";
       overlayToClose.style.translate = "";
     }, 300); // Wait for transition
-    event.stopImmediatePropagation();
   }
   if (!overlayToClose) {
     document.body.style.pointerEvents = "auto";
@@ -759,7 +792,7 @@ const pageConfig = {
   },
   "/quizzes/my/quiz-editor": {
     title:
-      '<a href="/app/quizzes"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>',
+      '<a href="/app/quizzes/my"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>',
     middle: (extraData) => setQuizTitle(extraData.quizTitle),
     additional: () => {
       const saveQuizBtn = createSaveQuizBtn();
@@ -838,9 +871,9 @@ const updateTopSideBar = (pathName, extraData) => {
   const mobileTabsContainer = document.getElementById("mobile-tabs-container");
   if (
     mobileTabsContainer &&
-    normalizedPath !== "/home" &&
-    !normalizedPath.startsWith("/groups") &&
-    !normalizedPath.startsWith("/quizzes")
+    (normalizedPath.startsWith("/settings") ||
+      normalizedPath.includes("/chat") ||
+      normalizedPath.includes("/group-chat"))
   ) {
     mobileTabsContainer.classList.add("hidden");
     mobileTabsContainer.innerHTML = "";
@@ -863,6 +896,18 @@ const updateTopSideBar = (pathName, extraData) => {
   removeCreateBtns();
 
   removeSaveQuizBtn();
+
+  const mobileGroupActionsSection = document.querySelector(
+    ".mobile-group-chat-actions",
+  );
+  if (mobileGroupActionsSection && normalizedPath !== "/groups/my/group-chat") {
+    mobileGroupActionsSection.classList.add("hidden");
+    const actionsList = document.getElementById(
+      "mobile-drawer-group-actions-list",
+    );
+    if (actionsList) actionsList.innerHTML = "";
+  }
+
   // 5) ONLY groups get tabs
   const isGroups = ["/groups/my", "/groups/available"].includes(normalizedPath);
   const isQuizzes = ["/quizzes/my", "/quizzes/passed"].includes(normalizedPath);
@@ -926,8 +971,20 @@ const updateTopSideBarHeader = (Title) => {
     const returnHref = linkEl.getAttribute("href") || "/app/home";
     mobileBackBtn.setAttribute("href", returnHref);
     mobileBackBtn.classList.remove("hidden");
-    mobileTitleEl.textContent =
-      linkEl.textContent.trim() || tempDiv.textContent.trim();
+    if (Title.toLowerCase().includes("group chat")) {
+      mobileTitleEl.innerHTML = `
+        <button
+          type="button"
+          class="exclude-btn show-info-btn"
+        >
+          <i class="bi bi-info-circle"></i>
+          Group Chat
+        </button>
+      `;
+    } else {
+      mobileTitleEl.textContent =
+        linkEl.textContent.trim() || tempDiv.textContent.trim();
+    }
   } else {
     if (mobileBackBtn) mobileBackBtn.classList.add("hidden");
     mobileTitleEl.innerHTML = Title;
@@ -955,6 +1012,7 @@ export const updateMain = async (path, isTabLinks) => {
     }
     clearAllTimeOuts();
     closeAllEventSources();
+    clearAllPageListeners();
     clearOverlaysModals();
 
     let predRoute = path;
@@ -999,6 +1057,7 @@ export const updateMain = async (path, isTabLinks) => {
 
     clearAllTimeOuts();
     closeAllEventSources();
+    clearAllPageListeners();
     const cleanFragment =
       typeof htmlFragment === "string"
         ? htmlFragment.replace(/\bfade-in-template\b/g, "")
@@ -1398,6 +1457,11 @@ export const getLoader = () => {
 </svg>`;
 };
 
+export const enableMobileTabs = () => {
+  const tabs = document.querySelectorAll("#mobile-tabs-container .tab");
+  tabs.forEach((tab) => tab.style.removeProperty("pointer-events"));
+};
+
 export const getHomeSkeleton = () => {
   if (
     typeof window !== "undefined" &&
@@ -1408,8 +1472,8 @@ export const getHomeSkeleton = () => {
       headerContainer.classList.remove("hidden");
       headerContainer.innerHTML = `
         <div class="mobile-inactive-tabs navigation-tabs" style="width: 100%;">
-          <button type="button" class="tab active-tab exclude-btn" style="pointer-events: none;">Active Sessions</button>
-          <button type="button" class="tab exclude-btn" style="pointer-events: none;">Recent Messages</button>
+          <button type="button" class="tab active-tab exclude-btn" data-target="active-sessions" style="pointer-events: none;">Active Sessions</button>
+          <button type="button" class="tab exclude-btn" data-target="recent-messages" style="pointer-events: none;">Recent Messages</button>
         </div>
       `;
     }
@@ -1478,43 +1542,25 @@ export const getHomeSkeleton = () => {
       </div>
     </footer>
   </div>`;
-  const messageCard = `
-  <div
-    class="recent-message card-item loading-animation loading-card"
-    data-group-id="S443aQzWvV2lVz8vG4D0"
-  >
-    <header class="card-header">
-      <div class="left">
-        <h4
-          class="loading-opacity-animation"
-          style="width: 60%; height: 1.3rem"
-        ></h4>
+  const messageCard = 
+  `<div class="recent-message card-item loading-animation loading-card">
+    <header>
+      <div class="profile-info" >
+        <span class="icon loading-opacity-animation" style="width: 2.5rem; height: 2.5rem; border-radius: 50%;"></span>
+        <div class="details" style="min-height: 100%; height: 100%; gap: calc(var(--primary-gap) / 2); ">
+          <span class="user loading-opacity-animation" style="width: 120px; height: 1.1em; border-radius: 0.5em;"></span>
+          <span class="group loading-opacity-animation" style="width: 80px; height: 0.9em; border-radius: 0.5em;"></span>
+        </div>
       </div>
-      <div class="right" style="width: 25%">
-        <span
-          class="time loading-opacity-animation"
-          style="width: 100%; height: 1rem"
-        ></span>
+      <div class="meta-info">
+        <span class="timestamp loading-opacity-animation" style="width: 60px; height: 0.9em; border-radius: 0.5em;"></span>
       </div>
     </header>
-    <div
-      class="sender-info loading-opacity-animation"
-      style="width: 40%; height: 1rem; margin: 0.5rem 0"
-    ></div>
-    <div class="message-preview">
-      <p
-        class="loading-opacity-animation"
-        style="width: 80%; height: 1rem"
-      ></p>
-    </div>
-    <div
-      class="action-buttons"
-      style="margin-top: 1rem"
-    >
-      <div
-        class="loading-opacity-animation"
-        style="width: 100%; height: 2.2rem; border-radius: 0.4rem;"
-      ></div>
+    <p class="text-message loading-opacity-animation" style="width: 100%;height: 1.2em;border-radius: 0.5em;"></p>
+    <p class="text-message loading-opacity-animation" style="width: 50%;height: 1.2em;border-radius: 0.5em;"></p>
+    <div class="action-buttons">
+      <button type="button" class="should-fill reply-group loading-opacity-animation" style="height: 2rem; width: 130px;border-color: transparent;"></button>
+      <button type="button" class="should-fill reply loading-opacity-animation" style="height: 2rem; width: 80px; border-color: transparent;"></button>
     </div>
   </div>`;
   return `
@@ -1956,6 +2002,21 @@ export const getGroupChatSkeleton = () => {
 };
 
 export const getQuizEditorSkeleton = () => {
+  if (
+    typeof window !== "undefined" &&
+    window.matchMedia("(max-width: 48rem)").matches
+  ) {
+    const headerContainer = document.getElementById("mobile-tabs-container");
+    if (headerContainer) {
+      headerContainer.classList.remove("hidden");
+      headerContainer.innerHTML = `
+        <div class="mobile-quiz-editor-tabs navigation-tabs" style="width: 100%;">
+          <button type="button" class="tab active-tab exclude-btn" data-target="quiz-editor">Quiz Editor</button>
+          <button type="button" class="tab exclude-btn" data-target="questions-list">Questions List</button>
+        </div>
+      `;
+    }
+  }
   return `
     <div class="quiz-editor" style="pointer-events: none;">
       <section class="questions-panel">
@@ -2212,7 +2273,7 @@ export const getQuizPlaySkeleton = () => {
           <div class="question-body">
             <h4><span class="loading-opacity-animation" style="width: 80%; height: 1.4rem; border-radius: 0.3rem; display: inline-block; margin-bottom: 1rem;"></span></h4>
             <div class="question-choices">
-              <span class="select-answer-label">Select the correct Answer</span>
+              <span class="select-answer-label">Select the correct Answer <span style="opacity: 0.65; font-size: 0.85em; font-weight: normal;">(Or press 1-6 / A-F)</span></span>
               <div class="choices-list">
                 ${[0, 1, 2, 3]
                   .map(

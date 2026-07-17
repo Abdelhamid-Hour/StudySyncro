@@ -1,3 +1,4 @@
+import { enableMobileTabs } from "../../../global/js/utils.js";
 import { topSideBarMiddle } from "../../../global/js/variables.js";
 import { initFiltersInputListener, Loader } from "../../loader/js/utils.js";
 
@@ -41,7 +42,7 @@ export const createLoadingCard = (userGroup) => {
 
 export const getcreateGroupCardFunc = (userGroup) => {
   return (group) => {
-    const groupCard = document.createElement("a");
+    const groupCard = document.createElement(userGroup ? "a" : "div");
     groupCard.href = `/app/groups/my/${group.id}/chat`;
     groupCard.className = "group-card route-link card-item";
     groupCard.dataset.id = group.id;
@@ -116,26 +117,8 @@ export const getcreateGroupCardFunc = (userGroup) => {
   };
 };
 
-export const initMobileGroupsTabs = (userGroup) => {
-  const headerContainer = document.getElementById("mobile-tabs-container");
-  if (!headerContainer) return;
-  const isMobile = window.matchMedia("(max-width: 48rem)").matches;
-  if (isMobile) {
-    headerContainer.classList.remove("hidden");
-    headerContainer.innerHTML = `
-      <div class="mobile-groups-tabs navigation-tabs groups-tabs" style="width: 100%;">
-        <a href="/app/groups/my" class="tab route-link ${userGroup ? 'active-tab' : ''} exclude-btn">My Groups</a>
-        <a href="/app/groups/available" class="tab route-link ${!userGroup ? 'active-tab' : ''} exclude-btn">Available Groups</a>
-      </div>
-    `;
-  } else {
-    headerContainer.classList.add("hidden");
-    headerContainer.innerHTML = "";
-  }
-};
-
 export const initLazyLoadingLoader = (userGroup = false) => {
-  initMobileGroupsTabs(userGroup);
+  enableMobileTabs();
   const route = userGroup ? `/user-groups?` : `/available-groups?`;
   const loader = new Loader(
     document.querySelector(".groups-list"),

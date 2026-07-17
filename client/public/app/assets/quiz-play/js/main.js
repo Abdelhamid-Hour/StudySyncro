@@ -7,17 +7,17 @@ import {
   skipBtn,
 } from "./dom-variables.js";
 import {
-  resetVars,
+  initVars,
   setUpQuiz,
   skipQuestion,
   toNextQuestion,
   toPreviousQuestion,
 } from "./utils.js";
 
-export const init = (virtual = false) => {
+export const init = () => {
   initDomVariables();
 
-  resetVars();
+  initVars();
 
   setUpQuiz();
 

@@ -24,6 +24,7 @@
     </label>
   </header>
   <div data-last-visible="<%= lastVisible || '' %>" class="demandes-list">
+    <% if (requests && requests.length > 0) { %>
     <% requests.forEach((demande) => { %>
     <div class="demande card-item">
       <div class="avatar">
@@ -49,5 +50,14 @@
       </div>
     </div>
     <% }); %>
+    <% } else { %>
+    <div class="icon-wrapper">
+      <div class="empty-icon-container">
+        <i class="bi bi-person-check"></i>
+      </div>
+      <h3>No Join Requests</h3>
+      <p>There are no pending join requests for this group.</p>
+    </div>
+    <% } %>
   </div>
 </div>

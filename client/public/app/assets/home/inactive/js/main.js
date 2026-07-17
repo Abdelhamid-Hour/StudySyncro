@@ -1,13 +1,14 @@
+import { registerPageListener } from "../../../global/js/utils.js";
 import { activeSessions, messagesContainer, initDomVariables } from "./dom-variables.js";
 import {
   handleSessionBtns,
   handleRecentMessageBtns,
   initSessionsLoader,
   initRecentMessagesLoader,
-  initMobileInactiveTabs,
+  initMobileTabs,
 } from "./utils.js";
 
-export const init = (virtual = false) => {
+export const init = () => {
   initDomVariables();
 
   if (activeSessions) {
@@ -20,9 +21,9 @@ export const init = (virtual = false) => {
 
   initSessionsLoader();
   initRecentMessagesLoader();
-  initMobileInactiveTabs(true);
+  initMobileTabs();
 };
 
-window.addEventListener("resize", () => initMobileInactiveTabs(false));
+registerPageListener(window, "resize", initMobileTabs);
 
 init();

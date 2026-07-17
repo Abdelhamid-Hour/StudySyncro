@@ -4,6 +4,9 @@
       <h2 class="side-bar-title">
         <span class="badge simple-badge"></span>
       </h2>
+      <button type="button" class="exclude-btn close-group-left-btn">
+            <i class="bi bi-x-lg"></i>
+      </button>
     </aside>
     <div class="left-side-bar-content"></div>
   </aside>
@@ -37,7 +40,7 @@
       <% } else if(isAdmin) { %>
       <button type="button" class="small-btn create-session-btn">
         <i class="bi bi-plus-circle"></i>
-        Create Session
+        <span>Create Session</span>
       </button>
       <% } %>
 
@@ -48,7 +51,7 @@
         >
           <i class="bi bi-three-dots-vertical"></i>
         </button>
-        <div class="drop-down-menu group-chat-menu-btn-drop-down-menu overlay">
+        <div class="drop-down-menu group-chat-drop-down-menu overlay">
           <div class="drop-down-group">
             <div class="drop-down-group-label">
               Group Actions
@@ -80,7 +83,7 @@
             <% } %> <% if (isAdmin) { %>
             <button type="button" class="drop-down-item exclude-btn add-members-menu-btn">
               <i class="bi bi-person-plus"></i>
-              Invite Members
+              Invite Users
             </button>
             <% if ( isRequested) { %>
             <button

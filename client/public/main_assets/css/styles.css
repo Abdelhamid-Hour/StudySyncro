@@ -77,7 +77,7 @@ button,
     color: var(--error-color);
 
     &:hover {
-      color: var(--error-hover-color);
+      color: var(--btn-hover-text-color) !important;
       background-color: var(--error-background-color) !important;
     }
   }
@@ -433,6 +433,20 @@ button:disabled.loading-opacity-animation,
   to {
     --loading-light-start: 140%;
   }
+}
+
+.theme-toggle-icon {
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
+  display: inline-block;
+}
+
+.toggle-container:hover .theme-toggle-icon,
+.toggle-theme-btn:hover .theme-toggle-icon,
+#theme-toggle-btn:hover .theme-toggle-icon,
+#mobile-theme-toggle-btn:hover .theme-toggle-icon {
+  transform: rotate(20deg) scale(1.15);
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {

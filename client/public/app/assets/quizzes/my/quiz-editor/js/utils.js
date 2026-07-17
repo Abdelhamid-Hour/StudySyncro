@@ -18,7 +18,7 @@ import {
   scrollToView,
   showConfirmationBox,
   showErrorTooltip,
-  openDropDownMenu,
+  enableMobileTabs,
 } from "../../../../global/js/utils.js";
 import { setUpSelectMenu } from "../../../../shared/forms/js/utils.js";
 import {
@@ -55,7 +55,7 @@ export const handleTextarea = (e) => {
     const questionId = textarea.closest(".question-editor-box").id;
     const questionText = textarea.value.trim();
     const questionCard = document.querySelector(
-      `.question-card[href="#${questionId}"] .question-text`
+      `.question-card[href="#${questionId}"] .question-text`,
     );
     if (questionCard) {
       questionCard.textContent = questionText || "A simple question text here.";
@@ -70,7 +70,7 @@ const autoResizeTextarea = (textarea) => {
 export const handleEditorListDragEnd = () => {
   // Callback after drag and drop ends
   const questionEditorBoxes = Array.from(
-    editorQuestionsList.querySelectorAll(".question-editor-box")
+    editorQuestionsList.querySelectorAll(".question-editor-box"),
   );
   questionEditorBoxes.forEach((box) => {
     box.remove();
@@ -231,7 +231,7 @@ const handleSelectCorrectAnswer = (radioInput) => {
     .querySelectorAll(".choice")
     .forEach((choice) => choice.classList.remove("correct-answer"));
   const selectedChoice = choicesList.querySelector(
-    `.choice[data-choice-id="${choiceValue}"]`
+    `.choice[data-choice-id="${choiceValue}"]`,
   );
   if (selectedChoice) {
     selectedChoice.classList.add("correct-answer");
@@ -248,12 +248,11 @@ const handleSelectCorrectAnswer = (radioInput) => {
 const updateChoiceLabelsAndIds = (choicesList) => {
   choicesList.querySelectorAll(".choice").forEach((choice, index) => {
     choice.querySelector(".choice-label").textContent = String.fromCharCode(
-      65 + index
+      65 + index,
     ); // A, B, C, ...
     choice.setAttribute("data-choice-id", index);
-    choice.querySelector(
-      ".choice-input"
-    ).placeholder = `Enter choice ${String.fromCharCode(65 + index)}`;
+    choice.querySelector(".choice-input").placeholder =
+      `Enter choice ${String.fromCharCode(65 + index)}`;
   });
 };
 
@@ -286,7 +285,7 @@ const updateCurrentCorrectAnswer = (choicesList, selectMenu) => {
     selectMenu.querySelector(".correct-answer-value").textContent =
       currentCorrectAnswer.querySelector(".choice-label").textContent;
     selectMenu.querySelector(
-      `input[type="radio"][value="${choiceId}"]`
+      `input[type="radio"][value="${choiceId}"]`,
     ).checked = true;
   }
 };
@@ -295,13 +294,12 @@ const updateChoicesCountInPanel = (choicesList) => {
   const questionEditorBox = choicesList.closest(".question-editor-box");
   const questionId = questionEditorBox ? questionEditorBox.id : null;
   const questionCard = document.querySelector(
-    `.question-card[href="#${questionId}"]`
+    `.question-card[href="#${questionId}"]`,
   );
   if (questionCard) {
     const choiceCount = choicesList.children.length;
-    questionCard.querySelector(
-      ".choices-count"
-    ).textContent = `${choiceCount} Choices`;
+    questionCard.querySelector(".choices-count").textContent =
+      `${choiceCount} Choices`;
   }
 };
 
@@ -313,7 +311,7 @@ const handleDeleteChoice = (deleteChoiceBtn) => {
       .closest(".choices-section")
       .querySelector(".correct-answer-select");
     const choiceInDropdown = selectMenu.querySelector(
-      `.drop-down-item:has(input[value="${choice?.dataset.choiceId}"])`
+      `.drop-down-item:has(input[value="${choice?.dataset.choiceId}"])`,
     );
     choice.remove();
     choiceInDropdown.remove();
@@ -340,7 +338,7 @@ const createChoiceElement = (choiceCount) => {
   newChoice.innerHTML = `
     <span class="choice-label">${String.fromCharCode(65 + choiceCount)}</span>
     <input type="text" class="choice-input input" placeholder="Enter choice ${String.fromCharCode(
-      65 + choiceCount
+      65 + choiceCount,
     )}" />
     <button type="button" class="delete-choice-btn exclude-btn has-tooltip" data-tooltip="Delete Choice">
       <i class="bi bi-trash3"></i>
@@ -381,7 +379,7 @@ const handleAddChoice = (addChoiceBtn) => {
 const updateQuestionCounts = () => {
   const questionCount = questionsPanelList.children.length;
   questionsPanelList.previousElementSibling.querySelector(
-    ".count"
+    ".count",
   ).textContent = `${questionCount}`;
 };
 
@@ -435,7 +433,7 @@ const handleDeleteQuestion = (questionId) => {
 export const handleAddQuestion = () => {
   const { questionEditorBox, questionPanelItem } = getQuestionEls(
     `${Date.now()}`,
-    editorQuestionsList.children.length
+    editorQuestionsList.children.length,
   );
   editorQuestionsList.lastElementChild.before(questionEditorBox);
   questionsPanelList.appendChild(questionPanelItem);
@@ -462,13 +460,6 @@ export const handleQuestionsPanelListClick = (e) => {
 };
 
 export const handleEditorQuestionsListClick = (e) => {
-  // Handle Open Menu (Correct Answer Select / Dropdowns)
-  const openMenuBtn = e.target.closest(".open-drop-down-btn");
-  if (openMenuBtn) {
-    openDropDownMenu(openMenuBtn);
-    return;
-  }
-
   // Handle Select Correct Answer
   const radioInput = e.target.closest('input[type="radio"]');
   if (radioInput) handleSelectCorrectAnswer(radioInput);
@@ -498,10 +489,10 @@ export const getQuestionObject = (question) => {
   const text = question.querySelector("textarea").value.trim();
   const correctAnswerIndex = parseInt(
     question.querySelector('.correct-answer-select input[type="hidden"]').value,
-    10
+    10,
   );
   const choices = Array.from(question.querySelectorAll(".choice-input")).map(
-    (choice) => choice.value.trim()
+    (choice) => choice.value.trim(),
   );
 
   return new Question(id, text, choices, correctAnswerIndex);
@@ -566,7 +557,7 @@ export const handleSaveBtn = async (type, btn) => {
     swapMode("getViewMode", type, value);
     showMessageBlock(
       `${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully!`,
-      "success"
+      "success",
     );
   } catch (error) {
     console.error(`Failed to update ${type}:`, error);
@@ -590,7 +581,7 @@ const checkTitleValidity = (value, input) => {
     showErrorTooltip(
       `Title must be between ${NAME_TITLE_MIN_LENGTH} and ${NAME_TITLE_MAX_LENGTH} characters.`,
       input,
-      "input"
+      "input",
     );
     return;
   } else {
@@ -605,7 +596,7 @@ const validateQuestionText = (questionText, questionTextValue) => {
     showErrorTooltip(
       "Question text is required.",
       questionText,
-      "question-input"
+      "question-input",
     );
     questionText.focus();
     return false;
@@ -616,7 +607,7 @@ const validateQuestionText = (questionText, questionTextValue) => {
     showErrorTooltip(
       `Question text must be between ${QUESTION_TEXT_MIN_LENGTH} and ${QUESTION_TEXT_MAX_LENGTH} characters.`,
       questionText,
-      "question-input"
+      "question-input",
     );
     questionText.focus();
     return false;
@@ -635,7 +626,7 @@ const validateChoices = (choices, choicesValues) => {
     } else if (choice.length > CHOICE_TEXT_MAX_LENGTH) {
       showErrorTooltip(
         `Choice text must be less than ${CHOICE_TEXT_MAX_LENGTH} characters.`,
-        choiceInput
+        choiceInput,
       );
       return false;
     } else {
@@ -655,13 +646,13 @@ const validateChoices = (choices, choicesValues) => {
 const validateCorrectAnswer = (
   correctAnswerIndex,
   correctAnswerIndexValue,
-  choicesLength
+  choicesLength,
 ) => {
   if (correctAnswerIndexValue === "") {
     showErrorTooltip(
       "Correct answer is required.",
       correctAnswerIndex,
-      "correct-answer-select"
+      "correct-answer-select",
     );
     return false;
   } else if (
@@ -671,13 +662,13 @@ const validateCorrectAnswer = (
     showErrorTooltip(
       "Correct answer index is invalid.",
       correctAnswerIndex,
-      "correct-answer-select"
+      "correct-answer-select",
     );
     return false;
   } else {
     resetTooltip(
       globalTooltip,
-      correctAnswerIndex.closest(".correct-answer-select")
+      correctAnswerIndex.closest(".correct-answer-select"),
     );
   }
   return true;
@@ -695,7 +686,7 @@ const checkQuestionValidity = (inputs) => {
     !validateCorrectAnswer(
       correctAnswerIndex,
       correctAnswerIndexValue,
-      choicesValues.length
+      choicesValues.length,
     )
   )
     return false;
@@ -707,7 +698,7 @@ const getQuestionInputs = (question) => {
   const questionText = question.querySelector("textarea");
   const choices = Array.from(question.querySelectorAll(".choice input"));
   const correctAnswerIndex = question.querySelector(
-    '.correct-answer-select input[type="hidden"]'
+    '.correct-answer-select input[type="hidden"]',
   );
   return { questionText, choices, correctAnswerIndex };
 };
@@ -738,7 +729,7 @@ const classifyQuestions = (questions) => {
   const updatedQuestions = [];
   questions.forEach((question) => {
     const isNewQuestion = !initialData.questions.some(
-      (q) => q.id === question.id
+      (q) => q.id === question.id,
     );
     if (isNewQuestion) return newQuestions.push(question);
     const isUpdatedQuestion = initialData.questions.some(
@@ -747,9 +738,9 @@ const classifyQuestions = (questions) => {
         (question.text !== q.text ||
           question.choices.length !== q.choices.length ||
           question.choices.some(
-            (choice, index) => choice !== q.choices[index]
+            (choice, index) => choice !== q.choices[index],
           ) ||
-          question.correctAnswerIndex !== q.correctAnswerIndex)
+          question.correctAnswerIndex !== q.correctAnswerIndex),
     );
     if (isUpdatedQuestion) return updatedQuestions.push(question);
   });
@@ -845,7 +836,7 @@ export const handleSidebarTitleLinkClick = async (e) => {
       "Are you sure you want to leave?",
       "You will lose all unsaved changes.",
       "Discard",
-      "Save and Leave"
+      "Save and Leave",
     );
 
     if (res) {
@@ -863,4 +854,65 @@ export const handleSidebarTitleLinkClick = async (e) => {
   } catch (error) {
     console.error("Error", error);
   }
+};
+
+export const initMobileTabs = () => {
+  const questionsPanel = document.querySelector(
+    ".quiz-editor .questions-panel",
+  );
+  const questionEditorPanel = document.querySelector(
+    ".quiz-editor .question-editor-panel",
+  );
+
+  const headerContainer = document.getElementById("mobile-tabs-container");
+
+  const isMobile = window.matchMedia("(max-width: 48rem)").matches;
+
+  if (!isMobile) {
+    questionsPanel.style.display = "";
+    questionEditorPanel.style.display = "";
+    return;
+  }
+
+  enableMobileTabs();
+
+  const tabsBar = headerContainer?.querySelector(".mobile-quiz-editor-tabs");
+  if (!tabsBar) return;
+
+  tabsBar.querySelectorAll(".tab").forEach((t, i) => {
+    if (i == 0) t.classList.add("active-tab");
+    else t.classList.remove("active-tab");
+  });
+
+  if (tabsBar.dataset.handlersAttached) return;
+
+  tabsBar.dataset.handlersAttached = "true";
+
+  tabsBar.addEventListener("click", (e) => {
+    const btn = e.target.closest(".tab");
+    if (!btn) return;
+
+    tabsBar
+      .querySelectorAll(".tab")
+      .forEach((t) => t.classList.remove("active-tab"));
+    btn.classList.add("active-tab");
+
+    const currQuestionsPanel = document.querySelector(
+      ".quiz-editor .questions-panel",
+    );
+    const currQuestionEditorPanel = document.querySelector(
+      ".quiz-editor .question-editor-panel",
+    );
+
+    const target = btn.getAttribute("data-target");
+    if (target === "questions-list") {
+      if (currQuestionsPanel) currQuestionsPanel.style.display = "flex";
+      if (currQuestionEditorPanel)
+        currQuestionEditorPanel.style.display = "none";
+    } else {
+      if (currQuestionsPanel) currQuestionsPanel.style.display = "none";
+      if (currQuestionEditorPanel)
+        currQuestionEditorPanel.style.display = "flex";
+    }
+  });
 };

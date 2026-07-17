@@ -1,12 +1,11 @@
 import { topSideBarMiddle } from "../../../global/js/variables.js";
-import { navigateTo, toReadableDate } from "../../../global/js/utils.js";
+import { enableMobileTabs, navigateTo, toReadableDate } from "../../../global/js/utils.js";
 import { openQuizResultOverlay } from "../../../shared/quiz-result/js/utils.js";
 import {
   initFiltersInputListener,
   Loader,
 } from "../../../shared/loader/js/utils.js";
 
-import { initMobileQuizzesTabs } from "../../my/js/utils.js";
 
 const getScoreClass = (score) => {
   if (score >= 80) return "excellent";
@@ -166,7 +165,7 @@ const getCriteria = () => {
 };
 
 export const initLazyLoadingLoader = () => {
-  initMobileQuizzesTabs(true);
+  enableMobileTabs();
   const loader = new Loader(
     document.querySelector(".quizzes-list"),
     createPassedQuizCard,

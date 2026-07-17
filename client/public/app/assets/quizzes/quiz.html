@@ -1,37 +1,40 @@
-<div class="loading-card first-loading-card"><div style="display: flex; flex-direction: column">
-  <div class="message-sent">
-    <div class="avatar loading-opacity-animation"></div>
+<!DOCTYPE html>
+<html lang="en">
 
-    <div class="messages">
-      <div class="first-message-sent-text loading-animation">
-        <p class="loading-opacity-animation" style="width: 5rem"></p>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="0">
+  <title>Document</title>
+</head>
 
-        <span class="message-info loading-opacity-animation" style="width: 2rem"></span>
-      </div>
+<body>
+
+  <style>
+    .div {
+      background-color: red;
+      width: 30rem;
+      aspect-ratio: 1/1;
+      display: flex;
+      flex-direction: column;
+
+      .c {
+        background-color: green;
+        flex-basis: 100%;
+
+        .f {
+          background-color: aqua;
+          
+        }
+      }
+    }
+  </style>
+
+  <div class="div">
+    <div class="c">
+      <div class="f"></div>
     </div>
   </div>
-  <div class="message-received">
-    <div class="avatar loading-opacity-animation"></div>
+</body>
 
-    <div class="messages">
-      <div class="first-message-received-text loading-animation">
-        <span class="username loading-opacity-animation" style="width: 60%"></span>
-
-        <div class="media-message message-media-preview">
-          <div class="media-div loading-opacity-animation" style="width: 100%; height: auto; aspect-ratio: 16/9"></div>
-
-          <button type="button" class="expand-btn loading-opacity-animation" style="width: 2rem"></button>
-          <a class="download-btn button loading-opacity-animation" style="width: 2rem"></a>
-        </div>
-
-        <span class="message-info loading-opacity-animation" style="width: 10%"></span>
-      </div>
-
-      <div class="message-received-text card-item">
-        <p class="loading-opacity-animation" style="width: 5rem"></p>
-        <span class="message-info loading-opacity-animation" style="width: 2rem"></span>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
+</html>

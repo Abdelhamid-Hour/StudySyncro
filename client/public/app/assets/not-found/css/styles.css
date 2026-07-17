@@ -1,0 +1,110 @@
+.not-found-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--topbar-height, 4rem) - 4rem);
+  padding: 2rem;
+  width: 100%;
+}
+
+.not-found-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: var(--container-background-color);
+  border: 1px solid var(--container-border-color);
+  border-radius: var(--primary-radius);
+  padding: 3.5rem 2.5rem;
+  max-width: 34rem;
+  width: 100%;
+  box-shadow: 0 10px 30px var(--primary-shadow-color);
+  animation: scale-up 0.3s ease-out;
+}
+
+.error-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--error-block-background-color);
+  color: var(--error-block-text-color);
+  border: 1px solid var(--error-block-border-color);
+  padding: 0.35rem 0.85rem;
+  border-radius: 50rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 1.5rem;
+}
+
+.badge-dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  background-color: var(--error-color);
+  border-radius: 50%;
+}
+
+.icon-container {
+  width: 5.5rem;
+  height: 5.5rem;
+  border-radius: 50%;
+  background-color: var(--background-color);
+  border: 1px solid var(--container-border-color);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 20px var(--primary-shadow-color);
+}
+
+.not-found-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-text-color);
+  margin-bottom: 0.75rem;
+}
+
+.not-found-description {
+  font-size: 0.95rem;
+  color: var(--secondary-text-color);
+  line-height: 1.6;
+  margin-bottom: 2.25rem;
+  max-width: 26rem;
+}
+
+.not-found-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+@keyframes scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 48rem) {
+  .not-found-card {
+    padding: 2.5rem 1.5rem;
+  }
+
+  .not-found-actions {
+    flex-direction: column;
+  }
+
+  .not-found-actions .button,
+  .not-found-actions button {
+    width: 100%;
+  }
+}

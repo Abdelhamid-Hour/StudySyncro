@@ -5,9 +5,11 @@ import {
 } from "../../../../../main_assets/js/utils.js";
 import { timers } from "../../../global/js/variables.js";
 import {
+  enableMobileTabs,
   handleApiAction,
   millisecondsToHMFormat,
   navigateTo,
+  registerPageListener,
   updateMain,
 } from "../../../global/js/utils.js";
 import {
@@ -110,19 +112,19 @@ export class FlipTimer {
       ["left", "right"].forEach((side) => {
         this.digits[unit][side] = {
           topContainer: document.querySelector(
-            `.flip-${unit}-${side}-digit .flip-top-container`
+            `.flip-${unit}-${side}-digit .flip-top-container`,
           ),
           topFrontBackText: document.querySelector(
-            `.flip-${unit}-${side}-digit .flip-face-top-front-back span`
+            `.flip-${unit}-${side}-digit .flip-face-top-front-back span`,
           ),
           topBackText: document.querySelector(
-            `.flip-${unit}-${side}-digit .flip-face-top-back span`
+            `.flip-${unit}-${side}-digit .flip-face-top-back span`,
           ),
           topFrontFontText: document.querySelector(
-            `.flip-${unit}-${side}-digit .flip-face-top-front-front span`
+            `.flip-${unit}-${side}-digit .flip-face-top-front-front span`,
           ),
           bottomSpan: document.querySelector(
-            `.flip-${unit}-${side}-digit .flip-face-bottom span`
+            `.flip-${unit}-${side}-digit .flip-face-bottom span`,
           ),
         };
       });
@@ -130,7 +132,7 @@ export class FlipTimer {
   }
 
   initEventListener() {
-    document.addEventListener("animationend", this.eventListner);
+    registerPageListener(document, "animationend", this.eventListner);
   }
 
   // event listner
@@ -190,7 +192,7 @@ export class Quiz extends Task {
     if (groupId) {
       Session.groupId = groupId;
     }
-    
+
     this.isAdmin = isAdmin;
   }
   updateElapsedTime({ quizElapsedTime, status }) {
@@ -244,11 +246,11 @@ export class Quiz extends Task {
       button.addEventListener("click", () =>
         openQuizResultOverlay({
           quizId: this.UID,
-        })
+        }),
       );
     } else {
       button.addEventListener("click", () =>
-        openQuizResultsOverlay(this.UID, Session.groupId)
+        openQuizResultsOverlay(this.UID, Session.groupId),
       );
     }
     quizFooter.append(button);
@@ -310,7 +312,7 @@ export const addQuizEventListnersBns = (quizId) => {
 
   if (viewResultsBtn)
     viewResultsBtn.addEventListener("click", () =>
-      openQuizResultsOverlay(quizId, Session.groupId)
+      openQuizResultsOverlay(quizId, Session.groupId),
     );
 
   if (retakeBtn)
@@ -383,13 +385,13 @@ export class Session {
   initVariables() {
     this.timeLeftElement = document.querySelector(SESSIONSSELECTORS.timeLeft);
     this.elapsedTimeElement = document.querySelector(
-      SESSIONSSELECTORS.elapsedTime
+      SESSIONSSELECTORS.elapsedTime,
     );
     this.ongoingTasksContainer = document.querySelector(
-      TASKSSELECTORS.ongoingTasksList
+      TASKSSELECTORS.ongoingTasksList,
     );
     this.completedTasksContainer = document.querySelector(
-      TASKSSELECTORS.completedTasksList
+      TASKSSELECTORS.completedTasksList,
     );
     this.completedTasks = [];
     this.ongoingTasks = [];
@@ -415,7 +417,11 @@ export class Session {
         this.quiz.updateElapsedTime({
           status: this.quiz.status,
         });
-        if (this.quiz.status == "active" && !this.quiz.passed && !this.quiz.isAdmin)
+        if (
+          this.quiz.status == "active" &&
+          !this.quiz.passed &&
+          !this.quiz.isAdmin
+        )
           return;
       }
 
@@ -462,7 +468,7 @@ export class Session {
         if (index !== 0) return (acc += task.durationInMins * 60 * 1000);
         return acc;
       },
-      0
+      0,
     );
     this.activeTaskRemainingTime = this.elapsedTime - notStartedTasksDuration;
     this.TIMER = new FlipTimer(this.activeTaskRemainingTime);
@@ -490,7 +496,7 @@ export class Session {
     this.updateTasksBadges(
       nextTaskObj,
       this.ongoingTasks[1],
-      this.ongoingTasks[1] && this.ongoingTasks[2]
+      this.ongoingTasks[1] && this.ongoingTasks[2],
     );
     if (nextTask && nextTaskObj) {
       new FlipTimer(nextTaskObj.durationInMins * 60 * 1000);
@@ -535,7 +541,7 @@ export class Session {
         <div class="completed-task-box"> 
           <span class="title"></span>
           <span class="duration">${millisecondsToHMFormat(
-            task.durationInMins * 60 * 1000
+            task.durationInMins * 60 * 1000,
           )}</span>
            ${
              task.isBreak
@@ -564,12 +570,16 @@ export class Session {
       taskContainer.querySelector(".task-title").textContent = task.title;
       taskContainer.querySelector(".task-desc").textContent = task.description;
     }
+    const emptyState = this.completedTasksContainer.querySelector(".completed-empty-state");
+    if (emptyState) emptyState.remove();
     this.completedTasksContainer.append(taskContainer);
   }
 
   displayComplatedTasks() {
-    this.completedTasksContainer.innerHTML = "";
-    this.completedTasks.forEach((task) => this.displayComplatedTask(task));
+    if (this.completedTasks.length > 0) {
+      this.completedTasksContainer.innerHTML = "";
+      this.completedTasks.forEach((task) => this.displayComplatedTask(task));
+    }
   }
 
   async initTasks() {
@@ -585,7 +595,7 @@ export class Session {
     }
 
     this.ongoingTasks = this.tasks.filter(
-      (task) => !this.completedTasks.find((t) => t === task)
+      (task) => !this.completedTasks.find((t) => t === task),
     );
 
     this.completedTasks.forEach(async (task) => {
@@ -612,7 +622,7 @@ export class Session {
       this.updateTasksBadges(
         firstOngoingTask,
         this.ongoingTasks[1],
-        this.ongoingTasks[1] && this.ongoingTasks[2]
+        this.ongoingTasks[1] && this.ongoingTasks[2],
       );
     }
     if (this.ongoingTasks[0] && firstOngoingTask.status !== "active") {
@@ -637,7 +647,7 @@ export class Session {
       console.error("Error updating task status:", error);
       showMessageBlock(
         "Error updating task status. Please try again later.",
-        "error"
+        "error",
       );
     }
   }
@@ -676,16 +686,16 @@ export class Session {
               isFirst
                 ? 'data-tooltip="Active Task"'
                 : isQuiz
-                ? 'data-tooltip="Quiz"'
-                : isBreak
-                ? 'data-tooltip="Break"'
-                : ""
+                  ? 'data-tooltip="Quiz"'
+                  : isBreak
+                    ? 'data-tooltip="Break"'
+                    : ""
             }
             class="task-box${
               isQuiz ? " quiz-task-box" : isBreak ? " break-box" : ""
             }${isFirst ? " first" : ""}${
-        isFirst || isQuiz || isBreak ? " has-tooltip" : ""
-      }"
+              isFirst || isQuiz || isBreak ? " has-tooltip" : ""
+            }"
           >
             <div class="counter">
               <span>${(index + 1)
@@ -745,7 +755,7 @@ export class Session {
       console.error("Error ending session:", error);
       showMessageBlock(
         "Error ending session. Please try again later.",
-        "error"
+        "error",
       );
     }
   }
@@ -773,12 +783,16 @@ export class Session {
     if (this.sessionStream) {
       this.sessionStream.close();
     }
-    this.sessionStream = new EventSource(`/api/stream-single-session?sessionId=${sessionId}`);
+    this.sessionStream = new EventSource(
+      `/api/stream-single-session?sessionId=${sessionId}`,
+    );
     this.sessionStream.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
         if (data.joinedCount !== undefined) {
-          const joinedEl = document.querySelector(SESSIONSSELECTORS.joinedCount);
+          const joinedEl = document.querySelector(
+            SESSIONSSELECTORS.joinedCount,
+          );
           if (joinedEl) {
             joinedEl.textContent = data.joinedCount;
           }
@@ -807,3 +821,83 @@ export class Session {
     }
   }
 }
+
+export const initMobileTabs = () => {
+  const rightContainer = document.querySelector(".right-container");
+  const chat = rightContainer.querySelector(".overview-active-session .chat");
+  const timerQuizContainer = rightContainer.querySelector(
+    ".overview-active-session .timer-quiz-container",
+  );
+  const leftContainer = document.querySelector(".left-container");
+  const sessionInfo = leftContainer.querySelector(
+    ".overview-active-session .session",
+  );
+  const tasks = leftContainer.querySelector(".overview-active-session .tasks");
+  const isMobile = window.matchMedia("(max-width: 48rem)").matches;
+
+  if (!isMobile) {
+    rightContainer.style.display = "";
+    leftContainer.style.display = "";
+    sessionInfo.style.display = "";
+    tasks.style.display = "";
+    timerQuizContainer.style.display = "";
+    chat.style.display = "";
+    return;
+  }
+
+  let mobileActiveTabs = document.querySelector(".mobile-active-tabs");
+  if (!mobileActiveTabs) {
+    const mobileInActiveTabs = document.querySelector(".mobile-inactive-tabs");
+    if (!mobileInActiveTabs) return;
+    mobileInActiveTabs.outerHTML = `<div class="mobile-active-tabs navigation-tabs" style="width: 100%;">
+        <button type="button" class="tab active-tab exclude-btn" data-target="timer-session">Timer & Session</button>
+        <button type="button" class="tab exclude-btn" data-target="tasks">Tasks</button>
+        <button type="button" class="tab exclude-btn" data-target="chat">Chat</button>
+    </div>`;
+  }
+
+  mobileActiveTabs = document.querySelector(".mobile-active-tabs");
+
+  const mobileSearchBtn = document.querySelector(".mobile-search-btn");
+  if (mobileSearchBtn) mobileSearchBtn.classList.add("hidden");
+  const mobileSearchBox = document.getElementById("mobile-search-box");
+  if (mobileSearchBox) mobileSearchBox.classList.add("hidden");
+
+  mobileActiveTabs.querySelectorAll(".tab").forEach((t, i) => {
+    if (i == 0) t.classList.add("active-tab");
+    else t.classList.remove("active-tab");
+  });
+
+  if (mobileActiveTabs.dataset.handlersAttached) return;
+  mobileActiveTabs.dataset.handlersAttached = "true";
+
+  mobileActiveTabs.addEventListener("click", (e) => {
+    const btn = e.target.closest(".tab");
+    if (!btn) return;
+
+    mobileActiveTabs
+      .querySelectorAll(".tab")
+      .forEach((t) => t.classList.remove("active-tab"));
+    btn.classList.add("active-tab");
+
+    const target = btn.getAttribute("data-target");
+    if (target === "timer-session") {
+      leftContainer.style.display = "";
+      rightContainer.style.display = "";
+      timerQuizContainer.style.display = "";
+      sessionInfo.style.display = "";
+      chat.style.display = "none";
+      tasks.style.display = "none";
+    } else if (target === "chat") {
+      rightContainer.style.display = "";
+      chat.style.setProperty("display", "flex", "important");
+      timerQuizContainer.style.display = "none";
+      leftContainer.style.display = "none";
+    } else if (target === "tasks") {
+      leftContainer.style.display = "";
+      tasks.style.setProperty("display", "flex", "important");
+      sessionInfo.style.display = "none";
+      rightContainer.style.display = "none";
+    }
+  });
+};

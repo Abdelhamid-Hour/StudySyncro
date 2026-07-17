@@ -1,5 +1,8 @@
 import { fetchData, sendData } from "../../../../../main_assets/js/utils.js";
-import { openOverlayModal } from "../../../global/js/utils.js";
+import {
+  enableMobileTabs,
+  openOverlayModal,
+} from "../../../global/js/utils.js";
 import { Loader } from "../../../shared/loader/js/utils.js";
 import { joinSession } from "../../../shared/session/js/utils.js";
 import { handletTasksListners } from "../../../shared/tasks/js/utils.js";
@@ -869,23 +872,23 @@ const getRecentMessageLoader = () => {
   loader.className = "recent-message card-item loading-animation loading-card";
   loader.innerHTML = `
     <header>
-      <div class="profile-info" style="width: 60%">
-        <span class="loading-opacity-animation icon" style="height: 2.5rem; width: 2.5rem; border-radius: 50%;"></span>
-        <div class="details" style="width: 80%">
-          <span class="loading-opacity-animation" style="height: 1rem; width: 60%; display: block; margin-bottom: 0.4rem;"></span>
-          <span class="loading-opacity-animation" style="height: 0.8rem; width: 40%; display: block;"></span>
+      <div class="profile-info" >
+        <span class="icon loading-opacity-animation" style="width: 2.5rem; height: 2.5rem; border-radius: 50%;"></span>
+        <div class="details" style="min-height: 100%; height: 100%; gap: calc(var(--primary-gap) / 2); ">
+          <span class="user loading-opacity-animation" style="width: 120px; height: 1.1em; border-radius: 0.5em;"></span>
+          <span class="group loading-opacity-animation" style="width: 80px; height: 0.9em; border-radius: 0.5em;"></span>
         </div>
       </div>
-      <div class="meta-info" style="width: 30%; justify-content: flex-end;">
-        <span class="loading-opacity-animation" style="height: 1rem; width: 50px;"></span>
+      <div class="meta-info">
+        <span class="timestamp loading-opacity-animation" style="width: 60px; height: 0.9em; border-radius: 0.5em;"></span>
       </div>
     </header>
-    <p class="loading-opacity-animation" style="height: 1.2rem; width: 90%; margin: 1rem 0;"></p>
+    <p class="text-message loading-opacity-animation" style="width: 100%;height: 1.2em;border-radius: 0.5em;"></p>
+    <p class="text-message loading-opacity-animation" style="width: 50%;height: 1.2em;border-radius: 0.5em;"></p>
     <div class="action-buttons">
-      <span class="loading-opacity-animation button" style="height: 2rem; width: 120px;"></span>
-      <span class="loading-opacity-animation button" style="height: 2rem; width: 80px;"></span>
-    </div>
-  `;
+      <button type="button" class="should-fill reply-group loading-opacity-animation" style="height: 2rem; width: 130px;border-color: transparent;"></button>
+      <button type="button" class="should-fill reply loading-opacity-animation" style="height: 2rem; width: 80px; border-color: transparent;"></button>
+    </div>`;
   return loader;
 };
 
@@ -1058,10 +1061,7 @@ const initRecentMessagesStream = () => {
   };
 };
 
-export const initMobileInactiveTabs = (forceReset = false) => {
-  const contentBlocks = document.querySelector(
-    ".overview-session-inactive .content-blocks",
-  );
+export const initMobileTabs = () => {
   const activeSessionsSection = document.querySelector(
     ".content-blocks .active-sessions",
   );
@@ -1072,76 +1072,58 @@ export const initMobileInactiveTabs = (forceReset = false) => {
   const mobileSearchBox = document.getElementById("mobile-search-box");
   const headerContainer = document.getElementById("mobile-tabs-container");
 
-  if (!contentBlocks || !activeSessionsSection || !recentMessagesSection) {
-    if (headerContainer) {
-      headerContainer.classList.add("hidden");
-      headerContainer.innerHTML = "";
-    }
-    return;
-  }
-
   const isMobile = window.matchMedia("(max-width: 48rem)").matches;
 
   if (!isMobile) {
-    if (headerContainer) {
-      headerContainer.classList.add("hidden");
-      headerContainer.innerHTML = "";
-    }
-    const existingTabs = document.querySelector(".mobile-inactive-tabs");
-    existingTabs?.remove();
     activeSessionsSection.style.display = "";
     recentMessagesSection.style.display = "";
     return;
   }
 
-  if (!forceReset && headerContainer.querySelector(".mobile-inactive-tabs")) {
-    return;
-  }
+  enableMobileTabs();
+
+  const tabsBar = headerContainer?.querySelector(".mobile-inactive-tabs");
+  if (!tabsBar) return;
+
+  tabsBar.querySelectorAll(".tab").forEach((t, i) => {
+    if (i == 0) t.classList.add("active-tab");
+    else t.classList.remove("active-tab");
+  });
 
   if (mobileSearchBtn) {
     mobileSearchBtn.classList.remove("hidden");
   }
 
-  if (headerContainer) {
-    headerContainer.classList.remove("hidden");
-    headerContainer.innerHTML = `
-      <div class="mobile-inactive-tabs navigation-tabs" style="width: 100%;">
-        <button type="button" class="tab active-tab exclude-btn" data-target="active-sessions">Active Sessions</button>
-        <button type="button" class="tab exclude-btn" data-target="recent-messages">Recent Messages</button>
-      </div>
-    `;
-    const tabsBar = headerContainer.querySelector(".mobile-inactive-tabs");
+  if (tabsBar.dataset.handlersAttached) return;
+  tabsBar.dataset.handlersAttached = "true";
 
-    activeSessionsSection.style.display = "flex";
-    recentMessagesSection.style.display = "none";
+  tabsBar.addEventListener("click", (e) => {
+    const btn = e.target.closest(".tab");
+    if (!btn) return;
 
-    tabsBar?.addEventListener("click", (e) => {
-      const btn = e.target.closest(".tab");
-      if (!btn) return;
+    tabsBar
+      .querySelectorAll(".tab")
+      .forEach((t) => t.classList.remove("active-tab"));
+    btn.classList.add("active-tab");
 
-      tabsBar
-        .querySelectorAll(".tab")
-        .forEach((t) => t.classList.remove("active-tab"));
-      btn.classList.add("active-tab");
+    const currActiveSessions = document.querySelector(
+      ".content-blocks .active-sessions",
+    );
+    const currRecentMessages = document.querySelector(
+      ".content-blocks .recent-messages",
+    );
 
-      const currActiveSessions = document.querySelector(
-        ".content-blocks .active-sessions",
-      );
-      const currRecentMessages = document.querySelector(
-        ".content-blocks .recent-messages",
-      );
-
-      const target = btn.getAttribute("data-target");
-      if (target === "active-sessions") {
-        if (currActiveSessions) currActiveSessions.style.display = "flex";
-        if (currRecentMessages) currRecentMessages.style.display = "none";
-        if (mobileSearchBtn) mobileSearchBtn.classList.remove("hidden");
-      } else {
-        if (currActiveSessions) currActiveSessions.style.display = "none";
-        if (currRecentMessages) currRecentMessages.style.display = "flex";
-        if (mobileSearchBtn) mobileSearchBtn.classList.add("hidden");
-        if (mobileSearchBox) mobileSearchBox.classList.add("hidden");
-      }
-    });
-  }
+    const target = btn.getAttribute("data-target");
+    if (target === "active-sessions") {
+      if (currActiveSessions) currActiveSessions.style.display = "flex";
+      if (currRecentMessages) currRecentMessages.style.display = "none";
+      if (mobileSearchBtn) mobileSearchBtn.classList.remove("hidden");
+    } else {
+      if (currActiveSessions) currActiveSessions.style.display = "none";
+      if (currRecentMessages)
+        currRecentMessages.style.setProperty("display", "flex", "important");
+      if (mobileSearchBtn) mobileSearchBtn.classList.add("hidden");
+      if (mobileSearchBox) mobileSearchBox.classList.add("hidden");
+    }
+  });
 };

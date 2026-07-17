@@ -1,4 +1,10 @@
-import { expandAndShrinkDescription, Session, startSession } from "./utils.js";
+import { registerPageListener } from "../../../global/js/utils.js";
+import {
+  expandAndShrinkDescription,
+  initMobileTabs,
+  Session,
+  startSession,
+} from "./utils.js";
 import {
   expandDescriptionBtn,
   initDomVariables,
@@ -10,6 +16,7 @@ import { throttling } from "../../../../../main_assets/js/utils.js";
 import { endSession, leaveSession } from "../../../shared/session/js/utils.js";
 
 export const init = throttling(2000, async () => {
+  initMobileTabs();
   initDomVariables();
 
   expandDescriptionBtn.addEventListener("click", expandAndShrinkDescription);
@@ -31,5 +38,7 @@ export const init = throttling(2000, async () => {
 
   iniChat(Session.groupId, Session.id);
 });
+
+registerPageListener(window, "resize", initMobileTabs);
 
 init();

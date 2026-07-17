@@ -62,7 +62,7 @@
     border: var(--primary-border-style);
     align-items: center;
 
-    &>header {
+    & > header {
       position: relative;
       width: 100%;
 
@@ -139,7 +139,8 @@
   width: 100%;
   border: var(--primary-border-style);
   border-radius: var(--primary-radius);
-  transition: box-shadow var(--primary-transition-style),
+  transition:
+    box-shadow var(--primary-transition-style),
     border-color var(--primary-transition-style);
   display: flex;
   flex-direction: column;
@@ -268,8 +269,8 @@
   border: var(--primary-border-style);
   box-shadow: var(--primary-shadow);
   overflow: hidden;
-  
-  header{
+
+  header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -371,7 +372,7 @@
     box-shadow: var(--primary-shadow);
     overflow: hidden;
 
-    &>header {
+    & > header {
       h2 {
         justify-content: center;
         display: flex;
@@ -393,7 +394,6 @@
   .overview-session-inactive {
     padding: 0.5rem !important;
     gap: 0.75rem !important;
-    height: auto !important;
     overflow: visible !important;
     background: transparent !important;
     border: none !important;
@@ -441,7 +441,7 @@
     right: 0 !important;
     width: 100% !important;
     margin-top: 0 !important;
-    z-index: 1001 !important;
+    z-index: 901 !important;
   }
 
   .content-blocks {
@@ -462,8 +462,8 @@
     box-shadow: none !important;
   }
 
-  .content-blocks .recent-messages>header,
-  .content-blocks .active-sessions>header {
+  .content-blocks .recent-messages > header,
+  .content-blocks .active-sessions > header {
     display: none !important;
   }
 
@@ -530,7 +530,9 @@
     flex-direction: column !important;
     gap: 0.75rem !important;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18) !important;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease !important;
   }
 
   .content-blocks .active-session header,
@@ -675,18 +677,26 @@
     display: flex !important;
   }
 
-  .overview-session-inactive .content-blocks:has(.active-session.loading-card) .recent-messages {
+  .recent-messages {
     display: none !important;
   }
 
-  .overview-session-inactive .content-blocks:has(.active-session.loading-card) .active-sessions {
+  /* .overview-session-inactive
+    .content-blocks:has(.active-session.loading-card)
+    .recent-messages {
+    display: none !important;
+  } */
+
+  .overview-session-inactive
+    .content-blocks:has(.active-session.loading-card)
+    .active-sessions {
     display: flex !important;
     width: 100% !important;
     max-width: 100% !important;
     flex-basis: 100% !important;
   }
 
-  .session-view-overlay{
+  .session-view-overlay {
     min-width: 100%;
     border: none;
     height: 100%;

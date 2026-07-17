@@ -3,9 +3,13 @@ import {
   quizCreateBtn,
   quizzesListContainer,
 } from "./dom-variables.js";
-import { handleQuizCardBtns, handleQuizCreateClick, initLazyLoadingLoader } from "./utils.js";
+import {
+  handleQuizCardBtns,
+  handleQuizCreateClick,
+  initLazyLoadingLoader,
+} from "./utils.js";
 
-export const init = (virtual = false) => {
+export const init = () => {
   initDomVariables();
 
   const loader = initLazyLoadingLoader();

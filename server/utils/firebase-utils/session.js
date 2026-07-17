@@ -1,7 +1,14 @@
 const { FieldValue, FieldPath } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
-const { formatHoursMinutes, millisecondsToHMFormat, INITIALE_LOADERS_COUNT } = require("../global");
-const { notifySessionStatus, updateSessionNotificationJoined } = require("./notifications");
+const {
+  formatHoursMinutes,
+  millisecondsToHMFormat,
+  INITIALE_LOADERS_COUNT,
+} = require("../global");
+const {
+  notifySessionStatus,
+  updateSessionNotificationJoined,
+} = require("./notifications");
 const { getQuizResult, isQuizPassed } = require("./examen");
 const { getTasks } = require("./tache");
 
@@ -39,7 +46,7 @@ const createGroupSession = async (sessionData, userId) => {
     }
 
     const groupData = groupSnap.data();
-    
+
     if (groupData.creator !== userId)
       return {
         success: false,
@@ -69,7 +76,7 @@ const createGroupSession = async (sessionData, userId) => {
           title: quizSnap.data().title,
           questionsCount: quizSnap.data().questionsCount,
           createdAt: FieldValue.serverTimestamp(),
-          sessionName: name
+          sessionName: name,
         });
         await quizRef.update({
           groupsCount: FieldValue.increment(1),
@@ -159,7 +166,11 @@ const createGroupSession = async (sessionData, userId) => {
     };
 
     membersSnap.docs.forEach((memberDoc) => {
-      const activeSessionRef = db.collection("users").doc(memberDoc.id).collection("activeSessions").doc(newSessionId);
+      const activeSessionRef = db
+        .collection("users")
+        .doc(memberDoc.id)
+        .collection("activeSessions")
+        .doc(newSessionId);
       currentBatch.set(activeSessionRef, activeSessionCardData);
       batchCount++;
       if (batchCount === 500) {
@@ -183,7 +194,7 @@ const createGroupSession = async (sessionData, userId) => {
       newSessionId,
       true,
       memberIds,
-      userId
+      userId,
     );
 
     return {
@@ -201,12 +212,20 @@ const createGroupSession = async (sessionData, userId) => {
 
 const deleteActiveSessionFanOut = async (groupId, sessionId) => {
   try {
-    const membersSnap = await db.collection("groups").doc(groupId).collection("members").get();
+    const membersSnap = await db
+      .collection("groups")
+      .doc(groupId)
+      .collection("members")
+      .get();
     const fanoutBatches = [];
     let currentBatch = db.batch();
     let batchCount = 0;
     membersSnap.docs.forEach((memberDoc) => {
-      const activeSessionRef = db.collection("users").doc(memberDoc.id).collection("activeSessions").doc(sessionId);
+      const activeSessionRef = db
+        .collection("users")
+        .doc(memberDoc.id)
+        .collection("activeSessions")
+        .doc(sessionId);
       currentBatch.delete(activeSessionRef);
       batchCount++;
       if (batchCount === 500) {
@@ -224,12 +243,20 @@ const deleteActiveSessionFanOut = async (groupId, sessionId) => {
 
 const updateActiveSessionFanOut = async (groupId, sessionId, data) => {
   try {
-    const membersSnap = await db.collection("groups").doc(groupId).collection("members").get();
+    const membersSnap = await db
+      .collection("groups")
+      .doc(groupId)
+      .collection("members")
+      .get();
     const fanoutBatches = [];
     let currentBatch = db.batch();
     let batchCount = 0;
     membersSnap.docs.forEach((memberDoc) => {
-      const activeSessionRef = db.collection("users").doc(memberDoc.id).collection("activeSessions").doc(sessionId);
+      const activeSessionRef = db
+        .collection("users")
+        .doc(memberDoc.id)
+        .collection("activeSessions")
+        .doc(sessionId);
       // We can only update if the document exists, set with merge is safer
       currentBatch.set(activeSessionRef, data, { merge: true });
       batchCount++;
@@ -250,12 +277,12 @@ const cancelSession = async (sessionId, userId) => {
   try {
     const sessionRef = db.collection("sessions").doc(sessionId);
     const snapshot = await sessionRef.get();
-    
-    if(!snapshot.exists){
+
+    if (!snapshot.exists) {
       return {
         success: false,
         message: "Session not found",
-      }
+      };
     }
 
     const usRef = db.collection("users");
@@ -269,7 +296,8 @@ const cancelSession = async (sessionId, userId) => {
     const isAdmin = session.creator === userId;
 
     if (!isAdmin) {
-      const time = new Date(session.startDate).getTime() + session.duration * 1000 * 60;
+      const time =
+        new Date(session.startDate).getTime() + session.duration * 1000 * 60;
       const timestamp = Date.now();
 
       if (timestamp >= time) {
@@ -278,9 +306,20 @@ const cancelSession = async (sessionId, userId) => {
           updatedAt: FieldValue.serverTimestamp(),
         });
         await deleteActiveSessionFanOut(session.groupId, sessionId);
-        const membersSnap = await db.collection("groups").doc(session.groupId).collection("members").get();
+        const membersSnap = await db
+          .collection("groups")
+          .doc(session.groupId)
+          .collection("members")
+          .get();
         const memberIds = membersSnap.docs.map((doc) => doc.id);
-        await notifySessionStatus(session.groupId, session.groupName, session.name, sessionId, false, memberIds);
+        await notifySessionStatus(
+          session.groupId,
+          session.groupName,
+          session.name,
+          sessionId,
+          false,
+          memberIds,
+        );
         return { success: true, message: "Session ended" };
       } else {
         return {
@@ -295,15 +334,15 @@ const cancelSession = async (sessionId, userId) => {
       updatedAt: FieldValue.serverTimestamp(),
     });
 
-    let promises = []
+    let promises = [];
 
-    if(!snap.empty){
-       promises = snap.docs.map((doc) => {
-      const reference = usRef.doc(doc.id);
-      return reference.update({
-        currentSession: "",
+    if (!snap.empty) {
+      promises = snap.docs.map((doc) => {
+        const reference = usRef.doc(doc.id);
+        return reference.update({
+          currentSession: "",
+        });
       });
-    });
     }
 
     const gRefernce = groupRef.doc(session.groupId);
@@ -313,17 +352,28 @@ const cancelSession = async (sessionId, userId) => {
       promises.push(
         gRefernce.update({
           currentSession: "",
-        })
+        }),
       );
     }
-    
+
     await Promise.all(promises);
 
     await deleteActiveSessionFanOut(session.groupId, sessionId);
 
-    const membersSnap = await db.collection("groups").doc(session.groupId).collection("members").get();
+    const membersSnap = await db
+      .collection("groups")
+      .doc(session.groupId)
+      .collection("members")
+      .get();
     const memberIds = membersSnap.docs.map((doc) => doc.id);
-    await notifySessionStatus(session.groupId, session.groupName, session.name, sessionId, false, memberIds);
+    await notifySessionStatus(
+      session.groupId,
+      session.groupName,
+      session.name,
+      sessionId,
+      false,
+      memberIds,
+    );
 
     return { success: true, message: "Session ended" };
   } catch (error) {
@@ -335,14 +385,13 @@ const cancelSession = async (sessionId, userId) => {
 const leavSession = async (userId) => {
   const userSnap = db.collection("users").doc(userId);
 
-  
   const user = await userSnap.get();
-    if(!user.data().currentSession){
-      return{
-        success: false,
-        message: "User is not in any session",
-      }
-    }
+  if (!user.data().currentSession) {
+    return {
+      success: false,
+      message: "User is not in any session",
+    };
+  }
 
   const sessionSnap = await db
     .collection("sessions")
@@ -355,9 +404,13 @@ const leavSession = async (userId) => {
       joinedCount: FieldValue.increment(-1),
     });
     // Fan out joinedCount decrement
-    await updateActiveSessionFanOut(sessionSnap.data().groupId, user.data().currentSession, { 
-      joinedCount: FieldValue.increment(-1) 
-    });
+    await updateActiveSessionFanOut(
+      sessionSnap.data().groupId,
+      user.data().currentSession,
+      {
+        joinedCount: FieldValue.increment(-1),
+      },
+    );
   }
 
   if (user.exists) {
@@ -407,7 +460,7 @@ const getCurrentSessionInfo = async (userId) => {
 
     if (!sessionSnap.exists) {
       console.warn(
-        `Session with ID ${user.currentSession} not found for user ${userId}.`
+        `Session with ID ${user.currentSession} not found for user ${userId}.`,
       );
       return null;
     }
@@ -423,7 +476,7 @@ const getCurrentSessionInfo = async (userId) => {
 
     if (!groupSnap.exists) {
       console.warn(
-        `Group with ID ${session.groupId} not found for session ${user.currentSession}.`
+        `Group with ID ${session.groupId} not found for session ${user.currentSession}.`,
       );
       return null;
     }
@@ -436,7 +489,7 @@ const getCurrentSessionInfo = async (userId) => {
         "self",
         session.quizId,
         session.groupId,
-        userId
+        userId,
       );
       const quizSubmittedCount = result.success
         ? result.quizResult.submittedCount
@@ -453,7 +506,7 @@ const getCurrentSessionInfo = async (userId) => {
         quizObj.submittedCount = quizSubmittedCount;
         quizObj.percentage =
           Math.round(
-            result.quizResult.correctAnswers.length / quizData.questionsCount
+            result.quizResult.correctAnswers.length / quizData.questionsCount,
           ) * 100;
       }
     }
@@ -492,23 +545,32 @@ const formatSessions = (sessions) => {
       id: session.id,
       startTime: formatHoursMinutes(startTime),
       endTime: formatHoursMinutes(endTime),
-      duration: millisecondsToHMFormat(session.data().duration * 60 * 1000)
+      duration: millisecondsToHMFormat(session.data().duration * 60 * 1000),
     };
   });
 };
 
-const fetchActiveSessions = async (userId, count = INITIALE_LOADERS_COUNT, lastVisible = null, criteria = {}) => {
+const fetchActiveSessions = async (
+  userId,
+  count = INITIALE_LOADERS_COUNT,
+  lastVisible = null,
+  criteria = {},
+) => {
   try {
     const userRef = db.collection("users").doc(userId);
     let sessions = [];
 
     do {
-      let query = userRef.collection("activeSessions")
+      let query = userRef
+        .collection("activeSessions")
         .orderBy(FieldPath.documentId(), "desc")
         .limit(count * 5); // fetch more to allow for client-side filtering
 
       if (lastVisible) {
-        const lastVisibleDoc = await userRef.collection("activeSessions").doc(lastVisible).get();
+        const lastVisibleDoc = await userRef
+          .collection("activeSessions")
+          .doc(lastVisible)
+          .get();
         if (lastVisibleDoc.exists) {
           query = query.startAfter(lastVisibleDoc);
         } else {
@@ -527,18 +589,19 @@ const fetchActiveSessions = async (userId, count = INITIALE_LOADERS_COUNT, lastV
 
       if (criteria.search) {
         const searchTerm = criteria.search.trim().toLowerCase();
-        batchSessions = batchSessions.filter(s => 
-          (s.name && s.name.toLowerCase().includes(searchTerm)) ||
-          (s.groupName && s.groupName.toLowerCase().includes(searchTerm))
+        batchSessions = batchSessions.filter(
+          (s) =>
+            (s.name && s.name.toLowerCase().includes(searchTerm)) ||
+            (s.groupName && s.groupName.toLowerCase().includes(searchTerm)),
         );
       }
 
-      sessions = sessions
-        .concat(batchSessions)
-        .slice(0, count);
+      sessions = sessions.concat(batchSessions).slice(0, count);
 
       lastVisible =
-        sessionSnaps.docs.length === count * 5 ? sessionSnaps.docs[sessionSnaps.docs.length - 1].id : null;
+        sessionSnaps.docs.length === count * 5
+          ? sessionSnaps.docs[sessionSnaps.docs.length - 1].id
+          : null;
     } while (sessions.length < count && lastVisible);
 
     return { success: true, sessions, lastVisible };
@@ -569,7 +632,7 @@ const getSessionInformations = async (sessionID) => {
     // Total duration
     const durationInMins = tasks.reduce(
       (acc, task) => acc + (task.durationInMins || 0),
-      0
+      0,
     );
 
     const startDate = new Date(sessionData.startDate);
@@ -636,7 +699,7 @@ const getActiveSession = async (userId) => {
 
     if (!sessionSnap.exists) {
       console.warn(
-        `Session with ID ${user.currentSession} not found for user ${userId}.`
+        `Session with ID ${user.currentSession} not found for user ${userId}.`,
       );
       return {
         success: false,
@@ -655,7 +718,7 @@ const getActiveSession = async (userId) => {
 
     if (!groupSnap.exists) {
       console.warn(
-        `Group with ID ${session.groupId} not found for session ${user.currentSession}.`
+        `Group with ID ${session.groupId} not found for session ${user.currentSession}.`,
       );
       return {
         success: false,
@@ -704,26 +767,36 @@ const joinSession = async (sessionId, userId) => {
     const snap = await ref.get();
     const userRef = db.collection("users").doc(userId);
     const usSnap = await userRef.get();
-    if (snap.exists && usSnap.exists) {
-      await ref.update({
-        joinedUsers: FieldValue.arrayUnion(userId),
-        joinedCount: FieldValue.increment(1),
-      });
-      await userRef.update({
-        currentSession: sessionId,
-      });
-
-      // Fan out joinedCount increment
-      await updateActiveSessionFanOut(snap.data().groupId, sessionId, { 
-        joinedCount: FieldValue.increment(1) 
-      });
-      await updateSessionNotificationJoined(userId, sessionId, true);
-
+    if (!snap.exists) {
       return {
-        success: true,
-        message: "You joined the session succcessfully",
+        success: false,
+        message: "Session Not Found",
       };
     }
+    if (!usSnap.exists) {
+      return {
+        success: false,
+        message: "User Not Found",
+      };
+    }
+    await ref.update({
+      joinedUsers: FieldValue.arrayUnion(userId),
+      joinedCount: FieldValue.increment(1),
+    });
+    await userRef.update({
+      currentSession: sessionId,
+    });
+
+    // Fan out joinedCount increment
+    await updateActiveSessionFanOut(snap.data().groupId, sessionId, {
+      joinedCount: FieldValue.increment(1),
+    });
+    await updateSessionNotificationJoined(userId, sessionId, true);
+
+    return {
+      success: true,
+      message: "You joined the session succcessfully",
+    };
   } catch (error) {
     console.error(error);
 

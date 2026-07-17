@@ -71,13 +71,13 @@
     />
   </head>
   <body>
-    <div class="top-nav-bar" style="position: absolute; top: 1.5rem; right: 1.5rem; display: flex; gap: 0.8rem; z-index: 9999;">
+    <div class="top-nav-bar" style="position: absolute; top: 1.5rem; right: 1.5rem; display: flex; gap: 0.8rem; z-index: 999;">
       <a href="/" class="button exclude-btn" title="Back to Home" aria-label="Back to Home" style="padding: 0.5rem 1rem; border-radius: 5px; border: 1px solid var(--btn-border-color); background-color: var(--btn-background-color); color: var(--btn-text-color); display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
         <i class="bi bi-house-door-fill"></i>
         <span>Home</span>
       </a>
       <button class="button exclude-btn toggle-theme-btn" id="theme-toggle-btn" title="Toggle Dark/Light Mode" aria-label="Toggle Dark or Light Mode" style="padding: 0.5rem 0.8rem; border-radius: 5px; border: 1px solid var(--btn-border-color); background-color: var(--btn-background-color); color: var(--btn-text-color); font-size: 1.1rem; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-        <i class="bi bi-toggle-off" id="theme-toggle-icon"></i>
+        <i class="bi bi-moon theme-toggle-icon" id="theme-toggle-icon"></i>
       </button>
     </div>
     <main>
@@ -165,19 +165,21 @@
         if (toggleBtn) {
           toggleBtn.addEventListener("click", () => {
             const isDark = root.getAttribute("data-theme") === "dark";
-            applyTheme(!isDark);
+            applyTheme(!isDark, true);
           });
         }
 
-        function applyTheme(toDark) {
+        function applyTheme(toDark, save) {
           const theme = toDark ? "dark" : "light";
           root.setAttribute("data-theme", theme);
-          if (toggleIcon) toggleIcon.className = toDark ? "bi bi-toggle-on" : "bi bi-toggle-off";
-          try {
-            localStorage.setItem("theme", theme);
-            localStorage.setItem("mode", theme);
-            localStorage.setItem("studyhype_theme", theme);
-          } catch (e) {}
+          if (toggleIcon) toggleIcon.className = toDark ? "bi bi-sun theme-toggle-icon" : "bi bi-moon theme-toggle-icon";
+          if (save) {
+            try {
+              localStorage.setItem("theme", theme);
+              localStorage.setItem("mode", theme);
+              localStorage.setItem("studyhype_theme", theme);
+            } catch (e) {}
+          }
         }
       })();
     </script>

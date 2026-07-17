@@ -366,7 +366,7 @@ const markGroupAsReadHelper = async (userId, groupId, messageId = null, timestam
 };
 
 const getUserGroupChatStateHelper = async (userId, groupId) => {
-  try {
+  try {    
     const ref = rDb.ref(`userGroupChats/${userId}/${groupId}`);
     const snap = await ref.once("value");
     if (!snap.exists()) {

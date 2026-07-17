@@ -30,18 +30,21 @@
         opacity: 1;
       }
     }
+
     &:has(.email:checked) {
       .email-tab-content {
         visibility: visible;
         opacity: 1;
       }
     }
+
     &:has(.password:checked) {
       .password-tab-content {
         visibility: visible;
         opacity: 1;
       }
     }
+
     &:has(.delete-account:checked) {
       .delete-account-tab-content {
         visibility: visible;
@@ -51,6 +54,7 @@
 
     .settings-header {
       text-align: center;
+
       h2 {
         margin-bottom: var(--primary-gap);
       }
@@ -145,7 +149,7 @@
         display: none;
       }
 
-      &:has(:checked) > div {
+      &:has(:checked)>div {
         scale: 0 1;
       }
 
@@ -176,9 +180,11 @@
 
     header {
       text-align: center;
+
       h3 {
         color: var(--primary-color);
       }
+
       span {
         color: var(--secondary-text-color);
         font-size: var(--small-font-size);
@@ -218,6 +224,7 @@
           height: 10rem;
           position: relative;
           width: 10rem;
+
           input {
             display: none;
           }
@@ -255,6 +262,7 @@
           .avatar-hover:not(.hidden) {
             visibility: visible;
             opacity: 1;
+
             i {
               translate: 0 0;
             }
@@ -287,6 +295,7 @@
     flex-direction: column;
     gap: calc(var(--primary-gap) / 2);
     padding-inline: calc(var(--primary-gap) * 2);
+
     .modify-btn,
     .add-btn,
     .save-btn {
@@ -295,12 +304,14 @@
   }
 
   .email-tab-content {
+
     .password-ckeck-field,
     .email-field-container {
       display: flex;
       flex-direction: column;
       gap: calc(var(--primary-gap) / 2);
     }
+
     .info-message {
       color: var(--secondary-text-color);
       font-size: var(--small-font-size);
@@ -335,6 +346,7 @@
         align-items: center;
         gap: calc(var(--primary-gap) / 2);
       }
+
       i {
         color: var(--orange-color);
       }
@@ -361,6 +373,11 @@
     border-radius: 0;
     background: transparent;
     align-items: stretch;
+    height: fit-content;
+
+    .info-fields {
+      height: fit-content;
+    }
   }
 
   .settings-wrapper .settings-content {

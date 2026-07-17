@@ -25,6 +25,8 @@ export let groupLeftSideBar,
   joinSessionBtn,
   endSessionBtn,
   addMembersMenuBtn,
+  drawerSection,
+  actionsList,
   groupInfoMenuBtn;
 
 groupInfoElementsMap = {
@@ -461,4 +463,6 @@ export const initDomVariables = () => {
   groupLeftSideBarTitle = groupLeftSideBar.querySelector(".side-bar-title");
   joinSessionBtn = document.querySelector(".join-session");
   endSessionBtn = document.querySelector(".end-session");
+  drawerSection = document.querySelector(".mobile-group-chat-actions");
+  actionsList = document.getElementById("mobile-drawer-group-actions-list");
 };

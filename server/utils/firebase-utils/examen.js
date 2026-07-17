@@ -1,6 +1,6 @@
 const { FieldValue, FieldPath } = require("firebase-admin/firestore");
 const { db, admin } = require("../../firebase/firebaseAdmin");
-const { getQuestions } = require("./question");
+const { getQuestions, getQuizDuration } = require("./question");
 const { toReadableDate } = require("../global");
 const { getGroupById } = require("./shared");
 const { INITIALE_LOADERS_COUNT } = require("../global");
@@ -53,11 +53,13 @@ const filterQuizzes = (criteria, quizzes) => {
     let matchStatus =
       !criteria.status || criteria.status.length === 0
         ? true
-        : criteria.status.some((s) => s?.toLowerCase() === ex.status?.toLowerCase());
+        : criteria.status.some(
+            (s) => s?.toLowerCase() === ex.status?.toLowerCase(),
+          );
     let matchDate = criteria.date
       ? new Date(criteria.date) <= new Date(ex.submittedAt)
       : true;
-    
+
     const searchTerm = criteria.searchTerm?.trim().toLowerCase() || "";
     if (searchTerm) {
       matchSearch =
@@ -118,10 +120,7 @@ const getUserQuizzes = async (
       }));
 
       quizzes = quizzes.concat(
-        filterQuizzes(criteria, batchQuizzes).slice(
-          0,
-          count - quizzes.length,
-        ),
+        filterQuizzes(criteria, batchQuizzes).slice(0, count - quizzes.length),
       );
 
       lastVisible =
@@ -520,47 +519,79 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
     if (!quizSnap) {
       return {
         success: false,
-        message: "Error getting quiz data"
+        message: "Error getting quiz data",
       };
     }
 
     const quizData = quizSnap.data();
 
-    const questions = await getQuestions(quizId, user.uid);
+    const result = await getQuizPlayDetails(user, quizId);
+
+    if (!result.success) {
+      return result;
+    }
+
+    const { duration, passed, questions } = result.data;
 
     if (questions.length === 0) {
       return {
         success: false,
-        message: "No questions found in the quiz"
+        message: "No questions found in the quiz",
       };
     }
 
-    const isCreator = quizData.creator === user.uid;
-    const hasPassed = await isQuizPassed(user.uid, quizId);
+    const passedORCreator = passed;
     const sessionHasQuiz =
       session && session.quizId === quizId && task && task.isQuiz;
 
-    if (isCreator || hasPassed || (sessionHasQuiz && isTargetGroup)) {
+    if (passedORCreator || (sessionHasQuiz && isTargetGroup)) {
       return {
         success: true,
         templateContext: {
           firstQuestion: questions[0],
           quizTitle: quizData.title,
           totalQuestions: questions.length,
+          questions: questions,
+          duration,
+          passed,
         },
       };
     }
 
     return {
       success: false,
-      message: "Error getting quiz play context"
+      message: "Error getting quiz play context",
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
-      message: "Error getting quiz play context"
+      message: "Error getting quiz play context",
     };
+  }
+};
+
+const getQuizPlayDetails = async (user, quizId) => {
+  try {
+    const userId = user.uid;
+
+    const questions = await getQuestions(quizId, userId);
+    const passed =
+      (await isQuizPassed(userId, quizId)) ||
+      (await isAdminOfQuiz(userId, quizId));
+    const duration = passed ? 0 : await getQuizDuration(user);
+
+    return {
+      success: true,
+      data: {
+        questions,
+        duration,
+        passed,
+      },
+    };
+  } catch (error) {
+    console.error("Error in getQuizPlayDetails:", error);
+    return { success: false, message: "Internal Server Error" };
   }
 };
 
@@ -902,7 +933,10 @@ const addQuizResult = async (userId, quizResult) => {
   try {
     const userRef = db.collection("users").doc(userId);
     const userData = (await userRef.get()).data();
-    const quizSnap = await db.collection("quizzes").doc(quizResult.quizId).get();
+    const quizSnap = await db
+      .collection("quizzes")
+      .doc(quizResult.quizId)
+      .get();
 
     if (!quizSnap.exists)
       return {
@@ -956,7 +990,7 @@ const addQuizResult = async (userId, quizResult) => {
       sessionName: session.name,
       sessionId: userData.currentSession,
       groupId: session.groupId,
-      quizTitle
+      quizTitle,
     };
 
     if (existingResult.empty) {
@@ -969,7 +1003,7 @@ const addQuizResult = async (userId, quizResult) => {
       const quiz = quizSnap.data();
       if (!groupRes.success) return groupRes;
       const group = groupRes.group;
-      
+
       await userRef
         .collection("passedQuizzes")
         .doc(quizResult.groupId)
@@ -984,13 +1018,13 @@ const addQuizResult = async (userId, quizResult) => {
           ),
           questionsCount,
           userId,
-          sessionName: session.name
+          sessionName: session.name,
         });
-    } else  {
+    } else {
       return {
         success: true,
         message: "You have already submitted this quiz",
-      }
+      };
     }
 
     return {
@@ -1119,6 +1153,7 @@ const duplicateQuiz = async (quizId, userId, title) => {
 module.exports = {
   createQuiz,
   isQuizTitleAvailable,
+  getQuizPlayDetails,
   isAdminOfQuiz,
   duplicateQuiz,
   deleteQuiz,

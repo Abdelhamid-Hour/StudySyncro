@@ -27,6 +27,7 @@
     </label>
   </header>
   <div data-last-visible="<%= lastVisible || '' %>" class="quizzes-list">
+    <% if (quizzes && quizzes.length > 0) { %>
     <% quizzes.forEach( (quiz) => { %>
     <div class="quiz-card card-item" data-quiz-id="<%= quiz.quizId %>">
       <div class="quiz-title-container info-container">
@@ -96,5 +97,14 @@
       <% } %>
     </div>
     <% }); %>
+    <% } else { %>
+    <div class="icon-wrapper">
+      <div class="empty-icon-container">
+        <i class="bi bi-clipboard-x"></i>
+      </div>
+      <h3>No Quizzes Available</h3>
+      <p>No quizzes have been created or shared with this group yet.</p>
+    </div>
+    <% } %>
   </div>
 </div>

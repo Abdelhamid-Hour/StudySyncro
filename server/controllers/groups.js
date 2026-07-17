@@ -6,6 +6,7 @@ const {
   getQuizzesByGroupId,
   deleteQuiz,
   getPassedQuizzes,
+  getQuizPlayDetails,
 } = require("../utils/firebase-utils/examen");
 const {
   getJoinedGroups,
@@ -44,7 +45,7 @@ const getUserGroupsHandler = async (req, res) => {
     req.user.uid,
     creteria,
     parseInt(count, 10),
-    lastVisible
+    lastVisible,
   );
 
   return res.json(data);
@@ -72,7 +73,7 @@ const getAvailableGroupsHandler = async (req, res) => {
     req.user.uid,
     creteria,
     parseInt(count, 10),
-    lastVisible
+    lastVisible,
   );
 
   return res.json(data);
@@ -89,7 +90,7 @@ const getQuizzesHandler = async (req, res) => {
     req.user.uid,
     creteria,
     count,
-    lastVisible
+    lastVisible,
   );
 
   if (result.success) {
@@ -132,23 +133,17 @@ const groupFragmentHandler =
           };
 
         res.json(response);
-      }
+      },
     );
   };
 
 const getQuizPlayDetailsHandler = async (req, res) => {
   try {
-    const userId = req.user.uid;
-    const quizId = req.params.quizId;
-
-    const questions = await getQuestions(quizId, userId);
-    const passed =
-      (await isQuizPassed(userId, quizId)) ||
-      (await isAdminOfQuiz(userId, quizId));
-    const duration = passed ? null : await getQuizDuration(req.user);
-    return res.status(200).json({ questions, duration, passed });
+    const result = await getQuizPlayDetails(req.user, req.params.quizId);
+    if (result.success) return res.status(200).json({ ...result.data });
+    return res.status(500).json({ message: "Internal Server Error" });
   } catch (error) {
-    console.error("Error in getQuizPlayDetailsHandler:", error);
+    console.log("Error in getQuizPlayDetailsHandler:");
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -170,7 +165,7 @@ const joinGroupHandler = async (req, res) => {
   const groupId = req.body.groupId;
 
   const result = await joinGroup(groupId, req.user);
-    
+
   if (result.success) {
     return res.status(200).json({ status: result.status });
   }
@@ -185,7 +180,7 @@ const patchGroupHandler = async (req, res) => {
   const result = await modifyGroup(
     userData.uid,
     req.params.groupId,
-    updatedData
+    updatedData,
   );
 
   if (result.success) {
@@ -270,14 +265,14 @@ const inviteMembersHandler = async (req, res) => {
 };
 
 const getQuizzesByGroup = async (req, res) => {
-  const { groupId, search, sort, date, count, lastVisible } = req.query;  
+  const { groupId, search, sort, date, count, lastVisible } = req.query;
 
   const result = await getQuizzesByGroupId(
     groupId,
     req.user.uid,
     count,
     lastVisible,
-    { sort, date, search }
+    { sort, date, search },
   );
   if (result.success) {
     return res
@@ -330,7 +325,7 @@ const getMembersByGroup = async (req, res) => {
     groupId,
     req.user.uid,
     count,
-    lastVisible
+    lastVisible,
   );
   if (result.success) {
     return res

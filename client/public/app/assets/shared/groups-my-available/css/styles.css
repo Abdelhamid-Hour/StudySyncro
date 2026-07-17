@@ -17,7 +17,8 @@
   padding: var(--primary-gap);
   gap: calc(var(--primary-gap) / 2);
   border: var(--primary-border-style);
-  transition: box-shadow var(--primary-transition-style),
+  transition:
+    box-shadow var(--primary-transition-style),
     border-color var(--primary-transition-style);
 
   & * {
@@ -40,6 +41,11 @@
 
   .group-name {
     color: var(--primary-color);
+    display: -webkit-box;
+    line-clamp: 1;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .group-description {
@@ -50,6 +56,7 @@
     -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    word-break: break-word;
   }
 
   .avatars {
@@ -78,7 +85,7 @@
       margin-right: -0.5rem;
       overflow: hidden;
       &:not(:first-child) {
-        border-left: .3rem solid var(--btn-background-color);
+        border-left: 0.3rem solid var(--btn-background-color);
       }
     }
   }
@@ -165,9 +172,12 @@
     font-size: 1.5rem;
     border: none;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-    z-index: 1001;
+    z-index: 901;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
   }
 
   .mobile-create-group-btn:hover,
@@ -183,5 +193,5 @@
 }
 
 .mobile-create-group-btn {
-  display: none;
+  display: none !important;
 }

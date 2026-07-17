@@ -13,7 +13,7 @@ import {
   initOldValues,
 } from "./utils.js";
 
-export const init = (virtual = false) => {
+export const init = () => {
   initDomVariables();
 
   initOldValues();

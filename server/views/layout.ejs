@@ -385,7 +385,7 @@
     </aside>
     <aside class="left-side-bar">
       <div class="logo-container">
-        <i class="bi bi-box-fill"></i>
+        <img src="/main_assets/images/logo-mark.svg" alt="StudyHype Logo" style="width: 1.8rem; height: 1.8rem; flex-shrink: 0;" />
         <h6 class="should-hide">StudyHype</h6>
       </div>
       <div class="side-bar-icons">
@@ -421,153 +421,9 @@
               <i class="bi bi-bell"></i>
               <span class="badge notification-badge <%= unreadCount > 0 ? '' : 'hidden' %>"><%= unreadCount > 99 ? '99+' : unreadCount %></span>
             </button>
-            <div class="notifications-overlay overlay">
-              <header class="notifications-header">
-                <div class="header-title">
-                  <i class="bi bi-bell-fill"></i>
-                  <span>Notifications</span>
-                </div>
-              </header>
-              <div class="notifications-categories">
-                <button type="button" class="notif-category-btn exclude-btn active" data-category="All">All</button>
-                <button type="button" class="notif-category-btn exclude-btn" data-category="Join Request">Requests</button>
-                <button type="button" class="notif-category-btn exclude-btn" data-category="Groups">Groups</button>
-                <button type="button" class="notif-category-btn exclude-btn" data-category="Sessions">Sessions</button>
-              </div>
-              <div class="notifications-list" id="notifications-list" data-last-visible="<%= (typeof notificationsData !== 'undefined' && notificationsData.lastVisible) ? notificationsData.lastVisible : '' %>" data-current-session="<%= (typeof user !== 'undefined' && user && user.currentSession) ? user.currentSession : '' %>" data-current-user-id="<%= (typeof user !== 'undefined' && user && user.uid) ? user.uid : '' %>">
-                <% if (typeof notificationsData !== 'undefined' && notificationsData.cards && notificationsData.cards.length > 0) { %>
-                  <%
-                    const formatNotifDate = (ts) => {
-                      try {
-                        const d = new Date(ts || Date.now());
-                        if (isNaN(d.getTime())) return "Recent";
-                        return d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-                      } catch (e) {
-                        return "Recent";
-                      }
-                    };
-                    const formatNotifMsg = (notif) => {
-                      let msg = notif.message || "";
-                      if (msg.startsWith("Admin role") || msg.includes("Admin role")) {
-                        msg = msg.replace("Admin role", "<strong>Admin</strong> role");
-                      }
-
-                      const termsMap = [
-                        { term: "successfully joined", cls: "bold-success" },
-                        { term: "accepted", cls: "bold-success" },
-                        { term: "started", cls: "bold-success" },
-                        { term: "ended", cls: "bold-success" },
-                        { term: "rejected", cls: "bold-danger" },
-                        { term: "removed", cls: "bold-danger" },
-                        { term: "deleted", cls: "bold-danger" },
-                        { term: "demoted from Admin", cls: "bold-danger" },
-                        { term: "demoted", cls: "bold-danger" },
-                        { term: "pending approval", cls: "bold-warning" },
-                        { term: "transferred", cls: "bold-warning" },
-                        { term: notif.metadata?.senderName, cls: "" },
-                        { term: notif.metadata?.groupName, cls: "" },
-                        { term: notif.metadata?.sessionName, cls: "" }
-                      ].filter(item => item.term && typeof item.term === "string");
-
-                      termsMap.sort((a, b) => b.term.length - a.term.length);
-
-                      termsMap.forEach(({ term, cls }) => {
-                        const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                        const regex = new RegExp(`(?<!>|<strong class="[^"]*">)(${escaped})(?!<\\/strong>)`, 'g');
-                        const classAttr = cls ? ` class="${cls}"` : "";
-                        msg = msg.replace(regex, `<strong${classAttr}>$1</strong>`);
-                      });
-
-                      return msg;
-                    };
-                  %>
-                  <% notificationsData.cards.forEach(notif => { %>
-                    <%
-                      const type = notif.type || "general";
-                      let iconHtml = `<i class="bi bi-bell-fill"></i>`;
-                      if (notif.metadata && notif.metadata.senderPhotoURL && (type === "join_request" || type === "member_removed")) {
-                        iconHtml = `<img src="${notif.metadata.senderPhotoURL}" alt="avatar" />`;
-                      } else if (type === "join_request") {
-                        iconHtml = `<i class="bi bi-person-fill"></i>`;
-                      } else if (type === "join_accepted") {
-                        iconHtml = `<i class="bi bi-link-45deg"></i>`;
-                      } else if (type === "join_pending") {
-                        iconHtml = `<i class="bi bi-three-dots"></i>`;
-                      } else if (type === "join_rejected") {
-                        iconHtml = `<i class="bi bi-x-lg"></i>`;
-                      } else if (type === "member_removed") {
-                        iconHtml = `<i class="bi bi-person-dash-fill"></i>`;
-                      } else if (type === "role_transferred") {
-                        iconHtml = `<i class="bi bi-arrow-left-right"></i>`;
-                      } else if (type === "role_demoted") {
-                        iconHtml = `<i class="bi bi-person-down"></i>`;
-                      } else if (type === "group_deleted") {
-                        iconHtml = `<i class="bi bi-people-fill"></i>`;
-                      } else if (type === "session_started") {
-                        iconHtml = `<i class="bi bi-clock-fill"></i>`;
-                      } else if (type === "session_ended") {
-                        iconHtml = `<i class="bi bi-check-lg"></i>`;
-                      }
-                      const timeStr = formatNotifDate(notif.timestamp);
-                      const categoryLabel = notif.category || "General";
-                    %>
-                    <div class="notif-card card-item <%= notif.read ? '' : 'unread' %>" data-id="<%= notif.id %>" data-type="<%= notif.type %>" data-category="<%= notif.category || 'All' %>" data-demande-id="<%= notif.metadata?.demandeId || '' %>" data-group-id="<%= notif.metadata?.groupId || '' %>" data-sender-name="<%= notif.metadata?.senderName || '' %>" data-group-name="<%= notif.metadata?.groupName || '' %>" data-session-id="<%= notif.metadata?.sessionId || '' %>">
-                      <div class="notif-icon <%= notif.type %>">
-                        <%- iconHtml %>
-                      </div>
-                      <div class="notif-content">
-                        <div class="notif-message"><%- formatNotifMsg(notif) %></div>
-                        <div class="notif-footer">
-                          <span class="notif-meta"><%= timeStr %> • <%= categoryLabel %></span>
-                          <%
-                            const isAlreadyJoined = Boolean((notif.metadata && notif.metadata.joined) || (typeof user !== 'undefined' && user && user.currentSession && user.currentSession === (notif.metadata && notif.metadata.sessionId)));
-                            const isCreator = Boolean((notif.metadata && notif.metadata.isAdmin) || (typeof user !== 'undefined' && user && notif.metadata && notif.metadata.creatorId && user.uid === notif.metadata.creatorId));
-                          %>
-                          <% if (notif.type === 'join_request') { %>
-                            <div class="notif-actions">
-                              <button type="button" class="reject-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> Reject</button>
-                              <button type="button" class="accept-btn exclude-btn small-btn" data-action="accept"><i class="bi bi-check-circle"></i> Accept</button>
-                            </div>
-                          <% } else if (notif.type === 'session_started' && !(notif.metadata && notif.metadata.sessionEnded) && !isAlreadyJoined && !isCreator) { %>
-                            <div class="notif-actions">
-                              <button type="button" class="join-session-btn exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> Join</button>
-                            </div>
-                          <% } %>
-                        </div>
-                      </div>
-                    </div>
-                  <% }) %>
-                <% } else { %>
-                  <div class="icon-wrapper">
-                    <div class="empty-icon-container">
-                      <i class="bi bi-bell-slash"></i>
-                    </div>
-                    <h3>No notifications yet</h3>
-                    <p>You don't have any notifications right now.</p>
-                  </div>
-                <% } %>
-              </div>
-            </div>
           </div>
-          <button class="exclude-btn open-close-side-bar-btn nav-btn">
-            <div>
-              <i class="bi bi-chevron-left"></i>
-            <svg
-              viewBox="0 0 1.7251844 4.052049"
-              version="1.1">
-            <sodipodi:namedview
-            id="namedview1"
-            pagecolor="#ffffff"
-            bordercolor="#000000"
-            borderopacity="0.25" /><g
-            inkscape:groupmode="layer"
-            id="layer1"
-            transform="translate(-1.2540744,-0.09064213)"><g
-              transform="matrix(0.52333911,0,0,0.52333911,1.3779505,2.0848581)"><path
-                d="M 2.5299976,-3.8105617 H 0.29309067 c -0.29209289679,0 -0.5297938,0.2377008 -0.5297938,0.5297937 v 6.6830961 c 0,0.2920928 0.23770090321,0.5297937 0.5297938,0.5297937 H 2.5299976 c 0.2920929,0 0.5297935,-0.2377009 0.5297935,-0.5297937 V -3.280768 c 0,-0.2920929 -0.2377006,-0.5297937 -0.5297935,-0.5297937 z M 0.45481747,3.2995645 c -0.097482,0 -0.1765979,-0.079116 -0.1765979,-0.1765979 0,-0.097482 0.079116,-0.1765979 0.1765979,-0.1765979 0.097482,0 0.17659792,0.079116 0.17659792,0.1765979 0,0.097482 -0.0791159,0.1765979 -0.17659792,0.1765979 z m 0,-4.9027821 c -0.097482,0 -0.1765979,-0.079116 -0.1765979,-0.1765979 0,-0.097482 0.079116,-0.1765979 0.1765979,-0.1765979 0.097482,0 0.17659792,0.079116 0.17659792,0.1765979 0,0.097482 -0.0791159,0.1765979 -0.17659792,0.1765979 z m 0,-0.7063916 c -0.097482,0 -0.1765979,-0.079116 -0.1765979,-0.176598 0,-0.097482 0.079116,-0.1765979 0.1765979,-0.1765979 0.097482,0 0.17659792,0.079116 0.17659792,0.1765979 0,0.097482 -0.0791159,0.176598 -0.17659792,0.176598 z m 0,-0.7063917 c -0.097482,0 -0.1765979,-0.079116 -0.1765979,-0.1765979 0,-0.097482 0.079116,-0.1765979 0.1765979,-0.1765979 0.097482,0 0.17659792,0.079116 0.17659792,0.1765979 0,0.097482 -0.0791159,0.1765979 -0.17659792,0.1765979 z M 2.3682952,3.2995645 h -1.324818 c -0.0975999,0 -0.17659796,-0.078998 -0.17659796,-0.1765979 0,-0.0976 0.0789981,-0.1765979 0.17659796,-0.1765979 h 1.324818 c 0.0976,0 0.1765979,0.078998 0.1765979,0.1765979 0,0.0976 -0.078998,0.1765979 -0.1765979,0.1765979 z m 8.255e-4,-4.9027821 H 1.0434772 c -0.0975999,0 -0.17659796,-0.078998 -0.17659796,-0.1765979 0,-0.0976 0.0789981,-0.1765979 0.17659796,-0.1765979 h 1.3256435 c 0.0976,0 0.1765979,0.078998 0.1765979,0.1765979 0,0.0976 -0.078998,0.1765979 -0.1765979,0.1765979 z m 0,-0.7063916 H 1.0434772 c -0.0975999,0 -0.17659796,-0.078998 -0.17659796,-0.176598 0,-0.0976 0.0789981,-0.1765979 0.17659796,-0.1765979 h 1.3256435 c 0.0976,0 0.1765979,0.078998 0.1765979,0.1765979 0,0.0976 -0.078998,0.176598 -0.1765979,0.176598 z m 0,-0.7063917 H 1.0434772 c -0.0975999,0 -0.17659796,-0.078998 -0.17659796,-0.1765979 0,-0.0976 0.0789981,-0.1765979 0.17659796,-0.1765979 h 1.3256435 c 0.0976,0 0.1765979,0.078998 0.1765979,0.1765979 0,0.0976 -0.078998,0.1765979 -0.1765979,0.1765979 z"
-                style="stroke-width:0.117732" /></g></g></svg>
-                
-            </div>
+          <button type="button" class="exclude-btn open-close-side-bar-btn nav-btn" title="Toggle Sidebar">
+            <i class="bi bi-layout-sidebar sidebar-toggle-icon"></i>
           </button>
           <a
             href="/app/settings"
@@ -578,6 +434,137 @@
         </div>
       </div>
     </aside>
+    <div class="notifications-overlay overlay">
+      <header class="notifications-header">
+        <div class="header-title">
+          <i class="bi bi-bell-fill"></i>
+          <span>Notifications</span>
+        </div>
+
+        <button type="button" class="exclude-btn close-overlay-btn">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </header>
+      <div class="notifications-categories">
+        <button type="button" class="notif-category-btn exclude-btn active" data-category="All">All</button>
+        <button type="button" class="notif-category-btn exclude-btn" data-category="Join Request">Requests</button>
+        <button type="button" class="notif-category-btn exclude-btn" data-category="Groups">Groups</button>
+        <button type="button" class="notif-category-btn exclude-btn" data-category="Sessions">Sessions</button>
+      </div>
+      <div class="notifications-list" id="notifications-list" data-last-visible="<%= (typeof notificationsData !== 'undefined' && notificationsData.lastVisible) ? notificationsData.lastVisible : '' %>" data-current-session="<%= (typeof user !== 'undefined' && user && user.currentSession) ? user.currentSession : '' %>" data-current-user-id="<%= (typeof user !== 'undefined' && user && user.uid) ? user.uid : '' %>">
+        <% if (typeof notificationsData !== 'undefined' && notificationsData.cards && notificationsData.cards.length > 0) { %>
+          <%
+            const formatNotifDate = (ts) => {
+              try {
+                const d = new Date(ts || Date.now());
+                if (isNaN(d.getTime())) return "Recent";
+                return d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+              } catch (e) {
+                return "Recent";
+              }
+            };
+            const formatNotifMsg = (notif) => {
+              let msg = notif.message || "";
+              if (msg.startsWith("Admin role") || msg.includes("Admin role")) {
+                msg = msg.replace("Admin role", "<strong>Admin</strong> role");
+              }
+
+              const termsMap = [
+                { term: "successfully joined", cls: "bold-success" },
+                { term: "accepted", cls: "bold-success" },
+                { term: "started", cls: "bold-success" },
+                { term: "ended", cls: "bold-success" },
+                { term: "rejected", cls: "bold-danger" },
+                { term: "removed", cls: "bold-danger" },
+                { term: "deleted", cls: "bold-danger" },
+                { term: "demoted from Admin", cls: "bold-danger" },
+                { term: "demoted", cls: "bold-danger" },
+                { term: "pending approval", cls: "bold-warning" },
+                { term: "transferred", cls: "bold-warning" },
+                { term: notif.metadata?.senderName, cls: "" },
+                { term: notif.metadata?.groupName, cls: "" },
+                { term: notif.metadata?.sessionName, cls: "" }
+              ].filter(item => item.term && typeof item.term === "string");
+
+              termsMap.sort((a, b) => b.term.length - a.term.length);
+
+              termsMap.forEach(({ term, cls }) => {
+                const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(`(?<!>|<strong class="[^"]*">)(${escaped})(?!<\\/strong>)`, 'g');
+                const classAttr = cls ? ` class="${cls}"` : "";
+                msg = msg.replace(regex, `<strong${classAttr}>$1</strong>`);
+              });
+
+              return msg;
+            };
+          %>
+          <% notificationsData.cards.forEach(notif => { %>
+            <%
+              const type = notif.type || "general";
+              let iconHtml = `<i class="bi bi-bell-fill"></i>`;
+              if (notif.metadata && notif.metadata.senderPhotoURL && (type === "join_request" || type === "member_removed")) {
+                iconHtml = `<img src="${notif.metadata.senderPhotoURL}" alt="avatar" />`;
+              } else if (type === "join_request") {
+                iconHtml = `<i class="bi bi-person-fill"></i>`;
+              } else if (type === "join_accepted") {
+                iconHtml = `<i class="bi bi-link-45deg"></i>`;
+              } else if (type === "join_pending") {
+                iconHtml = `<i class="bi bi-three-dots"></i>`;
+              } else if (type === "join_rejected") {
+                iconHtml = `<i class="bi bi-x-lg"></i>`;
+              } else if (type === "member_removed") {
+                iconHtml = `<i class="bi bi-person-dash-fill"></i>`;
+              } else if (type === "role_transferred") {
+                iconHtml = `<i class="bi bi-arrow-left-right"></i>`;
+              } else if (type === "role_demoted") {
+                iconHtml = `<i class="bi bi-person-down"></i>`;
+              } else if (type === "group_deleted") {
+                iconHtml = `<i class="bi bi-people-fill"></i>`;
+              } else if (type === "session_started") {
+                iconHtml = `<i class="bi bi-clock-fill"></i>`;
+              } else if (type === "session_ended") {
+                iconHtml = `<i class="bi bi-check-lg"></i>`;
+              }
+              const timeStr = formatNotifDate(notif.timestamp);
+              const categoryLabel = notif.category || "General";
+            %>
+            <div class="notif-card card-item <%= notif.read ? '' : 'unread' %>" data-id="<%= notif.id %>" data-type="<%= notif.type %>" data-category="<%= notif.category || 'All' %>" data-demande-id="<%= notif.metadata?.demandeId || '' %>" data-group-id="<%= notif.metadata?.groupId || '' %>" data-sender-name="<%= notif.metadata?.senderName || '' %>" data-group-name="<%= notif.metadata?.groupName || '' %>" data-session-id="<%= notif.metadata?.sessionId || '' %>">
+              <div class="notif-icon <%= notif.type %>">
+                <%- iconHtml %>
+              </div>
+              <div class="notif-content">
+                <div class="notif-message"><%- formatNotifMsg(notif) %></div>
+                <div class="notif-footer">
+                  <span class="notif-meta"><%= timeStr %> • <%= categoryLabel %></span>
+                  <%
+                    const isAlreadyJoined = Boolean((notif.metadata && notif.metadata.joined) || (typeof user !== 'undefined' && user && user.currentSession && user.currentSession === (notif.metadata && notif.metadata.sessionId)));
+                    const isCreator = Boolean((notif.metadata && notif.metadata.isAdmin) || (typeof user !== 'undefined' && user && notif.metadata && notif.metadata.creatorId && user.uid === notif.metadata.creatorId));
+                  %>
+                  <% if (notif.type === 'join_request') { %>
+                    <div class="notif-actions">
+                      <button type="button" class="reject-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> Reject</button>
+                      <button type="button" class="accept-btn exclude-btn small-btn" data-action="accept"><i class="bi bi-check-circle"></i> Accept</button>
+                    </div>
+                  <% } else if (notif.type === 'session_started' && !(notif.metadata && notif.metadata.sessionEnded) && !isAlreadyJoined && !isCreator) { %>
+                    <div class="notif-actions">
+                      <button type="button" class="join-session-btn exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> Join</button>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <div class="icon-wrapper">
+            <div class="empty-icon-container">
+              <i class="bi bi-bell-slash"></i>
+            </div>
+            <h3>No notifications yet</h3>
+            <p>You don't have any notifications right now.</p>
+          </div>
+        <% } %>
+      </div>
+    </div>
     <script>
       if (localStorage.getItem("sidebar-collapsed") === "true") {
         document.querySelectorAll(".should-hide").forEach(function(el) {
@@ -600,7 +587,13 @@
       <div class="mobile-topbar-center">
         <h1 class="mobile-page-title">
           <% if (resourcesRoute === '/groups/my/group-chat/') { %>
+            <button
+            type="button"
+            class="exclude-btn show-info-btn"
+            >
+            <i class="bi bi-info-circle"></i>
             Group Chat
+          </button>
           <% } else if (resourcesRoute === '/quizzes/my/quiz-editor/') { %>
             Quiz Editor
           <% } else if (resourcesRoute.includes("/home/")) { %>
@@ -627,9 +620,40 @@
     <div id="mobile-search-box" class="mobile-search-box hidden"></div>
 
     <!-- MOBILE NAVIGATION TABS CONTAINER (<= 48rem) -->
-    <div id="mobile-tabs-container" class="mobile-tabs-container hidden"></div>
+    <% const showGroupsTabs = resourcesRoute === '/groups/my/' || resourcesRoute === '/groups/available/'; %>
+    <% const showQuizzesTabs = resourcesRoute === '/quizzes/my/' || resourcesRoute === '/quizzes/passed/'; %>
+    <% const showQuizEditTabs = resourcesRoute === '/quizzes/my/quiz-editor/'; %>
+    <% const showHomeTabs = resourcesRoute.includes('/home'); %>
+    <% const showMobileTabs = showGroupsTabs || showQuizzesTabs || showQuizEditTabs || showHomeTabs; %>
+    <div id="mobile-tabs-container" class="mobile-tabs-container<%= showMobileTabs ? '' : ' hidden' %>">
+      <% if (showHomeTabs) { %>
+      <div class="mobile-<%= hasActiveSession ? '' : 'in' %>active-tabs navigation-tabs" style="width: 100%;">
+        <button type="button" class="tab active-tab exclude-btn" data-target="<%= hasActiveSession ? 'timer-session' : 'active-sessions' %>"><%= hasActiveSession ? 'Timer & Session' : 'Active Sessions' %></button>
+        <button type="button" class="tab exclude-btn" data-target="<%= hasActiveSession ? 'tasks' : 'recent-messages' %>"><%= hasActiveSession ? 'Tasks' : 'Recent Messages' %></button>
+      <% if (hasActiveSession) { %>
+        <button type="button" class="tab exclude-btn" data-target="chat">Chat</button>
+      <% } %>
+      </div>
+      <% } else if (showGroupsTabs) { %>
+      <div class="mobile-groups-tabs navigation-tabs groups-tabs" style="width: 100%;">
+        <a href="/app/groups/my" class="tab route-link<%= resourcesRoute === '/groups/my/' ? ' active-tab' : '' %> exclude-btn">My Groups</a>
+        <a href="/app/groups/available" class="tab route-link<%= resourcesRoute === '/groups/available/' ? ' active-tab' : '' %> exclude-btn">Available Groups</a>
+      </div>
+      <% } else if (showQuizzesTabs || showQuizEditTabs) { %>
+      <div class="mobile-<%= showQuizzesTabs ? 'quizzes' : 'quiz-editor' %>-tabs navigation-tabs quizzes-tabs" style="width: 100%;">
+        <% if (showQuizzesTabs) { %>
+        <a href="/app/quizzes/my" class="tab route-link<%= resourcesRoute === '/quizzes/my/' ? ' active-tab' : '' %> exclude-btn">My Quizzes</a>
+        <a href="/app/quizzes/passed" class="tab route-link<%= resourcesRoute === '/quizzes/passed/' ? ' active-tab' : '' %> exclude-btn">Passed</a>
+        <% } else { %>
+        <button type="button" class="tab active-tab exclude-btn" data-target="quiz-editor">Quiz Editor</button>
+        <button type="button" class="tab exclude-btn" data-target="questions-list">Questions List</button>
+        <% } %>
+      </div>
+      <% } %>
+    </div>
 
     <!-- MOBILE MASTER MENU DRAWER -->
+    <div class="mobile-drawer-backdrop"></div>
     <div class="mobile-master-drawer">
       <header class="mobile-drawer-header">
         <button type="button" id="mobile-theme-toggle-btn" class="exclude-btn toggle-container nav-btn should-fill" title="Toggle Theme">
@@ -642,7 +666,7 @@
       <div class="mobile-drawer-body">
         <div class="mobile-drawer-section">
           <span class="mobile-drawer-section-title">App Controls</span>
-          <button type="button" class="exclude-btn mobile-drawer-btn mobile-notif-btn should-fill">
+          <button type="button" class="exclude-btn mobile-drawer-btn mobile-notif-btn open-drop-down-btn">
             <i class="bi bi-bell"></i>
             <span>Notifications</span>
             <% const mUnreadCount = (typeof notificationsData !== 'undefined' && notificationsData.unreadCount) ? notificationsData.unreadCount : 0; %>

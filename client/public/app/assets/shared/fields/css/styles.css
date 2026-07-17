@@ -6,7 +6,7 @@
   &:has(.group-subject-field),
   &:has(.drop-down-menu) {
     position: relative !important;
-    z-index: 100 !important;
+    z-index: 90 !important;
   }
 }
 
@@ -16,7 +16,7 @@
 
   &:has(.drop-down-menu),
   &:has(.select-menu) {
-    z-index: 100 !important;
+    z-index: 90 !important;
   }
   display: flex;
   align-items: center;
@@ -25,7 +25,8 @@
   background-color: var(--inputs-background-color);
   outline: 0.15rem solid transparent;
   width: 100%;
-  transition: border-color var(--primary-transition-style),
+  transition:
+    border-color var(--primary-transition-style),
     outline-color var(--primary-transition-style);
 
   &:focus-within,
@@ -84,7 +85,7 @@
     transition: background-color var(--primary-transition-style);
     /* ! for complating */
     &::before {
-      content: '';
+      content: "";
       height: 100%;
       width: 20%;
       border-start-start-radius: 5px;

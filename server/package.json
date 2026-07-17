@@ -14,7 +14,8 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon ./app.js"
+    "start": "nodemon ./app.js",
+    "seed:groups": "node seed_fake_groups.js"
   },
   "author": "",
   "license": "ISC",

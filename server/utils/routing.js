@@ -82,6 +82,7 @@ const fetchData = async (pathName, user) => {
       const payload = await fetchHomeData(user.uid);
       payload.payload.extraData = {
         fullName: user.fullName,
+        hasActiveSession: payload.payload.hasActiveSession || false
       };
       return payload;
 
@@ -155,8 +156,7 @@ const renderFragmentOrLayout = (
   payload,
   pathName,
   req,
-  res,
-  extraProps
+  res
 ) => {
   const isFetch = req.headers?.["x-requested-with"] === "fetch"; // should I add it in front end
 
@@ -173,7 +173,7 @@ const renderFragmentOrLayout = (
 
     if (isFetch)
       return res.status(200).json({
-        pathName: pathName,
+        pathName,
         htmlFragment: htmlFragment,
         extraData: payload.extraData,
       });
@@ -199,7 +199,7 @@ const renderFragmentOrLayout = (
         user: req.user,
         notificationsData,
         toReadableDate,
-        ...extraProps,
+        ...payload.extraData,
       },
       (layoutErr, fullPage) => {
         if (layoutErr) {

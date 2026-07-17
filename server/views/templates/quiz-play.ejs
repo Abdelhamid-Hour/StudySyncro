@@ -1,9 +1,17 @@
 <div class="quiz-view">
+  <script>
+    window.__QUIZ_INITIAL_DATA__ = {
+      duration: <%= duration %>,
+      questions: <%- typeof questions !== 'undefined' ? JSON.stringify(questions) : '[]' %>,
+      passed: <%= passed %>
+    };
+  </script>
   <a class="button close-btn exclude-btn has-tooltip" data-tooltip="Close">
     <i class="bi bi-x-lg"></i>
   </a>
   <div class="questions-view">
     <header class="quiz-header">
+      <% if (typeof duration !== 'undefined' && duration > 0) { %>
       <div class="timer">
         <span class="time-left">
           <span class="icon-box"><i class="bi bi-stopwatch-fill"></i></span>
@@ -17,6 +25,7 @@
           <span class="seconds key-hint">30</span>
         </div>
       </div>
+      <% } %>
       <h3 class="quiz-title"><%= quizTitle %></h3>
     </header>
     <div class="question-view">
@@ -31,12 +40,12 @@
             of <%= totalQuestions %>
           </span>
         </h4>
-        <button type="button" class="gray-btn skip-btn">Skip</button>
+        <button type="button" class="gray-btn skip-btn has-tooltip" data-tooltip="Or press S">Skip</button>
       </header>
       <div class="question-body">
         <h4><%= firstQuestion.text %></h4>
         <div class="question-choices">
-          <span class="select-answer-label">Select the correct Answer</span>
+          <span class="select-answer-label">Select the correct Answer <span style="opacity: 0.65; font-size: 0.85em; font-weight: normal;">(Or press 1-6 / A-F)</span></span>
           <div class="choices-list">
             <% firstQuestion.choices.forEach(function(choice, idx) { %>
               <label class="choice">

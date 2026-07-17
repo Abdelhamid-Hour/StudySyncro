@@ -4,30 +4,32 @@ import { sendData } from "../../../../main_assets/js/utils.js";
 import { INITIALE_LOADERS_COUNT } from "./variables.js";
 
 const categoriesState = {
-  "All": { cardsHtml: [], lastVisible: null, isLoaded: false },
+  All: { cardsHtml: [], lastVisible: null, isLoaded: false },
   "Join Request": { cardsHtml: [], lastVisible: "", isLoaded: false },
-  "Groups": { cardsHtml: [], lastVisible: "", isLoaded: false },
-  "Sessions": { cardsHtml: [], lastVisible: "", isLoaded: false },
+  Groups: { cardsHtml: [], lastVisible: "", isLoaded: false },
+  Sessions: { cardsHtml: [], lastVisible: "", isLoaded: false },
 };
 
 let notifLoader = null;
 let notifEventSource = null;
 
 const updateBadgeCount = (delta) => {
-  const badge = document.querySelector(".notification-badge");
-  if (!badge) return;
+  const badges = document.querySelectorAll(".notification-badge");
+  if (!badges.length) return;
 
-  let count = parseInt(badge.textContent, 10);
-  if (isNaN(count)) count = 0;
-  count += delta;
+  badges.forEach((badge) => {
+    let count = parseInt(badge.textContent, 10);
+    if (isNaN(count)) count = 0;
+    count += delta;
 
-  if (count <= 0) {
-    count = 0;
-    badge.classList.add("hidden");
-  } else {
-    badge.classList.remove("hidden");
-  }
-  badge.textContent = count > 99 ? "99+" : count;
+    if (count <= 0) {
+      count = 0;
+      badge.classList.add("hidden");
+    } else {
+      badge.classList.remove("hidden");
+    }
+    badge.textContent = count > 99 ? "99+" : count;
+  });
 };
 
 const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
@@ -47,7 +49,12 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
     if (!notifId) {
       const cDemandeId = c.getAttribute("data-demande-id");
       const cGroupId = c.getAttribute("data-group-id");
-      if (demandeId && cDemandeId && cDemandeId === demandeId && (!groupId || !cGroupId || cGroupId === groupId)) {
+      if (
+        demandeId &&
+        cDemandeId &&
+        cDemandeId === demandeId &&
+        (!groupId || !cGroupId || cGroupId === groupId)
+      ) {
         return true;
       }
     }
@@ -79,20 +86,34 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
       c.classList.remove("unread");
     }
 
-    if (actionType && (actionType === "accepted" || actionType === "rejected")) {
-      const newType = actionType === "accepted" ? "join_accepted" : "join_rejected";
+    if (
+      actionType &&
+      (actionType === "accepted" || actionType === "rejected")
+    ) {
+      const newType =
+        actionType === "accepted" ? "join_accepted" : "join_rejected";
       c.setAttribute("data-type", newType);
       if (document.contains(c)) {
-        c.classList.add(actionType === "accepted" ? "transitioning-accepted" : "transitioning-rejected");
+        c.classList.add(
+          actionType === "accepted"
+            ? "transitioning-accepted"
+            : "transitioning-rejected",
+        );
         setTimeout(() => {
-          c.classList.remove("transitioning-accepted", "transitioning-rejected");
+          c.classList.remove(
+            "transitioning-accepted",
+            "transitioning-rejected",
+          );
         }, 800);
       }
 
       const iconElem = c.querySelector(".notif-icon");
       if (iconElem) {
         iconElem.className = `notif-icon ${newType}`;
-        iconElem.innerHTML = actionType === "accepted" ? `<i class="bi bi-link-45deg"></i>` : `<i class="bi bi-x-lg"></i>`;
+        iconElem.innerHTML =
+          actionType === "accepted"
+            ? `<i class="bi bi-link-45deg"></i>`
+            : `<i class="bi bi-x-lg"></i>`;
       }
 
       let senderName = c.getAttribute("data-sender-name");
@@ -102,7 +123,8 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
         if (rawText.includes(" has requested to join your group ")) {
           const parts = rawText.split(" has requested to join your group ");
           if (parts[0] && !senderName) senderName = parts[0].trim();
-          if (parts[1] && !groupName) groupName = parts[1].replace(/\.$/, "").trim();
+          if (parts[1] && !groupName)
+            groupName = parts[1].replace(/\.$/, "").trim();
         }
       }
       senderName = senderName || "User";
@@ -110,7 +132,10 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
 
       const statusWord = actionType === "accepted" ? "accepted" : "rejected";
       const newMsg = `Join request from ${senderName} for group ${groupName} was ${statusWord}.`;
-      const formattedMsg = formatNotificationMessage({ message: newMsg, metadata: { senderName, groupName } });
+      const formattedMsg = formatNotificationMessage({
+        message: newMsg,
+        metadata: { senderName, groupName },
+      });
 
       const msgElem = c.querySelector(".notif-message");
       if (msgElem) {
@@ -131,7 +156,11 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
     updateBadgeCount(-1);
     const ids = Array.from(idsToMark).filter(Boolean);
     if (ids.length > 0) {
-      sendData("/api/notifications/mark-read", { notificationIds: ids }, "POST").catch(() => {});
+      sendData(
+        "/api/notifications/mark-read",
+        { notificationIds: ids },
+        "POST",
+      ).catch(() => {});
     }
   }
 };
@@ -181,10 +210,14 @@ const bindCardActions = (card) => {
             if (notifsList) {
               notifsList.setAttribute("data-current-session", sessionId);
             }
-            document.querySelectorAll(`.notif-card[data-session-id="${sessionId}"] .join-session-btn`).forEach((btn) => {
-              const c = btn.closest(".notif-card");
-              if (c) markSingleCardReadAndRemoveActions(c, "joined");
-            });
+            document
+              .querySelectorAll(
+                `.notif-card[data-session-id="${sessionId}"] .join-session-btn`,
+              )
+              .forEach((btn) => {
+                const c = btn.closest(".notif-card");
+                if (c) markSingleCardReadAndRemoveActions(c, "joined");
+              });
             history.pushState({}, "", "/app/home");
             window.dispatchEvent(new PopStateEvent("popstate", { state: {} }));
           },
@@ -215,14 +248,17 @@ const formatNotificationMessage = (notif) => {
     { term: "transferred", cls: "bold-warning" },
     { term: notif.metadata?.senderName, cls: "" },
     { term: notif.metadata?.groupName, cls: "" },
-    { term: notif.metadata?.sessionName, cls: "" }
-  ].filter(item => item.term && typeof item.term === "string");
+    { term: notif.metadata?.sessionName, cls: "" },
+  ].filter((item) => item.term && typeof item.term === "string");
 
   termsMap.sort((a, b) => b.term.length - a.term.length);
 
   termsMap.forEach(({ term, cls }) => {
-    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`(?<!>|<strong class="[^"]*">)(${escaped})(?!<\\/strong>)`, 'g');
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(
+      `(?<!>|<strong class="[^"]*">)(${escaped})(?!<\\/strong>)`,
+      "g",
+    );
     const classAttr = cls ? ` class="${cls}"` : "";
     msg = msg.replace(regex, `<strong${classAttr}>$1</strong>`);
   });
@@ -246,9 +282,10 @@ const formatNotifDate = (ts) => {
   }
 };
 
-const createNotificationCard = (notif) => {  
+const createNotificationCard = (notif) => {
   const card = document.createElement("div");
-  const isUnread = notif.read === false || notif.read === "false" ? "unread" : "";
+  const isUnread =
+    notif.read === false || notif.read === "false" ? "unread" : "";
   const type = notif.type || "general";
   const demandeId = notif.metadata?.demandeId || "";
   const groupId = notif.metadata?.groupId || "";
@@ -265,7 +302,10 @@ const createNotificationCard = (notif) => {
   card.setAttribute("data-session-id", notif.metadata?.sessionId || "");
 
   let iconHtml = `<i class="bi bi-bell-fill"></i>`;
-  if (notif.metadata?.senderPhotoURL && (type === "join_request" || type === "member_removed")) {
+  if (
+    notif.metadata?.senderPhotoURL &&
+    (type === "join_request" || type === "member_removed")
+  ) {
     iconHtml = `<img src="${notif.metadata.senderPhotoURL}" alt="avatar" />`;
   } else if (type === "join_request") {
     iconHtml = `<i class="bi bi-person-fill"></i>`;
@@ -293,13 +333,22 @@ const createNotificationCard = (notif) => {
   const categoryLabel = notif.category || "General";
 
   const notifsContainer = document.getElementById("notifications-list");
-  const currentSession = notifsContainer ? notifsContainer.getAttribute("data-current-session") : "";
-  const currentUserId = notifsContainer ? notifsContainer.getAttribute("data-current-user-id") : "";
-  const isAdmin = Boolean(notif.metadata?.isAdmin || (currentUserId && notif.metadata?.creatorId && currentUserId === notif.metadata.creatorId));
+  const currentSession = notifsContainer
+    ? notifsContainer.getAttribute("data-current-session")
+    : "";
+  const currentUserId = notifsContainer
+    ? notifsContainer.getAttribute("data-current-user-id")
+    : "";
+  const isAdmin = Boolean(
+    notif.metadata?.isAdmin ||
+    (currentUserId &&
+      notif.metadata?.creatorId &&
+      currentUserId === notif.metadata.creatorId),
+  );
   const isJoined = Boolean(
     typeof notif.metadata?.joined === "boolean"
       ? notif.metadata.joined
-      : currentSession && currentSession === notif.metadata?.sessionId
+      : currentSession && currentSession === notif.metadata?.sessionId,
   );
 
   let actionsHtml = "";
@@ -310,7 +359,12 @@ const createNotificationCard = (notif) => {
         <button type="button" class="accept-btn exclude-btn small-btn" data-action="accept"><i class="bi bi-check-circle"></i> Accept</button>
       </div>
     `;
-  } else if (type === "session_started" && !notif.metadata?.sessionEnded && !isAdmin && !isJoined) {
+  } else if (
+    type === "session_started" &&
+    !notif.metadata?.sessionEnded &&
+    !isAdmin &&
+    !isJoined
+  ) {
     actionsHtml = `
       <div class="notif-actions">
         <button type="button" class="join-session-btn exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> Join</button>
@@ -340,28 +394,36 @@ const handleMarkAllAsRead = async (silent = false) => {
   const category = activeBtn ? activeBtn.getAttribute("data-category") : "All";
 
   if (!category || category === "All") {
-    document.querySelectorAll("#notifications-list .notif-card.unread").forEach(card => card.classList.remove("unread"));
-    Object.values(categoriesState).forEach(state => {
-      if (state.cardsHtml) state.cardsHtml.forEach(card => card.classList.remove("unread"));
+    document
+      .querySelectorAll("#notifications-list .notif-card.unread")
+      .forEach((card) => card.classList.remove("unread"));
+    Object.values(categoriesState).forEach((state) => {
+      if (state.cardsHtml)
+        state.cardsHtml.forEach((card) => card.classList.remove("unread"));
     });
     updateBadgeCount(-99999);
   } else {
     let removedCount = 0;
-    document.querySelectorAll("#notifications-list .notif-card.unread").forEach(card => {
-      if (card.getAttribute("data-category") === category) {
-        card.classList.remove("unread");
-        removedCount++;
-      }
-    });
+    document
+      .querySelectorAll("#notifications-list .notif-card.unread")
+      .forEach((card) => {
+        if (card.getAttribute("data-category") === category) {
+          card.classList.remove("unread");
+          removedCount++;
+        }
+      });
     if (categoriesState[category] && categoriesState[category].cardsHtml) {
-      categoriesState[category].cardsHtml.forEach(card => {
+      categoriesState[category].cardsHtml.forEach((card) => {
         if (card.classList && card.classList.contains("unread")) removedCount++;
         if (card.classList) card.classList.remove("unread");
       });
     }
     if (categoriesState["All"] && categoriesState["All"].cardsHtml) {
-      categoriesState["All"].cardsHtml.forEach(card => {
-        if (card.getAttribute && card.getAttribute("data-category") === category) {
+      categoriesState["All"].cardsHtml.forEach((card) => {
+        if (
+          card.getAttribute &&
+          card.getAttribute("data-category") === category
+        ) {
           if (card.classList) card.classList.remove("unread");
         }
       });
@@ -372,9 +434,11 @@ const handleMarkAllAsRead = async (silent = false) => {
   }
 
   try {
-    sendData("/api/notifications/mark-read", { category }, "POST").catch(err => {
-      if (!silent) console.error("Error marking notifications read:", err);
-    });
+    sendData("/api/notifications/mark-read", { category }, "POST").catch(
+      (err) => {
+        if (!silent) console.error("Error marking notifications read:", err);
+      },
+    );
   } catch (err) {
     if (!silent) console.error("Error marking notifications read:", err);
   }
@@ -384,16 +448,22 @@ const initRealtimeNotifications = () => {
   if (notifEventSource) {
     notifEventSource.close();
   }
-  
+
   if (window.Notification && Notification.permission === "default") {
-    const bellBtn = document.querySelector(".open-drop-down-btn[data-tooltip='Notifications']");
-    if (bellBtn) {
-      bellBtn.addEventListener("click", () => {
-        if (Notification.permission === "default") {
-          Notification.requestPermission().catch(() => {});
-        }
-      }, { once: true });
-    }
+    const bellBtns = document.querySelectorAll(
+      ".open-drop-down-btn[data-tooltip='Notifications'], .mobile-notif-btn",
+    );
+    bellBtns.forEach((bellBtn) => {
+      bellBtn.addEventListener(
+        "click",
+        () => {
+          if (Notification.permission === "default") {
+            Notification.requestPermission().catch(() => {});
+          }
+        },
+        { once: true },
+      );
+    });
   }
 
   notifEventSource = new EventSource("/api/notifications/stream");
@@ -402,14 +472,23 @@ const initRealtimeNotifications = () => {
       const notif = JSON.parse(event.data);
       if (!notif || !notif.id) return;
 
-      if ((notif.type === "session_ended" || notif.metadata?.sessionEnded) && notif.metadata?.sessionId) {
+      if (
+        (notif.type === "session_ended" || notif.metadata?.sessionEnded) &&
+        notif.metadata?.sessionId
+      ) {
         document
-          .querySelectorAll(`.notif-card[data-session-id="${notif.metadata.sessionId}"] .notif-actions`)
+          .querySelectorAll(
+            `.notif-card[data-session-id="${notif.metadata.sessionId}"] .notif-actions`,
+          )
           .forEach((el) => el.remove());
         Object.values(categoriesState).forEach((state) => {
           if (state.cardsHtml) {
             state.cardsHtml.forEach((cardEl) => {
-              if (cardEl.getAttribute && cardEl.getAttribute("data-session-id") === notif.metadata.sessionId) {
+              if (
+                cardEl.getAttribute &&
+                cardEl.getAttribute("data-session-id") ===
+                  notif.metadata.sessionId
+              ) {
                 const act = cardEl.querySelector(".notif-actions");
                 if (act) act.remove();
               }
@@ -418,14 +497,21 @@ const initRealtimeNotifications = () => {
         });
       }
 
-      if (window.Notification && Notification.permission === "granted") {
+      if (
+        window.Notification &&
+        Notification.permission === "granted" &&
+        notif.changeType === "added" &&
+        (!notif.read || notif.read === "false" || notif.read === false)
+      ) {
         new Notification(notif.title || "StudyHype Notification", {
           body: notif.message || "",
-          icon: "/app/assets/global/images/logo.png"
+          icon: "/app/assets/global/images/logo.png",
         });
       }
 
-      const existingDomCard = document.querySelector(`#notifications-list .notif-card[data-id="${notif.id}"]`);
+      const existingDomCard = document.querySelector(
+        `#notifications-list .notif-card[data-id="${notif.id}"]`,
+      );
 
       if (notif.changeType === "modified" && !existingDomCard) {
         return;
@@ -439,16 +525,20 @@ const initRealtimeNotifications = () => {
       const category = notif.category || "All";
 
       const activeBtn = document.querySelector(".notif-category-btn.active");
-      const activeCategory = activeBtn ? activeBtn.getAttribute("data-category") : "All";
+      const activeCategory = activeBtn
+        ? activeBtn.getAttribute("data-category")
+        : "All";
 
-      const emptyMsg = document.querySelector("#notifications-list .icon-wrapper, #notifications-list .notifications-empty");
+      const emptyMsg = document.querySelector(
+        "#notifications-list .icon-wrapper, #notifications-list .notifications-empty",
+      );
       if (emptyMsg) emptyMsg.remove();
 
       const upsertIntoState = (catName, cardEl) => {
         const state = categoriesState[catName];
         if (!state || !state.cardsHtml) return;
         const idx = state.cardsHtml.findIndex(
-          (c) => c.getAttribute && c.getAttribute("data-id") === notif.id
+          (c) => c.getAttribute && c.getAttribute("data-id") === notif.id,
         );
         if (idx !== -1) {
           state.cardsHtml[idx] = cardEl;
@@ -476,8 +566,7 @@ const initRealtimeNotifications = () => {
     }
   };
 
-  notifEventSource.onerror = () => {
-  };
+  notifEventSource.onerror = () => {};
 };
 
 export const initNotificationsManager = () => {
@@ -487,19 +576,22 @@ export const initNotificationsManager = () => {
   const initialCards = Array.from(container.querySelectorAll(".notif-card"));
   const initialLastVisible = container.getAttribute("data-last-visible") || "";
 
-  const isAllDbLoaded = initialCards.length < INITIALE_LOADERS_COUNT && !initialLastVisible;
+  const isAllDbLoaded =
+    initialCards.length < INITIALE_LOADERS_COUNT && !initialLastVisible;
 
   if (initialCards.length > 0 || initialLastVisible) {
-    Object.keys(categoriesState).forEach(cat => {
+    Object.keys(categoriesState).forEach((cat) => {
       if (cat === "All") {
         categoriesState["All"].cardsHtml = initialCards;
         categoriesState["All"].lastVisible = initialLastVisible;
         categoriesState["All"].isLoaded = true;
-        initialCards.forEach(card => bindCardActions(card));
+        initialCards.forEach((card) => bindCardActions(card));
       } else {
-        const matching = initialCards.filter(c => c.getAttribute("data-category") === cat);
+        const matching = initialCards.filter(
+          (c) => c.getAttribute("data-category") === cat,
+        );
         if (isAllDbLoaded) {
-          categoriesState[cat].cardsHtml = matching.map(c => {
+          categoriesState[cat].cardsHtml = matching.map((c) => {
             const clone = c.cloneNode(true);
             bindCardActions(clone);
             return clone;
@@ -507,13 +599,14 @@ export const initNotificationsManager = () => {
           categoriesState[cat].lastVisible = "";
           categoriesState[cat].isLoaded = true;
         } else if (matching.length > 0) {
-          categoriesState[cat].cardsHtml = matching.map(c => {
+          categoriesState[cat].cardsHtml = matching.map((c) => {
             const clone = c.cloneNode(true);
             bindCardActions(clone);
             return clone;
           });
           const lastCard = matching[matching.length - 1];
-          categoriesState[cat].lastVisible = lastCard.getAttribute("data-id") || "";
+          categoriesState[cat].lastVisible =
+            lastCard.getAttribute("data-id") || "";
           categoriesState[cat].isLoaded = true;
         } else {
           categoriesState[cat].cardsHtml = [];
@@ -523,7 +616,7 @@ export const initNotificationsManager = () => {
       }
     });
   } else {
-    Object.keys(categoriesState).forEach(cat => {
+    Object.keys(categoriesState).forEach((cat) => {
       categoriesState[cat].isLoaded = true;
       categoriesState[cat].cardsHtml = [];
       categoriesState[cat].lastVisible = "";
@@ -541,7 +634,7 @@ export const initNotificationsManager = () => {
     div.style.padding = "14px 16px";
     div.innerHTML = `
       <div class="loading-opacity-animation" style="width: 2.6rem; height: 2.6rem; border-radius: 50%; flex-shrink: 0;"></div>
-      <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+      <div style="width: 100%; flex: 1; display: flex; flex-direction: column; gap: 8px;">
         <div class="loading-opacity-animation" style="height: 1rem; width: 85%; border-radius: 0.3rem;"></div>
         <div class="loading-opacity-animation" style="height: 1rem; width: 50%; border-radius: 0.3rem;"></div>
         <div class="loading-opacity-animation" style="height: 0.8rem; width: 35%; border-radius: 0.3rem; margin-top: 4px;"></div>
@@ -552,7 +645,9 @@ export const initNotificationsManager = () => {
 
   const getCriteria = () => {
     const activeBtn = document.querySelector(".notif-category-btn.active");
-    const category = activeBtn ? activeBtn.getAttribute("data-category") : "All";
+    const category = activeBtn
+      ? activeBtn.getAttribute("data-category")
+      : "All";
     if (!category || category === "All") return "";
     return `category=${category}`;
   };
@@ -577,7 +672,7 @@ export const initNotificationsManager = () => {
           desc: "There are no notifications in this category.",
         },
       },
-    }
+    },
   );
 
   if (categoriesState["All"].isLoaded) {
@@ -599,10 +694,18 @@ export const initNotificationsManager = () => {
       const newCategory = btn.getAttribute("data-category") || "All";
 
       if (oldCategory && categoriesState[oldCategory]) {
-        const currentCards = Array.from(container.querySelectorAll(".notif-card:not(.loading-card)"));
-        currentCards.forEach((c) => c.classList.remove("transitioning-accepted", "transitioning-rejected"));
+        const currentCards = Array.from(
+          container.querySelectorAll(".notif-card:not(.loading-card)"),
+        );
+        currentCards.forEach((c) =>
+          c.classList.remove(
+            "transitioning-accepted",
+            "transitioning-rejected",
+          ),
+        );
         categoriesState[oldCategory].cardsHtml = currentCards;
-        categoriesState[oldCategory].lastVisible = notifLoader.lastVisible || "";
+        categoriesState[oldCategory].lastVisible =
+          notifLoader.lastVisible || "";
         categoriesState[oldCategory].isLoaded = true;
       }
 
@@ -611,9 +714,15 @@ export const initNotificationsManager = () => {
 
       container.innerHTML = "";
 
-      if (categoriesState[newCategory] && categoriesState[newCategory].isLoaded) {
+      if (
+        categoriesState[newCategory] &&
+        categoriesState[newCategory].isLoaded
+      ) {
         categoriesState[newCategory].cardsHtml.forEach((card) => {
-          card.classList.remove("transitioning-accepted", "transitioning-rejected");
+          card.classList.remove(
+            "transitioning-accepted",
+            "transitioning-rejected",
+          );
           container.appendChild(card);
         });
         notifLoader.lastVisible = categoriesState[newCategory].lastVisible;
@@ -633,15 +742,17 @@ export const initNotificationsManager = () => {
     });
   });
 
-  const bellBtn = document.querySelector(".open-drop-down-btn[data-tooltip='Notifications']");
-  if (bellBtn) {
+  const bellBtns = document.querySelectorAll(
+    ".open-drop-down-btn[data-tooltip='Notifications'], .mobile-notif-btn",
+  );
+  bellBtns.forEach((bellBtn) => {
     bellBtn.addEventListener("click", () => {
       const badge = document.querySelector(".notification-badge");
       if (badge && !badge.classList.contains("hidden")) {
         handleMarkAllAsRead();
       }
     });
-  }
+  });
 
   initRealtimeNotifications();
 };

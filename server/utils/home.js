@@ -29,6 +29,7 @@ const fetchHomeData = async (userId) => {
           lastVisible: result.success ? result.lastVisible : null,
           formatHoursMinutes,
         },
+        hasActiveSession: true
       },
     };
   }

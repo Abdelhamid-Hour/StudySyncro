@@ -123,7 +123,7 @@ html[data-theme="light"] {
 }
 
 ::view-transition-new(root) {
-  z-index: 9999;
+  z-index: 999;
 }
 
 html[data-theme]::view-transition-new(root) {

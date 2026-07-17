@@ -331,10 +331,6 @@
         }
       }
 
-      p {
-        word-break: break-all;
-      }
-
       @starting-style {
         opacity: 0;
         scale: 0.9;
@@ -439,7 +435,7 @@
     align-items: start;
 
     .input-message {
-      padding-left: calc(var(--primary-gap) / 3);
+      padding-left: calc(var(--primary-gap) / 3) !important;
       padding-block: calc(var(--primary-gap) / 3);
       margin-bottom: calc(var(--primary-gap) / 2 + 0.9906rem);
       height: 3rem;
@@ -785,7 +781,7 @@
   width: 100%;
   margin: 1rem 0;
   position: relative;
-  z-index: 5;
+  z-index: 3;
   user-select: none;
 }
 .unread-messages-banner::before,

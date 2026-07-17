@@ -91,28 +91,31 @@ themeBtns.forEach((btn) => {
 const mobileMasterMenuBtn = document.querySelector(".mobile-master-menu-btn");
 const mobileMasterDrawer = document.querySelector(".mobile-master-drawer");
 const mobileDrawerCloseBtn = document.querySelector(".mobile-drawer-close-btn");
+const mobileDrawerBackdrop = document.querySelector(".mobile-drawer-backdrop");
 const mobileLogoutBtn = document.getElementById("mobile-logout-button");
 const mobileNotifBtn = document.querySelector(".mobile-notif-btn");
 
-mobileMasterMenuBtn?.addEventListener("click", () => {
+const openMobileDrawer = () => {
   mobileMasterDrawer?.classList.add("open");
-});
+  mobileDrawerBackdrop?.classList.add("open");
+};
 
-mobileDrawerCloseBtn?.addEventListener("click", () => {
+const closeMobileDrawer = () => {
   mobileMasterDrawer?.classList.remove("open");
-});
+  mobileDrawerBackdrop?.classList.remove("open");
+};
+
+mobileMasterMenuBtn?.addEventListener("click", openMobileDrawer);
+
+mobileDrawerCloseBtn?.addEventListener("click", closeMobileDrawer);
+
+mobileDrawerBackdrop?.addEventListener("click", closeMobileDrawer);
 
 mobileLogoutBtn?.addEventListener("click", () => {
   document.getElementById("logout-button")?.click();
 });
 
-mobileNotifBtn?.addEventListener("click", () => {
-  mobileMasterDrawer?.classList.remove("open");
-  const desktopNotifBtn = document.querySelector(
-    ".notification-container .open-drop-down-btn",
-  );
-  desktopNotifBtn?.click();
-});
+mobileNotifBtn?.addEventListener("click", closeMobileDrawer);
 
 window.addEventListener("popstate", () => {
   toggleActiveLink(location.pathname);
@@ -131,7 +134,20 @@ if (sidebarTitleEl && mobilePageTitleEl) {
       const returnHref = linkEl.getAttribute("href") || "/app/home";
       mobileBackBtn.setAttribute("href", returnHref);
       mobileBackBtn.classList.remove("hidden");
-      mobilePageTitleEl.textContent = linkEl.textContent.trim();
+      const titleText = linkEl.textContent.trim();
+      if (titleText.toLowerCase().includes("group chat")) {
+        mobilePageTitleEl.innerHTML = `
+          <button
+            type="button"
+            class="exclude-btn show-info-btn"
+          >
+            <i class="bi bi-info-circle"></i>
+            Group Chat
+          </button>
+        `;
+      } else {
+        mobilePageTitleEl.textContent = titleText;
+      }
     } else {
       if (mobileBackBtn) mobileBackBtn.classList.add("hidden");
       mobilePageTitleEl.innerHTML = sidebarTitleEl.innerHTML;
@@ -178,11 +194,14 @@ mobileSearchBtn?.addEventListener("click", (e) => {
 });
 
 document.addEventListener("click", (e) => {
+  console.log(e.target.tagName);
+
   if (
     mobileSearchBox &&
     !mobileSearchBox.classList.contains("hidden") &&
     !mobileSearchBox.contains(e.target) &&
-    !mobileSearchBtn?.contains(e.target)
+    !mobileSearchBtn?.contains(e.target) &&
+    e.target.tagName !== 'HTML'
   ) {
     mobileSearchBox.classList.add("hidden");
   }

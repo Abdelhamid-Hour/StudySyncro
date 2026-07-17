@@ -53,7 +53,6 @@ const sendMessageHandler = async (req, res) => {
 };
 
 const chatStreamHandler = async (req, res) => {
-  
   const groupId = req.query.groupId;
   const sessionId = req.query.sessionId;
   const groupSnap = await db.collection("groups").doc(groupId).get();
@@ -108,7 +107,7 @@ const chatStreamHandler = async (req, res) => {
   req.on("close", () => {
     try {
       clearInterval(heartbeat);
-      cleanUpClient(res, req.user.uid)
+      cleanUpClient(res, req.user.uid);
     } catch (error) {
       console.warn("Error closing stream:", error);
     }
@@ -160,7 +159,12 @@ const cleanUpRecentMessagesClient = (res, userId) => {
 const markGroupAsReadHandler = async (req, res) => {
   const { groupId, messageId, timestamp } = req.body;
   if (!groupId) return res.status(400).json({ message: "groupId is required" });
-  const result = await markGroupAsReadHelper(req.user.uid, groupId, messageId, timestamp);
+  const result = await markGroupAsReadHelper(
+    req.user.uid,
+    groupId,
+    messageId,
+    timestamp,
+  );
   if (result.success) {
     return res.status(200).json({ message: "Marked as read" });
   }
@@ -176,6 +180,7 @@ const getUserGroupChatStateHandler = async (req, res) => {
   if (result.success) {
     return res.status(200).json(result.data);
   }
+
   return res
     .status(500)
     .json({ message: result.message || "Failed to get state" });

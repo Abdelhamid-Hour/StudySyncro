@@ -227,7 +227,9 @@
     overflow: hidden;
     margin-bottom: 0 !important;
     padding: 0;
-    transition: padding 0s 300ms, margin-bottom var(--primary-transition-style),
+    transition:
+      padding 0s 300ms,
+      margin-bottom var(--primary-transition-style),
       max-height var(--primary-transition-style),
       opacity var(--primary-transition-style);
   }
@@ -237,7 +239,9 @@
       max-height: 40rem;
       margin-bottom: calc(var(--primary-gap) / 2) !important;
       padding: calc(var(--primary-gap) / 2);
-      transition: padding 0s, margin-bottom var(--primary-transition-style),
+      transition:
+        padding 0s,
+        margin-bottom var(--primary-transition-style),
         max-height var(--primary-transition-style),
         opacity var(--primary-transition-style);
     }
@@ -275,7 +279,8 @@
     border-radius: var(--primary-radius);
     overflow: hidden;
     outline: 0.15rem solid transparent;
-    transition: outline-color var(--primary-transition-style),
+    transition:
+      outline-color var(--primary-transition-style),
       border-color var(--primary-transition-style);
 
     input {
@@ -297,7 +302,8 @@
       align-items: center;
       justify-content: center;
       border-right: var(--primary-border-style);
-      transition: border-color var(--primary-transition-style),
+      transition:
+        border-color var(--primary-transition-style),
         background-color var(--primary-transition-style);
     }
   }
@@ -384,7 +390,7 @@
         }
       }
 
-      .avatar-cover{
+      .avatar-cover {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -442,5 +448,17 @@
         }
       }
     }
+  }
+}
+
+/* ============================================
+   MOBILE REDESIGN  ≤ 48rem  (bottom-sheet)
+   ============================================ */
+@media (max-width: 48rem) {
+  .quiz-result-overlay {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 0;
   }
 }

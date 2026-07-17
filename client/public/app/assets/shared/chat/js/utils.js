@@ -6,6 +6,7 @@ import {
   formatHoursMinutes,
   getDebounceFunc,
   getUUID,
+  registerPageListener,
   resetTooltip,
   runWhenDbReady,
   showTooltip,
@@ -82,7 +83,8 @@ const getMsgFromIndexedDB = (localId) => {
   });
 };
 
-export const getLastSeenMessage = async (groupId) => {
+export const getLastSeenMessage = async (groupId, sessionId = "") => {
+  if (sessionId || !groupId) return null;
   try {
     const res = await fetchData(`/chat/state/${groupId}`);
     if (res && res.lastSeenTimestamp) {
@@ -98,8 +100,8 @@ export const getLastSeenMessage = async (groupId) => {
   return null;
 };
 
-export const updateLastSeenFromDOM = async (groupId) => {
-  if (!groupId || !messagesContainer) return;
+export const updateLastSeenFromDOM = async (groupId, sessionId = "") => {
+  if (sessionId || !groupId || !messagesContainer) return;
   const newestEl = messagesContainer.querySelector(".message-sent:last-child [data-message-id]:last-child, .message-received:last-child [data-message-id]:last-child") ||
                    messagesContainer.querySelector("[data-message-id]:last-of-type");
   if (!newestEl) return;
@@ -483,13 +485,13 @@ class ChatMessage {
         }
         
       }
-      if (groupId) {
+      if (groupId && !sessionId) {
         const banner = messagesContainer.querySelector(".unread-messages-banner");
         if (banner) banner.remove();
         if(!navigator.onLine) {
-          PENDING_ONLINE_SYNC_OPS.push(() => updateLastSeenFromDOM(groupId));
+          PENDING_ONLINE_SYNC_OPS.push(() => updateLastSeenFromDOM(groupId, sessionId));
         } else {
-          updateLastSeenFromDOM(groupId);
+          updateLastSeenFromDOM(groupId, sessionId);
         }
       }
     } catch (error) {
@@ -1262,8 +1264,8 @@ const openChatStream = (groupId, sessionId) => {
         groupId: groupId || "",
       },
     ).renderMessage();
-    if (groupId) {
-      updateLastSeenFromDOM(groupId);
+    if (groupId && !sessionId) {
+      updateLastSeenFromDOM(groupId, sessionId);
     }
   });
 
@@ -1440,17 +1442,17 @@ const firstLoadFunc = (cards, groupId, sessionId) => {
   };
 }
 
-const handleInitialUnreadBannerAndScroll = async (groupId, isFirstLoad, cards = []) => {
+const handleInitialUnreadBannerAndScroll = async (groupId, isFirstLoad, cards = [], sessionId = "") => {
   if (!isFirstLoad) return;
-  if (!groupId) {
+  if (!groupId || sessionId) {
     scrollToBottom(messagesContainer);
     return;
   }
 
-  const lastSeenMsg = await getLastSeenMessage(groupId);
+  const lastSeenMsg = await getLastSeenMessage(groupId, sessionId);
   if (!lastSeenMsg || !cards.length) {
     scrollToBottom(messagesContainer);
-    await updateLastSeenFromDOM(groupId);
+    await updateLastSeenFromDOM(groupId, sessionId);
     return;
   }
 
@@ -1480,18 +1482,18 @@ const handleInitialUnreadBannerAndScroll = async (groupId, isFirstLoad, cards = 
         top: Math.max(0, bannerTop - 20),
         behavior: "instant",
       });
-      await updateLastSeenFromDOM(groupId);
+      await updateLastSeenFromDOM(groupId, sessionId);
       return;
     }
   }
 
   scrollToBottom(messagesContainer);
-  await updateLastSeenFromDOM(groupId);
+  await updateLastSeenFromDOM(groupId, sessionId);
 };
 
-const afterAppendRes = (data, groupId) => {
+const afterAppendRes = (data, groupId, sessionId = "") => {
   if (data.isFirstLoad) {
-    handleInitialUnreadBannerAndScroll(groupId, data.isFirstLoad, data.cards[0] || []);
+    handleInitialUnreadBannerAndScroll(groupId, data.isFirstLoad, data.cards[0] || [], sessionId);
   } else {
     const targetScroll =
       messagesContainer.scrollHeight - data.initialHeight;
@@ -1510,7 +1512,7 @@ const initChatLoader = (groupId, sessionId) => {
     {
       loadersCount: 1,
       append: false,
-      afterAppendRes: (data) => afterAppendRes(data, groupId),
+      afterAppendRes: (data) => afterAppendRes(data, groupId, sessionId),
       firstLoadFunc: (cards) => firstLoadFunc(cards[0], groupId, sessionId),
       rootMargin: "0px",
       threshold: 0.15,
@@ -1535,7 +1537,7 @@ export const iniChat = (groupId = "", sessionId = "") => {
 
   chatContainer.addEventListener("dragleave", handleDragLeave);
 
-  document.addEventListener("drop", handleDrop);
+  registerPageListener(document, "drop", handleDrop);
 
   sendBtn.addEventListener("click", () => handleChatInput(sessionId, groupId));
 

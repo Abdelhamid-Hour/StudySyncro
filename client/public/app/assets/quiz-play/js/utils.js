@@ -1,3 +1,4 @@
+import { registerPageListener } from "../../global/js/utils.js";
 import { showMessageBlock } from "../../../../../main_assets/js/utils.js";
 import { fetchData, sendData } from "../../../../main_assets/js/utils.js";
 import { openQuizResultOverlay } from "../../shared/quiz-result/js/utils.js";
@@ -10,23 +11,9 @@ import {
 } from "./dom-variables.js";
 import lottie from "https://cdn.skypack.dev/lottie-web@5.12.0";
 
-let quiz = {
-  questions: [],
-  id: window.location.pathname.split("/").pop(),
-  duration: 0, // Duration in minutes
-  passed: false,
-  title: document.querySelector(".quiz-title")?.textContent.trim(),
-};
+let quiz = {};
 
-let quizResult = {
-  quizId: quiz.id,
-  correctAnswers: [],
-  incorrectAnswers: [],
-  skippedQuestions: [],
-  groupId: "",
-  submittedAt: null,
-  quizTitle: quiz.title
-};
+let quizResult = {};
 
 let currentQuestionIndex = 0;
 
@@ -36,7 +23,7 @@ const drawArc = (
   percentage = 1,
   color = "red",
   step = 0.1,
-  angle = 0
+  angle = 0,
 ) => {
   ctx.lineCap = "round"; // Make the arc ends rounded
   ctx.lineWidth = 0.01 * innerWidth; // Set line width relative to canvas size
@@ -48,7 +35,7 @@ const drawArc = (
     canvas.height / 2,
     canvas.height / 2 - 10,
     0,
-    2 * Math.PI
+    2 * Math.PI,
   );
   ctx.stroke();
   ctx.closePath();
@@ -59,7 +46,7 @@ const drawArc = (
     canvas.height / 2,
     canvas.height / 2 - 10,
     0,
-    2 * Math.PI * percentage
+    2 * Math.PI * percentage,
   );
   ctx.stroke();
 };
@@ -153,7 +140,7 @@ export const setUpCanvas = (
   grade,
   percentage,
   correctCount,
-  circleAnDuration
+  circleAnDuration,
 ) => {
   const quizResultPage = getQuizResultPage(grade, correctCount, percentage);
   const wrapper = document.querySelector(".quiz-view");
@@ -164,7 +151,7 @@ export const setUpCanvas = (
         quizResult,
         questions: quiz.questions,
       },
-    })
+    }),
   );
   const canvas = document.querySelector("canvas.percentage-circle");
   const ctx = canvas.getContext("2d");
@@ -181,7 +168,7 @@ export const setUpCanvas = (
     animateArc(canvas, ctx, percentage, colorMap[grade], circleAnDuration);
   };
 
-  window.addEventListener("resize", updateSize);
+  registerPageListener(window, "resize", updateSize);
 
   updateSize();
 
@@ -211,7 +198,7 @@ export const getQuestionTemplate = (
     questionText = "A simple question text here, simple question text here, simple question text here, simple question text here",
     choices = ["Choice A", "Choice B", "Choice C"],
   },
-  animationClass
+  animationClass,
 ) => {
   const questionTemplate = document.createElement("div");
   questionTemplate.className = `question-body ${animationClass}`;
@@ -219,7 +206,7 @@ export const getQuestionTemplate = (
   <div class="question-body">
     <h4></h4>
     <div class="question-choices">
-      <span class="select-answer-label">Select the correct Answer</span>
+      <span class="select-answer-label">Select the correct Answer <span style="opacity: 0.65; font-size: 0.85em; font-weight: normal;">(Or press 1-6 / A-F)</span></span>
       <div class="choices-list">
       </div>
     </div>
@@ -236,26 +223,36 @@ export const getQuestionTemplate = (
   return questionTemplate;
 };
 
-export const resetVars = () => {
+export const initVars = () => {
+  quiz = {
+    questions: [],
+    id: window.location.pathname.split("/").pop(),
+    duration: 0, // Duration in minutes
+    passed: false,
+    title: document.querySelector(".quiz-title")?.textContent.trim(),
+  };
+
   quizResult = {
     quizId: quiz.id,
     correctAnswers: [],
     incorrectAnswers: [],
     skippedQuestions: [],
-    groupId: new URL(window.location.href).searchParams.get("groupId") || "",
+    groupId: "",
+    submittedAt: null,
+    quizTitle: quiz.title,
   };
   currentQuestionIndex = 0;
 };
 
 export const removeCurrentQuestionFromResults = (questionId) => {
   quizResult.skippedQuestions = quizResult.skippedQuestions.filter(
-    (qId) => qId !== questionId
+    (qId) => qId !== questionId,
   );
   quizResult.correctAnswers = quizResult.correctAnswers.filter(
-    (qId) => qId !== questionId
+    (qId) => qId !== questionId,
   );
   quizResult.incorrectAnswers = quizResult.incorrectAnswers.filter(
-    (q) => q.id !== questionId
+    (q) => q.id !== questionId,
   );
 };
 
@@ -284,7 +281,7 @@ const step = (direction) => {
       choices: question.choices,
       answerIndex: question.correctAnswerIndex,
     },
-    animationClass
+    animationClass,
   );
   const questionContainer = document.querySelector(".question-body");
   questionContainer.replaceWith(questionEl);
@@ -295,7 +292,7 @@ export const toNextQuestion = () => {
   if (!checkedChoice) {
     showMessageBlock(
       "Please select an answer or click the Skip button to continue.",
-      "info"
+      "info",
     );
     return;
   }
@@ -331,29 +328,39 @@ export const toPreviousQuestion = () => step(-1);
 
 export const setUpQuiz = async () => {
   try {
-    const { questions, duration, passed } = await fetchData(
-      "/quiz-play-details/" + quiz.id
-    );
+    let questions, duration, passed;
+    if (window.__QUIZ_INITIAL_DATA__ && window.__QUIZ_INITIAL_DATA__.questions && window.__QUIZ_INITIAL_DATA__.questions.length > 0) {
+      questions = window.__QUIZ_INITIAL_DATA__.questions;
+      duration = window.__QUIZ_INITIAL_DATA__.duration;
+      passed = window.__QUIZ_INITIAL_DATA__.passed;
+    } else {
+      const data = await fetchData(
+        "/quiz-play-details/" + quiz.id,
+      );
+      questions = data.questions;
+      duration = data.duration;
+      passed = data.passed;
+    }
     quiz.duration = duration;
     quiz.questions = questions;
     quiz.passed = passed;
-    if (quiz.duration) {
+    registerPageListener(document, "keydown", handleKeyDown);
+    if (quiz.duration && timerEl) {
       const finishedDate = new Date(Date.now() + quiz.duration);
       const shouldShowHours = Math.floor(quiz.duration / 3600000) > 0;
       if (!shouldShowHours) {
         hoursEl.nextElementSibling?.remove();
         hoursEl.remove();
       }
-      document.addEventListener("keydown", handleKeyDown);
       tick(finishedDate, shouldShowHours);
-    } else {
+    } else if (timerEl) {
       timerEl.remove();
     }
   } catch (error) {
     console.error("Failed to fetch quiz questions:", error);
     showMessageBlock(
       "Failed to load quiz questions. Please try again later.",
-      "error"
+      "error",
     );
     return;
   }
@@ -391,7 +398,7 @@ const markSkipped = () => {
     const isSkipped = quizResult.skippedQuestions.includes(question.id);
     const isCorrect = quizResult.correctAnswers.includes(question.id);
     const isIncorrect = quizResult.incorrectAnswers.some(
-      (q) => q.id === question.id
+      (q) => q.id === question.id,
     );
 
     if (!isCorrect && !isIncorrect && !isSkipped)
@@ -428,19 +435,18 @@ const finishQuiz = async () => {
     grade,
     percentage,
     `${quizResult.correctAnswers.length} of ${quiz.questions.length}`,
-    1000
+    1000,
   );
 };
 
 const submitExamenResult = async () => {
   try {
-
     await sendData("/api/add-quiz-result", { quizResult });
   } catch (error) {
     console.error("Failed to submit examen result:", error);
     showMessageBlock(
       "Failed to submit your quiz result. Please try again later.",
-      "error"
+      "error",
     );
     return;
   }
@@ -448,15 +454,34 @@ const submitExamenResult = async () => {
 
 export const handleKeyDown = (e) => {
   if (window.location.pathname.includes("/quiz-play/")) {
-    if (e.key === "ArrowRight") {
+    if (
+      ["INPUT", "TEXTAREA"].includes(e.target?.tagName) &&
+      e.target.type !== "radio" &&
+      e.target.type !== "checkbox"
+    )
+      return;
+
+    if (e.key === "ArrowRight" || e.key === "Enter") {
       e.preventDefault();
       toNextQuestion();
     } else if (e.key === "ArrowLeft") {
       e.preventDefault();
       toPreviousQuestion();
-    } else if (e.key === "Enter") {
+    } else if (e.key.toLowerCase() === "s") {
       e.preventDefault();
-      toNextQuestion();
+      skipQuestion();
+    } else if (/^[1-6]$/.test(e.key)) {
+      const idx = Number(e.key) - 1;
+      const radio = document.querySelector(
+        `input[type="radio"][name="choice"][value="${idx}"]`,
+      );
+      if (radio) radio.checked = true;
+    } else if (/^[a-fA-F]$/.test(e.key)) {
+      const idx = e.key.toLowerCase().charCodeAt(0) - 97;
+      const radio = document.querySelector(
+        `input[type="radio"][name="choice"][value="${idx}"]`,
+      );
+      if (radio) radio.checked = true;
     }
   }
 };

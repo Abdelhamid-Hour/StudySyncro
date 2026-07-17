@@ -16,8 +16,8 @@ const getQuestionsCards = (questions, quizResult) => {
       getStatusClass(quizResult, question.id) === "correct"
         ? "green-rect"
         : getStatusClass(quizResult, question.id) === "skipped"
-        ? "gray-rect"
-        : "red-rect";
+          ? "gray-rect"
+          : "red-rect";
     const questionCard = document.createElement("div");
     questionCard.className = "question-card";
     questionCard.id = `question-${index + 1}`;
@@ -63,7 +63,7 @@ const getChoicesList = (question, quizResult) => {
     question.choices.forEach((choiceText, index) => {
       const choice = document.createElement("label");
       const Incorrect = quizResult.incorrectAnswers.find(
-        (q) => q.id === question.id
+        (q) => q.id === question.id,
       );
       const incorrectAnswerIndex = Incorrect?.answerIndex;
       const correctAnswerIndex = question.correctAnswerIndex;
@@ -84,7 +84,6 @@ const getChoicesList = (question, quizResult) => {
 };
 
 export const getResultOverlay = (quizResult, questions) => {
-  
   const getPercentage = (count) => Math.round((count / questions.length) * 100);
 
   const submittedAt = new Date(quizResult.submittedAt);
@@ -108,7 +107,6 @@ export const getResultOverlay = (quizResult, questions) => {
   const incorrectPercent = getPercentage(incorrectCount);
   const correctPercent = getPercentage(correctCount);
   const skippedPercent = getPercentage(skippedCount);
-  
 
   const resultWrapper = document.createElement("div");
   resultWrapper.className = "overlay-model quiz-result-overlay";
@@ -128,8 +126,8 @@ export const getResultOverlay = (quizResult, questions) => {
       <i class="bi bi-x-lg"></i>
     </button>
   </header>
-  <h3 class="quiz-title">${quizResult.quizTitle || 'QUIZ TITLE'}</h3>
-  ${quizResult.sessionName ? `<span class="session-name"><i class="bi bi-clock-history"></i> ${quizResult.sessionName}</span>` : ''}
+  <h3 class="quiz-title">${quizResult.quizTitle || "QUIZ TITLE"}</h3>
+  ${quizResult.sessionName ? `<span class="session-name"><i class="bi bi-clock-history"></i> ${quizResult.sessionName}</span>` : ""}
   <div class="answered">
     <span class="answered-title">Answered :</span>
     <span class="answered-count">${answeredCount}/${questionCount} Questions</span>
@@ -142,7 +140,7 @@ export const getResultOverlay = (quizResult, questions) => {
       return `
       <a href="#question-${index + 1}" class="status-rect ${getStatusClass(
         quizResult,
-        question.id
+        question.id,
       )}">${index + 1}</a>`;
     })
     .join("")}
@@ -187,7 +185,7 @@ export const getResultOverlay = (quizResult, questions) => {
 const getQuizResult = async (quizId, userId, groupId) => {
   try {
     const quizData = await fetchData(
-      `/examen-result?quizId=${quizId}&userId=${userId}&groupId=${groupId}`
+      `/examen-result?quizId=${quizId}&userId=${userId}&groupId=${groupId}`,
     );
     return quizData;
   } catch (error) {
@@ -218,7 +216,7 @@ export const openQuizResultOverlay = async ({
           const questionsLink = e.target.closest("a.status-rect");
           if (questionsLink) scrollToView(e, questionsLink);
         });
-    }
+    },
   );
 };
 
@@ -228,7 +226,7 @@ export const openQuizResultsOverlay = async (quizId, groupId) => {
     [".close-results-overlay-btn"],
     async () => {
       const { overlay } = await fetchData(
-        `/results-list?quizId=${quizId}&groupId=${groupId}`
+        `/results-list?quizId=${quizId}&groupId=${groupId}`,
       );
       return overlay;
     },
@@ -240,6 +238,6 @@ export const openQuizResultsOverlay = async (quizId, groupId) => {
           openQuizResultOverlay({ quizId, userId, groupId });
         }
       });
-    }
+    },
   );
 };
