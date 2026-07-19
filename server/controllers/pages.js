@@ -32,6 +32,8 @@ const handleGroupChatRoute = async (req, res) => {
   if (!result.success) {
     return res.status(result.statusCode).json({
       message: result.message || "Failed to load group chat",
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
     });
   }
 
@@ -62,6 +64,8 @@ const handleQuizEditRoute = async (req, res) => {
   if (!result.success) {
     return res.status(result.statusCode).json({
       message: result.message || "Failed to load quiz editor",
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
     });
   }
 

@@ -21,10 +21,14 @@ const sendMessage = async (
   user,
 ) => {
   try {
+    if (!file && (!message || typeof message !== "string" || message.trim().length === 0)) {
+      throw new Error("Cannot send an empty message without an attachment.");
+    }
+
     const joinedToGroup = await db
       .collection("users")
       .doc(user.uid)
-      .collection("userGroupsIds")
+      .collection("userGroups")
       .doc(groupId)
       .get();
 
@@ -54,17 +58,24 @@ const sendMessage = async (
     if (messageId) {
       const msg = await ref.child(messageId).get();
       if (!msg.exists())
-        return { success: false, message: "Message not found", messageId };
+        return {
+          success: false,
+          message: "Message not found",
+          messageId,
+          isNative: false,
+          type: "error",
+        };
       if (msg.val().sender.id !== user.uid)
         return {
           success: false,
           message: "Unauthorized to edit this message",
+          isNative: true,
+          type: "warning",
         };
     }
 
     if (message) {
       messageData.content.text = message;
-      messageData.timestamp = Date.now();
       const chatRef = await ref.push(messageData);
 
       if (!sessionId && groupId) {
@@ -94,7 +105,13 @@ const sendMessage = async (
     const res = await uploadFileToStorage(filePath, file);
     if (!res.success) {
       await chatRef.child("content").update({ fileStatus: FILE_STATUS.FAILED });
-      return { success: false, messageId: chatRef.key, message: res.message };
+      return {
+        success: false,
+        messageId: chatRef.key,
+        message: res.message,
+        isNative: res.isNative ?? false,
+        type: res.type ?? "error",
+      };
     }
     await chatRef.remove();
     messageData.content.filePath = res.URL;
@@ -114,7 +131,17 @@ const sendMessage = async (
     };
   } catch (error) {
     console.error("Error sending message:", error);
-    return { success: false, message: error.message };
+    const isValidation = [
+      "Cannot send an empty message without an attachment.",
+      "You Are Unauthorized to send message to this group",
+      "You Are Unauthorized to send message to this session",
+    ].includes(error.message);
+    return {
+      success: false,
+      message: error.message,
+      isNative: isValidation,
+      type: isValidation ? "warning" : "error",
+    };
   }
 };
 
@@ -195,7 +222,7 @@ const getMessages = async (
     return { success: true, messages, lastVisible };
   } catch (error) {
     console.error("Error getting messages:", error);
-    return { success: false, message: error.message };
+    return { success: false, message: error.message, isNative: false, type: "error" };
   }
 };
 
@@ -346,7 +373,7 @@ const markGroupAsReadHelper = async (userId, groupId, messageId = null, timestam
     const ref = rDb.ref(`userGroupChats/${userId}/${groupId}`);
     const snap = await ref.once("value");
     if (!snap.exists()) {
-      return { success: false, message: "Group chat state not found" };
+      return { success: false, message: "Group chat state not found", isNative: true, type: "info" };
     }
     const now = Date.now();
     const updates = {
@@ -361,7 +388,7 @@ const markGroupAsReadHelper = async (userId, groupId, messageId = null, timestam
     return { success: true };
   } catch (error) {
     console.error("Error marking group as read:", error);
-    return { success: false, message: error.message };
+    return { success: false, message: error.message, isNative: false, type: "error" };
   }
 };
 
@@ -370,12 +397,12 @@ const getUserGroupChatStateHelper = async (userId, groupId) => {
     const ref = rDb.ref(`userGroupChats/${userId}/${groupId}`);
     const snap = await ref.once("value");
     if (!snap.exists()) {
-      return { success: false, message: "Group chat state not found" };
+      return { success: false, message: "Group chat state not found", isNative: true, type: "info" };
     }
     return { success: true, data: snap.val() };
   } catch (error) {
     console.error("Error getting user group chat state:", error);
-    return { success: false, message: error.message };
+    return { success: false, message: error.message, isNative: false, type: "error" };
   }
 };
 
@@ -425,7 +452,7 @@ const getRecentMessagesHelper = async (userId, limit = INITIALE_LOADERS_COUNT, l
     };
   } catch (error) {
     console.error("Error getting recent messages:", error);
-    return { success: false, message: error.message };
+    return { success: false, message: error.message, isNative: false, type: "error" };
   }
 
 };

@@ -9,6 +9,7 @@ import {
   checkError,
   fetchData,
   showMessageBlock,
+  isNativeDomainCondition,
 } from "../../../../main_assets/js/utils.js";
 import { AUTH_ERRORS } from "../../../../main_assets/js/variables.js";
 
@@ -42,11 +43,15 @@ export const getFreshTokenId = async (password) => {
     }
   } catch (error) {
     // if the error is auth/invalid-credential show a specific message
-    if (error.code === AUTH_ERRORS.INVALID_CREDENTIAL)
-      showMessageBlock("Incorrect password.", "error");
-    checkError(error);
-    console.error("Error fetching fresh token ID:", error);
-    showMessageBlock(error.message, "error");
+    if (error.code === AUTH_ERRORS.INVALID_CREDENTIAL) {
+      showMessageBlock("Incorrect password.", "warning");
+      return null;
+    }
+    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    if (!isNative) checkError(error);
+    if (!isNative) console.error("Error fetching fresh token ID:", error);
+    showMessageBlock(error.message, notifType);
     return null;
   }
 };

@@ -130,8 +130,13 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
       senderName = senderName || "User";
       groupName = groupName || "group";
 
+      const isInvite =
+        c.getAttribute("data-is-invite") === "true" ||
+        c.getAttribute("data-type") === "join_invite";
       const statusWord = actionType === "accepted" ? "accepted" : "rejected";
-      const newMsg = `Join request from ${senderName} for group ${groupName} was ${statusWord}.`;
+      const newMsg = isInvite
+        ? `Invitation to join group ${groupName} was ${statusWord}.`
+        : `Join request from ${senderName} for group ${groupName} was ${statusWord}.`;
       const formattedMsg = formatNotificationMessage({
         message: newMsg,
         metadata: { senderName, groupName },
@@ -151,18 +156,6 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
     const actions = c.querySelector(".notif-actions");
     if (actions) actions.remove();
   });
-
-  if (anyUnread) {
-    updateBadgeCount(-1);
-    const ids = Array.from(idsToMark).filter(Boolean);
-    if (ids.length > 0) {
-      sendData(
-        "/api/notifications/mark-read",
-        { notificationIds: ids },
-        "POST",
-      ).catch(() => {});
-    }
-  }
 };
 
 const bindCardActions = (card) => {
@@ -190,6 +183,39 @@ const bindCardActions = (card) => {
       const groupId = card.getAttribute("data-group-id");
       handleApiAction("/reject-demande", { demandeId, groupId }, rejectBtn, {
         successMsg: "Demande rejected",
+        onSuccess: () => {
+          markSingleCardReadAndRemoveActions(card, "rejected");
+        },
+      });
+    });
+  }
+
+  const joinInviteBtn = card.querySelector(".join-invite-btn");
+  if (joinInviteBtn) {
+    joinInviteBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const groupId = card.getAttribute("data-group-id");
+      handleApiAction(
+        "/join-group",
+        { groupId, isInvite: true },
+        joinInviteBtn,
+        {
+          successMsg: "Joined group successfully!",
+          onSuccess: () => {
+            markSingleCardReadAndRemoveActions(card, "accepted");
+          },
+        },
+      );
+    });
+  }
+
+  const rejectInviteBtn = card.querySelector(".reject-invite-btn");
+  if (rejectInviteBtn) {
+    rejectInviteBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const groupId = card.getAttribute("data-group-id");
+      handleApiAction("/reject-invite", { groupId }, rejectInviteBtn, {
+        successMsg: "Invitation rejected",
         onSuccess: () => {
           markSingleCardReadAndRemoveActions(card, "rejected");
         },
@@ -228,13 +254,24 @@ const bindCardActions = (card) => {
   }
 };
 
+const escapeHtmlStr = (str) => {
+  if (typeof str !== "string") return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+};
+
 const formatNotificationMessage = (notif) => {
-  let msg = notif.message || "";
+  let msg = escapeHtmlStr(notif.message || "");
   if (msg.startsWith("Admin role") || msg.includes("Admin role")) {
     msg = msg.replace("Admin role", "<strong>Admin</strong> role");
   }
 
   const termsMap = [
+    { term: "invited you to join", cls: "bold-success" },
     { term: "successfully joined", cls: "bold-success" },
     { term: "accepted", cls: "bold-success" },
     { term: "started", cls: "bold-success" },
@@ -254,9 +291,10 @@ const formatNotificationMessage = (notif) => {
   termsMap.sort((a, b) => b.term.length - a.term.length);
 
   termsMap.forEach(({ term, cls }) => {
-    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const escapedTerm = escapeHtmlStr(term);
+    const regexStr = escapedTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const regex = new RegExp(
-      `(?<!>|<strong class="[^"]*">)(${escaped})(?!<\\/strong>)`,
+      `(?<!>|<strong class="[^"]*">)(${regexStr})(?!<\\/strong>)`,
       "g",
     );
     const classAttr = cls ? ` class="${cls}"` : "";
@@ -301,13 +339,22 @@ const createNotificationCard = (notif) => {
   card.setAttribute("data-group-name", notif.metadata?.groupName || "");
   card.setAttribute("data-session-id", notif.metadata?.sessionId || "");
 
+  card.setAttribute("data-is-invite", notif.metadata?.isInvite || "");
+
   let iconHtml = `<i class="bi bi-bell-fill"></i>`;
   if (
     notif.metadata?.senderPhotoURL &&
-    (type === "join_request" || type === "member_removed")
+    (type === "join_request" ||
+      type === "member_removed" ||
+      type === "join_invite" ||
+      notif.metadata?.isInvite)
   ) {
-    iconHtml = `<img src="${notif.metadata.senderPhotoURL}" alt="avatar" />`;
-  } else if (type === "join_request") {
+    iconHtml = `<img src="${escapeHtmlStr(notif.metadata.senderPhotoURL)}" alt="avatar" />`;
+  } else if (
+    type === "join_request" ||
+    type === "join_invite" ||
+    notif.metadata?.isInvite
+  ) {
     iconHtml = `<i class="bi bi-person-fill"></i>`;
   } else if (type === "join_accepted") {
     iconHtml = `<i class="bi bi-link-45deg"></i>`;
@@ -352,11 +399,21 @@ const createNotificationCard = (notif) => {
   );
 
   let actionsHtml = "";
-  if (type === "join_request") {
+  if (type === "join_request" && !notif.metadata?.isInvite) {
     actionsHtml = `
       <div class="notif-actions">
         <button type="button" class="reject-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> Reject</button>
         <button type="button" class="accept-btn exclude-btn small-btn" data-action="accept"><i class="bi bi-check-circle"></i> Accept</button>
+      </div>
+    `;
+  } else if (
+    type === "join_invite" ||
+    (type === "join_request" && notif.metadata?.isInvite)
+  ) {
+    actionsHtml = `
+      <div class="notif-actions">
+        <button type="button" class="reject-invite-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> Reject</button>
+        <button type="button" class="join-invite-btn exclude-btn small-btn" data-action="join"><i class="bi bi-box-arrow-in-right"></i> Join</button>
       </div>
     `;
   } else if (
@@ -389,56 +446,65 @@ const createNotificationCard = (notif) => {
   return card;
 };
 
-const handleMarkAllAsRead = async (silent = false) => {
+export const clearAllNotifCardsUnreadState = () => {
+  document
+    .querySelectorAll("#notifications-list .notif-card.unread")
+    .forEach((card) => card.classList.remove("unread"));
+  Object.values(categoriesState).forEach((state) => {
+    if (state && state.cardsHtml) {
+      state.cardsHtml.forEach((card) => card.classList.remove("unread"));
+    }
+  });
+};
+
+const handleMarkAllAsRead = async (
+  silent = false,
+  removeUnreadClass = true,
+) => {
   const activeBtn = document.querySelector(".notif-category-btn.active");
   const category = activeBtn ? activeBtn.getAttribute("data-category") : "All";
 
-  if (!category || category === "All") {
-    document
-      .querySelectorAll("#notifications-list .notif-card.unread")
-      .forEach((card) => card.classList.remove("unread"));
-    Object.values(categoriesState).forEach((state) => {
-      if (state.cardsHtml)
-        state.cardsHtml.forEach((card) => card.classList.remove("unread"));
-    });
-    updateBadgeCount(-99999);
-  } else {
-    let removedCount = 0;
-    document
-      .querySelectorAll("#notifications-list .notif-card.unread")
-      .forEach((card) => {
-        if (card.getAttribute("data-category") === category) {
-          card.classList.remove("unread");
-          removedCount++;
-        }
+  if (removeUnreadClass) {
+    if (!category || category === "All") {
+      document
+        .querySelectorAll("#notifications-list .notif-card.unread")
+        .forEach((card) => card.classList.remove("unread"));
+      Object.values(categoriesState).forEach((state) => {
+        if (state.cardsHtml)
+          state.cardsHtml.forEach((card) => card.classList.remove("unread"));
       });
-    if (categoriesState[category] && categoriesState[category].cardsHtml) {
-      categoriesState[category].cardsHtml.forEach((card) => {
-        if (card.classList && card.classList.contains("unread")) removedCount++;
-        if (card.classList) card.classList.remove("unread");
-      });
-    }
-    if (categoriesState["All"] && categoriesState["All"].cardsHtml) {
-      categoriesState["All"].cardsHtml.forEach((card) => {
-        if (
-          card.getAttribute &&
-          card.getAttribute("data-category") === category
-        ) {
+    } else {
+      document
+        .querySelectorAll("#notifications-list .notif-card.unread")
+        .forEach((card) => {
+          if (card.getAttribute("data-category") === category) {
+            card.classList.remove("unread");
+          }
+        });
+      if (categoriesState[category] && categoriesState[category].cardsHtml) {
+        categoriesState[category].cardsHtml.forEach((card) => {
           if (card.classList) card.classList.remove("unread");
-        }
-      });
-    }
-    if (removedCount > 0) {
-      updateBadgeCount(-removedCount);
+        });
+      }
+      if (categoriesState["All"] && categoriesState["All"].cardsHtml) {
+        categoriesState["All"].cardsHtml.forEach((card) => {
+          if (
+            card.getAttribute &&
+            card.getAttribute("data-category") === category
+          ) {
+            if (card.classList) card.classList.remove("unread");
+          }
+        });
+      }
     }
   }
 
+  updateBadgeCount(-99999);
+
   try {
-    sendData("/api/notifications/mark-read", { category }, "POST").catch(
-      (err) => {
-        if (!silent) console.error("Error marking notifications read:", err);
-      },
-    );
+    sendData("/api/notifications/mark-read", {}, "POST").catch((err) => {
+      if (!silent) console.error("Error marking notifications read:", err);
+    });
   } catch (err) {
     if (!silent) console.error("Error marking notifications read:", err);
   }
@@ -513,15 +579,37 @@ const initRealtimeNotifications = () => {
         `#notifications-list .notif-card[data-id="${notif.id}"]`,
       );
 
-      if (notif.changeType === "modified" && !existingDomCard) {
+      const isUnreadInvite =
+        notif.type === "join_invite" &&
+        (!notif.read || notif.read === "false" || notif.read === false);
+
+      if (
+        notif.changeType === "modified" &&
+        !existingDomCard &&
+        !isUnreadInvite
+      ) {
         return;
       }
 
-      if (!existingDomCard && (!notif.read || notif.read === "false")) {
+      const isCurrentlyUnread =
+        !notif.read || notif.read === "false" || notif.read === false;
+      if (
+        isCurrentlyUnread &&
+        (!existingDomCard || !existingDomCard.classList.contains("unread"))
+      ) {
         updateBadgeCount(1);
       }
 
       const newCard = createNotificationCard(notif);
+      const isOverlayOpen =
+        document.querySelector(".notifications-overlay.open-overlay") !== null;
+      if (
+        isOverlayOpen &&
+        existingDomCard &&
+        existingDomCard.classList.contains("unread")
+      ) {
+        newCard.classList.add("unread");
+      }
       const category = notif.category || "All";
 
       const activeBtn = document.querySelector(".notif-category-btn.active");
@@ -541,7 +629,12 @@ const initRealtimeNotifications = () => {
           (c) => c.getAttribute && c.getAttribute("data-id") === notif.id,
         );
         if (idx !== -1) {
-          state.cardsHtml[idx] = cardEl;
+          if (isUnreadInvite) {
+            state.cardsHtml.splice(idx, 1);
+            state.cardsHtml.unshift(cardEl);
+          } else {
+            state.cardsHtml[idx] = cardEl;
+          }
         } else {
           state.cardsHtml.unshift(cardEl);
         }
@@ -550,7 +643,14 @@ const initRealtimeNotifications = () => {
 
       if (activeCategory === "All" || activeCategory === category) {
         if (existingDomCard) {
-          existingDomCard.replaceWith(newCard);
+          if (isUnreadInvite) {
+            existingDomCard.remove();
+            const container = document.getElementById("notifications-list");
+            if (container)
+              container.insertBefore(newCard, container.firstChild);
+          } else {
+            existingDomCard.replaceWith(newCard);
+          }
         } else {
           const container = document.getElementById("notifications-list");
           if (container) container.insertBefore(newCard, container.firstChild);
@@ -749,10 +849,11 @@ export const initNotificationsManager = () => {
     bellBtn.addEventListener("click", () => {
       const badge = document.querySelector(".notification-badge");
       if (badge && !badge.classList.contains("hidden")) {
-        handleMarkAllAsRead();
+        handleMarkAllAsRead(false, false);
       }
     });
   });
 
+  window.clearAllNotifCardsUnreadState = clearAllNotifCardsUnreadState;
   initRealtimeNotifications();
 };

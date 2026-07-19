@@ -2,6 +2,7 @@ import {
   fetchData,
   sendData,
   showMessageBlock,
+  isNativeDomainCondition,
 } from "../../../../../../main_assets/js/utils.js";
 import {
   DESCRIPTION_MAX_LENGTH,
@@ -12,6 +13,8 @@ import {
   MIN_MEMBERS,
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
+  SESSION_MAX_DURATION,
+  SESSION_MIN_DURATION,
   TASK_MAX_DURATION,
   TASK_MIN_DURATION,
 } from "../../../../global/js/variables.js";
@@ -95,7 +98,7 @@ export const handleLeavingGroup = async (e) => {
 };
 
 export const handleGroupInfo = async () => {
-  await openGroupLeftSideBar("/group-info");
+  if (!(await openGroupLeftSideBar("/group-info"))) return;
   const removeGroupBtn = document.querySelector(".remove-group-btn");
   if (removeGroupBtn) {
     removeGroupBtn.addEventListener("click", handleRemoveGroup);
@@ -118,6 +121,22 @@ export const handleShowInfoBtnClick = (e) => {
 };
 
 export const openGroupLeftSideBar = async (route) => {
+  if (
+    !groupLeftSideBar.classList.contains("close") &&
+    groupLeftSideBar.dataset.currentRoute === route
+  ) {
+    return false;
+  }
+  groupLeftSideBar.dataset.currentRoute = route;
+
+  const SIDEBAR_TITLES = {
+    "/group-info": "Group Informations",
+    "/session-info": "Session Informations",
+    "/members-list": "Members",
+    "/demandes-list": "Join Requests",
+    "/quizzes-list": "Quizzes",
+  };
+  groupLeftSideBarTitle.textContent = SIDEBAR_TITLES[route] || "";
   groupLeftSideBarContent.innerHTML = getLoader();
   groupLeftSideBar.classList.remove("close");
 
@@ -164,13 +183,19 @@ export const openGroupLeftSideBar = async (route) => {
         joinSession(joinBtn.dataset.sessionId, joinBtn),
       );
   } catch (error) {
-    console.error(error);
+    const isNative =
+      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType =
+      error.type || error.data?.type || (isNative ? "info" : "error");
+    if (!isNative) console.error(error);
     showMessageBlock(
       error.message || "An error occurred while loading group info.",
-      "error",
+      notifType,
     );
-    groupLeftSideBarContent.innerHTML = `<p class="error-message"><i class="bi bi-exclamation-circle"></i>Failed to load group info. Please try again later.</p>`;
+    if (!isNative)
+      groupLeftSideBarContent.innerHTML = `<p class="error-message"><i class="bi bi-exclamation-circle"></i>Failed to load group info. Please try again later.</p>`;
   }
+  return true;
 };
 
 const getSessionCreationOverlay = () => {
@@ -823,10 +848,13 @@ const handleFinishBtnClick = async (sessionData, btn) => {
     (acc, task) => acc + (Number(task.durationInMins) || 0),
     0,
   );
-  if (totalDuration <= 0)
+  if (
+    totalDuration < SESSION_MIN_DURATION ||
+    totalDuration > SESSION_MAX_DURATION
+  )
     return showMessageBlock(
-      "Total session duration must be greater than 0 minutes.",
-      "info",
+      `Total session duration must be between ${SESSION_MIN_DURATION} and ${SESSION_MAX_DURATION} minutes.`,
+      "warning",
     );
 
   if (quiz && (!quiz.description || !quiz.durationInMins))
@@ -845,8 +873,12 @@ const handleFinishBtnClick = async (sessionData, btn) => {
     showMessageBlock("Session created successfully", "success");
     navigateTo("/home");
   } catch (error) {
-    console.error("Error: ", error);
-    showMessageBlock(error.message, "error");
+    const isNative =
+      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType =
+      error.type || error.data?.type || (isNative ? "info" : "error");
+    if (!isNative) console.error("Error: ", error);
+    showMessageBlock(error.message, notifType);
   } finally {
     btn.isCreating = false;
     btn.disabled = false;
@@ -863,7 +895,7 @@ const handleSessionForm = (data, sessionStore, wrapper) => {
     addOrUpdateQuizTask(data, sessionStore, wrapper);
     return;
   } else if (!data["session-quiz-title"] && !data["session-quiz-id"]) {
-    sessionData.sessionQuiz = null;
+    sessionData.sessionQuiz = undefined;
     sessionStore.taskToEdit = null;
     const quizIndex = sessionData.tasks.findIndex((task) => task.isQuiz);
     if (quizIndex !== -1) {
@@ -1426,7 +1458,7 @@ const handleQuizCardBtns = (e) => {
 };
 
 export const handleQuizzesListMenuBtn = async () => {
-  await openGroupLeftSideBar("/quizzes-list");
+  if (!(await openGroupLeftSideBar("/quizzes-list"))) return;
   setUpDatePicker(groupLeftSideBarContent);
   const container = groupLeftSideBar.querySelector(".quizzes-list");
   container.addEventListener("click", (e) => handleQuizCardBtns(e));
@@ -1526,7 +1558,7 @@ const handleMembersLoader = () => {
 };
 
 export const handleMembersListMenuBtn = async () => {
-  await openGroupLeftSideBar("/members-list");
+  if (!(await openGroupLeftSideBar("/members-list"))) return;
   const inviteUserBtn = groupLeftSideBar.querySelector(".invite-user-btn");
   const search = groupLeftSideBar.querySelector(".members-search #search");
   const membersResults = groupLeftSideBar.querySelector(".members-list");
@@ -1554,7 +1586,7 @@ export const handleMembersListMenuBtn = async () => {
 };
 
 export const handleSessionInfoMenuBtn = async () => {
-  await openGroupLeftSideBar("/session-info");
+  if (!(await openGroupLeftSideBar("/session-info"))) return;
   handletTasksListners("session-info");
 };
 
@@ -1655,7 +1687,7 @@ const handleDemandeCardBtns = (e) => {
 };
 
 export const setUpDemandes = async () => {
-  await openGroupLeftSideBar("/demandes-list");
+  if (!(await openGroupLeftSideBar("/demandes-list"))) return;
   setUpDatePicker(groupLeftSideBarContent);
   const container = groupLeftSideBar.querySelector(".demandes-list");
   container.addEventListener("click", (e) => handleDemandeCardBtns(e));
@@ -1832,8 +1864,12 @@ const handleSaveAction = async (
     swapMode(infoBox, "getViewMode", updatedValue, showInSearchValue);
     showMessageBlock("Group info updated successfully", "success");
   } catch (error) {
-    console.log("Error", error);
-    showMessageBlock(error.message, "error");
+    const isNative =
+      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType =
+      error.type || error.data?.type || (isNative ? "info" : "error");
+    if (!isNative) console.log("Error", error);
+    showMessageBlock(error.message, notifType);
   } finally {
     saveBtn.innerHTML = '<i class="bi bi-floppy"></i>';
     saveBtn.disabled = false;

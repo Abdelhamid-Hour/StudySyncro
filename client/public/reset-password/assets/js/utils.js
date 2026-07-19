@@ -1,4 +1,4 @@
-import { passwordRegex } from '../../../main_assets/js/dom-variables.js';
+import { passwordRegex, PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH } from '../../../main_assets/js/variables.js';
 import { main, passwordField, confirmPasswordField } from './dom-variables.js';
 export const splitUrlParams = (paramName) => {
   const searchParams = new URLSearchParams(location.search);
@@ -52,7 +52,7 @@ export const verifyPasswordFields = () => {
   }
 
   if (!passwordRegex.test(password)) {
-    showError('The password must be at least 8 characters', passwordField);
+    showError(`The password must be between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters`, passwordField);
   }
 
   if (!passwordRegex.test(password) || password !== confirmPassword) {

@@ -1,58 +1,19 @@
 // index and optimize website for searche engines
-// handel inputs [hashiing and encode special chars]
 // add metadata and metadata handler to the login page
 // use post css to generate the css files
-// limite the timer to max is 24 hrs
 // solve consol warnings
 // add loading animation to the login page
-// ! ity 1 !important classes in global home styles for prevent screen fliqer
-// make the loading boxes and the quizzes/groups number dynamic 
-// add delete message feature
-// solve picture height problem in chat messages
-// solve message login delay
-// add time counter in the session creation
-// add passed time in each qquestion
-// built the 404 page (with Animated vercton in icon8)
-// try to improve the drag and drop feature like for the mouse out while dragging !
-// Verify any data attr that it data sent from the front end
-// remove the imoji skeleton
-// add a max and min sesision duratioknm
-// remove menu btn from tasks list in ongoing session page (session active)
-// add condition to not start quiz if session is completed
-// fix the scroll to the end of the containre fliker while dragging
-// dont forgot kick and transfer rule
-// make the firebase functions remove the finished sessions
-// add refresh btn to the inactive tabs (msgs and active sessions) or other update solution 
-// add a soft delete option
+// Verify any data attr that it data sent from the front end ----- securityyy
+// ========== make the firebase functions remove the finished sessions
+// add a soft delete option ================
 // improve website operations with transactions
-/ retrn a page when the user want to acccess a group that not join to it
-// invite user functionality
+/ retrn a page when the user want to acccess a group that not join to it ---- all unhaurized partes | groups or thing that not found
+// invite user functionality ---------------------- active
 // modify the chat input inactive home page to use the pre existing func for initialization
 // arab verion
-
-No Results Found
-No matches found for your search or filters. || this is used for chat 
-
-- What you should do next : 
-
-+ submit the examen result from quiz play page
-
-add show result button:
-for user : if submit the quiz or the quiz task has been completed
-for admin: after the quiz task completed and the btn text is : 'show Results' (list of users results)
-
-
-+ quiz play:
-
-if the user has been passed the quiz dont let him repassed with new result *
-
-dont let the admin pass the exam by the url
-
-remove the quiz if is empty or without quetions
-
-
-// cancell button
-// add email form
+// learn mutaionObserver
+// solve the login style problem (the error text clip)
+// improve and solve the password RegEx
 
 
 

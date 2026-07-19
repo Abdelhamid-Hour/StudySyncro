@@ -1,11 +1,22 @@
 const { FieldValue, FieldPath } = require("firebase-admin/firestore");
 const { db, rDb } = require("../../firebase/firebaseAdmin");
 const { getFormattedMembers, addMember } = require("./members");
-const { getGroupById, refillSampleMembersIfNeeded } = require("./shared");
+const {
+  getGroupById,
+  refillSampleMembersIfNeeded,
+  syncUserGroupSnapshot,
+  syncUserGroupRemoval,
+  saveGroupToUser,
+} = require("./shared");
 const { sendRequest } = require("./demandes");
 const { toReadableDate } = require("../global");
 const { INITIALE_LOADERS_COUNT } = require("../global");
-const { notifyGroupDeleted, notifyRoleTransfer } = require("./notifications");
+const {
+  notifyGroupDeleted,
+  notifyRoleTransfer,
+  notifyGroupInvite,
+  updateJoinInviteNotificationStatus,
+} = require("./notifications");
 
 const createGroup = async (groupData, userData) => {
   try {
@@ -44,6 +55,8 @@ const createGroup = async (groupData, userData) => {
         success: false,
         message:
           "A group with this name already exists. Please choose another name.",
+        isNative: true,
+        type: "warning",
       };
     }
 
@@ -54,8 +67,7 @@ const createGroup = async (groupData, userData) => {
       email: userData.email,
       photoURL: userData.photoURL,
     });
-    const userRef = db.collection("users").doc(userData.uid);
-    await userRef.collection("userGroupsIds").doc(groupDoc.id).set({});
+    await saveGroupToUser(userData.uid, groupDoc.id, newGrop);
     return {
       success: true,
     };
@@ -64,6 +76,8 @@ const createGroup = async (groupData, userData) => {
     return {
       success: false,
       message: "An error occurred while creating the group. Please try again.",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -92,7 +106,7 @@ const filterGroups = (
   criteria,
   groups,
   availableGroups,
-  joinedGroupsIds
+  joinedGroupsIds,
 ) => {
   return groups.filter((g) => {
     const canBeVisible =
@@ -108,7 +122,9 @@ const filterGroups = (
 
     const matchVisibility =
       !criteria.visibility?.length ||
-      criteria.visibility.some((v) => v?.toLowerCase() === g.visibility?.toLowerCase());
+      criteria.visibility.some(
+        (v) => v?.toLowerCase() === g.visibility?.toLowerCase(),
+      );
 
     let matchShowInSearch = true;
 
@@ -125,9 +141,9 @@ const filterGroups = (
     if (!availableGroups) {
       matchRole =
         !criteria.role?.length ||
-        (criteria.role.some((r) => r?.toLowerCase() === "admin") && userId === g.creator) ||
+        (criteria.role.some((r) => r?.toLowerCase() === "admin") &&
+          userId === g.creator) ||
         (criteria.role.some((r) => r?.toLowerCase() === "member") &&
-          joinedGroupsIds.includes(g.id) &&
           userId != g.creator);
     }
 
@@ -164,7 +180,7 @@ const getAvailableGroups = async (
     searchBy: "",
   },
   limit = INITIALE_LOADERS_COUNT,
-  lastVisible = null
+  lastVisible = null,
 ) => {
   try {
     let availableGroups = [];
@@ -173,7 +189,10 @@ const getAvailableGroups = async (
     const requestedGroupsIds = requestedGroupsSnap.docs
       .filter((doc) => doc.data().status === "pending")
       .map((doc) => doc.id);
-    const joinedGroupsSnap = await userRef.collection("userGroupsIds").get();
+    const joinedGroupsSnap = await userRef
+      .collection("userGroups")
+      .select()
+      .get();
     const joinedGroupsIds = joinedGroupsSnap.empty
       ? []
       : joinedGroupsSnap.docs.map((doc) => doc.id);
@@ -212,8 +231,8 @@ const getAvailableGroups = async (
       availableGroups = availableGroups.concat(
         filterGroups(userId, criteria, groups, true, joinedGroupsIds).slice(
           0,
-          remaining
-        )
+          remaining,
+        ),
       );
 
       lastVisible =
@@ -226,7 +245,7 @@ const getAvailableGroups = async (
     const finalCards = getFormatedGroups(
       groupsToReturn,
       userId,
-      requestedGroupsIds
+      requestedGroupsIds,
     );
 
     // return id of last returned group if we filled the requested limit, else null
@@ -253,39 +272,27 @@ const getJoinedGroups = async (
     searchBy: "",
   },
   limit = INITIALE_LOADERS_COUNT,
-  lastVisible = null
+  lastVisible = null,
 ) => {
   try {
     let joinedGroups = [];
 
     const batchSize = Number(limit) * 10;
 
-    const joinedGroupsSnap = await db
-      .collection("users")
-      .doc(userId)
-      .collection("userGroupsIds")
-      .get();
-    const joinedGroupsIds = joinedGroupsSnap.empty
-      ? []
-      : joinedGroupsSnap.docs.map((doc) => doc.id);
-
-    if (joinedGroupsIds.length === 0)
-      return {
-        cards: [],
-        lastVisible: null,
-      };
-
     do {
       let query = db
-        .collection("groups")
-        .where(FieldPath.documentId(), "in", joinedGroupsIds)
+        .collection("users")
+        .doc(userId)
+        .collection("userGroups")
         .orderBy("creationDate", criteria.sort || "desc")
         .limit(batchSize);
 
       // Handle pagination
       if (lastVisible) {
         const lastVisibleDoc = await db
-          .collection("groups")
+          .collection("users")
+          .doc(userId)
+          .collection("userGroups")
           .doc(lastVisible)
           .get();
         if (lastVisibleDoc.exists) {
@@ -298,6 +305,9 @@ const getJoinedGroups = async (
       }
 
       const snapshot = await query.get();
+      if (snapshot.empty && joinedGroups.length === 0) {
+        return { cards: [], lastVisible: null };
+      }
 
       // Convert docs to objects
       const groups = snapshot.docs.map((doc) => ({
@@ -308,7 +318,7 @@ const getJoinedGroups = async (
       // Add up to remaining needed groups
       const remaining = limit - joinedGroups.length;
       joinedGroups = joinedGroups.concat(
-        filterGroups(userId, criteria, groups).slice(0, remaining)
+        filterGroups(userId, criteria, groups).slice(0, remaining),
       );
 
       // Update lastVisible for next page
@@ -351,12 +361,16 @@ const leaveGroup = async (groupId, userId) => {
       return {
         success: false,
         message: "Group not found",
+        isNative: true,
+        type: "info",
       };
 
     if (!memberSnap.exists) {
       return {
         success: false,
         message: "User not found",
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -364,18 +378,30 @@ const leaveGroup = async (groupId, userId) => {
     await groupRef.update({
       membersCount: FieldValue.increment(-1),
     });
-    await userRef.collection("userGroupsIds").doc(groupId).delete();
+    await userRef.collection("userGroups").doc(groupId).delete();
+    await syncUserGroupSnapshot(groupId, {
+      membersCount: FieldValue.increment(-1),
+    });
     await refillSampleMembersIfNeeded(groupRef);
 
     if (groupSnap.data().currentSession) {
-      await userRef.collection("activeSessions").doc(groupSnap.data().currentSession).delete();
+      await userRef
+        .collection("activeSessions")
+        .doc(groupSnap.data().currentSession)
+        .delete();
       const userSnap = await userRef.get();
-      if (userSnap.exists && userSnap.data().currentSession === groupSnap.data().currentSession) {
+      if (
+        userSnap.exists &&
+        userSnap.data().currentSession === groupSnap.data().currentSession
+      ) {
         const { leavSession } = require("./session");
         await leavSession(userId);
       }
     }
-    await rDb.ref(`userGroupChats/${userId}/${groupId}`).remove().catch((e) => console.error(e));
+    await rDb
+      .ref(`userGroupChats/${userId}/${groupId}`)
+      .remove()
+      .catch((e) => console.error(e));
 
     return {
       success: true,
@@ -386,6 +412,8 @@ const leaveGroup = async (groupId, userId) => {
     return {
       success: false,
       message: "cant leave groupe , something went wrong",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -403,6 +431,8 @@ const modifyGroup = async (userId, groupId, formData) => {
       return {
         success: false,
         message: "you dont have the right to upate the group informations.",
+        isNative: true,
+        type: "warning",
       };
     }
 
@@ -443,6 +473,8 @@ const modifyGroup = async (userId, groupId, formData) => {
       return {
         success: false,
         message: "No changes detected, skipping update.",
+        isNative: true,
+        type: "info",
       };
     }
   } catch (error) {
@@ -450,6 +482,8 @@ const modifyGroup = async (userId, groupId, formData) => {
     return {
       success: false,
       message: "Can't update group properties ! please try again later.",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -462,6 +496,8 @@ const updateGroupProperty = async (groupId, property, newValue) => {
       return {
         success: false,
         message: "Group not found",
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -474,16 +510,20 @@ const updateGroupProperty = async (groupId, property, newValue) => {
             return { valid: false, message: "Group name cannot be empty" };
           }
           const cleaned = val.trim();
-          const snapshot = await db.collection("groups")
+          const snapshot = await db
+            .collection("groups")
             .where("name", "==", cleaned)
             .limit(2)
             .get();
-          const isDuplicated = snapshot.docs.some(doc => doc.id !== groupId);
+          const isDuplicated = snapshot.docs.some((doc) => doc.id !== groupId);
           if (isDuplicated) {
-            return { valid: false, message: "A group with this name already exists" };
+            return {
+              valid: false,
+              message: "A group with this name already exists",
+            };
           }
           return { valid: true, value: cleaned };
-        }
+        },
       },
       description: {
         field: "description",
@@ -492,7 +532,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
             return { valid: false, message: "Description cannot be empty" };
           }
           return { valid: true, value: val.trim() };
-        }
+        },
       },
       creator: {
         field: "creator",
@@ -501,7 +541,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
             return { valid: false, message: "Creator ID cannot be empty" };
           }
           return { valid: true, value: val.trim() };
-        }
+        },
       },
       subject: {
         field: "subject",
@@ -510,7 +550,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
             return { valid: false, message: "Subject cannot be empty" };
           }
           return { valid: true, value: val.trim() };
-        }
+        },
       },
       level: {
         field: "level",
@@ -519,7 +559,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
             return { valid: false, message: "Level cannot be empty" };
           }
           return { valid: true, value: val.trim() };
-        }
+        },
       },
       visibility: {
         field: "visibility",
@@ -528,20 +568,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
             return { valid: false, message: "Visibility cannot be empty" };
           }
           return { valid: true, value: val.trim() };
-        }
-      },
-      MaxMembres: {
-        field: "maxMembers",
-        validate: (val) => {
-          if (val === null || val === undefined || val === "") {
-            return { valid: false, message: "Max members cannot be empty" };
-          }
-          const num = Number(val);
-          if (isNaN(num) || num <= 0) {
-            return { valid: false, message: "Max members must be a positive number" };
-          }
-          return { valid: true, value: num };
-        }
+        },
       },
       maxMembers: {
         field: "maxMembers",
@@ -551,10 +578,13 @@ const updateGroupProperty = async (groupId, property, newValue) => {
           }
           const num = Number(val);
           if (isNaN(num) || num <= 0) {
-            return { valid: false, message: "Max members must be a positive number" };
+            return {
+              valid: false,
+              message: "Max members must be a positive number",
+            };
           }
           return { valid: true, value: num };
-        }
+        },
       },
       showInSearch: {
         field: "showInSearch",
@@ -568,8 +598,8 @@ const updateGroupProperty = async (groupId, property, newValue) => {
             return { valid: false, message: "Invalid value for showInSearch" };
           }
           return { valid: true, value: boolValue };
-        }
-      }
+        },
+      },
     };
 
     const propConfig = propertyMap[property];
@@ -577,6 +607,8 @@ const updateGroupProperty = async (groupId, property, newValue) => {
       return {
         success: false,
         message: "Invalid property type",
+        isNative: true,
+        type: "warning",
       };
     }
 
@@ -585,6 +617,8 @@ const updateGroupProperty = async (groupId, property, newValue) => {
       return {
         success: false,
         message: validation.message,
+        isNative: true,
+        type: "warning",
       };
     }
 
@@ -592,12 +626,17 @@ const updateGroupProperty = async (groupId, property, newValue) => {
       [propConfig.field]: validation.value,
     });
 
+    if (!["maxMembers", "showInSearch", "currentSession"].includes(property))
+      await syncUserGroupSnapshot(groupId, {
+        [propConfig.field]: validation.value,
+      });
+
     if (propConfig.field === "creator") {
       await notifyRoleTransfer(
         groupId,
         groupDoc.data().name,
         groupDoc.data().creator,
-        validation.value
+        validation.value,
       );
     }
 
@@ -610,6 +649,8 @@ const updateGroupProperty = async (groupId, property, newValue) => {
     return {
       success: false,
       message: "An error occurred while updating the group property",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -624,25 +665,39 @@ const deleteGroup = async (groupId) => {
     if (groupRes.group.currentSession && groupRes.group.currentSession !== "") {
       return {
         success: false,
-        message: "You cannot delete this group while an active study session is running. Please end the session first.",
+        message:
+          "You cannot delete this group while an active study session is running. Please end the session first.",
+        isNative: true,
+        type: "warning",
       };
     }
 
     const membersSnap = await groupRef.collection("members").get();
     const memberIds = membersSnap.docs.map((doc) => doc.id);
 
+    await syncUserGroupRemoval(groupId);
     await groupRef.delete();
     await notifyGroupDeleted(memberIds, groupId, groupRes.group.name);
-    await rDb.ref(`groups/${groupId}/chat`).remove().catch((e) => console.error(e));
+    await rDb
+      .ref(`groups/${groupId}/chat`)
+      .remove()
+      .catch((e) => console.error(e));
     for (const memberId of memberIds) {
-      await rDb.ref(`userGroupChats/${memberId}/${groupId}`).remove().catch((e) => console.error(e));
+      await rDb
+        .ref(`userGroupChats/${memberId}/${groupId}`)
+        .remove()
+        .catch((e) => console.error(e));
     }
 
     return { success: true, message: "Group removed" };
-
   } catch (error) {
     console.log(error.message);
-    return { success: false, message: "Group removed" };
+    return {
+      success: false,
+      message: "Error removing group",
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
@@ -652,7 +707,12 @@ const getGroupInfo = async (groupId, userId) => {
     const groupSnap = await groupRef.get();
 
     if (!groupSnap.exists)
-      return { success: false, message: "Group not found" };
+      return {
+        success: false,
+        message: "Group not found",
+        isNative: true,
+        type: "info",
+      };
     const group = groupSnap.data();
     const adminInfo = (
       await groupRef.collection("members").doc(group.creator).get()
@@ -695,6 +755,8 @@ const getGroupInfo = async (groupId, userId) => {
     return {
       success: false,
       message: "An error occurred while fetching group info. Please try again.",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -703,32 +765,34 @@ const getChatContext = async (userId, groupId) => {
   try {
     const groupRes = await getGroupById(groupId);
 
-    if(!groupRes.success) return {
-      ...groupRes,
-      statusCode: 404
-    };
+    if (!groupRes.success)
+      return {
+        ...groupRes,
+        statusCode: 404,
+      };
 
     const group = groupRes.group;
-    
+
     if (!group)
       return {
         success: false,
         statusCode: 404,
         message: "Group Not Found",
+        isNative: true,
+        type: "info",
       };
 
     const userRef = db.collection("users").doc(userId);
 
-    const isMember = await userRef
-      .collection("userGroupsIds")
-      .doc(groupId)
-      .get();
+    const isMember = await userRef.collection("userGroups").doc(groupId).get();
 
     if (!isMember.exists)
       return {
         success: false,
         statusCode: 401,
         message: "You are not a member of this group",
+        isNative: true,
+        type: "warning",
       };
 
     const sessionSnap = group.currentSession
@@ -756,11 +820,13 @@ const getChatContext = async (userId, groupId) => {
       success: false,
       statusCode: 500,
       message: "Cannot fetch data , please try again later !.",
+      isNative: false,
+      type: "error",
     };
   }
 };
 
-const joinGroup = async (groupId, userData) => {
+const joinGroup = async (groupId, userData, isInvite = false) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
     const groupSnap = await groupRef.get();
@@ -769,17 +835,26 @@ const joinGroup = async (groupId, userData) => {
       return {
         success: false,
         message: "Group does not exist",
+        isNative: true,
+        type: "info",
       };
     }
 
     const group = groupSnap.data();
 
-    if (group.visibility === "Public") {
-      // Directly add member for public groups
-      
-      return await addMember(groupRef, userData.uid);
+    if (group.visibility === "Public" || isInvite) {
+      // Directly add member for public groups or when joining via invitation
+      const result = await addMember(groupRef, userData.uid);
+      if (result.success) {
+        await updateJoinInviteNotificationStatus(
+          userData.uid,
+          groupId,
+          "accepted",
+        );
+      }
+      return result;
     }
-    
+
     if (group.visibility === "Private" && group.showInSearch) {
       // Send join request for private groups that are discoverable
       return await sendRequest(groupId, userData);
@@ -788,17 +863,98 @@ const joinGroup = async (groupId, userData) => {
     return {
       success: false,
       message: "You cannot join this group.",
+      isNative: true,
+      type: "info",
     };
   } catch (error) {
     console.error("Error in joinGroup:", error);
     return {
       success: false,
       message: "Internal server error",
+      isNative: false,
+      type: "error",
     };
   }
 };
 
-const inviteMembers = async () => ({ success: true });
+const inviteMembers = async (groupId, users, senderUserData) => {
+  try {
+    if (!groupId || !users || !Array.isArray(users) || users.length === 0) {
+      return {
+        success: false,
+        message: "Invalid parameters",
+        isNative: true,
+        type: "warning",
+      };
+    }
+
+    const groupRef = db.collection("groups").doc(groupId);
+    const groupSnap = await groupRef.get();
+    if (!groupSnap.exists) {
+      return {
+        success: false,
+        message: "Group does not exist",
+        isNative: true,
+        type: "info",
+      };
+    }
+
+    const groupData = groupSnap.data();
+    const groupName = groupData.name || "a group";
+    const members = groupData.members || [];
+
+    let senderUser = senderUserData;
+    if (senderUserData && typeof senderUserData === "string") {
+      const senderSnap = await db.collection("users").doc(senderUserData).get();
+      senderUser = senderSnap.exists
+        ? { uid: senderSnap.id, ...senderSnap.data() }
+        : { uid: senderUserData, fullName: "Admin" };
+    } else if (!senderUser) {
+      senderUser = { uid: groupData.creator, fullName: "Admin" };
+    }
+
+    const invitePromises = [];
+    for (const u of users) {
+      const targetUserId = typeof u === "object" ? u.id || u.uid : u;
+      if (!targetUserId) continue;
+      if (
+        members.includes(targetUserId) ||
+        groupData.creator === targetUserId
+      ) {
+        continue;
+      }
+      invitePromises.push(
+        notifyGroupInvite(groupId, groupName, senderUser, targetUserId),
+      );
+    }
+
+    await Promise.all(invitePromises);
+    return { success: true };
+  } catch (error) {
+    console.error("Error in inviteMembers:", error);
+    return {
+      success: false,
+      message: "Failed to invite members",
+      isNative: false,
+      type: "error",
+    };
+  }
+};
+
+const rejectInvite = async (groupId, userId) => {
+  try {
+    await updateJoinInviteNotificationStatus(userId, groupId, "rejected");
+    return { success: true, message: "Invitation rejected successfully." };
+  } catch (error) {
+    console.error("Error in rejectInvite:", error);
+    return {
+      success: false,
+      message: "Failed to reject invitation.",
+      isNative: false,
+      type: "error",
+    };
+  }
+};
 
 module.exports = {
   leaveGroup,
@@ -812,4 +968,5 @@ module.exports = {
   deleteGroup,
   getChatContext,
   inviteMembers,
+  rejectInvite,
 };

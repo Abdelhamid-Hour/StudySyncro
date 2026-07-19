@@ -6,7 +6,11 @@ import {
   INITIALE_LOADERS_COUNT,
   LOADER_COUNT,
 } from "../../../global/js/variables.js";
-import { getDebounceFunc, getLoadersCount, isAsync } from "../../../global/js/utils.js";
+import {
+  getDebounceFunc,
+  getLoadersCount,
+  isAsync,
+} from "../../../global/js/utils.js";
 
 const encodeCriteria = (criteria) => {
   if (!criteria) return "";
@@ -26,6 +30,7 @@ export class Loader {
     route,
     loadingBox,
     {
+      chat = false,
       rootMargin = "30px",
       getCriteria = () => "",
       loadersCount = getLoadersCount(),
@@ -47,6 +52,7 @@ export class Loader {
     this.append = append;
     this.rootMargin = rootMargin;
     this.threshold = threshold;
+    this.chat = chat;
     this.createCard = createCard;
     this.route = route;
     this.loading = false;
@@ -121,7 +127,7 @@ export class Loader {
     this.sentinel = document.querySelector(".first-loading-card");
   }
 
-  async loadMore(isFirstLoad = false) { 
+  async loadMore(isFirstLoad = false) {
     this.loading = true;
     const requestId = ++this.currentRequestId;
 
@@ -132,7 +138,6 @@ export class Loader {
     }
 
     try {
-      
       let { cards, lastVisible } = await fetchData(endPoint);
 
       if (requestId !== this.currentRequestId) {
@@ -141,11 +146,11 @@ export class Loader {
 
       this.lastVisible = lastVisible;
 
-      if(!cards.length || (cards[0].length != undefined && !cards[0].length)){
+      if (!cards.length || (cards[0].length != undefined && !cards[0].length)) {
         this.io.unobserve(this.sentinel);
         clearLoadersBoxes();
         this.checkEmptyState();
-        return
+        return;
       }
 
       const frag = document.createDocumentFragment();
@@ -155,7 +160,8 @@ export class Loader {
       if (isFirstLoad) {
         const res = this.firstLoadFunc(cards);
         if (res && res.cards) cards = res.cards;
-        if (res && res.lastVisible) lastVisible = res.lastVisible || lastVisible;
+        if (res && res.lastVisible)
+          lastVisible = res.lastVisible || lastVisible;
       }
 
       let cardElements;
@@ -172,6 +178,37 @@ export class Loader {
 
       frag.append(...cardElements);
 
+      if (this.chat) {
+        const msgContainer = frag.querySelector(
+          ".message-received:last-child, .message-sent:last-child",
+        );
+        const firstMsgContainer = document.querySelector(
+          ".chat-messages > .message-received, .chat-messages > .message-sent",
+        );
+
+        const msgContainerMessages = msgContainer?.querySelector(".messages");
+
+        if (
+          firstMsgContainer &&
+          msgContainer &&
+          msgContainerMessages &&
+          firstMsgContainer.className === msgContainer.className
+        ) {
+          const messages = firstMsgContainer.querySelector(".messages");
+          const firstMessage =
+            messages.firstChild ||
+            messages.querySelector(".first-message-received-text");
+          if (firstMessage) {
+            firstMessage.className = firstMessage.className.replace(
+              "first-",
+              "",
+            );
+            firstMessage.querySelector("span.username")?.remove();
+          }
+          msgContainerMessages.append(...messages.children);
+          firstMsgContainer.remove();
+        }
+      }
       // insert the new cards before the last loader
       if (this.append) this.sentinel.before(frag);
       else this.sentinel.after(frag);
@@ -226,7 +263,9 @@ export class Loader {
           }
         }
 
-        const stateObj = isFiltered ? (this.emptyState.filtered || null) : (this.emptyState.noFilter || null);
+        const stateObj = isFiltered
+          ? this.emptyState.filtered || null
+          : this.emptyState.noFilter || null;
         if (stateObj) {
           icon = stateObj.icon || icon;
           title = stateObj.title || title;
@@ -257,8 +296,8 @@ export const initFiltersInputListener = (loader, container) => {
   const resetLoader = getDebounceFunc(() => loader.reset(), 300);
   const handleInputChange = (e) => {
     const isInput = e.target.tagName === "INPUT";
-    if (isInput) {      
-       resetLoader();
+    if (isInput) {
+      resetLoader();
     }
   };
   container.addEventListener("input", handleInputChange);
@@ -295,7 +334,7 @@ export const setUpDatePicker = (container) => {
       dateBadge = createDateBadge(dateInput);
       searchContainer.appendChild(dateBadge);
     }
-    if(!selectedDate) dateBadge.remove();
+    if (!selectedDate) dateBadge.remove();
     else dateBadge.querySelector(".text").innerText = selectedDate;
   });
 };

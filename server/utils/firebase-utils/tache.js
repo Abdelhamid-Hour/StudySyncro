@@ -89,14 +89,18 @@ const changeTaskStatus = async (status, taskId) => {
       };
     }
     return {
-      success: true,
+      success: false,
       message: "Task not found",
+      isNative: true,
+      type: "info",
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
       message: "Could not update task status",
+      isNative: false,
+      type: "error",
     };
   }
 };

@@ -11,6 +11,7 @@ const {
 } = require("./notifications");
 const { getQuizResult, isQuizPassed } = require("./examen");
 const { getTasks } = require("./tache");
+const { syncUserGroupSnapshot } = require("./shared");
 
 const createGroupSession = async (sessionData, userId) => {
   try {
@@ -18,6 +19,8 @@ const createGroupSession = async (sessionData, userId) => {
       return {
         success: false,
         message: "no data is received",
+        isNative: true,
+        type: "warning",
       };
     }
 
@@ -27,13 +30,31 @@ const createGroupSession = async (sessionData, userId) => {
       return {
         success: false,
         message: "Group ID is required",
+        isNative: true,
+        type: "warning",
       };
 
     if (!tasks || tasks.length === 0)
       return {
         success: false,
         message: "At least one task is required to create a session",
+        isNative: true,
+        type: "warning",
       };
+
+    const calculatedTasksDuration = tasks.reduce(
+      (sum, t) => sum + (Number(t.durationInMins) || 0),
+      0,
+    );
+    if (duration !== calculatedTasksDuration) {
+      return {
+        success: false,
+        message:
+          "Total session duration does not match the sum of task durations.",
+        isNative: true,
+        type: "warning",
+      };
+    }
 
     const groupRef = db.collection("groups").doc(groupId);
     const groupSnap = await groupRef.get();
@@ -42,6 +63,8 @@ const createGroupSession = async (sessionData, userId) => {
       return {
         success: false,
         message: "Group does not exist",
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -51,6 +74,8 @@ const createGroupSession = async (sessionData, userId) => {
       return {
         success: false,
         message: "You are not the creator of this group",
+        isNative: true,
+        type: "warning",
       };
 
     let quizId = "";
@@ -68,6 +93,8 @@ const createGroupSession = async (sessionData, userId) => {
         return {
           success: false,
           message: "Quiz does not exist",
+          isNative: true,
+          type: "info",
         };
       }
 
@@ -206,6 +233,8 @@ const createGroupSession = async (sessionData, userId) => {
     return {
       success: false,
       message: "Cant create session",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -282,6 +311,8 @@ const cancelSession = async (sessionId, userId) => {
       return {
         success: false,
         message: "Session not found",
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -320,11 +351,16 @@ const cancelSession = async (sessionId, userId) => {
           false,
           memberIds,
         );
-        return { success: true, message: "Session ended" };
+        return {
+          success: true,
+          message: "Session ended",
+        };
       } else {
         return {
           success: false,
           message: "You dont have the right to end the session.",
+          isNative: true,
+          type: "warning",
         };
       }
     }
@@ -378,7 +414,12 @@ const cancelSession = async (sessionId, userId) => {
     return { success: true, message: "Session ended" };
   } catch (error) {
     console.log(error);
-    return { success: false, message: "Somethign went wrong" };
+    return {
+      success: false,
+      message: "Somethign went wrong",
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
@@ -386,10 +427,13 @@ const leavSession = async (userId) => {
   const userSnap = db.collection("users").doc(userId);
 
   const user = await userSnap.get();
+
   if (!user.data().currentSession) {
     return {
       success: false,
       message: "User is not in any session",
+      isNative: true,
+      type: "info",
     };
   }
 
@@ -413,24 +457,17 @@ const leavSession = async (userId) => {
     );
   }
 
-  if (user.exists) {
-    const leftSessionId = user.data().currentSession;
-    await userSnap.update({
-      currentSession: "",
-    });
-    if (leftSessionId) {
-      await updateSessionNotificationJoined(userId, leftSessionId, false);
-    }
-    return {
-      success: true,
-      message: "left the session ",
-    };
-  } else {
-    return {
-      success: false,
-      message: "Cant leave session",
-    };
+  const leftSessionId = user.data().currentSession;
+  await userSnap.update({
+    currentSession: "",
+  });
+  if (leftSessionId) {
+    await updateSessionNotificationJoined(userId, leftSessionId, false);
   }
+  return {
+    success: true,
+    message: "You left the session succefully",
+  };
 };
 
 const getCurrentSessionInfo = async (userId) => {
@@ -452,12 +489,6 @@ const getCurrentSessionInfo = async (userId) => {
     const sessionRef = db.collection("sessions").doc(user.currentSession);
     const sessionSnap = await sessionRef.get();
 
-    const quizTaskSnap = await db
-      .collection("tasks")
-      .where("sessionId", "==", user.currentSession)
-      .where("isQuiz", "==", true)
-      .get();
-
     if (!sessionSnap.exists) {
       console.warn(
         `Session with ID ${user.currentSession} not found for user ${userId}.`,
@@ -466,6 +497,19 @@ const getCurrentSessionInfo = async (userId) => {
     }
 
     const session = sessionSnap.data();
+
+    if (session.status !== "active") {
+      await userRef.update({
+        currentSession: "",
+      });
+      return null;
+    }
+
+    const quizTaskSnap = await db
+      .collection("tasks")
+      .where("sessionId", "==", user.currentSession)
+      .where("isQuiz", "==", true)
+      .get();
 
     const [groupSnap, quizSnap] = await Promise.all([
       db.collection("groups").doc(session.groupId).get(),
@@ -607,7 +651,12 @@ const fetchActiveSessions = async (
     return { success: true, sessions, lastVisible };
   } catch (error) {
     console.error("Error fetching active sessions:", error);
-    return { success: false, sessions: [] };
+    return {
+      success: false,
+      isNative: false,
+      message: "Error fetching active sessions",
+      type: "error",
+    };
   }
 };
 
@@ -615,7 +664,7 @@ const getSessionInformations = async (sessionID) => {
   try {
     const snap = await db.collection("sessions").doc(sessionID).get();
     const sessionData = snap.data();
-    const tasks = await getTasks(sessionID); // Assumes this returns an array of Task/Quiz objects
+    const tasks = await getTasks(sessionID);
     const groupSnap = await db
       .collection("groups")
       .doc(sessionData.groupId)
@@ -626,6 +675,8 @@ const getSessionInformations = async (sessionID) => {
       return {
         success: false,
         message: "Session not found or no tasks available",
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -669,6 +720,8 @@ const getSessionInformations = async (sessionID) => {
     return {
       success: false,
       message: "Failed to fetch session details",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -678,11 +731,6 @@ const getActiveSession = async (userId) => {
     const userRef = db.collection("users").doc(userId);
     const userSnap = await userRef.get();
 
-    if (!userSnap.exists) {
-      console.warn(`User with ID ${userId} not found.`);
-      return null;
-    }
-
     const user = userSnap.data();
 
     const tasks = await getTasks(user.currentSession);
@@ -691,6 +739,8 @@ const getActiveSession = async (userId) => {
       return {
         success: false,
         message: "User is not in a session",
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -704,6 +754,8 @@ const getActiveSession = async (userId) => {
       return {
         success: false,
         message: "Session not found",
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -723,6 +775,8 @@ const getActiveSession = async (userId) => {
       return {
         success: false,
         message: "Group not found",
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -757,6 +811,8 @@ const getActiveSession = async (userId) => {
     return {
       success: false,
       message: "Failed to fetch active session",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -771,12 +827,16 @@ const joinSession = async (sessionId, userId) => {
       return {
         success: false,
         message: "Session Not Found",
+        isNative: true,
+        type: "info",
       };
     }
     if (!usSnap.exists) {
       return {
         success: false,
         message: "User Not Found",
+        isNative: true,
+        type: "info",
       };
     }
     await ref.update({
@@ -803,6 +863,8 @@ const joinSession = async (sessionId, userId) => {
     return {
       success: false,
       message: "Somethign wrong happened , please try again later",
+      isNative: false,
+      type: "error",
     };
   }
 };

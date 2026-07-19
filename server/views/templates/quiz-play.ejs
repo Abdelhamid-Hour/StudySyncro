@@ -2,7 +2,7 @@
   <script>
     window.__QUIZ_INITIAL_DATA__ = {
       duration: <%= duration %>,
-      questions: <%- typeof questions !== 'undefined' ? JSON.stringify(questions) : '[]' %>,
+      questions: <%- typeof questions !== 'undefined' ? JSON.stringify(questions).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026') : '[]' %>,
       passed: <%= passed %>
     };
   </script>

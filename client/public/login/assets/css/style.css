@@ -41,8 +41,7 @@ main {
 /* login login block styling */
 #login-form {
   position: relative;
-  max-width: 28rem;
-  width: 50%;
+  width: 32%;
   padding: 2rem;
   color: var(--container-text-color);
   background-color: var(--container-background-color);
@@ -53,6 +52,7 @@ main {
   flex-direction: column;
   justify-content: center;
   gap: 1rem;
+  transition: all var(--login-swap-animation-duration) linear;
 
   #outline-container {
     position: absolute;
@@ -248,6 +248,10 @@ section#forms {
   .sign-in-container {
     position: relative;
     z-index: 2;
+
+    .email-container {
+      margin-bottom: 0.3rem;
+    }
   }
 
   .sign-up-container {
@@ -274,7 +278,6 @@ section#forms {
       position: relative;
       a {
         position: absolute;
-        font-size: small;
         text-decoration: underline;
         cursor: pointer;
         top: -1.3rem;
@@ -312,6 +315,7 @@ section#forms {
       border-radius: 7px;
       border: var(--inputs-border-size) solid var(--inputs-border-color);
       transition: all var(--inputs-outline-trans-duration) ease-out;
+      margin-bottom: 0.3rem;
 
       &:has(input:focus) {
         outline: 0.2rem solid var(--inputs-outline-color);
@@ -479,10 +483,10 @@ section#forms {
     color: var(--error-color);
     text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
     font-size: var(--error-font-size);
-    height: 1em;
-    position: relative;
-    top: 0.2rem;
-    padding-bottom: 0.5rem;
+    height: 1.2rem;
+    /* position: relative;
+    top: 0.2rem; */
+    /* padding-bottom: 0.5rem; */
     & > span {
       display: flex;
       align-items: flex-end;

@@ -30,6 +30,14 @@ const sendMessageHandler = async (req, res) => {
   const message = req.body.message || "";
   const messageId = req.body.messageId || null;
 
+  if (!file && (!message || typeof message !== "string" || message.trim().length === 0)) {
+    return res.status(400).json({
+      message: "Cannot send an empty message without an attachment.",
+      isNative: true,
+      type: "warning",
+    });
+  }
+
   const result = await sendMessage(
     file,
     message,
@@ -49,6 +57,8 @@ const sendMessageHandler = async (req, res) => {
   return res.status(500).json({
     message: result.message || "Failed to send message",
     messageId: result.messageId,
+    isNative: result.isNative ?? false,
+    type: result.type ?? "error",
   });
 };
 
@@ -58,22 +68,22 @@ const chatStreamHandler = async (req, res) => {
   const groupSnap = await db.collection("groups").doc(groupId).get();
 
   if (!groupSnap.exists)
-    return res.status(404).json({ error: "Group not found" });
+    return res.status(404).json({ message: "Group not found", error: "Group not found", isNative: false, type: "error" });
 
   const joinedToGroup = await db
     .collection("users")
     .doc(req.user.uid)
-    .collection("userGroupsIds")
+    .collection("userGroups")
     .doc(groupId)
     .get();
 
   if (!joinedToGroup.exists)
-    return res.status(403).json({ error: "Access denied to this group chat" });
+    return res.status(403).json({ message: "Access denied to this group chat", error: "Access denied to this group chat", isNative: true, type: "warning" });
 
   if (sessionId && req.user.currentSession !== sessionId)
     return res
       .status(403)
-      .json({ error: "Access denied to this session chat" });
+      .json({ message: "Access denied to this session chat", error: "Access denied to this session chat", isNative: true, type: "warning" });
 
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -131,7 +141,11 @@ const getMessagesHandler = async (req, res) => {
       lastVisible: result.lastVisible,
     });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
@@ -158,7 +172,7 @@ const cleanUpRecentMessagesClient = (res, userId) => {
 
 const markGroupAsReadHandler = async (req, res) => {
   const { groupId, messageId, timestamp } = req.body;
-  if (!groupId) return res.status(400).json({ message: "groupId is required" });
+  if (!groupId) return res.status(400).json({ message: "groupId is required", isNative: false, type: "error" });
   const result = await markGroupAsReadHelper(
     req.user.uid,
     groupId,
@@ -170,12 +184,16 @@ const markGroupAsReadHandler = async (req, res) => {
   }
   return res
     .status(500)
-    .json({ message: result.message || "Failed to mark as read" });
+    .json({
+      message: result.message || "Failed to mark as read",
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
 };
 
 const getUserGroupChatStateHandler = async (req, res) => {
   const { groupId } = req.params;
-  if (!groupId) return res.status(400).json({ message: "groupId is required" });
+  if (!groupId) return res.status(400).json({ message: "groupId is required", isNative: false, type: "error" });
   const result = await getUserGroupChatStateHelper(req.user.uid, groupId);
   if (result.success) {
     return res.status(200).json(result.data);
@@ -183,7 +201,11 @@ const getUserGroupChatStateHandler = async (req, res) => {
 
   return res
     .status(500)
-    .json({ message: result.message || "Failed to get state" });
+    .json({
+      message: result.message || "Failed to get state",
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
 };
 
 const getRecentMessagesHandler = async (req, res) => {
@@ -199,7 +221,11 @@ const getRecentMessagesHandler = async (req, res) => {
       lastVisible: result.data.lastVisible,
     });
   }
-  return res.status(500).json({ message: result.message });
+  return res.status(500).json({
+    message: result.message,
+    isNative: result.isNative ?? false,
+    type: result.type ?? "error",
+  });
 };
 
 const recentMessagesStreamHandler = async (req, res) => {

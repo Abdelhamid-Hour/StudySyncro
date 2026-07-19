@@ -28,6 +28,7 @@ import {
 import {
   globalTooltip,
   PENDING_ONLINE_SYNC_OPS,
+  MESSAGE_MAX_LENGTH,
 } from "../../../global/js/variables.js";
 import { Loader } from "../../loader/js/utils.js";
 
@@ -102,14 +103,20 @@ export const getLastSeenMessage = async (groupId, sessionId = "") => {
 
 export const updateLastSeenFromDOM = async (groupId, sessionId = "") => {
   if (sessionId || !groupId || !messagesContainer) return;
-  const newestEl = messagesContainer.querySelector(".message-sent:last-child [data-message-id]:last-child, .message-received:last-child [data-message-id]:last-child") ||
-                   messagesContainer.querySelector("[data-message-id]:last-of-type");
+  const newestEl =
+    messagesContainer.querySelector(
+      ".message-sent:last-child [data-message-id]:last-child, .message-received:last-child [data-message-id]:last-child",
+    ) || messagesContainer.querySelector("[data-message-id]:last-of-type");
   if (!newestEl) return;
   const messageId = newestEl.dataset.messageId || "";
   const timestamp = Number(newestEl.dataset.timestamp || Date.now());
 
   try {
-    await sendData("/api/chat/mark-read", { groupId, messageId, timestamp }, "POST");
+    await sendData(
+      "/api/chat/mark-read",
+      { groupId, messageId, timestamp },
+      "POST",
+    );
   } catch (err) {
     console.error("Failed to mark chat as read on server:", err);
   }
@@ -154,6 +161,7 @@ const getMessagesByTimeRange = async (from, to) => {
 
 const initDOMVariables = () => {
   inputMessage = document.querySelector(".input-message");
+  if (inputMessage) inputMessage.maxLength = MESSAGE_MAX_LENGTH;
   imageInput = document.getElementById("image-upload");
   fileInput = document.getElementById("file-upload");
   sendBtn = document.querySelector(".send-btn");
@@ -360,6 +368,15 @@ const handleSendMessageSuccess = async (result, wrapper, formData, isFile) => {
   }
 };
 
+const sendMessage = async (formData, wrapper, isFile = false) => {
+  try {
+    const result = await sendData("/api/send-message", formData, "POST");
+    handleSendMessageSuccess(result, wrapper, formData, isFile);
+  } catch (error) {
+    handleSendMessageError(error, wrapper, formData, isFile);
+  }
+};
+
 const handleSendMessageError = (error, wrapper, formData, isFile) => {
   const file = formData.get("file");
   console.error(error);
@@ -395,15 +412,6 @@ const handleSendMessageError = (error, wrapper, formData, isFile) => {
     error.message || "Failed to send message. Please try again.",
     "error",
   );
-};
-
-const sendMessage = async (formData, wrapper, isFile = false) => {
-  try {
-    const result = await sendData("/api/send-message", formData, "POST");
-    handleSendMessageSuccess(result, wrapper, formData, isFile);
-  } catch (error) {
-    handleSendMessageError(error, wrapper, formData, isFile);
-  }
 };
 
 class ChatMessage {
@@ -454,7 +462,11 @@ class ChatMessage {
         groupId: groupId || "",
         timestamp: this.timestamp,
       };
-      if (this.text) {
+      if (
+        this.text &&
+        typeof this.text === "string" &&
+        this.text.trim().length > 0
+      ) {
         const formData = new FormData();
         this.appendBaseData(formData, baseData);
         formData.append("message", this.text);
@@ -483,13 +495,16 @@ class ChatMessage {
             );
           }
         }
-        
       }
       if (groupId && !sessionId) {
-        const banner = messagesContainer.querySelector(".unread-messages-banner");
+        const banner = messagesContainer.querySelector(
+          ".unread-messages-banner",
+        );
         if (banner) banner.remove();
-        if(!navigator.onLine) {
-          PENDING_ONLINE_SYNC_OPS.push(() => updateLastSeenFromDOM(groupId, sessionId));
+        if (!navigator.onLine) {
+          PENDING_ONLINE_SYNC_OPS.push(() =>
+            updateLastSeenFromDOM(groupId, sessionId),
+          );
         } else {
           updateLastSeenFromDOM(groupId, sessionId);
         }
@@ -505,13 +520,19 @@ class ChatMessage {
 
   renderMessage() {
     const threshold = 50;
-    const isScrolledUp = !this.isSender &&
+    const isScrolledUp =
+      !this.isSender &&
       Boolean(this.groupId) &&
       Boolean(this.chatContainer) &&
-      this.chatContainer.scrollHeight - this.chatContainer.scrollTop - this.chatContainer.clientHeight > threshold;
+      this.chatContainer.scrollHeight -
+        this.chatContainer.scrollTop -
+        this.chatContainer.clientHeight >
+        threshold;
 
     if (isScrolledUp) {
-      const existingBanner = this.chatContainer.querySelector(".unread-messages-banner");
+      const existingBanner = this.chatContainer.querySelector(
+        ".unread-messages-banner",
+      );
       if (!existingBanner) {
         const banner = document.createElement("div");
         banner.className = "unread-messages-banner";
@@ -531,7 +552,9 @@ class ChatMessage {
       scrollToBottom(this.chatContainer);
     }
     if (this.isSender && this.chatContainer) {
-      const banner = this.chatContainer.querySelector(".unread-messages-banner");
+      const banner = this.chatContainer.querySelector(
+        ".unread-messages-banner",
+      );
       if (banner) banner.remove();
     }
     return this;
@@ -539,7 +562,7 @@ class ChatMessage {
 
   appendToChat(messageBubble, file = null) {
     const emptyStateUI = document.querySelector(".icon-wrapper");
-    if(emptyStateUI) emptyStateUI.remove();
+    if (emptyStateUI) emptyStateUI.remove();
     let messageContainer = null;
     const isFirstMessage = this.isFirstMessage();
     if (isFirstMessage) {
@@ -918,6 +941,13 @@ const handleChatInput = async (sessionId, groupId) => {
   }
   // Check if there is a message or files to send
   const inputValue = inputMessage.value.trim();
+  if (inputValue.length > MESSAGE_MAX_LENGTH) {
+    showMessageBlock(
+      `Message cannot exceed ${MESSAGE_MAX_LENGTH} characters.`,
+      "info",
+    );
+    return;
+  }
   if (inputValue || files.length > 0) {
     new ChatMessage(inputValue, files, "self", Date.now(), messagesContainer, {
       isSender: true,
@@ -1346,8 +1376,6 @@ const getMessageLoader = () => {
   loaderWrapper.className = "loading-card";
   loaderWrapper.innerHTML = `<div style="display: flex; flex-direction: column">
   <div class="message-sent">
-    <div class="avatar loading-opacity-animation"></div>
-
     <div class="messages">
       <div class="first-message-sent-text loading-animation">
         <p class="loading-opacity-animation" style="width: 5rem"></p>
@@ -1419,7 +1447,6 @@ const getMessagesIds = () => {
 };
 
 const firstLoadFunc = (cards, groupId, sessionId) => {
-  
   openChatStream(groupId, sessionId);
   const messageIds = getMessagesIds();
 
@@ -1440,16 +1467,21 @@ const firstLoadFunc = (cards, groupId, sessionId) => {
     cards: [cards],
     lastVisible,
   };
-}
+};
 
-const handleInitialUnreadBannerAndScroll = async (groupId, isFirstLoad, cards = [], sessionId = "") => {
-  if (!isFirstLoad) return;
+let lastSeenMsg = null;
+
+const handleInitialUnreadBannerAndScroll = async (
+  groupId,
+  isFirstLoad,
+  cards = [],
+  sessionId = "",
+) => {
   if (!groupId || sessionId) {
     scrollToBottom(messagesContainer);
     return;
   }
 
-  const lastSeenMsg = await getLastSeenMessage(groupId, sessionId);
   if (!lastSeenMsg || !cards.length) {
     scrollToBottom(messagesContainer);
     await updateLastSeenFromDOM(groupId, sessionId);
@@ -1457,24 +1489,32 @@ const handleInitialUnreadBannerAndScroll = async (groupId, isFirstLoad, cards = 
   }
 
   let firstUnseenMsg = null;
-  const lastSeenIdx = cards.findIndex(c => c.id === lastSeenMsg.messageId);
+  const lastSeenIdx = cards.findIndex((c) => c.id === lastSeenMsg.messageId);
   if (lastSeenIdx !== -1 && lastSeenIdx + 1 < cards.length) {
     firstUnseenMsg = cards[lastSeenIdx + 1];
   } else if (lastSeenIdx === -1) {
-    firstUnseenMsg = cards.find(c => Number(c.timestamp) > lastSeenMsg.timestamp);
+    firstUnseenMsg = cards.find(
+      (c) => Number(c.timestamp) > lastSeenMsg.timestamp,
+    );
   }
 
-  const existingBanner = messagesContainer.querySelector(".unread-messages-banner");
-  if (existingBanner) existingBanner.remove();
-
   if (firstUnseenMsg) {
-    const firstUnseenEl = messagesContainer.querySelector(`[data-message-id="${firstUnseenMsg.id}"]`);
+    const firstUnseenEl = messagesContainer.querySelector(
+      `[data-message-id="${firstUnseenMsg.id}"]`,
+    );
     if (firstUnseenEl) {
+      const existingBanner = messagesContainer.querySelector(
+        ".unread-messages-banner",
+      );
+      if (existingBanner) existingBanner.remove();
+
       const banner = document.createElement("div");
       banner.className = "unread-messages-banner";
       banner.innerHTML = `<span>Unread Messages</span>`;
-      
-      const bubbleContainer = firstUnseenEl.closest(".message-sent, .message-received") || firstUnseenEl;
+
+      const bubbleContainer =
+        firstUnseenEl.closest(".message-sent, .message-received") ||
+        firstUnseenEl;
       bubbleContainer.before(banner);
 
       const bannerTop = banner.offsetTop;
@@ -1482,34 +1522,42 @@ const handleInitialUnreadBannerAndScroll = async (groupId, isFirstLoad, cards = 
         top: Math.max(0, bannerTop - 20),
         behavior: "instant",
       });
-      await updateLastSeenFromDOM(groupId, sessionId);
+      if (isFirstLoad) await updateLastSeenFromDOM(groupId, sessionId);
       return;
     }
   }
 
-  scrollToBottom(messagesContainer);
-  await updateLastSeenFromDOM(groupId, sessionId);
+  if (isFirstLoad) {
+    scrollToBottom(messagesContainer);
+    await updateLastSeenFromDOM(groupId, sessionId);
+  }
 };
 
 const afterAppendRes = (data, groupId, sessionId = "") => {
-  if (data.isFirstLoad) {
-    handleInitialUnreadBannerAndScroll(groupId, data.isFirstLoad, data.cards[0] || [], sessionId);
-  } else {
-    const targetScroll =
-      messagesContainer.scrollHeight - data.initialHeight;
+  if (!data.isFirstLoad) {
+    const targetScroll = messagesContainer.scrollHeight - data.initialHeight;
     messagesContainer.scroll({
       top: targetScroll,
       behavior: "instant",
     });
   }
+  handleInitialUnreadBannerAndScroll(
+    groupId,
+    data.isFirstLoad,
+    data.cards[0] || [],
+    sessionId,
+  );
 };
-const initChatLoader = (groupId, sessionId) => {
+
+const initChatLoader = async (groupId, sessionId) => {
+  lastSeenMsg = await getLastSeenMessage(groupId, sessionId);
   const loader = new Loader(
     messagesContainer,
     createChatFrag,
     `/messages?sessionId=${sessionId}&groupId=${groupId}&`,
     getMessageLoader(),
     {
+      chat: true,
       loadersCount: 1,
       append: false,
       afterAppendRes: (data) => afterAppendRes(data, groupId, sessionId),
@@ -1521,8 +1569,8 @@ const initChatLoader = (groupId, sessionId) => {
           icon: "bi-chat",
           title: "No Messages",
           desc: "No messages in this chat.",
-        }
-      }
+        },
+      },
     },
   ).reset();
   return loader;

@@ -19,6 +19,7 @@ const {
   transferRoleHandler,
   getUsersHandler,
   inviteMembersHandler,
+  rejectInviteHandler,
   getQuizzesByGroup,
   getMembersByGroup,
   getDemandesByGroup,
@@ -77,135 +78,408 @@ const {
   getRecentMessagesHandler,
   recentMessagesStreamHandler,
 } = require("../controllers/chat");
+const { validate } = require("../middleware/validate");
+const {
+  createGroupSchema,
+  joinGroupSchema,
+  patchGroupSchema,
+  groupIdBodySchema,
+  groupIdParamSchema,
+  idParamSchema,
+  memberActionSchema,
+  inviteMembersSchema,
+  userGroupsQuerySchema,
+  availableGroupsQuerySchema,
+  groupMembersQuerySchema,
+  usersQuerySchema,
+} = require("../schemas/groups.schema");
+const {
+  createQuizSchema,
+  checkQuizTitleSchema,
+  quizIdParamSchema,
+  updateQuizSchema,
+  patchQuizSchema,
+  duplicateQuizSchema,
+  addQuizResultSchema,
+  quizzesQuerySchema,
+  groupQuizzesQuerySchema,
+  passedQuizzesQuerySchema,
+  quizzesListMenuQuerySchema,
+  resultsListQuerySchema,
+  examenResultQuerySchema,
+} = require("../schemas/quizzes.schema");
+const {
+  createSessionSchema,
+  sessionIdBodySchema,
+  updateTaskStatusSchema,
+  activeSessionsQuerySchema,
+  streamSingleSessionQuerySchema,
+} = require("../schemas/sessions.schema");
+const {
+  sendMessageSchema,
+  markGroupReadSchema,
+  chatMessagesQuerySchema,
+  chatStreamQuerySchema,
+  recentMessagesQuerySchema,
+} = require("../schemas/chat.schema");
+const {
+  demandeActionSchema,
+  groupDemandesQuerySchema,
+} = require("../schemas/demandes.schema");
+const {
+  updateEmailSchema,
+  addEmailSchema,
+  updateProfileSchema,
+  updatePasswordSchema,
+  addPasswordSchema,
+  closeAccountSchema,
+} = require("../schemas/users.schema");
+const {
+  getUserNotificationsQuerySchema,
+} = require("../schemas/notifications.schema");
 
 const apiRouter = express.Router();
 
 apiRouter.post("/insert-user-data", upload.single("file"), createNewUser);
 
-apiRouter.get("/session-details/:id", setSessionDetails, sendSessionDetails);
+apiRouter.get(
+  "/session-details/:id",
+  validate({ params: idParamSchema }),
+  setSessionDetails,
+  sendSessionDetails,
+);
 
-apiRouter.get("/user-groups", getUserGroupsHandler);
+apiRouter.get(
+  "/user-groups",
+  validate({ query: userGroupsQuerySchema }),
+  getUserGroupsHandler,
+);
 
-apiRouter.get("/available-groups", getAvailableGroupsHandler);
+apiRouter.get(
+  "/available-groups",
+  validate({ query: availableGroupsQuerySchema }),
+  getAvailableGroupsHandler,
+);
 
-apiRouter.post("/create-group", createGroupHandler);
+apiRouter.post(
+  "/create-group",
+  validate({ body: createGroupSchema }),
+  createGroupHandler,
+);
 
-apiRouter.post("/join-group", joinGroupHandler);
+apiRouter.post(
+  "/join-group",
+  validate({ body: joinGroupSchema }),
+  joinGroupHandler,
+);
 
-apiRouter.patch("/update-group/:groupId", patchGroupHandler);
+apiRouter.patch(
+  "/update-group/:groupId",
+  validate({ params: groupIdParamSchema, body: patchGroupSchema }),
+  patchGroupHandler,
+);
 
-apiRouter.post("/create-quiz", createQuizHandler);
+apiRouter.post(
+  "/create-quiz",
+  validate({ body: createQuizSchema }),
+  createQuizHandler,
+);
 
-apiRouter.post("/check-quiz-title", checkQuizTitleHandler);
+apiRouter.post(
+  "/check-quiz-title",
+  validate({ body: checkQuizTitleSchema }),
+  checkQuizTitleHandler,
+);
 
-apiRouter.put("/update-quiz/:quizId", updateQuizHandler);
+apiRouter.put(
+  "/update-quiz/:quizId",
+  validate({ params: quizIdParamSchema, body: updateQuizSchema }),
+  updateQuizHandler,
+);
 
-apiRouter.patch("/update-quiz/:quizId", patchQuizHandler);
+apiRouter.patch(
+  "/update-quiz/:quizId",
+  validate({ params: quizIdParamSchema, body: patchQuizSchema }),
+  patchQuizHandler,
+);
 
-apiRouter.delete("/remove-quiz/:quizId", removeQuizHandler);
+apiRouter.delete(
+  "/remove-quiz/:quizId",
+  validate({ params: quizIdParamSchema }),
+  removeQuizHandler,
+);
 
-apiRouter.post("/duplicate-quiz", duplicateQuizHandler);
+apiRouter.post(
+  "/duplicate-quiz",
+  validate({ body: duplicateQuizSchema }),
+  duplicateQuizHandler,
+);
 
-apiRouter.get("/quizzes", getQuizzesHandler);
+apiRouter.get(
+  "/quizzes",
+  validate({ query: quizzesQuerySchema }),
+  getQuizzesHandler,
+);
 
-apiRouter.get("/quiz-play-details/:quizId", getQuizPlayDetailsHandler);
+apiRouter.get(
+  "/quiz-play-details/:quizId",
+  validate({ params: quizIdParamSchema }),
+  getQuizPlayDetailsHandler,
+);
 
-apiRouter.get("/quiz-details/:quizId", getQuizDetailsHandler);
+apiRouter.get(
+  "/quiz-details/:quizId",
+  validate({ params: quizIdParamSchema }),
+  getQuizDetailsHandler,
+);
 
-apiRouter.get("/quizzes-list-menu", getQuizzesListHandler);
+apiRouter.get(
+  "/quizzes-list-menu",
+  validate({ query: quizzesListMenuQuerySchema }),
+  getQuizzesListHandler,
+);
 
 apiRouter.get("/active-session", getActiveSessionHandler);
 
-apiRouter.get("/active-sessions", getActiveSessionsHandler);
+apiRouter.get(
+  "/active-sessions",
+  validate({ query: activeSessionsQuerySchema }),
+  getActiveSessionsHandler,
+);
 
 apiRouter.get("/stream-sessions", sessionStreamHandler);
 
-apiRouter.get("/stream-single-session", streamSingleSessionHandler);
+apiRouter.get(
+  "/stream-single-session",
+  validate({ query: streamSingleSessionQuerySchema }),
+  streamSingleSessionHandler,
+);
 
-apiRouter.post("/update-task-status", updateTaskStatusHandler);
+apiRouter.post(
+  "/update-task-status",
+  validate({ body: updateTaskStatusSchema }),
+  updateTaskStatusHandler,
+);
 
-apiRouter.post("/create-session", createSessionHandler);
+apiRouter.post(
+  "/create-session",
+  validate({ body: createSessionSchema }),
+  createSessionHandler,
+);
 
 // Accept a join request by userId and groupId
-apiRouter.post("/accept-demande", acceptDemandeHandler);
+apiRouter.post(
+  "/accept-demande",
+  validate({ body: demandeActionSchema }),
+  acceptDemandeHandler,
+);
 
 // Reject a join request by userId and groupId
-apiRouter.post("/reject-demande", rejectDemandeHandler);
+apiRouter.post(
+  "/reject-demande",
+  validate({ body: demandeActionSchema }),
+  rejectDemandeHandler,
+);
 
 // Join a session by sessionId
-apiRouter.post("/join-session", joinSessionHandler);
+apiRouter.post(
+  "/join-session",
+  validate({ body: sessionIdBodySchema }),
+  joinSessionHandler,
+);
 
 // Remove a group by groupId
-apiRouter.delete("/remove-group/:groupId", removeGroupHandler);
+apiRouter.delete(
+  "/remove-group/:groupId",
+  validate({ params: groupIdParamSchema }),
+  removeGroupHandler,
+);
 
 // Leave a group by userId and groupId
-apiRouter.post("/leave-group", leaveGroupHandler);
+apiRouter.post(
+  "/leave-group",
+  validate({ body: groupIdBodySchema }),
+  leaveGroupHandler,
+);
 
 // Kick a member from a group by groupId and userId
-apiRouter.post("/kick-member", kickMemberHandler);
+apiRouter.post(
+  "/kick-member",
+  validate({ body: memberActionSchema }),
+  kickMemberHandler,
+);
 
 // Transfer role in a group by groupId, fromUserId, toUserId
-apiRouter.post("/transfer-role", transferRoleHandler);
+apiRouter.post(
+  "/transfer-role",
+  validate({ body: memberActionSchema }),
+  transferRoleHandler,
+);
 
 // End a session by sessionId
-apiRouter.post("/end-session", endSessionHandler);
+apiRouter.post(
+  "/end-session",
+  validate({ body: sessionIdBodySchema }),
+  endSessionHandler,
+);
 
 // Leave a session by sessionId and userId
-apiRouter.post("/leave-session", leaveSessionHandler);
+apiRouter.post(
+  "/leave-session",
+  validate({ body: sessionIdBodySchema }),
+  leaveSessionHandler,
+);
 
-apiRouter.post("/add-quiz-result", addQuizResultHandler);
+apiRouter.post(
+  "/add-quiz-result",
+  validate({ body: addQuizResultSchema }),
+  addQuizResultHandler,
+);
 
 // Get examen result by userId and quizId
-apiRouter.get("/examen-result", getExamenResultHandler);
+apiRouter.get(
+  "/examen-result",
+  validate({ query: examenResultQuerySchema }),
+  getExamenResultHandler,
+);
 
-apiRouter.get("/results-list", getResultsListHandler);
+apiRouter.get(
+  "/results-list",
+  validate({ query: resultsListQuerySchema }),
+  getResultsListHandler,
+);
 
-apiRouter.get("/users", getUsersHandler);
+apiRouter.get("/users", validate({ query: usersQuerySchema }), getUsersHandler);
 
-apiRouter.post("/invite-users", inviteMembersHandler);
+apiRouter.post(
+  "/invite-users",
+  validate({ body: inviteMembersSchema }),
+  inviteMembersHandler,
+);
 
-apiRouter.get("/group-quizzes", getQuizzesByGroup);
+apiRouter.post(
+  "/reject-invite",
+  validate({ body: groupIdBodySchema }),
+  rejectInviteHandler,
+);
 
-apiRouter.get("/passed-quizzes", getPassedQuizzesHandler);
+apiRouter.get(
+  "/group-quizzes",
+  validate({ query: groupQuizzesQuerySchema }),
+  getQuizzesByGroup,
+);
 
-apiRouter.get("/group-demandes", getDemandesByGroup);
+apiRouter.get(
+  "/passed-quizzes",
+  validate({ query: passedQuizzesQuerySchema }),
+  getPassedQuizzesHandler,
+);
 
-apiRouter.get("/group-members", getMembersByGroup);
+apiRouter.get(
+  "/group-demandes",
+  validate({ query: groupDemandesQuerySchema }),
+  getDemandesByGroup,
+);
+
+apiRouter.get(
+  "/group-members",
+  validate({ query: groupMembersQuerySchema }),
+  getMembersByGroup,
+);
 
 apiRouter.get("/user-info", getUserInfoHandler);
 
-apiRouter.patch("/update-email", updateEmailHandler);
+apiRouter.patch(
+  "/update-email",
+  validate({ body: updateEmailSchema }),
+  updateEmailHandler,
+);
 
-apiRouter.post("/add-email", addEmailHandler);
+apiRouter.post(
+  "/add-email",
+  validate({ body: addEmailSchema }),
+  addEmailHandler,
+);
 
-apiRouter.patch("/update-profile", upload.single("file"), updatePofileHandler);
+apiRouter.patch(
+  "/update-profile",
+  upload.single("file"),
+  validate({ body: updateProfileSchema }),
+  updatePofileHandler,
+);
 
-apiRouter.patch("/update-password", updatePasswordHandler);
+apiRouter.patch(
+  "/update-password",
+  validate({ body: updatePasswordSchema }),
+  updatePasswordHandler,
+);
 
-apiRouter.post("/add-password", addPasswordHandler);
+apiRouter.post(
+  "/add-password",
+  validate({ body: addPasswordSchema }),
+  addPasswordHandler,
+);
 
-apiRouter.post("/close-account", closeAccountHandler, logOut);
+apiRouter.post(
+  "/close-account",
+  validate({ body: closeAccountSchema }),
+  closeAccountHandler,
+  logOut,
+);
 
-apiRouter.post("/send-message", upload.single("file"), sendMessageHandler);
+apiRouter.post(
+  "/send-message",
+  upload.single("file"),
+  validate({ body: sendMessageSchema }),
+  sendMessageHandler,
+);
 
-apiRouter.get("/messages", getMessagesHandler);
+apiRouter.get(
+  "/messages",
+  validate({ query: chatMessagesQuerySchema }),
+  getMessagesHandler,
+);
 
-apiRouter.get("/chat-stream", chatStreamHandler);
+apiRouter.get(
+  "/chat-stream",
+  validate({ query: chatStreamQuerySchema }),
+  chatStreamHandler,
+);
 
-apiRouter.get("/recent-messages", getRecentMessagesHandler);
-apiRouter.post("/chat/mark-read", markGroupAsReadHandler);
-apiRouter.get("/chat/state/:groupId", getUserGroupChatStateHandler);
+apiRouter.get(
+  "/recent-messages",
+  validate({ query: recentMessagesQuerySchema }),
+  getRecentMessagesHandler,
+);
+
+apiRouter.post(
+  "/chat/mark-read",
+  validate({ body: markGroupReadSchema }),
+  markGroupAsReadHandler,
+);
+
+apiRouter.get(
+  "/chat/state/:groupId",
+  validate({ params: groupIdParamSchema }),
+  getUserGroupChatStateHandler,
+);
+
 apiRouter.get("/recent-messages/stream", recentMessagesStreamHandler);
 
 GroupFragmentRoutes.forEach((config) => {
   apiRouter.get(
     `${config.route}/:id`,
+    validate({ params: idParamSchema }),
     generateTemplateContext,
     groupFragmentHandler(config),
   );
 });
 
-apiRouter.get("/notifications", getUserNotificationsHandler);
+apiRouter.get(
+  "/notifications",
+  validate({ query: getUserNotificationsQuerySchema }),
+  getUserNotificationsHandler,
+);
 apiRouter.get("/notifications/stream", streamNotificationsHandler);
 apiRouter.post("/notifications/mark-read", markNotificationsAsReadHandler);
 

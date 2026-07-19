@@ -10,7 +10,11 @@ const rejectDemandeHandler = async (req, res) => {
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
@@ -21,7 +25,11 @@ const acceptDemandeHandler = async (req, res) => {
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 

@@ -2,6 +2,7 @@ import {
   fetchData,
   sendData,
   showMessageBlock,
+  isNativeDomainCondition,
 } from "../../../../../main_assets/js/utils.js";
 import {
   DESCRIPTION_MAX_LENGTH,
@@ -250,8 +251,10 @@ const handleCreateGroupSubmit = async (groupData, form, createBtn) => {
     showMessageBlock("Group created successfully", "success");
     navigateTo("/groups/my");
   } catch (error) {
-    console.error("Error: ", error);
-    showMessageBlock(error.message, "error");
+    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    if (!isNative) console.error("Error: ", error);
+    showMessageBlock(error.message, notifType);
   } finally {
     form.isCreating = false;
     createBtn.disabled = false;

@@ -1,3 +1,14 @@
+import {
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  EMAIL_MIN_LENGTH,
+  EMAIL_MAX_LENGTH,
+} from "../../../../main_assets/js/variables.js";
+import {
+  NAME_TITLE_MIN_LENGTH,
+  NAME_TITLE_MAX_LENGTH,
+} from "../../global/js/variables.js";
+
 export let profileModifyBtn,
   emailModifyBtn,
   passwordModifyBtn,
@@ -37,4 +48,33 @@ export const initDomVariables = () => {
   deleteAccountConfirmation = settingsWrapper.querySelector(
     ".confirmation-input"
   );
+
+  if (fullNameInput) {
+    fullNameInput.maxLength = NAME_TITLE_MAX_LENGTH;
+    fullNameInput.minLength = NAME_TITLE_MIN_LENGTH * 2;
+  }
+  if (emailInput) {
+    emailInput.maxLength = EMAIL_MAX_LENGTH;
+    emailInput.minLength = EMAIL_MIN_LENGTH;
+  }
+  if (passwordEmailInput) {
+    passwordEmailInput.maxLength = PASSWORD_MAX_LENGTH;
+    passwordEmailInput.minLength = PASSWORD_MIN_LENGTH;
+  }
+  if (currentPasswordInput) {
+    currentPasswordInput.maxLength = PASSWORD_MAX_LENGTH;
+    currentPasswordInput.minLength = PASSWORD_MIN_LENGTH;
+  }
+  if (newPasswordInput) {
+    newPasswordInput.maxLength = PASSWORD_MAX_LENGTH;
+    newPasswordInput.minLength = PASSWORD_MIN_LENGTH;
+  }
+  if (confirmPasswordInput) {
+    confirmPasswordInput.maxLength = PASSWORD_MAX_LENGTH;
+    confirmPasswordInput.minLength = PASSWORD_MIN_LENGTH;
+  }
+  if (passwordDeleteInput) {
+    passwordDeleteInput.maxLength = PASSWORD_MAX_LENGTH;
+    passwordDeleteInput.minLength = PASSWORD_MIN_LENGTH;
+  }
 };

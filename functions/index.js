@@ -1,4 +1,5 @@
 import { onDocumentUpdated } from "firebase-functions/v2/firestore";
+import { onSchedule } from "firebase-functions/v2/scheduler";
 import { setGlobalOptions } from "firebase-functions/v2";
 import { defineString } from "firebase-functions/params";
 import admin from "firebase-admin";
@@ -217,3 +218,91 @@ https://your-app-url.com/unsubscribe
     }
   }
 );
+
+/**
+ * Scheduled function running every 5 minutes to auto-end expired active sessions
+ * if no user manually ended them. Handles Firestore batch chunking (max 500 ops/batch).
+ */
+export const autoEndExpiredSessions = onSchedule(
+  "every 5 minutes",
+  async (event) => {
+    try {
+      const now = Date.now();
+      const activeSessionsSnap = await admin
+        .firestore()
+        .collection("sessions")
+        .where("status", "==", "active")
+        .get();
+
+      if (activeSessionsSnap.empty) {
+        console.log("Auto-end sessions check: No active sessions found.");
+        return;
+      }
+
+      const db = admin.firestore();
+      const batchCommits = [];
+      let currentBatch = db.batch();
+      let operationCount = 0;
+      let updatedCount = 0;
+
+      for (const doc of activeSessionsSnap.docs) {
+        const session = doc.data();
+
+        if (!session.startDate || !session.duration) continue;
+
+        const startTime = new Date(session.startDate).getTime();
+        const durationMs = Number(session.duration) * 60 * 1000;
+        const endTime = startTime + durationMs;
+
+        if (now >= endTime) {
+          // Commit current batch and create a new one if operation count limit (450 ops) is reached
+          if (operationCount + 2 >= 450) {
+            batchCommits.push(currentBatch.commit());
+            currentBatch = db.batch();
+            operationCount = 0;
+          }
+
+          console.log(
+            `Auto-ending expired session ID: ${doc.id} (${session.name || "Unnamed"})`
+          );
+
+          // 1. Update session status to "finished"
+          currentBatch.update(doc.ref, {
+            status: "finished",
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+          operationCount++;
+
+          // 2. Clear currentSession on parent group doc if set
+          if (session.groupId) {
+            const groupRef = db.collection("groups").doc(session.groupId);
+            currentBatch.update(groupRef, {
+              currentSession: "",
+            });
+            operationCount++;
+          }
+
+          updatedCount++;
+        }
+      }
+
+      if (operationCount > 0) {
+        batchCommits.push(currentBatch.commit());
+      }
+
+      if (batchCommits.length > 0) {
+        await Promise.all(batchCommits);
+        console.log(
+          `Successfully auto-ended ${updatedCount} expired session(s) across ${batchCommits.length} batch(es).`
+        );
+      } else {
+        console.log(
+          "Auto-end sessions check: All active sessions are still within their duration."
+        );
+      }
+    } catch (error) {
+      console.error("Error in autoEndExpiredSessions function:", error);
+    }
+  }
+);
+

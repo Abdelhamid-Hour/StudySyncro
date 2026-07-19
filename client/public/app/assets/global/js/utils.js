@@ -9,7 +9,7 @@ import {
   topSideBarMiddle,
 } from "./variables.js";
 import { fetchTemplate, sendData } from "../../../../main_assets/js/utils.js";
-import { showMessageBlock } from "../../../../main_assets/js/utils.js";
+import { showMessageBlock, isNativeDomainCondition } from "../../../../main_assets/js/utils.js";
 import { initAndDiplayErrorTooltip } from "../../shared/chat/js/utils.js";
 
 export let _loadersCount = 4;
@@ -162,8 +162,13 @@ export const handleApiAction = async (
     if (successMsg) showMessageBlock(successMsg, "success");
     if (typeof onSuccess === "function") onSuccess(response);
   } catch (error) {
-    console.error("Error:", error);
-    showMessageBlock(error.message || "An error occurred.", "error");
+    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+
+    if (!isNative) {
+      console.error("Error:", error);
+    }
+    showMessageBlock(error.message || error.data?.message || "An error occurred.", notifType);
   } finally {
     if (btn) toOrginalBtn(btn, toOldBtn, originalHtml);
   }
@@ -289,12 +294,24 @@ export const openDropDownMenu = (button) => {
 
   if (overlay) {
     if (overlay.classList.contains("open-overlay")) {
+      if (
+        overlay.classList.contains("notifications-overlay") &&
+        window.clearAllNotifCardsUnreadState
+      ) {
+        window.clearAllNotifCardsUnreadState();
+      }
       overlay.classList.remove("open-overlay");
       document.body.style.pointerEvents = "auto";
       return;
     }
     const existingOverlay = document.querySelector(".open-overlay");
     if (existingOverlay && existingOverlay !== overlay) {
+      if (
+        existingOverlay.classList.contains("notifications-overlay") &&
+        window.clearAllNotifCardsUnreadState
+      ) {
+        window.clearAllNotifCardsUnreadState();
+      }
       existingOverlay.classList.remove("open-overlay");
     }
     overlay.classList.add("open-overlay");
@@ -347,6 +364,12 @@ export const handleOverlayClose = (event) => {
     overlayToClose &&
     !isOpenBtn
   ) {
+    if (
+      overlayToClose.classList.contains("notifications-overlay") &&
+      window.clearAllNotifCardsUnreadState
+    ) {
+      window.clearAllNotifCardsUnreadState();
+    }
     overlayToClose.classList.remove("open-overlay");
     document.body.style.pointerEvents = "auto";
     // Reset positioning
@@ -542,8 +565,10 @@ const setScriptRoute = async (pathName, thisNav) => {
     if (thisNav !== navCounter) return;
     module.init?.(true);
   } catch (error) {
-    console.error(error);
-    showMessageBlock(error.message, "error");
+    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    if (!isNative) console.error(error);
+    showMessageBlock(error.message || "An error occurred.", notifType);
   }
 };
 
@@ -1003,6 +1028,43 @@ export const clearAllTimeOuts = () => {
   });
 };
 
+export const updateDocumentTitle = (path) => {
+  if (!path) return;
+  let cleanPath = path;
+  if (cleanPath.startsWith("http")) {
+    try {
+      cleanPath = new URL(cleanPath).pathname;
+    } catch (e) {}
+  }
+  if (
+    cleanPath.includes("/home") ||
+    cleanPath === "/" ||
+    cleanPath === "/app"
+  ) {
+    document.title = "StudyHype — Home";
+  } else if (cleanPath.includes("/groups/my/group-chat")) {
+    document.title = "StudyHype — Group Chat";
+  } else if (cleanPath.includes("/groups/available")) {
+    document.title = "StudyHype — Available Groups";
+  } else if (
+    cleanPath.includes("/groups/my") ||
+    cleanPath.includes("/groups")
+  ) {
+    document.title = "StudyHype — Groups";
+  } else if (cleanPath.includes("/quizzes/my/quiz-editor")) {
+    document.title = "StudyHype — Quiz Editor";
+  } else if (cleanPath.includes("/quizzes/passed")) {
+    document.title = "StudyHype — Passed Quizzes";
+  } else if (
+    cleanPath.includes("/quizzes/my") ||
+    cleanPath.includes("/quizzes")
+  ) {
+    document.title = "StudyHype — Quizzes";
+  } else if (cleanPath.includes("/settings")) {
+    document.title = "StudyHype — Settings";
+  }
+};
+
 export const updateMain = async (path, isTabLinks) => {
   const thisNav = ++navCounter;
   try {
@@ -1014,6 +1076,7 @@ export const updateMain = async (path, isTabLinks) => {
     closeAllEventSources();
     clearAllPageListeners();
     clearOverlaysModals();
+    updateDocumentTitle(path);
 
     let predRoute = path;
     try {
@@ -1093,8 +1156,10 @@ export const updateMain = async (path, isTabLinks) => {
       );
     }
   } catch (error) {
-    console.error(error);
-    showMessageBlock(error.message, "error");
+    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    if (!isNative) console.error(error);
+    showMessageBlock(error.message || "An error occurred.", notifType);
   } finally {
     isRouting = false;
   }
@@ -1403,9 +1468,11 @@ export const openOverlayModal = async (
       }
     }
   } catch (error) {
-    console.error(error);
-    backdrop.innerHTML = "<h2>Error loading content</h2>";
-    showMessageBlock(error.message, "error");
+    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    if (!isNative) console.error(error);
+    if (!isNative) backdrop.innerHTML = "<h2>Error loading content</h2>";
+    showMessageBlock(error.message || "An error occurred.", notifType);
   }
 };
 
@@ -1934,8 +2001,6 @@ export const getGroupChatSkeleton = () => {
           <div class="loading-card first-loading-card">
             <div style="display: flex; flex-direction: column">
               <div class="message-sent">
-                <div class="avatar loading-opacity-animation"></div>
-
                 <div class="messages">
                   <div class="first-message-sent-text loading-animation">
                     <p class="loading-opacity-animation" style="width: 5rem"></p>

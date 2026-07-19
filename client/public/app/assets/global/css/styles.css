@@ -889,7 +889,7 @@ main {
   font-size: var(--small-font-size);
   width: max-content;
   max-width: 30rem;
-  z-index: 999;
+  z-index: 9999;
   background-color: var(--tooltip-background-color);
   padding: calc(var(--primary-gap) / 2);
   border-radius: var(--primary-radius);
@@ -1203,6 +1203,7 @@ main {
         }
 
         &.join_request,
+        &.join_invite,
         &.join_pending,
         &.session_started {
           color: var(--blue-color, #0040a0);
@@ -1305,7 +1306,8 @@ main {
                 filter: brightness(0.95);
               }
 
-              &.reject-btn {
+              &.reject-btn,
+              &.reject-invite-btn {
                 border: 1px solid #ef4444;
                 color: #ef4444;
 
@@ -1315,7 +1317,8 @@ main {
               }
 
               &.accept-btn,
-              &.join-session-btn {
+              &.join-session-btn,
+              &.join-invite-btn {
                 border: 1px solid #3b82f6;
                 color: #3b82f6;
 

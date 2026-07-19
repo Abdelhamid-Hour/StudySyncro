@@ -1,11 +1,16 @@
 const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
-const { refillSampleMembersIfNeeded } = require("./shared");
+const {
+  refillSampleMembersIfNeeded,
+  syncUserGroupSnapshot,
+  saveGroupToUser,
+} = require("./shared");
 const { toReadableDate, INITIALE_LOADERS_COUNT } = require("../global");
 const {
   notifyJoinRequest,
   notifyJoinResult,
   updateJoinRequestNotificationStatus,
+  updateJoinInviteNotificationStatus,
 } = require("./notifications");
 
 const sendRequest = async (groupId, userData) => {
@@ -17,6 +22,8 @@ const sendRequest = async (groupId, userData) => {
       return {
         success: false,
         message: "Group not found",
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -29,6 +36,8 @@ const sendRequest = async (groupId, userData) => {
       return {
         success: false,
         message: "Group is full",
+        isNative: true,
+        type: "info",
       };
 
     const isRequestSent = (
@@ -36,7 +45,12 @@ const sendRequest = async (groupId, userData) => {
     ).exists;
 
     if (isRequestSent)
-      return { message: "You have already sent a request", success: false };
+      return {
+        message: "You have already sent a request",
+        success: false,
+        isNative: true,
+        type: "info",
+      };
 
     const isAlreadyMember = (
       await groupRef.collection("members").doc(userData.uid).get()
@@ -44,14 +58,18 @@ const sendRequest = async (groupId, userData) => {
 
     if (isAlreadyMember)
       return {
-        message: "You are already a member ",
+        message: "You are already a member",
         success: false,
+        isNative: true,
+        type: "info",
       };
 
     if (!group.showInSearch)
       return {
         success: false,
         message: "The Group Is Private and Not Visible",
+        isNative: true,
+        type: "info",
       };
 
     const demandeDate = new Date().toISOString();
@@ -81,7 +99,7 @@ const sendRequest = async (groupId, userData) => {
       group.name,
       group.creator,
       userData,
-      userData.uid
+      userData.uid,
     );
 
     return {
@@ -93,6 +111,8 @@ const sendRequest = async (groupId, userData) => {
     return {
       success: false,
       message: error.message || "An unexpected error occurred.",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -107,6 +127,8 @@ const acceptRequest = async (groupId, requestId, userId) => {
       return {
         success: false,
         message: `Group not found.`,
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -114,6 +136,8 @@ const acceptRequest = async (groupId, requestId, userId) => {
       return {
         success: false,
         message: "Only the group creator can accept requests.",
+        isNative: true,
+        type: "warning",
       };
     }
 
@@ -123,7 +147,12 @@ const acceptRequest = async (groupId, requestId, userId) => {
       .get();
 
     if (!requestToAcceptSnap.exists) {
-      return { success: false, message: "Join request not found." };
+      return {
+        success: false,
+        message: "Join request not found.",
+        isNative: true,
+        type: "info",
+      };
     }
 
     const requestToAccept = requestToAcceptSnap.data();
@@ -141,7 +170,12 @@ const acceptRequest = async (groupId, requestId, userId) => {
 
     if (isAlreadyMember) {
       await requestToAcceptSnap.ref.delete();
-      return { success: false, message: "User is already a member." };
+      return {
+        success: false,
+        message: "User is already a member.",
+        isNative: true,
+        type: "info",
+      };
     }
 
     await groupRef.collection("members").doc(newMember.uid).set(newMember);
@@ -149,7 +183,10 @@ const acceptRequest = async (groupId, requestId, userId) => {
       membersCount: FieldValue.increment(1),
     });
     const userRef = db.collection("users").doc(newMember.uid);
-    await userRef.collection("userGroupsIds").doc(groupId).set({});
+    await saveGroupToUser(newMember.uid, groupId, groupData);
+    await syncUserGroupSnapshot(groupId, {
+      membersCount: FieldValue.increment(1),
+    });
     await requestToAcceptSnap.ref.delete();
     await userRef
       .collection("sentRequests")
@@ -158,18 +195,24 @@ const acceptRequest = async (groupId, requestId, userId) => {
     await refillSampleMembersIfNeeded(groupRef);
 
     if (groupData.currentSession) {
-      const sessionSnap = await db.collection("sessions").doc(groupData.currentSession).get();
+      const sessionSnap = await db
+        .collection("sessions")
+        .doc(groupData.currentSession)
+        .get();
       if (sessionSnap.exists) {
         const sData = sessionSnap.data();
-        await userRef.collection("activeSessions").doc(groupData.currentSession).set({
-          name: sData.name || "",
-          description: sData.description || "",
-          duration: sData.duration || 0,
-          startDate: sData.startDate || "",
-          groupName: sData.groupName || "",
-          tasksCount: sData.tasksCount || 0,
-          joinedCount: sData.joinedCount || 0,
-         });
+        await userRef
+          .collection("activeSessions")
+          .doc(groupData.currentSession)
+          .set({
+            name: sData.name || "",
+            description: sData.description || "",
+            duration: sData.duration || 0,
+            startDate: sData.startDate || "",
+            groupName: sData.groupName || "",
+            tasksCount: sData.tasksCount || 0,
+            joinedCount: sData.joinedCount || 0,
+          });
       }
     }
 
@@ -177,7 +220,12 @@ const acceptRequest = async (groupId, requestId, userId) => {
       userId,
       groupId,
       requestId,
-      "accepted"
+      "accepted",
+    );
+    await updateJoinInviteNotificationStatus(
+      newMember.uid,
+      groupId,
+      "accepted",
     );
     await notifyJoinResult(requestId, groupId, groupData.name, true);
 
@@ -189,6 +237,8 @@ const acceptRequest = async (groupId, requestId, userId) => {
       message: `Failed to accept request: ${
         error.message || "An unexpected error occurred."
       }`,
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -203,6 +253,8 @@ const rejectRequest = async (groupId, requestId, userId) => {
       return {
         success: false,
         message: `Group not found.`,
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -210,6 +262,8 @@ const rejectRequest = async (groupId, requestId, userId) => {
       return {
         success: false,
         message: "Only the group creator can accept requests.",
+        isNative: true,
+        type: "warning",
       };
     }
 
@@ -219,7 +273,12 @@ const rejectRequest = async (groupId, requestId, userId) => {
       .get();
 
     if (!requestSnap.exists)
-      return { success: false, message: "Join request not found." };
+      return {
+        success: false,
+        message: "Join request not found.",
+        isNative: true,
+        type: "info",
+      };
 
     await requestSnap.ref.delete();
     await db
@@ -235,7 +294,7 @@ const rejectRequest = async (groupId, requestId, userId) => {
       userId,
       groupId,
       requestId,
-      "rejected"
+      "rejected",
     );
     await notifyJoinResult(requestId, groupId, group.name, false);
 
@@ -248,6 +307,8 @@ const rejectRequest = async (groupId, requestId, userId) => {
     return {
       success: false,
       message: "Something wrong happened",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -264,9 +325,7 @@ const getFilteredRequests = (criteria, demandes) => {
   demandes = demandes.filter((doc) => {
     const fullName = doc.data().fullName?.toLowerCase() || "";
     const searchTerm = criteria.search?.trim().toLowerCase() || "";
-    const matchSearch = searchTerm
-      ? fullName.includes(searchTerm)
-      : true;
+    const matchSearch = searchTerm ? fullName.includes(searchTerm) : true;
     const demandeDate = doc.data().demandeDate;
     const matchDate = criteria.date
       ? demandeDate && new Date(demandeDate) >= new Date(criteria.date)
@@ -282,7 +341,12 @@ const getRequests = async (groupId, userId) => {
     const groupRef = db.collection("groups").doc(groupId);
     const groupSnap = await groupRef.get();
     if (!groupSnap.exists)
-      return { success: false, message: "Group not found" };
+      return {
+        success: false,
+        message: "Group not found",
+        isNative: true,
+        type: "info",
+      };
     const creator = groupSnap.data().creator;
     const requestsSnap = await groupRef.collection("requests").get();
     const requests = getFormatedRequests(requestsSnap.docs);
@@ -299,6 +363,8 @@ const getRequests = async (groupId, userId) => {
     return {
       success: false,
       message: "An error occurred while fetching requests",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -307,14 +373,19 @@ const getDemandesByGroupId = async (
   groupId,
   limit = INITIALE_LOADERS_COUNT,
   lastVisible = null,
-  criteria = {}
+  criteria = {},
 ) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
     const groupSnap = await groupRef.get();
 
     if (!groupSnap.exists) {
-      return { success: false, message: "Group not found" };
+      return {
+        success: false,
+        message: "Group not found",
+        isNative: true,
+        type: "info",
+      };
     }
 
     let demandes = [];
@@ -389,6 +460,8 @@ const getDemandesByGroupId = async (
     return {
       success: false,
       message: "An error occurred while fetching demandes",
+      isNative: false,
+      type: "error",
     };
   }
 };

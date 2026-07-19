@@ -2,6 +2,7 @@ import {
   fetchData,
   sendData,
   showMessageBlock,
+  isNativeDomainCondition,
 } from "../../../../../../main_assets/js/utils.js";
 import {
   CHOICE_TEXT_MAX_LENGTH,
@@ -11,6 +12,8 @@ import {
   hoverTooltip,
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
+  MIN_CHOICES_COUNT,
+  MAX_CHOICES_COUNT,
 } from "../../../../global/js/variables.js";
 import {
   getLoader,
@@ -306,7 +309,7 @@ const updateChoicesCountInPanel = (choicesList) => {
 const handleDeleteChoice = (deleteChoiceBtn) => {
   const choice = deleteChoiceBtn.closest(".choice");
   const choicesList = choice.closest(".choices-list");
-  if (choicesList.children.length > 2) {
+  if (choicesList.children.length > MIN_CHOICES_COUNT) {
     const selectMenu = choicesList
       .closest(".choices-section")
       .querySelector(".correct-answer-select");
@@ -327,7 +330,10 @@ const handleDeleteChoice = (deleteChoiceBtn) => {
 
     updateChoicesCountInPanel(choicesList);
   } else {
-    showMessageBlock("You must have at least two choices.", "error");
+    showMessageBlock(
+      `You must have at least ${MIN_CHOICES_COUNT} choices.`,
+      "error",
+    );
   }
 };
 
@@ -360,7 +366,7 @@ const createDropDownItem = (choiceCount) => {
 const handleAddChoice = (addChoiceBtn) => {
   const choicesList = addChoiceBtn.previousElementSibling;
   const choiceCount = choicesList.children.length;
-  if (choiceCount < 6) {
+  if (choiceCount < MAX_CHOICES_COUNT) {
     const newChoice = createChoiceElement(choiceCount);
     choicesList.appendChild(newChoice);
 
@@ -372,7 +378,10 @@ const handleAddChoice = (addChoiceBtn) => {
 
     updateChoicesCountInPanel(choicesList);
   } else {
-    showMessageBlock("You can only have up to 6 choices.", "error");
+    showMessageBlock(
+      `You can only have up to ${MAX_CHOICES_COUNT} choices.`,
+      "error",
+    );
   }
 };
 
@@ -502,8 +511,10 @@ export const initializeInitialData = async () => {
   try {
     initialData = await fetchData("/quiz-details/" + getQuizId());
   } catch (error) {
-    showMessageBlock(error.message, "error");
-    console.log("Error: ", error);
+    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    showMessageBlock(error.message, notifType);
+    if (!isNative) console.log("Error: ", error);
   }
 };
 
@@ -560,8 +571,10 @@ export const handleSaveBtn = async (type, btn) => {
       "success",
     );
   } catch (error) {
-    console.error(`Failed to update ${type}:`, error);
-    showMessageBlock(`Failed to update ${type}. Please try again.`, "error");
+    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    if (!isNative) console.error(`Failed to update ${type}:`, error);
+    showMessageBlock(error.message || `Failed to update ${type}. Please try again.`, notifType);
     return;
   } finally {
     btn.isSaving = false;
@@ -767,8 +780,10 @@ const saveQuizToServer = async (questions) => {
     // update the initialData with the new questions
     initialData.questions = questions;
   } catch (error) {
-    console.error("Failed to save quiz:", error);
-    showMessageBlock("Failed to save quiz. Please try again.", "error");
+    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    if (!isNative) console.error("Failed to save quiz:", error);
+    showMessageBlock(error.message || "Failed to save quiz. Please try again.", notifType);
   } finally {
     saveQuizBtn.innerHTML = `<i class="bi bi-floppy"></i><span>Save</span>`;
     saveQuizBtn.disabled = false;

@@ -23,6 +23,8 @@ const createQuizHandler = async (req, res) => {
   } else {
     return res.status(400).json({
       message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
     });
   }
 };
@@ -35,6 +37,8 @@ const checkQuizTitleHandler = async (req, res) => {
     return res.status(400).json({
       available: false,
       message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
     });
   }
 
@@ -63,6 +67,8 @@ const updateQuizHandler = async (req, res) => {
   } else {
     return res.status(400).json({
       message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
     });
   }
 };
@@ -81,6 +87,8 @@ const patchQuizHandler = async (req, res) => {
   } else {
     return res.status(400).json({
       message: response.message,
+      isNative: response.isNative ?? false,
+      type: response.type ?? "error",
     });
   }
 };
@@ -89,7 +97,11 @@ const getResultsListHandler = async (req, res) => {
   const { quizId, groupId } = req.query;
   const result = await getQuizResultsByGroup(quizId, groupId, req.user.uid);
 
-  if (!result.success) return res.status(400).json({ message: result.message });
+  if (!result.success) return res.status(400).json({
+    message: result.message,
+    isNative: result.isNative ?? false,
+    type: result.type ?? "error",
+  });
 
   return res.render(
     "fragments/resullts-list",
@@ -100,7 +112,7 @@ const getResultsListHandler = async (req, res) => {
 
         return res
           .status(500)
-          .json({ message: "Error rendering results list" });
+          .json({ message: "Error rendering results list", isNative: false, type: "error" });
       }
       return res.status(200).json({ overlay: html });
     },
@@ -117,6 +129,8 @@ const getQuizDetailsHandler = async (req, res) => {
   } else {
     return res.status(400).json({
       message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
     });
   }
 };
@@ -146,7 +160,11 @@ const addQuizResultHandler = async (req, res) => {
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
@@ -160,7 +178,11 @@ const getExamenResultHandler = async (req, res) => {
       .status(200)
       .json({ quizResult: result.quizResult, questions: result.questions });
   } else {
-    return res.status(401).json({ message: result.message });
+    return res.status(401).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
@@ -170,7 +192,11 @@ const removeQuizHandler = async (req, res) => {
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
@@ -180,7 +206,11 @@ const duplicateQuizHandler = async (req, res) => {
   if (result.success) {
     return res.status(200).json(result);
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 

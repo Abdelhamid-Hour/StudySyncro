@@ -5,8 +5,16 @@ import {
   passwordRegex,
   PROFILE_ALLOWED_TYPES,
   userNameRegex,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  EMAIL_MIN_LENGTH,
+  EMAIL_MAX_LENGTH,
 } from "../../../../main_assets/js/variables.js";
-import { globalTooltip } from "../../global/js/variables.js";
+import {
+  globalTooltip,
+  NAME_TITLE_MIN_LENGTH,
+  NAME_TITLE_MAX_LENGTH,
+} from "../../global/js/variables.js";
 import {
   handleApiAction,
   resetTooltip,
@@ -116,12 +124,12 @@ const checkValidation = () => {
     return false;
   } else if (
     (fullName.split(" ").length < 2 && fullName.split(" ").length > 3) ||
-    fullName.length < 6 ||
-    fullName.length > 50 ||
+    fullName.length < NAME_TITLE_MIN_LENGTH ||
+    fullName.length > NAME_TITLE_MAX_LENGTH ||
     !userNameRegex.test(fullName)
   ) {
     showErrorTooltip(
-      "Full name must be 6-50 characters long, contain only letters and spaces, and include at least a first and last name.",
+      `Full name must be ${NAME_TITLE_MIN_LENGTH * 2}-${NAME_TITLE_MAX_LENGTH} characters long, contain only letters and spaces, and include at least a first and last name.`,
       fullNameInput
     );
     return false;
@@ -221,8 +229,15 @@ const checkEmailValidation = () => {
   if (!email) {
     showErrorTooltip("Email cannot be empty.", emailInput);
     return false;
-  } else if (!emailRegex.test(email)) {
-    showErrorTooltip("Invalid email format.", emailInput);
+  } else if (
+    !emailRegex.test(email) ||
+    email.length < EMAIL_MIN_LENGTH ||
+    email.length > EMAIL_MAX_LENGTH
+  ) {
+    showErrorTooltip(
+      `Invalid email format (${EMAIL_MIN_LENGTH}-${EMAIL_MAX_LENGTH} characters required).`,
+      emailInput
+    );
     return false;
   } else {
     resetTooltip(globalTooltip, emailInput.closest(".field-container"));
@@ -231,12 +246,6 @@ const checkEmailValidation = () => {
   if (passwordEmailInput) {
     if (!password) {
       showErrorTooltip("Password cannot be empty.", passwordEmailInput);
-      return false;
-    } else if (!passwordRegex.test(password)) {
-      showErrorTooltip(
-        "Password must be between 8 and 16 characters and can include letters, numbers, and special characters.",
-        passwordEmailInput
-      );
       return false;
     } else {
       resetTooltip(
@@ -331,12 +340,6 @@ const checkPasswordFields = () => {
     if (!currentPassword) {
       showErrorTooltip("Current password is required.", currentPasswordInput);
       return false;
-    } else if (!passwordRegex.test(currentPassword)) {
-      showErrorTooltip(
-        "New password must be between 8 and 16 characters long.",
-        currentPasswordInput
-      );
-      return false;
     } else {
       resetTooltip(
         globalTooltip,
@@ -350,7 +353,7 @@ const checkPasswordFields = () => {
     return false;
   } else if (!passwordRegex.test(newPassword)) {
     showErrorTooltip(
-      "New password must be between 8 and 16 characters long.",
+      `New password must be between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters long.`,
       newPasswordInput
     );
     return false;
@@ -363,7 +366,7 @@ const checkPasswordFields = () => {
     return false;
   } else if (!passwordRegex.test(confirmPassword)) {
     showErrorTooltip(
-      "Confirm password must be between 8 and 16 characters long.",
+      `Confirm password must be between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters long.`,
       confirmPasswordInput
     );
     return false;
@@ -450,12 +453,6 @@ const checkDeleteInputsValidity = () => {
     if (!passwordDelete) {
       showErrorTooltip(
         "Password is required to delete account.",
-        passwordDeleteInput
-      );
-      return false;
-    } else if (!passwordRegex.test(passwordDelete)) {
-      showErrorTooltip(
-        "Password must be between 8 and 16 characters long.",
         passwordDeleteInput
       );
       return false;

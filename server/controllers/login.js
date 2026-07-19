@@ -20,7 +20,11 @@ const createSession = async function (req, res) {
     return res.status(200).json({ message: "Session created" });
   } catch (error) {
     console.log(error.message);
-    return res.status(500).json({ message: "Error creating session" });
+    return res.status(500).json({
+      message: "Error creating session",
+      isNative: false,
+      type: "error",
+    });
   }
 };
 

@@ -13,7 +13,12 @@ const getUserInfoHandler = async (req, res) => {
   if (!result.success) {
     return res
       .status(500)
-      .json({ success: false, message: "Failed to fetch user info." });
+      .json({
+        success: false,
+        message: "Failed to fetch user info.",
+        isNative: result.isNative ?? false,
+        type: result.type ?? "error",
+      });
   }
 
   res.json({ email: result.email, provider: result.provider });
@@ -27,6 +32,8 @@ const updateEmailHandler = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: result.message || "Failed to update email.",
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
     });
   }
   res.json({ success: true, message: "Email updated successfully." });
@@ -39,6 +46,8 @@ const addEmailHandler = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: result.message || "Failed to add email.",
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
     });
   }
   res.json({ success: true, message: "Email added successfully." });
@@ -52,7 +61,12 @@ const updatePofileHandler = async (req, res) => {
   if (!result.success) {
     return res
       .status(500)
-      .json({ success: false, message: "Failed to update full name." });
+      .json({
+        success: false,
+        message: "Failed to update full name.",
+        isNative: result.isNative ?? false,
+        type: result.type ?? "error",
+      });
   }
 
   res.json({ success: true, message: "Full name updated successfully." });
@@ -65,6 +79,8 @@ const updatePasswordHandler = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: result.message || "Failed to update password.",
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
     });
   }
   res.json({ success: true, message: "Password updated successfully." });
@@ -77,6 +93,8 @@ const addPasswordHandler = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: result.message || "Failed to add password.",
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
     });
   }
   res.json({ success: true, message: "Password added successfully." });
@@ -89,6 +107,8 @@ const closeAccountHandler = async (req, res, next) => {
     return res.status(500).json({
       success: false,
       message: result.message || "Failed to close account.",
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
     });
   }
 

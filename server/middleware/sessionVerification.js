@@ -32,7 +32,7 @@ const requireAuthForPages = async (req, res, next) => {
     return next();
   } catch (error) {
     clearCookies(res, ["session", "SECRET", "csrfToken"]);
-    if (isFetch) return res.status(401).json({ message: "Unauthorized" });
+    if (isFetch) return res.status(401).json({ message: "Unauthorized", isNative: true, type: "warning" });
     return res.redirect("/login");
   }
 };
@@ -56,7 +56,7 @@ const requireAuthForAPI = async (req, res, next) => {
     return next();
   } catch (error) {
     clearCookies(res, ["session", "SECRET", "csrfToken"]);
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ message: "Unauthorized", isNative: true, type: "warning" });
   }
 };
 

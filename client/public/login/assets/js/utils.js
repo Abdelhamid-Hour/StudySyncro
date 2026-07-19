@@ -3,7 +3,15 @@ import {
   passwordRegex,
   userNameRegex,
   emailRegex,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  EMAIL_MIN_LENGTH,
+  EMAIL_MAX_LENGTH,
 } from "../../../main_assets/js/variables.js";
+import {
+  NAME_TITLE_MIN_LENGTH,
+  NAME_TITLE_MAX_LENGTH,
+} from "../../../app/assets/global/js/variables.js";
 import {
   stylsheet,
   signInemailField,
@@ -91,10 +99,11 @@ const initializeSignUpForm = () => {
   stylsheet.insertRule(signUpAnimationRules.initialRule, cssRulesLength);
   stylsheet.insertRule(
     signUpAnimationRules.signUpClassAnimationRule,
-    ++cssRulesLength
+    ++cssRulesLength,
   );
 };
 const inputsEmptying = () => {
+  signInFormContainer.style.height = "";
   signInemailField.value = "";
   signInPasswordField.value = "";
   signUpemailField.value = "";
@@ -109,6 +118,7 @@ const inputsEmptying = () => {
  * @param {Number} targetFormHeight - The target height for the sign-up form.
  */
 const swapAnimation = (targetFormHeight) => {
+  inputsEmptying();
   // add the z-index based on the signUp form height
   if (targetFormHeight === signInFormHeight) {
     hideErrors(
@@ -116,7 +126,7 @@ const swapAnimation = (targetFormHeight) => {
       signUpConfirmPasswordField,
       firstNameField,
       lastNameField,
-      signUpemailField
+      signUpemailField,
     );
     signInFormContainer.classList.add("active-form");
     signInFormContainer.onanimationstart = () => {
@@ -140,7 +150,6 @@ const swapAnimation = (targetFormHeight) => {
     };
   }
   // discharging inputs
-  inputsEmptying();
   const signUpAnimationRules = getSwapAnimationRule(targetFormHeight);
   // delete the initial sign Up form height before removing the class animation
   // because it prevents the sign Up form to back to the initial animation height
@@ -154,7 +163,7 @@ const swapAnimation = (targetFormHeight) => {
   // add the new sign Up form animation rule to the stylesheet as a last style
   stylsheet.insertRule(
     signUpAnimationRules.signUpClassAnimationRule,
-    ++cssRulesLength
+    ++cssRulesLength,
   );
   // force re-layout and repaint to apply the new animation
   void signInFormContainer.offsetWidth;
@@ -165,7 +174,7 @@ const swapAnimation = (targetFormHeight) => {
 
 export const swapAnimationThrottling = throttling(
   animationDuration,
-  swapAnimation
+  swapAnimation,
 );
 const hideErrors = (...elements) => {
   elements.forEach((element) => {
@@ -175,7 +184,7 @@ const hideErrors = (...elements) => {
     void container.offsetWidth;
     if ([firstNameField, lastNameField].includes(element)) {
       signUpFormContainer.querySelector(
-        ".user-name-container .error-container"
+        ".user-name-container .error-container",
       ).firstElementChild.innerHTML = "";
     } else {
       container.nextElementSibling.firstElementChild.innerHTML = "";
@@ -187,7 +196,7 @@ const showError = (errorMessage, element) => {
   const errorIcon = '<i class="bi bi-exclamation-circle"></i>';
   if ([firstNameField, lastNameField].includes(element)) {
     signUpFormContainer.querySelector(
-      ".user-name-container .error-container"
+      ".user-name-container .error-container",
     ).firstElementChild.innerHTML = `${errorIcon} ${errorMessage}`;
   } else {
     container.nextElementSibling.firstElementChild.innerHTML = `${errorIcon} ${errorMessage}`;
@@ -201,16 +210,20 @@ const validatesSignInForm = () => {
   hideErrors(signInemailField, signInPasswordField);
   const email = signInemailField.value.trim();
   const password = signInPasswordField.value.trim();
-  if (!passwordRegex.test(password)) {
+  if (
+    !emailRegex.test(email) ||
+    email.length < EMAIL_MIN_LENGTH ||
+    email.length > EMAIL_MAX_LENGTH
+  ) {
     showError(
-      "The password must be at least 8 characters",
-      signInPasswordField
+      `Please enter a valid email (${EMAIL_MIN_LENGTH}-${EMAIL_MAX_LENGTH} characters)`,
+      signInemailField,
     );
+    return false;
   }
-  if (!emailRegex.test(email)) {
-    showError("Please enter a valid email", signInemailField);
-  }
-  if (!emailRegex.test(email) || !passwordRegex.test(password)) {
+
+  if (!password) {
+    showError("Please enter your password", signInPasswordField);
     return false;
   }
   return true;
@@ -219,8 +232,15 @@ const validatesSignInForm = () => {
 const verifyEmail = () => {
   hideErrors(signInemailField);
   const email = signInemailField.value.trim();
-  if (!emailRegex.test(email)) {
-    showError("Please enter a valid email", signInemailField);
+  if (
+    !emailRegex.test(email) ||
+    email.length < EMAIL_MIN_LENGTH ||
+    email.length > EMAIL_MAX_LENGTH
+  ) {
+    showError(
+      `Please enter a valid email (${EMAIL_MIN_LENGTH}-${EMAIL_MAX_LENGTH} characters)`,
+      signInemailField,
+    );
     return false;
   }
   return true;
@@ -232,48 +252,63 @@ const validatesSignUpForm = () => {
     signUpPasswordField,
     signUpConfirmPasswordField,
     firstNameField,
-    lastNameField
+    lastNameField,
   );
   const email = signUpemailField.value.trim();
   const password = signUpPasswordField.value.trim();
   const confirmPassword = signUpConfirmPasswordField.value.trim();
   const firstName = firstNameField.value.trim();
   const lastName = lastNameField.value.trim();
-  if (password !== confirmPassword) {
-    showError("Passwords do not match", signUpConfirmPasswordField);
-  }
 
-  if (!passwordRegex.test(password)) {
+  if (
+    !userNameRegex.test(firstName) ||
+    firstName.length < NAME_TITLE_MIN_LENGTH ||
+    firstName.length > NAME_TITLE_MAX_LENGTH
+  ) {
     showError(
-      "The password must be at least 8 characters",
-      signUpPasswordField
+      `First name must be ${NAME_TITLE_MIN_LENGTH}-${NAME_TITLE_MAX_LENGTH} characters only letters`,
+      firstNameField,
     );
+    return false;
   }
 
-  if (!emailRegex.test(email)) {
-    showError("Please enter a valid email", signUpemailField);
-  }
-
-  if (!userNameRegex.test(lastName)) {
-    showError("Last name must be 3-15 characters only letters", lastNameField);
-  }
-
-  if (!userNameRegex.test(firstName)) {
+  if (
+    !userNameRegex.test(lastName) ||
+    lastName.length < NAME_TITLE_MIN_LENGTH ||
+    lastName.length > NAME_TITLE_MAX_LENGTH
+  ) {
     showError(
-      "First name must be 3-15 characters only letters",
-      firstNameField
+      `Last name must be ${NAME_TITLE_MIN_LENGTH}-${NAME_TITLE_MAX_LENGTH} characters only letters`,
+      lastNameField,
     );
+    return false;
   }
 
   if (
     !emailRegex.test(email) ||
-    !passwordRegex.test(password) ||
-    !userNameRegex.test(firstName) ||
-    !userNameRegex.test(lastName) ||
-    password !== confirmPassword
+    email.length < EMAIL_MIN_LENGTH ||
+    email.length > EMAIL_MAX_LENGTH
   ) {
+    showError(
+      `Please enter a valid email (${EMAIL_MIN_LENGTH}-${EMAIL_MAX_LENGTH} characters)`,
+      signUpemailField,
+    );
     return false;
   }
+
+  if (!passwordRegex.test(password)) {
+    showError(
+      `The password must be between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters`,
+      signUpPasswordField,
+    );
+    return false;
+  }
+
+  if (password !== confirmPassword) {
+    showError("Passwords do not match", signUpConfirmPasswordField);
+    return false;
+  }
+
   return true;
 };
 
@@ -309,7 +344,7 @@ export const getLettersAnimation = () => {
     actionCallBack,
     animationDuration,
     letterAnimationDuration,
-    charactersString
+    charactersString,
   ) {
     if (word === wordTarget) {
       wordTarget = "";

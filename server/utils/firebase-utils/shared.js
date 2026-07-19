@@ -24,6 +24,8 @@ const getGroupById = async (groupId) => {
       return {
         success: false,
         message: "Group not found",
+        isNative: true,
+        type: "info",
       };
     } else {
       const group = { id: groupId, ...snaphsot.data() };
@@ -37,7 +39,90 @@ const getGroupById = async (groupId) => {
     return {
       success: false,
       message: error.message,
+      isNative: false,
+      type: "error",
     };
+  }
+};
+
+const saveGroupToUser = async (userId, groupId, groupData) => {
+  await db
+    .collection("users")
+    .doc(userId)
+    .collection("userGroups")
+    .doc(groupId)
+    .set({
+      description: groupData.description,
+      level: groupData.level,
+      sampleMembers: groupData.sampleMembers,
+      membersCount: groupData.membersCount,
+      name: groupData.name,
+      subject: groupData.subject,
+      visibility: groupData.visibility,
+      creator: groupData.creator,
+      creationDate: groupData.creationDate,
+    });
+};
+
+const syncUserGroupSnapshot = async (groupId, updates) => {
+  try {
+    const membersSnap = await db
+      .collection("groups")
+      .doc(groupId)
+      .collection("members")
+      .get();
+    if (membersSnap.empty) return;
+
+    let batch = db.batch();
+    let count = 0;
+    for (const memberDoc of membersSnap.docs) {
+      const userGroupRef = db
+        .collection("users")
+        .doc(memberDoc.id)
+        .collection("userGroups")
+        .doc(groupId);
+      batch.set(userGroupRef, updates, { merge: true });
+      count++;
+      if (count === 490) {
+        await batch.commit();
+        batch = db.batch();
+        count = 0;
+      }
+    }
+    if (count > 0) await batch.commit();
+  } catch (error) {
+    console.error(`Error syncing userGroups for group ${groupId}:`, error);
+  }
+};
+
+const syncUserGroupRemoval = async (groupId) => {
+  try {
+    const membersSnap = await db
+      .collection("groups")
+      .doc(groupId)
+      .collection("members")
+      .get();
+    if (membersSnap.empty) return;
+
+    let batch = db.batch();
+    let count = 0;
+    for (const memberDoc of membersSnap.docs) {
+      const userGroupRef = db
+        .collection("users")
+        .doc(memberDoc.id)
+        .collection("userGroups")
+        .doc(groupId);
+      batch.delete(userGroupRef);
+      count++;
+      if (count === 490) {
+        await batch.commit();
+        batch = db.batch();
+        count = 0;
+      }
+    }
+    if (count > 0) await batch.commit();
+  } catch (error) {
+    console.error(`Error removing userGroups for group ${groupId}:`, error);
   }
 };
 
@@ -65,8 +150,10 @@ const refillSampleMembersIfNeeded = async (groupRef) => {
     // Only update if sampleMembers actually changed
     const prevSampleMembers = groupAfterUpdate.sampleMembers || [];
 
-    if (sampleMembers.length !== prevSampleMembers.length)
+    if (sampleMembers.length !== prevSampleMembers.length) {
       await groupRef.update({ sampleMembers });
+      await syncUserGroupSnapshot(groupRef.id, { sampleMembers });
+    }
   }
 };
 
@@ -82,13 +169,13 @@ const uploadFileToStorage = async (filePath, file, isAvatar = false) => {
     const isSupportedFileType =
       !isAvatar &&
       Object.values(FILE_ALLOWED_TYPES).some((types) =>
-        types.includes(file.mimetype)
+        types.includes(file.mimetype),
       );
     if (!isSupportedAvatarType && !isSupportedFileType)
       throw new Error("Invalid file type");
 
     const fileUpload = bucket.file(
-      filePath + `/${Date.now()}-${file.originalname}`
+      filePath + `/${Date.now()}-${file.originalname}`,
     );
 
     await fileUpload.save(file.buffer, {
@@ -99,14 +186,25 @@ const uploadFileToStorage = async (filePath, file, isAvatar = false) => {
       action: "read",
       expires: Date.now() + 1000 * 60 * 60 * 24 * 7, // 7 days
       responseDisposition: `attachment; filename="${encodeURIComponent(
-        file.originalname
+        file.originalname,
       )}"`,
     });
 
     return { success: true, URL: URL[0] };
   } catch (error) {
     console.error("Error uploading file to storage:", error);
-    return { success: false, message: error.message };
+    const isValidation = [
+      "No file provided for upload",
+      "File is empty",
+      "The file should be less or equal to 50MB",
+      "Invalid file type",
+    ].includes(error.message);
+    return {
+      success: false,
+      message: error.message,
+      isNative: isValidation,
+      type: isValidation ? "warning" : "error",
+    };
   }
 };
 
@@ -114,5 +212,8 @@ module.exports = {
   getGroupById,
   uploadFileToStorage,
   refillSampleMembersIfNeeded,
+  syncUserGroupSnapshot,
+  syncUserGroupRemoval,
   PROFILE_ALLOWED_TYPES,
+  saveGroupToUser,
 };

@@ -14,9 +14,15 @@ const updateProfile = async (fullName, avatar, user) => {
       const result = await uploadFileToStorage(
         `avatars/${user.uid}`,
         avatar,
-        true
+        true,
       );
-      if (!result.success) return { success: false, message: result.message };
+      if (!result.success)
+        return {
+          success: false,
+          message: result.message,
+          isNative: result.isNative ?? false,
+          type: result.type ?? "error",
+        };
       await admin.auth().updateUser(user.uid, { photoURL: result.URL });
       await db
         .collection("users")
@@ -26,7 +32,12 @@ const updateProfile = async (fullName, avatar, user) => {
     return { success: true };
   } catch (error) {
     console.error("Error updating full name:", error);
-    return { success: false, message: "Failed to update full name." };
+    return {
+      success: false,
+      message: "Failed to update full name.",
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
@@ -34,7 +45,7 @@ const getUserInfo = async (userId) => {
   try {
     const userRecord = await admin.auth().getUser(userId);
     const providers = userRecord.providerData.map(
-      (provider) => provider.providerId
+      (provider) => provider.providerId,
     );
     return {
       success: true,
@@ -42,12 +53,17 @@ const getUserInfo = async (userId) => {
       provider: providers.includes("facebook.com")
         ? "facebook.com"
         : providers.includes("google.com")
-        ? "google.com"
-        : "password",
+          ? "google.com"
+          : "password",
     };
   } catch (error) {
     console.error("Error fetching user info:", error);
-    return { success: false, message: "Failed to fetch user info." };
+    return {
+      success: false,
+      message: "Failed to fetch user info.",
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
@@ -57,19 +73,31 @@ const verifyUser = async (userId, key) => {
     const user = await db.collection("users").doc(credentials.uid).get();
     if (!user.exists) {
       admin.auth().deleteUser(credentials.uid);
-      return { success: false, message: "Please choose the correct account." };
+      return {
+        success: false,
+        message: "Please choose the correct account.",
+        isNative: true,
+        type: "warning",
+      };
     }
 
     if (credentials.uid !== userId)
       return {
         success: false,
         message: "Please choose the correct account.",
+        isNative: true,
+        type: "warning",
       };
 
     return { success: true };
   } catch (error) {
     console.error("Error verifying user:", error);
-    return { success: false, message: "User verification failed." };
+    return {
+      success: false,
+      message: "User verification failed.",
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
@@ -82,7 +110,7 @@ const updateEmail = async (newEmail, idToken, userId) => {
 
     const userRecord = await admin.auth().getUser(userId);
     const providers = userRecord.providerData.map(
-      (provider) => provider.providerId
+      (provider) => provider.providerId,
     );
 
     if (
@@ -94,11 +122,18 @@ const updateEmail = async (newEmail, idToken, userId) => {
         success: false,
         message:
           "The account is linked to a social provider. Cannot change email.",
+        isNative: true,
+        type: "warning",
       };
     }
 
     if (!userRecord.email) {
-      return { success: false, message: "No existing email to update." };
+      return {
+        success: false,
+        message: "No existing email to update.",
+        isNative: true,
+        type: "warning",
+      };
     }
 
     await admin.auth().updateUser(userId, { email: newEmail });
@@ -106,7 +141,12 @@ const updateEmail = async (newEmail, idToken, userId) => {
     return { success: true, message: "Email updated successfully." };
   } catch (error) {
     console.error("Error updating email:", error);
-    return { success: false, message: "Failed to update email." };
+    return {
+      success: false,
+      message: "Failed to update email.",
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
@@ -123,6 +163,8 @@ const addEmail = async (email, key, userId) => {
       return {
         success: false,
         message: "Email already exists.",
+        isNative: true,
+        type: "warning",
       };
     }
 
@@ -131,7 +173,12 @@ const addEmail = async (email, key, userId) => {
     return { success: true, message: "Email added successfully." };
   } catch (error) {
     console.error("Error adding email:", error);
-    return { success: false, message: "Failed to add email." };
+    return {
+      success: false,
+      message: "Failed to add email.",
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
@@ -144,13 +191,15 @@ const addPassword = async (password, key, userId) => {
 
     const userRecord = await admin.auth().getUser(userId);
     const providers = userRecord.providerData.map(
-      (provider) => provider.providerId
+      (provider) => provider.providerId,
     );
 
     if (providers.includes("password")) {
       return {
         success: false,
         message: "Password already set for this account.",
+        isNative: true,
+        type: "warning",
       };
     }
 
@@ -158,7 +207,12 @@ const addPassword = async (password, key, userId) => {
     return { success: true, message: "Password added successfully." };
   } catch (error) {
     console.error("Error adding password:", error);
-    return { success: false, message: "Failed to add password." };
+    return {
+      success: false,
+      message: "Failed to add password.",
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
@@ -171,18 +225,28 @@ const updatePassword = async (newPassword, key, userId) => {
 
     const userRecord = await admin.auth().getUser(userId);
     const providers = userRecord.providerData.map(
-      (provider) => provider.providerId
+      (provider) => provider.providerId,
     );
 
     if (!providers.includes("password")) {
-      return { success: false, message: "No password set for this account." };
+      return {
+        success: false,
+        message: "No password set for this account.",
+        isNative: true,
+        type: "warning",
+      };
     }
 
     await admin.auth().updateUser(userId, { password: newPassword });
     return { success: true, message: "Password updated successfully." };
   } catch (error) {
     console.error("Error updating password:", error);
-    return { success: false, message: "Failed to update password." };
+    return {
+      success: false,
+      message: "Failed to update password.",
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
@@ -200,7 +264,12 @@ const closeAccount = async (key, userId) => {
     return { success: true, message: "Account closed successfully." };
   } catch (error) {
     console.error("Error closing account:", error);
-    return { success: false, message: "Failed to close account." };
+    return {
+      success: false,
+      message: "Failed to close account.",
+      isNative: false,
+      type: "error",
+    };
   }
 };
 

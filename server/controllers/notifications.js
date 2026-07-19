@@ -17,28 +17,34 @@ const getUserNotificationsHandler = async (req, res) => {
     if (result.success) {
       return res.status(200).json(result);
     } else {
-      return res.status(500).json({ message: result.message || "Failed to fetch notifications" });
+      return res.status(500).json({
+        message: result.message || "Failed to fetch notifications",
+        isNative: result.isNative ?? false,
+        type: result.type ?? "error",
+      });
     }
   } catch (error) {
     console.error("Error in getUserNotificationsHandler:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error", isNative: false, type: "error" });
   }
 };
 
 const markNotificationsAsReadHandler = async (req, res) => {
   try {
     const userId = req.user.uid;
-    const { notificationIds = [], category = null } = req.body;
-
-    const result = await markLoadedNotificationsAsRead(userId, notificationIds, category);
+    const result = await markLoadedNotificationsAsRead(userId);
     if (result.success) {
       return res.status(200).json(result);
     } else {
-      return res.status(500).json({ message: result.message || "Failed to mark notifications as read" });
+      return res.status(500).json({
+        message: result.message || "Failed to mark notifications as read",
+        isNative: result.isNative ?? false,
+        type: result.type ?? "error",
+      });
     }
   } catch (error) {
     console.error("Error in markNotificationsAsReadHandler:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error", isNative: false, type: "error" });
   }
 };
 

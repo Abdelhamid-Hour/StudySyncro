@@ -24,7 +24,7 @@ const getGroupChatContext = async (userId, groupId) => {
   return await getChatContext(userId, groupId);
 };
 // Group Left Side Bar Contexts
-const getGroupInfoContext = async (groupId, user) => {  
+const getGroupInfoContext = async (groupId, user) => {
   const groupInfo = await getGroupInfo(groupId, user.uid);
   return groupInfo;
 };
@@ -37,6 +37,8 @@ const getSessionInfoContext = async (groupId, userId) => {
     return {
       success: false,
       message: "Group Not exists",
+      isNative: true,
+      type: "info",
     };
 
   const res = await getSessionInformations(groupData.currentSession);
@@ -45,6 +47,8 @@ const getSessionInfoContext = async (groupId, userId) => {
     return {
       success: false,
       message: res.message || "Failed to load session information",
+      isNative: res.isNative,
+      type: res.type,
     };
   }
 

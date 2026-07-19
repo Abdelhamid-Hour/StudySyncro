@@ -1,10 +1,7 @@
 const { getDemandesByGroupId } = require("../utils/firebase-utils/demandes");
 const {
   getUserQuizzes,
-  isAdminOfQuiz,
-  isQuizPassed,
   getQuizzesByGroupId,
-  deleteQuiz,
   getPassedQuizzes,
   getQuizPlayDetails,
 } = require("../utils/firebase-utils/examen");
@@ -17,6 +14,7 @@ const {
   deleteGroup,
   leaveGroup,
   inviteMembers,
+  rejectInvite,
   updateGroupProperty,
 } = require("../utils/firebase-utils/group");
 const {
@@ -24,10 +22,6 @@ const {
   getUsers,
   getMembers,
 } = require("../utils/firebase-utils/members");
-const {
-  getQuestions,
-  getQuizDuration,
-} = require("../utils/firebase-utils/question");
 
 const getUserGroupsHandler = async (req, res) => {
   const { lastVisible, count, level, visibility, searchTerm, sort, role } =
@@ -61,6 +55,9 @@ const getAvailableGroupsHandler = async (req, res) => {
     sort,
     joinableOnly,
   } = req.query;
+
+  console.log("joinableOnly: ", joinableOnly);
+  
   const creteria = {
     level: level ? level.split(",") : [],
     visibility: visibility ? visibility.split(",") : [],
@@ -99,7 +96,11 @@ const getQuizzesHandler = async (req, res) => {
       .json({ cards: result.cards, lastVisible: result.lastVisible });
   }
 
-  return res.status(400).json({ message: result.message });
+  return res.status(400).json({
+    message: result.message,
+    isNative: result.isNative ?? false,
+    type: result.type ?? "error",
+  });
 };
 
 const groupFragmentHandler =
@@ -108,6 +109,8 @@ const groupFragmentHandler =
     if (!res.payload.success)
       return res.status(400).json({
         message: res.payload.message || "Failed to load.",
+        isNative: res.payload.isNative ?? false,
+        type: res.payload.type ?? "error",
       });
     return res.render(
       `fragments/my-groups${route}`,
@@ -119,6 +122,8 @@ const groupFragmentHandler =
           console.error("Error rendering template:", err);
           return res.status(500).json({
             message: "Failed to load group info. Please try again later.",
+            isNative: false,
+            type: "error",
           });
         }
 
@@ -141,10 +146,14 @@ const getQuizPlayDetailsHandler = async (req, res) => {
   try {
     const result = await getQuizPlayDetails(req.user, req.params.quizId);
     if (result.success) return res.status(200).json({ ...result.data });
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({
+      message: result.message || "Internal Server Error",
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   } catch (error) {
     console.log("Error in getQuizPlayDetailsHandler:");
-    return res.status(500).json({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error", isNative: false, type: "error" });
   }
 };
 
@@ -157,19 +166,26 @@ const createGroupHandler = async (req, res) => {
   } else {
     return res.status(400).json({
       message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
     });
   }
 };
 
 const joinGroupHandler = async (req, res) => {
   const groupId = req.body.groupId;
+  const isInvite = Boolean(req.body.isInvite);
 
-  const result = await joinGroup(groupId, req.user);
+  const result = await joinGroup(groupId, req.user, isInvite);
 
   if (result.success) {
     return res.status(200).json({ status: result.status });
   }
-  return res.status(400).json({ message: result.message });
+  return res.status(400).json({
+    message: result.message,
+    isNative: result.isNative ?? false,
+    type: result.type ?? "error",
+  });
 };
 
 const patchGroupHandler = async (req, res) => {
@@ -188,6 +204,8 @@ const patchGroupHandler = async (req, res) => {
   } else {
     return res.status(400).json({
       message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
     });
   }
 };
@@ -200,7 +218,11 @@ const transferRoleHandler = async (req, res) => {
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
@@ -212,7 +234,11 @@ const kickMemberHandler = async (req, res) => {
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
@@ -223,7 +249,11 @@ const leaveGroupHandler = async (req, res) => {
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
@@ -233,34 +263,46 @@ const removeGroupHandler = async (req, res) => {
   if (result.success) {
     return res.status(200).json({ message: result.message });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
 const getUsersHandler = async (req, res) => {
   try {
-    const { search, count, lastVisible, groupId } = req.query;
+    const { search = '', count, lastVisible = '', groupId } = req.query;
     const result = await getUsers(search, count, lastVisible, groupId);
 
     if (result.success) {
       res.json({ cards: result.users, lastVisible: result.lastVisible });
     } else {
-      res.status(400).json({ message: result.message });
+      res.status(400).json({
+        message: result.message,
+        isNative: result.isNative ?? false,
+        type: result.type ?? "error",
+      });
     }
   } catch (error) {
     console.error("Error fetching users:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error", error: "Internal Server Error", isNative: false, type: "error" });
   }
 };
 
 const inviteMembersHandler = async (req, res) => {
   const { groupId, users } = req.body;
 
-  const result = await inviteMembers(groupId, users);
+  const result = await inviteMembers(groupId, users, req.user);
   if (result.success) {
     return res.status(200).json({ success: true });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
@@ -279,7 +321,11 @@ const getQuizzesByGroup = async (req, res) => {
       .status(200)
       .json({ cards: result.cards, lastVisible: result.lastVisible });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
@@ -296,7 +342,11 @@ const getPassedQuizzesHandler = async (req, res) => {
       .status(200)
       .json({ cards: result.cards, lastVisible: result.lastVisible });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
@@ -313,7 +363,11 @@ const getDemandesByGroup = async (req, res) => {
       .status(200)
       .json({ cards: result.cards, lastVisible: result.lastVisible });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
@@ -332,7 +386,28 @@ const getMembersByGroup = async (req, res) => {
       .status(200)
       .json({ cards: result.cards, lastVisible: result.lastVisible });
   } else {
-    return res.status(400).json({ message: result.message });
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
+  }
+};
+
+const rejectInviteHandler = async (req, res) => {
+  const { groupId } = req.body;
+  if (!groupId) {
+    return res.status(400).json({ message: "Group ID is required", isNative: true, type: "warning" });
+  }
+  const result = await rejectInvite(groupId, req.user.uid);
+  if (result.success) {
+    return res.status(200).json({ message: result.message });
+  } else {
+    return res.status(400).json({
+      message: result.message,
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 };
 
@@ -342,6 +417,7 @@ module.exports = {
   getAvailableGroupsHandler,
   getDemandesByGroup,
   inviteMembersHandler,
+  rejectInviteHandler,
   getMembersByGroup,
   getQuizzesByGroup,
   groupFragmentHandler,

@@ -141,6 +141,8 @@ const getUserQuizzes = async (
     return {
       success: false,
       message: "Error fetching user quizzes",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -212,6 +214,8 @@ const getPassedQuizzes = async (
     return {
       success: false,
       message: "Error fetching user quizzes",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -267,6 +271,8 @@ const getQuizzesByGroupId = async (
       return {
         success: false,
         message: "Group Not Found",
+        isNative: true,
+        type: "info",
       };
     const passedQuizzesSnap = await db
       .collection("users")
@@ -333,6 +339,8 @@ const getQuizzesByGroupId = async (
     return {
       success: false,
       message: "Error fetching quizzes",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -348,6 +356,8 @@ const createQuiz = async (examenData, userId) => {
       return {
         success: false,
         message: titleAvailability.message,
+        isNative: titleAvailability.isNative || true,
+        type: titleAvailability.type || "warning",
       };
     }
 
@@ -363,17 +373,18 @@ const createQuiz = async (examenData, userId) => {
       status: "draft",
     };
     const docRef = await examenRef.add(newExamen);
-    const result = {
+    return {
       success: true,
-      quizId: docRef.id, // This should be replaced with actual logic to create a quiz
+      quizId: docRef.id,
       message: "Quiz created successfully",
     };
-    return result;
   } catch (error) {
     console.log(error.message);
     return {
       success: false,
       message: "Error creating the quizz",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -385,6 +396,8 @@ const isQuizTitleAvailable = async (title, userId, excludedQuizId = null) => {
         success: false,
         available: false,
         message: "Quiz Title is required",
+        isNative: true,
+        type: "warning",
       };
     }
 
@@ -398,9 +411,11 @@ const isQuizTitleAvailable = async (title, userId, excludedQuizId = null) => {
 
     if (hasConflict) {
       return {
-        success: true,
+        success: false,
         available: false,
         message: "You already have a quiz with this title",
+        isNative: true,
+        type: "warning",
       };
     }
 
@@ -415,6 +430,8 @@ const isQuizTitleAvailable = async (title, userId, excludedQuizId = null) => {
       success: false,
       available: false,
       message: "Failed to check quiz title availability",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -433,6 +450,8 @@ const deleteQuiz = async (quizId) => {
     return {
       success: false,
       message: "Error deleting the quiz",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -454,6 +473,8 @@ const updateQuizTitle = async (title, id, userId) => {
       return {
         success: false,
         message: "Quiz id is not valid",
+        isNative: true,
+        type: "warning",
       };
     }
   } catch (error) {
@@ -461,6 +482,8 @@ const updateQuizTitle = async (title, id, userId) => {
     return {
       success: false,
       message: "Could not update  the quiz title",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -481,6 +504,8 @@ const updateQuizSubject = async (subject, id, userId) => {
       return {
         success: false,
         message: "Quiz id is not valid",
+        isNative: true,
+        type: "warning",
       };
     }
   } catch (error) {
@@ -488,6 +513,8 @@ const updateQuizSubject = async (subject, id, userId) => {
     return {
       success: false,
       message: "Could not update the quiz subject",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -520,6 +547,8 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
       return {
         success: false,
         message: "Error getting quiz data",
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -537,6 +566,8 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
       return {
         success: false,
         message: "No questions found in the quiz",
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -561,12 +592,16 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
     return {
       success: false,
       message: "Error getting quiz play context",
+      isNative: true,
+      type: "warning",
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
       message: "Error getting quiz play context",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -591,7 +626,12 @@ const getQuizPlayDetails = async (user, quizId) => {
     };
   } catch (error) {
     console.error("Error in getQuizPlayDetails:", error);
-    return { success: false, message: "Internal Server Error" };
+    return {
+      success: false,
+      message: "Internal Server Error",
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
@@ -616,6 +656,8 @@ const getQuizEditContext = async (quizId, userId) => {
         success: false,
         statusCode: 404,
         message: "Quiz not found",
+        isNative: true,
+        type: "info",
       };
 
     if (quizSnap.data().creator !== userId)
@@ -623,6 +665,8 @@ const getQuizEditContext = async (quizId, userId) => {
         success: false,
         statusCode: 401,
         message: "You are not authorized to edit this quiz",
+        isNative: true,
+        type: "warning",
       };
 
     const data = quizSnap.data();
@@ -643,6 +687,8 @@ const getQuizEditContext = async (quizId, userId) => {
       success: false,
       statusCode: 500,
       message: "Cannot fetch data , please try again later !.",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -653,6 +699,8 @@ const getQuizzInfo = async (quizId, userId) => {
       return {
         success: false,
         message: "Quiz ID is required",
+        isNative: true,
+        type: "warning",
       };
 
     const quizRef = db.collection("quizzes").doc(quizId);
@@ -662,6 +710,8 @@ const getQuizzInfo = async (quizId, userId) => {
       return {
         success: false,
         message: "Quiz not found",
+        isNative: true,
+        type: "info",
       };
 
     const quiz = quizSnap.data();
@@ -670,6 +720,8 @@ const getQuizzInfo = async (quizId, userId) => {
       return {
         success: false,
         message: "You are not authorized to edit this quiz",
+        isNative: true,
+        type: "warning",
       };
 
     const questions = await getQuestions(quizId, userId);
@@ -686,6 +738,8 @@ const getQuizzInfo = async (quizId, userId) => {
     return {
       success: false,
       message: "Cant fetch the quiz questions please try again later",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -796,6 +850,8 @@ const modifyQuizQuestions = async (
       return {
         success: false,
         message: "Quiz not found",
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -803,6 +859,8 @@ const modifyQuizQuestions = async (
       return {
         success: false,
         message: "You are not authorized to modify this quiz",
+        isNative: true,
+        type: "warning",
       };
     }
 
@@ -859,6 +917,8 @@ const modifyQuizQuestions = async (
     return {
       success: false,
       message: "Something happend while updating the quiz",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -877,12 +937,16 @@ const getQuizResult = async (reqUserId, quizId, groupId, userId) => {
 
     if (
       userId !== reqUserId &&
-      (userId !== quizCreator ||
-        (groupSnap && groupSnap.exists && groupSnap.data().creator !== userId))
+      userId !== quizCreator &&
+      groupSnap &&
+      groupSnap.exists &&
+      groupSnap.data().creator !== userId
     )
       return {
         success: false,
         message: "You are not authorized to view this quiz result.",
+        isNative: true,
+        type: "warning",
       };
 
     const quizResultRef = db.collection("quizResults");
@@ -895,6 +959,8 @@ const getQuizResult = async (reqUserId, quizId, groupId, userId) => {
       return {
         success: false,
         message: "No quiz result found for this user and quiz",
+        isNative: true,
+        type: "info",
       };
     }
 
@@ -925,6 +991,8 @@ const getQuizResult = async (reqUserId, quizId, groupId, userId) => {
     return {
       success: false,
       message: "Failed to fetch quiz result",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -942,6 +1010,8 @@ const addQuizResult = async (userId, quizResult) => {
       return {
         success: false,
         message: "Quiz not found",
+        isNative: true,
+        type: "info",
       };
 
     const quizTitle = quizSnap.data().title;
@@ -956,6 +1026,8 @@ const addQuizResult = async (userId, quizResult) => {
       return {
         success: false,
         message: "You are not in a session",
+        isNative: true,
+        type: "warning",
       };
 
     const sessionSnap = await db
@@ -967,6 +1039,8 @@ const addQuizResult = async (userId, quizResult) => {
       return {
         success: false,
         message: "Session not found",
+        isNative: true,
+        type: "info",
       };
 
     const session = sessionSnap.data();
@@ -975,6 +1049,8 @@ const addQuizResult = async (userId, quizResult) => {
       return {
         success: false,
         message: "You are not in a session with this quiz",
+        isNative: true,
+        type: "warning",
       };
 
     const questionsCount = (
@@ -1036,6 +1112,8 @@ const addQuizResult = async (userId, quizResult) => {
     return {
       success: false,
       message: "Failed to save quiz result",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -1043,18 +1121,33 @@ const addQuizResult = async (userId, quizResult) => {
 const getQuizResultsByGroup = async (quizId, groupId, userId) => {
   try {
     const quizSnap = await db.collection("quizzes").doc(quizId).get();
-    const quiz = quizSnap.data();
+
+    const groupSnap = await db.collection("groups").doc(quizId).get();
 
     if (!quizSnap.exists)
       return {
         success: false,
         message: "Quiz not found",
+        isNative: true,
+        type: "info",
       };
 
-    if (quiz.creator !== userId)
+    const quiz = quizSnap.data();
+
+    if (!groupSnap.exists)
+      return {
+        success: false,
+        message: "Group Not Found",
+        isNative: true,
+        type: "info",
+      };
+
+    if (groupSnap.data().creator !== userId)
       return {
         success: false,
         message: "You are not authorized to view this quiz results.",
+        isNative: true,
+        type: "warning",
       };
 
     const quizResults = await db
@@ -1077,6 +1170,8 @@ const getQuizResultsByGroup = async (quizId, groupId, userId) => {
     return {
       success: false,
       message: "Failed to fetch quiz results",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -1087,6 +1182,8 @@ const duplicateQuiz = async (quizId, userId, title) => {
       return {
         success: false,
         message: "Quiz ID is required",
+        isNative: true,
+        type: "warning",
       };
     }
 
@@ -1097,6 +1194,8 @@ const duplicateQuiz = async (quizId, userId, title) => {
       return {
         success: false,
         message: "Quiz not found",
+        isNative: true,
+        type: "info",
       };
 
     const quiz = quizSnap.data();
@@ -1104,6 +1203,8 @@ const duplicateQuiz = async (quizId, userId, title) => {
       return {
         success: false,
         message: "You are not authorized to duplicate this quiz.",
+        isNative: true,
+        type: "warning",
       };
 
     const newTitle = title || `${quiz.title} (Copy)`;
@@ -1113,6 +1214,8 @@ const duplicateQuiz = async (quizId, userId, title) => {
       return {
         success: false,
         message: titleAvailability.message,
+        isNative: titleAvailability.isNative || true,
+        type: titleAvailability.type || "warning",
       };
     }
 
@@ -1146,6 +1249,8 @@ const duplicateQuiz = async (quizId, userId, title) => {
     return {
       success: false,
       message: "Failed to duplicate quiz",
+      isNative: false,
+      type: "error",
     };
   }
 };

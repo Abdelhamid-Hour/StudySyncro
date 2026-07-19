@@ -1,6 +1,10 @@
 const { FieldValue } = require("firebase-admin/firestore");
 const { db, rDb } = require("../../firebase/firebaseAdmin");
-const { refillSampleMembersIfNeeded } = require("./shared");
+const {
+  refillSampleMembersIfNeeded,
+  syncUserGroupSnapshot,
+  saveGroupToUser,
+} = require("./shared");
 const { INITIALE_LOADERS_COUNT } = require("../global");
 const { notifyMemberRemoved } = require("./notifications");
 
@@ -18,7 +22,7 @@ const getFilteredMembers = (search, members, creator, isAdmin) => {
   if (!search) return getFormattedMembers(members, creator, isAdmin);
   const lowerSearch = search.trim().toLowerCase();
   const filteredMembers = members.filter((m) =>
-    m.fullName?.toLowerCase().includes(lowerSearch)
+    m.fullName?.toLowerCase().includes(lowerSearch),
   );
   return getFormattedMembers(filteredMembers, creator, isAdmin);
 };
@@ -35,7 +39,12 @@ const getMembers = async (
     const groupSnap = await groupRef.get();
 
     if (!groupSnap.exists) {
-      return { success: false, message: "Group not found" };
+      return {
+        success: false,
+        message: "Group not found",
+        isNative: true,
+        type: "info",
+      };
     }
     const creator = groupSnap.data().creator;
     const isAdmin = creator === userId;
@@ -117,37 +126,11 @@ const getMembers = async (
     return {
       success: false,
       message: "An error occurred while fetching members",
+      isNative: false,
+      type: "error",
     };
   }
 };
-
-// const getMembers = async (search, groupId, userId) => {
-//   try {
-//     const groupRef = db.collection("groups").doc(groupId);
-//     const groupSnap = await groupRef.get();
-//     const creator = groupSnap.data().creator;
-//     const membersSnap = await groupRef.collection("members").get();
-
-//     if (!groupSnap.exists)
-//       return { success: false, message: "Group not found" };
-//     const members = membersSnap.docs.map((doc) => doc.data());
-//     const filteredMembers = getFilteredMembers(search, members, creator);
-//     return {
-//       success: true,
-//       context: {
-//         isAdmin: creator === userId,
-//         count: filteredMembers.length,
-//         filteredMembers,
-//       },
-//     };
-//   } catch (error) {
-//     console.error(error);
-//     return {
-//       success: false,
-//       message: "An error occurred while fetching members",
-//     };
-//   }
-// };
 
 const addMember = async (groupRef, userId) => {
   try {
@@ -163,7 +146,12 @@ const addMember = async (groupRef, userId) => {
     const maxMembers = membersCount >= group.maxMembers;
 
     if (maxMembers) {
-      return { message: "Group is full", success: false };
+      return {
+        message: "Group is full",
+        success: false,
+        isNative: true,
+        type: "info",
+      };
     }
 
     const userData = userSnap.data();
@@ -173,7 +161,12 @@ const addMember = async (groupRef, userId) => {
     ).exists;
 
     if (isAlreadyMember) {
-      return { message: "You are already a member", success: false };
+      return {
+        message: "You are already a member",
+        success: false,
+        isNative: true,
+        type: "info",
+      };
     }
 
     // Add user to group members
@@ -186,22 +179,31 @@ const addMember = async (groupRef, userId) => {
     await groupRef.update({
       membersCount: FieldValue.increment(1),
     });
-    await userRef.collection("userGroupsIds").doc(groupRef.id).set({});
+    await saveGroupToUser(userId, groupRef.id, group);
+    await syncUserGroupSnapshot(groupRef.id, {
+      membersCount: FieldValue.increment(1),
+    });
     await refillSampleMembersIfNeeded(groupRef);
 
     if (group.currentSession) {
-      const sessionSnap = await db.collection("sessions").doc(group.currentSession).get();
+      const sessionSnap = await db
+        .collection("sessions")
+        .doc(group.currentSession)
+        .get();
       if (sessionSnap.exists) {
         const sData = sessionSnap.data();
-        await userRef.collection("activeSessions").doc(group.currentSession).set({
-          name: sData.name || "",
-          description: sData.description || "",
-          duration: sData.duration || 0,
-          startDate: sData.startDate || "",
-          groupName: sData.groupName || "",
-          tasksCount: sData.tasksCount || 0,
-          joinedCount: sData.joinedCount || 0,
-         });
+        await userRef
+          .collection("activeSessions")
+          .doc(group.currentSession)
+          .set({
+            name: sData.name || "",
+            description: sData.description || "",
+            duration: sData.duration || 0,
+            startDate: sData.startDate || "",
+            groupName: sData.groupName || "",
+            tasksCount: sData.tasksCount || 0,
+            joinedCount: sData.joinedCount || 0,
+          });
       }
     }
 
@@ -211,7 +213,12 @@ const addMember = async (groupRef, userId) => {
     };
   } catch (error) {
     console.error("Error in addMember function:", error);
-    return { message: "Internal sever error", success: false };
+    return {
+      message: "Internal sever error",
+      success: false,
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
@@ -227,19 +234,23 @@ const kickMember = async (groupId, userId) => {
       return {
         success: false,
         message: "Group not found",
+        isNative: true,
+        type: "info",
       };
     }
     if (!memberSnap.exists) {
       return {
         success: false,
         message: "User not found",
+        isNative: true,
+        type: "info",
       };
     }
     await memberSnap.ref.delete();
     await db
       .collection("users")
       .doc(userId)
-      .collection("userGroupsIds")
+      .collection("userGroups")
       .doc(groupId)
       .delete();
     await groupRef.update({
@@ -251,14 +262,23 @@ const kickMember = async (groupId, userId) => {
         photoURL: userSnap.data().photoURL,
       }),
     });
+    await syncUserGroupSnapshot(groupId, {
+      membersCount: FieldValue.increment(-1),
+    });
 
     // Refill sampleMembers if less than 3
     await refillSampleMembersIfNeeded(groupRef);
 
     if (groupSnap.data().currentSession) {
-      await userRef.collection("activeSessions").doc(groupSnap.data().currentSession).delete();
+      await userRef
+        .collection("activeSessions")
+        .doc(groupSnap.data().currentSession)
+        .delete();
     }
-    await rDb.ref(`userGroupChats/${userId}/${groupId}`).remove().catch((e) => console.error(e));
+    await rDb
+      .ref(`userGroupChats/${userId}/${groupId}`)
+      .remove()
+      .catch((e) => console.error(e));
 
     await notifyMemberRemoved(userId, groupId, groupSnap.data().name);
 
@@ -271,6 +291,8 @@ const kickMember = async (groupId, userId) => {
     return {
       success: false,
       message: "Something went wrong",
+      isNative: false,
+      type: "error",
     };
   }
 };
@@ -296,7 +318,7 @@ const getUsers = async (
   search,
   count = INITIALE_LOADERS_COUNT,
   lastVisible,
-  groupId
+  groupId,
 ) => {
   // get user that its name and id match the search
   try {
@@ -376,6 +398,8 @@ const getUsers = async (
     return {
       success: false,
       message: "An error occurred while fetching users",
+      isNative: false,
+      type: "error",
     };
   }
 };

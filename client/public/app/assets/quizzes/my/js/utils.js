@@ -1,6 +1,7 @@
 import {
   sendData,
   showMessageBlock,
+  isNativeDomainCondition,
 } from "../../../../../main_assets/js/utils.js";
 import {
   globalTooltip,
@@ -170,8 +171,10 @@ const checkQuizTitleAvailability = async (title, quizTitleInput) => {
     resetTooltip(globalTooltip, quizTitleInput.closest(".field-container"));
     return true;
   } catch (error) {
-    console.error("Error: ", error);
-    showMessageBlock(error.message, "error");
+    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    if (!isNative) console.error("Error: ", error);
+    showMessageBlock(error.message, notifType);
     return false;
   }
 };

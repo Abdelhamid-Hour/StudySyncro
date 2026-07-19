@@ -46,7 +46,11 @@ const createNewUser = async (req, res) => {
         const filePath = `avatars/${uid}`;
         const result = await uploadFileToStorage(filePath, avatar, true);
         if (!result.success)
-          return res.status(500).json({ message: result.message });
+          return res.status(500).json({
+            message: result.message,
+            isNative: result.isNative ?? false,
+            type: result.type ?? "error",
+          });
         userData.photoURL = result.URL;
       } else {
         userData.photoURL =
@@ -65,6 +69,8 @@ const createNewUser = async (req, res) => {
     return res.status(500).json({
       message: "Error saving user data",
       error: error.message,
+      isNative: false,
+      type: "error",
     });
   }
 };
@@ -89,7 +95,11 @@ const createSession = async function (req, res) {
     return res.status(200).json({ message: "Session created" });
   } catch (error) {
     console.log(error.message);
-    return res.status(500).json({ message: "Error creating session" });
+    return res.status(500).json({
+      message: "Error creating session",
+      isNative: false,
+      type: "error",
+    });
   }
 };
 

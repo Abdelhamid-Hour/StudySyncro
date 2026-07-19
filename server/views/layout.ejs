@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
       (function() {
         try {
@@ -69,7 +68,23 @@
     <link data-dynamic="" rel="stylesheet" href="/app/assets<%- resourcesRoute %>css/styles.css" />
     <link rel="stylesheet" href="/main_assets/css/styles.css" />
     <link rel="stylesheet" href="/main_assets/css/variables_and_fonts.css" />
-    <title>Home</title>
+    <title>StudyHype — <%= resourcesRoute.includes("/home/") 
+      ? "Home" 
+      : resourcesRoute === '/groups/my/group-chat/' 
+      ? "Group Chat" 
+      : resourcesRoute === '/groups/available/'
+      ? "Available Groups"
+      : ['/groups/my/', '/groups/available/'].includes(resourcesRoute) || resourcesRoute.includes('/groups/')
+      ? "Groups" 
+      : resourcesRoute === '/quizzes/my/quiz-editor/' 
+      ? "Quiz Editor" 
+      : resourcesRoute === '/quizzes/passed/'
+      ? "Passed Quizzes"
+      : ['/quizzes/my/', '/quizzes/passed/'].includes(resourcesRoute) || resourcesRoute.includes('/quizzes/')
+      ? "Quizzes" 
+      : resourcesRoute.includes('/settings/') 
+      ? "Settings" 
+      : "Dashboard" %></title>
   </head>
   
   <body>
@@ -110,7 +125,7 @@
       <div class="top-side-bar-middele">
       <% if (resourcesRoute.includes("/home/")) { %>
       <div class="greeting-msg fade-in-template">
-        <h2>Hello <%- user.fullName %> 👋</h2>
+        <h2>Hello <%= user.fullName %> 👋</h2>
         <p>Have a good day !</p>
       </div>
       <% } else if (['/quizzes/my/', '/quizzes/passed/', '/groups/my/', '/groups/available/'].includes(resourcesRoute)) { %>
@@ -385,7 +400,7 @@
     </aside>
     <aside class="left-side-bar">
       <div class="logo-container">
-        <img src="/main_assets/images/logo-mark.svg" alt="StudyHype Logo" style="width: 1.8rem; height: 1.8rem; flex-shrink: 0;" />
+        <img src="/main_assets/images/logo-mark.svg" alt="StudyHype Logo" style="aspect-ratio: 1 / 1; width: 2.2rem; flex-shrink: 0;" />
         <h6 class="should-hide">StudyHype</h6>
       </div>
       <div class="side-bar-icons">
@@ -463,13 +478,18 @@
                 return "Recent";
               }
             };
+            const escapeHtml = (str) => {
+              if (typeof str !== 'string') return '';
+              return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+            };
             const formatNotifMsg = (notif) => {
-              let msg = notif.message || "";
+              let msg = escapeHtml(notif.message || "");
               if (msg.startsWith("Admin role") || msg.includes("Admin role")) {
                 msg = msg.replace("Admin role", "<strong>Admin</strong> role");
               }
 
               const termsMap = [
+                { term: "invited you to join", cls: "bold-success" },
                 { term: "successfully joined", cls: "bold-success" },
                 { term: "accepted", cls: "bold-success" },
                 { term: "started", cls: "bold-success" },
@@ -489,8 +509,9 @@
               termsMap.sort((a, b) => b.term.length - a.term.length);
 
               termsMap.forEach(({ term, cls }) => {
-                const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                const regex = new RegExp(`(?<!>|<strong class="[^"]*">)(${escaped})(?!<\\/strong>)`, 'g');
+                const escapedTerm = escapeHtml(term);
+                const regexStr = escapedTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(`(?<!>|<strong class="[^"]*">)(${regexStr})(?!<\\/strong>)`, 'g');
                 const classAttr = cls ? ` class="${cls}"` : "";
                 msg = msg.replace(regex, `<strong${classAttr}>$1</strong>`);
               });
@@ -502,9 +523,9 @@
             <%
               const type = notif.type || "general";
               let iconHtml = `<i class="bi bi-bell-fill"></i>`;
-              if (notif.metadata && notif.metadata.senderPhotoURL && (type === "join_request" || type === "member_removed")) {
-                iconHtml = `<img src="${notif.metadata.senderPhotoURL}" alt="avatar" />`;
-              } else if (type === "join_request") {
+              if (notif.metadata && notif.metadata.senderPhotoURL && (type === "join_request" || type === "member_removed" || type === "join_invite" || notif.metadata.isInvite)) {
+                iconHtml = `<img src="${escapeHtml(notif.metadata.senderPhotoURL)}" alt="avatar" />`;
+              } else if (type === "join_request" || type === "join_invite" || (notif.metadata && notif.metadata.isInvite)) {
                 iconHtml = `<i class="bi bi-person-fill"></i>`;
               } else if (type === "join_accepted") {
                 iconHtml = `<i class="bi bi-link-45deg"></i>`;
@@ -528,7 +549,7 @@
               const timeStr = formatNotifDate(notif.timestamp);
               const categoryLabel = notif.category || "General";
             %>
-            <div class="notif-card card-item <%= notif.read ? '' : 'unread' %>" data-id="<%= notif.id %>" data-type="<%= notif.type %>" data-category="<%= notif.category || 'All' %>" data-demande-id="<%= notif.metadata?.demandeId || '' %>" data-group-id="<%= notif.metadata?.groupId || '' %>" data-sender-name="<%= notif.metadata?.senderName || '' %>" data-group-name="<%= notif.metadata?.groupName || '' %>" data-session-id="<%= notif.metadata?.sessionId || '' %>">
+            <div class="notif-card card-item <%= notif.read ? '' : 'unread' %>" data-id="<%= notif.id %>" data-type="<%= notif.type %>" data-category="<%= notif.category || 'All' %>" data-demande-id="<%= notif.metadata?.demandeId || '' %>" data-group-id="<%= notif.metadata?.groupId || '' %>" data-sender-name="<%= notif.metadata?.senderName || '' %>" data-group-name="<%= notif.metadata?.groupName || '' %>" data-session-id="<%= notif.metadata?.sessionId || '' %>" data-is-invite="<%= notif.metadata?.isInvite || '' %>">
               <div class="notif-icon <%= notif.type %>">
                 <%- iconHtml %>
               </div>
@@ -540,10 +561,15 @@
                     const isAlreadyJoined = Boolean((notif.metadata && notif.metadata.joined) || (typeof user !== 'undefined' && user && user.currentSession && user.currentSession === (notif.metadata && notif.metadata.sessionId)));
                     const isCreator = Boolean((notif.metadata && notif.metadata.isAdmin) || (typeof user !== 'undefined' && user && notif.metadata && notif.metadata.creatorId && user.uid === notif.metadata.creatorId));
                   %>
-                  <% if (notif.type === 'join_request') { %>
+                  <% if (notif.type === 'join_request' && !notif.metadata?.isInvite) { %>
                     <div class="notif-actions">
                       <button type="button" class="reject-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> Reject</button>
                       <button type="button" class="accept-btn exclude-btn small-btn" data-action="accept"><i class="bi bi-check-circle"></i> Accept</button>
+                    </div>
+                  <% } else if (notif.type === 'join_invite' || (notif.type === 'join_request' && notif.metadata?.isInvite)) { %>
+                    <div class="notif-actions">
+                      <button type="button" class="reject-invite-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> Reject</button>
+                      <button type="button" class="join-invite-btn exclude-btn small-btn" data-action="join"><i class="bi bi-box-arrow-in-right"></i> Join</button>
                     </div>
                   <% } else if (notif.type === 'session_started' && !(notif.metadata && notif.metadata.sessionEnded) && !isAlreadyJoined && !isCreator) { %>
                     <div class="notif-actions">

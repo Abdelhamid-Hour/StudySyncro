@@ -122,51 +122,35 @@ const getUserNotifications = async (
     return {
       success: false,
       message: "An error occurred while fetching notifications",
+      isNative: false,
+      type: "error",
     };
   }
 };
 
-const markLoadedNotificationsAsRead = async (userId, notificationIds = [], category = null) => {
+const markLoadedNotificationsAsRead = async (userId) => {
   try {
     const notifCollection = db
       .collection("notifications")
       .doc(userId)
       .collection("notifications");
 
-    if (category) {
-      let query = notifCollection.where("read", "==", false);
-      if (category !== "All") {
-        query = query.where("category", "==", category);
-      }
-      const snapshot = await query.get();
-      if (snapshot.empty) return { success: true, count: 0 };
+    const snapshot = await notifCollection.where("read", "==", false).get();
+    if (snapshot.empty) return { success: true, count: 0 };
 
-      const docs = snapshot.docs;
-      for (let i = 0; i < docs.length; i += 500) {
-        const chunk = docs.slice(i, i + 500);
-        const batch = db.batch();
-        chunk.forEach((doc) => {
-          batch.update(doc.ref, { read: true });
-        });
-        await batch.commit();
-      }
-      return { success: true, count: docs.length };
-    }
-
-    if (!notificationIds || !notificationIds.length) return { success: true, count: 0 };
-    for (let i = 0; i < notificationIds.length; i += 500) {
-      const chunk = notificationIds.slice(i, i + 500);
+    const docs = snapshot.docs;
+    for (let i = 0; i < docs.length; i += 500) {
+      const chunk = docs.slice(i, i + 500);
       const batch = db.batch();
-      for (const id of chunk) {
-        const docRef = notifCollection.doc(id);
-        batch.update(docRef, { read: true });
-      }
+      chunk.forEach((doc) => {
+        batch.update(doc.ref, { read: true });
+      });
       await batch.commit();
     }
-    return { success: true, count: notificationIds.length };
+    return { success: true, count: docs.length };
   } catch (error) {
-    console.error("Error marking loaded notifications as read:", error);
-    return { success: false, message: error.message };
+    console.error("Error marking notifications as read:", error);
+    return { success: false, message: error.message, isNative: false, type: "error" };
   }
 };
 
@@ -201,6 +185,38 @@ const updateJoinRequestNotificationStatus = async (
     }
   } catch (error) {
     console.error("Error updating join request notification status:", error);
+  }
+};
+
+const updateJoinInviteNotificationStatus = async (
+  userId,
+  groupId,
+  newStatus
+) => {
+  try {
+    const notifCollection = db
+      .collection("notifications")
+      .doc(userId)
+      .collection("notifications");
+    const snapshot = await notifCollection
+      .where("metadata.groupId", "==", groupId)
+      .where("type", "==", "join_invite")
+      .limit(1)
+      .get();
+
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      const data = doc.data();
+      await doc.ref.update({
+        read: true,
+        type: newStatus === "accepted" ? "join_accepted" : "join_rejected",
+        message: `Invitation to join group ${
+          data.metadata?.groupName || "group"
+        } was ${newStatus}.`,
+      });
+    }
+  } catch (error) {
+    console.error("Error updating join invite notification status:", error);
   }
 };
 
@@ -253,6 +269,52 @@ const notifyJoinResult = async (
     read: false,
     metadata: { groupId, groupName },
   });
+};
+
+const notifyGroupInvite = async (
+  groupId,
+  groupName,
+  senderUser,
+  invitedUserId
+) => {
+  try {
+    const notifCollection = db
+      .collection("notifications")
+      .doc(invitedUserId)
+      .collection("notifications");
+
+    const existing = await notifCollection
+      .where("metadata.groupId", "==", groupId)
+      .where("type", "==", "join_invite")
+      .limit(1)
+      .get();
+
+    if (!existing.empty) {
+      await existing.docs[0].ref.update({
+        timestamp: Date.now(),
+        read: false,
+      });
+      return;
+    }
+
+    await addNotification(invitedUserId, {
+      type: "join_invite",
+      title: "Group Invitation",
+      message: `${senderUser.fullName || "A group admin"} invited you to join the group ${groupName}.`,
+      category: "Join Request",
+      read: false,
+      metadata: {
+        groupId,
+        groupName,
+        senderId: senderUser.uid || senderUser.id,
+        senderName: senderUser.fullName || "Admin",
+        senderPhotoURL: senderUser.photoURL || null,
+        isInvite: true,
+      },
+    });
+  } catch (error) {
+    console.error("Error in notifyGroupInvite:", error);
+  }
 };
 
 const markSessionStartedNotificationsEnded = async (members = [], sessionId) => {
@@ -412,8 +474,10 @@ module.exports = {
   getUserNotifications,
   markLoadedNotificationsAsRead,
   updateJoinRequestNotificationStatus,
+  updateJoinInviteNotificationStatus,
   notifyJoinRequest,
   notifyJoinResult,
+  notifyGroupInvite,
   notifySessionStatus,
   updateSessionNotificationJoined,
   notifyRoleTransfer,

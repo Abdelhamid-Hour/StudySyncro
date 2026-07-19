@@ -28,6 +28,10 @@ import {
   formsContainer,
   forgotPasswordLink,
   fileinput,
+  signUpFormContainer,
+  signInFormContainer,
+  loginForm,
+  avatarSpaceReserver,
 } from "../assets/js/dom-variables.js";
 import { showMessageBlock } from "../../main_assets/js/utils.js";
 
@@ -49,15 +53,16 @@ signInBtn.addEventListener("click", async () => {
     auth,
     signInemailField.value,
     signInPasswordField.value,
-    showMessageBlock
+    showMessageBlock,
   );
   inputsEmptying();
 });
 
 signUpBtn.addEventListener("click", () => {
   if (!validatesSignUpForm()) return;
+
   const fullName = `${userNameFormat(firstName.value)} ${userNameFormat(
-    lastName.value
+    lastName.value,
   )}`;
 
   createAuserWithEmailAndPassword(
@@ -66,7 +71,7 @@ signUpBtn.addEventListener("click", () => {
     signUpemailField.value,
     fileinput.files[0],
     signUpPasswordField.value,
-    showMessageBlock
+    showMessageBlock,
   );
   inputsEmptying();
 });
@@ -87,7 +92,7 @@ forgotPasswordLink.addEventListener("click", async () => {
     await sendPasswordResetEmail(auth, signInemailField.value);
     showMessageBlock(
       "If this email is registered, you will receive a password reset link.",
-      "success"
+      "success",
     );
     signInPasswordField.value = "";
   } catch (error) {

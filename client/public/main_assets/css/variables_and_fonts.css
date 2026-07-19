@@ -95,6 +95,12 @@ html[data-theme="light"] {
   --info-block-text-color: #1e77fd;
   --info-icon-color: #1e77fd;
   --close-info-icon-color: #1451a3;
+  /* external warning variables */
+  --warning-block-background-color: var(--container-background-color);
+  --warning-block-border-color: #f59e0b;
+  --warning-block-text-color: #f59e0b;
+  --warning-icon-color: #f59e0b;
+  --close-warning-icon-color: #d97706;
   /* links color */
   --links-color: #485268;
   /* link hover color */

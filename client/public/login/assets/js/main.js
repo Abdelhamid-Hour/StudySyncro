@@ -4,7 +4,7 @@ import {
   initializeSignUpForm,
   lettersAnimation,
   showAvatarSide,
-  swapAnimationThrottling
+  swapAnimationThrottling,
 } from "./utils.js";
 import {
   eyeIcons,
@@ -15,6 +15,8 @@ import {
   animationDuration,
   avatarContainer,
   avatarAside,
+  updateSignFormHeights,
+  signInFormContainer,
 } from "./dom-variables.js";
 import "../../auth/auth.js";
 import { setUpFileInputListeners } from "../../../app/assets/shared/avatar/js/utils.js";
@@ -36,7 +38,7 @@ signUpLink.addEventListener("click", function () {
       document.querySelector("h1 > span").textContent = `${word}`;
     },
     animationDuration,
-    20
+    20,
   );
   swapAnimationThrottling(signUpFormHeight);
 });
@@ -50,11 +52,16 @@ signInLink.addEventListener("click", function () {
       document.querySelector("h1 > span").textContent = `${word}`;
     },
     animationDuration,
-    20
+    20,
   );
   swapAnimationThrottling(signInFormHeight);
 });
 
+window.addEventListener("resize", () => {
+  setTimeout(() => {
+    updateSignFormHeights();
+  }, 300);
+});
 // Add EventListener for eye icons click
 handlEyeIconsClick(eyeIcons);
 
