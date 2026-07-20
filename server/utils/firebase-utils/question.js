@@ -49,7 +49,7 @@ const getQuizDuration = async (user) => {
       activeTasksSnap.docs.length > 0 ? activeTasksSnap.docs[0].data() : {};
     const timeLeft = Date.now() - new Date(session.startDate).getTime();
 
-    if (!activeTask.empty && activeTask.isQuiz && sessionSnap.exists) {
+    if (activeTask && activeTask.isQuiz && sessionSnap.exists) {
       if (timeLeft < session.duration * 60000) {
         const elapsedTime = Math.floor(session.duration * 60000 - timeLeft);
 

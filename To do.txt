@@ -1,21 +1,13 @@
 // index and optimize website for searche engines
 // add metadata and metadata handler to the login page
 // use post css to generate the css files
-// solve consol warnings
 // add loading animation to the login page
-// Verify any data attr that it data sent from the front end ----- securityyy
-// ========== make the firebase functions remove the finished sessions
 // add a soft delete option ================
 // improve website operations with transactions
-/ retrn a page when the user want to acccess a group that not join to it ---- all unhaurized partes | groups or thing that not found
-// invite user functionality ---------------------- active
 // modify the chat input inactive home page to use the pre existing func for initialization
 // arab verion
 // learn mutaionObserver
-// solve the login style problem (the error text clip)
-// improve and solve the password RegEx
-
-
+// add the cloud funcs
 
 
 

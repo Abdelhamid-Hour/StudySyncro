@@ -25,7 +25,6 @@ html[data-theme="light"] {
 }
 
 :root {
-
   /* h1 color */
   --heading-color: var(--primary-color);
   /* buttons color variables */
@@ -73,7 +72,7 @@ html[data-theme="light"] {
   --error-color: #eb3b43ff;
   --error-border-color: rgb(182, 61, 61);
   --error-background-color: rgb(182, 61, 61);
-  --error-font-size: small;
+  --error-font-size: var(--small-font-size);
   --error-font-weight: 500;
   /* external error variables */
   --error-block-background-color: rgb(231, 109, 109);
@@ -115,6 +114,12 @@ html[data-theme="light"] {
   --disabled-text-color: var(--btn-border-color);
   --disabled-background-color: var(--btn-background-color);
   --primary-transition-style: 300ms ease-out;
+  --xx-large-font-size: 2.1rem;
+  --x-large-font-size: 1.8rem;
+  --large-font-size: 1.5rem;
+  --medium-font-size: 1rem;
+  --small-font-size: 0.875rem;
+  --x-small-font-size: 0.6rem;
 }
 
 /* Telegram-style circular reveal transition */
@@ -133,15 +138,19 @@ html[data-theme="light"] {
 }
 
 html[data-theme]::view-transition-new(root) {
-  animation: theme-reveal .7s ease-in-out;
+  animation: theme-reveal 0.7s ease-in-out;
 }
 
 @keyframes theme-reveal {
   from {
-    clip-path: circle(0% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%));
+    clip-path: circle(
+      0% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%)
+    );
   }
 
   to {
-    clip-path: circle(150% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%));
+    clip-path: circle(
+      150% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%)
+    );
   }
 }

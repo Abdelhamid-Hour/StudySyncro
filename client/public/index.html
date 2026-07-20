@@ -65,48 +65,48 @@
     <link rel="stylesheet" href="./main_assets/css/landing.css" />
   </head>
   <body>
-    <main class="landing-wrapper fade-in-template">
-      <!-- Navigation Bar -->
-      <nav class="landing-nav">
-        <a href="/" class="landing-brand" style="text-decoration: none">
-          <img
-            src="./main_assets/images/logo-mark.svg"
-            alt="StudyHype Logo"
-            style="width: 2.2rem; height: 2.2rem; flex-shrink: 0"
-          />
-          <span
-            style="
-              font-size: 1.45rem;
-              font-weight: 800;
-              letter-spacing: -0.5px;
-              color: var(--primary-color);
-            "
-            >StudyHype</span
-          >
+    <!-- Navigation Bar -->
+    <nav class="landing-nav">
+      <a href="/" class="landing-brand" style="text-decoration: none">
+        <img
+          src="./main_assets/images/logo-mark.svg"
+          alt="StudyHype Logo"
+          style="width: 2.2rem; height: 2.2rem; flex-shrink: 0"
+        />
+        <span
+          style="
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--primary-color);
+          "
+          >StudyHype</span
+        >
+      </a>
+
+      <ul class="landing-nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#workflow">How It Works</a></li>
+        <li><a href="#stats">Community</a></li>
+      </ul>
+
+      <div class="landing-nav-actions">
+        <button
+          class="button exclude-btn toggle-theme-btn"
+          id="theme-toggle-btn"
+          title="Toggle Dark/Light Mode"
+          aria-label="Toggle Dark or Light Mode"
+        >
+          <i class="bi bi-moon theme-toggle-icon" id="theme-toggle-icon"></i>
+        </button>
+        <a href="/login" class="button blue-btn login-btn">
+          <span>Login</span>
+          <i class="bi bi-arrow-right"></i>
         </a>
+      </div>
+    </nav>
 
-        <ul class="landing-nav-links">
-          <li><a href="#features">Features</a></li>
-          <li><a href="#workflow">How It Works</a></li>
-          <li><a href="#stats">Community</a></li>
-        </ul>
-
-        <div class="landing-nav-actions">
-          <button
-            class="button exclude-btn toggle-theme-btn"
-            id="theme-toggle-btn"
-            title="Toggle Dark/Light Mode"
-            aria-label="Toggle Dark or Light Mode"
-          >
-            <i class="bi bi-moon theme-toggle-icon" id="theme-toggle-icon"></i>
-          </button>
-          <a href="/login" class="button blue-btn">
-            <span>Login</span>
-            <i class="bi bi-arrow-right"></i>
-          </a>
-        </div>
-      </nav>
-
+    <main class="landing-wrapper fade-in-template">
       <!-- Hero Section -->
       <header class="landing-hero">
         <h1>Elevate Your Study Sessions with Real-Time Collaboration</h1>

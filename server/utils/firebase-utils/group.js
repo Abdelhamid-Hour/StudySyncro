@@ -764,23 +764,17 @@ const getGroupInfo = async (groupId, userId) => {
 const getChatContext = async (userId, groupId) => {
   try {
     const groupRes = await getGroupById(groupId);
-
-    if (!groupRes.success)
+    console.log("groupRes:", groupRes); // Debugging line
+    
+    if (!groupRes.success) {
+      const statusCode = groupRes.isNative ? 404 : 500;
       return {
         ...groupRes,
-        statusCode: 404,
+        statusCode,
       };
+    }
 
     const group = groupRes.group;
-
-    if (!group)
-      return {
-        success: false,
-        statusCode: 404,
-        message: "Group Not Found",
-        isNative: true,
-        type: "info",
-      };
 
     const userRef = db.collection("users").doc(userId);
 
@@ -790,9 +784,7 @@ const getChatContext = async (userId, groupId) => {
       return {
         success: false,
         statusCode: 401,
-        message: "You are not a member of this group",
-        isNative: true,
-        type: "warning",
+        message: "Forbidden",
       };
 
     const sessionSnap = group.currentSession
@@ -819,9 +811,7 @@ const getChatContext = async (userId, groupId) => {
     return {
       success: false,
       statusCode: 500,
-      message: "Cannot fetch data , please try again later !.",
-      isNative: false,
-      type: "error",
+      message: "Internal Server Error",
     };
   }
 };

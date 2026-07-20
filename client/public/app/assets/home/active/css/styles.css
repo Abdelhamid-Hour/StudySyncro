@@ -88,7 +88,6 @@
     width: 100%;
     overflow: hidden;
     transition: max-height var(--primary-transition-style);
-    scrollbar-width: 5px;
     scrollbar-width: none;
 
     &::-webkit-scrollbar {
@@ -107,7 +106,7 @@
     }
 
     button {
-      padding: 0.0625rem;
+      padding: 1px;
       cursor: pointer;
       border-radius: var(--primary-radius);
       transition:
@@ -315,7 +314,7 @@
       .score-container {
         position: relative;
         height: 2.3906rem;
-        width: 93px;
+        width: 5.8125rem;
         display: flex;
         align-items: center;
         justify-content: center;

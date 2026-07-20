@@ -6,6 +6,48 @@ const { formatNumber } = require("../utils/global");
 const { getGroupChatContext } = require("../utils/groups");
 const { fetchData, renderFragmentOrLayout } = require("../utils/routing");
 
+const errorPageIconClasses = {
+  notFound: "bi bi-exclamation-triangle",
+  serverError: "bi bi-x-circle",
+  forbidden: "bi bi-exclamation-triangle",
+};
+
+const errorPageMessages = {
+  notFound: "Page Not Found",
+  serverError: "Server Error",
+  forbidden: "Access Forbiden",
+};
+
+const getErrorPageContext = (page, statusCode) => {
+  const iconClass =
+    statusCode === 500
+      ? errorPageIconClasses.serverError
+      : statusCode === 404
+        ? errorPageIconClasses.notFound
+        : errorPageIconClasses.forbidden;
+
+  const description =
+    statusCode === 404
+      ? `The ${page} you are trying to access does not exist.`
+      : statusCode === 500
+        ? `An unexpected error occurred while trying to access the ${page}.`
+        : `You do not have permission to access this ${page}.`;
+
+  const statusMessage =
+    statusCode === 404
+      ? errorPageMessages.notFound
+      : statusCode === 500
+        ? errorPageMessages.serverError
+        : errorPageMessages.forbidden;
+
+  return {
+    iconClass,
+    description,
+    statusMessage,
+    statusCode,
+  };
+};
+
 const handleRoutes = async (req, res) => {
   const payload = await fetchData(req.path, req.user);
   const pathName = req.path === "/home" ? payload.pathName : req.path;
@@ -14,27 +56,34 @@ const handleRoutes = async (req, res) => {
     pathName === "/home"
       ? payload.pathName
       : pathName === "/quizzes"
-      ? "/quizzes/quizzes-list"
-      : pathName
+        ? "/quizzes/quizzes-list"
+        : pathName
   }`;
   return renderFragmentOrLayout(
     template,
     req.path === "/home" ? payload.payload : payload,
     pathName,
     req,
-    res
+    res,
   );
 };
 
 const handleGroupChatRoute = async (req, res) => {
   const result = await getGroupChatContext(req.user.uid, req.params.groupId); // Replace with actual logic to get group chat context
-  
+
   if (!result.success) {
-    return res.status(result.statusCode).json({
-      message: result.message || "Failed to load group chat",
-      isNative: result.isNative ?? false,
-      type: result.type ?? "error",
-    });
+    return renderFragmentOrLayout(
+      "templates/error",
+      {
+        templateContext: {
+          ...getErrorPageContext("group chat", result.statusCode),
+          user: true,
+        },
+      },
+      "/error",
+      req,
+      res,
+    );
   }
 
   const templateContext = result.templateContext;
@@ -52,9 +101,9 @@ const handleGroupChatRoute = async (req, res) => {
     payload,
     "/groups/my/group-chat",
     req,
-    res
+    res,
   );
-}; // ! should implement with firebase
+};
 
 const handleQuizEditRoute = async (req, res) => {
   const quizId = req.params.quizId;
@@ -62,11 +111,18 @@ const handleQuizEditRoute = async (req, res) => {
   const result = await getQuizEditContext(quizId, req.user.uid);
 
   if (!result.success) {
-    return res.status(result.statusCode).json({
-      message: result.message || "Failed to load quiz editor",
-      isNative: result.isNative ?? false,
-      type: result.type ?? "error",
-    });
+    return renderFragmentOrLayout(
+      "templates/error",
+      {
+        templateContext: {
+          ...getErrorPageContext("quiz", result.statusCode),
+          user: true,
+        },
+      },
+      "/error",
+      req,
+      res,
+    );
   }
 
   const templateContext = { ...result.templateContext, formatNumber };
@@ -84,7 +140,7 @@ const handleQuizEditRoute = async (req, res) => {
     payload,
     "/quizzes/my/quiz-editor",
     req,
-    res
+    res,
   );
 };
 
@@ -92,17 +148,27 @@ const handleQuizPlayRoute = async (req, res) => {
   const response = await getQuizzPlayContext(
     req.user,
     req.params.quizId,
-    req.query.groupId
+    req.query.groupId,
   );
   const templateContext = response.templateContext;
-  
+
   const payload = {
     templateContext,
   };
 
   if (!response.success) {
-    const backUrl = req.header("Referer") || "/app/home";
-    return res.redirect(backUrl);
+    return renderFragmentOrLayout(
+      "templates/error",
+      {
+        templateContext: {
+          ...getErrorPageContext("quiz", response.statusCode),
+          user: true,
+        },
+      },
+      "/error",
+      req,
+      res,
+    );
   }
 
   renderFragmentOrLayout(
@@ -110,8 +176,40 @@ const handleQuizPlayRoute = async (req, res) => {
     payload,
     "/quiz-play",
     req,
-    res
+    res,
   );
+};
+
+const pageNotFoundHandler = async (req, res) => {
+  const templateContext = {
+    isStandalone: false,
+    user: req.user,
+    statusCode: 404,
+    statusMessage: "Page Not Found",
+    description:
+      "We couldn't find the page you are looking for. It might have been removed, renamed, or did not exist in the first place.",
+    iconClass: "bi bi-exclamation-triangle",
+  };
+
+  if (req.path.startsWith("/app") && req.user) {
+    return renderFragmentOrLayout(
+      "templates/error",
+      {
+        templateContext: {
+          ...templateContext,
+          isStandalone: false,
+        },
+      },
+      "/error",
+      req,
+      res,
+    );
+  }
+
+  return res.status(404).render("templates/error", {
+    ...templateContext,
+    isStandalone: true,
+  });
 };
 
 module.exports = {
@@ -119,4 +217,5 @@ module.exports = {
   handleGroupChatRoute,
   handleQuizEditRoute,
   handleQuizPlayRoute,
+  pageNotFoundHandler,
 };

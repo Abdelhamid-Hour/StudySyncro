@@ -208,7 +208,7 @@
         &.creation-date-admin {
           .admin-info-box .admin-container {
             font-size: var(--small-font-size);
-            min-height: 52.9px;
+            min-height: 3.3062rem;
             overflow: hidden;
 
             .admin-value {

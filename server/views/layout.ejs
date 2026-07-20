@@ -449,6 +449,13 @@
         </div>
       </div>
     </aside>
+    <script>
+      if (localStorage.getItem("sidebar-collapsed") === "true") {
+        document.querySelectorAll(".should-hide").forEach(function(el) {
+          el.classList.add("hidden");
+        });
+      }
+    </script>
     <div class="notifications-overlay overlay">
       <header class="notifications-header">
         <div class="header-title">
@@ -591,13 +598,6 @@
         <% } %>
       </div>
     </div>
-    <script>
-      if (localStorage.getItem("sidebar-collapsed") === "true") {
-        document.querySelectorAll(".should-hide").forEach(function(el) {
-          el.classList.add("hidden");
-        });
-      }
-    </script>
     <!-- MOBILE TOPBAR HEADER (<= 48rem) -->
     <header class="mobile-topbar">
       <div class="mobile-topbar-left">

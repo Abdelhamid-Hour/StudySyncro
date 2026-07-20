@@ -521,6 +521,17 @@ const updateQuizSubject = async (subject, id, userId) => {
 
 const getQuizzPlayContext = async (user, quizId, groupId) => {
   try {
+    const quizSnap = await db.collection("quizzes").doc(quizId).get();
+
+    if (!quizSnap) {
+      return {
+        success: false,
+        message: "Quiz not found",
+        statusCode: 404,
+        isNative: true,
+      };
+    }
+
     const sessionSnap = user.currentSession
       ? await db.collection("sessions").doc(user.currentSession).get()
       : null;
@@ -534,7 +545,6 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
       : null;
 
     const task = taskSnap && !taskSnap.empty ? taskSnap.docs[0].data() : {};
-    const quizSnap = await db.collection("quizzes").doc(quizId).get();
     const groupSnap = groupId
       ? await db.collection("groups").doc(groupId).get()
       : null;
@@ -543,21 +553,15 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
       groupSnap.exists &&
       groupSnap.data().currentSession === user.currentSession;
 
-    if (!quizSnap) {
-      return {
-        success: false,
-        message: "Error getting quiz data",
-        isNative: true,
-        type: "info",
-      };
-    }
-
     const quizData = quizSnap.data();
 
     const result = await getQuizPlayDetails(user, quizId);
 
     if (!result.success) {
-      return result;
+      return {
+        ...result,
+        statusCode: 500,
+      };
     }
 
     const { duration, passed, questions } = result.data;
@@ -566,8 +570,7 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
       return {
         success: false,
         message: "No questions found in the quiz",
-        isNative: true,
-        type: "info",
+        statusCode: 404,
       };
     }
 
@@ -591,17 +594,15 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
 
     return {
       success: false,
-      message: "Error getting quiz play context",
-      isNative: true,
-      type: "warning",
+      message: "Forbidden",
+      statusCode: 401,
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
       message: "Error getting quiz play context",
-      isNative: false,
-      type: "error",
+      statusCode: 500,
     };
   }
 };
@@ -656,17 +657,13 @@ const getQuizEditContext = async (quizId, userId) => {
         success: false,
         statusCode: 404,
         message: "Quiz not found",
-        isNative: true,
-        type: "info",
       };
 
     if (quizSnap.data().creator !== userId)
       return {
         success: false,
         statusCode: 401,
-        message: "You are not authorized to edit this quiz",
-        isNative: true,
-        type: "warning",
+        message: "Forbidden",
       };
 
     const data = quizSnap.data();
@@ -686,9 +683,7 @@ const getQuizEditContext = async (quizId, userId) => {
     return {
       success: false,
       statusCode: 500,
-      message: "Cannot fetch data , please try again later !.",
-      isNative: false,
-      type: "error",
+      message: "Internal Server Error",
     };
   }
 };

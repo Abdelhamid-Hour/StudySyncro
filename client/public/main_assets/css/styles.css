@@ -2,13 +2,18 @@
   box-sizing: border-box;
   margin: 0;
   font-family: "Inter";
-  /* font-size: 16px; */
 }
 
 body {
   background-color: var(--background-color);
   color: var(--primary-text-color);
   min-height: 100vh;
+}
+
+h2,
+h1 {
+  color: var(--primary-color);
+  font-size: var(--large-font-size);
 }
 
 ::selection {
@@ -58,7 +63,8 @@ button,
   text-decoration: none;
   padding: calc(var(--primary-gap) / 2);
   cursor: pointer;
-  transition: color var(--primary-transition-style),
+  transition:
+    color var(--primary-transition-style),
     background-color var(--primary-transition-style),
     border-color var(--primary-transition-style),
     box-shadow var(--primary-transition-style),
@@ -94,7 +100,8 @@ button,
 
 a {
   text-decoration: none;
-  transition: opacity var(--primary-transition-style),
+  transition:
+    opacity var(--primary-transition-style),
     color var(--primary-transition-style),
     background-color var(--primary-transition-style);
 
@@ -110,7 +117,7 @@ button:has(> i[class*="bi"]),
 .button:has(> i[class*="bi"]) {
   display: inline-flex;
   align-items: center;
-  gap: calc((var(--primary-gap) / 2) + .2rem);
+  gap: calc((var(--primary-gap) / 2) + 0.2rem);
 }
 
 button:not(.exclude-btn),
@@ -380,10 +387,13 @@ button:not(.exclude-btn),
 }
 
 .loading-animation {
-  background-image: linear-gradient(135deg,
-      transparent calc(var(--loading-light-start) - 10%),
-      var(--loading-color-light) var(--loading-light-start) calc(var(--loading-light-start) + 20%),
-      transparent calc(var(--loading-light-start) + 30%));
+  background-image: linear-gradient(
+    135deg,
+    transparent calc(var(--loading-light-start) - 10%),
+    var(--loading-color-light) var(--loading-light-start)
+      calc(var(--loading-light-start) + 20%),
+    transparent calc(var(--loading-light-start) + 30%)
+  );
   animation: loading-animation 1s ease-in-out infinite both;
 }
 
@@ -476,7 +486,7 @@ button:disabled.loading-opacity-animation,
   transform: rotate(20deg) scale(1.15);
 }
 
-@media (min-width: 768px) and (max-width: 1024px) {
+@media (min-width: 48rem) and (max-width: 64rem) {
   html {
     font-size: 9px;
   }
@@ -486,42 +496,26 @@ button:disabled.loading-opacity-animation,
   }
 }
 
-@media (min-width: 1024px) and (max-width: 1250px) {
+@media (min-width: 64rem) and (max-width: 78.125rem) {
   html {
     font-size: 11px;
   }
 }
 
-@media (min-width: 1250px) and (max-width: 1450px) {
+@media (min-width: 78.125rem) and (max-width: 90.625rem) {
   html {
     font-size: 13px;
   }
 }
 
-@media (min-width: 1450px) and (max-width: 1650px) {
+@media (min-width: 90.625rem) and (max-width: 103.125rem) {
   html {
     font-size: 14.5px;
   }
 }
 
-@media (min-width: 768px) and (max-width: 1024px) {
-  html {
-    font-size: 9px;
-  }
-
-  .profile-container {
-    max-width: 80% !important;
-  }
-}
-
-@media (min-width: 1024px) and (max-width: 1250px) {
-  html {
-    font-size: 11px;
-  }
-}
-
-@media (min-width: 1250px) and (max-width: 1450px) {
-  html {
-    font-size: 13px;
+@media (max-width: 48rem) {
+  #login-form {
+    width: 80%;
   }
 }

@@ -70,7 +70,7 @@ export let signInFormHeight =
 export let signUpFormHeight =
   signUpFormContainer.getBoundingClientRect().height;
 // get the first external styles
-export const stylsheet = document.styleSheets[4];
+export const stylsheet = document.getElementById("stylesheet").sheet;
 
 // get the Login swap animation duration from the stylesheet
 export const animationDuration = parseInt(
@@ -81,7 +81,7 @@ export const animationDuration = parseInt(
 
 export const updateSignFormHeights = () => {
   signUpFormHeight = signUpFormContainer.offsetHeight;
-  signInFormContainer.style.height = 'auto';;
+  signInFormContainer.style.height = "auto";
   signInFormHeight = signInFormContainer.offsetHeight;
   signInFormContainer.style.height = signInFormContainer.classList.contains(
     "active-form",

@@ -144,7 +144,7 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
       // Handle unauthorized access
       showMessageBlock(
         "🚫 You are not authorized to access this resource. Please log in.",
-        "error"
+        "warning"
       );
       setTimeout(() => {
         redirectTo("/login");

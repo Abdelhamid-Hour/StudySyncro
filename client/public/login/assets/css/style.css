@@ -12,6 +12,52 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+}
+
+.top-nav-bar {
+  position: absolute;
+  top: 0;
+  display: flex;
+  gap: 0.8rem;
+  padding: 1rem;
+  z-index: 999;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  div {
+    display: flex;
+    justify-content: center;
+    gap: var(--primary-gap);
+  }
+
+  .login-top-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--primary-gap);
+    transition: all 0.2s ease;
+    padding: 0.45rem 1rem;
+
+    img {
+      width: 1.8rem;
+      height: 1.8rem;
+    }
+
+    span {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--heading-color);
+      letter-spacing: -0.5px;
+    }
+  }
+
+  .button {
+    padding: 0.5rem 0.8rem;
+    border-radius: 5px;
+    background-color: var(--btn-background-color);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  }
 }
 
 main {
@@ -24,13 +70,12 @@ main {
   #space-reserver {
     position: relative;
     width: 0;
-    max-width: 28rem;
     transition: all var(--login-swap-animation-duration) linear;
     z-index: -2;
 
     &.shown {
       padding: 2rem;
-      width: 50%;
+      width: 32%;
       & + #login-form {
         border-start-start-radius: unset;
         border-end-start-radius: unset;
@@ -113,7 +158,7 @@ main {
       position: relative;
       cursor: pointer;
       border: 2px dashed var(--primary-color);
-      padding: 20px 40px;
+      padding: 1.25rem 2.5rem;
       border-radius: 10px;
       width: 90%;
       display: flex;
@@ -393,6 +438,9 @@ section#forms {
         /* eye icon */
         .eye-icon {
           position: absolute;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           top: 50%;
           right: 0.5rem;
           translate: 0 -50%;
@@ -405,23 +453,18 @@ section#forms {
 
           div {
             position: absolute;
-            top: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            translate: 25% 70%;
             background-color: var(--inputs-background-color);
-            padding-block: 1px;
+            padding-block: 0.1rem;
             width: 100%;
-            height: fit-content;
-            transform-origin: 0 0;
             rotate: 45deg;
             transition: all var(--eye-trans-duration) ease-in-out;
-            float: right;
 
             hr {
               background-color: var(--eye-pass-color);
-              height: 2px;
+              height: 0.1rem;
               border: none;
               width: 100%;
             }
@@ -556,63 +599,48 @@ div.separator {
   }
 }
 
-@media screen and (max-width: 925px) {
-  #outline-container:has(+ aside.shown) {
-    display: none;
-  }
-  #space-reserver.shown + div {
-    border-radius: unset;
-  }
-  #login-form {
-    width: fit-content;
-    padding-inline: 1rem;
+@media screen and (max-width: 48rem) {
+  .top-nav-bar {
+    position: sticky;
+    background-color: color-mix(
+      in srgb,
+      var(--container-background-color) 75%,
+      transparent
+    );
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
 
-    aside {
-      &.shown {
-        border-right-color: var(--container-background-color);
-        border-radius: unset;
-        left: -1px;
-      }
+    .login-top-logo {
+      background-color: transparent;
+      box-shadow: none;
     }
   }
-  #space-reserver.shown {
-    max-width: unset;
-    & + div {
-      max-width: unset;
-      height: 100vh;
-      flex-basis: 50%;
-    }
-  }
-  button {
-    span {
-      width: 80%;
-    }
-  }
-}
-@media screen and (max-width: 720px) {
   main {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    flex-grow: 1;
 
     #space-reserver {
       width: 100%;
       height: 0;
-
       &.shown {
         height: 40rem;
         & + div {
-          max-width: unset;
-          width: 100%;
-          border-radius: unset;
+          flex-basis: 50%;
         }
       }
     }
     #login-form {
-      width: fit-content;
-      max-width: unset;
+      width: 100% !important;
+      border-radius: unset;
+      padding: 1rem;
+      flex-grow: 1;
+
       aside {
-        border-bottom-color: var(--container-background-color);
+        border: initial;
+        border-radius: initial;
         &.shown {
           translate: 0 -100%;
         }
@@ -625,37 +653,6 @@ div.separator {
           gap: calc(var(--form-gap) / 2) !important;
           & > div {
             flex-basis: 50%;
-          }
-        }
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 560px) {
-  #login-form {
-    width: 100% !important;
-    height: 100vh;
-  }
-}
-@media screen and (max-width: 360px) {
-  main {
-    #space-reserver.shown {
-      height: 43rem !important;
-    }
-    #login-form {
-      aside.shown {
-        height: 43rem !important;
-      }
-      .md-text-container {
-        & > div:first-child {
-          i {
-            font-size: calc(var(--inputs-icons-font-size) / 2);
-          }
-        }
-        .text-container-label {
-          label {
-            left: 0.3rem !important;
           }
         }
       }

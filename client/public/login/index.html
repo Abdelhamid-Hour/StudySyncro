@@ -103,96 +103,33 @@
     />
     <link rel="stylesheet" href="../main_assets/css/variables_and_fonts.css" />
     <link rel="stylesheet" href="../main_assets/css/styles.css" />
-    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link id="stylesheet" rel="stylesheet" href="./assets/css/style.css" />
   </head>
   <body>
-    <a
-      href="/"
-      class="login-top-logo button exclude-btn"
-      style="
-        position: absolute;
-        top: 1.5rem;
-        left: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.7rem;
-        z-index: 999;
-        text-decoration: none;
-        padding: 0.45rem 1rem;
-        border-radius: 5px;
-        border: 1px solid var(--btn-border-color);
-        background-color: var(--btn-background-color);
-        color: var(--heading-color);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        transition: all 0.2s ease;
-      "
-    >
-      <img
-        src="../main_assets/images/logo-mark.svg"
-        alt="StudyHype Logo"
-        style="width: 1.8rem; height: 1.8rem"
-      />
-      <span
-        style="
-          font-size: 1.25rem;
-          font-weight: 800;
-          color: var(--heading-color);
-          letter-spacing: -0.5px;
-        "
-        >StudyHype</span
-      >
-    </a>
-    <div
-      class="top-nav-bar"
-      style="
-        position: absolute;
-        top: 1.5rem;
-        right: 1.5rem;
-        display: flex;
-        gap: 0.8rem;
-        z-index: 999;
-      "
-    >
-      <a
-        href="/"
-        class="button exclude-btn"
-        title="Back to Home"
-        aria-label="Back to Home"
-        style="
-          padding: 0.5rem 1rem;
-          border-radius: 5px;
-          border: 1px solid var(--btn-border-color);
-          background-color: var(--btn-background-color);
-          color: var(--btn-text-color);
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          text-decoration: none;
-        "
-      >
-        <i class="bi bi-house-door-fill"></i>
-        <span>Home</span>
+    <div class="top-nav-bar">
+      <a href="/" class="login-top-logo button exclude-btn">
+        <img src="../main_assets/images/logo-mark.svg" alt="StudyHype Logo" />
+        <span>StudyHype</span>
       </a>
-      <button
-        class="button exclude-btn toggle-theme-btn"
-        id="theme-toggle-btn"
-        title="Toggle Dark/Light Mode"
-        aria-label="Toggle Dark or Light Mode"
-        style="
-          padding: 0.5rem 0.8rem;
-          border-radius: 5px;
-          border: 1px solid var(--btn-border-color);
-          background-color: var(--btn-background-color);
-          color: var(--btn-text-color);
-          font-size: 1.1rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-        "
-      >
-        <i class="bi bi-moon theme-toggle-icon" id="theme-toggle-icon"></i>
-      </button>
+      <div>
+        <a
+          href="/"
+          class="button exclude-btn"
+          title="Back to Home"
+          aria-label="Back to Home"
+        >
+          <i class="bi bi-house-door-fill"></i>
+          <span>Home</span>
+        </a>
+        <button
+          class="button exclude-btn toggle-theme-btn"
+          id="theme-toggle-btn"
+          title="Toggle Dark/Light Mode"
+          aria-label="Toggle Dark or Light Mode"
+        >
+          <i class="bi bi-sun theme-toggle-icon" id="theme-toggle-icon"></i>
+        </button>
+      </div>
     </div>
     <main>
       <div id="space-reserver"></div>

@@ -20,25 +20,24 @@ const getGroupById = async (groupId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
     const snaphsot = await groupRef.get();
-    if (snaphsot.empty) {
+    if (!snaphsot.exists) {
       return {
         success: false,
-        message: "Group not found",
+        message: "Group Not Found",
         isNative: true,
         type: "info",
       };
-    } else {
-      const group = { id: groupId, ...snaphsot.data() };
-      return {
-        success: true,
-        group,
-      };
     }
+    const group = { id: groupId, ...snaphsot.data() };
+    return {
+      success: true,
+      group,
+    };
   } catch (error) {
     console.log(error.message);
     return {
       success: false,
-      message: error.message,
+      message: "Internal Server Error",
       isNative: false,
       type: "error",
     };

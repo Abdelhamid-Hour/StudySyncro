@@ -246,7 +246,7 @@ form {
   --inputs-border-color: var(--error-color);
 }
 
-@media screen and (max-width: 485px) {
+@media screen and (max-width: 30.3125rem) {
   main {
     height: 100vh;
     width: 100vw;
