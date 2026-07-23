@@ -1,4 +1,4 @@
-import { enableMobileTabs } from "../../../global/js/utils.js";
+import { enableMobileTabs, t } from "../../../global/js/utils.js";
 import { topSideBarMiddle } from "../../../global/js/variables.js";
 import { initFiltersInputListener, Loader } from "../../loader/js/utils.js";
 
@@ -50,23 +50,23 @@ export const getcreateGroupCardFunc = (userGroup) => {
       group.level === "Intermediate"
         ? "blue-badge"
         : group.level === "Advanced"
-        ? "orange-badge"
-        : "gray-badge"
-    }">${group.level}</span>`;
+          ? "orange-badge"
+          : "gray-badge"
+    }">${t("common:forms.levels." + group.level, { defaultValue: group.level })}</span>`;
 
     groupCard.innerHTML = `
     <header>
         <span class="badge ${
           group.visibility.charAt(0).toLowerCase() + group.visibility.slice(1)
         }-badge">
-            ${group.visibility}
+            ${t("common:forms.visibility." + group.visibility, { defaultValue: group.visibility })}
         </span>
         ${
           userGroup
             ? `<span class="badge ${
                 group.isHost ? "orange-badge" : "blue-badge"
               }">
-                ${group.isHost ? "Host" : "Member"}
+                ${group.isHost ? t("common:shared_groups.badges.host") : t("common:shared_groups.badges.member")}
             </span>`
             : groupLevel
         }
@@ -86,7 +86,7 @@ export const getcreateGroupCardFunc = (userGroup) => {
                 photoURL
                   ? `<img src="${photoURL}" alt="avatar" />`
                   : `<h4>${fullName.charAt(0).toUpperCase()}</h4>`
-              }</div>`
+              }</div>`,
           )
           .join("")}
         ${
@@ -99,8 +99,8 @@ export const getcreateGroupCardFunc = (userGroup) => {
           !userGroup
             ? `<button class="btn-join">${
                 group.visibility === "Public"
-                  ? '<i class="bi bi-send"></i>Join Now '
-                  : '<i class="bi bi-lock"></i>Request to Join'
+                  ? `<i class="bi bi-send"></i>${t("common:shared_groups.actions.join_now")}`
+                  : `<i class="bi bi-lock"></i>${t("common:shared_groups.actions.request_to_join")}`
               }</button>`
             : ""
         }
@@ -109,9 +109,11 @@ export const getcreateGroupCardFunc = (userGroup) => {
 
     const groupDesc = groupCard.querySelector(".group-description");
     groupDesc.setAttribute("data-tooltip", group.description);
-    groupDesc.textContent = group.description;
-    groupCard.querySelector(".group-name").textContent = group.name;
-    groupCard.querySelector(".subject-value").textContent = group.subject;
+    groupDesc.innerHTML = `<bdi>${group.description}</bdi>`;
+    groupCard.querySelector(".group-name").innerHTML =
+      `<bdi>${group.name}</bdi>`;
+    groupCard.querySelector(".subject-value").innerHTML =
+      `<bdi>${group.subject}</bdi>`;
 
     return groupCard;
   };
@@ -131,21 +133,21 @@ export const initLazyLoadingLoader = (userGroup = false) => {
         noFilter: userGroup
           ? {
               icon: "bi-people-fill",
-              title: "No Groups Joined",
-              desc: "You are not a member of any study groups yet. Create or join a group to begin collaborating!",
+              title: t("common:shared_groups.skeletons.no_groups_joined_title"),
+              desc: t("common:shared_groups.skeletons.no_groups_joined_desc"),
             }
           : {
               icon: "bi-people-fill",
-              title: "No Groups Available",
-              desc: "There are currently no public study groups available to join. Check back later!",
+              title: t("common:shared_groups.skeletons.no_groups_available_title"),
+              desc: t("common:shared_groups.skeletons.no_groups_available_desc"),
             },
         filtered: {
           icon: "bi-people-fill",
-          title: "No Groups Found",
-          desc: "No study groups match your search or filter criteria.",
+          title: t("common:shared_groups.skeletons.no_groups_found_title"),
+          desc: t("common:shared_groups.skeletons.no_groups_found_desc"),
         },
       },
-    }
+    },
   );
 
   initFiltersInputListener(loader, topSideBarMiddle);

@@ -51,7 +51,8 @@
       visibility: hidden;
       pointer-events: none;
       opacity: 0;
-      transition: opacity var(--primary-transition-style) 50ms,
+      transition:
+        opacity var(--primary-transition-style) 50ms,
         visibility var(--primary-transition-style) 300ms;
       font-size: var(--small-font-size);
 
@@ -78,7 +79,8 @@
         visibility: visible;
         pointer-events: initial;
         opacity: 1;
-        transition: visibility var(--primary-transition-style),
+        transition:
+          visibility var(--primary-transition-style),
           opacity var(--primary-transition-style);
       }
     }
@@ -104,7 +106,7 @@
 
       &.quiz-task-box,
       &.break-box {
-        border-right: 0.4rem solid var(--primary-color);
+        border-inline-end: 0.4rem solid var(--primary-color);
       }
 
       &.quiz-task-box {
@@ -140,10 +142,10 @@
         height: 1.5625rem;
         flex-basis: 15%;
         gap: calc(var(--primary-gap) / 3);
-        margin-right: calc(var(--primary-gap) / 2);
+        margin-inline-end: calc(var(--primary-gap) / 2);
         button {
           /* flex-basis: 50%; */
-          margin-left: auto;
+          margin-inline-start: auto;
         }
 
         button.task-menu-btn {
@@ -180,7 +182,7 @@
         justify-content: center;
         font-weight: bold;
         font-size: var(--small-font-size);
-        border-right: var(--primary-border-style);
+        border-inline-end: var(--primary-border-style);
       }
 
       span.duration {
@@ -190,7 +192,7 @@
       }
 
       span.title {
-        padding-left: 2%;
+        padding-inline-start: 2%;
         font-size: var(--small-font-size);
         flex-basis: 65%;
         overflow: hidden;

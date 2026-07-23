@@ -1,0 +1,121 @@
+{
+  "badges": {
+    "draft": "Draft",
+    "draft_tooltip": "Add at least 1 question to publish",
+    "published": "Published"
+  },
+  "menu": {
+    "edit": "Edit",
+    "preview": "Preview",
+    "duplicate": "Duplicate",
+    "remove": "Remove"
+  },
+  "labels": {
+    "quiz_title": "Quiz title",
+    "questions": "Questions",
+    "shared_in": "Shared in",
+    "shared_in_tooltip": "Groups | Sessions",
+    "subject": "Subject",
+    "group_name": "Group Name",
+    "session_name": "Session Name",
+    "submitted_at": "Submitted At",
+    "score": "Score",
+    "search_placeholder": "Search By Title",
+    "sort_quizzes": "Sort Quizzes",
+    "admin_cant_submit": "Admin can't submit quizzes",
+    "not_submitted_tooltip": "You haven't submitted the quiz"
+  },
+  "actions": {
+    "view_result": "View Result",
+    "view_results": "View Results",
+    "retake": "Retake",
+    "retake_quiz": "Retake Quiz"
+  },
+  "play": {
+    "time_left": "Time Left :",
+    "question_label": "Question",
+    "of_label": "of",
+    "skip": "Skip",
+    "skip_tooltip": "Or press S",
+    "select_answer": "Select the correct Answer",
+    "select_hint": "(Or press 1-6 / A-F)",
+    "prev": "Previous",
+    "or_press": "Or Press",
+    "press": "Press",
+    "or": "Or",
+    "next": "Next"
+  },
+  "my": {
+    "empty_heading": "No Quizzes Created",
+    "empty_desc": "You haven't created any quizzes yet. Click the 'Create Quiz' button to get started!"
+  },
+  "passed": {
+    "empty_heading": "No Passed Quizzes",
+    "empty_desc": "You haven't completed any quizzes yet. Join a study session and take a quiz to see your achievements here!"
+  },
+  "session_overlay": {
+    "title": "Session Details",
+    "started": "Started: {time}",
+    "ends": "Ends: {time}",
+    "duration": "Duration: {time}",
+    "session_quiz": "Session Quiz",
+    "tasks_heading": "Tasks",
+    "show_details_tooltip": "Show Details",
+    "scroll_to_top_tooltip": "Scroll To Top",
+    "collapse_all_tooltip": "Collapse All",
+    "quiz_tooltip": "Quiz",
+    "task_title": "Title:",
+    "task_details": "Details:",
+    "join_session": "Join Session"
+  },
+  "results_overlay": {
+    "title": "Users Results",
+    "quiz_title_label": "Quiz Title",
+    "table": {
+      "profile": "Profile",
+      "full_name": "Full Name",
+      "submitted_at": "Submitted At",
+      "answered_questions": "Answered Questions",
+      "score": "Score",
+      "actions": "Actions"
+    }
+  },
+  "editor": {
+    "add_question": "Add Question",
+    "question_num": "Question {num}",
+    "drag_to_reorder": "Drag to Reorder",
+    "delete_question": "Delete Question",
+    "subject_label": "Subject:",
+    "edit_subject": "Edit Subject",
+    "edit_title": "Edit Title",
+    "shared_in_label": "Shared In:",
+    "question_placeholder": "Enter question text here...",
+    "choices": "Choices",
+    "choice_placeholder": "Enter choice {letter}",
+    "delete_choice": "Delete Choice",
+    "add_choice": "Add Choice",
+    "correct_answer": "Correct Answer"
+  },
+  "plural_counts": {
+    "questions": {
+      "one": "1 Question",
+      "other": "{count} Questions"
+    },
+    "choices": {
+      "one": "1 Choice",
+      "other": "{count} Choices"
+    },
+    "groups": {
+      "one": "Group",
+      "other": "Groups"
+    },
+    "sessions": {
+      "one": "Session",
+      "other": "Sessions"
+    },
+    "joined_users": {
+      "one": "{count} Joined User",
+      "other": "{count} Joined Users"
+    }
+  }
+}

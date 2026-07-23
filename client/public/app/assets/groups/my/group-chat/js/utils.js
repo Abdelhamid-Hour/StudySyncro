@@ -1,10 +1,4 @@
 import {
-  fetchData,
-  sendData,
-  showMessageBlock,
-  isNativeDomainCondition,
-} from "../../../../../../main_assets/js/utils.js";
-import {
   DESCRIPTION_MAX_LENGTH,
   DESCRIPTION_MIN_LENGTH,
   globalTooltip,
@@ -29,6 +23,11 @@ import {
   navigateTo,
   handleApiAction,
   closeOverlayModal,
+  t,
+  fetchData,
+  sendData,
+  showMessageBlock,
+  isNativeDomainCondition,
 } from "../../../../global/js/utils.js";
 import {
   levelValues,
@@ -84,14 +83,14 @@ export const getGroupId = () => {
 export const handleLeavingGroup = async (e) => {
   const res = await showConfirmationBox(
     "exclamation",
-    "Leave Group",
-    "Are you sure you want to leave this group?",
-    "Cancel",
-    "Leave",
+    t("group-chat:modals.leave_group_title"),
+    t("group-chat:modals.leave_group_desc"),
+    t("common:modals.cancel"),
+    t("group-chat:modals.leave_group_confirm"),
   );
   if (res) {
     handleApiAction("/leave-group", { groupId: getGroupId() }, e.target, {
-      successMsg: "Left group successfully",
+      successMsg: t("group-chat:alerts.left_group_success"),
       onSuccess: () => navigateTo("/groups/my"),
     });
   }
@@ -130,11 +129,11 @@ export const openGroupLeftSideBar = async (route) => {
   groupLeftSideBar.dataset.currentRoute = route;
 
   const SIDEBAR_TITLES = {
-    "/group-info": "Group Informations",
-    "/session-info": "Session Informations",
-    "/members-list": "Members",
-    "/demandes-list": "Join Requests",
-    "/quizzes-list": "Quizzes",
+    "/group-info": t("group-chat:sidebar_titles.group_info"),
+    "/session-info": t("group-chat:sidebar_titles.session_info"),
+    "/members-list": t("group-chat:sidebar_titles.members"),
+    "/demandes-list": t("group-chat:sidebar_titles.join_requests"),
+    "/quizzes-list": t("group-chat:sidebar_titles.quizzes"),
   };
   groupLeftSideBarTitle.textContent = SIDEBAR_TITLES[route] || "";
   groupLeftSideBarContent.innerHTML = getLoader();
@@ -143,7 +142,10 @@ export const openGroupLeftSideBar = async (route) => {
   showInfoBtn
     .querySelector("i")
     .classList.replace("bi-info-circle", "bi-x-circle");
-  showInfoBtn.setAttribute("data-tooltip", "Close group info");
+  showInfoBtn.setAttribute(
+    "data-tooltip",
+    t("group-chat:tooltips.close_group_info"),
+  );
 
   try {
     const { template, title, count, info } = await fetchData(
@@ -189,11 +191,11 @@ export const openGroupLeftSideBar = async (route) => {
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error(error);
     showMessageBlock(
-      error.message || "An error occurred while loading group info.",
+      error.message || t("group-chat:alerts.load_group_info_error"),
       notifType,
     );
     if (!isNative)
-      groupLeftSideBarContent.innerHTML = `<p class="error-message"><i class="bi bi-exclamation-circle"></i>Failed to load group info. Please try again later.</p>`;
+      groupLeftSideBarContent.innerHTML = `<p class="error-message"><i class="bi bi-exclamation-circle"></i>${t("group-chat:alerts.failed_to_load_group_info")}</p>`;
   }
   return true;
 };
@@ -202,7 +204,7 @@ const getSessionCreationOverlay = () => {
   const sessionOverlay = `
         <div class="create-session-overlay overlay-model">
         <header>
-          <h3>Create New Session</h3>
+          <h3>${t("group-chat:modals.create_new_session")}</h3>
           <button type="button" class="exclude-btn close-session-creation-overlay">
           <i class="bi bi-x-lg"></i>
           </button>
@@ -214,11 +216,11 @@ const getSessionCreationOverlay = () => {
           <div class="progress-text">
             <label class="progress-start-text">
               <input type="checkbox" id="progress-start-text" />
-              Informations
+              ${t("group-chat:modals.session_info_step")}
             </label>
             <label class="progress-end-text">
               <input type="checkbox" id="progress-end-text" />
-              Tasks
+              ${t("group-chat:modals.session_tasks_step")}
             </label>
           </div>
         </div>
@@ -255,7 +257,7 @@ const getSessionForm = (name, description, quiz) => {
           minlength="${NAME_TITLE_MIN_LENGTH}"
           maxlength="${NAME_TITLE_MAX_LENGTH}"
           class="input"
-          placeholder="Name"
+          placeholder="${t("group-chat:modals.session_name_placeholder")}"
         />
       </div>
 
@@ -271,11 +273,11 @@ const getSessionForm = (name, description, quiz) => {
           id="session-description"
           name="session-description"
           class="input"
-          placeholder="Description"
+          placeholder="${t("group-chat:modals.session_description_placeholder")}"
           maxlength="${DESCRIPTION_MAX_LENGTH}"
           minlength="${DESCRIPTION_MIN_LENGTH}"
         ></textarea>
-        <span class="chars-limit">0/${DESCRIPTION_MAX_LENGTH}</span>
+        <span class="chars-limit">0${DESCRIPTION_MAX_LENGTH}</span>
       </div>
 
       <div class="field-container session-quiz-field">
@@ -284,7 +286,7 @@ const getSessionForm = (name, description, quiz) => {
         </div>
         <div class="select-trigger input">
           <button type="button" class="exclude-btn open-drop-down-btn">
-            <span class="quiz-value">Quiz Title (Optional)</span>
+            <span class="quiz-value">${t("group-chat:modals.quiz_title_optional")}</span>
             <input type="hidden" class="session-quiz-title" name="session-quiz-title" value="" />
             <input type="hidden" class="session-quiz-id" name="session-quiz-id" value="" />
             <i class="bi bi-chevron-down"></i>
@@ -293,16 +295,11 @@ const getSessionForm = (name, description, quiz) => {
             <div class="select-search">
               <input id="select-search" type="search">
             </div>
-            <div class="select-group drop-down-group">
-              <div class="select-group-label drop-down-group-label">Fundamental Sciences</div>
-              <hr class="separator">
-              <div class="select-item drop-down-item" data-value="Mathematics">Mathematics</div>
-            </div>
           </div>
         </div>
       </div>
 
-      <button type="submit" class="blue-btn next-btn">Next</button>
+      <button type="submit" class="blue-btn next-btn">${t("group-chat:buttons.next")}</button>
     </form>
   `;
 
@@ -313,10 +310,12 @@ const getSessionForm = (name, description, quiz) => {
 
   wrapper.querySelector(".chars-limit").textContent = `${
     description?.length || 0
-  }/${DESCRIPTION_MAX_LENGTH}`;
+  }${DESCRIPTION_MAX_LENGTH}`;
 
   const quizValueEl = wrapper.querySelector(".quiz-value");
-  quizValueEl.textContent = quizTitle ? quizTitle : "Quiz Title (Optional)";
+  quizValueEl.textContent = quizTitle
+    ? quizTitle
+    : t("group-chat:modals.quiz_title_optional");
   wrapper
     .querySelector('input[name="session-quiz-title"]')
     .setAttribute("value", quizTitle || "");
@@ -371,16 +370,16 @@ const setUpSwapBtn = (btnClassName, targetClassName, wrapper, sessionStore) => {
 // task form
 const getTaskButtonLabel = (task, addQuiz, addBreak) =>
   addQuiz
-    ? "Add Quiz"
+    ? t("group-chat:buttons.add_quiz")
     : addBreak
-      ? "Add Break"
+      ? t("group-chat:buttons.add_break")
       : task?.isQuiz
-        ? "Update Quiz"
+        ? t("group-chat:buttons.update_quiz")
         : task?.isBreak
-          ? "Update Break"
+          ? t("group-chat:buttons.update_break")
           : task
-            ? "Update Task"
-            : "Add Task";
+            ? t("group-chat:buttons.update_task")
+            : t("group-chat:buttons.add_task");
 const getTaskForm = (task, addQuiz, addBreak) => {
   const wrapper = document.createElement("div");
   wrapper.className = "create-task-form";
@@ -388,22 +387,22 @@ const getTaskForm = (task, addQuiz, addBreak) => {
     <header class="tasks-header">
       <h3>${
         addQuiz
-          ? "Add Quiz Task Details"
+          ? t("group-chat:modals.add_quiz_details")
           : task?.isQuiz
-            ? "Edit Quiz Task"
+            ? t("group-chat:modals.edit_quiz_task")
             : task?.isBreak
-              ? "Edit Break"
+              ? t("group-chat:modals.edit_break")
               : task
-                ? "Edit Task"
+                ? t("group-chat:modals.edit_task")
                 : addBreak
-                  ? "Create Break"
-                  : "Create Task"
+                  ? t("group-chat:modals.create_break")
+                  : t("group-chat:modals.create_task")
       }</h3>
       ${
         addQuiz
           ? ""
           : `<button type="button" class="gray-btn small-btn cancel-task-creation">
-        Cancel
+        ${t("common:modals.cancel")}
       </button>`
       }
     </header>
@@ -428,7 +427,7 @@ const getTaskForm = (task, addQuiz, addBreak) => {
           minlength="${NAME_TITLE_MIN_LENGTH}"
           maxlength="${NAME_TITLE_MAX_LENGTH}"
           class="input"
-          placeholder="Title"
+          placeholder="${t("group-chat:modals.task_title_placeholder")}"
         />
       </div>
 
@@ -447,11 +446,11 @@ const getTaskForm = (task, addQuiz, addBreak) => {
           id="task-description"
           name="task-description"
           class="input"
-          placeholder="Description"
+          placeholder="${t("group-chat:modals.session_description_placeholder")}"
           maxlength="${DESCRIPTION_MAX_LENGTH}"
           minlength="${DESCRIPTION_MIN_LENGTH}"
         ></textarea>
-        <span class="chars-limit">0/${DESCRIPTION_MAX_LENGTH}</span>
+        <span class="chars-limit">${DESCRIPTION_MAX_LENGTH}</span>
       </div>`
       }
 
@@ -467,7 +466,7 @@ const getTaskForm = (task, addQuiz, addBreak) => {
             class="input"
             id="task-duration"
             name="task-duration"
-            placeholder="Total Duration (minutes)"
+            placeholder="${t("group-chat:modals.task_duration_placeholder")}"
           />
         </div>
         <button type="submit" class="blue-btn add-task-btn">
@@ -490,7 +489,7 @@ const getTaskForm = (task, addQuiz, addBreak) => {
       task?.description || "";
     wrapper.querySelector(".chars-limit").textContent = `${
       task?.description?.length || 0
-    }/${DESCRIPTION_MAX_LENGTH}`;
+    }${DESCRIPTION_MAX_LENGTH}`;
   }
   wrapper
     .querySelector("#task-duration")
@@ -501,14 +500,20 @@ const getTaskForm = (task, addQuiz, addBreak) => {
 
 const checkTextFieldValidity = (title, description, isBreak) => {
   if (!title.value) {
-    showErrorTooltip("Please enter a title", title.closest(".field-container"));
+    showErrorTooltip(
+      t("group-chat:errors.enter_title"),
+      title.closest(".field-container"),
+    );
     return false;
   } else if (
     title.value.length < NAME_TITLE_MIN_LENGTH ||
     title.value.length > NAME_TITLE_MAX_LENGTH
   ) {
     showErrorTooltip(
-      `Title should be between ${NAME_TITLE_MIN_LENGTH} and ${NAME_TITLE_MAX_LENGTH} characters`,
+      t("group-chat:errors.title_length", {
+        min: NAME_TITLE_MIN_LENGTH,
+        max: NAME_TITLE_MAX_LENGTH,
+      }),
       title.closest(".field-container"),
     );
     return false;
@@ -519,7 +524,7 @@ const checkTextFieldValidity = (title, description, isBreak) => {
   if (!isBreak) {
     if (!description.value) {
       showErrorTooltip(
-        "Please enter a description",
+        t("group-chat:errors.enter_description"),
         description.closest(".field-container"),
       );
       return false;
@@ -528,7 +533,10 @@ const checkTextFieldValidity = (title, description, isBreak) => {
       description.value.length > DESCRIPTION_MAX_LENGTH
     ) {
       showErrorTooltip(
-        `Description should be between ${DESCRIPTION_MIN_LENGTH} and ${DESCRIPTION_MAX_LENGTH} characters`,
+        t("group-chat:errors.description_length", {
+          min: DESCRIPTION_MIN_LENGTH,
+          max: DESCRIPTION_MAX_LENGTH,
+        }),
         description.closest(".field-container"),
       );
       return false;
@@ -556,7 +564,10 @@ const checkTaskFormValidity = (form, isBreak) => {
     Number(duration.value) > TASK_MAX_DURATION
   ) {
     showErrorTooltip(
-      `Task duration should be a number between ${TASK_MIN_DURATION} and ${TASK_MAX_DURATION} minutes`,
+      t("group-chat:errors.task_duration_range", {
+        min: TASK_MIN_DURATION,
+        max: TASK_MAX_DURATION,
+      }),
       duration.closest(".field-container"),
     );
     return false;
@@ -576,9 +587,9 @@ const createTaskElement = (task, idx, taskCount) => {
     <div data-task-id="${idx}" class="task-wrapper">
       <div ${
         task.isQuiz
-          ? 'data-tooltip="Quiz"'
+          ? `data-tooltip="${t("group-chat:badges.quiz")}"`
           : task.isBreak
-            ? 'data-tooltip="Break"'
+            ? `data-tooltip="${t("group-chat:badges.break")}"`
             : ""
       } class="task-box ${
         task.isQuiz
@@ -603,7 +614,7 @@ const createTaskElement = (task, idx, taskCount) => {
               ? ""
               : `<button
             type="button"
-            data-tooltip="Show Details"
+            data-tooltip="${t("group-chat:tooltips.show_details")}"
             class="task-down-icon exclude-btn should-fill has-tooltip"
           >
             <i class="bi bi-caret-down"></i>
@@ -613,11 +624,11 @@ const createTaskElement = (task, idx, taskCount) => {
           <div class="task-options drop-down-menu overlay">
             <button type="button" class="exclude-btn select-item drop-down-item small-btn edit-task-btn">
               <i class="bi bi-pencil"></i>
-              Edit
+              ${t("group-chat:actions.edit")}
             </button>
             <button type="button" class="exclude-btn select-item drop-down-item small-btn red-btn remove-task-btn">
               <i class="bi bi-trash"></i>
-              Delete
+              ${t("common:modals.delete")}
             </button>
           </div>
         </div>
@@ -626,9 +637,9 @@ const createTaskElement = (task, idx, taskCount) => {
         task.isBreak
           ? ""
           : `<div class="task-details">
-        <h5>Title:</h5>
+        <h5>${t("group-chat:info.title_label")}</h5>
         <p class="task-title"></p>
-        <h5>Details:</h5>
+        <h5>${t("group-chat:info.details_label")}</h5>
         <p class="task-desc"></p>
       </div>`
       }
@@ -669,29 +680,29 @@ const getTasksListContainer = (
   tasksArray = [],
 ) => `<div class="tasks-list-container">
         <header class="tasks-header">
-          <h3>Tasks List</h3>
+          <h3>${t("group-chat:modals.tasks_list_title")}</h3>
           <div class="btns">
               <button
                 type="button"
-                data-tooltip="Scroll To Top"
+                data-tooltip="${t("common:actions.scroll_to_top")}"
                 class="exclude-btn scroll-to-top has-tooltip">
                 <i class="bi bi-arrow-up-short"></i>
               </button>
               <button
                 type="button"
-                data-tooltip="Collapse All"
+                data-tooltip="${t("common:actions.collapse_all")}"
                 class="exclude-btn collapse-all has-tooltip">
                 <i class="bi bi-arrows-expand"></i>
               </button>
           </div>
-          <span class="badge simple-badge duration-badge">Total Duration 0m</span>
+          <span class="badge simple-badge duration-badge">${t("group-chat:modals.duration_label", { duration: "0m" })}</span>
           <button type="button" class="small-btn create-break-btn">
             <i class="bi bi-plus-lg"></i>
-            Add Break
+            ${t("group-chat:buttons.add_break")}
           </button>
           <button type="button" class="small-btn create-task-btn">
             <i class="bi bi-plus-lg"></i>
-            Add Task
+            ${t("group-chat:buttons.add_task")}
           </button>
         </header>
         ${getTasksList(tasksArray).outerHTML}
@@ -756,20 +767,22 @@ const setUpSessionForm = (wrapper, sessionStore) => {
     quizzesSelectTrigger,
     () => `
     <div class="mobile-select-menu-header">
-      <h4>Select Quiz</h4>
-      <button type="button" class="exclude-btn close-select-menu-btn" title="Close"><i class="bi bi-x-lg"></i></button>
+      <h4>${t("group-chat:modals.select_quiz")}</h4>
+      <button type="button" class="exclude-btn close-select-menu-btn" title="${t("common:modals.close")}"><i class="bi bi-x-lg"></i></button>
     </div>
     <div class="select-search">
-      <input id="select-search" type="search" placeholder="Search quizzes..." />
+      <input id="select-search" type="search" placeholder="${t("group-chat:modals.search_quizzes_placeholder")}" />
     </div>
-    <div class="select-item drop-down-item" data-value="">No Quiz (Optional)</div>
+    <div class="select-item drop-down-item" data-value="">${t("group-chat:modals.no_quiz_optional")}</div>
     <hr class="separator" />
     <div class="select-group quizzes-menu drop-down-group"></div>
   `,
     true,
     (selectButtonValue, selectedItem, selectedValue) => {
       if (!selectedValue) {
-        selectButtonValue.textContent = "Quiz Title (Optional)";
+        selectButtonValue.textContent = t(
+          "group-chat:modals.quiz_title_optional",
+        );
         quizzesSelectTrigger.querySelector(
           'input[name="session-quiz-title"]',
         ).value = "";
@@ -808,13 +821,13 @@ const setUpSessionForm = (wrapper, sessionStore) => {
       emptyState: {
         noFilter: {
           icon: "bi-clipboard-x",
-          title: "No Quizzes Available",
-          desc: "No quizzes have been created for this group yet.",
+          title: t("group-chat:skeletons.no_quizzes_avail_title"),
+          desc: t("group-chat:skeletons.no_quizzes_avail_desc"),
         },
         filtered: {
           icon: "bi-search",
-          title: "No Quizzes Match",
-          desc: "No quizzes match your search.",
+          title: t("group-chat:skeletons.no_quizzes_found_title"),
+          desc: t("group-chat:skeletons.no_quizzes_found_desc"),
         },
       },
     },
@@ -840,7 +853,7 @@ const handleFinishBtnClick = async (sessionData, btn) => {
   const tasksLength = sessionData.tasks.length;
   if (tasksLength === 0)
     return showMessageBlock(
-      "You must add at least one task before finishing.",
+      t("group-chat:alerts.add_at_least_one_task"),
       "info",
     );
 
@@ -853,13 +866,16 @@ const handleFinishBtnClick = async (sessionData, btn) => {
     totalDuration > SESSION_MAX_DURATION
   )
     return showMessageBlock(
-      `Total session duration must be between ${SESSION_MIN_DURATION} and ${SESSION_MAX_DURATION} minutes.`,
+      t("group-chat:alerts.total_duration_error", {
+        min: SESSION_MIN_DURATION,
+        max: SESSION_MAX_DURATION,
+      }),
       "warning",
     );
 
   if (quiz && (!quiz.description || !quiz.durationInMins))
     return showMessageBlock(
-      "Please complete the quiz details before finishing.",
+      t("group-chat:alerts.complete_quiz_details"),
       "info",
     );
 
@@ -870,7 +886,7 @@ const handleFinishBtnClick = async (sessionData, btn) => {
     btn.innerHTML = getLoader();
     sessionData.groupId = getGroupId();
     await sendData("/api/create-session", { sessionData });
-    showMessageBlock("Session created successfully", "success");
+    showMessageBlock(t("group-chat:alerts.session_created_success"), "success");
     navigateTo("/home");
   } catch (error) {
     const isNative =
@@ -882,7 +898,7 @@ const handleFinishBtnClick = async (sessionData, btn) => {
   } finally {
     btn.isCreating = false;
     btn.disabled = false;
-    btn.innerHTML = "Finish";
+    btn.innerHTML = t("group-chat:buttons.finish");
   }
 };
 
@@ -936,9 +952,9 @@ const setUpTasksList = (wrapper, sessionStore) => {
     resortTasksArray(sessionData, wrapper),
   );
   const durationBadge = wrapper.querySelector(".duration-badge");
-  durationBadge.textContent = `Duration ${millisecondsToHMFormat(
-    sessionData.duration * 60 * 1000,
-  )}`;
+  durationBadge.textContent = t("group-chat:modals.duration_label", {
+    duration: millisecondsToHMFormat(sessionData.duration * 60 * 1000),
+  });
   const tasksList = wrapper.querySelector(".tasks-list");
   tasksList.addEventListener("click", async (e) => {
     const editBtn = e.target.closest(".edit-task-btn");
@@ -957,10 +973,10 @@ const setUpTasksList = (wrapper, sessionStore) => {
       if (isQuizTask) {
         const res = await showConfirmationBox(
           "exclamation",
-          "Remove Quiz",
-          "Are you sure you want to remove the quiz?",
-          "Cancel",
-          "Remove Quiz",
+          t("group-chat:modals.remove_quiz_title"),
+          t("group-chat:modals.remove_quiz_desc"),
+          t("common:modals.cancel"),
+          t("group-chat:modals.remove_quiz_confirm"),
         );
         if (res) {
           sessionData.sessionQuiz = null; // Remove the quiz from session data
@@ -969,9 +985,9 @@ const setUpTasksList = (wrapper, sessionStore) => {
         }
       }
       sessionData.duration -= task.durationInMins;
-      durationBadge.textContent = `Duration ${millisecondsToHMFormat(
-        sessionData.duration * 60 * 1000,
-      )}`;
+      durationBadge.textContent = t("group-chat:modals.duration_label", {
+        duration: millisecondsToHMFormat(sessionData.duration * 60 * 1000),
+      });
       sessionData.tasks.splice(taskId, 1);
       tasksList.innerHTML = getTasksList(sessionData.tasks).innerHTML;
     }
@@ -985,10 +1001,10 @@ const getTasksContainer = (
         ${getTasksListContainer(tasksArray)}
         <div class="buttons">
           <button type="button" class="grey-btn back-btn gray-btn">
-            Back
+            ${t("group-chat:buttons.back")}
           </button>
           <button form="" type="submit" class="blue-btn finish-btn">
-            Finish
+            ${t("group-chat:buttons.finish")}
           </button>
         </div>
       </div>`;
@@ -1108,6 +1124,7 @@ const configs = {
     setup: (wrapper, sessionStore) => setUpTaskForm(wrapper, sessionStore),
   },
 };
+
 const swapSessionOverlayContent = (targetClassName, wrapper, sessionStore) => {
   const config = configs[targetClassName];
   if (!config) {
@@ -1133,7 +1150,7 @@ export const closeGroupLeftSideBar = () => {
   showInfoBtn
     .querySelector("i")
     .classList.replace("bi-x-circle", "bi-info-circle");
-  showInfoBtn.setAttribute("data-tooltip", "Show group info");
+  showInfoBtn.setAttribute("data-tooltip", t("group-chat:tooltips.show_group_info"));
 };
 
 const swapMode = (infoBox, modeFuncName, updatedValue, showInSearchValue) => {
@@ -1185,10 +1202,10 @@ const handleKickMember = async (kickBtn) => {
     .getAttribute("data-member-id");
   const res = await showConfirmationBox(
     "exclamation",
-    "Kick Member",
-    "Are you sure you want to kick this member?",
-    "Cancel",
-    "Kick",
+    t("group-chat:modals.kick_member_title"),
+    t("group-chat:modals.kick_member_desc"),
+    t("common:modals.cancel"),
+    t("group-chat:modals.kick_member_confirm"),
   );
   if (!res) return;
   handleApiAction(
@@ -1196,7 +1213,7 @@ const handleKickMember = async (kickBtn) => {
     { groupId: getGroupId(), memberId },
     kickBtn,
     {
-      successMsg: "Member kicked successfully",
+      successMsg: t("group-chat:alerts.member_kicked_success"),
       onSuccess: () => {
         kickBtn.closest(".member").remove();
         const badgeCount = document.querySelector(".side-bar-title .badge");
@@ -1212,10 +1229,10 @@ const handleMoveAdminRole = async (moveAdminRoleBtn) => {
     .getAttribute("data-member-id");
   const res = await showConfirmationBox(
     "exclamation",
-    "Move Admin Role",
-    "Are you sure you want to move this member to admin?",
-    "Cancel",
-    "Move",
+    t("group-chat:modals.move_admin_title"),
+    t("group-chat:modals.move_admin_desc"),
+    t("common:modals.cancel"),
+    t("group-chat:modals.move_admin_confirm"),
   );
   if (!res) return;
   handleApiAction(
@@ -1223,7 +1240,7 @@ const handleMoveAdminRole = async (moveAdminRoleBtn) => {
     { groupId: getGroupId(), memberId },
     moveAdminRoleBtn,
     {
-      successMsg: "Role transferred successfully",
+      successMsg: t("group-chat:alerts.role_transferred_success"),
       onSuccess: () => navigateTo(`/groups/my/${getGroupId()}/chat`), // Refresh the page to reflect changes
     },
   );
@@ -1238,7 +1255,7 @@ const handleAcceptDemande = (acceptBtn) => {
     { demandeId, groupId: getGroupId() },
     acceptBtn,
     {
-      successMsg: "Demande accepted",
+      successMsg: t("group-chat:alerts.demande_accepted"),
       onSuccess: () => {
         acceptBtn.closest(".demande").remove();
         const badgeCount = document.querySelector(".side-bar-title .badge");
@@ -1257,7 +1274,7 @@ const handleRejectDemande = (rejectBtn) => {
     { demandeId, groupId: getGroupId() },
     rejectBtn,
     {
-      successMsg: "Demande rejected",
+      successMsg: t("group-chat:alerts.demande_rejected"),
       onSuccess: () => {
         rejectBtn.closest(".demande").remove();
         const badgeCount = document.querySelector(".side-bar-title .badge");
@@ -1313,7 +1330,7 @@ const createQuizItem = (quiz) => {
         <span class="icon-box">
           <i class="bi bi-question-circle"></i>
         </span>
-        Quiz title
+        ${t("group-chat:info.quiz_title")}
       </label>
       <div class="quiz-title content"></div>
     </div>
@@ -1323,7 +1340,7 @@ const createQuizItem = (quiz) => {
           <i class="bi bi-clock-history"></i>
           <i class="bi bi-info-circle"></i>
         </span>
-        Session name
+        ${t("group-chat:info.session_name")}
       </label>
       <div class="session-name content"></div>
     </div>
@@ -1332,7 +1349,7 @@ const createQuizItem = (quiz) => {
         <span class="icon-box">
           <i class="bi bi-question-circle"></i>
         </span>
-        Questions
+        ${t("group-chat:info.questions")}
       </label>
       <div class="questions content">
         <span></span>
@@ -1343,13 +1360,13 @@ const createQuizItem = (quiz) => {
         <span class="icon-box">
           <i class="bi bi-calendar-event"></i>
         </span>
-        submittedAt
+        ${t("group-chat:info.submitted_at")}
         ${
           !quiz.submittedAt
-            ? `<i style="margin-left: auto;" class="bi bi-info-circle has-tooltip" data-tooltip="${
+            ? `<i style="margin-inline-start: auto;" class="bi bi-info-circle has-tooltip" data-tooltip="${
                 quiz.isAdmin
-                  ? "Admin can't submit quizzes"
-                  : "You haven't submitted the quiz"
+                  ? t("group-chat:tooltips.admin_cant_submit")
+                  : t("group-chat:tooltips.you_havent_submitted")
               }"></i>`
             : ""
         }
@@ -1366,13 +1383,13 @@ const createQuizItem = (quiz) => {
         class="view-result${quiz.isAdmin ? "s" : ""}-btn should-fill"
       >
         <i class="bi bi-eye"></i>
-        View ${quiz.isAdmin ? "Results" : "Result"}
+        ${quiz.isAdmin ? t("group-chat:buttons.view_results") : t("group-chat:buttons.view_result")}
       </button>
       ${
         !quiz.isAdmin
           ? `<button type="button" class="retake-btn">
               <i class="bi bi-arrow-repeat"></i>
-              Retake
+              ${t("group-chat:buttons.retake")}
             </button>`
           : ""
       }
@@ -1401,9 +1418,11 @@ const createQuizItemLoader = () => {
         <span class="icon-box">
           <i class="bi bi-question-circle"></i>
         </span>
-        Quiz title
+        ${t("group-chat:info.quiz_title")}
       </label>
-      <div class="quiz-title content loading-opacity-animation" style="width: 60%; height: 1.2em; border-radius: 0.5em;"></div>
+      <div class="quiz-title content">
+        <div class="loading-opacity-animation" style="width: 100%; height: 1.5rem; border-radius: 0.5rem;"></div>
+      </div>
     </div>
     <div class="session-name-container info-container">
       <label class="session-name-label">
@@ -1411,25 +1430,29 @@ const createQuizItemLoader = () => {
           <i class="bi bi-clock-history"></i>
           <i class="bi bi-info-circle"></i>
         </span>
-        Session name
+        ${t("group-chat:info.session_name")}
       </label>
-      <div class="session-name content loading-opacity-animation" style="width: 50%; height: 1.2em; border-radius: 0.5em;"></div>
+      <div class="session-name content">
+        <div class="loading-opacity-animation" style="width: 100%; height: 1.5rem; border-radius: 0.5rem;"></div>
+      </div>
     </div>
     <div class="questions-container info-container small-container">
       <label class="questions-label">
         <span class="icon-box">
           <i class="bi bi-question-circle"></i>
         </span>
-        Questions
+        ${t("group-chat:info.questions")}
       </label>
-      <div class="questions content loading-opacity-animation" style="width: 30%; height: 1.2em; border-radius: 0.5em;"></div>
+      <div class="questions content">
+        <div class="loading-opacity-animation" style="width: 100%; height: 1.5rem; border-radius: 0.5rem;"></div>
+      </div>
     </div>
     <div class="quiz-date-container info-container small-container">
       <label class="quiz-date-label">
         <span class="icon-box">
           <i class="bi bi-calendar-event"></i>
         </span>
-        submittedAt
+        ${t("group-chat:info.submitted_at")}
       </label>
       <div class="quiz-date content loading-opacity-animation" style="width: 40%; height: 1.2em; border-radius: 0.5em;"></div>
     </div>
@@ -1473,13 +1496,13 @@ export const handleQuizzesListMenuBtn = async () => {
       emptyState: {
         noFilter: {
           icon: "bi-clipboard-x",
-          title: "No Quizzes Available",
-          desc: "No quizzes have been created or shared with this group yet.",
+          title: t("group-chat:skeletons.no_quizzes_avail_title"),
+          desc: t("group-chat:skeletons.no_quizzes_avail_desc"),
         },
         filtered: {
           icon: "bi-search",
-          title: "No Quizzes Found",
-          desc: "No quizzes match your search or filter criteria.",
+          title: t("group-chat:skeletons.no_quizzes_found_title"),
+          desc: t("group-chat:skeletons.no_quizzes_found_desc"),
         },
       },
     },
@@ -1504,19 +1527,19 @@ const createMemberCard = (member) => {
     <span class="username"></span>
     ${
       member.isAdmin
-        ? `<span style="margin-right: auto;" class="badge orange-badge"${
-            member.userIsAdmin ? ' style="margin-right:auto"' : ""
-          }>Host</span>`
+        ? `<span style="margin-inline-end: auto;" class="badge orange-badge"${
+            member.userIsAdmin ? ' style="margin-inline-end:auto"' : ""
+          }>${t("group-chat:badges.host")}</span>`
         : ""
     }
     ${
       member.userIsAdmin && !member.isAdmin
         ? `<div class="action-btns" data-member-id="${member.id}">
             <button type="button" class="red-btn kick-btn small-btn">
-              <i class="bi bi-person-dash"></i> Kick
+              <i class="bi bi-person-dash"></i> ${t("group-chat:buttons.kick")}
             </button>
             <button type="button" class="orange-btn move-admin-role-btn small-btn">
-              <i class="bi bi-person-gear"></i> Transfer Admin
+              <i class="bi bi-person-gear"></i> ${t("group-chat:buttons.transfer_admin")}
             </button>
           </div>`
         : ""
@@ -1575,8 +1598,8 @@ export const handleMembersListMenuBtn = async () => {
       emptyState: {
         filtered: {
           icon: "bi-search",
-          title: "No Members Found",
-          desc: "No members match your search query.",
+          title: t("group-chat:skeletons.no_members_found_title"),
+          desc: t("group-chat:skeletons.no_members_found_desc"),
         },
       },
     },
@@ -1593,14 +1616,14 @@ export const handleSessionInfoMenuBtn = async () => {
 export const handleRemoveGroup = async (e) => {
   const res = await showConfirmationBox(
     "exclamation",
-    "Remove group",
-    "Are you sure you want to remove this group?",
-    "Cancel",
-    "Remove",
+    t("group-chat:modals.remove_group_title"),
+    t("group-chat:modals.remove_group_desc"),
+    t("common:modals.cancel"),
+    t("group-chat:modals.remove_group_confirm"),
   );
   if (res) {
     handleApiAction(`/remove-group/${getGroupId()}`, {}, e.target, {
-      successMsg: "Group removed successfully",
+      successMsg: t("group-chat:alerts.group_removed_success"),
       onSuccess: () => navigateTo("/groups/my"),
       method: "DELETE",
     });
@@ -1635,11 +1658,11 @@ const createDemandeCard = (demande) => {
     <div class="action-btns" data-user-id="${demande.userId}">
       <button type="button" class="red-btn reject-btn small-btn">
         <i class="bi bi-x-circle"></i>
-        Reject
+        ${t("group-chat:buttons.reject")}
       </button>
       <button type="button" class="green-btn accept-btn small-btn">
         <i class="bi bi-check-circle"></i>
-        Accept
+        ${t("group-chat:buttons.accept")}
       </button>
     </div>
   `;
@@ -1702,13 +1725,13 @@ export const setUpDemandes = async () => {
       emptyState: {
         noFilter: {
           icon: "bi-person-check",
-          title: "No Join Requests",
-          desc: "There are no pending join requests for this group.",
+          title: t("group-chat:skeletons.no_join_req_title"),
+          desc: t("group-chat:skeletons.no_join_req_desc"),
         },
         filtered: {
           icon: "bi-search",
-          title: "No Requests Found",
-          desc: "No join requests match your search or filter criteria.",
+          title: t("group-chat:skeletons.no_requests_found_title"),
+          desc: t("group-chat:skeletons.no_requests_found_desc"),
         },
       },
     },
@@ -1862,7 +1885,7 @@ const handleSaveAction = async (
         : null;
 
     swapMode(infoBox, "getViewMode", updatedValue, showInSearchValue);
-    showMessageBlock("Group info updated successfully", "success");
+    showMessageBlock(t("group-chat:alerts.group_info_updated"), "success");
   } catch (error) {
     const isNative =
       error.isNative || error.data?.isNative || isNativeDomainCondition(error);
@@ -1886,7 +1909,7 @@ const validateMaxMembers = (input, value) => {
   ) {
     initAndDiplayErrorTooltip(
       input.closest(".info-edit-wrapper"),
-      `Max members should be a number between ${MIN_MEMBERS} and ${MAX_MEMBERS}`,
+      t("group-chat:errors.max_members_range", { min: MIN_MEMBERS, max: MAX_MEMBERS }),
     );
     return false;
   }
@@ -1900,7 +1923,7 @@ const validateGroupName = (input, value) => {
   ) {
     initAndDiplayErrorTooltip(
       input.closest(".info-edit-wrapper"),
-      `Group name should be between ${NAME_TITLE_MIN_LENGTH} and ${NAME_TITLE_MAX_LENGTH} characters`,
+      t("group-chat:errors.group_name_length", { min: NAME_TITLE_MIN_LENGTH, max: NAME_TITLE_MAX_LENGTH }),
     );
     return false;
   }
@@ -1914,7 +1937,7 @@ const validateGroupDescription = (input, value) => {
   ) {
     initAndDiplayErrorTooltip(
       input.closest(".info-edit-wrapper"),
-      `Group description should be between ${DESCRIPTION_MIN_LENGTH} and ${DESCRIPTION_MAX_LENGTH} characters`,
+      t("group-chat:errors.description_length", { min: DESCRIPTION_MIN_LENGTH, max: DESCRIPTION_MAX_LENGTH }),
     );
     return false;
   }
@@ -1947,7 +1970,7 @@ const checkRadioValidity = (input, valideValues) => {
   if (!valideValues.includes(input?.dataset.value)) {
     initAndDiplayErrorTooltip(
       input.closest(".info-edit-wrapper"),
-      "Please select a valid option",
+      t("group-chat:errors.select_valid_option"),
     );
     return false;
   }
@@ -2008,49 +2031,48 @@ export const handleAddMembersBtn = () => {
 const getAddMembersOverlay = () => {
   return `
     <div class="overlay-model add-members-overlay">
-      <header class="list-header">
+    <header>
       <h3 class="label">
         <i class="bi bi-people-fill"></i>
-        Invite Users
+        ${t("group-chat:modals.invite_users_title")}
       </h3>
-      <!-- close btn -->
-      <button type="button" class="close-overlay-btn exclude-btn">
-        <i class="bi bi-x-lg"></i>
+      <button
+        type="button"
+        class="exclude-btn close-add-members-overlay should-fill"
+      >
+        <i class="bi bi-x-circle"></i>
       </button>
-      </header>
+    </header>
+    <div class="overlay-content">
       <section class="text-helper">
-      Enter the user’s ID or name to invite them to the group
+      ${t("group-chat:modals.invite_desc")}
       </section>
-      <section class="search-sec">
-      <div class="members-search users-search">
-        <div class="search-icon-container">
-        <i class="bi bi-person-fill"></i>
-        </div>
-
+      <div class="users-search-container search-container" id="add-members-search-container">
         <input
         type="search"
         id="search"
-        placeholder="Search By User Name or ID"
+        placeholder="${t("group-chat:modals.search_user_placeholder")}"
         />
+        <i class="bi bi-search"></i>
       </div>
-      </section>
-      <section class="users-result">
+      <div class="users-list-container" id="members-list">
         <div class="icon-wrapper">
           <div class="empty-icon-container">
             <i class="bi bi-people"></i>
           </div>
-          <h3>Search for Users</h3>
-          <p>Type a username or email in the search bar above to find users to invite.</p>
+          <h3>${t("group-chat:skeletons.search_users_title")}</h3>
+          <p>${t("group-chat:skeletons.search_users_desc")}</p>
         </div>
-      </section>
-      <div class="action-btns">
+      </div>
+    </div>
+    <footer>
       <button type="button" class="btn blue-btn confirm-btn">
-        Confirm
+        ${t("common:modals.confirm")}
       </button>
       <button type="button" class="btn gray-btn cancel-btn">
-        Cancel
+        ${t("common:modals.cancel")}
       </button>
-      </div>
+    </footer>
     </div>
     `;
 };
@@ -2061,7 +2083,7 @@ const createUserBadge = (user) => {
   badge.innerHTML = `
   <div class="avatar">
     <img
-      alt="Member Avatar"
+      alt="${t("common:member_avatar_alt")}"
     />
   </div>
   <span class="full-name"></span>
@@ -2129,7 +2151,7 @@ const inviteUsersToGroup = (users, confirmBtn) => {
     { groupId: getGroupId(), users },
     confirmBtn,
     {
-      successMsg: "Users invited successfully!",
+      successMsg: t("group-chat:alerts.users_invited_success"),
       onSuccess: () => closeOverlayModal("add-members-overlay"),
     },
   );
@@ -2137,7 +2159,7 @@ const inviteUsersToGroup = (users, confirmBtn) => {
 
 const handleConfirmClick = (users, confirmBtn) => {
   if (users.length === 0) {
-    showMessageBlock("Please select at least one user to add.", "info");
+    showMessageBlock(t("group-chat:alerts.select_user_to_add"), "info");
     return;
   } else {
     inviteUsersToGroup(users, confirmBtn);
@@ -2155,7 +2177,7 @@ const handleMembersResultsInput = (e, users, container, removeFromUsers) => {
   if (e.target.checked) {
     if (users.length >= 5)
       return showMessageBlock(
-        "You can only invite up to 5 users at a time.",
+        t("group-chat:alerts.max_invite_limit"),
         "info",
       );
 
@@ -2177,7 +2199,7 @@ const handleUsersLoader = (data, container, users) => {
     usersResults.before(badgeCount);
   }
   if (search.value === "") return badgeCount.remove();
-  badgeCount.textContent = `${data.cards.length} Users Found`;
+  badgeCount.textContent = t("group-chat:alerts.users_found_count", { count: data.cards.length });
   data.cards.forEach((card) => {
     if (users.includes(card.id)) {
       const userInResult = usersResults.querySelector(
@@ -2204,14 +2226,14 @@ const createUserCard = (user) => {
   <div class="avatar">
     <img
       src="${user.photoURL}"
-      alt="Member Avatar"
+      alt="${t("common:member_avatar_alt")}"
     />
   </div>
   <div class="wrapper">
     <span class="full-name"></span>
     ${
       user.isAlreadyMember
-        ? `<span class="already-member">Already A member</span>`
+        ? `<span class="already-member">${t("group-chat:badges.already_member")}</span>`
         : ""
     }
   </div>
@@ -2271,13 +2293,13 @@ const setUpAddMembersOverlay = (container) => {
       emptyState: {
         noFilter: {
           icon: "bi-people",
-          title: "Search for Users",
-          desc: "Type a name or ID in the search bar above to find users to invite.",
+          title: t("group-chat:skeletons.search_users_title"),
+          desc: t("group-chat:skeletons.search_users_desc"),
         },
         filtered: {
           icon: "bi-search",
-          title: "No Users Found",
-          desc: "No users match your search query.",
+          title: t("group-chat:skeletons.no_users_found_title"),
+          desc: t("group-chat:skeletons.no_users_found_desc"),
         },
       },
     },
@@ -2360,7 +2382,7 @@ export const syncMobileDrawerGroupActions = () => {
       ? icon.outerHTML
       : '<i class="bi bi-plus-circle"></i>';
     const textContent =
-      topBarCreateSessionBtn.textContent.trim() || "Create Session";
+      topBarCreateSessionBtn.textContent.trim() || t("group-chat:create_session");
     clone.innerHTML = `${iconHtml}<span>${textContent}</span>`;
     actionsList.appendChild(clone);
   }

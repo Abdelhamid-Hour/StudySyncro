@@ -218,7 +218,7 @@
       & > div.tasks-list {
         & > div[class*="task"] div[class*="task-box"] {
           &.task-box.first {
-            border-left: 0.4rem solid var(--success-block-border-color);
+            border-inline-start: 0.4rem solid var(--success-block-border-color);
           }
 
           &.completed-task-box {
@@ -250,8 +250,8 @@
   .quiz {
     .quiz-note {
       font-size: var(--small-font-size);
-      margin-right: auto;
-      margin-left: var(--primary-gap);
+      margin-inline-end: auto;
+      margin-inline-start: var(--primary-gap);
       text-align: center;
       align-content: center;
     }
@@ -283,7 +283,7 @@
             background-color: var(--info-background-color);
             position: absolute;
             bottom: 0;
-            left: 0;
+            inset-inline-start: 0;
             height: 0.5rem;
             width: 100%;
             padding: initial;
@@ -344,7 +344,7 @@
       }
 
       .action-buttons {
-        margin-left: auto;
+        margin-inline-start: auto;
         display: flex;
         gap: var(--primary-gap);
       }
@@ -388,7 +388,7 @@
             padding-inline: calc(var(--primary-gap) / 4);
             align-content: center;
             top: 0;
-            left: 0;
+            inset-inline-start: 0;
             translate: 5% -60%;
             border-radius: var(--primary-radius);
             background-color: var(--container-background-color);
@@ -405,7 +405,7 @@
           &.active-task-container {
             background-color: var(--green-bg);
             color: var(--green-color);
-            margin-left: auto;
+            margin-inline-start: auto;
           }
 
           &.next-task-container {
@@ -417,7 +417,7 @@
             align-items: center;
 
             label {
-              left: initial;
+              inset-inline-start: initial;
               translate: 0 -60%;
             }
           }
@@ -449,7 +449,7 @@
           font-size: 9cqw;
           position: absolute;
           top: 0;
-          right: 0;
+          inset-inline-end: 0;
           translate: 110% -100%;
         }
       }
@@ -540,17 +540,17 @@
           }
 
           .flip-gap-left {
-            left: 0;
+            inset-inline-start: 0;
             border-start-end-radius: var(--primary-radius);
             border-end-end-radius: var(--primary-radius);
-            border-right: var(--gap-border);
+            border-inline-end: var(--gap-border);
           }
 
           .flip-gap-right {
-            right: 0;
+            inset-inline-end: 0;
             border-start-start-radius: var(--primary-radius);
             border-end-start-radius: var(--primary-radius);
-            border-left: var(--gap-border);
+            border-inline-start: var(--gap-border);
           }
         }
 
@@ -575,13 +575,13 @@
           }
 
           .flip-gap-left {
-            left: 0;
+            inset-inline-start: 0;
             border-start-end-radius: var(--primary-radius);
             border-end-end-radius: var(--primary-radius);
           }
 
           .flip-gap-right {
-            right: 0;
+            inset-inline-end: 0;
             border-start-start-radius: var(--primary-radius);
             border-end-start-radius: var(--primary-radius);
           }
@@ -598,7 +598,7 @@
           position: absolute;
           display: block;
           top: 0;
-          left: 0;
+          inset-inline-start: 0;
           height: 50%;
           width: 100%;
           overflow: hidden;
@@ -627,7 +627,7 @@
             backface-visibility: hidden;
             position: absolute;
             top: 0;
-            left: 0;
+            inset-inline-start: 0;
             height: 100%;
             width: 100%;
             z-index: var(--top-ffront-z-index);

@@ -1,10 +1,4 @@
 import {
-  fetchData,
-  sendData,
-  showMessageBlock,
-  isNativeDomainCondition,
-} from "../../../../../main_assets/js/utils.js";
-import {
   DESCRIPTION_MAX_LENGTH,
   DESCRIPTION_MIN_LENGTH,
   globalTooltip,
@@ -18,8 +12,11 @@ import {
   resetTooltip,
   showErrorTooltip,
   navigateTo,
-  updateMain,
   getLoader,
+  sendData,
+  showMessageBlock,
+  isNativeDomainCondition,
+  t,
 } from "../../../global/js/utils.js";
 import {
   levelValues,
@@ -31,12 +28,11 @@ import {
   setUpSelectMenu,
   setUpSwitchBtn,
 } from "../../../shared/forms/js/utils.js";
-import { groupCreateBtn } from "./dom-variables.js";
 
 export const getGroupOverlay = () => `
 <div class="create-group-overlay overlay-model">
     <header>
-        <h3>Create New Group</h3>
+        <h3>${t("groups:modals.create_new_group")}</h3>
         <button type="button" class="exclude-btn close-group-overlay">
             <i class="bi bi-x-lg"></i>
         </button>
@@ -57,7 +53,7 @@ export const getGroupOverlay = () => `
                     minlength="${NAME_TITLE_MIN_LENGTH}"
                     maxlength="${NAME_TITLE_MAX_LENGTH}"
                     class="input"
-                    placeholder="Group Name"
+                    placeholder="${t("groups:forms.group_name_placeholder")}"
                 />
             </div>
             <div class="field-container group-description-field">
@@ -74,9 +70,9 @@ export const getGroupOverlay = () => `
                     class="input"
                     maxlength="${DESCRIPTION_MAX_LENGTH}"
                     minlength="${DESCRIPTION_MIN_LENGTH}"
-                    placeholder="Describe your group (e.g. purpose, topics, goals)"
+                    placeholder="${t("groups:forms.group_description_placeholder")}"
                 ></textarea>
-                <span class="chars-limit">0/${DESCRIPTION_MAX_LENGTH}</span>
+                <span class="chars-limit">0${DESCRIPTION_MAX_LENGTH}</span>
             </div>
             <div class="dual-container">
                 <div class="field-container group-subject-field">
@@ -85,7 +81,7 @@ export const getGroupOverlay = () => `
                     </div>
                     <div class="select-trigger input">
                         <button type="button" class="exclude-btn open-drop-down-btn">
-                            <span class="subject-value">Subject</span>
+                            <span class="subject-value">${t("groups:forms.subject_placeholder")}</span>
                             <input type="hidden" name="subject" value="" />
                             <i class="bi bi-chevron-down"></i>
                         </button>
@@ -98,7 +94,7 @@ export const getGroupOverlay = () => `
                     <div class="field-icon-container">
                         <i class="bi bi-graph-up"></i>
                     </div>
-                    <span class="level-input input">Beginner</span>
+                    <span class="level-input input">${t("common:forms.levels.Beginner")}</span>
                     <input type="hidden" name="level" value="Beginner" />
                     <button
                         type="button"
@@ -118,7 +114,7 @@ export const getGroupOverlay = () => `
                         
                         type="number"
                         class="input"
-                        placeholder="Max Members"
+                        placeholder="${t("groups:forms.max_members_placeholder")}"
                         name="max-members"
                     />
                 </div>
@@ -126,7 +122,7 @@ export const getGroupOverlay = () => `
                     <div class="field-icon-container">
                         <i class="bi bi-eye"></i>
                     </div>
-                        <span class="visibility-input input">Public</span>
+                        <span class="visibility-input input">${t("common:forms.visibility.Public")}</span>
                     <input type="hidden" name="visibility" value="Public" />
                     <button
                         type="button"
@@ -137,7 +133,7 @@ export const getGroupOverlay = () => `
                     </button>
                 </div>
             </div>
-            <button type="submit" class="blue-btn create-btn">Create</button>
+            <button type="submit" class="blue-btn create-btn">${t("groups:buttons.create")}</button>
         </form>
     </div>
 </div>
@@ -153,15 +149,18 @@ const chechGroupValues = (inputs) => {
   const maxMembersValue = maxMembers?.value ?? "";
   const visibilityValue = visibility?.value ?? "";
   if (!groupNameValue.trim()) {
-    showErrorTooltip("Group name is required.", groupName);
+    showErrorTooltip(t("groups:errors.group_name_required"), groupName);
     return false;
   } else if (
     groupNameValue.length < NAME_TITLE_MIN_LENGTH ||
     groupNameValue.length > NAME_TITLE_MAX_LENGTH
   ) {
     showErrorTooltip(
-      `Group name must be between ${NAME_TITLE_MIN_LENGTH} and ${NAME_TITLE_MAX_LENGTH} characters.`,
-      groupName
+      t("groups:errors.group_name_length", {
+        min: NAME_TITLE_MIN_LENGTH,
+        max: NAME_TITLE_MAX_LENGTH,
+      }),
+      groupName,
     );
     return false;
   } else {
@@ -169,15 +168,18 @@ const chechGroupValues = (inputs) => {
   }
 
   if (!descriptionValue.trim()) {
-    showErrorTooltip("Description is required.", description);
+    showErrorTooltip(t("groups:errors.description_required"), description);
     return false;
   } else if (
     descriptionValue.length < DESCRIPTION_MIN_LENGTH ||
     descriptionValue.length > DESCRIPTION_MAX_LENGTH
   ) {
     showErrorTooltip(
-      `Description must be between ${DESCRIPTION_MIN_LENGTH} and ${DESCRIPTION_MAX_LENGTH} characters.`,
-      description
+      t("groups:errors.description_length", {
+        min: DESCRIPTION_MIN_LENGTH,
+        max: DESCRIPTION_MAX_LENGTH,
+      }),
+      description,
     );
     return false;
   } else {
@@ -185,14 +187,14 @@ const chechGroupValues = (inputs) => {
   }
 
   if (!subjectValue.trim()) {
-    showErrorTooltip("Subject is required.", subject);
+    showErrorTooltip(t("groups:errors.subject_required"), subject);
     return false;
   } else {
     resetTooltip(globalTooltip, subject.closest(".field-container"));
   }
 
   if (!levelValues.includes(levelValue)) {
-    showErrorTooltip("Level is not valid.", level);
+    showErrorTooltip(t("groups:errors.level_invalid"), level);
     return false;
   } else {
     resetTooltip(globalTooltip, level.closest(".field-container"));
@@ -204,8 +206,11 @@ const chechGroupValues = (inputs) => {
     Number(maxMembersValue) > 1000
   ) {
     showErrorTooltip(
-      `Max members must be a number between ${MIN_MEMBERS} and ${MAX_MEMBERS}.`,
-      maxMembers
+      t("groups:errors.max_members_range", {
+        min: MIN_MEMBERS,
+        max: MAX_MEMBERS,
+      }),
+      maxMembers,
     );
     return false;
   } else {
@@ -213,7 +218,7 @@ const chechGroupValues = (inputs) => {
   }
 
   if (!visibilityValues.includes(visibilityValue)) {
-    showErrorTooltip("Visibility is not valid.", visibility);
+    showErrorTooltip(t("groups:errors.visibility_invalid"), visibility);
     return false;
   } else {
     resetTooltip(globalTooltip, visibility.closest(".field-container"));
@@ -226,14 +231,14 @@ export const handleGroupCreateClick = () => {
     "create-group-overlay",
     [".close-group-overlay"],
     getGroupOverlay,
-    setUpGroupOverlay
+    setUpGroupOverlay,
   );
 };
 
 const setUpGroupOverlay = (backdropElement) => {
   setUpSelectMenu(backdropElement.querySelector(".group-subject-field"));
   const visibilityField = backdropElement.querySelector(
-    ".group-visibility-field"
+    ".group-visibility-field",
   );
   const levelField = backdropElement.querySelector(".group-level-field");
   setUpSwitchBtn(visibilityField);
@@ -248,17 +253,19 @@ const handleCreateGroupSubmit = async (groupData, form, createBtn) => {
     createBtn.disabled = true;
     createBtn.innerHTML = getLoader();
     await sendData("/api/create-group", { groupData });
-    showMessageBlock("Group created successfully", "success");
+    showMessageBlock(t("groups:alerts.group_created_success"), "success");
     navigateTo("/groups/my");
   } catch (error) {
-    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
-    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    const isNative =
+      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType =
+      error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error("Error: ", error);
     showMessageBlock(error.message, notifType);
   } finally {
     form.isCreating = false;
     createBtn.disabled = false;
-    createBtn.innerHTML = "Create";
+    createBtn.innerHTML = t("groups:buttons.create");
   }
   // ? its not necessary to reset the form here, as the overlay will be closed
 };
@@ -286,6 +293,6 @@ export const initGroupForm = () => {
         maxMembers,
         visibility,
       }),
-    (groupData) => handleCreateGroupSubmit(groupData, form, createBtn)
+    (groupData) => handleCreateGroupSubmit(groupData, form, createBtn),
   );
 };

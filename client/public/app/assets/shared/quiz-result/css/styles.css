@@ -18,7 +18,7 @@
     color: var(--secondary-text-color);
 
     .questions-count {
-      margin-right: auto;
+      margin-inline-end: auto;
       display: flex;
       align-items: center;
       font-weight: bold;
@@ -123,7 +123,7 @@
       }
 
       &:first-child {
-        margin-right: calc(var(--primary-gap) / 2);
+        margin-inline-end: calc(var(--primary-gap) / 2);
       }
     }
   }
@@ -168,7 +168,7 @@
           }
         }
         .question-status {
-          margin-right: auto;
+          margin-inline-end: auto;
           display: flex;
           align-items: center;
           color: var(--secondary-text-color);
@@ -187,7 +187,7 @@
           font-size: var(--x-small-font-size);
           border-radius: 0.2rem;
           top: calc(var(--primary-gap) / 2);
-          right: calc(var(--primary-gap) / 2);
+          inset-inline-end: calc(var(--primary-gap) / 2);
           width: 1.5rem;
           height: 1.5rem;
 
@@ -301,7 +301,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border-right: var(--primary-border-style);
+      border-inline-end: var(--primary-border-style);
       transition:
         border-color var(--primary-transition-style),
         background-color var(--primary-transition-style);
@@ -334,7 +334,7 @@
       align-items: center;
       gap: 0.3rem;
       position: absolute;
-      left: 0;
+      inset-inline-start: 0;
       color: var(--primary-color);
     }
 
@@ -350,7 +350,7 @@
     }
     .close-results-overlay-btn {
       position: absolute;
-      right: 0;
+      inset-inline-end: 0;
       &:hover {
         background-color: var(--btn-background-color);
         box-shadow: var(--primary-shadow);
@@ -415,18 +415,18 @@
 
       tr:first-child {
         th:first-child {
-          border-top-left-radius: var(--primary-radius);
+          border-start-start-radius: var(--primary-radius);
         }
         th:last-child {
-          border-top-right-radius: var(--primary-radius);
+          border-start-end-radius: var(--primary-radius);
         }
       }
       tr:last-child {
         td:first-child {
-          border-bottom-left-radius: var(--primary-radius);
+          border-end-start-radius: var(--primary-radius);
         }
         td:last-child {
-          border-bottom-right-radius: var(--primary-radius);
+          border-end-end-radius: var(--primary-radius);
         }
       }
 

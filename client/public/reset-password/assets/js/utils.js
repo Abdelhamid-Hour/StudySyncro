@@ -1,4 +1,5 @@
 import { passwordRegex, PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH } from '../../../main_assets/js/variables.js';
+import { t } from '../../../main_assets/js/i18n.js';
 import { main, passwordField, confirmPasswordField } from './dom-variables.js';
 export const splitUrlParams = (paramName) => {
   const searchParams = new URLSearchParams(location.search);
@@ -48,11 +49,11 @@ export const verifyPasswordFields = () => {
   const password = passwordField.value.trim();
   const confirmPassword = confirmPasswordField.value.trim();
   if (password !== confirmPassword) {
-    showError('Passwords do not match', confirmPasswordField);
+    showError(t('reset_password:errors.passwords_do_not_match'), confirmPasswordField);
   }
 
   if (!passwordRegex.test(password)) {
-    showError(`The password must be between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters`, passwordField);
+    showError(t('reset_password:errors.password_length', { min: PASSWORD_MIN_LENGTH, max: PASSWORD_MAX_LENGTH }), passwordField);
   }
 
   if (!passwordRegex.test(password) || password !== confirmPassword) {

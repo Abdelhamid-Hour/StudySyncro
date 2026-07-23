@@ -1,13 +1,13 @@
 // index and optimize website for searche engines
 // add metadata and metadata handler to the login page
 // use post css to generate the css files
-// add loading animation to the login page
-// add a soft delete option ================
 // improve website operations with transactions
-// modify the chat input inactive home page to use the pre existing func for initialization
 // arab verion
 // learn mutaionObserver
 // add the cloud funcs
+// decomment the fast google sign in 
+
+//join_accepted message not good with join_invite accept
 
 
 
@@ -20,8 +20,7 @@
 
 
 
-/** need verification 
 
-Groups:
-quizzes tab
-invite a member
+
+//------------------------------------
+// add a soft delete option ================

@@ -1,11 +1,9 @@
 import {
-  showMessageBlock,
-  sendData,
-} from "../../../../../main_assets/js/utils.js";
-import {
   getLoader,
   handleApiAction,
   showConfirmationBox,
+  t,
+  showMessageBlock,
 } from "../../../global/js/utils.js";
 
 export const handleJoinGroupClick = async (joinGroupBtn) => {
@@ -13,10 +11,10 @@ export const handleJoinGroupClick = async (joinGroupBtn) => {
 
   const result = await showConfirmationBox(
     "confirmation",
-    "Join Group",
-    "Are you sure you want to join this group?",
-    "Cancel",
-    "Join"
+    t("groups:modals.join_group_title"),
+    t("groups:modals.join_group_desc"),
+    t("common:modals.cancel"),
+    t("groups:modals.join_group_confirm"),
   );
 
   joinGroupBtn.disabled = false;
@@ -40,34 +38,27 @@ export const handleJoinGroupClick = async (joinGroupBtn) => {
         const resultElement = getResultElement(data.status, groupId);
         groupFooter.replaceChild(
           document.createRange().createContextualFragment(resultElement),
-          joinGroupBtn
+          joinGroupBtn,
         );
       },
-    }
+    },
   );
-};
-
-const createLoaderDiv = () => {
-  const loaderDiv = document.createElement("div");
-  loaderDiv.className = "loader-container";
-  loaderDiv.innerHTML = getLoader();
-  return loaderDiv;
 };
 
 const getResultElement = (status, groupId) => {
   return status === "joined"
     ? `<a href="/app/groups/my/${groupId}/chat" class="view-group-link">
-                             <i class="bi bi-box-arrow-right"></i><span>View Group</span>
+                             <i class="bi bi-box-arrow-right"></i><span>${t("groups:actions.view_group")}</span>
                      </a>`
-    : '<span class="pending-text"><i class="bi bi-hourglass-split"></i>Pending</span>';
+    : `<span class="pending-text"><i class="bi bi-hourglass-split"></i>${t("groups:actions.pending")}</span>`;
 };
 
 const getSuccessMessage = (status, groupName) => {
   const cover = document.createElement("div");
   cover.innerHTML =
     status === "joined"
-      ? `You’ve successfully joined Group <b></b>`
-      : `Your request to join Group <b></b> has been sent`;
+      ? t("groups:alerts.joined_group_success_html")
+      : t("groups:alerts.join_request_sent_html");
 
   cover.querySelector("b").textContent = groupName;
   return cover.innerHTML;

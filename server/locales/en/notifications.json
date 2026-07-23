@@ -1,0 +1,72 @@
+{
+  "categories": {
+    "Join Request": "Join Request",
+    "Groups": "Groups",
+    "Sessions": "Sessions",
+    "All": "All",
+    "General": "General"
+  },
+  "messages": {
+    "join_request": {
+      "title": "New Join Request",
+      "message": "{senderName} requested to join {groupName}."
+    },
+    "join_pending": {
+      "title": "Request Sent",
+      "message": "Your request to join {groupName} is pending admin approval."
+    },
+    "join_accepted": {
+      "title": "Request Accepted",
+      "message": "Your request to join {groupName} has been accepted. Welcome!"
+    },
+    "join_rejected": {
+      "title": "Request Declined",
+      "message": "Your request to join {groupName} was declined by the admin."
+    },
+    "join_invite": {
+      "title": "Group Invitation",
+      "message": "{senderName} invited you to join {groupName}."
+    },
+    "session_started": {
+      "title": "Study Session Started",
+      "message": "A study session '{sessionName}' has started in {groupName}. Join now!"
+    },
+    "session_ended": {
+      "title": "Study Session Ended",
+      "message": "The study session '{sessionName}' in {groupName} has ended."
+    },
+    "role_transferred": {
+      "title": "Host Role Transferred",
+      "message": "You are now the Host of {groupName}."
+    },
+    "role_demoted": {
+      "title": "Role Updated",
+      "message": "Host role for {groupName} has been transferred to {newAdminName}."
+    },
+    "member_removed": {
+      "title": "Removed from Group",
+      "message": "You have been removed from {groupName}."
+    },
+    "group_deleted": {
+      "title": "Group Deleted",
+      "message": "The study group {groupName} has been deleted by the host."
+    }
+  },
+  "styling_terms": {
+    "invited_you_to_join": "invited you to join",
+    "successfully_joined": "successfully joined",
+    "accepted": "accepted",
+    "started": "started",
+    "ended": "ended",
+    "rejected": "rejected",
+    "removed": "removed",
+    "deleted": "deleted",
+    "demoted_from_admin": "demoted from Admin",
+    "demoted": "demoted",
+    "pending_approval": "pending approval",
+    "transferred": "transferred",
+    "admin_role": "Admin role",
+    "host_role": "Host",
+    "declined": "declined"
+  }
+}

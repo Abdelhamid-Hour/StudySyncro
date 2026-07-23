@@ -27,13 +27,9 @@ import {
   googleBtn,
   formsContainer,
   forgotPasswordLink,
-  fileinput,
-  signUpFormContainer,
-  signInFormContainer,
-  loginForm,
-  avatarSpaceReserver,
+  fileinput
 } from "../assets/js/dom-variables.js";
-import { showMessageBlock } from "../../main_assets/js/utils.js";
+import { showMessageBlock, checkError, t } from "../../main_assets/js/utils.js";
 
 InitializeGoogleOneTap(auth, showMessageBlock);
 
@@ -91,11 +87,12 @@ forgotPasswordLink.addEventListener("click", async () => {
     }
     await sendPasswordResetEmail(auth, signInemailField.value);
     showMessageBlock(
-      "If this email is registered, you will receive a password reset link.",
+      t("login:messages.reset_link_sent"),
       "success",
     );
     signInPasswordField.value = "";
   } catch (error) {
+    checkError(error);
     showMessageBlock(error.message, "error");
   }
 });

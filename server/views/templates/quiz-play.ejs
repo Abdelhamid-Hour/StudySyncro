@@ -6,7 +6,7 @@
       passed: <%= passed %>
     };
   </script>
-  <a class="button close-btn exclude-btn has-tooltip" data-tooltip="Close">
+  <a class="button close-btn exclude-btn has-tooltip" data-tooltip="<%= t('common.actions.close') %>">
     <i class="bi bi-x-lg"></i>
   </a>
   <div class="questions-view">
@@ -15,7 +15,7 @@
       <div class="timer">
         <span class="time-left">
           <span class="icon-box"><i class="bi bi-stopwatch-fill"></i></span>
-          Time Left :
+          <%= t("quizzes:play.time_left") %>
         </span>
         <div class="timer-digits">
           <span class="hours key-hint">00</span>
@@ -26,7 +26,7 @@
         </div>
       </div>
       <% } %>
-      <h3 class="quiz-title"><%= quizTitle %></h3>
+      <h3 class="quiz-title"><bdi><%= quizTitle %></bdi></h3>
     </header>
     <div class="question-view">
       <header class="question-view-header">
@@ -35,23 +35,23 @@
             <i class="bi bi-patch-question"></i>
           </span>
           <span class="question-count counter">
-            Question
+            <%= t("quizzes:play.question_label") %>
             <span class="current-question-number">1</span>
-            of <%= totalQuestions %>
+            <%= t("quizzes:play.of_label") %> <bdi><%= totalQuestions %></bdi>
           </span>
         </h4>
-        <button type="button" class="gray-btn skip-btn has-tooltip" data-tooltip="Or press S">Skip</button>
+        <button type="button" class="gray-btn skip-btn has-tooltip" data-tooltip="<%= t('quizzes:play.skip_tooltip') %>"><%= t("quizzes:play.skip") %></button>
       </header>
       <div class="question-body">
-        <h4><%= firstQuestion.text %></h4>
+        <h4><bdi><%= firstQuestion.text %></bdi></h4>
         <div class="question-choices">
-          <span class="select-answer-label">Select the correct Answer <span style="opacity: 0.65; font-size: 0.85em; font-weight: normal;">(Or press 1-6 / A-F)</span></span>
+          <span class="select-answer-label"><%= t("quizzes:play.select_answer") %> <span style="opacity: 0.65; font-size: 0.85em; font-weight: normal;"><%= t("quizzes:play.select_hint") %></span></span>
           <div class="choices-list">
             <% firstQuestion.choices.forEach(function(choice, idx) { %>
               <label class="choice">
                 <input type="radio" value="<%= idx %>" name="choice" />
                 <span class="choice-label"><%= String.fromCharCode(65 + idx) %></span>
-                <span class="choice-text"><%= choice %></span>
+                <span class="choice-text"><bdi><%= choice %></bdi></span>
               </label>
             <% }); %>
           </div>
@@ -59,16 +59,16 @@
       </div>
       <footer class="question-actions-row">
         <div class="prev action">
-          <button class="prev-btn gray-btn">Previous</button>
-          <span>Or Press</span>
+          <button class="prev-btn gray-btn"><%= t("quizzes:play.prev") %></button>
+          <span><%= t("quizzes:play.or_press") %></span>
           <i class="left-key icon"></i>
         </div>
         <div class="next action">
-          <span>Press</span>
+          <span><%= t("quizzes:play.press") %></span>
           <i class="right-key icon"></i>
-          <span>Or</span>
+          <span><%= t("quizzes:play.or") %></span>
           <i class="enter-key icon"></i>
-          <button class="next-btn blue-btn">Next</button>
+          <button class="next-btn blue-btn"><%= t("quizzes:play.next") %></button>
         </div>
       </footer>
     </div>

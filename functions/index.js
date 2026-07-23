@@ -25,7 +25,7 @@ export const notifyAdminOnJoin = onDocumentUpdated(
       const beforeUids = event.data?.before?.data()?.membersUids || [];
       const afterUids = event.data?.after?.data()?.membersUids || [];
       const newMemberUids = afterUids.filter(
-        (uid) => !beforeUids.includes(uid)
+        (uid) => !beforeUids.includes(uid),
       ); // Add logging to ensure these values are correct
       console.log("Function triggered for groupId:", event.params.groupId);
       console.log("Before UIDs:", beforeUids);
@@ -53,7 +53,7 @@ export const notifyAdminOnJoin = onDocumentUpdated(
         .get();
       if (!adminDoc.exists) {
         console.log(
-          `Admin document for ID ${adminId} does not exist, returning.`
+          `Admin document for ID ${adminId} does not exist, returning.`,
         );
         return;
       }
@@ -67,7 +67,7 @@ export const notifyAdminOnJoin = onDocumentUpdated(
 
       if (!adminEmail) {
         console.log(
-          `Admin email not found for admin ID ${adminId}, returning.`
+          `Admin email not found for admin ID ${adminId}, returning.`,
         );
         return;
       } // Get new member details
@@ -189,7 +189,7 @@ https://your-app-url.com/unsubscribe
       // --- END ADDITION ---
 
       console.log(
-        `Attempting to send email to ${adminEmail} for group ${groupName}...`
+        `Attempting to send email to ${adminEmail} for group ${groupName}...`,
       );
       await sgMail.send({
         to: adminEmail,
@@ -210,13 +210,13 @@ https://your-app-url.com/unsubscribe
         },
       });
       console.log(
-        `Professional notification sent to ${adminEmail} for group ${groupName}`
+        `Professional notification sent to ${adminEmail} for group ${groupName}`,
       );
     } catch (error) {
       console.error("Error in notifyAdminOnJoin:", error);
       throw error;
     }
-  }
+  },
 );
 
 /**
@@ -263,7 +263,7 @@ export const autoEndExpiredSessions = onSchedule(
           }
 
           console.log(
-            `Auto-ending expired session ID: ${doc.id} (${session.name || "Unnamed"})`
+            `Auto-ending expired session ID: ${doc.id} (${session.name || "Unnamed"})`,
           );
 
           // 1. Update session status to "finished"
@@ -293,16 +293,15 @@ export const autoEndExpiredSessions = onSchedule(
       if (batchCommits.length > 0) {
         await Promise.all(batchCommits);
         console.log(
-          `Successfully auto-ended ${updatedCount} expired session(s) across ${batchCommits.length} batch(es).`
+          `Successfully auto-ended ${updatedCount} expired session(s) across ${batchCommits.length} batch(es).`,
         );
       } else {
         console.log(
-          "Auto-end sessions check: All active sessions are still within their duration."
+          "Auto-end sessions check: All active sessions are still within their duration.",
         );
       }
     } catch (error) {
       console.error("Error in autoEndExpiredSessions function:", error);
     }
-  }
+  },
 );
-

@@ -1,10 +1,4 @@
 import {
-  fetchData,
-  sendData,
-  showMessageBlock,
-  isNativeDomainCondition,
-} from "../../../../../../main_assets/js/utils.js";
-import {
   CHOICE_TEXT_MAX_LENGTH,
   globalTooltip,
   QUESTION_TEXT_MAX_LENGTH,
@@ -22,6 +16,11 @@ import {
   showConfirmationBox,
   showErrorTooltip,
   enableMobileTabs,
+  fetchData,
+  sendData,
+  showMessageBlock,
+  isNativeDomainCondition,
+  t,
 } from "../../../../global/js/utils.js";
 import { setUpSelectMenu } from "../../../../shared/forms/js/utils.js";
 import {
@@ -61,7 +60,8 @@ export const handleTextarea = (e) => {
       `.question-card[href="#${questionId}"] .question-text`,
     );
     if (questionCard) {
-      questionCard.textContent = questionText || "A simple question text here.";
+      questionCard.textContent =
+        questionText || t("quiz-edit:default_question_text");
     }
   }
 };
@@ -83,7 +83,10 @@ export const handleEditorListDragEnd = () => {
     const box = questionEditorBoxes.find((box) => {
       return box.id === card.href.split("#")[1];
     });
-    box.querySelector(".counter").textContent = `Question ${index + 1}`;
+    box.querySelector(".counter").textContent = t(
+      "quiz-edit:question_counter",
+      { count: index + 1 },
+    );
     editorQuestionsList.lastElementChild.before(box);
   });
 };
@@ -97,19 +100,19 @@ const getQuestionEls = (questionId, questionCount) => {
                   <span class="icon-box">
                     <i class="bi bi-patch-question"></i>
                   </span>
-                  <span class="question-count counter">Question ${questionCount}</span>
+                  <span class="question-count counter">${t("quiz-edit:question_counter", { count: questionCount })}</span>
                 </h4>
                 <button
                   type="button"
                   class="delete-question-btn exclude-btn has-tooltip"
-                  data-tooltip="Delete Choice"
+                  data-tooltip="${t("quiz-edit:delete_question_tooltip")}"
                 >
                   <i class="bi bi-trash3"></i>
                 </button>
               </header>
               <textarea
                 class="question-input input"
-                placeholder="Enter question text here..."
+                placeholder="${t("quiz-edit:question_placeholder")}"
                 id="question-text"
               ></textarea>
               <div class="choices-section">
@@ -117,7 +120,7 @@ const getQuestionEls = (questionId, questionCount) => {
                   <span class="icon-box">
                     <i class="bi bi-list-ol"></i>
                   </span>
-                  Choices
+                  ${t("quiz-edit:choices_heading")}
                 </h5>
                 <div class="choices-list">
                   <div data-choice-id="0" class="choice correct-answer">
@@ -125,12 +128,12 @@ const getQuestionEls = (questionId, questionCount) => {
                     <input
                       type="text"
                       class="choice-input input"
-                      placeholder="Enter choice A"
+                      placeholder="${t("quiz-edit:choice_placeholder", { letter: "A" })}"
                     />
                     <button
                       type="button"
                       class="delete-choice-btn exclude-btn has-tooltip"
-                      data-tooltip="Delete Choice"
+                      data-tooltip="${t("quiz-edit:delete_choice_tooltip")}"
                     >
                       <i class="bi bi-trash3"></i>
                     </button>
@@ -140,12 +143,12 @@ const getQuestionEls = (questionId, questionCount) => {
                     <input
                       type="text"
                       class="choice-input input"
-                      placeholder="Enter choice B"
+                      placeholder="${t("quiz-edit:choice_placeholder", { letter: "B" })}"
                     />
                     <button
                       type="button"
                       class="delete-choice-btn exclude-btn has-tooltip"
-                      data-tooltip="Delete Choice"
+                      data-tooltip="${t("quiz-edit:delete_choice_tooltip")}"
                     >
                       <i class="bi bi-trash3"></i>
                     </button>
@@ -153,14 +156,14 @@ const getQuestionEls = (questionId, questionCount) => {
                 </div>
                 <button type="button" class="add-choice-btn small-btn">
                   <i class="bi bi-plus-circle"></i>
-                  Add Choice
+                  ${t("quiz-edit:add_choice")}
                 </button>
                 <hr />
                 <h5 class="correct-answer-title section-title">
                   <span class="icon-box">
                     <i class="bi bi-check-circle"></i>
                   </span>
-                  Correct Answer
+                  ${t("quiz-edit:correct_answer_heading")}
                 </h5>
                 <div class="correct-answer-select">
                   <div class="icon-box">
@@ -200,18 +203,18 @@ const getQuestionEls = (questionId, questionCount) => {
                     <span class="icon-box">
                       <i class="bi bi-patch-question"></i>
                     </span>
-                    <span class="question-count counter">Question ${questionCount}</span>
+                    <span class="question-count counter">${t("quiz-edit:question_counter", { count: questionCount })}</span>
                   </h4>
-                  <button type="button" class="exclude-btn drag-handle has-tooltip" data-tooltip="Drag to Reorder">
+                  <button type="button" class="exclude-btn drag-handle has-tooltip" data-tooltip="${t("quiz-edit:drag_tooltip")}">
                     <i class="drag-icon"></i>
                   </button>
                 </header>
                 <p class="question-text">
-                  A simple question text here.
+                  ${t("quiz-edit:default_question_text")}
                 </p>
                 <footer class="question-card-footer">
-                  <span class="choices-count">2 Choices</span>
-                  <button type="button" class="delete-question-btn exclude-btn has-tooltip" data-tooltip="Delete Question">
+                  <span class="choices-count">${t("quizzes:choices_count", { count: 2 })}</span>
+                  <button type="button" class="delete-question-btn exclude-btn has-tooltip" data-tooltip="${t("quiz-edit:delete_question_tooltip")}">
                     <i class="bi bi-trash3"></i>
                   </button>
                 </footer>
@@ -254,8 +257,10 @@ const updateChoiceLabelsAndIds = (choicesList) => {
       65 + index,
     ); // A, B, C, ...
     choice.setAttribute("data-choice-id", index);
-    choice.querySelector(".choice-input").placeholder =
-      `Enter choice ${String.fromCharCode(65 + index)}`;
+    choice.querySelector(".choice-input").placeholder = t(
+      "quiz-edit:choice_placeholder",
+      { letter: String.fromCharCode(65 + index) },
+    );
   });
 };
 
@@ -301,8 +306,10 @@ const updateChoicesCountInPanel = (choicesList) => {
   );
   if (questionCard) {
     const choiceCount = choicesList.children.length;
-    questionCard.querySelector(".choices-count").textContent =
-      `${choiceCount} Choices`;
+    questionCard.querySelector(".choices-count").textContent = t(
+      "quizzes:choices_count",
+      { count: choiceCount },
+    );
   }
 };
 
@@ -331,7 +338,7 @@ const handleDeleteChoice = (deleteChoiceBtn) => {
     updateChoicesCountInPanel(choicesList);
   } else {
     showMessageBlock(
-      `You must have at least ${MIN_CHOICES_COUNT} choices.`,
+      t("quiz-edit:alerts.min_choices", { min: MIN_CHOICES_COUNT }),
       "error",
     );
   }
@@ -343,10 +350,8 @@ const createChoiceElement = (choiceCount) => {
   newChoice.setAttribute("data-choice-id", choiceCount);
   newChoice.innerHTML = `
     <span class="choice-label">${String.fromCharCode(65 + choiceCount)}</span>
-    <input type="text" class="choice-input input" placeholder="Enter choice ${String.fromCharCode(
-      65 + choiceCount,
-    )}" />
-    <button type="button" class="delete-choice-btn exclude-btn has-tooltip" data-tooltip="Delete Choice">
+    <input type="text" class="choice-input input" placeholder="${t("quiz-edit:choice_placeholder", { letter: String.fromCharCode(65 + choiceCount) })}" />
+    <button type="button" class="delete-choice-btn exclude-btn has-tooltip" data-tooltip="${t("quiz-edit:delete_choice_tooltip")}">
       <i class="bi bi-trash3"></i>
     </button>
   `;
@@ -379,7 +384,7 @@ const handleAddChoice = (addChoiceBtn) => {
     updateChoicesCountInPanel(choicesList);
   } else {
     showMessageBlock(
-      `You can only have up to ${MAX_CHOICES_COUNT} choices.`,
+      t("quiz-edit:alerts.max_choices", { max: MAX_CHOICES_COUNT }),
       "error",
     );
   }
@@ -404,7 +409,10 @@ const recountQuestionNumbers = (questionId) => {
         this.index = index;
       }
       if (index > this.index) {
-        box.querySelector(".counter").textContent = `Question ${index}`;
+        box.querySelector(".counter").textContent = t(
+          "quiz-edit:question_counter",
+          { count: index },
+        );
       }
     }, {});
   });
@@ -511,8 +519,10 @@ export const initializeInitialData = async () => {
   try {
     initialData = await fetchData("/quiz-details/" + getQuizId());
   } catch (error) {
-    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
-    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    const isNative =
+      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType =
+      error.type || error.data?.type || (isNative ? "info" : "error");
     showMessageBlock(error.message, notifType);
     if (!isNative) console.log("Error: ", error);
   }
@@ -567,15 +577,27 @@ export const handleSaveBtn = async (type, btn) => {
     initialData[type] = value; // Update the initial data with the new value
     swapMode("getViewMode", type, value);
     showMessageBlock(
-      `${type.charAt(0).toUpperCase() + type.slice(1)} updated successfully!`,
+      type === "title"
+        ? t("quiz-edit:alerts.title_updated")
+        : t("quiz-edit:alerts.subject_updated"),
       "success",
     );
   } catch (error) {
-    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
-    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    const isNative =
+      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType =
+      error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error(`Failed to update ${type}:`, error);
-    showMessageBlock(error.message || `Failed to update ${type}. Please try again.`, notifType);
-    return;
+    showMessageBlock(
+      error.message ||
+        t("quiz-edit:alerts.failed_to_update", {
+          type:
+            type === "title"
+              ? t("common:quiz_card.quiz_title")
+              : t("common:quiz_card.subject"),
+        }),
+      notifType,
+    );
   } finally {
     btn.isSaving = false;
     btn.innerHTML = '<i class="bi bi-floppy"></i>';
@@ -585,14 +607,17 @@ export const handleSaveBtn = async (type, btn) => {
 
 const checkTitleValidity = (value, input) => {
   if (!value) {
-    showErrorTooltip("Title is required.", input, "input");
+    showErrorTooltip(t("quizzes:validation.title_required"), input, "input");
     return;
   } else if (
     value.length < NAME_TITLE_MIN_LENGTH ||
     value.length > NAME_TITLE_MAX_LENGTH
   ) {
     showErrorTooltip(
-      `Title must be between ${NAME_TITLE_MIN_LENGTH} and ${NAME_TITLE_MAX_LENGTH} characters.`,
+      t("quizzes:validation.title_length", {
+        min: NAME_TITLE_MIN_LENGTH,
+        max: NAME_TITLE_MAX_LENGTH,
+      }),
       input,
       "input",
     );
@@ -607,7 +632,7 @@ const checkTitleValidity = (value, input) => {
 const validateQuestionText = (questionText, questionTextValue) => {
   if (!questionTextValue) {
     showErrorTooltip(
-      "Question text is required.",
+      t("quiz-edit:validation.question_required"),
       questionText,
       "question-input",
     );
@@ -618,7 +643,10 @@ const validateQuestionText = (questionText, questionTextValue) => {
     questionTextValue.length > QUESTION_TEXT_MAX_LENGTH
   ) {
     showErrorTooltip(
-      `Question text must be between ${QUESTION_TEXT_MIN_LENGTH} and ${QUESTION_TEXT_MAX_LENGTH} characters.`,
+      t("quiz-edit:validation.question_length", {
+        min: QUESTION_TEXT_MIN_LENGTH,
+        max: QUESTION_TEXT_MAX_LENGTH,
+      }),
       questionText,
       "question-input",
     );
@@ -634,11 +662,13 @@ const validateChoices = (choices, choicesValues) => {
   for (const [index, choice] of choicesValues.entries()) {
     const choiceInput = choices[index];
     if (!choice) {
-      showErrorTooltip("Choice text is required.", choiceInput);
+      showErrorTooltip(t("quiz-edit:validation.choice_required"), choiceInput);
       return false;
     } else if (choice.length > CHOICE_TEXT_MAX_LENGTH) {
       showErrorTooltip(
-        `Choice text must be less than ${CHOICE_TEXT_MAX_LENGTH} characters.`,
+        t("quiz-edit:validation.choice_length", {
+          max: CHOICE_TEXT_MAX_LENGTH,
+        }),
         choiceInput,
       );
       return false;
@@ -648,7 +678,10 @@ const validateChoices = (choices, choicesValues) => {
   }
 
   if (choicesValues.length < 2) {
-    showErrorTooltip("At least two choices are required.", choices[0]);
+    showErrorTooltip(
+      t("quiz-edit:validation.min_choices_required"),
+      choices[0],
+    );
     return false;
   } else {
     resetTooltip(globalTooltip, choices[0].closest(".choice"));
@@ -663,7 +696,7 @@ const validateCorrectAnswer = (
 ) => {
   if (correctAnswerIndexValue === "") {
     showErrorTooltip(
-      "Correct answer is required.",
+      t("quiz-edit:validation.correct_answer_required"),
       correctAnswerIndex,
       "correct-answer-select",
     );
@@ -673,7 +706,7 @@ const validateCorrectAnswer = (
     correctAnswerIndexValue >= choicesLength
   ) {
     showErrorTooltip(
-      "Correct answer index is invalid.",
+      t("quiz-edit:validation.correct_answer_invalid"),
       correctAnswerIndex,
       "correct-answer-select",
     );
@@ -776,16 +809,21 @@ const saveQuizToServer = async (questions) => {
     // Extract quizId from URL: /app/quizzes/anything-here/edit (Firebase UID can contain chars)
 
     await sendData("/api/update-quiz/" + quizId, updatedData, "PUT");
-    showMessageBlock("Quiz saved successfully!", "success");
+    showMessageBlock(t("quiz-edit:alerts.quiz_saved_success"), "success");
     // update the initialData with the new questions
     initialData.questions = questions;
   } catch (error) {
-    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
-    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    const isNative =
+      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType =
+      error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error("Failed to save quiz:", error);
-    showMessageBlock(error.message || "Failed to save quiz. Please try again.", notifType);
+    showMessageBlock(
+      error.message || t("quiz-edit:alerts.failed_to_save"),
+      notifType,
+    );
   } finally {
-    saveQuizBtn.innerHTML = `<i class="bi bi-floppy"></i><span>Save</span>`;
+    saveQuizBtn.innerHTML = `<i class="bi bi-floppy"></i><span>${t("common:modals.save")}</span>`;
     saveQuizBtn.disabled = false;
     saveQuizBtn.isSaving = false;
   }
@@ -816,7 +854,7 @@ export const saveQuiz = async () => {
     updatedData.updatedQuestions.length === 0 &&
     updatedData.deletedQuestions.length === 0
   ) {
-    showMessageBlock("No changes to save.", "info");
+    showMessageBlock(t("quiz-edit:alerts.no_changes_to_save"), "info");
     return null;
   }
 
@@ -848,10 +886,10 @@ export const handleSidebarTitleLinkClick = async (e) => {
 
     const res = await showConfirmationBox(
       "exclamation",
-      "Are you sure you want to leave?",
-      "You will lose all unsaved changes.",
-      "Discard",
-      "Save and Leave",
+      t("quiz-edit:modals.leave_editor_title"),
+      t("quiz-edit:modals.leave_editor_desc"),
+      t("quiz-edit:modals.leave_editor_discard"),
+      t("quiz-edit:modals.leave_editor_save"),
     );
 
     if (res) {

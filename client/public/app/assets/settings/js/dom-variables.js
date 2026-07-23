@@ -1,12 +1,10 @@
 import {
-  PASSWORD_MIN_LENGTH,
-  PASSWORD_MAX_LENGTH,
-  EMAIL_MIN_LENGTH,
-  EMAIL_MAX_LENGTH,
-} from "../../../../main_assets/js/variables.js";
-import {
   NAME_TITLE_MIN_LENGTH,
   NAME_TITLE_MAX_LENGTH,
+  EMAIL_MIN_LENGTH,
+  EMAIL_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
 } from "../../global/js/variables.js";
 
 export let profileModifyBtn,
@@ -46,7 +44,7 @@ export const initDomVariables = () => {
   passwordDeleteInput = document.getElementById("password-delete");
   passwordCheckContainer = document.querySelector(".password-ckeck-field");
   deleteAccountConfirmation = settingsWrapper.querySelector(
-    ".confirmation-input"
+    ".confirmation-input",
   );
 
   if (fullNameInput) {

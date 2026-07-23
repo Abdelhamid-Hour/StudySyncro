@@ -24,7 +24,7 @@
     overflow: hidden;
     height: 100%;
     flex-basis: 25%;
-    border-right: var(--primary-border-style);
+    border-inline-end: var(--primary-border-style);
     transition:
       flex-basis var(--primary-transition-style),
       visibility var(--primary-transition-style);
@@ -72,7 +72,7 @@
       height: calc(100% - 3rem);
 
       input[type="search"] {
-        padding-right: calc(var(--primary-gap) * 2);
+        padding-inline-end: calc(var(--primary-gap) * 2);
       }
       .pencil {
         width: 5rem;
@@ -132,7 +132,7 @@
           height: 100%;
         }
         .action-btns {
-          margin-left: auto;
+          margin-inline-start: auto;
         }
       }
 
@@ -200,7 +200,7 @@
 
           .switch-btn {
             position: absolute;
-            right: calc(var(--primary-gap) / 4);
+            inset-inline-end: calc(var(--primary-gap) / 4);
             top: calc(var(--primary-gap) / 4);
           }
         }
@@ -232,7 +232,7 @@
           font-size: var(--small-font-size);
           align-self: flex-end;
           padding: calc(var(--primary-gap) / 4);
-          margin-left: auto;
+          margin-inline-start: auto;
           border-radius: var(--primary-radius);
 
           &:where(:hover) {
@@ -289,7 +289,7 @@
             width: calc(100% - 2px);
             height: 8rem;
             bottom: 1px;
-            left: 1px;
+            inset-inline-start: 1px;
             background-image: linear-gradient(
               to top,
               var(--btn-background-color) 10%,
@@ -306,7 +306,7 @@
             &::after {
               content: "";
               height: 80%;
-              border-right: var(--primary-border-style);
+              border-inline-end: var(--primary-border-style);
             }
 
             &:not(:last-child) {
@@ -435,7 +435,7 @@
         }
 
         .action-btns {
-          margin-left: auto;
+          margin-inline-start: auto;
         }
       }
     }
@@ -458,7 +458,7 @@
         width: calc(100% - 2px);
         height: 3rem;
         bottom: 0;
-        left: 0;
+        inset-inline-start: 0;
         background-image: linear-gradient(
           to top,
           var(--btn-background-color) 0.4rem,
@@ -507,7 +507,7 @@
 
           &:has(.action-btns) {
             &.demande .username-container {
-              margin-right: auto;
+              margin-inline-end: auto;
             }
 
             &.demande .username-container {
@@ -547,10 +547,10 @@
             overflow: hidden;
             text-overflow: ellipsis;
             font-size: var(--small-font-size);
-            margin-right: auto;
+            margin-inline-end: auto;
 
             &:has(+ span.badge) {
-              margin-right: initial;
+              margin-inline-end: initial;
             }
           }
         }
@@ -593,11 +593,11 @@
       }
 
       div:has(.group-chat-menu-btn) {
-        margin-left: var(--primary-gap);
+        margin-inline-start: var(--primary-gap);
       }
 
       .badge {
-        margin-left: var(--primary-gap);
+        margin-inline-start: var(--primary-gap);
       }
 
       .drop-down-menu {
@@ -691,7 +691,7 @@
     margin-bottom: calc(var(--primary-gap) / 2);
 
     .duration-badge {
-      margin-right: auto;
+      margin-inline-end: auto;
     }
 
     .btns button {
@@ -709,7 +709,7 @@
   }
 
   .create-break-btn {
-    margin-left: 2rem;
+    margin-inline-start: 2rem;
   }
 
   .buttons {
@@ -735,7 +735,7 @@
 
     .counter {
       position: relative;
-      border-right: initial !important;
+      border-inline-end: initial !important;
       cursor: grab;
       background-image: radial-gradient(
         circle,
@@ -756,7 +756,7 @@
         height: 50%;
         background-color: var(--btn-border-color);
         position: absolute;
-        right: 0;
+        inset-inline-end: 0;
       }
     }
   }
@@ -781,8 +781,6 @@
   }
 
   .session-quiz-select-menu {
-    left: 50% !important;
-    translate: -50% calc(100% + 0.5rem) !important;
     width: 100% !important;
     padding-top: 0;
 
@@ -859,7 +857,7 @@
         width: 0%;
         border-radius: 0.2rem;
         background-color: var(--primary-color);
-        float: left;
+        float: inline-start;
         transition: width 1s;
       }
 
@@ -875,11 +873,11 @@
         border-radius: 50%;
       }
       &::before {
-        left: 0;
+        inset-inline-start: 0;
       }
 
       &::after {
-        right: 0;
+        inset-inline-end: 0;
         transition: background-color var(--primary-transition-style);
       }
     }
@@ -966,7 +964,7 @@
     justify-content: center;
     gap: var(--primary-gap);
     width: fit-content;
-    margin-left: auto;
+    margin-inline-start: auto;
     margin-top: auto;
   }
 
@@ -996,10 +994,10 @@
       position: relative;
       border-radius: 1rem;
       padding: 0.2rem;
-      padding-right: 0.4rem;
+      padding-inline-end: 0.4rem;
       background-color: var(--btn-background-color);
       margin-bottom: calc(var(--primary-gap) / 2);
-      margin-right: calc(var(--primary-gap) / 2);
+      margin-inline-end: calc(var(--primary-gap) / 2);
       box-shadow: var(--primary-shadow);
       transition: var(--primary-transition-style);
 
@@ -1009,13 +1007,13 @@
       }
 
       &:last-child {
-        margin-right: auto;
+        margin-inline-end: auto;
       }
 
       .remove-btn {
         position: absolute;
         top: 0;
-        right: 0;
+        inset-inline-end: 0;
         translate: 50% -50%;
         z-index: 1;
         padding: 0;
@@ -1152,13 +1150,13 @@
     width: 100%;
     height: 100%;
     top: 0;
-    left: 0;
+    inset-inline-start: 0;
     z-index: 999;
 
     .close-group-left-btn {
       display: block !important;
       position: absolute;
-      right: var(--primary-gap);
+      inset-inline-end: var(--primary-gap);
       border-radius: var(--primary-radius);
       background-color: var(--btn-background-color);
       aspect-ratio: 1 / 1;

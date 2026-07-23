@@ -1,8 +1,4 @@
 import {
-  fetchData,
-  showMessageBlock,
-} from "../../../../../main_assets/js/utils.js";
-import {
   INITIALE_LOADERS_COUNT,
   LOADER_COUNT,
 } from "../../../global/js/variables.js";
@@ -10,6 +6,9 @@ import {
   getDebounceFunc,
   getLoadersCount,
   isAsync,
+  t,
+  fetchData,
+  showMessageBlock,
 } from "../../../global/js/utils.js";
 
 const encodeCriteria = (criteria) => {
@@ -222,10 +221,7 @@ export class Loader {
     } catch (error) {
       console.error("Error loading more items:", error);
       // Optionally, you can show an error message to the user
-      showMessageBlock(
-        "Error loading more items. Please try again later.",
-        "error",
-      );
+      showMessageBlock(t("common:alerts.error_loading_more"), "error");
     }
 
     this.loading = false;
@@ -240,8 +236,8 @@ export class Loader {
       iconWrapper.className = "icon-wrapper";
 
       let icon = "bi-search";
-      let title = "No Results Found";
-      let desc = "No matches found for your search or filters.";
+      let title = t("common:skeletons.no_results_title");
+      let desc = t("common:skeletons.no_results_desc");
 
       if (this.emptyState) {
         let isFiltered = false;
@@ -277,8 +273,8 @@ export class Loader {
         <div class="empty-icon-container">
           <i class="bi ${icon}"></i>
         </div>
-        <h3>${title}</h3>
-        <p>${desc}</p>
+        <h3><bdi>${title}</bdi></h3>
+        <p><bdi>${desc}</bdi></p>
       `;
       this.container.appendChild(iconWrapper);
     }

@@ -71,7 +71,8 @@
           cursor: pointer;
           padding: calc(var(--primary-gap) / 2);
           border-radius: 0.1rem;
-          transition: background-color var(--primary-transition-style),
+          transition:
+            background-color var(--primary-transition-style),
             color var(--primary-transition-style);
           color: var(--secondary-text-color);
 
@@ -104,7 +105,8 @@
     background-color: var(--btn-background-color);
     border-radius: var(--primary-radius);
     border: var(--primary-border-style);
-    transition: visibility var(--primary-transition-style),
+    transition:
+      visibility var(--primary-transition-style),
       opacity var(--primary-transition-style);
     visibility: hidden;
     opacity: 0;
@@ -131,47 +133,40 @@
 
     /* eye icon */
     .eye-icon {
-      display: flex;
       position: absolute;
-      align-items: center;
+      display: flex;
       justify-content: center;
+      align-items: center;
       top: 50%;
-      right: 0.5rem;
+      inset-inline-end: 0.5rem;
       translate: 0 -50%;
       color: var(--eye-pass-color);
       cursor: pointer;
+      width: initial;
+      font-size: var(--medium-font-size);
 
-      i {
-        color: var(--primary-color);
+      &:has(:checked) > div {
+        scale: 0 1;
       }
 
       input {
         display: none;
       }
 
-      &:has(:checked)>div {
-        scale: 0 1;
-      }
-
       div {
         position: absolute;
-        top: 0;
         display: flex;
         justify-content: center;
         align-items: center;
-        translate: 20% 20%;
         background-color: var(--inputs-background-color);
-        padding-block: 1px;
+        padding-block: 0.1rem;
         width: 100%;
-        height: fit-content;
-        transform-origin: 0 0;
         rotate: 45deg;
         transition: all var(--eye-trans-duration) ease-in-out;
-        float: right;
 
         hr {
           background-color: var(--eye-pass-color);
-          height: 2px;
+          height: 0.1rem;
           border: none;
           width: 100%;
         }
@@ -240,7 +235,8 @@
             width: 100%;
             height: 100%;
             background-color: rgba(68, 68, 68, 0.607);
-            transition: opacity var(--primary-transition-style),
+            transition:
+              opacity var(--primary-transition-style),
               visibility var(--primary-transition-style),
               scale var(--primary-transition-style);
 
@@ -304,7 +300,6 @@
   }
 
   .email-tab-content {
-
     .password-ckeck-field,
     .email-field-container {
       display: flex;
@@ -329,7 +324,7 @@
       }
     }
 
-    .warning-block {
+    .settings-warning-block {
       background-color: #ffc99c;
       color: var(--orange-color);
       padding: var(--primary-gap);
@@ -430,13 +425,13 @@
   .settings-wrapper .delete-account-tab-content {
     order: 4;
 
-    .warning-block {
+    .settings-warning-block {
       margin-inline: initial;
     }
   }
 
   .settings-wrapper .tab-content header {
-    text-align: left;
+    text-align: start;
   }
 
   .settings-wrapper .tab-content header h3 {
@@ -459,12 +454,21 @@
     width: 100%;
   }
 
-  .settings-wrapper .profile-tab-content .profile-form .avatar-container .avatar {
+  .settings-wrapper
+    .profile-tab-content
+    .profile-form
+    .avatar-container
+    .avatar {
     width: 7.5rem;
     height: 7.5rem;
   }
 
-  .settings-wrapper .profile-tab-content .profile-form .avatar-container .avatar i {
+  .settings-wrapper
+    .profile-tab-content
+    .profile-form
+    .avatar-container
+    .avatar
+    i {
     font-size: 7.5rem;
   }
 
@@ -494,7 +498,7 @@
     align-self: stretch;
   }
 
-  .settings-wrapper .warning-block {
+  .settings-wrapper .settings-warning-block {
     margin-inline: 0;
     padding: 0.875rem;
   }

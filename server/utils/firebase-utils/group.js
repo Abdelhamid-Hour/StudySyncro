@@ -765,7 +765,7 @@ const getChatContext = async (userId, groupId) => {
   try {
     const groupRes = await getGroupById(groupId);
     console.log("groupRes:", groupRes); // Debugging line
-    
+
     if (!groupRes.success) {
       const statusCode = groupRes.isNative ? 404 : 500;
       return {

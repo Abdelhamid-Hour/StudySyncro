@@ -7,13 +7,13 @@
       <input
         type="search"
         id="search"
-        placeholder="Search By Member Name or ID"
+        placeholder="<%= t('groups:members_list.search_placeholder') %>"
       />
     </div>
     <% if(isAdmin) { %>
     <button type="button" class="invite-user-btn">
       <i class="bi bi-plus-lg"></i>
-      Invite
+      <%= t("groups:members_list.invite") %>
     </button>
     <% } %>
   </header>
@@ -24,22 +24,22 @@
         <% if (member.photoURL) { %>
         <img src="<%= member.photoURL %>" alt="avatar" />
         <% } else { %>
-        <h4><%= member.fullName.charAt(0).toUpperCase() %></h4>
+        <h4><bdi><%= member.fullName.charAt(0).toUpperCase() %></bdi></h4>
         <% } %>
       </div>
-      <span class="username"><%= member.fullName %></span>
+      <span class="username"><bdi><%= member.fullName %></bdi></span>
       <% if (member.isAdmin) { %>
-        <span class="badge orange-badge" style="margin-right: auto;">Host</span>
+        <span class="badge orange-badge" style="margin-inline-end: auto;"><%= t("groups:badges.host") %></span>
       <% } %>
       <% if (isAdmin && !member.isAdmin) { %>
       <div class="action-btns" data-member-id="<%= member.id %>">
         <button type="button" class="red-btn kick-btn small-btn">
           <i class="bi bi-person-dash"></i>
-          Kick
+          <%= t("groups:members_list.kick") %>
         </button>
         <button type="button" class="orange-btn move-admin-role-btn small-btn">
           <i class="bi bi-person-gear"></i>
-          Transfer Admin
+          <%= t("groups:members_list.transfer_admin") %>
         </button>
       </div>
       <% } %>

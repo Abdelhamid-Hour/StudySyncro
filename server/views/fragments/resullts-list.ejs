@@ -2,10 +2,10 @@
   <header class="list-header">
     <h3 class="label">
       <i class="bi bi-people-fill"></i>
-      Users Results
+      <%= t("quizzes:results_overlay.title") %>
     </h3>
     <div class="quiz-title">
-      <span class="title-label">Quiz Title</span>
+      <span class="title-label"><%= t("quizzes:results_overlay.quiz_title_label") %></span>
       <h3 class="quiz-title"><%= quizTitle %></h3>
     </div>
     <!-- close btn -->
@@ -20,37 +20,37 @@
           <th>
             <div>
               <i class="bi bi-person-circle"></i>
-              Profile
+              <%= t("quizzes:results_overlay.table.profile") %>
             </div>
           </th>
           <th>
             <div>
               <i class="bi bi-person"></i>
-              Full Name
+              <%= t("quizzes:results_overlay.table.full_name") %>
             </div>
           </th>
           <th>
             <div>
               <i class="bi bi-calendar-event"></i>
-              Submitted At
+              <%= t("quizzes:results_overlay.table.submitted_at") %>
             </div>
           </th>
           <th>
             <div>
               <i class="bi bi-list-ol"></i>
-              Answered Questions
+              <%= t("quizzes:results_overlay.table.answered_questions") %>
             </div>
           </th>
           <th>
             <div>
               <i class="bi bi-bar-chart-line"></i>
-              Score
+              <%= t("quizzes:results_overlay.table.score") %>
             </div>
           </th>
           <th>
             <div>
               <i class="bi bi-gear"></i>
-              Actions
+              <%= t("quizzes:results_overlay.table.actions") %>
             </div>
           </th>
         </tr>
@@ -79,7 +79,7 @@
               data-user-id="<%= result.resultDetails.userId %>"
             >
               <i class="bi bi-eye"></i>
-              View Result
+              <%= t("quizzes:actions.view_result") %>
             </button>
           </td>
         </tr>

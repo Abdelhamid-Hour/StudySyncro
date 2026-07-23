@@ -9,23 +9,23 @@
         <span
           class="badge <%= group.visibility.charAt(0).toLowerCase() + group.visibility.slice(1) _%>-badge"
         >
-          <%= group.visibility %>
+          <%= t('groups:badges.' + group.visibility.toLowerCase()) || group.visibility %>
         </span>
         <span
           class="level-value badge <%= group.level === 'Intermediate' ? 'blue-badge' : group.level === 'Advanced' ? 'orange-badge' : 'gray-badge' %>"
         >
-          <%= group.level %>
+          <%= t('groups:badges.' + group.level.toLowerCase()) || group.level %>
         </span>
       </header>
       <div class="group-meta">
-        <h3 class="group-name"><%= group.name %></h3>
-        <span class="subject-value badge simple-badge"><%= group.subject %></span>
+        <h3 class="group-name"><bdi><%= group.name %></bdi></h3>
+        <span class="subject-value badge simple-badge"><bdi><%= group.subject %></bdi></span>
       </div>
       <div
         data-tooltip="<%= group.description %>"
         class="group-description has-tooltip"
       >
-        <%= group.description %>
+        <bdi><%= group.description %></bdi>
       </div>
       <footer class="group-footer">
         <div class="avatars">
@@ -34,23 +34,23 @@
             <% if (photoURL) { %>
             <img src="<%= photoURL %>" alt="avatar" />
             <% } else { %>
-            <h4><%= fullName.charAt(0).toUpperCase() %></h4>
+            <h4><bdi><%= fullName.charAt(0).toUpperCase() %></bdi></h4>
             <% } %>
           </div>
           <% }); %> <% if (group.extraMembersCount > 0) { %>
-          <div class="member-count">+<%= group.extraMembersCount %></div>
+          <div class="member-count">+<bdi><%= group.extraMembersCount %></bdi></div>
           <% } %>
         </div>
         
         <% if (group.isRequested) { %>
-        <span class="pending-text"><i class="bi bi-hourglass-split"></i>Pending</span>
+        <span class="pending-text"><i class="bi bi-hourglass-split"></i><%= t("groups:badges.pending") %></span>
         <% } else { %>
         <button class="btn-join">
           <% if ( group.visibility === "Public") { %>
           <i class="bi bi-send"></i>
-          Join Now <% } else { %>
+          <%= t("groups:available.join_now") %> <% } else { %>
           <i class="bi bi-lock"></i>
-          Request to Join <% } %>
+          <%= t("groups:available.request_to_join") %> <% } %>
         </button>
         <% } %>
       </footer>
@@ -61,8 +61,8 @@
       <div class="empty-icon-container">
         <i class="bi bi-people-fill"></i>
       </div>
-      <h3>No Groups Available</h3>
-      <p>There are currently no public study groups available to join. Check back later!</p>
+      <h3><%= t("groups:available.empty_heading") %></h3>
+      <p><%= t("groups:available.empty_desc") %></p>
     </div>
   <% } %>
 </div>

@@ -1,25 +1,24 @@
-import { redirectTo } from "../../../../main_assets/js/utils.js";
-import {
-  emailRegex,
-  MAX_AVATAR_SIZE,
-  passwordRegex,
-  PROFILE_ALLOWED_TYPES,
-  userNameRegex,
-  PASSWORD_MIN_LENGTH,
-  PASSWORD_MAX_LENGTH,
-  EMAIL_MIN_LENGTH,
-  EMAIL_MAX_LENGTH,
-} from "../../../../main_assets/js/variables.js";
 import {
   globalTooltip,
   NAME_TITLE_MIN_LENGTH,
   NAME_TITLE_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  EMAIL_MIN_LENGTH,
+  EMAIL_MAX_LENGTH,
+  emailRegex,
+  MAX_AVATAR_SIZE,
+  PROFILE_ALLOWED_TYPES,
+  passwordRegex,
+  userNameRegex,
 } from "../../global/js/variables.js";
 import {
   handleApiAction,
   resetTooltip,
   showConfirmationBox,
   showErrorTooltip,
+  t,
+  redirectTo,
 } from "../../global/js/utils.js";
 import { handleFormSubmit } from "../../shared/forms/js/utils.js";
 import { getFreshTokenId } from "./auth.js";
@@ -50,7 +49,7 @@ const toSubmitBtn = (btn) => {
   btn.className = "blue-btn save-btn";
   btn.innerHTML = `
         <i class="bi bi-floppy"></i>
-        Save Changes
+        ${t("settings:buttons.save_changes")}
       `;
 };
 
@@ -87,7 +86,7 @@ export const enableProfileEditMode = (profileModifyBtn, e) => {
   cancelBtn.className = "gray-btn cancel-btn";
   cancelBtn.innerHTML = `
         <i class="bi bi-x-lg"></i>
-        Cancel
+        ${t("settings:buttons.cancel")}
       `;
   profileModifyBtn.before(cancelBtn);
   toSubmitBtn(profileModifyBtn);
@@ -109,7 +108,7 @@ const disableProfileMode = (profileSaveBtn) => {
   document.querySelector(".profile-tab-content .cancel-btn")?.remove();
   profileSaveBtn.innerHTML = `
       <i class="bi bi-pencil"></i >
-      Modify Profile
+      ${t("settings:buttons.modify_profile")}
     `;
   toModifyBtn(profileSaveBtn);
   resetTooltip(globalTooltip);
@@ -120,7 +119,7 @@ const checkValidation = () => {
   const avatarFile = avatarInput.files[0];
 
   if (!fullName) {
-    showErrorTooltip("Full name cannot be empty.", fullNameInput);
+    showErrorTooltip(t("settings:validation.fullname_empty"), fullNameInput);
     return false;
   } else if (
     (fullName.split(" ").length < 2 && fullName.split(" ").length > 3) ||
@@ -129,8 +128,11 @@ const checkValidation = () => {
     !userNameRegex.test(fullName)
   ) {
     showErrorTooltip(
-      `Full name must be ${NAME_TITLE_MIN_LENGTH * 2}-${NAME_TITLE_MAX_LENGTH} characters long, contain only letters and spaces, and include at least a first and last name.`,
-      fullNameInput
+      t("settings:validation.fullname_invalid", {
+        min: NAME_TITLE_MIN_LENGTH * 2,
+        max: NAME_TITLE_MAX_LENGTH,
+      }),
+      fullNameInput,
     );
     return false;
   } else {
@@ -139,16 +141,18 @@ const checkValidation = () => {
 
   if (avatarFile && !PROFILE_ALLOWED_TYPES.includes(avatarFile.type)) {
     showErrorTooltip(
-      "Invalid file type. Allowed types: JPEG, PNG, GIF, WEBP.",
+      t("settings:validation.avatar_type"),
       avatarInput,
-      "avatar"
+      "avatar",
     );
     return false;
   } else if (avatarFile && avatarFile.size > MAX_AVATAR_SIZE) {
     showErrorTooltip(
-      `File size exceeds ${MAX_AVATAR_SIZE / (1024 * 1024)} MB.`,
+      t("settings:validation.avatar_size", {
+        size: MAX_AVATAR_SIZE / (1024 * 1024),
+      }),
       avatarInput,
-      "avatar"
+      "avatar",
     );
     return false;
   } else {
@@ -156,7 +160,7 @@ const checkValidation = () => {
   }
 
   if (fullName === oldValues.fullName && !avatarFile) {
-    showErrorTooltip("No changes made to save.", fullNameInput);
+    showErrorTooltip(t("settings:validation.no_changes"), fullNameInput);
     return false;
   }
 
@@ -177,7 +181,7 @@ export const handleProfileSaveBtn = () => {
     if (avatarFile) formData.append("file", avatarFile);
 
     return handleApiAction("/update-profile", formData, profileSaveBtn, {
-      successMsg: "Profile updated successfully.",
+      successMsg: t("settings:alerts.profile_updated_success"),
       onSuccess: () => disableProfileMode(profileSaveBtn),
       method: "PATCH",
       toOldBtn: false,
@@ -193,7 +197,7 @@ const enableEmailEditMode = (emailModifyBtn, e) => {
   cancelBtn.className = "gray-btn cancel-btn";
   cancelBtn.innerHTML = `
         <i class="bi bi-x-lg"></i>
-        Cancel
+        ${t("settings:buttons.cancel")}
       `;
   emailModifyBtn.before(cancelBtn);
   toSubmitBtn(emailModifyBtn);
@@ -210,7 +214,7 @@ const disableEmailEditMode = (emailSaveBtn) => {
   passwordCheckContainer.classList.add("hidden");
   emailSaveBtn.innerHTML = `
           <i class="bi bi-pencil"></i>
-          Modify Email
+          ${t("settings:buttons.modify_email")}
   `;
   toModifyBtn(emailSaveBtn);
   document.querySelector(".email-tab-content .cancel-btn")?.remove();
@@ -227,7 +231,7 @@ const checkEmailValidation = () => {
   const password = passwordEmailInput?.value.trim();
 
   if (!email) {
-    showErrorTooltip("Email cannot be empty.", emailInput);
+    showErrorTooltip(t("settings:validation.email_empty"), emailInput);
     return false;
   } else if (
     !emailRegex.test(email) ||
@@ -235,8 +239,11 @@ const checkEmailValidation = () => {
     email.length > EMAIL_MAX_LENGTH
   ) {
     showErrorTooltip(
-      `Invalid email format (${EMAIL_MIN_LENGTH}-${EMAIL_MAX_LENGTH} characters required).`,
-      emailInput
+      t("settings:validation.email_invalid", {
+        min: EMAIL_MIN_LENGTH,
+        max: EMAIL_MAX_LENGTH,
+      }),
+      emailInput,
     );
     return false;
   } else {
@@ -245,21 +252,21 @@ const checkEmailValidation = () => {
 
   if (passwordEmailInput) {
     if (!password) {
-      showErrorTooltip("Password cannot be empty.", passwordEmailInput);
+      showErrorTooltip(
+        t("settings:validation.password_empty"),
+        passwordEmailInput,
+      );
       return false;
     } else {
       resetTooltip(
         globalTooltip,
-        passwordEmailInput.closest(".field-container")
+        passwordEmailInput.closest(".field-container"),
       );
     }
   }
 
   if (oldValues.email === email) {
-    showErrorTooltip(
-      "New email cannot be the same as the current email.",
-      emailInput
-    );
+    showErrorTooltip(t("settings:validation.email_same"), emailInput);
     return false;
   }
 
@@ -281,7 +288,7 @@ export const handleEmailSaveBtn = () => {
         },
         emailSaveBtn,
         {
-          successMsg: "Email updated successfully. Please log in again.",
+          successMsg: t("settings:alerts.email_updated_success"),
           onSuccess: () => {
             if (emailSaveBtn) disableEmailEditMode(emailSaveBtn);
             redirectTo("/login");
@@ -289,7 +296,7 @@ export const handleEmailSaveBtn = () => {
           method: "PATCH",
           toOldBtn: emailSubmitBtn ? true : false,
           getExtraData: async () => await getFreshTokenId(data["password"]),
-        }
+        },
       );
 
     if (emailAddBtn)
@@ -300,11 +307,11 @@ export const handleEmailSaveBtn = () => {
         },
         emailAddBtn,
         {
-          successMsg: "Email added successfully. Please log in again.",
+          successMsg: t("settings:alerts.email_added_success"),
           onSuccess: () => redirectTo("/login"),
           method: "POST",
           getExtraData: async () => await getFreshTokenId(data["password"]),
-        }
+        },
       );
   });
 };
@@ -314,7 +321,7 @@ export const handleSettingsWrapperClick = (e) => {
   if (tab) {
     const emailSaveBtn = document.querySelector(".email-tab-content .save-btn");
     const profileSaveBtn = document.querySelector(
-      ".profile-tab-content .save-btn"
+      ".profile-tab-content .save-btn",
     );
     disableEmailEditMode(emailSaveBtn);
     disableProfileMode(profileSaveBtn);
@@ -338,23 +345,32 @@ const checkPasswordFields = () => {
 
   if (currentPasswordInput) {
     if (!currentPassword) {
-      showErrorTooltip("Current password is required.", currentPasswordInput);
+      showErrorTooltip(
+        t("settings:validation.current_password_required"),
+        currentPasswordInput,
+      );
       return false;
     } else {
       resetTooltip(
         globalTooltip,
-        currentPasswordInput.closest(".field-container")
+        currentPasswordInput.closest(".field-container"),
       );
     }
   }
 
   if (!newPassword) {
-    showErrorTooltip("New password is required.", newPasswordInput);
+    showErrorTooltip(
+      t("settings:validation.new_password_required"),
+      newPasswordInput,
+    );
     return false;
   } else if (!passwordRegex.test(newPassword)) {
     showErrorTooltip(
-      `New password must be between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters long.`,
-      newPasswordInput
+      t("settings:validation.new_password_invalid", {
+        min: PASSWORD_MIN_LENGTH,
+        max: PASSWORD_MAX_LENGTH,
+      }),
+      newPasswordInput,
     );
     return false;
   } else {
@@ -362,31 +378,37 @@ const checkPasswordFields = () => {
   }
 
   if (!confirmPassword) {
-    showErrorTooltip("Confirm password is required.", confirmPasswordInput);
+    showErrorTooltip(
+      t("settings:validation.confirm_password_required"),
+      confirmPasswordInput,
+    );
     return false;
   } else if (!passwordRegex.test(confirmPassword)) {
     showErrorTooltip(
-      `Confirm password must be between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters long.`,
-      confirmPasswordInput
+      t("settings:validation.confirm_password_invalid", {
+        min: PASSWORD_MIN_LENGTH,
+        max: PASSWORD_MAX_LENGTH,
+      }),
+      confirmPasswordInput,
     );
     return false;
   } else if (newPassword !== confirmPassword) {
     showErrorTooltip(
-      "New password and confirm password do not match.",
-      confirmPasswordInput
+      t("settings:validation.passwords_dont_match"),
+      confirmPasswordInput,
     );
     return false;
   } else {
     resetTooltip(
       globalTooltip,
-      confirmPasswordInput.closest(".field-container")
+      confirmPasswordInput.closest(".field-container"),
     );
   }
 
   if (currentPassword === newPassword) {
     showErrorTooltip(
-      "New password must be different from the current password.",
-      newPasswordInput
+      t("settings:validation.new_password_same_as_current"),
+      newPasswordInput,
     );
     return false;
   }
@@ -416,7 +438,7 @@ export const handlePasswordModifyClick = () => {
         },
         passModifyBtn,
         {
-          successMsg: "Password updated successfully. Please log in again.",
+          successMsg: t("settings:alerts.password_updated_success"),
           onSuccess: () => {
             clearPasswordFields();
             redirectTo("/login");
@@ -424,7 +446,7 @@ export const handlePasswordModifyClick = () => {
           method: "PATCH",
           getExtraData: async () =>
             await getFreshTokenId(data["current-password"]),
-        }
+        },
       );
 
     if (passAddBtn)
@@ -435,12 +457,12 @@ export const handlePasswordModifyClick = () => {
         },
         passAddBtn,
         {
-          successMsg: "Password added successfully. Please log in again.",
+          successMsg: t("settings:alerts.password_added_success"),
           onSuccess: () => redirectTo("/login"),
           method: "POST",
           getExtraData: async () =>
             await getFreshTokenId(data["current-password"]),
-        }
+        },
       );
   });
 };
@@ -452,22 +474,22 @@ const checkDeleteInputsValidity = () => {
   if (passwordDeleteInput) {
     if (!passwordDelete) {
       showErrorTooltip(
-        "Password is required to delete account.",
-        passwordDeleteInput
+        t("settings:validation.password_required_to_delete"),
+        passwordDeleteInput,
       );
       return false;
     } else {
       resetTooltip(
         globalTooltip,
-        passwordDeleteInput.closest(".field-container")
+        passwordDeleteInput.closest(".field-container"),
       );
     }
   }
   if (!isConfirme) {
     showErrorTooltip(
-      "You must confirm account deletion.",
+      t("settings:validation.confirm_delete"),
       deleteAccountConfirmation,
-      "container"
+      "container",
     );
     return false;
   } else {
@@ -482,10 +504,10 @@ export const handleCloseAccountBtn = () => {
   handleFormSubmit(form, checkDeleteInputsValidity, async (data) => {
     const res = await showConfirmationBox(
       "exclamation",
-      "Are you sure you want to delete your account?",
-      "This action is irreversible and will result in the loss of all your data.",
-      "Cancel",
-      "Yes, delete my account"
+      t("settings:modals.delete_account_confirm_title"),
+      t("settings:modals.delete_account_confirm_desc"),
+      t("common:modals.cancel"),
+      t("settings:modals.delete_account_confirm_btn"),
     );
 
     if (!res) return;
@@ -493,7 +515,7 @@ export const handleCloseAccountBtn = () => {
     const deleteAccountBtn = form.querySelector(".delete-account-btn");
 
     return handleApiAction("/close-account", {}, deleteAccountBtn, {
-      successMsg: "Account closed successfully. Bye!👋",
+      successMsg: t("settings:alerts.account_closed_success"),
       method: "POST",
       getExtraData: async () => await getFreshTokenId(data["password"]),
     });

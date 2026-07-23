@@ -1,23 +1,23 @@
 <div class="settings-wrapper fade-in-template">
   <div class="settings-content">
     <header class="settings-header">
-      <h2>My Account</h2>
+      <h2><%= t("settings:title") %></h2>
       <div class="tabs">
         <label class="exclude-btn active tab profile-tab">
           <input type="radio" name="tab" class="profile" checked />
-          Personal Info
+          <%= t("settings:tabs.personal_info") %>
         </label>
         <label class="exclude-btn tab email-tab">
           <input type="radio" name="tab" class="email" />
-          Email Address
+          <%= t("settings:tabs.email_address") %>
         </label>
         <label class="exclude-btn tab password-tab">
           <input type="radio" name="tab" class="password" />
-          Password
+          <%= t("settings:tabs.password") %>
         </label>
         <label class="exclude-btn tab delete-account-tab">
           <input type="radio" name="tab" class="delete-account" />
-          Close Account
+          <%= t("settings:tabs.close_account") %>
         </label>
       </div>
     </header>
@@ -26,23 +26,23 @@
       <!-- Close Account -->
       <div class="delete-account-tab-content tab-content">
         <header>
-          <h3>Close Account</h3>
-          <span>All your data will be permanently deleted.</span>
+          <h3><%= t("settings:close_account.heading") %></h3>
+          <span><%= t("settings:close_account.sub") %></span>
         </header>
-        <div class="warning-block">
+        <div class="settings-warning-block">
           <h4>
             <i class="bi bi-exclamation-triangle-fill"></i>
-            Warning: Irreversible Action
+            <%= t("settings:close_account.warning_title") %>
           </h4>
           <span>
-            Once you close your account, there is no way to recover your data.
+            <%= t("settings:close_account.warning_desc") %>
           </span>
         </div>
         <form class="delete-account-form">
           <div class="password-field-container">
             
             <% if (canChangePassword && canChangeEmail) { %>
-             <label for="password-delete">Password</label>
+             <label for="password-delete"><%= t("settings:close_account.password_label") %></label>
               <div class="field-container password-field">
                 <div class="field-icon-container">
                   <span class="icon-box">
@@ -55,7 +55,7 @@
                   maxlength="16"
                   name="password"
                   class="input"
-                  placeholder="Confirm your password"
+                  placeholder="<%= t("settings:close_account.password_placeholder") %>"
                 />
                 <label class="eye-icon">
                   <input type="checkbox" />
@@ -74,26 +74,26 @@
                   class="path"
                 ></path>
               </svg>
-              I understand this cannot be undone.
+              <%= t("settings:close_account.confirm_checkbox") %>
             </label>
           </div>
 
           <button type="submit" class="red-btn delete-account-btn">
             <i class="bi bi-trash3"></i>
-            Close Account
+            <%= t("settings:close_account.submit_btn") %>
           </button>
         </form>
       </div>
       <!-- Password -->
       <div class="password-tab-content tab-content">
         <header>
-          <h3><%= canChangePassword ? "Change" : "Add" %> Password</h3>
-          <span>Choose a strong, password.</span>
+          <h3><%= canChangePassword ? t("settings:password.heading_change") : t("settings:password.heading_add") %></h3>
+          <span><%= t("settings:password.sub") %></span>
         </header>
         <form class="password-form">
 
           <% if (canChangePassword && canChangeEmail) { %>
-           <label for="current-password">Current Password</label>
+           <label for="current-password"><%= t("settings:password.current_label") %></label>
             <div class="field-container current-password-field">
               <div class="field-icon-container">
                 <span class="icon-box">
@@ -106,7 +106,7 @@
                 id="current-password"
                 name="current-password"
                 class="input"
-                placeholder="Current password"
+                placeholder="<%= t("settings:password.current_placeholder") %>"
               />
               <label class="eye-icon">
                 <input type="checkbox" />
@@ -116,7 +116,7 @@
             </div>
           <% } %>
 
-          <label for="new-password">New Password</label>
+          <label for="new-password"><%= t("settings:password.new_label") %></label>
           <div class="field-container new-password-field">
             <div class="field-icon-container">
               <span class="icon-box">
@@ -129,7 +129,7 @@
               id="new-password"
               name="new-password"
               class="input"
-              placeholder="New password"
+              placeholder="<%= t("settings:password.new_placeholder") %>"
             />
             <label class="eye-icon">
               <input type="checkbox" />
@@ -138,7 +138,7 @@
             </label>
           </div>
 
-          <label for="confirm-password">Confirm Password</label>
+          <label for="confirm-password"><%= t("settings:password.confirm_label") %></label>
           <div class="field-container confirm-password-field">
             <div class="field-icon-container">
               <span class="icon-box">
@@ -151,7 +151,7 @@
               id="confirm-password"
               name="confirm-password"
               class="input"
-              placeholder="Confirm password"
+              placeholder="<%= t("settings:password.confirm_placeholder") %>"
             />
             <label class="eye-icon">
               <input type="checkbox" />
@@ -162,20 +162,20 @@
 
           <button type="submit" class="<%= canChangePassword ? "modify" : "add" %>-btn blue-btn">
             <i class="bi bi-pencil"></i>
-            <%= canChangePassword ? "Change" : "Add" %> Password
+            <%= canChangePassword ? t("settings:password.submit_change_btn") : t("settings:password.submit_add_btn") %>
           </button>
         </form>
       </div>
       <!-- Email Address -->
       <div class="email-tab-content tab-content">
         <header>
-          <h3><%= canChangeEmail ? "Change" : "Add" %> Email</h3>
-          <span><%= canChangeEmail ? "Switch to a new" : "Add a" %> email address.</span>
+          <h3><%= canChangeEmail ? t("settings:email.heading_change") : t("settings:email.heading_add") %></h3>
+          <span><%= canChangeEmail ? t("settings:email.sub_change") : t("settings:email.sub_add") %></span>
         </header>
         <form class="email-form">
           
           <div class="email-field-container">
-            <label for="email">Email</label>
+            <label for="email"><%= t("settings:email.label") %></label>
             <div class="field-container email-field">
               <div class="field-icon-container">
                 <span class="icon-box">
@@ -188,7 +188,7 @@
                 name="email"
                 class="input"
                 value="<%= email || "" %>"
-                placeholder="email"
+                placeholder="<%= t("settings:email.placeholder") %>"
                 readonly
               />
             </div>
@@ -196,7 +196,7 @@
 
           <% if (canChangePassword && canChangeEmail) { %>
           <div class="password-ckeck-field hidden">
-            <label for="password-email">Current Password</label>
+            <label for="password-email"><%= t("settings:email.current_password_label") %></label>
             <div class="field-container password-field">
               <div class="field-icon-container">
                 <span class="icon-box">
@@ -209,7 +209,7 @@
                 maxlength="16"
                 name="password"
                 class="input"
-                placeholder="Enter your password"
+                placeholder="<%= t("settings:email.current_password_placeholder") %>"
               />
               <label class="eye-icon">
                 <input type="checkbox" />
@@ -224,13 +224,13 @@
            <div class="action-btns">
             <button type="<%= canAddEmail || canChangeEmail && !canChangePassword ? "submit" : "button" %>" class="blue-btn <%= canChangePassword && canChangeEmail ? "modify" : canChangeEmail ? "submit-modification" : "add" %>-btn">
               <i class="bi bi-pencil"></i>
-              <%= canChangeEmail ? "Change" : "Add" %> Email
+              <%= canChangeEmail ? t("settings:email.submit_change_btn") : t("settings:email.submit_add_btn") %>
             </button>
           </div>
           <% } else { %>
             <div class="info-message">
               <i class="bi bi-info-circle"></i>
-              You cannot change your email as it is linked to an external provider.
+              <%= t("settings:email.external_provider_info") %>
             </div>
           <% } %>
         </form>
@@ -238,8 +238,8 @@
       <!-- Personal Info -->
       <div class="profile-tab-content tab-content">
         <header>
-          <h3>Personal Details</h3>
-          <span>Keep your information up to date.</span>
+          <h3><%= t("settings:personal_info.heading") %></h3>
+          <span><%= t("settings:personal_info.sub") %></span>
         </header>
         <form class="profile-form">
           <div class="avatar-container">
@@ -249,19 +249,19 @@
                 <i class="bi bi-upload"></i>
               </div>
               <% if (photoURL) { %>
-                <img src="<%= photoURL %>" width="100" alt="User Avatar" />
+                <img src="<%= photoURL %>" width="100" alt="<%= t('common:avatar_alt') %>" />
               <% } else { %>
                 <i class="bi bi-person-circle"></i>
               <% } %>
             </label>
             <span class="caption hidden">
-              Upload a JPG, PNG, or GIF (Max 1MB).
+              <%= t("settings:personal_info.avatar_caption") %>
             </span>
             <span class="error"></span>
           </div>
           <div class="info-fields">
             <div class="fields">
-              <label for="full-name">Full Name</label>
+              <label for="full-name"><%= t("settings:personal_info.full_name_label") %></label>
               <div class="field-container full-name-field">
                 <div class="field-icon-container">
                   <span class="icon-box">
@@ -274,12 +274,12 @@
                   name="full-name"
                   class="input"
                   value="<%= fullName %>"
-                  placeholder="Enter your full name"
+                  placeholder="<%= t("settings:personal_info.full_name_placeholder") %>"
                   readonly
                 />
               </div>
 
-              <label for="uid">User ID</label>
+              <label for="uid"><%= t("settings:personal_info.uid_label") %></label>
               <div class="field-container uid-field">
                 <div class="field-icon-container">
                   <span class="icon-box">
@@ -299,7 +299,7 @@
             <div class="action-btns">
               <button type="button" class="blue-btn modify-btn">
                 <i class="bi bi-pencil"></i>
-                Modify Profile
+                <%= t("settings:personal_info.modify_btn") %>
               </button>
             </div>
           </div>

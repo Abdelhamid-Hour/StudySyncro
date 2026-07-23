@@ -1,4 +1,4 @@
-import { navigateTo } from "../../global/js/utils.js";
+import { loadNamespace } from "../../global/js/utils.js";
 import {
   closeBtn,
   initDomVariables,
@@ -14,8 +14,9 @@ import {
   toPreviousQuestion,
 } from "./utils.js";
 
-export const init = () => {
+export const init = async () => {
   initDomVariables();
+  await loadNamespace("quizzes");
 
   initVars();
 

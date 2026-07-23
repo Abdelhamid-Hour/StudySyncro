@@ -5,7 +5,7 @@
         <i class="bi bi-clipboard-check-fill"></i>
       </div>
       <label
-        data-tooltip="Filter By Date"
+        data-tooltip="<%= t('common.topbar.filter_date_tooltip') %>"
         class="date-label should-fill has-tooltip"
       >
         <i class="bi bi-calendar"></i>
@@ -14,13 +14,13 @@
       <input
         type="search"
         id="search"
-        placeholder="Search By Title"
+        placeholder="<%= t('quizzes:labels.search_placeholder') %>"
         autocomplete="username"
       />
     </div>
     <label
       class="exclude-btn sort-button button has-tooltip"
-      data-tooltip="Sort Quizzes"
+      data-tooltip="<%= t('quizzes:labels.sort_quizzes') %>"
     >
       <i class="bi bi-sort-down"></i>
       <input type="checkbox" id="sort-checkbox" class="sort-checkbox" />
@@ -35,9 +35,9 @@
           <span class="icon-box">
             <i class="bi bi-question-circle"></i>
           </span>
-          Quiz title
+          <%= t("quizzes:labels.quiz_title") %>
         </label>
-        <div class="quiz-title content"><%= quiz.title %></div>
+        <div class="quiz-title content"><bdi><%= quiz.title %></bdi></div>
       </div>
       <div class="session-name-container info-container">
         <label class="session-name-label">
@@ -45,19 +45,19 @@
             <i class="bi bi-clock-history"></i>
             <i class="bi bi-info-circle"></i>
           </span>
-          Session name
+          <%= t("quizzes:labels.session_name") %>
         </label>
-        <div class="session-name content"><%= quiz.sessionName || 'N/A' %></div>
+        <div class="session-name content"><bdi><%= quiz.sessionName || 'N/A' %></bdi></div>
       </div>
       <div class="questions-container info-container small-container">
         <label class="questions-label">
           <span class="icon-box">
             <i class="bi bi-question-circle"></i>
           </span>
-          Questions
+          <%= t("quizzes:labels.questions") %>
         </label>
         <div class="questions content">
-          <span><%= quiz.questionsCount %></span>
+          <span><bdi><%= quiz.questionsCount %></bdi></span>
         </div>
       </div>
       <div class="quiz-date-container info-container small-container">
@@ -65,17 +65,17 @@
           <span class="icon-box">
             <i class="bi bi-calendar-event"></i>
           </span>
-          submittedAt <% if (!quiz.submittedAt) { %>
+          <%= t("quizzes:labels.submitted_at") %> <% if (!quiz.submittedAt) { %>
           <!-- info icon -->
           <i
-            style="margin-left: auto;"
+            style="margin-inline-start: auto;"
             class="bi bi-info-circle has-tooltip"
-            data-tooltip="<%= isAdmin ? "Admin can't submit quizzes" : "You haven't submitted the quiz" %>"
+            data-tooltip="<%= isAdmin ? t('quizzes:labels.admin_cant_submit') : t('quizzes:labels.not_submitted_tooltip') %>"
           ></i>
           <% } %>
         </label>
         <div class="quiz-date content">
-          <span><%= quiz.submittedAt ? quiz.submittedAt : 'N/A' %></span>
+          <span><bdi><%= quiz.submittedAt ? quiz.submittedAt : 'N/A' %></bdi></span>
         </div>
       </div>
       <% if (quiz.passed || isAdmin) { %>
@@ -85,12 +85,12 @@
           class="view-result<% if(isAdmin) { %>s<% } %>-btn should-fill"
         >
           <i class="bi bi-eye"></i>
-          View <% if(isAdmin) { %>Results<% } else { %>Result<% } %>
+          <%= isAdmin ? t("quizzes:actions.view_results") : t("quizzes:actions.view_result") %>
         </button>
         <% if (!isAdmin) { %>
         <button type="button" class="retake-btn">
           <i class="bi bi-arrow-repeat"></i>
-          Retake
+          <%= t("quizzes:actions.retake") %>
         </button>
         <% } %>
       </div>
@@ -102,8 +102,8 @@
       <div class="empty-icon-container">
         <i class="bi bi-clipboard-x"></i>
       </div>
-      <h3>No Quizzes Available</h3>
-      <p>No quizzes have been created or shared with this group yet.</p>
+      <h3><%= t("groups:quizzes_list.empty_heading") %></h3>
+      <p><%= t("groups:quizzes_list.empty_desc") %></p>
     </div>
     <% } %>
   </div>

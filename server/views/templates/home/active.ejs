@@ -4,16 +4,16 @@
       <header>
         <div class="header-title">
           <i class="bi bi-book-fill"></i>
-          <h2>Current Session</h2>
+          <h2><%= t("home:active.current_session") %></h2>
         </div>
         <div class="badges">
           <span class="badge <%= session.quiz ? 'green-badge' : 'gray-badge' %>">
             <i class="bi bi-clipboard2-check-fill"></i>
-            <span><%= session.quiz ? 'Quiz' : 'No Quiz' %></span>
+            <span><%= session.quiz ? t("home:active.badge_quiz") : t("home:active.badge_no_quiz") %></span>
           </span>
           <span class="badge <%= session.isAdmin ? 'orange-badge' : 'blue-badge' %>">
             <i class="bi <%= session.isAdmin ? 'bi-person-fill-gear' : 'bi-person-fill' %>"></i>
-            <span><%= session.isAdmin ? 'Host' : 'Member' %></span>
+            <span><%= session.isAdmin ? t("home:active.badge_host") : t("home:active.badge_member") %></span>
           </span>
         </div>
       </header>
@@ -22,24 +22,24 @@
           <label class="session-name-label"><span class="icon-box">
             <i class="bi bi-clock-history"></i>
             <i class="bi bi-info-circle"></i>
-          </span>Session name</label>
+          </span><%= t("home:active.session_name") %></label>
           <div class="session-name content">
-          <%= session.name %>
+          <bdi><%= session.name %></bdi>
           </div>
         </div>
         <div class="start-time-container info-container small-container">
-          <label class="start-time-label"><span class="icon-box"><i class="bi bi-play-circle"></i></span>Start</label>
+          <label class="start-time-label"><span class="icon-box"><i class="bi bi-play-circle"></i></span><%= t("home:active.start") %></label>
           <div class="content">
             <span class="start-time">
-              <%= session.startDate %>
+              <bdi><%= session.startDate %></bdi>
             </span>
           </div>
         </div>
 
         <div class="end-time-container info-container small-container">
-          <label class="end-time-label"><span class="icon-box"><i class="bi bi-stopwatch"></i></span>End</label>
+          <label class="end-time-label"><span class="icon-box"><i class="bi bi-stopwatch"></i></span><%= t("home:active.end") %></label>
           <div class="content">
-            <span class="end-time"><%= session.endDate %></span>
+            <span class="end-time"><bdi><%= session.endDate %></bdi></span>
           </div>
         </div>
         <div class="group-name-container info-container">
@@ -47,19 +47,19 @@
           <span class="icon-box">
             <i class="bi bi-people"></i>
             <i class="bi bi-info-circle"></i>
-          </span>Group name</label>
+          </span><%= t("home:active.group_name") %></label>
           <div class="group-name content">
-            <%= session.groupName %>
+            <bdi><%= session.groupName %></bdi>
           </div>
         </div>
         <div class="time-left-container info-container small-container">
-          <label class="left-label"><span class="icon-box"><i class="bi bi-hourglass-bottom"></i></span>Left</label>
+          <label class="left-label"><span class="icon-box"><i class="bi bi-hourglass-bottom"></i></span><%= t("home:active.left") %></label>
           <div class="content">
             <span class="time-left">0m</span>
           </div>
         </div>
         <div class="elapsed-time-container info-container small-container">
-          <label class="elapsed-time-label"><span class="icon-box"><i class="bi bi-hourglass-top"></i></span>Elapsed</label>
+          <label class="elapsed-time-label"><span class="icon-box"><i class="bi bi-hourglass-top"></i></span><%= t("home:active.elapsed") %></label>
           <div class="content">
             <span class="elapsed-time">0m</span>
           </div>
@@ -69,43 +69,43 @@
           <span class="icon-box">
             <i class="bi bi-clipboard-check"></i>
             <i class="bi bi-info-circle"></i>
-          </span>Quiz title</label>
-          <div class="quiz-title content"><%= session.quiz ? session.quiz.title : 'No Quiz Added To This Session' %></div>
+          </span><%= t("home:active.quiz_title") %></label>
+          <div class="quiz-title content"><%= session.quiz ? session.quiz.title : t("home:active.no_quiz_added") %></div>
         </div>
         <div class="duration-container info-container small-container">
           <label class="duration-label"><span class="icon-box">
                 <i class="bi bi-clock"></i>
-              </span>Duration</label>
+              </span><%= t("home:active.duration") %></label>
           <div class="content">
             <span class="duration">
               
-              <%= session.duration %>
+              <bdi><%= session.duration %></bdi>
             </span>
           </div>
         </div>
         <div class="joined-count-container info-container small-container">
           <label class="joined-count-label">
             <span class="icon-box"><i class="bi bi-person-check"></i></span>
-            Joined Count
+            <%= t("home:active.joined_count_label") %>
           </label>
           <div class="joined-count-content">
-            <span class="joined-count"><%= session.joinedCount %></span>
+            <span class="joined-count"><bdi><%= session.joinedCount %></bdi></span>
           </div>
         </div>
         <div class="session-description-container info-container">
           <div class="session-description-label">
-            <span>Session Description</span>
+            <span><%= t("home:active.session_description") %></span>
             <button type="button" class="exclude-btn expande-desc-btn">
               <i class="bi bi-chevron-expand"></i>
             </button>
           </div>
-          <div class="session-description"><%= session.description %></div>
+          <div class="session-description"><bdi><%= session.description %></bdi></div>
         </div>
       </div>
       <div class="btns session-action-btns">
         <button type="button" class="red-btn <%= session.isAdmin ? 'end-session-btn' : 'leave-session-btn' %>">
           <i class="bi bi-box-arrow-left"></i>
-          <span><%= session.isAdmin ? 'End Session' : 'Leave' %></span>
+          <span><%= session.isAdmin ? t("home:active.end_session") : t("home:active.leave") %></span>
         </button>
       </div>
     </div>
@@ -113,18 +113,18 @@
       <header>
         <div class="header-title">
           <i class="bi bi-ui-checks"></i>
-          <h2>Tasks</h2>
+          <h2><%= t("home:active.tasks_heading") %></h2>
         </div>
       </header>
       <div class="tasks-container">
         <div class="ongoing-tasks">
           <header>
-            <h3 class="ongoing">Ongoing</h3>
+            <h3 class="ongoing"><%= t("home:active.ongoing") %></h3>
             <div class="btns">
-              <button type="button" data-tooltip="Scroll To Top" class="exclude-btn scroll-to-top has-tooltip">
+              <button type="button" data-tooltip="<%= t('quizzes:session_overlay.scroll_to_top_tooltip') %>" class="exclude-btn scroll-to-top has-tooltip">
                 <i class="bi bi-arrow-up-short"></i>
               </button>
-              <button type="button" data-tooltip="Collapse All" class="exclude-btn collapse-all has-tooltip">
+              <button type="button" data-tooltip="<%= t('quizzes:session_overlay.collapse_all_tooltip') %>" class="exclude-btn collapse-all has-tooltip">
                 <i class="bi bi-arrows-expand"></i>
               </button>
             </div>
@@ -134,12 +134,12 @@
         <hr class="separator" />
         <div class="completed-tasks">
           <header>
-            <h3 class="completed">Completed</h3>
+            <h3 class="completed"><%= t("home:active.completed") %></h3>
             <div class="btns">
-              <button type="button" data-tooltip="Scroll To Top" class="exclude-btn scroll-to-top has-tooltip">
+              <button type="button" data-tooltip="<%= t('quizzes:session_overlay.scroll_to_top_tooltip') %>" class="exclude-btn scroll-to-top has-tooltip">
                 <i class="bi bi-arrow-up-short"></i>
               </button>
-              <button type="button" data-tooltip="Collapse All" class="exclude-btn collapse-all has-tooltip">
+              <button type="button" data-tooltip="<%= t('quizzes:session_overlay.collapse_all_tooltip') %>" class="exclude-btn collapse-all has-tooltip">
                 <i class="bi bi-arrows-expand"></i>
               </button>
             </div>
@@ -149,8 +149,8 @@
               <div class="empty-icon-container">
                 <i class="bi bi-check2-circle"></i>
               </div>
-              <h3>No Completed Tasks Yet</h3>
-              <p>Tasks you complete during this session will appear here.</p>
+              <h3><%= t("home:active.empty_completed_heading") %></h3>
+              <p><%= t("home:active.empty_completed_desc") %></p>
             </div>
           </div>
         </div>
@@ -163,7 +163,7 @@
         <header>
           <div class="header-title">
             <i class="bi bi-stopwatch-fill"></i>
-            <h2>Timer</h2>
+            <h2><%= t("home:active.timer_heading") %></h2>
           </div>
           <div class="info">
           </div>
@@ -224,7 +224,7 @@
                 </div>
               </div>
             </div>
-            <span class="label">HRS</span>
+            <span class="label"><%= t("home:active.timer_labels.hrs") %></span>
           </div>
           <div class="timer-separator"></div>
           <div class="flip-container flip-container-minutes">
@@ -282,7 +282,7 @@
                 </div>
               </div>
             </div>
-            <span class="label">MINS</span>
+            <span class="label"><%= t("home:active.timer_labels.mins") %></span>
           </div>
           <div class="timer-separator"></div>
           <div class="flip-container flip-container-seconds">
@@ -340,7 +340,7 @@
                 </div>
               </div>
             </div>
-            <span class="label">SECS</span>
+            <span class="label"><%= t("home:active.timer_labels.secs") %></span>
           </div>
         </div>
       </div>
@@ -348,16 +348,16 @@
         <header>
           <div class="header-title">
             <i class="bi bi-clipboard-check-fill"></i>
-            <h2>Quiz</h2>
+            <h2><%= t("home:active.quiz_heading") %></h2>
           </div>
           <% if (!session.isAdmin && session.quiz && session.quiz.passed && session.quiz.status !== 'completed') { %>
-           <span class="quiz-note badge gray-badge"><i class="bi bi-info-circle"></i>You already passed this quiz. You cannot retake it.</span>
+           <span class="quiz-note badge gray-badge"><i class="bi bi-info-circle"></i><%= t("home:active.already_passed_note") %></span>
           <% } %>
           <% if (session.quiz) { %>
            <div class="badges">
             <span class="status-badge badge <%= session.quiz.status === 'active' ? 'orange-badge' : session.quiz.status === 'completed' ? 'green-badge' : 'gray-badge' %>">
                 <i class="bi <%= session.quiz.status === 'active' ? 'bi-clock-history' : session.quiz.status === 'completed' ? 'bi-check-circle' : 'bi-hourglass' %>"></i>
-              <%= session.quiz.status === 'active' ? 'In Progress' : session.quiz.status === 'completed' ? 'Completed' : 'Pending' %>
+              <%= session.quiz.status === 'active' ? t("home:active.status.in_progress") : session.quiz.status === 'completed' ? t("home:active.status.completed") : t("home:active.status.pending") %>
             </span>
           </div>
           <% } %>
@@ -367,26 +367,26 @@
             <label class="quiz-title-label"><span class="icon-box">
               <i class="bi bi-clipboard-check"></i>
               <i class="bi bi-info-circle"></i>
-            </span>Quiz title</label>
-            <div  class="quiz-title content"><%= session.quiz ? session.quiz.title : 'No Quiz Added To This Session' %></div>
+            </span><%= t("home:active.quiz_title") %></label>
+            <div  class="quiz-title content"><%= session.quiz ? session.quiz.title : t("home:active.no_quiz_added") %></div>
           </div>
           <div class="questions-container<%= !session.quiz ? ' no-quiz' : '' %> info-container small-container">
-            <label class="questions-label"><span class="icon-box"><i class="bi bi-question-circle"></i></span>Questions</label>
+            <label class="questions-label"><span class="icon-box"><i class="bi bi-question-circle"></i></span><%= t("home:active.questions_label") %></label>
             <div class="questions content">
-              <span ><%= session.quiz ? session.quiz.questionsCount : '--' %> Questions</span>
+              <span ><%= session.quiz ? t("home:active.questions_count", { count: session.quiz.questionsCount }) : '-- ' + t("home:active.questions_label") %></span>
             </div>
           </div>
           <div class="start-in-container<%= !session.quiz ? ' no-quiz' : '' %> info-container small-container">
-            <label class="start-in-label"><span class="icon-box"><i class="bi bi-play-circle"></i></span>Start In</label>
+            <label class="start-in-label"><span class="icon-box"><i class="bi bi-play-circle"></i></span><%= t("home:active.start_in") %></label>
             <div class="content">
               <span class="start-time">--m</span>
             </div>
           </div>
           <% if (!session.isAdmin) { %>
            <div class="submitted-container<%= !session.quiz ? ' no-quiz' : '' %> info-container small-container">
-            <label class="submitted-label"><span class="icon-box"><i class="bi bi-check2-all"></i></span>Submitted</label>
+            <label class="submitted-label"><span class="icon-box"><i class="bi bi-check2-all"></i></span><%= t("home:active.submitted") %></label>
             <div class="submitted">
-              <span class="submitted-count"><%= session.quiz && session.quiz.passed ? `${session.quiz.submittedCount} of ${session.quiz.questionsCount}` : '-- of --' %> Questions</span>
+              <span class="submitted-count"><%= session.quiz && session.quiz.passed ? t("home:active.submitted_progress", { submitted: session.quiz.submittedCount, total: session.quiz.questionsCount }) : '-- / --' %></span>
               <div class="progress-back">
                 <div style="width: <%= session.quiz && session.quiz.passed ? session.quiz.percentage : '0' %>%;" class="progress"></div>
               </div>
@@ -397,7 +397,7 @@
         <footer class="quiz-footer">
           <% if (!session.isAdmin && session.quiz && session.quiz.passed) { %>
            <div class="score-container<%= !session.quiz ? ' no-quiz' : '' %> info-container">
-            <label>Your Score</label>
+            <label><%= t("home:active.your_score") %></label>
             <span class="score"><%= session.quiz && session.quiz.passed ? `${session.quiz.percentage}%` : '_____' %></span>
           </div>
           <% } %>
@@ -410,7 +410,7 @@
                   class="retake-btn"
                 >
                   <i class="bi bi-arrow-clockwise"></i>
-                  Retake Quiz
+                  <%= t("home:active.retake_quiz") %>
                 </button>
                 <% } %>
                 <button
@@ -418,7 +418,7 @@
                 class="result<%= session.isAdmin ? 's' : '' %>-btn should-fill"
               >
                 <i class="bi bi-eye"></i>
-                View <%= session.isAdmin ? 'Results' : 'Result' %>
+                <%= session.isAdmin ? t("home:active.view_results") : t("home:active.view_result") %>
                 </button>
               </div>
             <% } %>
@@ -430,7 +430,7 @@
       <header>
         <div class="header-title">
           <i class="bi bi-chat-text-fill"></i>
-          <h2>Chat</h2>
+          <h2><%= t("home:active.chat_heading") %></h2>
         </div>
       </header>
       <div data-last-visible="<%= lastVisible %>" data-last-message-id="<%= messages[messages.length - 1]?.id || '' %>" class="chat-messages">
@@ -445,7 +445,7 @@
               <% if (!msg.isSender) { %>
                 <div class="avatar">
                   <% if (msg.sender.photoURL) { %>
-                    <img src="<%= msg.sender.photoURL %>" alt="User Avatar" />
+                    <img src="<%= msg.sender.photoURL %>" alt="<%= t('common:avatar_alt') %>" />
                     <% } else { %>
                       <i class="bi bi-person-circle"></i>
                       <% } %>
@@ -457,7 +457,7 @@
                   <div class="<%= isFirst ? 'first-' : '' %>message-<%= msg.isSender ? 'sent' : 'received' %>-text card-item"
                       data-message-id="<%= msg.id || '' %>" <%- msg.content.fileStatus && msg.content.fileStatus !== 'uploaded' ? `data-local-id="${msg.localId || ''}"` : '' %> >
                     <% if (!msg.isSender && isFirst) { %>
-                      <span data-sender-id="<%= msg.sender.id %>" class="username"><%= msg.sender.fullName %></span>
+                      <span data-sender-id="<%= msg.sender.id %>" class="username"><bdi><%= msg.sender.fullName %></bdi></span>
                     <% } %>
 
                     <% if (msg.content.text) { %>
@@ -494,7 +494,7 @@
                             <% } %>
                           </div>
                         <% if (file.fileStatus !== 'uploaded') { %>
-                          <button type="button" class="re-send-btn small-btn"><i class="bi bi-upload"></i>Retry</button>
+                          <button type="button" class="re-send-btn small-btn"><i class="bi bi-upload"></i><%= t("common.actions.retry") %></button>
                         <% } %>
                         <% if (file.fileStatus === 'uploaded') { %>
                           <button type="button" class="expand-btn"><i class="bi bi-arrows-fullscreen"></i></button>
@@ -613,43 +613,43 @@
                 <div class="search-icon-container">
                   <i class="bi bi-search"></i>
                 </div>
-                <input type="search" placeholder="Search for emoji" id="emojis-search-input" class="emojis-search-input" />
+                <input type="search" placeholder="<%= t('groups:chat.search_emoji_placeholder') %>" id="emojis-search-input" class="emojis-search-input" />
               </div>
               <div class="emojies-sections">
                 <section id="recent">
-                  <h5>Recent</h5>
+                  <h5><%= t("groups:chat.emoji_recent") %></h5>
                   <div class="recent-emojies"></div>
                 </section>
                 <section id="people">
-                  <h5>People</h5>
+                  <h5><%= t("groups:chat.emoji_people") %></h5>
                   <div class="people-emojies"></div>
                 </section>
                 <section id="animals_nature">
-                  <h5>Animals & Nature</h5>
+                  <h5><%= t("groups:chat.emoji_animals_nature") %></h5>
                   <div class="animals-nature-emojies"></div>
                 </section>
                 <section id="food_drink">
-                  <h5>Food & Drink</h5>
+                  <h5><%= t("groups:chat.emoji_food_drink") %></h5>
                   <div class="food-drink-emojies"></div>
                 </section>
                 <section id="activity">
-                  <h5>Activity</h5>
+                  <h5><%= t("groups:chat.emoji_activity") %></h5>
                   <div class="activity-emojies"></div>
                 </section>
                 <section id="objects">
-                  <h5>Objects</h5>
+                  <h5><%= t("groups:chat.emoji_objects") %></h5>
                   <div class="objects-emojies"></div>
                 </section>
                 <section id="symbols">
-                  <h5>Symbols</h5>
+                  <h5><%= t("groups:chat.emoji_symbols") %></h5>
                   <div class="symbols-emojies"></div>
                 </section>
                 <section id="travel_places">
-                  <h5>Travel & Places</h5>
+                  <h5><%= t("groups:chat.emoji_travel_places") %></h5>
                   <div class="travel-places-emojies"></div>
                 </section>
                 <section id="flags">
-                  <h5>Flags</h5>
+                  <h5><%= t("groups:chat.emoji_flags") %></h5>
                   <div class="flags-emojies"></div>
                 </section>
               </div>
@@ -674,7 +674,7 @@
             .txt,
             .rar" />
         </div>
-        <textarea placeholder="Type a message" id="input-message" class="input-message"></textarea>
+        <textarea placeholder="<%= t('home:active.type_message_placeholder') %>" id="input-message" class="input-message"></textarea>
         <button type="button" class="send-btn exclude-btn should-fill">
           <i class="bi bi-send"></i>
         </button>

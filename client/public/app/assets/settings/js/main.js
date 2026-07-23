@@ -1,3 +1,4 @@
+import { loadNamespace } from "../../global/js/utils.js";
 import { setUpFileInputListeners } from "../../shared/avatar/js/utils.js";
 import {
   avatarContainer,
@@ -13,8 +14,9 @@ import {
   initOldValues,
 } from "./utils.js";
 
-export const init = () => {
+export const init = async () => {
   initDomVariables();
+  await loadNamespace("settings");
 
   initOldValues();
 

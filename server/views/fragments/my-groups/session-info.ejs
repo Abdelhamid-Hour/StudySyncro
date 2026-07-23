@@ -6,9 +6,9 @@
         <span class="session-info-icon icon-box">
           <i class="bi bi-clock-history"></i>
         </span>
-        Session Name
+        <%= t("quizzes:labels.session_name") %>
       </span>
-      <span class="session-name-value value content"><%= name %></span>
+      <span class="session-name-value value content"><bdi><%= name %></bdi></span>
     </div>
   </div>
 
@@ -19,13 +19,13 @@
         <span class="session-description-icon icon-box">
           <i class="bi bi-journal-text"></i>
         </span>
-        Description
+        <%= t("groups:session_info.description") %>
       </span>
       <p
         class="session-description-value value has-tooltip"
         data-tooltip="<%= description %>"
       >
-        <%= description %>
+        <bdi><%= description %></bdi>
       </p>
     </div>
   </div>
@@ -36,9 +36,9 @@
         <span class="quiz-icon icon-box">
           <i class="bi bi-question-circle"></i>
         </span>
-        Quiz
+        <%= t("groups:session_info.quiz") %>
       </span>
-      <span class="quiz-value value content"><%= quiz ? quiz.title : "No Quiz Assigned" %></span>
+      <span class="quiz-value value content"><bdi><%= quiz ? quiz.title : t("groups:session_info.no_quiz") %></bdi></span>
     </div>
   </div>
 
@@ -50,9 +50,9 @@
           <span class="start-icon icon-box">
             <i class="bi bi-play-circle"></i>
           </span>
-          Start
+          <%= t("groups:session_info.start") %>
         </span>
-        <span class="start-value value content"><%= startTime %></span>
+        <span class="start-value value content"><bdi><%= startTime %></bdi></span>
       </div>
     </div>
     <div class="end-info-box info-box">
@@ -61,9 +61,9 @@
           <span class="end-icon icon-box">
             <i class="bi bi-stopwatch"></i>
           </span>
-          End
+          <%= t("groups:session_info.end") %>
         </span>
-        <span class="end-value value content"><%= endTime %></span>
+        <span class="end-value value content"><bdi><%= endTime %></bdi></span>
       </div>
     </div>
   </div>
@@ -75,10 +75,10 @@
           <span class="duration-icon icon-box">
             <i class="bi bi-clock"></i>
           </span>
-          Duration
+          <%= t("groups:session_info.duration") %>
         </span>
         <span class="duration-value value content">
-          <%= duration %>
+          <bdi><%= duration %></bdi>
         </span>
       </div>
     </div>
@@ -88,10 +88,10 @@
           <span class="joined-count-icon icon-box">
             <i class="bi bi-people-fill"></i>
           </span>
-          Joined Count
+          <%= t("groups:session_info.joined_count") %>
         </span>
         <span class="joined-count-value value content">
-          <%= joinedCount %> Members
+          <%= t("groups:plural_counts.members", { count: joinedCount }) %>
         </span>
       </div>
     </div>
@@ -102,18 +102,18 @@
       <span class="joined-count-icon icon-box">
         <i class="bi bi-ui-checks"></i>
       </span>
-      Tasks
+      <%= t("quizzes:session_overlay.tasks_heading") %>
       <div class="action-btns">
         <button
           type="button"
-          data-tooltip="Scroll To Top"
+          data-tooltip="<%= t('quizzes:session_overlay.scroll_to_top_tooltip') %>"
           class="exclude-btn scroll-to-top has-tooltip tasks-btn action-btn"
         >
           <i class="bi bi-arrow-up-short"></i>
         </button>
         <button
           type="button"
-          data-tooltip="Collapse All"
+          data-tooltip="<%= t('quizzes:session_overlay.collapse_all_tooltip') %>"
           class="exclude-btn collapse-all has-tooltip tasks-btn action-btn"
         >
           <i class="bi bi-arrows-expand"></i>
@@ -125,27 +125,27 @@
       <%_ tasks.map((task, index) => { %>
           <div class="task-wrapper">
             <div <%- task.isQuiz
-            ? 'data-tooltip="Quiz"' 
+            ? `data-tooltip="${t('quizzes:session_overlay.quiz_tooltip')}"` 
             : '' %> class="task-box<%= task.isQuiz ? ' has-tooltip quiz-task-box' : '' %>">
               <div class="counter">
                 <span>
-                  <%= (index + 1) .toString()
-                  .padStart(tasks.length.toString().length, '0') %>
+                  <bdi><%= (index + 1) .toString()
+                  .padStart(tasks.length.toString().length, '0') %></bdi>
                 </span>
               </div>
-              <span class="title"><%= task.title %></span>
-              <span class="duration"><%= millisecondsToHMFormat( task.durationInMins * 60 * 1000 ) _%>
+              <span class="title"><bdi><%= task.title %></bdi></span>
+              <span class="duration"><bdi><%= millisecondsToHMFormat( task.durationInMins * 60 * 1000 ) _%></bdi>
               </span>
               <div class="icons">
-                <button type="button" data-tooltip="Show Details" class="task-down-icon exclude-btn should-fill has-tooltip">
+                <button type="button" data-tooltip="<%= t('quizzes:session_overlay.show_details_tooltip') %>" class="task-down-icon exclude-btn should-fill has-tooltip">
                   <i class="bi bi-caret-down"></i>
                 </button>
               </div>
             </div>
             <div class="task-details">
-              <h5>Title:</h5>
-              <p><%= task.title %></p>
-              <h5>Details:</h5>
+              <h5><%= t("quizzes:session_overlay.task_title") %></h5>
+              <p><bdi><%= task.title %></bdi></p>
+              <h5><%= t("quizzes:session_overlay.task_details") %></h5>
               <%=task.description _%>
             </div>
           </div>
@@ -157,12 +157,12 @@
     <% if (isJoined) { %>
     <button data-session-id="<%= id %>" type="button" class="<%= isAdmin ? 'end' : 'leave' %>-btn red-btn should-fill">
       <i class="bi bi-x-circle"></i>
-      <%= isAdmin ? 'End' : 'Leave' %> Session
+      <%= isAdmin ? t("groups:session_info.end_session") : t("groups:session_info.leave_session") %>
     </button>
     <% } else { %>
     <button data-session-id="<%= id %>" type="button" class="green-btn join-btn should-fill blue-btn">
       <i class="bi bi-check-circle"></i>
-      Join Session
+      <%= t("quizzes:session_overlay.join_session") %>
     </button>
     <% } %>
   </div>

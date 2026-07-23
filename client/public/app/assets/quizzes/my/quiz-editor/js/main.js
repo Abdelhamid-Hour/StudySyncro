@@ -1,4 +1,4 @@
-import { registerPageListener } from "../../../../global/js/utils.js";
+import { registerPageListener, loadNamespaces } from "../../../../global/js/utils.js";
 import { setUpDragAndDrop } from "../../../../shared/tasks/js/utils.js";
 import {
   editorHeader,
@@ -23,7 +23,8 @@ import {
   initMobileTabs,
 } from "./utils.js";
 
-export const init = () => {
+export const init = async () => {
+  await loadNamespaces(["quizzes", "quiz-edit"]);
   initDomVariables();
 
   initializeInitialData();

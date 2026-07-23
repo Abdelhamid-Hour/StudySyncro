@@ -1,4 +1,4 @@
-import { registerPageListener } from "../../../../global/js/utils.js";
+import { loadNamespace, registerPageListener } from "../../../../global/js/utils.js";
 import { iniChat } from "../../../../shared/chat/js/utils.js";
 import {
   endSession,
@@ -18,8 +18,9 @@ import {
   handleGroupMenuBtns
 } from "./utils.js";
 
-export const init = () => {
+export const init = async () => {
   initDomVariables();
+  await loadNamespace("group-chat");
 
   iniChat(getGroupId());
 

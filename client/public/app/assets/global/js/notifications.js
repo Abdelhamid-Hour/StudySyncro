@@ -1,5 +1,5 @@
 import { Loader } from "../../shared/loader/js/utils.js";
-import { toReadableDate, handleApiAction } from "./utils.js";
+import { handleApiAction, t } from "./utils.js";
 import { sendData } from "../../../../main_assets/js/utils.js";
 import { INITIALE_LOADERS_COUNT } from "./variables.js";
 
@@ -133,10 +133,10 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
       const isInvite =
         c.getAttribute("data-is-invite") === "true" ||
         c.getAttribute("data-type") === "join_invite";
-      const statusWord = actionType === "accepted" ? "accepted" : "rejected";
+      const keySuffix = actionType === "accepted" ? "accepted" : "rejected";
       const newMsg = isInvite
-        ? `Invitation to join group ${groupName} was ${statusWord}.`
-        : `Join request from ${senderName} for group ${groupName} was ${statusWord}.`;
+        ? t(`notifications:messages.join_invite_${keySuffix}.message`, { groupName })
+        : t(`notifications:messages.join_request_${keySuffix}.message`, { senderName, groupName });
       const formattedMsg = formatNotificationMessage({
         message: newMsg,
         metadata: { senderName, groupName },
@@ -168,7 +168,7 @@ const bindCardActions = (card) => {
       const demandeId = card.getAttribute("data-demande-id");
       const groupId = card.getAttribute("data-group-id");
       handleApiAction("/accept-demande", { demandeId, groupId }, acceptBtn, {
-        successMsg: "Demande accepted",
+        successMsg: t("notifications:alerts.demande_accepted"),
         onSuccess: () => {
           markSingleCardReadAndRemoveActions(card, "accepted");
         },
@@ -182,7 +182,7 @@ const bindCardActions = (card) => {
       const demandeId = card.getAttribute("data-demande-id");
       const groupId = card.getAttribute("data-group-id");
       handleApiAction("/reject-demande", { demandeId, groupId }, rejectBtn, {
-        successMsg: "Demande rejected",
+        successMsg: t("notifications:alerts.demande_rejected"),
         onSuccess: () => {
           markSingleCardReadAndRemoveActions(card, "rejected");
         },
@@ -200,7 +200,7 @@ const bindCardActions = (card) => {
         { groupId, isInvite: true },
         joinInviteBtn,
         {
-          successMsg: "Joined group successfully!",
+          successMsg: t("notifications:alerts.joined_group_success"),
           onSuccess: () => {
             markSingleCardReadAndRemoveActions(card, "accepted");
           },
@@ -215,7 +215,7 @@ const bindCardActions = (card) => {
       e.stopPropagation();
       const groupId = card.getAttribute("data-group-id");
       handleApiAction("/reject-invite", { groupId }, rejectInviteBtn, {
-        successMsg: "Invitation rejected",
+        successMsg: t("notifications:alerts.invitation_rejected"),
         onSuccess: () => {
           markSingleCardReadAndRemoveActions(card, "rejected");
         },
@@ -247,7 +247,7 @@ const bindCardActions = (card) => {
             history.pushState({}, "", "/app/home");
             window.dispatchEvent(new PopStateEvent("popstate", { state: {} }));
           },
-          successMsg: "Joined the session successfully",
+          successMsg: t("notifications:alerts.joined_session_success"),
         });
       }
     });
@@ -266,27 +266,48 @@ const escapeHtmlStr = (str) => {
 
 const formatNotificationMessage = (notif) => {
   let msg = escapeHtmlStr(notif.message || "");
+  const adminRoleTerm = t("notifications:styling_terms.admin_role", { defaultValue: "Admin role" });
+  if (msg.includes(adminRoleTerm)) {
+    msg = msg.replace(adminRoleTerm, `<strong>${adminRoleTerm}</strong>`);
+  }
   if (msg.startsWith("Admin role") || msg.includes("Admin role")) {
     msg = msg.replace("Admin role", "<strong>Admin</strong> role");
   }
 
   const termsMap = [
+    { term: t("notifications:styling_terms.invited_you_to_join"), cls: "bold-success" },
     { term: "invited you to join", cls: "bold-success" },
+    { term: t("notifications:styling_terms.invited_you_to_join_suffix"), cls: "bold-success" },
+    { term: t("notifications:styling_terms.successfully_joined"), cls: "bold-success" },
     { term: "successfully joined", cls: "bold-success" },
+    { term: t("notifications:styling_terms.accepted"), cls: "bold-success" },
     { term: "accepted", cls: "bold-success" },
+    { term: t("notifications:styling_terms.started"), cls: "bold-success" },
     { term: "started", cls: "bold-success" },
-    { term: "ended", cls: "bold-success" },
+    { term: t("notifications:styling_terms.ended"), cls: "bold-danger" },
+    { term: "ended", cls: "bold-danger" },
+    { term: t("notifications:styling_terms.rejected"), cls: "bold-danger" },
     { term: "rejected", cls: "bold-danger" },
+    { term: t("notifications:styling_terms.declined"), cls: "bold-danger" },
+    { term: "declined", cls: "bold-danger" },
+    { term: t("notifications:styling_terms.removed"), cls: "bold-danger" },
     { term: "removed", cls: "bold-danger" },
+    { term: t("notifications:styling_terms.deleted"), cls: "bold-danger" },
     { term: "deleted", cls: "bold-danger" },
+    { term: t("notifications:styling_terms.demoted_from_admin"), cls: "bold-danger" },
     { term: "demoted from Admin", cls: "bold-danger" },
+    { term: t("notifications:styling_terms.demoted"), cls: "bold-danger" },
     { term: "demoted", cls: "bold-danger" },
+    { term: t("notifications:styling_terms.pending_approval"), cls: "bold-warning" },
     { term: "pending approval", cls: "bold-warning" },
+    { term: t("notifications:styling_terms.transferred"), cls: "bold-warning" },
     { term: "transferred", cls: "bold-warning" },
+    { term: t("notifications:styling_terms.host_role"), cls: "" },
+    { term: "Host", cls: "" },
     { term: notif.metadata?.senderName, cls: "" },
     { term: notif.metadata?.groupName, cls: "" },
     { term: notif.metadata?.sessionName, cls: "" },
-  ].filter((item) => item.term && typeof item.term === "string");
+  ].filter((item) => item.term && typeof item.term === "string" && !item.term.startsWith("notifications:styling_terms."));
 
   termsMap.sort((a, b) => b.term.length - a.term.length);
 
@@ -307,7 +328,7 @@ const formatNotificationMessage = (notif) => {
 const formatNotifDate = (ts) => {
   try {
     const d = new Date(ts || Date.now());
-    if (isNaN(d.getTime())) return "Recent";
+    if (isNaN(d.getTime())) return t("notifications:recent");
     return d.toLocaleString("en-US", {
       month: "short",
       day: "numeric",
@@ -316,7 +337,7 @@ const formatNotifDate = (ts) => {
       minute: "2-digit",
     });
   } catch (e) {
-    return "Recent";
+    return t("notifications:recent");
   }
 };
 
@@ -377,7 +398,7 @@ const createNotificationCard = (notif) => {
   }
 
   const timeStr = formatNotifDate(notif.timestamp);
-  const categoryLabel = notif.category || "General";
+  const categoryLabel = t(`notifications:categories.${notif.category || "General"}`);
 
   const notifsContainer = document.getElementById("notifications-list");
   const currentSession = notifsContainer
@@ -402,8 +423,8 @@ const createNotificationCard = (notif) => {
   if (type === "join_request" && !notif.metadata?.isInvite) {
     actionsHtml = `
       <div class="notif-actions">
-        <button type="button" class="reject-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> Reject</button>
-        <button type="button" class="accept-btn exclude-btn small-btn" data-action="accept"><i class="bi bi-check-circle"></i> Accept</button>
+        <button type="button" class="reject-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> ${t("notifications:actions.reject")}</button>
+        <button type="button" class="accept-btn exclude-btn small-btn" data-action="accept"><i class="bi bi-check-circle"></i> ${t("notifications:actions.accept")}</button>
       </div>
     `;
   } else if (
@@ -412,8 +433,8 @@ const createNotificationCard = (notif) => {
   ) {
     actionsHtml = `
       <div class="notif-actions">
-        <button type="button" class="reject-invite-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> Reject</button>
-        <button type="button" class="join-invite-btn exclude-btn small-btn" data-action="join"><i class="bi bi-box-arrow-in-right"></i> Join</button>
+        <button type="button" class="reject-invite-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> ${t("notifications:actions.reject")}</button>
+        <button type="button" class="join-invite-btn exclude-btn small-btn" data-action="join"><i class="bi bi-box-arrow-in-right"></i> ${t("notifications:actions.join")}</button>
       </div>
     `;
   } else if (
@@ -424,9 +445,17 @@ const createNotificationCard = (notif) => {
   ) {
     actionsHtml = `
       <div class="notif-actions">
-        <button type="button" class="join-session-btn exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> Join</button>
+        <button type="button" class="join-session-btn exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> ${t("notifications:actions.join")}</button>
       </div>
     `;
+  }
+
+  let notifForMessage = notif;
+  if (type && notif.metadata) {
+    const translatedMsg = t(`notifications:messages.${type}.message`, notif.metadata);
+    if (translatedMsg && !translatedMsg.startsWith("notifications:messages.")) {
+      notifForMessage = { ...notif, message: translatedMsg };
+    }
   }
 
   card.innerHTML = `
@@ -434,7 +463,7 @@ const createNotificationCard = (notif) => {
       ${iconHtml}
     </div>
     <div class="notif-content">
-      <div class="notif-message">${formatNotificationMessage(notif)}</div>
+      <div class="notif-message">${formatNotificationMessage(notifForMessage)}</div>
       <div class="notif-footer">
         <span class="notif-meta">${timeStr} • ${categoryLabel}</span>
         ${actionsHtml}
@@ -763,13 +792,13 @@ export const initNotificationsManager = () => {
       emptyState: {
         noFilter: {
           icon: "bi-bell-slash",
-          title: "No notifications yet",
-          desc: "You don't have any notifications right now.",
+          title: t("notifications:skeletons.no_notifications_yet_title"),
+          desc: t("notifications:skeletons.no_notifications_yet_desc"),
         },
         filtered: {
           icon: "bi-bell-slash",
-          title: "No notifications found",
-          desc: "There are no notifications in this category.",
+          title: t("notifications:skeletons.no_notifications_found_title"),
+          desc: t("notifications:skeletons.no_notifications_found_desc"),
         },
       },
     },

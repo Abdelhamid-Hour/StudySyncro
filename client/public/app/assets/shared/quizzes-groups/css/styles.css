@@ -10,8 +10,7 @@
   padding: 0.4rem;
 }
 
-.left-side-bar:has(.should-hide.hidden)~main {
-
+.left-side-bar:has(.should-hide.hidden) ~ main {
   .groups-list,
   .quizzes-list {
     grid-template-columns: repeat(4, minmax(24rem, 1fr));
@@ -44,7 +43,7 @@
     display: flex;
     flex-direction: column;
     bottom: 0;
-    left: 50%;
+    inset-inline-start: 50%;
     padding: var(--primary-gap);
     gap: calc(var(--primary-gap) / 2);
     background-color: var(--btn-background-color);
@@ -81,10 +80,9 @@
   }
 }
 
-
 .loading-btn {
-  margin-left: auto;
-  background-color: #88888A !important;
+  margin-inline-start: auto;
+  background-color: #88888a !important;
 }
 
 @media (max-width: 48rem) {
@@ -94,5 +92,3 @@
     flex-direction: column !important;
   }
 }
-
-

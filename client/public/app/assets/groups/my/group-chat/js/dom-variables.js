@@ -7,6 +7,7 @@ import {
   NAME_TITLE_MIN_LENGTH,
 } from "../../../../global/js/variables.js";
 import { createShowInSearchLabel } from "../../../../shared/forms/js/utils.js";
+import { t } from "../../../../../../main_assets/js/i18n.js";
 
 export let groupLeftSideBar,
   showInfoBtn,
@@ -37,14 +38,14 @@ groupInfoElementsMap = {
             <div class="action-btns">
             <button
               type="button"
-              data-tooltip="Save"
+              data-tooltip="${t("common:modals.save")}"
               class="exclude-btn save-btn action-btn has-tooltip should-fill"
             >
               <i class="bi bi-floppy"></i>
             </button>
             <button
               type="button"
-              data-tooltip="Cancel"
+              data-tooltip="${t("common:modals.cancel")}"
               class="exclude-btn cancel-btn action-btn has-tooltip"
             >
               <i class="bi bi-x-lg"></i>
@@ -58,7 +59,7 @@ groupInfoElementsMap = {
                 <i class="bi bi-people-fill"></i>
                 <i class="bi bi-info-circle"></i>
               </span>
-              Group Name
+              ${t("group-chat:info.group_name")}
             </label>
             <input
             name="name"
@@ -79,7 +80,7 @@ groupInfoElementsMap = {
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
-              Edit
+              ${t("group-chat:actions.edit")}
             </button>
             <div class="group-name-container info-container">
               <span class="label" id="group-name-label-view">
@@ -87,7 +88,7 @@ groupInfoElementsMap = {
                   <i class="bi bi-people-fill"></i>
                   <i class="bi bi-info-circle"></i>
                 </span>
-                Group Name
+                ${t("group-chat:info.group_name")}
               </span>
               <span class="group-name-value value content">
               </span>
@@ -106,14 +107,14 @@ groupInfoElementsMap = {
             <div class="action-btns">
             <button
               type="button"
-              data-tooltip="Save"
+              data-tooltip="${t("common:modals.save")}"
               class="exclude-btn save-btn action-btn has-tooltip should-fill"
             >
               <i class="bi bi-floppy"></i>
             </button>
             <button
               type="button"
-              data-tooltip="Cancel"
+              data-tooltip="${t("common:modals.cancel")}"
               class="exclude-btn cancel-btn action-btn has-tooltip"
             >
               <i class="bi bi-x-lg"></i>
@@ -127,7 +128,7 @@ groupInfoElementsMap = {
                 <i class="bi bi-people-fill"></i>
                 <i class="bi bi-info-circle"></i>
               </span>
-              Group Description
+              ${t("group-chat:info.group_description")}
             </label>
             <textarea
             name="description"
@@ -148,7 +149,7 @@ groupInfoElementsMap = {
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
-              Edit
+              ${t("group-chat:actions.edit")}
             </button>
             <div class="group-description-container info-container">
               <span class="label">
@@ -156,7 +157,7 @@ groupInfoElementsMap = {
                   <i class="bi bi-people-fill"></i>
                   <i class="bi bi-info-circle"></i>
                 </span>
-                Group Description
+                ${t("group-chat:info.group_description")}
               </span>
               <p data-tooltip="" class="group-description-value value has-tooltip"></p>
             </div>
@@ -175,14 +176,14 @@ groupInfoElementsMap = {
             <div class="action-btns">
             <button
               type="button"
-              data-tooltip="Save"
+              data-tooltip="${t("common:modals.save")}"
               class="exclude-btn save-btn action-btn has-tooltip should-fill"
             >
               <i class="bi bi-floppy"></i>
             </button>
             <button
               type="button"
-              data-tooltip="Cancel"
+              data-tooltip="${t("common:modals.cancel")}"
               class="exclude-btn cancel-btn action-btn has-tooltip"
             >
               <i class="bi bi-x-lg"></i>
@@ -193,7 +194,7 @@ groupInfoElementsMap = {
               <span class="subject-icon icon-box">
                 <i class="bi bi-journal-text"></i>
               </span>
-              Subject
+              ${t("group-chat:info.subject")}
             </span>
             <div class="select-trigger input">
               <button type="button" class="exclude-btn open-drop-down-btn" id="subject-input">
@@ -215,14 +216,14 @@ groupInfoElementsMap = {
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
-              Edit
+              ${t("group-chat:actions.edit")}
             </button>
             <div class="subject-container info-container">
               <span class="label" >
                 <span class="subject-icon icon-box">
                   <i class="bi bi-journal-text"></i>
                 </span>
-                Subject
+                ${t("group-chat:info.subject")}
               </span>
               <span class="subject-value value content"></span>
             </div>
@@ -240,14 +241,14 @@ groupInfoElementsMap = {
             <div class="action-btns">
               <button
                 type="button"
-                data-tooltip="Save"
+                data-tooltip="${t("common:modals.save")}"
                 class="exclude-btn save-btn action-btn has-tooltip should-fill"
               >
                 <i class="bi bi-floppy"></i>
               </button>
               <button
                 type="button"
-                data-tooltip="Cancel"
+                data-tooltip="${t("common:modals.cancel")}"
                 class="exclude-btn cancel-btn action-btn has-tooltip"
               >
                 <i class="bi bi-x-lg"></i>
@@ -258,7 +259,7 @@ groupInfoElementsMap = {
                 <span class="level-icon icon-box">
                   <i class="bi bi-graph-up"></i>
                 </span>
-                Level
+                ${t("group-chat:info.level")}
               </label>
               <button
                 type="button"
@@ -273,7 +274,7 @@ groupInfoElementsMap = {
           </div>
           `;
       const span = wrapper.querySelector(".level-input");
-      span.textContent = value;
+      span.textContent = t(`common:forms.levels.${value}`, { defaultValue: value });
       span.setAttribute("data-value", value);
       return wrapper.innerHTML;
     },
@@ -282,20 +283,20 @@ groupInfoElementsMap = {
       wrapper.innerHTML = `
            <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
-              Edit
+              ${t("group-chat:actions.edit")}
             </button>
             <div class="level-container info-container">
               <span class="label">
                 <span class="level-icon icon-box">
                   <i class="bi bi-graph-up"></i>
                 </span>
-                Level
+                ${t("group-chat:info.level")}
               </span>
               <span class="level-value value content"></span>
             </div>
           `;
       const content = wrapper.querySelector(".level-value.content");
-      content.textContent = value;
+      content.textContent = t(`common:forms.levels.${value}`, { defaultValue: value });
       return wrapper.innerHTML;
     },
   },
@@ -307,14 +308,14 @@ groupInfoElementsMap = {
             <div class="action-btns">
             <button
               type="button"
-              data-tooltip="Save"
+              data-tooltip="${t("common:modals.save")}"
               class="exclude-btn save-btn action-btn has-tooltip should-fill"
             >
               <i class="bi bi-floppy"></i>
             </button>
             <button
               type="button"
-              data-tooltip="Cancel"
+              data-tooltip="${t("common:modals.cancel")}"
               class="exclude-btn cancel-btn action-btn has-tooltip"
             >
               <i class="bi bi-x-lg"></i>
@@ -327,7 +328,7 @@ groupInfoElementsMap = {
               <span class="visibility-icon icon-box">
                 <i class="bi bi-eye-fill"></i>
               </span>
-              Visibility
+              ${t("group-chat:info.visibility")}
             </label>
             <button
               type="button"
@@ -342,7 +343,7 @@ groupInfoElementsMap = {
           </div>
           `;
       const span = wrapper.querySelector(".visibility-input");
-      span.textContent = value;
+      span.textContent = t(`common:forms.visibility.${value}`, { defaultValue: value });
       span.setAttribute("data-value", value);
       if (value === "Private") {
         const label = createShowInSearchLabel(showInSearchInput);
@@ -355,20 +356,20 @@ groupInfoElementsMap = {
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
-              Edit
+              ${t("group-chat:actions.edit")}
             </button>
             <div class="visibility-container info-container">
               <span class="label" id="visibility-label-view">
                 <span class="visibility-icon icon-box">
                   <i class="bi bi-eye-fill"></i>
                 </span>
-                Visibility
+                ${t("group-chat:info.visibility")}
               </span>
               <span class="visibility-value value content"></span>
             </div>
           `;
       const content = wrapper.querySelector(".visibility-value.content");
-      content.textContent = value;
+      content.textContent = t(`common:forms.visibility.${value}`, { defaultValue: value });
       if (value === "Private") {
         const label = createShowInSearchLabel(showInSearchInput, true);
         wrapper.appendChild(label);
@@ -384,14 +385,14 @@ groupInfoElementsMap = {
             <div class="action-btns">
             <button
               type="button"
-              data-tooltip="Save"
+              data-tooltip="${t("common:modals.save")}"
               class="exclude-btn save-btn action-btn has-tooltip should-fill"
             >
               <i class="bi bi-floppy"></i>
             </button>
             <button
               type="button"
-              data-tooltip="Cancel"
+              data-tooltip="${t("common:modals.cancel")}"
               class="exclude-btn cancel-btn action-btn has-tooltip"
             >
               <i class="bi bi-x-lg"></i>
@@ -405,7 +406,7 @@ groupInfoElementsMap = {
                 <i class="bi bi-people-fill"></i>
                 <i class="bi bi-info-circle"></i>
               </span>
-              Max Members
+              ${t("group-chat:info.max_members")}
             </label>
             <input
             name="max-members"
@@ -427,14 +428,14 @@ groupInfoElementsMap = {
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
-              Edit
+              ${t("group-chat:actions.edit")}
             </button>
             <div class="max-members-container info-container">
               <span class="label">
                 <span class="max-members-icon icon-box">
                   <i class="bi bi-person-plus-fill"></i>
                 </span>
-                Max Members
+                ${t("group-chat:info.max_members")}
               </span>
               <span class="max-members-value value content"></span>
             </div>

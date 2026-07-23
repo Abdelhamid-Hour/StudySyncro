@@ -1,4 +1,4 @@
-const { admin, db, bucket } = require("../../firebase/firebaseAdmin");
+const { admin, db, bucket, rDb } = require("../../firebase/firebaseAdmin");
 const { uploadFileToStorage } = require("./shared");
 
 const updateProfile = async (fullName, avatar, user) => {
@@ -260,6 +260,8 @@ const closeAccount = async (key, userId) => {
 
     await admin.auth().deleteUser(userId);
     await db.collection("users").doc(userId).delete();
+    await db.collection("notifications").doc(userId).delete();
+    await rDb.ref(`userGroupChats/${userId}`).remove();
 
     return { success: true, message: "Account closed successfully." };
   } catch (error) {

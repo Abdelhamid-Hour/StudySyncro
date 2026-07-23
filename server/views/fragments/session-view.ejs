@@ -1,6 +1,6 @@
 <div class="overlay-model session-view-overlay" data-id="<%= session.id %>">
   <header>
-    <h3>Session Details</h3>
+    <h3><%= t("quizzes:session_overlay.title") %></h3>
     <button type="button" class="exclude-btn close-session-view-overlay should-fill">
       <i class="bi bi-x-circle"></i>
     </button>
@@ -14,19 +14,19 @@
         </span>
       </div>
       <div>
-        <h3 class="session-name"><%= session.name %><span class="badge simple-badge users-count"><%= session.joinedCount %> Joined User</span></h3>
+        <h3 class="session-name"><%= session.name %><span class="badge simple-badge users-count"><%= t("quizzes:plural_counts.joined_users", { count: session.joinedCount }) %></span></h3>
         
       </div>
       <p class="session-description"><%= session.description %></p>
       <div class="session-info">
         <span class="badge green-badge start-badge">
-          Started: <%= session.startTime %>
+          <%= t("quizzes:session_overlay.started", { time: session.startTime }) %>
         </span>
         <span class="badge orange-badge end-badge">
-          Ends: <%= session.endTime %>
+          <%= t("quizzes:session_overlay.ends", { time: session.endTime }) %>
         </span>
         <span class="badge blue-badge duration-badge">
-          Duration: <%= session.duration %>
+          <%= t("quizzes:session_overlay.duration", { time: session.duration }) %>
         </span>
       </div>
     </div>
@@ -34,13 +34,13 @@
     <div class="quiz">
       <h3>
         <i class="bi bi-clipboard2-check-fill"></i>
-        Session Quiz
+        <%= t("quizzes:session_overlay.session_quiz") %>
       </h3>
       <div class="quiz-info">
         <h3 class="quiz-title"><%= session.quiz.title %></h3>
         <span class="questions-count badge blue-badge">
           <%= session.quiz.questionsCount %>
-          <span>Questions</span>
+          <span><%= t("quizzes:labels.questions") %></span>
         </span>
         <span class="start-time badge<%= session.quiz.status === 'Finished' ? ' gray-badge' : session.quiz.status === 'active' ? ' green-badge' : ' orange-badge'%>">
           <i class="bi bi-clock-fill"></i>
@@ -51,18 +51,18 @@
     <% } %>
     <div class="session-tasks">
       <header>
-        <h3 class="title"><i class="bi bi-ui-checks"></i>Tasks</h3>
+        <h3 class="title"><i class="bi bi-ui-checks"></i><%= t("quizzes:session_overlay.tasks_heading") %></h3>
         <div class="btns">
           <button
             type="button"
-            data-tooltip="Scroll To Top"
+            data-tooltip="<%= t('quizzes:session_overlay.scroll_to_top_tooltip') %>"
             class="exclude-btn scroll-to-top has-tooltip"
           >
             <i class="bi bi-arrow-up-short"></i>
           </button>
           <button
             type="button"
-            data-tooltip="Collapse All"
+            data-tooltip="<%= t('quizzes:session_overlay.collapse_all_tooltip') %>"
             class="exclude-btn collapse-all has-tooltip"
           >
             <i class="bi bi-arrows-expand"></i>
@@ -74,7 +74,7 @@
         <%_ session.tasks.map((task, index) => { %>
             <div class="task-wrapper ">
               <div <%- task instanceof Quiz 
-              ? 'data-tooltip="Quiz"' 
+              ? `data-tooltip="${t('quizzes:session_overlay.quiz_tooltip')}"` 
               : '' %> class="task-box<%= task instanceof Quiz ? ' has-tooltip quiz-task-box' : '' %>">
                 <div class="counter">
                   <span>
@@ -86,15 +86,15 @@
                 <span class="duration"><%= session.millisecondsToHMFormat( task.durationInMins * 60 * 1000 ) _%>
                 </span>
                 <div class="icons">
-                  <button type="button" data-tooltip="Show Details" class="task-down-icon exclude-btn should-fill has-tooltip">
+                  <button type="button" data-tooltip="<%= t('quizzes:session_overlay.show_details_tooltip') %>" class="task-down-icon exclude-btn should-fill has-tooltip">
                     <i class="bi bi-caret-down"></i>
                   </button>
                 </div>
               </div>
               <div class="task-details">
-                <h5>Title:</h5>
+                <h5><%= t("quizzes:session_overlay.task_title") %></h5>
                 <p><%= task.title %></p>
-                <h5>Details:</h5>
+                <h5><%= t("quizzes:session_overlay.task_details") %></h5>
                 <%=task.description _%>
               </div>
             </div>
@@ -104,6 +104,6 @@
   </div>
   <button type="button" class="join-session blue-btn">
     <i class="bi bi-box-arrow-in-right"></i>
-    Join Session
+    <%= t("quizzes:session_overlay.join_session") %>
   </button>
 </div>

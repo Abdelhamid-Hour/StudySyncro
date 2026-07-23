@@ -115,19 +115,29 @@
         <a
           href="/"
           class="button exclude-btn"
+          data-i18n-title="login:nav.back_to_home"
           title="Back to Home"
           aria-label="Back to Home"
         >
           <i class="bi bi-house-door-fill"></i>
-          <span>Home</span>
+          <span data-i18n="login:nav.home">Home</span>
         </a>
         <button
           class="button exclude-btn toggle-theme-btn"
           id="theme-toggle-btn"
+          data-i18n-title="login:nav.toggle_theme"
           title="Toggle Dark/Light Mode"
           aria-label="Toggle Dark or Light Mode"
         >
           <i class="bi bi-sun theme-toggle-icon" id="theme-toggle-icon"></i>
+        </button>
+        <button
+          class="button exclude-btn lang-toggle-btn"
+          title="Switch Language"
+          aria-label="Switch Language"
+        >
+          <i class="bi bi-globe"></i>
+          <span class="lang-toggle-text">AR</span>
         </button>
       </div>
     </div>
@@ -137,8 +147,8 @@
         <div id="outline-container"></div>
         <aside>
           <section>
-            <h1 style="margin: 0">👋 Welcome to StudyHype</h1>
-            <p>
+            <h1 style="margin: 0" data-i18n="login:aside.welcome_title">👋 Welcome to StudyHype</h1>
+            <p data-i18n="login:aside.welcome_desc">
               Hey there! Ready to join the coolest study community around?
               Create an account now to access exclusive resources, connect with
               like-minded students, and elevate your learning experience!
@@ -170,18 +180,18 @@
               accept="image/png, image/jpeg, image/jpg, image/webp"
             />
             <div class="text">
-              <p>Drop the file or click to choose a profile picture</p>
-              <p>Allowed file types:</p>
-              <p>JPG, PNG, JPEG, WEBP.</p>
-              <p>Max file size: 200KB</p>
+              <p data-i18n="login:aside.drop_file">Drop the file or click to choose a profile picture</p>
+              <p data-i18n="login:aside.allowed_types">Allowed file types:</p>
+              <p data-i18n="login:aside.file_formats">JPG, PNG, JPEG, WEBP.</p>
+              <p data-i18n="login:aside.max_size">Max file size: 200KB</p>
             </div>
             <span class="error"></span>
           </label>
         </aside>
         <header>
           <h1>
-            <span>Login to</span>
-            Your Account
+            <span data-i18n="login:header.login_to">Login to</span>
+            <span id="header-account-text" data-i18n="login:header.your_account">Your Account</span>
           </h1>
         </header>
         <section id="forms">
@@ -195,7 +205,7 @@
                   <div class="email-container-label">
                     <label for="sign-in-email">
                       <div></div>
-                      Email
+                      <span data-i18n="login:sign_in_form.email_label">Email</span>
                     </label>
                     <input
                       placeholder=""
@@ -213,7 +223,7 @@
                 </div>
               </div>
               <div class="password-container">
-                <a id="forgot-password">Forgot Password?</a>
+                <a id="forgot-password" data-i18n="login:sign_in_form.forgot_password">Forgot Password?</a>
                 <div class="md-password-container">
                   <div>
                     <i class="bi bi-lock-fill"></i>
@@ -221,7 +231,7 @@
                   <div class="password-container-label">
                     <label for="sign-in-password">
                       <div></div>
-                      Password
+                      <span data-i18n="login:sign_in_form.password_label">Password</span>
                     </label>
                     <input
                       placeholder=""
@@ -243,11 +253,11 @@
                   <span class="error-msg"></span>
                 </div>
               </div>
-              <button id="sign-in-btn" type="button">Sign In</button>
+              <button id="sign-in-btn" type="button" data-i18n="login:sign_in_form.sign_in_btn">Sign In</button>
             </form>
             <p>
-              New to StudyHype?
-              <a id="sign-up-link">Create an account</a>
+              <span data-i18n="login:sign_in_form.new_to_studyhype">New to StudyHype?</span>
+              <a id="sign-up-link" data-i18n="login:sign_in_form.create_account_link">Create an account</a>
             </p>
           </div>
           <div class="sign-up-container">
@@ -262,7 +272,7 @@
                       <div class="text-container-label">
                         <label for="first-name">
                           <div></div>
-                          First Name
+                          <span data-i18n="login:sign_up_form.first_name_label">First Name</span>
                         </label>
                         <input
                           placeholder=""
@@ -282,7 +292,7 @@
                       <div class="text-container-label">
                         <label for="last-name">
                           <div></div>
-                          Last Name
+                          <span data-i18n="login:sign_up_form.last_name_label">Last Name</span>
                         </label>
                         <input
                           placeholder=""
@@ -307,7 +317,7 @@
                   <div class="email-container-label">
                     <label for="sign-up-email">
                       <div></div>
-                      Email
+                      <span data-i18n="login:sign_up_form.email_label">Email</span>
                     </label>
                     <input
                       placeholder=""
@@ -331,7 +341,7 @@
                   <div class="password-container-label">
                     <label for="sign-up-password">
                       <div></div>
-                      Password
+                      <span data-i18n="login:sign_up_form.password_label">Password</span>
                     </label>
                     <input
                       placeholder=""
@@ -361,7 +371,7 @@
                   <div class="password-container-label">
                     <label for="confirm-password">
                       <div></div>
-                      Confirm Password
+                      <span data-i18n="login:sign_up_form.confirm_password_label">Confirm Password</span>
                     </label>
                     <input
                       placeholder=""
@@ -383,23 +393,24 @@
                   <span class="error-msg"></span>
                 </div>
               </div>
-              <button id="sign-up-btn" type="button">Sign Up</button>
+              <button id="sign-up-btn" type="button" data-i18n="login:sign_up_form.sign_up_btn">Sign Up</button>
             </form>
             <p>
-              Already have an account?
-              <a id="sign-in-link">Sign In</a>
+              <span data-i18n="login:sign_up_form.already_have_account">Already have an account?</span>
+              <a id="sign-in-link" data-i18n="login:sign_up_form.sign_in_link">Sign In</a>
             </p>
           </div>
         </section>
         <div class="separator">
           <hr />
-          <p>Or</p>
+          <p data-i18n="login:providers.or">Or</p>
         </div>
         <section class="provider-container">
           <button
             type="button"
             id="google-sign-in"
             class="provider"
+            data-i18n-title="login:providers.google_sign_in"
             title="Sign In with Google"
           >
             <svg
@@ -426,12 +437,13 @@
                 fill="#EB4335"
               />
             </svg>
-            <span>Sign In with Google</span>
+            <span data-i18n="login:providers.google_sign_in">Sign In with Google</span>
           </button>
           <button
             type="button"
             id="fb-sign-in"
             class="provider"
+            data-i18n-title="login:providers.facebook_sign_in"
             title="Sign In with Facebook"
           >
             <svg
@@ -455,7 +467,7 @@
                 d="m25 23 .8-5H21v-3.5c0-1.4.5-2.5 2.7-2.5H26V7.4c-1.3-.2-2.7-.4-4-.4-4.1 0-7 2.5-7 7v4h-4.5v5H15v12.7c1 .2 2 .3 3 .3s2-.1 3-.3V23h4z"
               />
             </svg>
-            <span>Sign In with Facebook</span>
+            <span data-i18n="login:providers.facebook_sign_in">Sign In with Facebook</span>
           </button>
         </section>
       </div>
@@ -466,53 +478,5 @@
       src="./assets/js/main.js"
       crossorigin="anonymous"
     ></script>
-
-    <!-- Native Theme Switcher Script -->
-    <script>
-      (function () {
-        const toggleBtn = document.getElementById("theme-toggle-btn");
-        const toggleIcon = document.getElementById("theme-toggle-icon");
-        const root = document.documentElement;
-
-        const savedTheme = localStorage.getItem("theme") || "light";
-        applyTheme(savedTheme === "dark", false);
-
-        if (toggleBtn) {
-          toggleBtn.addEventListener("click", () => {
-            const isDark = root.getAttribute("data-theme") === "dark";
-
-            const rect = toggleBtn.getBoundingClientRect();
-            const x = rect.left + rect.width / 2;
-            const y = rect.top + rect.height / 2;
-            root.style.setProperty("--theme-toggle-x", `${x}px`);
-            root.style.setProperty("--theme-toggle-y", `${y}px`);
-
-            const doSwitch = () => applyTheme(!isDark, true);
-
-            if (document.startViewTransition) {
-              document.startViewTransition(doSwitch);
-            } else {
-              doSwitch();
-            }
-          });
-        }
-
-        function applyTheme(toDark, save) {
-          const theme = toDark ? "dark" : "light";
-          root.setAttribute("data-theme", theme);
-          if (toggleIcon)
-            toggleIcon.className = toDark
-              ? "bi bi-sun theme-toggle-icon"
-              : "bi bi-moon theme-toggle-icon";
-          if (save) {
-            try {
-              localStorage.setItem("theme", theme);
-              localStorage.setItem("mode", theme);
-              localStorage.setItem("studyhype_theme", theme);
-            } catch (e) {}
-          }
-        }
-      })();
-    </script>
   </body>
 </html>

@@ -1,3 +1,5 @@
+import { t } from "../../../../global/js/utils.js";
+
 export let editorQuestionsList,
   panelAddQuestionBtn,
   questionsPanelList,
@@ -24,7 +26,7 @@ export const metaInfoEl = {
           </div>
           <button
             class="exclude-btn save-subject-btn has-tooltip"
-            data-tooltip="Save"
+            data-tooltip="${t("common:modals.save")}"
             type="button"
           >
             <i class="bi bi-floppy"></i>
@@ -43,12 +45,12 @@ export const metaInfoEl = {
             <span class="icon-box">
               <i class="bi bi-book"></i>
             </span>
-            Subject:
+            ${t("quiz-edit:subject_label")}
           </span>
           <span class="subject-value value"></span>
           <button
             class="exclude-btn edit-subject-btn has-tooltip"
-            data-tooltip="Edit Subject"
+            data-tooltip="${t("quiz-edit:edit_subject_tooltip")}"
             type="button"
           >
             <i class="bi bi-pencil-square"></i>
@@ -65,12 +67,12 @@ export const metaInfoEl = {
           type="text"
           id="quiz-title-input"
           class="input"
-          placeholder="Enter Quiz Title"
+          placeholder="${t("quiz-edit:enter_quiz_title_placeholder")}"
           value=""
         />
         <button
           class="exclude-btn save-title-btn has-tooltip"
-          data-tooltip="Save"
+          data-tooltip="${t("common:modals.save")}"
           type="button"
         >
           <i class="bi bi-floppy"></i>
@@ -84,7 +86,7 @@ export const metaInfoEl = {
       wrapper.innerHTML = `<h4 class="title-text"></h4>
           <button
             class="exclude-btn edit-title-btn has-tooltip"
-            data-tooltip="Edit Title"
+            data-tooltip="${t("quiz-edit:edit_title_tooltip")}"
             type="button"
           >
             <i class="bi bi-pencil-square"></i>

@@ -4,14 +4,14 @@
     <div data-quiz-id="<%= quiz.id %>" class="quiz-card card-item">
       <header class="quiz-card-header">
         <% if (quiz.status==="draft" ) { %>
-          <span class="badge gray-badge has-tooltip" data-tooltip="Add at least 1 question to publish">
+          <span class="badge gray-badge has-tooltip" data-tooltip="<%= t('quizzes:badges.draft_tooltip') %>">
             <i class="bi bi-pencil"></i>
-            Draft
+            <%= t("quizzes:badges.draft") %>
           </span>
         <% } else { %>
             <span class="badge green-badge">
               <i class="bi bi-check"></i>
-              Published
+              <%= t("quizzes:badges.published") %>
             </span>
         <% } %>
               <div>
@@ -23,22 +23,22 @@
                     <button type="button" class="drop-down-item exclude-btn edit-quiz-menu-btn"
                       data-quiz-id="<%= quiz.id %>">
                       <i class="bi bi-pencil-square"></i>
-                      Edit
+                      <%= t("quizzes:menu.edit") %>
                     </button>
                     <button type="button" class="drop-down-item exclude-btn preview-quiz-menu-btn"
                       data-quiz-id="<%= quiz.id %>">
                       <i class="bi bi-eye"></i>
-                      Preview
+                      <%= t("quizzes:menu.preview") %>
                     </button>
                     <button type="button" class="drop-down-item exclude-btn duplicate-quiz-menu-btn"
                       data-quiz-id="<%= quiz.id %>">
                       <i class="bi bi-files"></i>
-                      Duplicate
+                      <%= t("quizzes:menu.duplicate") %>
                     </button>
                     <button type="button" class="drop-down-item exclude-btn red-btn remove-quiz-menu-btn"
                       data-quiz-id="<%= quiz.id %>">
                       <i class="bi bi-trash3"></i>
-                      Remove
+                      <%= t("quizzes:menu.remove") %>
                     </button>
                   </div>
                 </div>
@@ -47,42 +47,42 @@
       <div class="quiz-title-container info-container">
         <label class="quiz-title-label">
           <span class="icon-box"><i class="bi bi-card-text"></i></span>
-          Quiz title
+          <%= t("quizzes:labels.quiz_title") %>
         </label>
         <div class="quiz-title content">
-          <%= quiz.title %>
+          <bdi><%= quiz.title %></bdi>
         </div>
       </div>
       <div class="questions-count-container info-container small-container">
         <label class="questions-count-label">
           <span class="icon-box"><i class="bi bi-question-circle"></i></span>
-          Questions
+          <%= t("quizzes:labels.questions") %>
         </label>
         <span class="count content">
-          <%= quiz.questionsCount %>
+          <bdi><%= quiz.questionsCount %></bdi>
         </span>
       </div>
       <div class="shared-in-container info-container">
         <label class="shared-in-label">
           <span class="icon-box"><i class="bi bi-people"></i></span>
-          Shared in
+          <%= t("quizzes:labels.shared_in") %>
         </label>
         <div class="content">
-          <span class="count content has-tooltip" data-tooltip="Groups | Sessions">
-            <%= formatNumber(quiz.groupsCount) %>
-              <sup>Gr</sup>
-              | <%= formatNumber(quiz.sessionsCount) %>
-                <sup>Ses</sup>
+          <span class="count content has-tooltip" data-tooltip="<%= t('quizzes:labels.shared_in_tooltip') %>">
+            <bdi><%= formatNumber(quiz.groupsCount) %></bdi>
+              <sup><%= t("common:quiz_card.groups_abbr") %></sup>
+              | <bdi><%= formatNumber(quiz.sessionsCount) %></bdi>
+                <sup><%= t("common:quiz_card.sessions_abbr") %></sup>
           </span>
         </div>
       </div>
       <div class="subject-container info-container small-container">
         <label class="subject-label">
           <span class="icon-box"><i class="bi bi-book"></i></span>
-          Subject
+          <%= t("quizzes:labels.subject") %>
         </label>
         <span class="subject content">
-          <%= quiz.subject %>
+          <bdi><%= quiz.subject %></bdi>
         </span>
       </div>
     </div>
@@ -92,8 +92,8 @@
         <div class="empty-icon-container">
           <i class="bi bi-file-earmark-plus"></i>
         </div>
-        <h3>No Quizzes Created</h3>
-        <p>You haven't created any quizzes yet. Click the 'Create Quiz' button to get started!</p>
+        <h3><%= t("quizzes:my.empty_heading") %></h3>
+        <p><%= t("quizzes:my.empty_desc") %></p>
       </div>
   <% } %>
 </div>

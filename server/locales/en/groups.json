@@ -1,0 +1,107 @@
+{
+  "badges": {
+    "host": "Host",
+    "member": "Member",
+    "pending": "Pending",
+    "public": "Public",
+    "private": "Private",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
+  },
+  "my": {
+    "empty_heading": "No Groups Joined",
+    "empty_desc": "You are not a member of any study groups yet. Create or join a group to begin collaborating!",
+    "create_group_title": "Create Group"
+  },
+  "available": {
+    "join_now": "Join Now",
+    "request_to_join": "Request to Join",
+    "empty_heading": "No Groups Available",
+    "empty_desc": "There are currently no public study groups available to join. Check back later!"
+  },
+  "info": {
+    "edit": "Edit",
+    "group_name": "Group Name",
+    "group_description": "Group Description",
+    "subject": "Subject",
+    "level": "Level",
+    "visibility": "Visibility",
+    "show_in_search": "Show in Search Results",
+    "max_members": "Max Members",
+    "creation_date": "Creation date",
+    "admin": "Admin",
+    "members": "Members",
+    "manage": "Manage",
+    "view_all": "View All",
+    "remove_group": "Remove Group",
+    "leave_group": "Leave Group",
+    "demandes": "Demandes"
+  },
+  "demandes": {
+    "search_placeholder": "Search By Member Name or UID",
+    "sort_tooltip": "Sort Demandes",
+    "reject": "Reject",
+    "accept": "Accept",
+    "empty_heading": "No Join Requests",
+    "empty_desc": "There are no pending join requests for this group."
+  },
+  "members_list": {
+    "search_placeholder": "Search By Member Name or ID",
+    "invite": "Invite",
+    "kick": "Kick",
+    "transfer_admin": "Transfer Admin"
+  },
+  "quizzes_list": {
+    "empty_heading": "No Quizzes Available",
+    "empty_desc": "No quizzes have been created or shared with this group yet."
+  },
+  "session_info": {
+    "description": "Description",
+    "quiz": "Quiz",
+    "no_quiz": "No Quiz Assigned",
+    "start": "Start",
+    "end": "End",
+    "duration": "Duration",
+    "joined_count": "Joined Count",
+    "end_session": "End Session",
+    "leave_session": "Leave Session"
+  },
+  "chat": {
+    "show_info_tooltip": "Show Group Details",
+    "title": "Real Time Chat",
+    "active_session_tooltip": "Active Session",
+    "create_session": "Create Session",
+    "group_actions": "Group Actions",
+    "group_info": "Group Info",
+    "quizzes": "Quizzes",
+    "session_info": "Session Info",
+    "invite_users": "Invite Users",
+    "manage_demandes": "Manage Demandes",
+    "manage_members": "Manage Members",
+    "members": "Members",
+    "remove_group": "Remove Group",
+    "leave_group": "Leave Group",
+    "search_emoji_placeholder": "Search for emoji",
+    "emoji_recent": "Recent",
+    "emoji_people": "People",
+    "emoji_animals_nature": "Animals & Nature",
+    "emoji_food_drink": "Food & Drink",
+    "emoji_activity": "Activity",
+    "emoji_objects": "Objects",
+    "emoji_symbols": "Symbols",
+    "emoji_travel_places": "Travel & Places",
+    "emoji_flags": "Flags",
+    "type_message_placeholder": "Type a message"
+  },
+  "plural_counts": {
+    "extra_members": {
+      "one": "+1",
+      "other": "+{count}"
+    },
+    "members": {
+      "one": "{count} Member",
+      "other": "{count} Members"
+    }
+  }
+}

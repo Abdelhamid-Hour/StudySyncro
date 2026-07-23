@@ -1,0 +1,117 @@
+{
+  "titles": {
+    "home": "Home",
+    "groups": "Groups",
+    "available_groups": "Available Groups",
+    "group_chat": "Group Chat",
+    "quizzes": "Quizzes",
+    "passed_quizzes": "Passed Quizzes",
+    "quiz_editor": "Quiz Editor",
+    "settings": "Settings",
+    "account_settings": "Account Settings",
+    "dashboard": "Dashboard",
+    "studyhype": "StudyHype"
+  },
+  "avatar_alt": "User Avatar",
+  "member_avatar_alt": "Member Avatar",
+  "sidebar": {
+    "logo_text": "StudyHype",
+    "overview": "OverView",
+    "groups": "Groups",
+    "quizzes": "Quizzes",
+    "settings": "Settings",
+    "notifications_tooltip": "Notifications",
+    "theme_tooltip": "Toggle Theme",
+    "toggle_tooltip": "Toggle Sidebar",
+    "switch_language_tooltip": "Switch Language"
+  },
+  "topbar": {
+    "greeting_hello": "Hello {fullName} 👋",
+    "greeting_sub": "Have a good day !",
+    "search_placeholder_groups": "Search By Group Name or Subject",
+    "search_placeholder_quizzes": "Search By Quiz Title or Subject",
+    "search_placeholder_passed": "Search By Quiz Title, Subject or Group Name",
+    "filter_date_tooltip": "Filter By Date",
+    "tabs": {
+      "my_groups": "My Groups",
+      "available_groups": "Available Groups",
+      "my_quizzes": "My Quizzes",
+      "passed_quizzes": "Passed"
+    }
+  },
+  "filters": {
+    "role": "Role",
+    "admin": "Admin",
+    "member": "Member",
+    "visibility": "Visibility",
+    "private": "Private",
+    "public": "Public",
+    "level": "Level",
+    "advanced": "Advanced",
+    "intermediate": "Intermediate",
+    "beginner": "Beginner",
+    "view_options": "View Options",
+    "joinable_only": "Joinable Only",
+    "status": "Status",
+    "published": "Published",
+    "draft": "Draft"
+  },
+  "profile_menu": {
+    "account": "Account",
+    "my_groups": "My Groups",
+    "my_quizzes": "My Quizzes",
+    "logout": "Logout"
+  },
+  "mobile_nav": {
+    "home": "Home",
+    "groups": "Groups",
+    "quizzes": "Quizzes",
+    "settings": "Settings",
+    "app_controls": "App Controls",
+    "group_actions": "Group Actions",
+    "timer_session": "Timer & Session",
+    "active_sessions": "Active Sessions",
+    "tasks": "Tasks",
+    "recent_messages": "Recent Messages",
+    "chat": "Chat",
+    "questions_list": "Questions List"
+  },
+  "notifications_drawer": {
+    "title": "Notifications",
+    "categories": {
+      "all": "All",
+      "requests": "Requests",
+      "groups": "Groups",
+      "sessions": "Sessions"
+    },
+    "actions": {
+      "reject": "Reject",
+      "accept": "Accept",
+      "join": "Join"
+    },
+    "empty_title": "No notifications yet",
+    "empty_sub": "You don't have any notifications right now."
+  },
+  "actions": {
+    "create_group": "Create Group",
+    "create_quiz": "Create Quiz",
+    "save": "Save",
+    "return": "Return",
+    "search": "Search",
+    "close": "Close",
+    "menu": "Menu",
+    "retry": "Retry"
+  },
+  "time": {
+    "recent": "Recent"
+  },
+  "error": {
+    "back_to_dashboard": "Back to Dashboard",
+    "go_to_login": "Go to Login",
+    "go_back": "Go Back"
+  },
+  "quiz_card": {
+    "groups_abbr": "Gr",
+    "sessions_abbr": "Ses"
+  }
+}

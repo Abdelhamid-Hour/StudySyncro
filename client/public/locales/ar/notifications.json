@@ -1,0 +1,109 @@
+{
+  "categories": {
+    "Join Request": "طلب انضمام",
+    "Groups": "المجموعات",
+    "Sessions": "الجلسات",
+    "All": "الكل",
+    "General": "عام",
+    "recent": "الأحدث"
+  },
+  "messages": {
+    "join_request": {
+      "title": "طلب انضمام جديد",
+      "message": "طلب {senderName} الانضمام إلى مجموعة {groupName}."
+    },
+    "join_pending": {
+      "title": "تم إرسال الطلب",
+      "message": "طلبك للانضمام إلى مجموعة {groupName} قيد مراجعة المشرف."
+    },
+    "join_accepted": {
+      "title": "تم قبول طلبك",
+      "message": "تم قبول طلب انضمامك إلى مجموعة {groupName}. مرحباً بك!"
+    },
+    "join_rejected": {
+      "title": "تم رفض طلبك",
+      "message": "تم رفض طلب انضمامك إلى مجموعة {groupName} من قبل المشرف."
+    },
+    "join_invite": {
+      "title": "دعوة للانضمام",
+      "message": "دعاك {senderName} للانضمام إلى مجموعة {groupName}."
+    },
+    "session_started": {
+      "title": "بدأت جلسة دراسية",
+      "message": "بدأت جلسة دراسية '{sessionName}' في مجموعة {groupName}. انضم الآن!"
+    },
+    "session_ended": {
+      "title": "انتهت الجلسة الدراسية",
+      "message": "انتهت الجلسة الدراسية '{sessionName}' في مجموعة {groupName}."
+    },
+    "role_transferred": {
+      "title": "نقل صلاحيات المضيف",
+      "message": "أصبحت الآن المضيف (Host) لمجموعة {groupName}."
+    },
+    "role_demoted": {
+      "title": "تحديث الصلاحيات",
+      "message": "تم نقل صلاحيات المضيف في مجموعة {groupName} إلى {newAdminName}."
+    },
+    "member_removed": {
+      "title": "تمت إزالتك من المجموعة",
+      "message": "تمت إزالتك من مجموعة {groupName}."
+    },
+    "group_deleted": {
+      "title": "تم حذف المجموعة",
+      "message": "تم حذف المجموعة الدراسية {groupName} من قبل المضيف."
+    },
+    "join_invite_accepted": {
+      "title": "تم قبول الدعوة",
+      "message": "تم قبول الدعوة للانضمام إلى مجموعة {groupName}."
+    },
+    "join_invite_rejected": {
+      "title": "تم رفض الدعوة",
+      "message": "تم رفض الدعوة للانضمام إلى مجموعة {groupName}."
+    },
+    "join_request_accepted": {
+      "title": "تم قبول الطلب",
+      "message": "تم قبول طلب انضمام {senderName} إلى مجموعة {groupName}."
+    },
+    "join_request_rejected": {
+      "title": "تم رفض الطلب",
+      "message": "تم رفض طلب انضمام {senderName} إلى مجموعة {groupName}."
+    }
+  },
+  "actions": {
+    "reject": "رفض",
+    "accept": "قبول",
+    "join": "انضمام"
+  },
+  "alerts": {
+    "demande_accepted": "تم قبول الطلب",
+    "demande_rejected": "تم رفض الطلب",
+    "joined_group_success": "تم الانضمام إلى المجموعة بنجاح!",
+    "invitation_rejected": "تم رفض الدعوة",
+    "joined_session_success": "تم الانضمام إلى الجلسة الدراسية بنجاح"
+  },
+  "skeletons": {
+    "no_notifications_yet_title": "لا توجد إشعارات بعد",
+    "no_notifications_yet_desc": "ليس لديك أي إشعارات في الوقت الحالي.",
+    "no_notifications_found_title": "لم يتم العثور على إشعارات",
+    "no_notifications_found_desc": "لا توجد إشعارات في هذه الفئة."
+  },
+  "styling_terms": {
+    "invited_you_to_join": "دعاك",
+    "invited_you_to_join_suffix": "للانضمام",
+    "successfully_joined": "انضم بنجاح",
+    "accepted": "تم قبول",
+    "started": "بدأت",
+    "ended": "انتهت",
+    "rejected": "تم رفض",
+    "declined": "تم رفض",
+    "removed": "تمت إزالتك",
+    "deleted": "تم حذف",
+    "demoted_from_admin": "تم تنزيل رتبتك من مشرف",
+    "demoted": "تم تنزيل رتبتك",
+    "pending_approval": "قيد مراجعة",
+    "transferred": "تم نقل",
+    "admin_role": "صلاحيات المضيف",
+    "host_role": "المضيف"
+  },
+  "recent": "الأحدث"
+}

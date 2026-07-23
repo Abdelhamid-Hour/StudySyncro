@@ -8,8 +8,15 @@ import {
   topSideBarHeader,
   topSideBarMiddle,
 } from "./variables.js";
-import { fetchTemplate, sendData } from "../../../../main_assets/js/utils.js";
-import { showMessageBlock, isNativeDomainCondition } from "../../../../main_assets/js/utils.js";
+export * from "../../../../main_assets/js/utils.js";
+export * from "../../../../main_assets/js/i18n.js";
+import {
+  fetchTemplate,
+  sendData,
+  showMessageBlock,
+  isNativeDomainCondition,
+  t,
+} from "../../../../main_assets/js/utils.js";
 import { initAndDiplayErrorTooltip } from "../../shared/chat/js/utils.js";
 
 export let _loadersCount = 4;
@@ -162,13 +169,18 @@ export const handleApiAction = async (
     if (successMsg) showMessageBlock(successMsg, "success");
     if (typeof onSuccess === "function") onSuccess(response);
   } catch (error) {
-    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
-    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    const isNative =
+      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType =
+      error.type || error.data?.type || (isNative ? "info" : "error");
 
     if (!isNative) {
       console.error("Error:", error);
     }
-    showMessageBlock(error.message || error.data?.message || "An error occurred.", notifType);
+    showMessageBlock(
+      error.message || error.data?.message || t("common:alerts.error_occurred"),
+      notifType,
+    );
   } finally {
     if (btn) toOrginalBtn(btn, toOldBtn, originalHtml);
   }
@@ -261,18 +273,66 @@ export const adjustMenuDirection = (button, menu) => {
   const menuHeight = menu.offsetHeight;
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
+  const gap = 8; // 0.5rem
 
-  // Check right overflow
-  if (buttonRect.left + menuWidth > viewportWidth) {
+  const spaceBelow = viewportHeight - buttonRect.bottom;
+  const spaceAbove = buttonRect.top;
+
+  // Assuming left: 0 aligns menu's left edge with button's left edge, extending to the right.
+  // Assuming right: 0 aligns menu's right edge with button's right edge, extending to the left.
+  const fitsExtendingRight = buttonRect.left + menuWidth <= viewportWidth;
+  const fitsExtendingLeft = buttonRect.right - menuWidth >= 0;
+
+  const fitsBelow = spaceBelow >= menuHeight + gap;
+  const fitsAbove = spaceAbove >= menuHeight + gap;
+
+  if (fitsBelow && fitsExtendingRight) {
+    // 1. Below, Extending Right (Default)
+    menu.style.left = "0";
+    menu.style.right = "auto";
+    menu.style.top = "auto";
+    menu.style.bottom = "0";
+    menu.style.translate = "0 calc(100% + 0.5rem)";
+  } else if (fitsBelow && fitsExtendingLeft) {
+    // 2. Below, Extending Left
     menu.style.left = "auto";
     menu.style.right = "0";
-  }
-
-  // Check bottom overflow
-  if (buttonRect.bottom + menuHeight + 8 > viewportHeight) {
+    menu.style.top = "auto";
+    menu.style.bottom = "0";
+    menu.style.translate = "0 calc(100% + 0.5rem)";
+  } else if (fitsAbove && fitsExtendingRight) {
+    // 3. Above, Extending Right
+    menu.style.left = "0";
+    menu.style.right = "auto";
     menu.style.top = "auto";
     menu.style.bottom = "100%";
     menu.style.translate = "0 calc(-0.5rem)";
+  } else if (fitsAbove && fitsExtendingLeft) {
+    // 4. Above, Extending Left
+    menu.style.left = "auto";
+    menu.style.right = "0";
+    menu.style.top = "auto";
+    menu.style.bottom = "100%";
+    menu.style.translate = "0 calc(-0.5rem)";
+  } else {
+    // Ultimate fallback if screen is cramped: Pick side with more space
+    if (spaceAbove > spaceBelow) {
+      menu.style.top = "auto";
+      menu.style.bottom = "100%";
+      menu.style.translate = "0 calc(-0.5rem)";
+    } else {
+      menu.style.top = "auto";
+      menu.style.bottom = "0";
+      menu.style.translate = "0 calc(100% + 0.5rem)";
+    }
+
+    if (buttonRect.left > viewportWidth / 2) {
+      menu.style.left = "auto";
+      menu.style.right = "0";
+    } else {
+      menu.style.left = "0";
+      menu.style.right = "auto";
+    }
   }
 };
 
@@ -286,8 +346,8 @@ export const openDropDownMenu = (button) => {
 
   if (
     !overlay &&
-    (button.dataset.tooltip === "Notifications" ||
-      button.classList.contains("mobile-notif-btn"))
+    (button.classList.contains("mobile-notif-btn") ||
+      button.classList.contains("notification-btn"))
   ) {
     overlay = document.querySelector(".notifications-overlay");
   }
@@ -410,6 +470,7 @@ export const resetTooltip = (tooltip, target) => {
   tooltipTimer = setTimeout(() => {
     tooltip.style.left = 0 + "px";
     tooltip.style.top = 0 + "px";
+    tooltip.style.translate = "";
     tooltip.className = "tooltip";
   }, 300);
 };
@@ -419,21 +480,126 @@ export const showTooltip = (tooltipTarget, tooltip, message, error) => {
 
   if (message) tooltipTarget.dataset.tooltip = message;
 
+  // Reset any old directional or state classes before calculating position
+  tooltip.className = "tooltip";
+  tooltip.style.translate = "none";
+
   const positionInfo = tooltipTarget.getBoundingClientRect();
   tooltip.textContent = tooltipTarget.getAttribute("data-tooltip");
-  tooltip.style.left = positionInfo.left + "px";
-  tooltip.style.top = positionInfo.top + "px";
-  // handle if the tooltip is too close to the right edge of the screen
-  if (positionInfo.left + tooltip.offsetWidth > window.innerWidth) {
+  tooltip.dir = document.documentElement.dir || "ltr";
+
+  // Ensure dimensions can be measured accurately
+  const tooltipWidth = tooltip.offsetWidth;
+  const tooltipHeight = tooltip.offsetHeight;
+  const gap = 8; // 0.5rem gap
+
+  const targetCenterX = positionInfo.left + positionInfo.width / 2;
+  const targetCenterY = positionInfo.top + positionInfo.height / 2;
+
+  // Check available viewport space across all boundaries
+  const spaceAbove = positionInfo.top;
+  const spaceBelow = window.innerHeight - positionInfo.bottom;
+  const spaceRight = window.innerWidth - positionInfo.right;
+  const spaceLeft = positionInfo.left;
+
+  // Decision logic for direction so tooltip is never hidden or cut outside viewport bounds
+  const halfWidth = tooltipWidth / 2;
+  const halfHeight = tooltipHeight / 2;
+
+  const fitsAbove =
+    spaceAbove >= tooltipHeight + gap &&
+    targetCenterX - halfWidth >= 0 &&
+    targetCenterX + halfWidth <= window.innerWidth;
+
+  const fitsBelow =
+    spaceBelow >= tooltipHeight + gap &&
+    targetCenterX - halfWidth >= 0 &&
+    targetCenterX + halfWidth <= window.innerWidth;
+
+  const fitsLeft =
+    spaceLeft >= tooltipWidth + gap &&
+    targetCenterY - halfHeight >= 0 &&
+    targetCenterY + halfHeight <= window.innerHeight;
+
+  const fitsRight =
+    spaceRight >= tooltipWidth + gap &&
+    targetCenterY - halfHeight >= 0 &&
+    targetCenterY + halfHeight <= window.innerHeight;
+
+  // For corner placements: Align tooltip box flush with target edge, center arrow over target
+  const arrowOffset = positionInfo.width / 2;
+  const fitsExtendingRight = positionInfo.left + tooltipWidth <= window.innerWidth;
+  const fitsExtendingLeft = positionInfo.right - tooltipWidth >= 0;
+
+  if (fitsAbove) {
+    // 1. Place ABOVE (`from-bottom` arrow / default) cleanly centered
+    tooltip.style.left = `${targetCenterX}px`;
+    tooltip.style.top = `${positionInfo.top - gap}px`;
+    tooltip.style.translate = "-50% -100%";
+  } else if (fitsBelow) {
+    // 2. Place BELOW (`from-top` arrow pointing up) cleanly centered
+    tooltip.classList.add("from-top");
+    tooltip.style.left = `${targetCenterX}px`;
+    tooltip.style.top = `${positionInfo.bottom + gap}px`;
+    tooltip.style.translate = "-50% 0";
+  } else if (fitsLeft) {
+    // 3. Place to the LEFT (`from-left` arrow pointing right) cleanly centered
     tooltip.classList.add("from-left");
-    tooltip.style.translate = `calc(-100% - 0.5rem) calc(${
-      parseFloat(positionInfo.height) / 2
-    }px - 50%)`;
+    tooltip.style.left = `${positionInfo.left - gap}px`;
+    tooltip.style.top = `${targetCenterY}px`;
+    tooltip.style.translate = "-100% -50%";
+  } else if (fitsRight) {
+    // 4. Place to the RIGHT (`from-right` arrow pointing left) cleanly centered
+    tooltip.classList.add("from-right");
+    tooltip.style.left = `${positionInfo.right + gap}px`;
+    tooltip.style.top = `${targetCenterY}px`;
+    tooltip.style.translate = "0 -50%";
+  } else if (spaceAbove >= tooltipHeight + gap && fitsExtendingRight) {
+    // 5. Target at Bottom-Left: Place ABOVE, aligned to left edge, extending RIGHT
+    tooltip.classList.add("above-right");
+    tooltip.style.setProperty("--arrow-offset", `${arrowOffset}px`);
+    tooltip.style.left = `${positionInfo.left}px`;
+    tooltip.style.top = `${positionInfo.top - gap}px`;
+    tooltip.style.translate = "0 -100%";
+  } else if (spaceAbove >= tooltipHeight + gap && fitsExtendingLeft) {
+    // 6. Target at Bottom-Right: Place ABOVE, aligned to right edge, extending LEFT
+    tooltip.classList.add("above-left");
+    tooltip.style.setProperty("--arrow-offset", `${arrowOffset}px`);
+    tooltip.style.left = `${positionInfo.right}px`;
+    tooltip.style.top = `${positionInfo.top - gap}px`;
+    tooltip.style.translate = "-100% -100%";
+  } else if (spaceBelow >= tooltipHeight + gap && fitsExtendingRight) {
+    // 7. Target at Top-Left: Place BELOW, aligned to left edge, extending RIGHT
+    tooltip.classList.add("below-right");
+    tooltip.style.setProperty("--arrow-offset", `${arrowOffset}px`);
+    tooltip.style.left = `${positionInfo.left}px`;
+    tooltip.style.top = `${positionInfo.bottom + gap}px`;
+    tooltip.style.translate = "0 0";
+  } else if (spaceBelow >= tooltipHeight + gap && fitsExtendingLeft) {
+    // 8. Target at Top-Right: Place BELOW, aligned to right edge, extending LEFT
+    tooltip.classList.add("below-left");
+    tooltip.style.setProperty("--arrow-offset", `${arrowOffset}px`);
+    tooltip.style.left = `${positionInfo.right}px`;
+    tooltip.style.top = `${positionInfo.bottom + gap}px`;
+    tooltip.style.translate = "-100% 0";
   } else {
-    tooltip.style.translate = `calc(-50% + ${
-      parseFloat(positionInfo.width) / 2
-    }px) -130%`;
+    // Ultimate fallback if window is completely tiny: clamp above
+    const clampedLeft = Math.max(
+      halfWidth + gap,
+      Math.min(window.innerWidth - halfWidth - gap, targetCenterX),
+    );
+    if (spaceAbove >= spaceBelow) {
+      tooltip.style.left = `${clampedLeft}px`;
+      tooltip.style.top = `${positionInfo.top - gap}px`;
+      tooltip.style.translate = "-50% -100%";
+    } else {
+      tooltip.classList.add("from-top");
+      tooltip.style.left = `${clampedLeft}px`;
+      tooltip.style.top = `${positionInfo.bottom + gap}px`;
+      tooltip.style.translate = "-50% 0";
+    }
   }
+
   tooltip.classList.add("show");
   if (error) {
     tooltip.classList.add("error-tooltip");
@@ -563,18 +729,23 @@ const setScriptRoute = async (pathName, thisNav) => {
     const modulePath = `/app/assets${pathName}/js/main.js`;
     const module = await import(modulePath);
     if (thisNav !== navCounter) return;
-    module.init?.(true);
+    module.init?.();
   } catch (error) {
-    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
-    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    const isNative =
+      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType =
+      error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error(error);
-    showMessageBlock(error.message || "An error occurred.", notifType);
+    showMessageBlock(
+      error.message || t("common:alerts.error_occurred"),
+      notifType,
+    );
   }
 };
 
 const setStyleRoute = (pathName) => {
   return new Promise((resolve) => {
-    const href = `/app/assets${pathName}/css/styles.css`;
+    const href = `/app/assets/${pathName}/css/styles.css`;
     if (document.querySelector(`link[rel="stylesheet"][href="${href}"]`)) {
       return resolve();
     }
@@ -618,14 +789,15 @@ const createGreetingMsg = (fullName) => {
   greetingMsg.className = "greeting-msg fade-in-template";
   const heading = document.createElement("h2");
   // Use a more robust greeting and fallback for missing name
-  const displayName = fullName && fullName.trim() ? fullName : "there";
+  const displayName =
+    fullName && fullName.trim() ? fullName : t("common:greetings.there");
   const greetings = [
-    "Hello",
-    "Welcome",
-    "Hi",
-    "Greetings",
-    "Good to see you",
-    "Hey",
+    t("common:greetings.hello"),
+    t("common:greetings.welcome"),
+    t("common:greetings.hi"),
+    t("common:greetings.greetings"),
+    t("common:greetings.good_to_see_you"),
+    t("common:greetings.hey"),
   ];
   // Pick a random greeting
   const greeting = greetings[Math.floor(Math.random() * greetings.length)];
@@ -634,11 +806,11 @@ const createGreetingMsg = (fullName) => {
   const paragraph = document.createElement("p");
   // Add a more personalized or dynamic message
   const dayMessages = [
-    "Hope you have a fantastic day!",
-    "Wishing you a productive session!",
-    "Let's achieve something great today!",
-    "Ready to make progress?",
-    "Have a wonderful day ahead!",
+    t("common:greetings.messages.fantastic_day"),
+    t("common:greetings.messages.productive_session"),
+    t("common:greetings.messages.great_today"),
+    t("common:greetings.messages.make_progress"),
+    t("common:greetings.messages.wonderful_day"),
   ];
   paragraph.textContent =
     dayMessages[Math.floor(Math.random() * dayMessages.length)];
@@ -666,8 +838,12 @@ const createSearchContainer = (isQuizPage = false) => {
   input.type = "search";
   input.id = "search-input";
   input.placeholder = isQuizPage
-    ? "Search By Quiz Title or Subject"
-    : "Search By Group Name or Subject";
+    ? t("common:placeholders.search_quizzes", {
+        defaultValue: "Search By Quiz Title or Subject",
+      })
+    : t("common:placeholders.search_groups", {
+        defaultValue: "Search By Group Name or Subject",
+      });
   // Create sort label as a button with checkbox
   const sortLabel = document.createElement("label");
   sortLabel.type = "button";
@@ -769,7 +945,7 @@ const createCreateBtn = (quiz) => {
 
   createGroupBtn.innerHTML = `
     <i class="bi bi-plus-circle"></i>
-    <span>Create ${quiz ? "Quiz" : "Group"}</span>
+    <span>${quiz ? t("common:buttons.create_quiz") : t("common:buttons.create_group")}</span>
   `;
   return createGroupBtn;
 };
@@ -780,50 +956,51 @@ const createSaveQuizBtn = () => {
   saveQuizBtn.type = "button";
   saveQuizBtn.innerHTML = `
   <i class="bi bi-floppy"></i>
-  <span>Save</span>
+  <span>${t("common:modals.save")}</span>
   `;
   return saveQuizBtn;
 };
 
-const pageConfig = {
-  "/home": {
-    title: "Home",
-    middle: (extraData) => createGreetingMsg(extraData.fullName),
-  },
-  "/groups/my": {
-    title: "Groups",
-    middle: () => createSearchContainer(),
-    additional: () => {
-      const createGroupBtn = createCreateBtn();
-      topSideBarFooter.prepend(createGroupBtn);
+const pageConfig = (key) => {
+  const pageConf = {
+    "/home": {
+      title: t("common:titles.home"),
+      middle: (extraData) => createGreetingMsg(extraData.fullName),
     },
-  },
-  "/quizzes/my": {
-    title: "Quizzes",
-    middle: () => createSearchContainer(true),
-    additional: () => {
-      const createQuizBtn = createCreateBtn(true);
-      topSideBarFooter.prepend(createQuizBtn);
+    "/groups/my": {
+      title: t("common:titles.groups"),
+      middle: () => createSearchContainer(),
+      additional: () => {
+        const createGroupBtn = createCreateBtn();
+        topSideBarFooter.prepend(createGroupBtn);
+      },
     },
-  },
-  "/settings": {
-    title: "Settings",
-    middle: () => document.createDocumentFragment(),
-  },
-  "/groups/my/group-chat": {
-    title:
-      '<a href="/app/groups/my"><i class="bi bi-caret-left-fill"></i>Group Chat</a>',
-    middle: (extraData) => setGroupName(extraData.groupName),
-  },
-  "/quizzes/my/quiz-editor": {
-    title:
-      '<a href="/app/quizzes/my"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>',
-    middle: (extraData) => setQuizTitle(extraData.quizTitle),
-    additional: () => {
-      const saveQuizBtn = createSaveQuizBtn();
-      topSideBarFooter.prepend(saveQuizBtn);
+    "/quizzes/my": {
+      title: t("common:titles.quizzes"),
+      middle: () => createSearchContainer(true),
+      additional: () => {
+        const createQuizBtn = createCreateBtn(true);
+        topSideBarFooter.prepend(createQuizBtn);
+      },
     },
-  },
+    "/settings": {
+      title: t("common:titles.settings"),
+      middle: () => document.createDocumentFragment(),
+    },
+    "/groups/my/group-chat": {
+      title: `<a href="/app/groups/my"><i class="bi bi-caret-left-fill"></i>${t("common:group_chat")}</a>`,
+      middle: (extraData) => setGroupName(extraData.groupName),
+    },
+    "/quizzes/my/quiz-editor": {
+      title: `<a href="/app/quizzes/my"><i class="bi bi-caret-left-fill"></i>${t("common:titles.quiz_editor")}</a>`,
+      middle: (extraData) => setQuizTitle(extraData.quizTitle),
+      additional: () => {
+        const saveQuizBtn = createSaveQuizBtn();
+        topSideBarFooter.prepend(saveQuizBtn);
+      },
+    },
+  };
+  return pageConf[key];
 };
 
 const removeCreateBtns = () => {
@@ -863,7 +1040,7 @@ const updateTopSideBar = (pathName, extraData) => {
   const {
     title: headerTitle = "",
     middle: makeMiddle = () => document.createDocumentFragment(),
-  } = pageConfig[normalizedPath] || {};
+  } = pageConfig(normalizedPath) || {};
 
   // 2) update header
   updateTopSideBarHeader(headerTitle);
@@ -944,13 +1121,13 @@ const updateTopSideBar = (pathName, extraData) => {
     const tabContent = [
       {
         route: "/app/groups/my",
-        textContent: "My Groups",
+        textContent: t("common:tabs.my_groups"),
         active: true,
       },
       {
         route: "/app/groups/available",
         className: "available-groups-tab",
-        textContent: "Available Groups",
+        textContent: t("common:tabs.available_groups"),
         active: false,
       },
     ];
@@ -960,13 +1137,13 @@ const updateTopSideBar = (pathName, extraData) => {
     const tabContent = [
       {
         route: "/app/quizzes/my",
-        textContent: "My Quizzes",
+        textContent: t("common:tabs.my_quizzes"),
         active: true,
       },
       {
         route: "/app/quizzes/passed",
         className: "groups-quizzes-tab",
-        textContent: "Passed",
+        textContent: t("common:tabs.passed"),
         active: false,
       },
     ];
@@ -974,7 +1151,7 @@ const updateTopSideBar = (pathName, extraData) => {
   }
 
   // 6) add additional content if needed
-  const { additional } = pageConfig[normalizedPath] || {};
+  const { additional } = pageConfig(normalizedPath) || {};
   if (additional) {
     additional();
   }
@@ -1041,27 +1218,27 @@ export const updateDocumentTitle = (path) => {
     cleanPath === "/" ||
     cleanPath === "/app"
   ) {
-    document.title = "StudyHype — Home";
+    document.title = `StudyHype — ${t("common:titles.home", { defaultValue: "Home" })}`;
   } else if (cleanPath.includes("/groups/my/group-chat")) {
-    document.title = "StudyHype — Group Chat";
+    document.title = `StudyHype — ${t("common:titles.group_chat", { defaultValue: "Group Chat" })}`;
   } else if (cleanPath.includes("/groups/available")) {
-    document.title = "StudyHype — Available Groups";
+    document.title = `StudyHype — ${t("common:titles.available_groups", { defaultValue: "Available Groups" })}`;
   } else if (
     cleanPath.includes("/groups/my") ||
     cleanPath.includes("/groups")
   ) {
-    document.title = "StudyHype — Groups";
+    document.title = `StudyHype — ${t("common:titles.groups", { defaultValue: "Groups" })}`;
   } else if (cleanPath.includes("/quizzes/my/quiz-editor")) {
-    document.title = "StudyHype — Quiz Editor";
+    document.title = `StudyHype — ${t("common:titles.quiz_editor", { defaultValue: "Quiz Editor" })}`;
   } else if (cleanPath.includes("/quizzes/passed")) {
-    document.title = "StudyHype — Passed Quizzes";
+    document.title = `StudyHype — ${t("common:titles.passed_quizzes", { defaultValue: "Passed Quizzes" })}`;
   } else if (
     cleanPath.includes("/quizzes/my") ||
     cleanPath.includes("/quizzes")
   ) {
-    document.title = "StudyHype — Quizzes";
+    document.title = `StudyHype — ${t("common:titles.quizzes", { defaultValue: "Quizzes" })}`;
   } else if (cleanPath.includes("/settings")) {
-    document.title = "StudyHype — Settings";
+    document.title = `StudyHype — ${t("common:titles.settings", { defaultValue: "Settings" })}`;
   }
 };
 
@@ -1156,10 +1333,15 @@ export const updateMain = async (path, isTabLinks) => {
       );
     }
   } catch (error) {
-    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
-    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    const isNative =
+      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType =
+      error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error(error);
-    showMessageBlock(error.message || "An error occurred.", notifType);
+    showMessageBlock(
+      error.message || t("common:alerts.error_occurred"),
+      notifType,
+    );
   } finally {
     isRouting = false;
   }
@@ -1258,7 +1440,7 @@ export const navigateTo = (pathName) => {
 const getDateInput = () => {
   const dateLabel = document.createElement("label");
   dateLabel.className = "date-label should-fill has-tooltip";
-  dateLabel.dataset.tooltip = "Filter By Date";
+  dateLabel.dataset.tooltip = t("common:tooltips.filter_by_date");
   dateLabel.innerHTML = `<i class="bi bi-calendar"></i>
     <input type="date" id="date-input">`;
   return dateLabel;
@@ -1293,13 +1475,17 @@ export const handleNavigation = (e) => {
         if (isUserQuizzesPage) {
           topSideBarMiddle.querySelector(".date-label").remove();
           searchContainer.appendChild(createFilterContainer());
-          searchContainer.querySelector("input").placeholder =
-            "Search By Quiz Title or Subject";
+          searchContainer.querySelector("input").placeholder = t(
+            "common:placeholders.search_quizzes",
+            { defaultValue: "Search By Quiz Title or Subject" },
+          );
         }
         if (!isUserQuizzesPage && !isGroupsTabs) {
           document.querySelector(".filter-container").remove();
-          searchContainer.querySelector("input").placeholder =
-            "Search By Quiz Title, Subject or Group Name";
+          searchContainer.querySelector("input").placeholder = t(
+            "common:placeholders.search_quizzes_groups",
+            { defaultValue: "Search By Quiz Title, Subject or Group Name" },
+          );
           searchContainer
             .querySelector(".main-search")
             .appendChild(getDateInput());
@@ -1399,39 +1585,75 @@ export const createFilterPanel = (groups = false) => {
     const isMyGroupsPage = location.pathname.includes("/groups/my");
 
     if (isMyGroupsPage) {
-      const roleSection = createSection("Role", [
-        { id: "admin", label: "Admin", icon: "bi bi-person-gear" },
-        { id: "member", label: "Member", icon: "bi bi-person" },
+      const roleSection = createSection(t("common:filters.role"), [
+        {
+          id: "admin",
+          label: t("common:filters.admin"),
+          icon: "bi bi-person-gear",
+        },
+        {
+          id: "member",
+          label: t("common:filters.member"),
+          icon: "bi bi-person",
+        },
       ]);
       filterPanel.appendChild(roleSection);
     }
 
     // Visibility Section
-    const visibilitySection = createSection("Visibility", [
-      { id: "private", label: "Private", icon: "bi bi-lock" },
-      { id: "public", label: "Public", icon: "bi bi-eye" },
+    const visibilitySection = createSection(t("common:filters.visibility"), [
+      {
+        id: "private",
+        label: t("common:forms.visibility.Private"),
+        icon: "bi bi-lock",
+      },
+      {
+        id: "public",
+        label: t("common:forms.visibility.Public"),
+        icon: "bi bi-eye",
+      },
     ]);
     filterPanel.appendChild(visibilitySection);
 
     // Level Section
-    const levelSection = createSection("Level", [
-      { id: "advanced", label: "Advanced", icon: "bi bi-graph-up" },
-      { id: "intermediate", label: "Intermediate", icon: "bi bi-bar-chart" },
-      { id: "beginner", label: "Beginner", icon: "bi bi-lightbulb" },
+    const levelSection = createSection(t("common:filters.level"), [
+      {
+        id: "advanced",
+        label: t("common:forms.levels.Advanced"),
+        icon: "bi bi-graph-up",
+      },
+      {
+        id: "intermediate",
+        label: t("common:forms.levels.Intermediate"),
+        icon: "bi bi-bar-chart",
+      },
+      {
+        id: "beginner",
+        label: t("common:forms.levels.Beginner"),
+        icon: "bi bi-lightbulb",
+      },
     ]);
     filterPanel.appendChild(levelSection);
 
     if (!isMyGroupsPage) {
-      const roleSection = createSection("View Options", [
-        { id: "joinable-only", label: "Joinable Only", icon: "bi bi-people" },
+      const roleSection = createSection(t("common:filters.view_options"), [
+        {
+          id: "joinable-only",
+          label: t("common:filters.joinable_only"),
+          icon: "bi bi-people",
+        },
       ]);
       filterPanel.appendChild(roleSection);
     }
   } else {
     // Status Section
-    const statusSection = createSection("Status", [
-      { id: "published", label: "Published", icon: "bi bi-check-circle" },
-      { id: "draft", label: "Draft", icon: "bi bi-pencil" },
+    const statusSection = createSection(t("common:filters.status"), [
+      {
+        id: "published",
+        label: t("common:filters.published"),
+        icon: "bi bi-check-circle",
+      },
+      { id: "draft", label: t("common:filters.draft"), icon: "bi bi-pencil" },
     ]);
     filterPanel.appendChild(statusSection);
   }
@@ -1468,11 +1690,17 @@ export const openOverlayModal = async (
       }
     }
   } catch (error) {
-    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
-    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    const isNative =
+      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType =
+      error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error(error);
-    if (!isNative) backdrop.innerHTML = "<h2>Error loading content</h2>";
-    showMessageBlock(error.message || "An error occurred.", notifType);
+    if (!isNative)
+      backdrop.innerHTML = `<h2>${t("common:skeletons.error_loading")}</h2>`;
+    showMessageBlock(
+      error.message || t("common:alerts.error_occurred"),
+      notifType,
+    );
   }
 };
 
@@ -1539,8 +1767,8 @@ export const getHomeSkeleton = () => {
       headerContainer.classList.remove("hidden");
       headerContainer.innerHTML = `
         <div class="mobile-inactive-tabs navigation-tabs" style="width: 100%;">
-          <button type="button" class="tab active-tab exclude-btn" data-target="active-sessions" style="pointer-events: none;">Active Sessions</button>
-          <button type="button" class="tab exclude-btn" data-target="recent-messages" style="pointer-events: none;">Recent Messages</button>
+          <button type="button" class="tab active-tab exclude-btn" data-target="active-sessions" style="pointer-events: none;">${t("common:skeletons.home.active_sessions_heading")}</button>
+          <button type="button" class="tab exclude-btn" data-target="recent-messages" style="pointer-events: none;">${t("common:skeletons.home.recent_messages_heading")}</button>
         </div>
       `;
     }
@@ -1609,8 +1837,7 @@ export const getHomeSkeleton = () => {
       </div>
     </footer>
   </div>`;
-  const messageCard = 
-  `<div class="recent-message card-item loading-animation loading-card">
+  const messageCard = `<div class="recent-message card-item loading-animation loading-card">
     <header>
       <div class="profile-info" >
         <span class="icon loading-opacity-animation" style="width: 2.5rem; height: 2.5rem; border-radius: 50%;"></span>
@@ -1634,15 +1861,15 @@ export const getHomeSkeleton = () => {
     <div class="overview-session-inactive" style="width: 100%; height: 100%; box-sizing: border-box; overflow-y: auto;">
       <div class="ready-message-container">
         <div class="ready-message">
-          <h2>Ready to start learning together?</h2>
-          <p>Join a study session to connect with peers, participate in discussions, and enhance your learning experience. StudyHype makes collaborative learning easy and effective!</p>
+          <h2>${t("common:skeletons.home.ready_heading")}</h2>
+          <p>${t("common:skeletons.home.ready_desc")}</p>
         </div>
       </div>
       <div class="content-blocks">
         <section class="recent-messages">
           <header>
-            <h2>Recent Messages</h2>
-            <p>Latest conversations from your study groups</p>
+            <h2>${t("common:skeletons.home.recent_messages_heading")}</h2>
+            <p>${t("common:skeletons.home.recent_messages_sub")}</p>
           </header>
           <div class="messages-container">
             ${messageCard.repeat(3)}
@@ -1651,14 +1878,14 @@ export const getHomeSkeleton = () => {
         <section class="active-sessions">
           <header>
             <div class="header-text">
-              <h2>Active Sessions</h2>
-              <p>Ongoing study sessions you can join now</p>
+              <h2>${t("common:skeletons.home.active_sessions_heading")}</h2>
+              <p>${t("common:skeletons.home.active_sessions_sub")}</p>
             </div>
             <div class="active-sessions-search search">
               <div class="search-icon-container">
                 <i class="bi bi-search"></i>
               </div>
-              <input type="search" placeholder="Search by session or group name" disabled />
+              <input type="search" placeholder="${t("common:skeletons.home.search_placeholder")}" disabled />
             </div>
           </header>
           <div class="sessions-container">
@@ -1681,8 +1908,8 @@ export const getGroupsSkeleton = (path = "") => {
       headerContainer.classList.remove("hidden");
       headerContainer.innerHTML = `
         <div class="mobile-groups-tabs navigation-tabs groups-tabs" style="width: 100%;">
-          <a href="/app/groups/my" class="tab route-link ${userGroup ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">My Groups</a>
-          <a href="/app/groups/available" class="tab route-link ${!userGroup ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">Available Groups</a>
+          <a href="/app/groups/my" class="tab route-link ${userGroup ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">${t("common:skeletons.groups.my_groups")}</a>
+          <a href="/app/groups/available" class="tab route-link ${!userGroup ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">${t("common:skeletons.groups.available_groups")}</a>
         </div>
       `;
     }
@@ -1726,7 +1953,7 @@ export const getGroupsSkeleton = (path = "") => {
     </div>
     ${
       userGroup
-        ? '<button type="button" class="mobile-create-group-btn create-group-btn exclude-btn" title="Create Group" aria-label="Create Group"><i class="bi bi-plus-lg"></i></button>'
+        ? `<button type="button" class="mobile-create-group-btn create-group-btn exclude-btn" title="${t("common:skeletons.groups.create_group")}" aria-label="${t("common:skeletons.groups.create_group")}"><i class="bi bi-plus-lg"></i></button>`
         : ""
     }
   `;
@@ -1743,8 +1970,8 @@ export const getQuizzesSkeleton = (path = "") => {
       headerContainer.classList.remove("hidden");
       headerContainer.innerHTML = `
         <div class="mobile-quizzes-tabs navigation-tabs quizzes-tabs" style="width: 100%;">
-          <a href="/app/quizzes/my" class="tab route-link ${!isPassed ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">My Quizzes</a>
-          <a href="/app/quizzes/passed" class="tab route-link ${isPassed ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">Passed</a>
+          <a href="/app/quizzes/my" class="tab route-link ${!isPassed ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">${t("common:skeletons.quizzes.my_quizzes")}</a>
+          <a href="/app/quizzes/passed" class="tab route-link ${isPassed ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">${t("common:skeletons.quizzes.passed")}</a>
         </div>
       `;
     }
@@ -1755,7 +1982,7 @@ export const getQuizzesSkeleton = (path = "") => {
         <div class="quiz-title-container info-container">
             <label class="quiz-title-label">
                 <span class="icon-box"><i class="bi bi-card-text"></i></span>
-                Quiz Title
+                ${t("common:skeletons.quizzes.quiz_title")}
             </label>
             <div class="quiz-title content loading-opacity-animation"></div>
         </div>
@@ -1764,7 +1991,7 @@ export const getQuizzesSkeleton = (path = "") => {
                 <span class="icon-box">
                     <i class="bi bi-people"></i>
                 </span>
-                Group Name
+                ${t("common:skeletons.quizzes.group_name")}
             </label>
             <div class="group-name content loading-opacity-animation"></div>
         </div>
@@ -1773,7 +2000,7 @@ export const getQuizzesSkeleton = (path = "") => {
         <span class="icon-box">
         <i class="bi bi-journal-bookmark"></i>
         </span>
-        Session Name
+        ${t("common:skeletons.quizzes.session_name")}
         </label>
         <div class="session-name content loading-opacity-animation"></div>
         </div>
@@ -1782,7 +2009,7 @@ export const getQuizzesSkeleton = (path = "") => {
                 <span class="icon-box">
                     <i class="bi bi-calendar-check"></i>
                 </span>
-                Submitted At
+                ${t("common:skeletons.quizzes.submitted_at")}
             </label>
             <div class="submitted-at content loading-opacity-animation"></div>
         </div>
@@ -1791,7 +2018,7 @@ export const getQuizzesSkeleton = (path = "") => {
                 <span class="icon-box">
                     <i class="bi bi-trophy"></i>
                 </span>
-                Score
+                ${t("common:skeletons.quizzes.score")}
             </label>
             <div class="score content loading-opacity-animation"></div>
         </div>
@@ -1813,21 +2040,21 @@ export const getQuizzesSkeleton = (path = "") => {
       <div class="quiz-title-container info-container">
         <label class="quiz-title-label">
           <span class="icon-box"><i class="bi bi-card-text"></i></span>
-          Quiz title
+          ${t("common:skeletons.quizzes.quiz_title")}
         </label>
         <div class="quiz-title content loading-opacity-animation"></div>
       </div>
       <div class="questions-count-container info-container small-container">
         <label class="questions-count-label">
           <span class="icon-box"><i class="bi bi-question-circle"></i></span>
-          Questions
+          ${t("common:skeletons.quizzes.questions")}
         </label>
         <span class="count content loading-opacity-animation"></span>
       </div>
       <div class="shared-in-container info-container">
         <label class="shared-in-label">
           <span class="icon-box"><i class="bi bi-people"></i></span>
-          Shared in
+          ${t("common:skeletons.quizzes.shared_in")}
         </label>
         <div class="content">
           <span class="count content loading-opacity-animation"></span>
@@ -1836,7 +2063,7 @@ export const getQuizzesSkeleton = (path = "") => {
       <div class="subject-container info-container small-container">
         <label class="subject-label">
           <span class="icon-box"><i class="bi bi-book"></i></span>
-          Subject
+          ${t("common:skeletons.quizzes.subject")}
         </label>
         <span class="subject content loading-opacity-animation"></span>
       </div>
@@ -1853,23 +2080,23 @@ export const getSettingsSkeleton = () => {
     <div class="settings-wrapper">
       <div class="settings-content">
         <header class="settings-header">
-          <h2>My Account</h2>
+          <h2>${t("common:skeletons.settings.my_account")}</h2>
           <div class="tabs" style="pointer-events: none;">
             <label class="exclude-btn active tab profile-tab">
               <input type="radio" name="tab" class="profile" checked disabled />
-              Personal Info
+              ${t("common:skeletons.settings.tabs.profile")}
             </label>
             <label class="exclude-btn tab email-tab">
               <input type="radio" name="tab" class="email" disabled />
-              Email Address
+              ${t("common:skeletons.settings.tabs.email")}
             </label>
             <label class="exclude-btn tab password-tab">
               <input type="radio" name="tab" class="password" disabled />
-              Password
+              ${t("common:skeletons.settings.tabs.password")}
             </label>
             <label class="exclude-btn tab delete-account-tab">
               <input type="radio" name="tab" class="delete-account" disabled />
-              Close Account
+              ${t("common:skeletons.settings.tabs.delete")}
             </label>
           </div>
         </header>
@@ -1878,8 +2105,8 @@ export const getSettingsSkeleton = () => {
           <!-- Personal Info -->
           <div class="profile-tab-content tab-content" style="pointer-events: none;">
             <header>
-              <h3>Personal Details</h3>
-              <span>Keep your information up to date.</span>
+              <h3>${t("common:skeletons.settings.profile_title")}</h3>
+              <span>${t("common:skeletons.settings.profile_subtitle")}</span>
             </header>
             <form class="profile-form">
               <div class="avatar-container">
@@ -1887,13 +2114,13 @@ export const getSettingsSkeleton = () => {
                   <div class="loading-opacity-animation" style="width: 100%; height: 100%; border-radius: 0.5rem;"></div>
                 </label>
                 <span class="caption hidden" style="visibility: hidden;">
-                  Upload a JPG, PNG, or GIF (Max 1MB).
+                  ${t("common:skeletons.settings.profile_caption")}
                 </span>
                 <span class="error"></span>
               </div>
               <div class="info-fields">
                 <div class="fields">
-                  <label for="full-name">Full Name</label>
+                  <label for="full-name">${t("common:skeletons.settings.full_name")}</label>
                   <div class="field-container full-name-field">
                     <div class="field-icon-container">
                       <span class="icon-box">
@@ -1905,7 +2132,7 @@ export const getSettingsSkeleton = () => {
                     </div>
                   </div>
 
-                  <label for="uid">User ID</label>
+                  <label for="uid">${t("common:skeletons.settings.uid")}</label>
                   <div class="field-container uid-field">
                     <div class="field-icon-container">
                       <span class="icon-box">
@@ -1921,7 +2148,7 @@ export const getSettingsSkeleton = () => {
                 <div class="action-btns">
                   <button type="button" class="blue-btn modify-btn" disabled>
                     <i class="bi bi-pencil"></i>
-                    Modify Profile
+                    ${t("common:skeletons.settings.modify_btn")}
                   </button>
                 </div>
               </div>
@@ -2076,8 +2303,8 @@ export const getQuizEditorSkeleton = () => {
       headerContainer.classList.remove("hidden");
       headerContainer.innerHTML = `
         <div class="mobile-quiz-editor-tabs navigation-tabs" style="width: 100%;">
-          <button type="button" class="tab active-tab exclude-btn" data-target="quiz-editor">Quiz Editor</button>
-          <button type="button" class="tab exclude-btn" data-target="questions-list">Questions List</button>
+          <button type="button" class="tab active-tab exclude-btn" data-target="quiz-editor">${t("common:skeletons.quiz_editor.quiz_editor")}</button>
+          <button type="button" class="tab exclude-btn" data-target="questions-list">${t("common:skeletons.quiz_editor.questions_list")}</button>
         </div>
       `;
     }
@@ -2087,7 +2314,7 @@ export const getQuizEditorSkeleton = () => {
       <section class="questions-panel">
         <header class="questions-header">
           <h4 class="panel-title">
-            Questions
+            ${t("common:skeletons.quiz_editor.questions")}
             <span class="count badge simple-badge">0</span>
           </h4>
           <button
@@ -2110,7 +2337,7 @@ export const getQuizEditorSkeleton = () => {
                     <span class="icon-box">
                       <i class="bi bi-patch-question"></i>
                     </span>
-                    <span class="question-count counter">Question ${idx}</span>
+                    <span class="question-count counter">${t("common:skeletons.quiz_editor.question_num", { num: idx })}</span>
                   </h4>
                   <button
                     type="button"
@@ -2122,7 +2349,7 @@ export const getQuizEditorSkeleton = () => {
                 </header>
                 <div class="loading-opacity-animation" style="width: 90%; height: 0.9rem; margin: 0.5rem 0; border-radius: 0.3rem;"></div>
                 <footer class="question-card-footer">
-                  <span class="choices-count">4 Choices</span>
+                  <span class="choices-count">${t("common:skeletons.quiz_editor.choices_count", { count: 4 })}</span>
                   <button
                     type="button"
                     class="delete-question-btn exclude-btn"
@@ -2147,7 +2374,7 @@ export const getQuizEditorSkeleton = () => {
                 <span class="icon-box">
                   <i class="bi bi-book"></i>
                 </span>
-                Subject:
+                ${t("common:skeletons.quiz_editor.subject_label")}
               </span>
               <span class="loading-opacity-animation" style="width: 6rem; height: 1.2rem; border-radius: 0.3rem;"></span>
               <button
@@ -2176,7 +2403,7 @@ export const getQuizEditorSkeleton = () => {
               <span class="icon-box">
                 <i class="bi bi-people"></i>
               </span>
-              Shared In:
+              ${t("common:skeletons.quiz_editor.shared_in_label")}
             </span>
             <span class="loading-opacity-animation" style="width: 5rem; height: 1.2rem; border-radius: 0.3rem;"></span>
           </span>
@@ -2191,7 +2418,7 @@ export const getQuizEditorSkeleton = () => {
                   <span class="icon-box">
                     <i class="bi bi-patch-question"></i>
                   </span>
-                  <span class="question-count counter">Question ${idx}</span>
+                  <span class="question-count counter">${t("common:skeletons.quiz_editor.question_num", { num: idx })}</span>
                 </h4>
                 <button
                   type="button"
@@ -2207,7 +2434,7 @@ export const getQuizEditorSkeleton = () => {
                   <span class="icon-box">
                     <i class="bi bi-list-ol"></i>
                   </span>
-                  Choices
+                  ${t("common:skeletons.quiz_editor.choices_title")}
                 </h5>
                 <div class="choices-list">
                   ${[0, 1]
@@ -2232,14 +2459,14 @@ export const getQuizEditorSkeleton = () => {
                 </div>
                 <button type="button" class="add-choice-btn small-btn" disabled>
                   <i class="bi bi-plus-circle"></i>
-                  Add Choice
+                  ${t("common:skeletons.quiz_editor.add_choice")}
                 </button>
                 <hr />
                 <h5 class="correct-answer-title section-title">
                   <span class="icon-box">
                     <i class="bi bi-check-circle"></i>
                   </span>
-                  Correct Answer
+                  ${t("common:skeletons.quiz_editor.correct_answer_title")}
                 </h5>
                 <div class="correct-answer-select">
                   <div class="icon-box">
@@ -2317,7 +2544,7 @@ export const getQuizPlaySkeleton = () => {
           <div class="timer">
             <span class="time-left">
               <span class="icon-box"><i class="bi bi-stopwatch-fill"></i></span>
-              Time Left :
+              ${t("common:skeletons.quiz_play.time_left")}
             </span>
             <div class="timer-digits">
               <span class="loading-opacity-animation" style="width: 4rem; height: 1.2rem; border-radius: 0.2rem; display: inline-block;"></span>
@@ -2331,14 +2558,14 @@ export const getQuizPlaySkeleton = () => {
               <span class="icon-box">
                 <i class="bi bi-patch-question"></i>
               </span>
-              <span class="loading-opacity-animation" style="width: 8rem; height: 1.2rem; border-radius: 0.3rem; display: inline-block;"></span>
+              <span class="loading-opacity-animation" style="width: 8rem; height: 1.2rem; border-radius: 0.3rem; display: inline-block; margin-inline-start: 0.5rem;"></span>
             </h4>
-            <button type="button" class="gray-btn skip-btn" disabled>Skip</button>
+            <button type="button" class="gray-btn skip-btn" disabled>${t("common:skeletons.quiz_play.skip")}</button>
           </header>
           <div class="question-body">
             <h4><span class="loading-opacity-animation" style="width: 80%; height: 1.4rem; border-radius: 0.3rem; display: inline-block; margin-bottom: 1rem;"></span></h4>
             <div class="question-choices">
-              <span class="select-answer-label">Select the correct Answer <span style="opacity: 0.65; font-size: 0.85em; font-weight: normal;">(Or press 1-6 / A-F)</span></span>
+              <span class="select-answer-label">${t("common:skeletons.quiz_play.select_answer")}</span>
               <div class="choices-list">
                 ${[0, 1, 2, 3]
                   .map(
@@ -2356,10 +2583,10 @@ export const getQuizPlaySkeleton = () => {
           </div>
           <footer class="question-actions-row">
             <div class="prev action">
-              <button class="prev-btn gray-btn" disabled>Previous</button>
+              <button class="prev-btn gray-btn" disabled>${t("common:skeletons.quiz_play.prev")}</button>
             </div>
             <div class="next action">
-              <button class="next-btn blue-btn" disabled>Next</button>
+              <button class="next-btn blue-btn" disabled>${t("common:skeletons.quiz_play.next")}</button>
             </div>
           </footer>
         </div>
@@ -2372,8 +2599,8 @@ const createConfirmationBox = (
   type = "exclamation",
   title,
   message,
-  cancelButtonText,
-  confirmButtonText,
+  cancelButtonText = t("common:modals.cancel"),
+  confirmButtonText = t("common:modals.confirm"),
 ) => {
   return `<div class="overlay-model confirmation-box ${type}">
         <i class="bi bi-${
@@ -2396,8 +2623,8 @@ export const showConfirmationBox = async (
   type,
   title,
   message,
-  cancelButtonText,
-  confirmButtonText,
+  cancelButtonText = t("common:modals.cancel"),
+  confirmButtonText = t("common:modals.confirm"),
 ) => {
   const promise = new Promise((res, rej) => {
     openOverlayModal(
@@ -2465,16 +2692,17 @@ export const formatNumber = (number) => {
 
 export const toReadableDate = (TimeOrDate, type) => {
   const date = new Date(TimeOrDate);
+  const locale = t("common:locale", { defaultValue: "en-US" });
 
   if (type === "short") {
-    return date.toLocaleString([], {
+    return date.toLocaleString(locale, {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
     });
   }
 
-  return date.toLocaleString([], {
+  return date.toLocaleString(locale, {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",

@@ -174,7 +174,7 @@ const uploadFileToStorage = async (filePath, file, isAvatar = false) => {
       throw new Error("Invalid file type");
 
     const fileUpload = bucket.file(
-      filePath + `/${Date.now()}-${file.originalname}`,
+      filePath + `${Date.now()}-${file.originalname}`,
     );
 
     await fileUpload.save(file.buffer, {

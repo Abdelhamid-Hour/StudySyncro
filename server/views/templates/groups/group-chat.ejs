@@ -14,33 +14,33 @@
     <div class="top-bar">
       <!-- inffo bootstrap icon -->
       <button
-        data-tooltip="Show Group Details"
+        data-tooltip="<%= t('groups:chat.show_info_tooltip') %>"
         type="button"
         class="exclude-btn show-info-btn has-tooltip"
       >
         <i class="bi bi-info-circle"></i>
       </button>
-      <h2 class="title">Real Time Chat</h2>
+      <h2 class="title"><%= t("groups:chat.title") %></h2>
       <% if (sessionId) { %>
         <% if (isAdmin) { %>
           <button type="button" data-session-id="<%= sessionId %>" class="small-btn red-btn end-session">
             <i class="bi bi-stop-circle"></i>
-            End Session
+            <%= t("groups:session_info.end_session") %>
           </button>
         <% } else if (!joined) { %>
           <button type="button" data-session-id="<%= sessionId %>" class="join-session small-btn blue-btn">
             <i class="bi bi-box-arrow-in-right"></i>
-            Join Session
+            <%= t("quizzes:session_overlay.join_session") %>
           </button>
         <% } %>
       <span
         class="session-active-badge badge circle-badge-1 green-badge has-tooltip"
-        data-tooltip="Active Session"
+        data-tooltip="<%= t('groups:chat.active_session_tooltip') %>"
       ></span>
       <% } else if(isAdmin) { %>
       <button type="button" class="small-btn create-session-btn">
         <i class="bi bi-plus-circle"></i>
-        <span>Create Session</span>
+        <span><%= t("groups:chat.create_session") %></span>
       </button>
       <% } %>
 
@@ -54,7 +54,7 @@
         <div class="drop-down-menu group-chat-drop-down-menu overlay">
           <div class="drop-down-group">
             <div class="drop-down-group-label">
-              Group Actions
+              <%= t("groups:chat.group_actions") %>
               <hr class="separator" />
             </div>
 
@@ -63,14 +63,14 @@
               class="drop-down-item exclude-btn group-info-menu-btn"
             >
               <i class="bi bi-info-circle"></i>
-              Group Info
+              <%= t("groups:chat.group_info") %>
             </button>
             <button
               type="button"
               class="drop-down-item exclude-btn quizzes-list-menu-btn"
             >
               <i class="bi bi-clipboard-check"></i>
-              Quizzes
+              <%= t("groups:chat.quizzes") %>
             </button>
             <% if (sessionId) { %>
             <button
@@ -78,12 +78,12 @@
               class="drop-down-item exclude-btn session-info-menu-btn"
             >
               <i class="bi bi-clock-history"></i>
-              Session Info
+              <%= t("groups:chat.session_info") %>
             </button>
             <% } %> <% if (isAdmin) { %>
             <button type="button" class="drop-down-item exclude-btn add-members-menu-btn">
               <i class="bi bi-person-plus"></i>
-              Invite Users
+              <%= t("groups:chat.invite_users") %>
             </button>
             <% if ( isRequested) { %>
             <button
@@ -91,7 +91,7 @@
               class="drop-down-item manage-demanes-menu-btn exclude-btn"
             >
               <i class="bi bi-list-check"></i>
-              Manage Demandes
+              <%= t("groups:chat.manage_demandes") %>
             </button>
             <% } %> <% } %>
             <button
@@ -99,7 +99,7 @@
               class="drop-down-item exclude-btn members-list-menu-btn"
             >
               <i class="bi bi-people"></i>
-              <%= isAdmin ? 'Manage' : '' %> Members
+              <%= isAdmin ? t("groups:chat.manage_members") : t("groups:chat.members") %>
             </button>
             <% if (isAdmin) { %>
             <button
@@ -107,7 +107,7 @@
               class="drop-down-item exclude-btn red-btn remove-group-menu-btn"
             >
               <i class="bi bi-trash3"></i>
-              Remove Group
+              <%= t("groups:chat.remove_group") %>
             </button>
             <% } else { %>
             <button
@@ -115,7 +115,7 @@
               class="drop-down-item exclude-btn red-btn leave-group-menu-btn"
             >
               <i class="bi bi-box-arrow-left"></i>
-              Leave Group
+              <%= t("groups:chat.leave_group") %>
             </button>
             <% } %>
           </div>
@@ -174,46 +174,46 @@
               </div>
               <input
                 type="search"
-                placeholder="Search for emoji"
+                placeholder="<%= t('groups:chat.search_emoji_placeholder') %>"
                 id="emojis-search-input"
                 class="emojis-search-input"
               />
             </div>
             <div class="emojies-sections">
               <section id="recent">
-                <h5>Recent</h5>
+                <h5><%= t("groups:chat.emoji_recent") %></h5>
                 <div class="recent-emojies"></div>
               </section>
               <section id="people">
-                <h5>People</h5>
+                <h5><%= t("groups:chat.emoji_people") %></h5>
                 <div class="people-emojies"></div>
               </section>
               <section id="animals_nature">
-                <h5>Animals &amp; Nature</h5>
+                <h5><%= t("groups:chat.emoji_animals_nature") %></h5>
                 <div class="animals-nature-emojies"></div>
               </section>
               <section id="food_drink">
-                <h5>Food &amp; Drink</h5>
+                <h5><%= t("groups:chat.emoji_food_drink") %></h5>
                 <div class="food-drink-emojies"></div>
               </section>
               <section id="activity">
-                <h5>Activity</h5>
+                <h5><%= t("groups:chat.emoji_activity") %></h5>
                 <div class="activity-emojies"></div>
               </section>
               <section id="objects">
-                <h5>Objects</h5>
+                <h5><%= t("groups:chat.emoji_objects") %></h5>
                 <div class="objects-emojies"></div>
               </section>
               <section id="symbols">
-                <h5>Symbols</h5>
+                <h5><%= t("groups:chat.emoji_symbols") %></h5>
                 <div class="symbols-emojies"></div>
               </section>
               <section id="travel_places">
-                <h5>Travel &amp; Places</h5>
+                <h5><%= t("groups:chat.emoji_travel_places") %></h5>
                 <div class="travel-places-emojies"></div>
               </section>
               <section id="flags">
-                <h5>Flags</h5>
+                <h5><%= t("groups:chat.emoji_flags") %></h5>
                 <div class="flags-emojies"></div>
               </section>
             </div>
@@ -251,7 +251,7 @@
         />
       </div>
       <textarea
-        placeholder="Type a message"
+        placeholder="<%= t('groups:chat.type_message_placeholder') %>"
         class="input-message"
         id="input-message"
       ></textarea>

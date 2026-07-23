@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="<%= lang %>" dir="<%= dir %>">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        try {
+          var theme = localStorage.getItem("theme") || "light";
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (e) {}
+      })();
+    </script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>
+      StudyHype — Elevate Your Learning with Real-Time Collaboration
+    </title>
+    <meta
+      name="description"
+      content="StudyHype is a collaborative learning platform featuring real-time group study sessions, interactive chat, custom quiz editors, and productivity timers."
+    />
+    <meta
+      name="keywords"
+      content="StudyHype, study groups, online learning, collaborative studying, real-time chat, quizzes, exam editor, study timer"
+    />
+    <meta name="author" content="StudyHype Team" />
+    <meta name="robots" content="index, follow" />
+    <meta name="application-name" content="StudyHype" />
+    <meta name="theme-color" content="#1e77fd" />
+
+    <!-- Open Graph / Social Sharing -->
+    <meta
+      property="og:title"
+      content="StudyHype — Collaborative Study Spaces"
+    />
+    <meta
+      property="og:description"
+      content="Join study groups, take interactive quizzes, and collaborate in real-time with peers around the world."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://app.studyhype.com/" />
+    <meta
+      property="og:image"
+      content="/main_assets/images/hero-dashboard.svg"
+    />
+
+    <!-- Favicon and Icons -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+    <!-- Preloading Critical Resources -->
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+      as="style"
+      id="font-arabic-preload"
+    />
+    <% } %>
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      as="style"
+      id="font-inter-preload"
+    />
+    <link
+      rel="preload"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      as="style"
+    />
+    <link
+      rel="preload"
+      href="/main_assets/css/variables_and_fonts.css"
+      as="style"
+    />
+    <link rel="preload" href="/main_assets/css/styles.css" as="style" />
+    <link rel="preload" href="/main_assets/css/landing.css" as="style" />
+
+    <!-- Fonts & Bootstrap Icons -->
+    <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+      id="font-arabic"
+    />
+    <% } %>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      id="font-inter"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+
+    <!-- Global Website Styles & Native Tokens -->
+    <link rel="stylesheet" href="/main_assets/css/variables_and_fonts.css" />
+    <link rel="stylesheet" href="/main_assets/css/styles.css" />
+    <link rel="stylesheet" href="/main_assets/css/landing.css" />
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="landing-nav">
+      <a href="/" class="landing-brand" style="text-decoration: none">
+        <img
+          src="/main_assets/images/logo-mark.svg"
+          alt="StudyHype Logo"
+          style="width: 2.2rem; height: 2.2rem; flex-shrink: 0"
+        />
+        <span
+          style="
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--primary-color);
+          "
+          >StudyHype</span
+        >
+      </a>
+
+      <ul class="landing-nav-links">
+        <li><a href="#features" data-i18n="root:nav.features"><%= t('root:nav.features') %></a></li>
+        <li>
+          <a href="#workflow" data-i18n="root:nav.how_it_works"><%= t('root:nav.how_it_works') %></a>
+        </li>
+        <li><a href="#stats" data-i18n="root:nav.community"><%= t('root:nav.community') %></a></li>
+      </ul>
+
+      <div class="landing-nav-actions">
+        <button
+          class="button exclude-btn toggle-theme-btn"
+          id="theme-toggle-btn"
+          data-i18n-title="root:nav.toggle_theme"
+          title="<%= t('root:nav.toggle_theme') %>"
+          aria-label="Toggle Dark or Light Mode"
+        >
+          <i class="bi bi-moon theme-toggle-icon" id="theme-toggle-icon"></i>
+        </button>
+        <button
+          class="button exclude-btn lang-toggle-btn"
+          title="<%= lang === 'ar' ? t('shared:actions.switch_to_en') : t('shared:actions.switch_to_ar') %>"
+          aria-label="Switch Language"
+          data-target="<%= lang === 'ar' ? 'en' : 'ar' %>"
+        >
+          <i class="bi bi-globe"></i>
+          <span class="lang-toggle-text"><%= lang === 'ar' ? 'EN' : 'AR' %></span>
+        </button>
+        <a href="/login" class="button blue-btn login-btn">
+          <span data-i18n="root:nav.login"><%= t('root:nav.login') %></span>
+          <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+    </nav>
+
+    <main class="landing-wrapper fade-in-template">
+      <!-- Hero Section -->
+      <header class="landing-hero">
+        <h1 data-i18n="root:hero.title">
+          <%= t('root:hero.title') %>
+        </h1>
+        <p data-i18n="root:hero.subtitle">
+          <%= t('root:hero.subtitle') %>
+        </p>
+
+        <div class="hero-actions">
+          <a href="/login" class="button blue-btn">
+            <span data-i18n="root:hero.get_started_btn"><%= t('root:hero.get_started_btn') %></span>
+            <i class="bi bi-box-arrow-in-right"></i>
+          </a>
+          <a href="#features" class="button">
+            <span data-i18n="root:hero.explore_features_btn"
+              ><%= t('root:hero.explore_features_btn') %></span
+            >
+            <i class="bi bi-chevron-down"></i>
+          </a>
+        </div>
+
+        <!-- Hero Showcase Mockup -->
+        <div class="hero-showcase-box">
+          <img
+            src="/main_assets/images/home/active-home-page-light.png"
+            data-dark-src="/main_assets/images/home/active-home-page.png"
+            data-light-src="/main_assets/images/home/active-home-page-light.png"
+            alt="StudyHype Dashboard Interface Preview"
+          />
+        </div>
+      </header>
+
+      <!-- Live Community Stats -->
+      <section class="landing-stats" id="stats">
+        <div class="stat-box">
+          <h3>15,000+</h3>
+          <p data-i18n="root:stats.active_students">
+            <%= t('root:stats.active_students') %>
+          </p>
+        </div>
+        <div class="stat-box">
+          <h3>50,000+</h3>
+          <p data-i18n="root:stats.quizzes_completed">
+            <%= t('root:stats.quizzes_completed') %>
+          </p>
+        </div>
+        <div class="stat-box">
+          <h3>3,500+</h3>
+          <p data-i18n="root:stats.study_groups"><%= t('root:stats.study_groups') %></p>
+        </div>
+        <div class="stat-box">
+          <h3>98%</h3>
+          <p data-i18n="root:stats.productivity_boost">
+            <%= t('root:stats.productivity_boost') %>
+          </p>
+        </div>
+      </section>
+
+      <!-- Features Grid Section -->
+      <section id="features">
+        <div class="section-title-box">
+          <h2 data-i18n="root:features.section_title">
+            <%= t('root:features.section_title') %>
+          </h2>
+          <p data-i18n="root:features.section_desc">
+            <%= t('root:features.section_desc') %>
+          </p>
+        </div>
+
+        <div class="pro-features-showcase">
+          <!-- Flagship Spotlight 1: Collaborative Study Spaces -->
+          <div class="feature-spotlight-row">
+            <div class="spotlight-content">
+              <div class="spotlight-badge">
+                <i class="bi bi-people-fill"></i>
+                <span data-i18n="root:features.spotlight_1.badge"
+                  ><%= t('root:features.spotlight_1.badge') %></span
+                >
+              </div>
+              <h3 data-i18n="root:features.spotlight_1.title">
+                <%= t('root:features.spotlight_1.title') %>
+              </h3>
+              <p data-i18n="root:features.spotlight_1.desc">
+                <%= t('root:features.spotlight_1.desc') %>
+              </p>
+              <ul class="spotlight-highlights">
+                <li>
+                  <i class="bi bi-check-circle-fill"></i>
+                  <span data-i18n="root:features.spotlight_1.highlight_1"
+                    ><%= t('root:features.spotlight_1.highlight_1') %></span
+                  >
+                </li>
+                <li>
+                  <i class="bi bi-check-circle-fill"></i>
+                  <span data-i18n="root:features.spotlight_1.highlight_2"
+                    ><%= t('root:features.spotlight_1.highlight_2') %></span
+                  >
+                </li>
+                <li>
+                  <i class="bi bi-check-circle-fill"></i>
+                  <span data-i18n="root:features.spotlight_1.highlight_3"
+                    ><%= t('root:features.spotlight_1.highlight_3') %></span
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="spotlight-visual">
+              <div class="feature-img-frame">
+                <img
+                  src="/main_assets/images/groups/available-groups-light.png"
+                  data-dark-src="/main_assets/images/groups/available-groups.png"
+                  data-light-src="/main_assets/images/groups/available-groups-light.png"
+                  alt="Study Groups Interface"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Flagship Spotlight 2: Real-Time Chat & Sharing -->
+          <div class="feature-spotlight-row spotlight-reversed">
+            <div class="spotlight-visual">
+              <div class="feature-img-frame">
+                <img
+                  src="/main_assets/images/chat/group-chat-light.png"
+                  data-dark-src="/main_assets/images/chat/group-chat.png"
+                  data-light-src="/main_assets/images/chat/group-chat-light.png"
+                  alt="Real-Time Chat Interface"
+                />
+              </div>
+            </div>
+            <div class="spotlight-content">
+              <div class="spotlight-badge">
+                <i class="bi bi-chat-dots-fill"></i>
+                <span data-i18n="root:features.spotlight_2.badge"
+                  ><%= t('root:features.spotlight_2.badge') %></span
+                >
+              </div>
+              <h3 data-i18n="root:features.spotlight_2.title">
+                <%= t('root:features.spotlight_2.title') %>
+              </h3>
+              <p data-i18n="root:features.spotlight_2.desc">
+                <%= t('root:features.spotlight_2.desc') %>
+              </p>
+              <ul class="spotlight-highlights">
+                <li>
+                  <i class="bi bi-check-circle-fill"></i>
+                  <span data-i18n="root:features.spotlight_2.highlight_1"
+                    ><%= t('root:features.spotlight_2.highlight_1') %></span
+                  >
+                </li>
+                <li>
+                  <i class="bi bi-check-circle-fill"></i>
+                  <span data-i18n="root:features.spotlight_2.highlight_2"
+                    ><%= t('root:features.spotlight_2.highlight_2') %></span
+                  >
+                </li>
+                <li>
+                  <i class="bi bi-check-circle-fill"></i>
+                  <span data-i18n="root:features.spotlight_2.highlight_3"
+                    ><%= t('root:features.spotlight_2.highlight_3') %></span
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Interactive Quiz Engine Bento Row -->
+          <div class="feature-bento-row">
+            <div class="bento-card">
+              <div class="bento-header">
+                <div class="spotlight-badge">
+                  <i class="bi bi-patch-question-fill"></i>
+                  <span data-i18n="root:features.bento_1.badge"
+                    ><%= t('root:features.bento_1.badge') %></span
+                  >
+                </div>
+                <h3 data-i18n="root:features.bento_1.title">
+                  <%= t('root:features.bento_1.title') %>
+                </h3>
+                <p data-i18n="root:features.bento_1.desc">
+                  <%= t('root:features.bento_1.desc') %>
+                </p>
+              </div>
+              <div class="bento-visual">
+                <div class="feature-img-frame">
+                  <img
+                    src="/main_assets/images/quiz/quiz-play-light.png"
+                    data-dark-src="/main_assets/images/quiz/quiz-play.png"
+                    data-light-src="/main_assets/images/quiz/quiz-play-light.png"
+                    alt="Interactive Quizzes Preview"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="bento-card">
+              <div class="bento-header">
+                <div class="spotlight-badge">
+                  <i class="bi bi-pencil-square"></i>
+                  <span data-i18n="root:features.bento_2.badge"
+                    ><%= t('root:features.bento_2.badge') %></span
+                  >
+                </div>
+                <h3 data-i18n="root:features.bento_2.title">
+                  <%= t('root:features.bento_2.title') %>
+                </h3>
+                <p data-i18n="root:features.bento_2.desc">
+                  <%= t('root:features.bento_2.desc') %>
+                </p>
+              </div>
+              <div class="bento-visual">
+                <div class="feature-img-frame">
+                  <img
+                    src="/main_assets/images/quiz/quiz-edit-light.png"
+                    data-dark-src="/main_assets/images/quiz/quiz-edit.png"
+                    data-light-src="/main_assets/images/quiz/quiz-edit-light.png"
+                    alt="Custom Quiz Editor Preview"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Productivity & Management Bento Row -->
+          <div class="feature-bento-row bento-asymmetric">
+            <div class="bento-card bento-widget">
+              <div class="bento-header">
+                <div class="spotlight-badge">
+                  <i class="bi bi-stopwatch-fill"></i>
+                  <span data-i18n="root:features.bento_3.badge"
+                    ><%= t('root:features.bento_3.badge') %></span
+                  >
+                </div>
+                <h3 data-i18n="root:features.bento_3.title">
+                  <%= t('root:features.bento_3.title') %>
+                </h3>
+                <p data-i18n="root:features.bento_3.desc">
+                  <%= t('root:features.bento_3.desc') %>
+                </p>
+              </div>
+              <div class="bento-visual">
+                <div class="feature-img-frame">
+                  <img
+                    src="/main_assets/images/home/timer-and-tasks-light.png"
+                    data-dark-src="/main_assets/images/home/timer-and-tasks.png"
+                    data-light-src="/main_assets/images/home/timer-and-tasks-light.png"
+                    alt="Study Timer & Tasks Preview"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="bento-card bento-dashboard">
+              <div class="bento-header">
+                <div class="spotlight-badge">
+                  <i class="bi bi-diagram-3-fill"></i>
+                  <span data-i18n="root:features.bento_4.badge"
+                    ><%= t('root:features.bento_4.badge') %></span
+                  >
+                </div>
+                <h3 data-i18n="root:features.bento_4.title">
+                  <%= t('root:features.bento_4.title') %>
+                </h3>
+                <p data-i18n="root:features.bento_4.desc">
+                  <%= t('root:features.bento_4.desc') %>
+                </p>
+              </div>
+              <div class="bento-visual">
+                <div class="feature-img-frame">
+                  <img
+                    src="/main_assets/images/groups/my-groups-light.png"
+                    data-dark-src="/main_assets/images/groups/my-groups.png"
+                    data-light-src="/main_assets/images/groups/my-groups-light.png"
+                    alt="Group Management Interface"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Workflow / How It Works -->
+      <section id="workflow">
+        <div class="section-title-box">
+          <h2 data-i18n="root:workflow.section_title"><%= t('root:workflow.section_title') %></h2>
+          <p data-i18n="root:workflow.section_desc">
+            <%= t('root:workflow.section_desc') %>
+          </p>
+        </div>
+
+        <div class="landing-workflow-grid">
+          <div class="workflow-step-box">
+            <div class="workflow-step-number">1</div>
+            <h3 data-i18n="root:workflow.step_1.title">
+              <%= t('root:workflow.step_1.title') %>
+            </h3>
+            <p data-i18n="root:workflow.step_1.desc">
+              <%= t('root:workflow.step_1.desc') %>
+            </p>
+          </div>
+
+          <div class="workflow-step-box">
+            <div class="workflow-step-number">2</div>
+            <h3 data-i18n="root:workflow.step_2.title">
+              <%= t('root:workflow.step_2.title') %>
+            </h3>
+            <p data-i18n="root:workflow.step_2.desc">
+              <%= t('root:workflow.step_2.desc') %>
+            </p>
+          </div>
+
+          <div class="workflow-step-box">
+            <div class="workflow-step-number">3</div>
+            <h3 data-i18n="root:workflow.step_3.title"><%= t('root:workflow.step_3.title') %></h3>
+            <p data-i18n="root:workflow.step_3.desc">
+              <%= t('root:workflow.step_3.desc') %>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Call to Action Section -->
+      <section class="landing-cta-box">
+        <h2 data-i18n="root:cta.title">
+          <%= t('root:cta.title') %>
+        </h2>
+        <p data-i18n="root:cta.desc">
+          <%= t('root:cta.desc') %>
+        </p>
+        <a href="/login" class="button blue-btn">
+          <span data-i18n="root:cta.btn"><%= t('root:cta.btn') %></span>
+          <i class="bi bi-arrow-right-circle-fill"></i>
+        </a>
+      </section>
+
+      <!-- Footer -->
+      <footer class="landing-footer">
+        <div
+          class="landing-brand"
+          style="
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+          "
+        >
+          <img
+            src="/main_assets/images/logo-mark.svg"
+            alt="StudyHype Logo"
+            style="width: 1.8rem; height: 1.8rem"
+          />
+          <span style="font-weight: 800; letter-spacing: -0.3px"
+            >StudyHype</span
+          >
+        </div>
+
+        <div class="landing-footer-links">
+          <a href="#features" data-i18n="root:footer.features"><%= t('root:footer.features') %></a>
+          <a href="#workflow" data-i18n="root:footer.how_it_works"
+            ><%= t('root:footer.how_it_works') %></a
+          >
+          <a href="/login" data-i18n="root:footer.login"><%= t('root:footer.login') %></a>
+        </div>
+
+        <p data-i18n="root:footer.copyright">
+          <%= t('root:footer.copyright') %>
+        </p>
+      </footer>
+    </main>
+
+    <!-- Native Theme Switcher Script -->
+    <script>
+      (function () {
+        const toggleBtn = document.getElementById("theme-toggle-btn");
+        const toggleIcon = document.getElementById("theme-toggle-icon");
+        const root = document.documentElement;
+
+        const savedTheme = localStorage.getItem("theme") || "light";
+        applyTheme(savedTheme === "dark", false);
+
+        toggleBtn?.addEventListener("click", () => {
+          const isDark = root.getAttribute("data-theme") === "dark";
+
+          const rect = toggleBtn.getBoundingClientRect();
+          const x = rect.left + rect.width / 2;
+          const y = rect.top + rect.height / 2;
+          root.style.setProperty("--theme-toggle-x", `${x}px`);
+          root.style.setProperty("--theme-toggle-y", `${y}px`);
+
+          const doSwitch = () => applyTheme(!isDark, true);
+
+          if (document.startViewTransition) {
+            document.startViewTransition(doSwitch);
+          } else {
+            doSwitch();
+          }
+        });
+
+        function applyTheme(toDark, save) {
+          const theme = toDark ? "dark" : "light";
+          root.setAttribute("data-theme", theme);
+          if (toggleIcon)
+            toggleIcon.className = toDark
+              ? "bi bi-sun theme-toggle-icon"
+              : "bi bi-moon theme-toggle-icon";
+
+          document
+            .querySelectorAll("img[data-dark-src][data-light-src]")
+            .forEach((img) => {
+              const targetSrc = toDark
+                ? img.getAttribute("data-dark-src")
+                : img.getAttribute("data-light-src");
+              if (img.getAttribute("src") !== targetSrc) {
+                img.setAttribute("src", targetSrc);
+              }
+            });
+
+          if (save) {
+            try {
+              localStorage.setItem("theme", theme);
+              localStorage.setItem("mode", theme);
+              localStorage.setItem("studyhype_theme", theme);
+            } catch (e) {}
+          }
+        }
+      })();
+    </script>
+    <script type="module">
+      import { initI18n } from "/main_assets/js/i18n.js";
+      initI18n(["shared", "root"], { isStatic: true });
+    </script>
+  </body>
+</html>

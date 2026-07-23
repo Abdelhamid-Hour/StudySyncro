@@ -1,0 +1,101 @@
+{
+  "skeletons": {
+    "no_quizzes_created_title": "لم يتم إنشاء أي اختبارات",
+    "no_quizzes_created_desc": "لم تقم بإنشاء أي اختبارات بعد. انقر على زر 'إنشاء اختبار' للبدء!",
+    "no_quizzes_found_title": "لم يتم العثور على اختبارات",
+    "no_quizzes_found_desc": "لا توجد اختبارات تطابق معايير الفلترة. حاول تعديل البحث أو الفلاتر.",
+    "no_passed_quizzes_title": "لا توجد اختبارات مجتازة",
+    "no_passed_quizzes_desc": "لم تكمل أي اختبارات بعد. انضم إلى جلسة دراسية وخذ اختباراً لترى إنجازاتك هنا!",
+    "no_passed_quizzes_found_title": "لم يتم العثور على اختبارات مجتازة",
+    "no_passed_quizzes_found_desc": "لا توجد اختبارات مجتازة تطابق معايير الفلترة."
+  },
+  "untitled_quiz": "اختبار بدون عنوان",
+  "unknown_group": "مجموعة غير معروفة",
+  "unknown_session": "جلسة غير معروفة",
+  "view_result": "عرض النتيجة",
+  "retake": "إعادة الاختبار",
+  "unknown": "غير معروف",
+  "edit": "تعديل",
+  "preview": "معاينة",
+  "duplicate": "تكرار",
+  "remove": "إزالة",
+  "create": "إنشاء",
+  "title_placeholder": "العنوان",
+  "new_title_placeholder": "العنوان الجديد",
+  "create_new_quiz": "إنشاء اختبار جديد",
+  "duplicate_quiz": "تكرار الاختبار",
+  "tooltips": {
+    "add_at_least_1_question": "أضف سؤالاً واحداً على الأقل للنشر",
+    "groups_sessions": "مجموعات | جلسات"
+  },
+  "alerts": {
+    "quiz_created": "تم إنشاء الاختبار بنجاح.",
+    "quiz_duplicated": "تم نسخ الاختبار بنجاح.",
+    "quiz_deleted": "تم حذف الاختبار بنجاح."
+  },
+  "validation": {
+    "title_required": "عنوان الاختبار مطلوب.",
+    "title_length": "يجب أن يكون عنوان الاختبار بين {min} و {max} حرفاً.",
+    "subject_required": "المادة مطلوبة."
+  },
+  "question_num": "السؤال {num}",
+  "choices_count": "{count} خيارات",
+  "finished_date": "تاريخ الانتهاء: {date}",
+  "questions_count": "{count} أسئلة",
+  "questions_label": "أسئلة",
+  "quiz_title_placeholder": "عنوان الاختبار",
+  "answered": "المُجاب عنه",
+  "status": {
+    "correct": "صحيح",
+    "skipped": "تخطى",
+    "incorrect": "خاطئ"
+  },
+  "editor": {
+    "questions": "الأسئلة",
+    "choices_title": "الخيارات",
+    "add_choice": "إضافة خيار",
+    "subject_label": "المادة:",
+    "shared_in_label": "مشارك في:",
+    "correct_answer_title": "الإجابة الصحيحة"
+  },
+  "play": {
+    "time_left": "الوقت المتبقي :",
+    "skip": "تخطي",
+    "select_answer": "اختر الإجابة الصحيحة (أو اضغط 1-6 / A-F)",
+    "prev": "السابق",
+    "next": "التالي",
+    "finish": "إنهاء",
+    "score_of": "{correct} من {total}",
+    "your_score": "درجتك",
+    "view_result_details": "عرض تفاصيل النتيجة",
+    "results": {
+      "excellent": {
+        "title": "عمل ممتاز!",
+        "desc": "لقد أنجزته بشكل رائع! استمر على هذا المنوال."
+      },
+      "good": {
+        "title": "أحسنت!",
+        "desc": "عمل رائع! لديك فهم جيد للمادة."
+      },
+      "average": {
+        "title": "ليس سيئاً، استمر!",
+        "desc": "أنت على وشك الوصول! استمر في العمل الجيد."
+      },
+      "poor": {
+        "title": "حظاً موفقاً في المرة القادمة!",
+        "desc": "حاول مراجعة المادة ومواصلة التدريب."
+      }
+    },
+    "grades": {
+      "excellent": "ممتاز",
+      "good": "جيد",
+      "average": "متوسط",
+      "poor": "ضعيف"
+    },
+    "alerts": {
+      "select_answer": "يرجى اختيار إجابة أو الضغط على زر التخطي للمتابعة.",
+      "failed_load": "فشل تحميل أسئلة الاختبار. يرجى المحاولة مرة أخرى لاحقاً.",
+      "failed_submit": "فشل إرسال نتيجة الاختبار. يرجى المحاولة مرة أخرى لاحقاً."
+    }
+  }
+}

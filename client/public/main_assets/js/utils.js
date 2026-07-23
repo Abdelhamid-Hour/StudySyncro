@@ -1,4 +1,25 @@
 import { AUTH_ERRORS } from "./variables.js";
+import {
+  t,
+  getLang,
+  setLang,
+  loadNamespace,
+  loadNamespaces,
+  initI18n,
+  changeLanguage,
+  initLanguageSwitcher,
+} from "./i18n.js";
+
+export {
+  t,
+  getLang,
+  setLang,
+  loadNamespace,
+  loadNamespaces,
+  initI18n,
+  changeLanguage,
+  initLanguageSwitcher,
+};
 
 // Add Event listener for eye icon click to toggle password visibility
 export const handlEyeIconsClick = (eyeIcons) => {
@@ -143,7 +164,7 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
     if (response.status === 401) {
       // Handle unauthorized access
       showMessageBlock(
-        "🚫 You are not authorized to access this resource. Please log in.",
+        t("common:alerts.unauthorized"),
         "warning"
       );
       setTimeout(() => {
@@ -157,8 +178,8 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
       history.back();
     }
 
-    const responseData = await response.json().catch(() => ({ message: "An error occurred" }));
-    const error = new Error(responseData.message || "An error occurred");
+    const responseData = await response.json().catch(() => ({ message: t("common:alerts.error_occurred") }));
+    const error = new Error(responseData.message || t("common:alerts.error_occurred"));
     error.data = responseData;
     error.status = response.status;
     const isNative = responseData.isNative || isNativeDomainCondition(error);
@@ -221,7 +242,7 @@ export const checkError = function (error) {
   }
   for (const key in AUTH_ERRORS) {
     if (AUTH_ERRORS[key].code === error.code) {
-      error.message = AUTH_ERRORS[key].message;
+      error.message = t(`shared:auth_errors.${key}`, { defaultValue: t(`common:auth_errors.${key}`, { defaultValue: AUTH_ERRORS[key].message }) });
       return;
     }
   }

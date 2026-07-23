@@ -1,0 +1,141 @@
+{
+  "badges": {
+    "draft": "مسودة",
+    "draft_tooltip": "أضف سؤالاً واحداً على الأقل للنشر",
+    "published": "منشور"
+  },
+  "menu": {
+    "edit": "تعديل",
+    "preview": "معاينة",
+    "duplicate": "تكرار",
+    "remove": "حذف"
+  },
+  "labels": {
+    "quiz_title": "عنوان الاختبار",
+    "questions": "الأسئلة",
+    "shared_in": "مشارك في",
+    "shared_in_tooltip": "مجموعات | جلسات",
+    "subject": "المادة",
+    "group_name": "اسم المجموعة",
+    "session_name": "اسم الجلسة",
+    "submitted_at": "تاريخ التقديم",
+    "score": "النتيجة",
+    "search_placeholder": "البحث بالعنوان",
+    "sort_quizzes": "ترتيب الاختبارات",
+    "admin_cant_submit": "لا يمكن للمشرف تقديم الاختبارات",
+    "not_submitted_tooltip": "لم تقم بتقديم الاختبار"
+  },
+  "actions": {
+    "view_result": "عرض النتيجة",
+    "view_results": "عرض النتائج",
+    "retake": "إعادة",
+    "retake_quiz": "إعادة الاختبار"
+  },
+  "play": {
+    "time_left": "الوقت المتبقي :",
+    "question_label": "السؤال",
+    "of_label": "من",
+    "skip": "تخطي",
+    "skip_tooltip": "أو اضغط S",
+    "select_answer": "اختر الإجابة الصحيحة",
+    "select_hint": "(أو اضغط 1-6 / A-F)",
+    "prev": "السابق",
+    "or_press": "أو اضغط",
+    "press": "اضغط",
+    "or": "أو",
+    "next": "التالي"
+  },
+  "my": {
+    "empty_heading": "لا توجد اختبارات منشأة",
+    "empty_desc": "لم تقم بإنشاء أي اختبارات بعد. انقر على زر 'إنشاء اختبار' للبدء!"
+  },
+  "passed": {
+    "empty_heading": "لا توجد اختبارات مجتازة",
+    "empty_desc": "لم تكمل أي اختبارات بعد. انضم إلى جلسة دراسية وخذ اختباراً لرؤية إنجازاتك هنا!"
+  },
+  "session_overlay": {
+    "title": "تفاصيل الجلسة",
+    "started": "بدأت: {time}",
+    "ends": "تنتهي: {time}",
+    "duration": "المدة: {time}",
+    "session_quiz": "اختبار الجلسة",
+    "tasks_heading": "المهام",
+    "show_details_tooltip": "عرض التفاصيل",
+    "scroll_to_top_tooltip": "التمرير للأعلى",
+    "collapse_all_tooltip": "طوي الكل",
+    "quiz_tooltip": "اختبار",
+    "task_title": "العنوان:",
+    "task_details": "التفاصيل:",
+    "join_session": "الانضمام للجلسة"
+  },
+  "results_overlay": {
+    "title": "نتائج المستخدمين",
+    "quiz_title_label": "عنوان الاختبار",
+    "table": {
+      "profile": "الملف الشخصي",
+      "full_name": "الاسم الكامل",
+      "submitted_at": "تاريخ التقديم",
+      "answered_questions": "الأسئلة المجابة",
+      "score": "النتيجة",
+      "actions": "الإجراءات"
+    }
+  },
+  "editor": {
+    "add_question": "إضافة سؤال",
+    "question_num": "السؤال {num}",
+    "drag_to_reorder": "اسحب لإعادة الترتيب",
+    "delete_question": "حذف السؤال",
+    "subject_label": "المادة:",
+    "edit_subject": "تعديل المادة",
+    "edit_title": "تعديل العنوان",
+    "shared_in_label": "مشارك في:",
+    "question_placeholder": "اكتب نص السؤال هنا...",
+    "choices": "الخيارات",
+    "choice_placeholder": "اكتب الخيار {letter}",
+    "delete_choice": "حذف الخيار",
+    "add_choice": "إضافة خيار",
+    "correct_answer": "الإجابة الصحيحة"
+  },
+  "plural_counts": {
+    "questions": {
+      "zero": "لا توجد أسئلة",
+      "one": "سؤال واحد",
+      "two": "سؤالان",
+      "few": "{count} أسئلة",
+      "many": "{count} سؤالاً",
+      "other": "{count} سؤال"
+    },
+    "choices": {
+      "zero": "لا توجد خيارات",
+      "one": "خيار واحد",
+      "two": "خياران",
+      "few": "{count} خيارات",
+      "many": "{count} خياراً",
+      "other": "{count} خيار"
+    },
+    "groups": {
+      "zero": "مجموعات",
+      "one": "مجموعة",
+      "two": "مجموعتان",
+      "few": "مجموعات",
+      "many": "مجموعة",
+      "other": "مجموعة"
+    },
+    "sessions": {
+      "zero": "جلسات",
+      "one": "جلسة",
+      "two": "جلستان",
+      "few": "جلسات",
+      "many": "جلسة",
+      "other": "جلسة"
+    },
+    "joined_users": {
+      "zero": "لا يوجد مستخدمون منضمون",
+      "one": "مستخدم واحد منضم",
+      "two": "مستخدمان منضمان",
+      "few": "{count} مستخدمين منضمين",
+      "many": "{count} مستخدماً منضماً",
+      "other": "{count} مستخدم منضم"
+    }
+  }
+}

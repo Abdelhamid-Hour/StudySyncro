@@ -1,0 +1,117 @@
+{
+  "titles": {
+    "home": "الرئيسية",
+    "groups": "المجموعات",
+    "available_groups": "المجموعات المتاحة",
+    "group_chat": "دردشة المجموعة",
+    "quizzes": "الاختبارات",
+    "passed_quizzes": "الاختبارات المجتازة",
+    "quiz_editor": "محرر الاختبارات",
+    "settings": "الإعدادات",
+    "account_settings": "إعدادات الحساب",
+    "dashboard": "لوحة التحكم",
+    "studyhype": "ستادي هايب"
+  },
+  "avatar_alt": "الصورة الشخصية للمستخدم",
+  "member_avatar_alt": "الصورة الشخصية للعضو",
+  "sidebar": {
+    "logo_text": "StudyHype",
+    "overview": "نظرة عامة",
+    "groups": "المجموعات",
+    "quizzes": "الاختبارات",
+    "settings": "الإعدادات",
+    "notifications_tooltip": "الإشعارات",
+    "theme_tooltip": "تغيير المظهر",
+    "toggle_tooltip": "طوي الشريط الجانبي",
+    "switch_language_tooltip": "تغيير اللغة"
+  },
+  "topbar": {
+    "greeting_hello": "مرحباً {fullName} 👋",
+    "greeting_sub": "أتمنى لك يوماً رائعاً!",
+    "search_placeholder_groups": "البحث باسم المجموعة أو المادة",
+    "search_placeholder_quizzes": "البحث بعنوان الاختبار أو المادة",
+    "search_placeholder_passed": "البحث بعنوان الاختبار، المادة أو اسم المجموعة",
+    "filter_date_tooltip": "تصفية حسب التاريخ",
+    "tabs": {
+      "my_groups": "مجموعاتي",
+      "available_groups": "المجموعات المتاحة",
+      "my_quizzes": "اختباراتي",
+      "passed_quizzes": "المجتازة"
+    }
+  },
+  "filters": {
+    "role": "الدور",
+    "admin": "مشرف",
+    "member": "عضو",
+    "visibility": "الظهور",
+    "private": "خاصة",
+    "public": "عامة",
+    "level": "المستوى",
+    "advanced": "متقدم",
+    "intermediate": "متوسط",
+    "beginner": "مبتدئ",
+    "view_options": "خيارات العرض",
+    "joinable_only": "القابلة للانضمام فقط",
+    "status": "الحالة",
+    "published": "منشور",
+    "draft": "مسودة"
+  },
+  "profile_menu": {
+    "account": "الحساب",
+    "my_groups": "مجموعاتي",
+    "my_quizzes": "اختباراتي",
+    "logout": "تسجيل الخروج"
+  },
+  "mobile_nav": {
+    "home": "الرئيسية",
+    "groups": "المجموعات",
+    "quizzes": "الاختبارات",
+    "settings": "الإعدادات",
+    "app_controls": "عناصر تحكم التطبيق",
+    "group_actions": "إجراءات المجموعة",
+    "timer_session": "المؤقت والجلسة",
+    "active_sessions": "الجلسات النشطة",
+    "tasks": "المهام",
+    "recent_messages": "الرسائل الأخيرة",
+    "chat": "الدردشة",
+    "questions_list": "قائمة الأسئلة"
+  },
+  "notifications_drawer": {
+    "title": "الإشعارات",
+    "categories": {
+      "all": "الكل",
+      "requests": "الطلبات",
+      "groups": "المجموعات",
+      "sessions": "الجلسات"
+    },
+    "actions": {
+      "reject": "رفض",
+      "accept": "قبول",
+      "join": "انضمام"
+    },
+    "empty_title": "لا توجد إشعارات بعد",
+    "empty_sub": "ليس لديك أي إشعارات في الوقت الحالي."
+  },
+  "actions": {
+    "create_group": "إنشاء مجموعة",
+    "create_quiz": "إنشاء اختبار",
+    "save": "حفظ",
+    "return": "رجوع",
+    "search": "بحث",
+    "close": "إغلاق",
+    "menu": "القائمة",
+    "retry": "إعادة المحاولة"
+  },
+  "time": {
+    "recent": "الآن"
+  },
+  "error": {
+    "back_to_dashboard": "العودة للوحة التحكم",
+    "go_to_login": "الذهاب لصفحة الدخول",
+    "go_back": "الرجوع"
+  },
+  "quiz_card": {
+    "groups_abbr": "م",
+    "sessions_abbr": "ج"
+  }
+}

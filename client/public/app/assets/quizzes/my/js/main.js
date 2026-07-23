@@ -1,3 +1,4 @@
+import { loadNamespace } from "../../../global/js/utils.js";
 import {
   initDomVariables,
   quizCreateBtn,
@@ -9,8 +10,9 @@ import {
   initLazyLoadingLoader,
 } from "./utils.js";
 
-export const init = () => {
+export const init = async () => {
   initDomVariables();
+  await loadNamespace("quizzes");
 
   const loader = initLazyLoadingLoader();
   quizCreateBtn?.addEventListener("click", handleQuizCreateClick);

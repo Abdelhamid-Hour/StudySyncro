@@ -1,6 +1,7 @@
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendEmailVerification,
   GoogleAuthProvider,
   signInWithCredential,
   signInWithPopup,
@@ -12,10 +13,8 @@ import {
   checkError,
   redirectTo,
   sendData,
+  t,
 } from "../../main_assets/js/utils.js";
-
-const SUCCESS_SIGN_UP_MESSAGE = "Account created successfully, redirecting...";
-const SUCCESS_SIGN_IN_MESSAGE = "Signed in successfully, redirecting...";
 
 const googleProvider = new GoogleAuthProvider();
 const fbProvider = new FacebookAuthProvider();
@@ -54,7 +53,7 @@ const handleUserSignUp = async (auth, user) => {
 const signInWhithProvider = async function (auth, provider, callback) {
   const userCredential = await signInWithPopup(auth, provider);
   const user = userCredential.user;
-  callback(SUCCESS_SIGN_IN_MESSAGE, "success");
+  callback(t("login:messages.signed_in_redirecting"), "success");
   await handleUserSignUp(auth, user);
 };
 
@@ -71,7 +70,7 @@ const InitializeGoogleOneTap = function (auth, callback) {
       // Convert Google credential to Firebase credential
       const credential = GoogleAuthProvider.credential(response.credential);
       const userCredential = await signInWithCredential(auth, credential);
-      callback(SUCCESS_SIGN_IN_MESSAGE, "success");
+      callback(t("login:messages.signed_in_redirecting"), "success");
       const user = userCredential.user;
       await handleUserSignUp(auth, user);
     } catch (error) {
@@ -140,21 +139,41 @@ const createAuserWithEmailAndPassword = async function (
   email,
   avatar,
   password,
-  callback
+  callback,
 ) {
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
-      password
+      password,
     );
-    callback(SUCCESS_SIGN_UP_MESSAGE, "success");
     const user = userCredential.user;
     await updateProfile(user, {
       displayName: fullName,
     });
-    user.avatar = avatar;
-    await handleUserSignUp(auth, user);
+    const actionCodeSettings = {
+      url: window.location.origin + "/app/home",
+      handleCodeInApp: true,
+    };
+    await sendEmailVerification(user, actionCodeSettings);
+
+    const idToken = await user.getIdToken();
+    const formData = new FormData();
+    formData.append("idToken", idToken);
+    formData.append("uid", user.uid);
+    formData.append("fullName", user.displayName);
+    formData.append("email", user.email);
+    formData.append("photoURL", user.photoURL);
+    if (avatar) formData.append("file", avatar);
+
+    // send user data to the server to save it in Firestore
+    await sendData("/api/insert-user-data", formData, "POST");
+
+    // Log out from server and frontend because email is unverified
+    await fetch("/logout", { method: "POST" });
+    signOut(auth);
+
+    callback(t("login:messages.account_created_verify"), "success");
   } catch (error) {
     checkError(error);
     callback(error.message, "error");
@@ -175,11 +194,26 @@ const signInAuserWithEmailAndPassword = async function (
   auth,
   email,
   password,
-  callback
+  callback,
 ) {
   try {
-    await signInWithEmailAndPassword(auth, email, password);
-    callback(SUCCESS_SIGN_IN_MESSAGE, "success");
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+    const user = userCredential.user;
+    if (!user.emailVerified) {
+      const actionCodeSettings = {
+        url: window.location.origin + "/app/home",
+        handleCodeInApp: true,
+      };
+      await sendEmailVerification(user, actionCodeSettings);
+      signOut(auth);
+      callback(t("login:messages.email_unverified"), "info");
+      return;
+    }
+    callback(t("login:messages.signed_in_redirecting"), "success");
     await sendIdToken(auth, "/login");
     // Log out the user In the frontend to avoid persistence
     signOut(auth);

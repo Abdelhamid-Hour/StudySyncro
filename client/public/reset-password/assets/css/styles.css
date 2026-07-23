@@ -3,7 +3,7 @@
 }
 * {
   box-sizing: border-box;
-  font-family: 'Josefin Sans';
+  font-family: "Josefin Sans";
   margin: 0px;
   padding: 0px;
 }
@@ -47,7 +47,7 @@ form {
   flex-direction: column;
   width: 25rem;
   gap: var(--form-gap);
-  div[class^='md-'] {
+  div[class^="md-"] {
     outline: 0.2rem solid transparent;
     display: flex;
     width: 100%;
@@ -69,7 +69,8 @@ form {
       border-start-start-radius: 10px;
       border-end-start-radius: 7px;
       background-color: var(--inputs-icons-background-color);
-      border-right: var(--inputs-border-size) solid var(--inputs-border-color);
+      border-inline-end: var(--inputs-border-size) solid
+        var(--inputs-border-color);
       transition: all var(--icons-focus-tran-duration) linear;
       color: var(--inputs-icons-color);
       font-size: var(--inputs-icons-font-size);
@@ -82,7 +83,7 @@ form {
       }
     }
 
-    div[class*='container-label'] {
+    div[class*="container-label"] {
       width: 85%;
       position: relative;
       border-start-end-radius: 5px;
@@ -98,7 +99,7 @@ form {
         width: 100%;
         border-start-end-radius: 5px;
         border-end-end-radius: 5px;
-        padding-left: 0.5rem;
+        padding-inline-start: 0.5rem;
         outline: none;
         border: none;
         transition: all var(--inputs-focus-tran-duration) linear;
@@ -112,7 +113,7 @@ form {
       & > div {
         position: absolute;
         top: 50%;
-        right: 0.5rem;
+        inset-inline-end: 0.5rem;
         translate: 0 -50%;
         color: var(--eye-pass-color);
         cursor: pointer;
@@ -122,7 +123,7 @@ form {
         position: absolute;
         user-select: none;
         top: 50%;
-        left: 1rem;
+        inset-inline-start: 1rem;
         translate: 0 -50%;
         width: fit-content;
         height: fit-content;
@@ -152,7 +153,7 @@ form {
         &:has(+ input:focus, + input:not(:placeholder-shown)) {
           color: var(--inputs-transition-label-color);
           top: -0.1rem;
-          left: 0.5rem;
+          inset-inline-start: 0.5rem;
           background-color: var(--inputs-focus-background-color);
           div {
             background-color: var(--container-background-color);
@@ -182,7 +183,7 @@ form {
           transform-origin: 0 0;
           rotate: 45deg;
           transition: all var(--eye-trans-duration) ease-in-out;
-          float: right;
+          float: inline-end;
 
           hr {
             background-color: var(--eye-pass-color);

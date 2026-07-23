@@ -1,16 +1,12 @@
-import {
-  fetchData,
-  sendData,
-  showMessageBlock,
-} from "../../../../../main_assets/js/utils.js";
 import { timers } from "../../../global/js/variables.js";
 import {
-  enableMobileTabs,
-  handleApiAction,
   millisecondsToHMFormat,
   navigateTo,
   registerPageListener,
-  updateMain,
+  fetchData,
+  sendData,
+  showMessageBlock,
+  t,
 } from "../../../global/js/utils.js";
 import {
   openQuizResultOverlay,
@@ -239,7 +235,7 @@ export class Quiz extends Task {
     button.className = `result${this.isAdmin ? "s" : ""}-btn should-fill`;
     button.innerHTML = `
       <i class="bi bi-eye"></i>
-      View ${this.isAdmin ? "Results" : "Result"}
+      ${this.isAdmin ? t("home:quiz.view_results") : t("home:quiz.view_result")}
     `;
 
     if (!this.isAdmin) {
@@ -265,7 +261,7 @@ export class Quiz extends Task {
     retakeBtn.className = "retake-btn";
     retakeBtn.innerHTML = `
       <i class="bi bi-arrow-clockwise"></i>
-      Retake Quiz
+      ${t("home:quiz.retake_quiz")}
     `;
     retakeBtn.addEventListener("click", () => {
       navigateTo(`/quiz-play/${this.UID}`);
@@ -281,16 +277,16 @@ export class Quiz extends Task {
     // Determine badge class and icon based on status
     let badgeClass = "gray-badge";
     let iconClass = "bi-hourglass";
-    let text = "Pending";
+    let text = t("home:badge.pending");
 
     if (status === "active") {
       badgeClass = "orange-badge";
       iconClass = "bi-clock-history";
-      text = "In Progress";
+      text = t("home:badge.in_progress");
     } else if (status === "completed") {
       badgeClass = "green-badge";
       iconClass = "bi-check-circle";
-      text = "Completed";
+      text = t("home:badge.completed");
     }
 
     badge.classList.remove("gray-badge", "orange-badge", "green-badge");
@@ -335,14 +331,14 @@ export const startSession = async () => {
 
 const getBadgesContainer = (nextTask) => `
           <div class="active-task-container">
-            <span class="task-label active-task-label">Active Task</span>
+            <span class="task-label active-task-label">${t("home:task.active_task")}</span>
             <span class="active-task-title task-title"></span>
           </div>
           ${
             nextTask
               ? `
           <div class="next-task-container">
-            <span class="task-label next-task-label">Next Task</span>
+            <span class="task-label next-task-label">${t("home:task.next_task")}</span>
             <span class="next-task-title task-title"></span>
           </div>
           `
@@ -500,7 +496,10 @@ export class Session {
     );
     if (nextTask && nextTaskObj) {
       new FlipTimer(nextTaskObj.durationInMins * 60 * 1000);
-      nextTask.firstElementChild.setAttribute("data-tooltip", "Active Task");
+      nextTask.firstElementChild.setAttribute(
+        "data-tooltip",
+        t("home:task.active_task"),
+      );
       nextTask.firstElementChild.classList.add("first", "has-tooltip");
       if (nextTaskObj.isQuiz) {
         this.quiz.status = "active";
@@ -515,10 +514,14 @@ export class Session {
     if (!activeTask) {
       return;
     }
+    const activeKind = activeTask.isQuiz
+      ? t("home:task.quiz")
+      : activeTask.isBreak
+        ? t("home:task.break")
+        : t("home:task.task");
     this.timerEls.activeTaskLabel.textContent =
-      "Active " +
-      (activeTask.isQuiz ? "Quiz" : activeTask.isBreak ? "Break" : "Task") +
-      (nextTask ? "" : " (Last Task)");
+      t("home:task.active_prefix", { kind: activeKind }) +
+      (nextTask ? "" : " " + t("home:task.last_task_suffix"));
     this.timerEls.activeTaskTitle.textContent = activeTask.title;
 
     if (!nextTask) {
@@ -527,10 +530,14 @@ export class Session {
       return;
     }
 
+    const nextKind = nextTask.isQuiz
+      ? t("home:task.quiz")
+      : nextTask.isBreak
+        ? t("home:task.break")
+        : t("home:task.task");
     this.timerEls.nextTaskLabel.textContent =
-      "Next " +
-      (nextTask.isQuiz ? "Quiz" : nextTask.isBreak ? "Break" : "Task") +
-      (nextTaskIsLast ? "" : " (Last Task)");
+      t("home:task.next_prefix", { kind: nextKind }) +
+      (nextTaskIsLast ? "" : " " + t("home:task.last_task_suffix"));
     this.timerEls.nextTaskTitle.textContent = nextTask.title;
   }
 
@@ -547,7 +554,7 @@ export class Session {
              task.isBreak
                ? ""
                : `
-            <button type="button" data-tooltip="Show Details" class="task-down-icon exclude-btn should-fill has-tooltip">
+            <button type="button" data-tooltip="${t("home:task.show_details")}" class="task-down-icon exclude-btn should-fill has-tooltip">
               <i class="bi bi-caret-down"></i>
             </button>
            `
@@ -558,9 +565,9 @@ export class Session {
             ? ""
             : `
         <div class="task-details">
-          <h5>Title: </h5>
+          <h5>${t("home:task.title_label")} </h5>
           <p class="task-title"></p>
-          <h5>Details: </h5>
+          <h5>${t("home:task.details_label")} </h5>
           <p class="task-desc"></p>
         </div>`
         }
@@ -570,7 +577,9 @@ export class Session {
       taskContainer.querySelector(".task-title").textContent = task.title;
       taskContainer.querySelector(".task-desc").textContent = task.description;
     }
-    const emptyState = this.completedTasksContainer.querySelector(".completed-empty-state");
+    const emptyState = this.completedTasksContainer.querySelector(
+      ".completed-empty-state",
+    );
     if (emptyState) emptyState.remove();
     this.completedTasksContainer.append(taskContainer);
   }
@@ -645,10 +654,7 @@ export class Session {
       });
     } catch (error) {
       console.error("Error updating task status:", error);
-      showMessageBlock(
-        "Error updating task status. Please try again later.",
-        "error",
-      );
+      showMessageBlock(t("home:alerts.error_updating_task"), "error");
     }
   }
 
@@ -684,11 +690,11 @@ export class Session {
           <div
             ${
               isFirst
-                ? 'data-tooltip="Active Task"'
+                ? `data-tooltip="${t("home:task.active_task")}"`
                 : isQuiz
-                  ? 'data-tooltip="Quiz"'
+                  ? `data-tooltip="${t("home:task.quiz")}"`
                   : isBreak
-                    ? 'data-tooltip="Break"'
+                    ? `data-tooltip="${t("home:task.break")}"`
                     : ""
             }
             class="task-box${
@@ -708,7 +714,7 @@ export class Session {
             }">${millisecondsToHMFormat(task.durationInMins * 60 * 1000)}</span>
             ${
               !isBreak
-                ? `<button type="button" data-tooltip="Show Details" class="task-down-icon exclude-btn should-fill has-tooltip">
+                ? `<button type="button" data-tooltip="${t("home:task.show_details")}" class="task-down-icon exclude-btn should-fill has-tooltip">
                     <i class="bi bi-caret-down"></i>
                   </button>`
                 : ""
@@ -717,9 +723,9 @@ export class Session {
           ${
             !isBreak
               ? `<div class="task-details">
-                  <h5>Title:</h5>
+                  <h5>${t("home:task.title_label")}</h5>
                   <p class="task-title"></p>
-                  <h5>Details:</h5>
+                  <h5>${t("home:task.details_label")}</h5>
                   <p class="task-desc"></p>
                 </div>`
               : ""
@@ -750,13 +756,10 @@ export class Session {
     try {
       await sendData("/api/end-session", { sessionId: Session.id });
       navigateTo("/home");
-      showMessageBlock("Session finished", "info");
+      showMessageBlock(t("home:alerts.session_finished"), "info");
     } catch (error) {
       console.error("Error ending session:", error);
-      showMessageBlock(
-        "Error ending session. Please try again later.",
-        "error",
-      );
+      showMessageBlock(t("home:alerts.error_ending_session"), "error");
     }
   }
 
@@ -803,7 +806,7 @@ export class Session {
           data.status === "aborted"
         ) {
           this.sessionStream.close();
-          showMessageBlock("Session ended", "info");
+          showMessageBlock(t("home:alerts.session_ended"), "info");
           navigateTo("/home");
         }
       } catch (e) {
@@ -850,9 +853,9 @@ export const initMobileTabs = () => {
     const mobileInActiveTabs = document.querySelector(".mobile-inactive-tabs");
     if (!mobileInActiveTabs) return;
     mobileInActiveTabs.outerHTML = `<div class="mobile-active-tabs navigation-tabs" style="width: 100%;">
-        <button type="button" class="tab active-tab exclude-btn" data-target="timer-session">Timer & Session</button>
-        <button type="button" class="tab exclude-btn" data-target="tasks">Tasks</button>
-        <button type="button" class="tab exclude-btn" data-target="chat">Chat</button>
+        <button type="button" class="tab active-tab exclude-btn" data-target="timer-session">${t("home:tabs.timer_session")}</button>
+        <button type="button" class="tab exclude-btn" data-target="tasks">${t("home:tabs.tasks")}</button>
+        <button type="button" class="tab exclude-btn" data-target="chat">${t("home:tabs.chat")}</button>
     </div>`;
   }
 

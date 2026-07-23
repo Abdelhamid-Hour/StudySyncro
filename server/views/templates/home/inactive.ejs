@@ -1,25 +1,23 @@
 <div class="overview-session-inactive fade-in-template">
   <div class="ready-message-container">
     <div class="ready-message">
-      <h2>Ready to start learning together?</h2>
+      <h2><%= t("home:inactive.ready_heading") %></h2>
       <p>
-        Join a study session to connect with peers, participate in discussions,
-        and enhance your learning experience. StudyHype makes collaborative
-        learning easy and effective!
+        <%= t("home:inactive.ready_desc") %>
       </p>
     </div>
   </div>
   <div class="content-blocks">
     <section class="recent-messages">
       <header>
-        <h2>Recent Messages</h2>
-        <p>Latest conversations from your study groups</p>
+        <h2><%= t("home:inactive.recent_messages_heading") %></h2>
+        <p><%= t("home:inactive.recent_messages_sub") %></p>
       </header>
       <div class="messages-container" data-last-visible="<%= lastVisible || '' %>">
         <% if (recentMessages && recentMessages.length) { %>
           <% recentMessages.forEach(msg => { %>
             <% const hasUnread = msg.hasUnreadMessages && msg.unreadCount > 0; %>
-            <div class="recent-message card-item <%= hasUnread ? 'has-unread' : '' %>" data-group-id="<%= msg.groupId || '' %>" data-last-update="<%= msg.lastUpdate || 0 %>">
+            <div class="recent-message card-item <%= hasUnread ? 'has-unread' : '' %>" data-group-id="<%= msg.groupId || '' %>" data-last-update="<%= msg.lastUpdate || 0 %>" data-unread-count="<%= msg.unreadCount || 0 %>">
               <header>
                 <div class="profile-info">
                   <% const photoURL = msg.lastMessage?.senderPhotoURL || msg.lastMessage?.photoURL || msg.senderPhotoURL || msg.photoURL; %>
@@ -29,33 +27,33 @@
                     <i class="bi bi-person-circle icon"></i>
                   <% } %>
                   <div class="details">
-                    <span class="user"><%= msg.lastMessage?.senderName || msg.lastMessageSender || "Someone" %></span>
-                    <span class="group"><%= msg.groupName || "Study Group" %></span>
+                    <span class="user"><bdi><%= msg.lastMessage?.senderName || msg.lastMessageSender || "Someone" %></bdi></span>
+                    <span class="group"><bdi><%= msg.groupName || "Study Group" %></bdi></span>
                   </div>
                 </div>
                 <div class="meta-info">
-                  <span class="timestamp"><%= formatTimeAgo(msg.lastUpdate) %></span>
+                  <span class="timestamp"><%= formatTimeAgo(msg.lastUpdate, typeof t !== 'undefined' ? t : null) %></span>
                   <% if (hasUnread) { %>
-                    <span class="unread-count blue-badge badge"><%= msg.unreadCount %> New Message<%= msg.unreadCount > 1 ? "s" : "" %></span>
+                    <span class="unread-count blue-badge badge"><%= t("home:inactive.unread_messages_count", { count: msg.unreadCount }) %></span>
                   <% } %>
                 </div>
               </header>
               <p class="text-message">
-                <%= msg.lastMessage?.text || msg.lastMessageText || "No messages yet" %>
+                <bdi><%= msg.lastMessage?.text || msg.lastMessageText || t("home:inactive.empty_messages_heading") %></bdi>
               </p>
               <div class="action-buttons" data-group-id="<%= msg.groupId || '' %>">
                 <button type="button" class="should-fill reply-group">
                   <i class="bi bi-reply"></i>
-                  Reply In Group
+                  <%= t("home:inactive.reply_in_group") %>
                 </button>
                 <button type="button" class="should-fill reply">
                   <i class="bi bi-reply"></i>
-                  Reply
+                  <%= t("home:inactive.reply") %>
                 </button>
                 <% if (hasUnread) { %>
                 <button type="button" class="mark-read">
                   <i class="bi bi-check2-all"></i>
-                  Mark as read
+                  <%= t("home:inactive.mark_as_read") %>
                 </button>
                 <% } %>
               </div>
@@ -66,8 +64,8 @@
             <div class="empty-icon-container">
               <i class="bi bi-chat-text-fill"></i>
             </div>
-            <h3>No Messages Yet</h3>
-            <p>No recent messages yet. Join or create a study group to start collaborating and sharing messages!</p>
+            <h3><%= t("home:inactive.empty_messages_heading") %></h3>
+            <p><%= t("home:inactive.empty_messages_desc") %></p>
           </div>
         <% } %>
       </div>
@@ -75,8 +73,8 @@
     <section class="active-sessions">
       <header>
         <div class="header-text">
-          <h2>Active Sessions</h2>
-          <p>Ongoing study sessions you can join now</p>
+          <h2><%= t("home:inactive.active_sessions_heading") %></h2>
+          <p><%= t("home:inactive.active_sessions_sub") %></p>
         </div>
         <div class="active-sessions-search search">
           <div class="search-icon-container">
@@ -85,7 +83,7 @@
           <input
             type="search"
             id="active-sessions-search-input"
-            placeholder="Search by session or group name"
+            placeholder="<%= t('home:inactive.search_placeholder') %>"
             autocomplete="off"
           />
         </div>
@@ -97,61 +95,60 @@
               <header>
                 <div class="session-info">
                   <h3 class="session-name">
-                    <%= session.name %>
+                    <bdi><%= session.name %></bdi>
                       <span class="joined-count badge simple-badge">
                         <span class="joined-count-value">
-                          <%= session.joinedCount %>
+                          <%= t("home:inactive.joined_users_count", { count: session.joinedCount }) %>
                         </span>
-                        Joined Users
                       </span>
                   </h3>
                   <span class="group badge">
                     <i class="bi bi-book-fill"></i>
-                    <%= session.groupName %>
+                    <bdi><%= session.groupName %></bdi>
                   </span>
                 </div>
                 <div class="meta-info">
                   <span class="badge blue-badge">
                     <i class="bi bi-clock-fill"></i>
-                    Duration
+                    <%= t("home:inactive.duration_label") %>
                     <span class="duration">
-                      <%= session.duration %>
+                      <bdi><%= session.duration %></bdi>
                     </span>
                   </span>
                   <span class="badge simple-badge">
                     <i class="bi bi-list-task"></i>
-                    <%= session.tasksCount %> Tasks
+                    <%= t("home:inactive.tasks_count", { count: session.tasksCount }) %>
                   </span>
                 </div>
               </header>
               <p class="session-description">
-                <%= session.description %>
+                <bdi><%= session.description %></bdi>
               </p>
               <footer class="footer">
                 <div class="footer-meta-info">
                   <span class="badge green-badge">
                     <i class="bi bi-play-circle"></i>
-                    Start At:
+                    <%= t("home:inactive.start_at") %>
                     <span class="duration">
-                      <%= session.startTime %>
+                      <bdi><%= session.startTime %></bdi>
                     </span>
                   </span>
                   <span class="badge orange-badge">
                     <i class="bi bi-stopwatch"></i>
-                    End At:
+                    <%= t("home:inactive.end_at") %>
                     <span class="duration">
-                      <%= session.endTime %>
+                      <bdi><%= session.endTime %></bdi>
                     </span>
                   </span>
                 </div>
                 <div class="action-buttons" data-session-id="<%= session.id %>">
                   <button type="button" class="join-session blue-btn">
                     <i class="bi bi-box-arrow-in-right"></i>
-                    Join Session
+                    <%= t("home:inactive.join_session") %>
                   </button>
                   <button type="button" class="should-fill view-details">
                     <i class="bi bi-info-circle"></i>
-                    View Details
+                    <%= t("home:inactive.view_details") %>
                   </button>
                 </div>
               </footer>
@@ -162,8 +159,8 @@
                   <div class="empty-icon-container">
                     <i class="bi bi-clock-history"></i>
                   </div>
-                  <h3>No Active Sessions</h3>
-                  <p>There are no study sessions currently active. You can start one or wait for others to join.</p>
+                  <h3><%= t("home:inactive.empty_sessions_heading") %></h3>
+                  <p><%= t("home:inactive.empty_sessions_desc") %></p>
                 </div>
                 <% } %>
       </div>

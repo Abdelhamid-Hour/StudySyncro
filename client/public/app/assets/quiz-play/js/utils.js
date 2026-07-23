@@ -1,6 +1,10 @@
-import { registerPageListener } from "../../global/js/utils.js";
-import { showMessageBlock } from "../../../../../main_assets/js/utils.js";
-import { fetchData, sendData } from "../../../../main_assets/js/utils.js";
+import {
+  registerPageListener,
+  showMessageBlock,
+  fetchData,
+  sendData,
+  t,
+} from "../../global/js/utils.js";
 import { openQuizResultOverlay } from "../../shared/quiz-result/js/utils.js";
 import {
   hoursEl,
@@ -68,29 +72,12 @@ function animateArc(canvas, ctx, percentage, color, duration = 1000) {
   requestAnimationFrame(animate);
 }
 
-const resultTypes = {
-  excellent: {
-    title: "Excellent work!",
-    description: "You nailed it! Keep it up.",
-  },
-  good: {
-    title: "Well done!",
-    description: "Great job! You have a good grasp of the material.",
-  },
-  average: {
-    title: "Not bad, keep going!",
-    description: "You're almost there! Keep up the good work.",
-  },
-  poor: {
-    title: "Better luck next time!",
-    description: "Try to review the material and keep practicing.",
-  },
-};
+// resultTypes has been replaced by dynamic locale keys
 
 const getQuizResultPage = (grade, correctCount, percentage) => {
-  const { title, description } = resultTypes[grade];
-  // Capitalize the first letter of grade
-  const capitalizedGrade = grade.charAt(0).toUpperCase() + grade.slice(1);
+  const title = t(`quizzes:play.results.${grade}.title`);
+  const description = t(`quizzes:play.results.${grade}.desc`);
+  const capitalizedGrade = t(`quizzes:play.grades.${grade}`);
   return `<div class="quiz-result">
             <header class="quiz-result-header">
                 <h1 class="title">${title}</h1>
@@ -114,7 +101,7 @@ const getQuizResultPage = (grade, correctCount, percentage) => {
                 class="quiz-svg-rectangle"
             />
             <div class="meta-result">
-                <h2>Your Score</h2>
+                <h2>${t("quizzes:play.your_score")}</h2>
                 <div class="percentage-wrapper">
                     <canvas class="percentage-circle"></canvas>
                     <div class="percentage-value">
@@ -125,11 +112,11 @@ const getQuizResultPage = (grade, correctCount, percentage) => {
                         <span class="icon-box">
                             <i class="bi bi-check2-circle"></i>
                         </span>
-                        ${correctCount} Questions
+                        ${correctCount} ${t("quizzes:questions_label")}
                     </span>
                 </div>
                 <button type="button" class="blue-btn view-result-btn">
-                    View Result Details
+                    ${t("quizzes:play.view_result_details")}
                 </button>
             </div>
             <div id="lottie-animation"></div>
@@ -195,8 +182,12 @@ const createChoiceElement = (choice, index) => {
 
 export const getQuestionTemplate = (
   {
-    questionText = "A simple question text here, simple question text here, simple question text here, simple question text here",
-    choices = ["Choice A", "Choice B", "Choice C"],
+    questionText = t("quizzes:quiz_play.fallback_question", { defaultValue: "Question text..." }),
+    choices = [
+      t("quizzes:quiz_play.choice_a", { defaultValue: "Choice A" }),
+      t("quizzes:quiz_play.choice_b", { defaultValue: "Choice B" }),
+      t("quizzes:quiz_play.choice_c", { defaultValue: "Choice C" }),
+    ],
   },
   animationClass,
 ) => {
@@ -206,7 +197,7 @@ export const getQuestionTemplate = (
   <div class="question-body">
     <h4></h4>
     <div class="question-choices">
-      <span class="select-answer-label">Select the correct Answer <span style="opacity: 0.65; font-size: 0.85em; font-weight: normal;">(Or press 1-6 / A-F)</span></span>
+      <span class="select-answer-label">${t("quizzes:play.select_answer")}</span>
       <div class="choices-list">
       </div>
     </div>
@@ -268,8 +259,8 @@ const step = (direction) => {
   }
 
   const nextIsLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
-  if (nextIsLastQuestion) nextBtn.textContent = "Finish";
-  else nextBtn.textContent = "Next";
+  if (nextIsLastQuestion) nextBtn.textContent = t("quizzes:play.finish");
+  else nextBtn.textContent = t("quizzes:play.next");
 
   const questionCounter = document.querySelector(".current-question-number");
   questionCounter.textContent = currentQuestionIndex + 1;
@@ -290,10 +281,7 @@ const step = (direction) => {
 export const toNextQuestion = () => {
   const checkedChoice = document.querySelector('input[type="radio"]:checked');
   if (!checkedChoice) {
-    showMessageBlock(
-      "Please select an answer or click the Skip button to continue.",
-      "info",
-    );
+    showMessageBlock(t("quizzes:play.alerts.select_answer"), "info");
     return;
   }
 
@@ -329,14 +317,16 @@ export const toPreviousQuestion = () => step(-1);
 export const setUpQuiz = async () => {
   try {
     let questions, duration, passed;
-    if (window.__QUIZ_INITIAL_DATA__ && window.__QUIZ_INITIAL_DATA__.questions && window.__QUIZ_INITIAL_DATA__.questions.length > 0) {
+    if (
+      window.__QUIZ_INITIAL_DATA__ &&
+      window.__QUIZ_INITIAL_DATA__.questions &&
+      window.__QUIZ_INITIAL_DATA__.questions.length > 0
+    ) {
       questions = window.__QUIZ_INITIAL_DATA__.questions;
       duration = window.__QUIZ_INITIAL_DATA__.duration;
       passed = window.__QUIZ_INITIAL_DATA__.passed;
     } else {
-      const data = await fetchData(
-        "/quiz-play-details/" + quiz.id,
-      );
+      const data = await fetchData("/quiz-play-details/" + quiz.id);
       questions = data.questions;
       duration = data.duration;
       passed = data.passed;
@@ -358,10 +348,7 @@ export const setUpQuiz = async () => {
     }
   } catch (error) {
     console.error("Failed to fetch quiz questions:", error);
-    showMessageBlock(
-      "Failed to load quiz questions. Please try again later.",
-      "error",
-    );
+    showMessageBlock(t("quizzes:play.alerts.failed_load"), "error");
     return;
   }
 };
@@ -431,12 +418,12 @@ const finishQuiz = async () => {
 
   if (!quiz.passed) submitExamenResult();
 
-  setUpCanvas(
-    grade,
-    percentage,
-    `${quizResult.correctAnswers.length} of ${quiz.questions.length}`,
-    1000,
-  );
+  const scoreString = t("quizzes:play.score_of", {
+    correct: quizResult.correctAnswers.length,
+    total: quiz.questions.length,
+  });
+
+  setUpCanvas(grade, percentage, scoreString, 1000);
 };
 
 const submitExamenResult = async () => {
@@ -444,10 +431,7 @@ const submitExamenResult = async () => {
     await sendData("/api/add-quiz-result", { quizResult });
   } catch (error) {
     console.error("Failed to submit examen result:", error);
-    showMessageBlock(
-      "Failed to submit your quiz result. Please try again later.",
-      "error",
-    );
+    showMessageBlock(t("quizzes:play.alerts.failed_submit"), "error");
     return;
   }
 };

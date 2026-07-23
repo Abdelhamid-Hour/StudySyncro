@@ -72,8 +72,8 @@
 
     .member-count {
       font-size: small;
-      margin-left: 0.5rem;
-      padding-left: 3.2px;
+      margin-inline-start: 0.5rem;
+      padding-inline-start: 3.2px;
       width: fit-content;
     }
 
@@ -82,10 +82,10 @@
       height: 2rem;
       width: 2rem;
       background-color: var(--background-color);
-      margin-right: -0.5rem;
+      margin-inline-end: -0.5rem;
       overflow: hidden;
       &:not(:first-child) {
-        border-left: 0.3rem solid var(--btn-background-color);
+        border-inline-start: 0.3rem solid var(--btn-background-color);
       }
     }
   }
@@ -163,7 +163,7 @@
     justify-content: center;
     position: fixed;
     bottom: 5.25rem;
-    right: 1.5rem;
+    inset-inline-end: 1.5rem;
     width: 3.5rem;
     height: 3.5rem;
     border-radius: 50%;

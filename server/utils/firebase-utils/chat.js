@@ -21,7 +21,10 @@ const sendMessage = async (
   user,
 ) => {
   try {
-    if (!file && (!message || typeof message !== "string" || message.trim().length === 0)) {
+    if (
+      !file &&
+      (!message || typeof message !== "string" || message.trim().length === 0)
+    ) {
       throw new Error("Cannot send an empty message without an attachment.");
     }
 
@@ -222,13 +225,17 @@ const getMessages = async (
     return { success: true, messages, lastVisible };
   } catch (error) {
     console.error("Error getting messages:", error);
-    return { success: false, message: error.message, isNative: false, type: "error" };
+    return {
+      success: false,
+      message: error.message,
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
 const startChildAddedListener = (roomId, query) => {
   const onChildAdded = (snapshot) => {
-
     try {
       const messageData = {
         id: snapshot.key,
@@ -368,12 +375,22 @@ const updateUserGroupChatState = async (groupId, messageData, messageId) => {
   }
 };
 
-const markGroupAsReadHelper = async (userId, groupId, messageId = null, timestamp = null) => {
+const markGroupAsReadHelper = async (
+  userId,
+  groupId,
+  messageId = null,
+  timestamp = null,
+) => {
   try {
     const ref = rDb.ref(`userGroupChats/${userId}/${groupId}`);
     const snap = await ref.once("value");
     if (!snap.exists()) {
-      return { success: false, message: "Group chat state not found", isNative: true, type: "info" };
+      return {
+        success: false,
+        message: "Group chat state not found",
+        isNative: true,
+        type: "info",
+      };
     }
     const now = Date.now();
     const updates = {
@@ -388,25 +405,44 @@ const markGroupAsReadHelper = async (userId, groupId, messageId = null, timestam
     return { success: true };
   } catch (error) {
     console.error("Error marking group as read:", error);
-    return { success: false, message: error.message, isNative: false, type: "error" };
+    return {
+      success: false,
+      message: error.message,
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
 const getUserGroupChatStateHelper = async (userId, groupId) => {
-  try {    
+  try {
     const ref = rDb.ref(`userGroupChats/${userId}/${groupId}`);
     const snap = await ref.once("value");
     if (!snap.exists()) {
-      return { success: false, message: "Group chat state not found", isNative: true, type: "info" };
+      return {
+        success: false,
+        message: "Group chat state not found",
+        isNative: true,
+        type: "info",
+      };
     }
     return { success: true, data: snap.val() };
   } catch (error) {
     console.error("Error getting user group chat state:", error);
-    return { success: false, message: error.message, isNative: false, type: "error" };
+    return {
+      success: false,
+      message: error.message,
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
-const getRecentMessagesHelper = async (userId, limit = INITIALE_LOADERS_COUNT, lastVisible = null) => {
+const getRecentMessagesHelper = async (
+  userId,
+  limit = INITIALE_LOADERS_COUNT,
+  lastVisible = null,
+) => {
   try {
     const baseRef = rDb.ref(`userGroupChats/${userId}`);
     let query = baseRef.orderByChild("lastUpdate");
@@ -438,10 +474,8 @@ const getRecentMessagesHelper = async (userId, limit = INITIALE_LOADERS_COUNT, l
     // Reverse to get descending order (RTDB returns ascending)
     results.reverse();
 
-    const nextLastVisible = results.length === limit
-      ? results[results.length - 1]?.groupId
-      : null;
-
+    const nextLastVisible =
+      results.length === limit ? results[results.length - 1]?.groupId : null;
 
     return {
       success: true,
@@ -452,11 +486,14 @@ const getRecentMessagesHelper = async (userId, limit = INITIALE_LOADERS_COUNT, l
     };
   } catch (error) {
     console.error("Error getting recent messages:", error);
-    return { success: false, message: error.message, isNative: false, type: "error" };
+    return {
+      success: false,
+      message: error.message,
+      isNative: false,
+      type: "error",
+    };
   }
-
 };
-
 
 const RECENT_MESSAGES_STREAM_MAP = new Map();
 
@@ -471,6 +508,7 @@ const startRecentMessagesListener = (userId, query) => {
   };
 
   const onChildRemoved = (snapshot) => {
+    console.log("onChildRemoved");
     try {
       const data = snapshot.val() || {};
       const groupId = snapshot.key || data.groupId;

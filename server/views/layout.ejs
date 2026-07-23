@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
+<html lang="<%= lang %>" dir="<%= dir %>">
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -16,10 +16,19 @@
     <!-- Preloading Critical Resources -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
+    <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
+    <link
+    rel="preload"
+    href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+    as="style"
+    id="font-arabic-preload"
+    />
+    <% } %>
     <link
     rel="preload"
     href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
     as="style"
+    id="font-inter-preload"
     />
     <link
     rel="preload"
@@ -56,10 +65,18 @@
       <%- style.styleTag %>
       <%- style.preloadLink %>
     <% }) %>
+      <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
       <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-    />
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
+        id="font-arabic"
+      />
+      <% } %>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        id="font-inter"
+      />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
@@ -68,23 +85,23 @@
     <link data-dynamic="" rel="stylesheet" href="/app/assets<%- resourcesRoute %>css/styles.css" />
     <link rel="stylesheet" href="/main_assets/css/styles.css" />
     <link rel="stylesheet" href="/main_assets/css/variables_and_fonts.css" />
-    <title>StudyHype — <%= resourcesRoute.includes("/home/") 
-      ? "Home" 
+    <title><%= t("common.titles.studyhype") %> — <%= resourcesRoute.includes("/home/") 
+      ? t("common.titles.home") 
       : resourcesRoute === '/groups/my/group-chat/' 
-      ? "Group Chat" 
+      ? t("common.titles.group_chat") 
       : resourcesRoute === '/groups/available/'
-      ? "Available Groups"
+      ? t("common.titles.available_groups")
       : ['/groups/my/', '/groups/available/'].includes(resourcesRoute) || resourcesRoute.includes('/groups/')
-      ? "Groups" 
+      ? t("common.titles.groups") 
       : resourcesRoute === '/quizzes/my/quiz-editor/' 
-      ? "Quiz Editor" 
+      ? t("common.titles.quiz_editor") 
       : resourcesRoute === '/quizzes/passed/'
-      ? "Passed Quizzes"
+      ? t("common.titles.passed_quizzes")
       : ['/quizzes/my/', '/quizzes/passed/'].includes(resourcesRoute) || resourcesRoute.includes('/quizzes/')
-      ? "Quizzes" 
+      ? t("common.titles.quizzes") 
       : resourcesRoute.includes('/settings/') 
-      ? "Settings" 
-      : "Dashboard" %></title>
+      ? t("common.titles.settings") 
+      : t("common.titles.dashboard") %></title>
   </head>
   
   <body>
@@ -92,17 +109,17 @@
       <div class="top-sidebar-header">
         <h2 class="sidebar-title">
           <%- resourcesRoute.includes("/home/") 
-            ? "Home" 
+            ? t("common.titles.home") 
             : ['/groups/my/', '/groups/available/'].includes(resourcesRoute) 
-            ? 'Groups' 
+            ? t("common.titles.groups") 
             : ['/quizzes/my/', '/quizzes/passed/'].includes(resourcesRoute) 
-            ? 'Quizzes' 
+            ? t("common.titles.quizzes") 
             : resourcesRoute === '/groups/my/group-chat/' 
-            ? `<a href="/app/groups/my" class="route-link"><i class="bi bi-caret-left-fill"></i>Group Chat</a>`
+            ? `<a href="/app/groups/my" class="route-link"><i class="bi bi-caret-left-fill"></i>${t("common.titles.group_chat")}</a>`
             : resourcesRoute === '/quizzes/my/quiz-editor/' 
-            ? `<a href="/app/quizzes/my" class="route-link"><i class="bi bi-caret-left-fill"></i>Quiz Editor</a>`
+            ? `<a href="/app/quizzes/my" class="route-link"><i class="bi bi-caret-left-fill"></i>${t("common.titles.quiz_editor")}</a>`
             : resourcesRoute.includes('/settings/')
-            ? 'Settings'
+            ? t("common.titles.settings")
             : '' %>
         </h2>
         <% if (['/groups/my/', '/groups/available/', '/quizzes/my/', '/quizzes/passed/'].includes(resourcesRoute)) { %>
@@ -111,13 +128,13 @@
             href="/app<%= resourcesRoute.includes('/quizzes/') ? '/quizzes' : '/groups' _%>/my"
             class="tab route-link <% if (resourcesRoute === "/groups/my/" || resourcesRoute === "/quizzes/my/") { %> active-tab<% } %> exclude-btn"
           >
-            My <%= resourcesRoute.includes('/quizzes/') ? 'Quizzes' : 'Groups' %>
+            <%= resourcesRoute.includes('/quizzes/') ? t("common.topbar.tabs.my_quizzes") : t("common.topbar.tabs.my_groups") %>
           </a>
           <a
             href="/app<%= resourcesRoute.includes('/quizzes/') ? '/quizzes/passed' : '/groups/available' _%>"
             class="tab route-link <%= resourcesRoute.includes('/quizzes/') ? 'groups-quizzes-tab' : 'available-groups-tab' %> <% if (resourcesRoute === "/groups/available/" || resourcesRoute === "/quizzes/passed/") { %> active-tab<% } %> exclude-btn"
           >
-            <%= resourcesRoute.includes('/quizzes/') ? 'Passed' : 'Available Groups' %>
+            <%= resourcesRoute.includes('/quizzes/') ? t("common.topbar.tabs.passed_quizzes") : t("common.topbar.tabs.available_groups") %>
           </a>
         </div>
         <% } %>
@@ -125,8 +142,8 @@
       <div class="top-side-bar-middele">
       <% if (resourcesRoute.includes("/home/")) { %>
       <div class="greeting-msg fade-in-template">
-        <h2>Hello <%= user.fullName %> 👋</h2>
-        <p>Have a good day !</p>
+        <h2><%= t("common.topbar.greeting_hello", { fullName: user.fullName }) %></h2>
+        <p><%= t("common.topbar.greeting_sub") %></p>
       </div>
       <% } else if (['/quizzes/my/', '/quizzes/passed/', '/groups/my/', '/groups/available/'].includes(resourcesRoute)) { %>
       <div class="search-container fade-in-template">
@@ -134,9 +151,9 @@
           <div class="search-icon-container">
             <i class="bi bi-search"></i>
           </div>
-          <input type="search" id="search-input" placeholder="<%- resourcesRoute.includes('/quizzes/my') ? 'Search By Quiz Title or Subject' : resourcesRoute.includes('/quizzes/passed') ? 'Search By Quiz Title, Subject or Group Name' : 'Search By Group Name or Subject' %>" />
+          <input type="search" id="search-input" placeholder="<%- resourcesRoute.includes('/quizzes/my') ? t('common.topbar.search_placeholder_quizzes') : resourcesRoute.includes('/quizzes/passed') ? t('common.topbar.search_placeholder_passed') : t('common.topbar.search_placeholder_groups') %>" />
           <% if (resourcesRoute.includes('/quizzes/passed')) { %>
-            <label data-tooltip="Filter By Date" class="date-label should-fill has-tooltip">
+            <label data-tooltip="<%= t('common.topbar.filter_date_tooltip') %>" class="date-label should-fill has-tooltip">
               <i class="bi bi-calendar"></i>
               <input type="date" id="date-input">
             </label>
@@ -157,7 +174,7 @@
               <% if (resourcesRoute === '/groups/my/') { %>
                 <!-- ? Role Filter -->
                 <section class="filter-section">
-                <h4 class="filter-title">Role</h4>
+                <h4 class="filter-title"><%= t("common.filters.role") %></h4>
                 <div class="filter-option">
                 <!-- From Uiverse.io by SelfMadeSystem --> 
                 <label for="admin" class="container">
@@ -170,7 +187,7 @@
                   ></path>
                 </svg>
                 <i class="bi bi-person-gear"></i>
-                Admin
+                <%= t("common.filters.admin") %>
                 </label>
                 </div>
                 <div class="filter-option">
@@ -184,14 +201,14 @@
                   ></path>
                 </svg>
                 <i class="bi bi-person"></i>
-                Member
+                <%= t("common.filters.member") %>
                 </label>
                 </div>
                 </section>
                 <% } %>
                 <!-- ? Visibility Filter -->
                 <section class="filter-section">
-                <h4 class="filter-title">Visibility</h4>
+                <h4 class="filter-title"><%= t("common.filters.visibility") %></h4>
                 <div class="filter-option">
                 <label for="private" class="container">
                 <input type="checkbox" id="private" value="Private" />
@@ -203,7 +220,7 @@
                   ></path>
                 </svg>
                 <i class="bi bi-lock"></i>
-                Private
+                <%= t("common.filters.private") %>
                 </label>
                 </div>
                 <div class="filter-option">
@@ -217,13 +234,13 @@
                   ></path>
                 </svg>
                 <i class="bi bi-eye"></i>
-                Public
+                <%= t("common.filters.public") %>
                 </label>
                 </div>
                 </section>
                 <!-- ? Level Filter -->
                 <section class="filter-section">
-                <h4 class="filter-title">Level</h4>
+                <h4 class="filter-title"><%= t("common.filters.level") %></h4>
                 <div class="filter-option">
                 <label for="advanced" class="container">
                   <input type="checkbox" id="advanced" value="Advanced" />
@@ -235,7 +252,7 @@
                   ></path>
                   </svg>
                   <i class="bi bi-graph-up"></i>
-                  Advanced
+                  <%= t("common.filters.advanced") %>
                 </label>
                 </div>
                 <div class="filter-option">
@@ -249,7 +266,7 @@
                   ></path>
                   </svg>
                   <i class="bi bi-bar-chart"></i>
-                  Intermediate
+                  <%= t("common.filters.intermediate") %>
                 </label>
                 </div>
                 <div class="filter-option">
@@ -263,14 +280,14 @@
                   ></path>
                   </svg>
                   <i class="bi bi-lightbulb"></i>
-                  Beginner
+                  <%= t("common.filters.beginner") %>
                 </label>
                 </div>
                 </section>
                 <!-- ? View Options -->
                 <% if (resourcesRoute === '/groups/available/') { %>
                 <section class="filter-section">
-                <h4 class="filter-title">View Options</h4>
+                <h4 class="filter-title"><%= t("common.filters.view_options") %></h4>
                 <div class="filter-option">
                 <label for="joinable-only" class="container">
                   <input type="checkbox" id="joinable-only" value="Joinable Only" />
@@ -282,7 +299,7 @@
                   ></path>
                   </svg>
                   <i class="bi bi-people"></i>
-                  Joinable Only
+                  <%= t("common.filters.joinable_only") %>
                 </label>
                 </div>
                 </section>
@@ -291,7 +308,7 @@
                 <% if (resourcesRoute.includes('/quizzes/my')) { %>
                  <!-- ? Status Filter -->
                 <section class="filter-section">
-                <h4 class="filter-title">Status</h4>
+                <h4 class="filter-title"><%= t("common.filters.status") %></h4>
                 <div class="filter-option">
                 <label for="published" class="container">
                 <input type="checkbox" id="published" value="published" />
@@ -303,7 +320,7 @@
                   ></path>
                 </svg>
                 <i class="bi bi-check-circle"></i>
-                Published
+                <%= t("common.filters.published") %>
                 </label>
                 </div>
                 <div class="filter-option">
@@ -317,7 +334,7 @@
                   ></path>
                 </svg>
                 <i class="bi bi-pencil"></i>
-                Draft
+                <%= t("common.filters.draft") %>
                 </label>
                 </div>
 
@@ -337,17 +354,17 @@
         <% if (resourcesRoute === '/groups/my/') { %>
         <button type="button" class="create-group-btn">
           <i class="bi bi-plus-circle"></i>
-          <span>Create Group</span>
+          <span><%= t("common.actions.create_group") %></span>
         </button>
         <% } else if (resourcesRoute === '/quizzes/my/quiz-editor/') { %>
         <button type="button" class="save-quiz-btn should-fill blue-btn">
           <i class="bi bi-floppy"></i>
-          <span>Save</span>
+          <span><%= t("common.actions.save") %></span>
         </button>
         <% } else if (resourcesRoute === '/quizzes/my/') { %>
         <button type="button" class="create-quiz-btn">
           <i class="bi bi-plus-circle"></i>
-          <span>Create Quiz</span>
+          <span><%= t("common.actions.create_quiz") %></span>
         </button>
         <% } %>
 
@@ -373,25 +390,25 @@
             <li class="account should-fill">
               <a href="/app/settings" class="drop-down-item route-link">
                 <i class="bi bi-person"></i>
-                Account
+                <%= t("common.profile_menu.account") %>
               </a>
             </li>
             <li class="groups should-fill">
               <a href="/app/groups/my" class="drop-down-item route-link">
                 <i class="bi bi-people"></i>
-                My Groups
+                <%= t("common.profile_menu.my_groups") %>
               </a>
             </li>
             <li class="quizzes should-fill">
               <a href="/app/quizzes/my" class="drop-down-item route-link">
                 <i class="bi bi-clipboard-check"></i>
-                My Quizzes
+                <%= t("common.profile_menu.my_quizzes") %>
               </a>
             </li>
             <li class="logout-button-li account">
               <button type="button" id="logout-button" class="red-btn drop-down-item">
                 <i class="bi bi-box-arrow-in-left"></i>
-                Logout
+                <%= t("common.profile_menu.logout") %>
               </button>
             </li>
           </ul>
@@ -401,43 +418,46 @@
     <aside class="left-side-bar">
       <div class="logo-container">
         <img src="/main_assets/images/logo-mark.svg" alt="StudyHype Logo" style="aspect-ratio: 1 / 1; width: 2.2rem; flex-shrink: 0;" />
-        <h6 class="should-hide">StudyHype</h6>
+        <h6 class="should-hide"><%= t("common.sidebar.logo_text") %></h6>
       </div>
       <div class="side-bar-icons">
         <div class="top-side-bar-icons">
           <a href="/app/home" class="nav-link route-link should-fill<% if (resourcesRoute.includes("/home/")) { %> active<% } %> ">
             <i class="bi bi-house<%_ if (resourcesRoute.includes("/home/")) { %>-fill<% } %>"></i>
-            <h3 class="should-hide">OverView</h3>
+            <h3 class="should-hide"><%= t("common.sidebar.overview") %></h3>
           </a>
           <a
             href="/app/groups/my"
             class="nav-link route-link should-fill<% if (resourcesRoute.includes("/groups/")) { %> active<% } %>"
           >
             <i class="bi bi-people<%_ if (resourcesRoute.includes("/groups/")) { %>-fill<% } %>"></i>
-            <h3 class="should-hide">Groups</h3>
+            <h3 class="should-hide"><%= t("common.sidebar.groups") %></h3>
           </a>
           <a href="/app/quizzes/my" class="nav-link route-link should-fill<% if (resourcesRoute.includes("/quizzes/")) { %> active<% } %>">
             <i class="bi bi-clipboard-check<% if (resourcesRoute.includes("/quizzes/")) { %>-fill<% } %>"></i>
-            <h3 class="should-hide">Quizzes</h3>
+            <h3 class="should-hide"><%= t("common.sidebar.quizzes") %></h3>
           </a>
         </div>
         <div class="bottom-side-bar-icons">
-          <button type="button" class="exclude-btn toggle-container nav-btn should-fill" title="Toggle Theme">
+          <button type="button" style="padding-bottom: initial;" class="exclude-btn toggle-container nav-btn should-fill" title="<%= t('common.sidebar.theme_tooltip') %>">
             <i class="bi bi-moon theme-toggle-icon"></i>
+          </button>
+          <button type="button" class="exclude-btn lang-toggle-btn nav-btn should-fill" title="<%= t('common.sidebar.switch_language_tooltip') %>" style="font-weight: 700;">
+            <span class="lang-toggle-text"><%= lang === 'ar' ? 'EN' : 'AR' %></span>
           </button>
           <div class="notification-container" style="position: relative; display: flex; align-items: center; width: fit-content;">
             <% const unreadCount = (typeof notificationsData !== 'undefined' && notificationsData.unreadCount) ? notificationsData.unreadCount : 0; %>
             <button
               type="button"
-              class="exclude-btn open-drop-down-btn should-fill nav-btn has-tooltip"
-              data-tooltip="Notifications"
+              class="exclude-btn notification-btn open-drop-down-btn should-fill nav-btn has-tooltip"
+              data-tooltip="<%= t('common.sidebar.notifications_tooltip') %>"
               style="position: relative;"
             >
               <i class="bi bi-bell"></i>
               <span class="badge notification-badge <%= unreadCount > 0 ? '' : 'hidden' %>"><%= unreadCount > 99 ? '99+' : unreadCount %></span>
             </button>
           </div>
-          <button type="button" class="exclude-btn open-close-side-bar-btn nav-btn" title="Toggle Sidebar">
+          <button type="button" class="exclude-btn open-close-side-bar-btn nav-btn" title="<%= t('common.sidebar.toggle_tooltip') %>">
             <i class="bi bi-layout-sidebar sidebar-toggle-icon"></i>
           </button>
           <a
@@ -460,7 +480,7 @@
       <header class="notifications-header">
         <div class="header-title">
           <i class="bi bi-bell-fill"></i>
-          <span>Notifications</span>
+          <span><%= t("common.notifications_drawer.title") %></span>
         </div>
 
         <button type="button" class="exclude-btn close-overlay-btn">
@@ -468,10 +488,10 @@
         </button>
       </header>
       <div class="notifications-categories">
-        <button type="button" class="notif-category-btn exclude-btn active" data-category="All">All</button>
-        <button type="button" class="notif-category-btn exclude-btn" data-category="Join Request">Requests</button>
-        <button type="button" class="notif-category-btn exclude-btn" data-category="Groups">Groups</button>
-        <button type="button" class="notif-category-btn exclude-btn" data-category="Sessions">Sessions</button>
+        <button type="button" class="notif-category-btn exclude-btn active" data-category="All"><%= t("common.notifications_drawer.categories.all") %></button>
+        <button type="button" class="notif-category-btn exclude-btn" data-category="Join Request"><%= t("common.notifications_drawer.categories.requests") %></button>
+        <button type="button" class="notif-category-btn exclude-btn" data-category="Groups"><%= t("common.notifications_drawer.categories.groups") %></button>
+        <button type="button" class="notif-category-btn exclude-btn" data-category="Sessions"><%= t("common.notifications_drawer.categories.sessions") %></button>
       </div>
       <div class="notifications-list" id="notifications-list" data-last-visible="<%= (typeof notificationsData !== 'undefined' && notificationsData.lastVisible) ? notificationsData.lastVisible : '' %>" data-current-session="<%= (typeof user !== 'undefined' && user && user.currentSession) ? user.currentSession : '' %>" data-current-user-id="<%= (typeof user !== 'undefined' && user && user.uid) ? user.uid : '' %>">
         <% if (typeof notificationsData !== 'undefined' && notificationsData.cards && notificationsData.cards.length > 0) { %>
@@ -490,28 +510,41 @@
               return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
             };
             const formatNotifMsg = (notif) => {
-              let msg = escapeHtml(notif.message || "");
-              if (msg.startsWith("Admin role") || msg.includes("Admin role")) {
-                msg = msg.replace("Admin role", "<strong>Admin</strong> role");
+              let rawMsg = notif.message || "";
+              if (notif.type && notif.metadata) {
+                const template = t(`notifications:messages.${notif.type}.message`);
+                if (template && !template.startsWith("notifications:messages.")) {
+                  rawMsg = template.replace(/{(\w+)}/g, (_, match) => 
+                    notif.metadata[match] !== undefined ? notif.metadata[match] : `{${match}}`
+                  );
+                }
               }
 
-              const termsMap = [
-                { term: "invited you to join", cls: "bold-success" },
-                { term: "successfully joined", cls: "bold-success" },
-                { term: "accepted", cls: "bold-success" },
-                { term: "started", cls: "bold-success" },
-                { term: "ended", cls: "bold-success" },
-                { term: "rejected", cls: "bold-danger" },
-                { term: "removed", cls: "bold-danger" },
-                { term: "deleted", cls: "bold-danger" },
-                { term: "demoted from Admin", cls: "bold-danger" },
-                { term: "demoted", cls: "bold-danger" },
-                { term: "pending approval", cls: "bold-warning" },
-                { term: "transferred", cls: "bold-warning" },
+              let msg = escapeHtml(rawMsg);
+              const adminRoleTerm = t("notifications:styling_terms.admin_role");
+              if (adminRoleTerm && msg.includes(adminRoleTerm)) {
+                msg = msg.replace(adminRoleTerm, `<strong>${adminRoleTerm}</strong>`);
+              }
+               const termsMap = [
+                { term: t("notifications:styling_terms.invited_you_to_join"), cls: "bold-success" },
+                { term: t("notifications:styling_terms.invited_you_to_join_suffix"), cls: "bold-success" },
+                { term: t("notifications:styling_terms.successfully_joined"), cls: "bold-success" },
+                { term: t("notifications:styling_terms.accepted"), cls: "bold-success" },
+                { term: t("notifications:styling_terms.started"), cls: "bold-success" },
+                { term: t("notifications:styling_terms.ended"), cls: "bold-danger" },
+                { term: t("notifications:styling_terms.rejected"), cls: "bold-danger" },
+                { term: t("notifications:styling_terms.declined"), cls: "bold-danger" },
+                { term: t("notifications:styling_terms.removed"), cls: "bold-danger" },
+                { term: t("notifications:styling_terms.deleted"), cls: "bold-danger" },
+                { term: t("notifications:styling_terms.demoted_from_admin"), cls: "bold-danger" },
+                { term: t("notifications:styling_terms.demoted"), cls: "bold-danger" },
+                { term: t("notifications:styling_terms.pending_approval"), cls: "bold-warning" },
+                { term: t("notifications:styling_terms.transferred"), cls: "bold-warning" },
+                { term: t("notifications:styling_terms.host_role"), cls: "" },
                 { term: notif.metadata?.senderName, cls: "" },
                 { term: notif.metadata?.groupName, cls: "" },
                 { term: notif.metadata?.sessionName, cls: "" }
-              ].filter(item => item.term && typeof item.term === "string");
+              ].filter(item => item.term && typeof item.term === "string" && !item.term.startsWith("notifications:styling_terms."));
 
               termsMap.sort((a, b) => b.term.length - a.term.length);
 
@@ -570,17 +603,17 @@
                   %>
                   <% if (notif.type === 'join_request' && !notif.metadata?.isInvite) { %>
                     <div class="notif-actions">
-                      <button type="button" class="reject-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> Reject</button>
-                      <button type="button" class="accept-btn exclude-btn small-btn" data-action="accept"><i class="bi bi-check-circle"></i> Accept</button>
+                      <button type="button" class="reject-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> <%= t("common.notifications_drawer.actions.reject") %></button>
+                      <button type="button" class="accept-btn exclude-btn small-btn" data-action="accept"><i class="bi bi-check-circle"></i> <%= t("common.notifications_drawer.actions.accept") %></button>
                     </div>
                   <% } else if (notif.type === 'join_invite' || (notif.type === 'join_request' && notif.metadata?.isInvite)) { %>
                     <div class="notif-actions">
-                      <button type="button" class="reject-invite-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> Reject</button>
-                      <button type="button" class="join-invite-btn exclude-btn small-btn" data-action="join"><i class="bi bi-box-arrow-in-right"></i> Join</button>
+                      <button type="button" class="reject-invite-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> <%= t("common.notifications_drawer.actions.reject") %></button>
+                      <button type="button" class="join-invite-btn exclude-btn small-btn" data-action="join"><i class="bi bi-box-arrow-in-right"></i> <%= t("common.notifications_drawer.actions.join") %></button>
                     </div>
                   <% } else if (notif.type === 'session_started' && !(notif.metadata && notif.metadata.sessionEnded) && !isAlreadyJoined && !isCreator) { %>
                     <div class="notif-actions">
-                      <button type="button" class="join-session-btn exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> Join</button>
+                      <button type="button" class="join-session-btn exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> <%= t("common.notifications_drawer.actions.join") %></button>
                     </div>
                   <% } %>
                 </div>
@@ -592,8 +625,8 @@
             <div class="empty-icon-container">
               <i class="bi bi-bell-slash"></i>
             </div>
-            <h3>No notifications yet</h3>
-            <p>You don't have any notifications right now.</p>
+            <h3><%= t("common.notifications_drawer.empty_title") %></h3>
+            <p><%= t("common.notifications_drawer.empty_sub") %></p>
           </div>
         <% } %>
       </div>
@@ -602,11 +635,11 @@
     <header class="mobile-topbar">
       <div class="mobile-topbar-left">
         <% const isSearchPage = ['/groups/my/', '/groups/available/', '/quizzes/my/', '/quizzes/passed/'].includes(resourcesRoute); %>
-        <button type="button" class="exclude-btn mobile-icon-btn mobile-search-btn <%= isSearchPage ? '' : 'hidden' %>" title="Search">
+        <button type="button" class="exclude-btn mobile-icon-btn mobile-search-btn <%= isSearchPage ? '' : 'hidden' %>" title="<%= t('common.actions.search') %>">
           <i class="bi bi-search"></i>
         </button>
         <% const isSubpageReturn = resourcesRoute === '/groups/my/group-chat/' || resourcesRoute === '/quizzes/my/quiz-editor/'; %>
-        <a href="<%= resourcesRoute === '/groups/my/group-chat/' ? '/app/groups/my' : '/app/quizzes/my' %>" class="mobile-back-btn route-link <%= isSubpageReturn ? '' : 'hidden' %>" title="Return">
+        <a href="<%= resourcesRoute === '/groups/my/group-chat/' ? '/app/groups/my' : '/app/quizzes/my' %>" class="mobile-back-btn route-link <%= isSubpageReturn ? '' : 'hidden' %>" title="<%= t('common.actions.return') %>">
           <i class="bi bi-arrow-left"></i>
         </a>
       </div>
@@ -618,25 +651,25 @@
             class="exclude-btn show-info-btn"
             >
             <i class="bi bi-info-circle"></i>
-            Group Chat
+            <%= t("common.titles.group_chat") %>
           </button>
           <% } else if (resourcesRoute === '/quizzes/my/quiz-editor/') { %>
-            Quiz Editor
+            <%= t("common.titles.quiz_editor") %>
           <% } else if (resourcesRoute.includes("/home/")) { %>
-            Home
+            <%= t("common.titles.home") %>
           <% } else if (resourcesRoute.includes("/groups/")) { %>
-            Groups
+            <%= t("common.titles.groups") %>
           <% } else if (resourcesRoute.includes("/quizzes/")) { %>
-            Quizzes
+            <%= t("common.titles.quizzes") %>
           <% } else if (resourcesRoute.includes("/settings/")) { %>
-            Account Settings
+            <%= t("common.titles.account_settings") %>
           <% } else { %>
-            StudyHype
+            <%= t("common.titles.studyhype") %>
           <% } %>
         </h1>
       </div>
       <div class="mobile-topbar-right">
-        <button type="button" class="exclude-btn mobile-master-menu-btn" title="Menu">
+        <button type="button" class="exclude-btn mobile-master-menu-btn" title="<%= t('common.actions.menu') %>">
           <i class="bi bi-list"></i>
         </button>
       </div>
@@ -654,25 +687,25 @@
     <div id="mobile-tabs-container" class="mobile-tabs-container<%= showMobileTabs ? '' : ' hidden' %>">
       <% if (showHomeTabs) { %>
       <div class="mobile-<%= hasActiveSession ? '' : 'in' %>active-tabs navigation-tabs" style="width: 100%;">
-        <button type="button" class="tab active-tab exclude-btn" data-target="<%= hasActiveSession ? 'timer-session' : 'active-sessions' %>"><%= hasActiveSession ? 'Timer & Session' : 'Active Sessions' %></button>
-        <button type="button" class="tab exclude-btn" data-target="<%= hasActiveSession ? 'tasks' : 'recent-messages' %>"><%= hasActiveSession ? 'Tasks' : 'Recent Messages' %></button>
+        <button type="button" class="tab active-tab exclude-btn" data-target="<%= hasActiveSession ? 'timer-session' : 'active-sessions' %>"><%= hasActiveSession ? t('common.mobile_nav.timer_session') : t('common.mobile_nav.active_sessions') %></button>
+        <button type="button" class="tab exclude-btn" data-target="<%= hasActiveSession ? 'tasks' : 'recent-messages' %>"><%= hasActiveSession ? t('common.mobile_nav.tasks') : t('common.mobile_nav.recent_messages') %></button>
       <% if (hasActiveSession) { %>
-        <button type="button" class="tab exclude-btn" data-target="chat">Chat</button>
+        <button type="button" class="tab exclude-btn" data-target="chat"><%= t('common.mobile_nav.chat') %></button>
       <% } %>
       </div>
       <% } else if (showGroupsTabs) { %>
       <div class="mobile-groups-tabs navigation-tabs groups-tabs" style="width: 100%;">
-        <a href="/app/groups/my" class="tab route-link<%= resourcesRoute === '/groups/my/' ? ' active-tab' : '' %> exclude-btn">My Groups</a>
-        <a href="/app/groups/available" class="tab route-link<%= resourcesRoute === '/groups/available/' ? ' active-tab' : '' %> exclude-btn">Available Groups</a>
+        <a href="/app/groups/my" class="tab route-link<%= resourcesRoute === '/groups/my/' ? ' active-tab' : '' %> exclude-btn"><%= t("common.topbar.tabs.my_groups") %></a>
+        <a href="/app/groups/available" class="tab route-link<%= resourcesRoute === '/groups/available/' ? ' active-tab' : '' %> exclude-btn"><%= t("common.topbar.tabs.available_groups") %></a>
       </div>
       <% } else if (showQuizzesTabs || showQuizEditTabs) { %>
       <div class="mobile-<%= showQuizzesTabs ? 'quizzes' : 'quiz-editor' %>-tabs navigation-tabs quizzes-tabs" style="width: 100%;">
         <% if (showQuizzesTabs) { %>
-        <a href="/app/quizzes/my" class="tab route-link<%= resourcesRoute === '/quizzes/my/' ? ' active-tab' : '' %> exclude-btn">My Quizzes</a>
-        <a href="/app/quizzes/passed" class="tab route-link<%= resourcesRoute === '/quizzes/passed/' ? ' active-tab' : '' %> exclude-btn">Passed</a>
+        <a href="/app/quizzes/my" class="tab route-link<%= resourcesRoute === '/quizzes/my/' ? ' active-tab' : '' %> exclude-btn"><%= t("common.topbar.tabs.my_quizzes") %></a>
+        <a href="/app/quizzes/passed" class="tab route-link<%= resourcesRoute === '/quizzes/passed/' ? ' active-tab' : '' %> exclude-btn"><%= t("common.topbar.tabs.passed_quizzes") %></a>
         <% } else { %>
-        <button type="button" class="tab active-tab exclude-btn" data-target="quiz-editor">Quiz Editor</button>
-        <button type="button" class="tab exclude-btn" data-target="questions-list">Questions List</button>
+        <button type="button" class="tab active-tab exclude-btn" data-target="quiz-editor"><%= t("common.titles.quiz_editor") %></button>
+        <button type="button" class="tab exclude-btn" data-target="questions-list"><%= t("common.mobile_nav.questions_list") %></button>
         <% } %>
       </div>
       <% } %>
@@ -682,25 +715,28 @@
     <div class="mobile-drawer-backdrop"></div>
     <div class="mobile-master-drawer">
       <header class="mobile-drawer-header">
-        <button type="button" id="mobile-theme-toggle-btn" class="exclude-btn toggle-container nav-btn should-fill" title="Toggle Theme">
+        <button type="button" id="mobile-theme-toggle-btn" class="exclude-btn toggle-container nav-btn should-fill" title="<%= t('common.sidebar.theme_tooltip') %>">
           <i class="bi bi-moon theme-toggle-icon"></i>
         </button>
-        <button type="button" class="exclude-btn mobile-drawer-close-btn" title="Close">
+        <button type="button" class="exclude-btn lang-toggle-btn nav-btn should-fill" title="<%= t('common.sidebar.switch_language_tooltip') %>" style="font-weight: 700;">
+          <span class="lang-toggle-text"><%= lang === 'ar' ? 'EN' : 'AR' %></span>
+        </button>
+        <button type="button" class="exclude-btn mobile-drawer-close-btn" title="<%= t('common.actions.close') %>">
           <i class="bi bi-x-lg"></i>
         </button>
       </header>
       <div class="mobile-drawer-body">
         <div class="mobile-drawer-section">
-          <span class="mobile-drawer-section-title">App Controls</span>
+          <span class="mobile-drawer-section-title"><%= t("common.mobile_nav.app_controls") %></span>
           <button type="button" class="exclude-btn mobile-drawer-btn mobile-notif-btn open-drop-down-btn">
             <i class="bi bi-bell"></i>
-            <span>Notifications</span>
+            <span><%= t("common.sidebar.notifications_tooltip") %></span>
             <% const mUnreadCount = (typeof notificationsData !== 'undefined' && notificationsData.unreadCount) ? notificationsData.unreadCount : 0; %>
             <span class="badge notification-badge <%= mUnreadCount > 0 ? '' : 'hidden' %>"><%= mUnreadCount > 99 ? '99+' : mUnreadCount %></span>
           </button>
         </div>
         <div class="mobile-drawer-section mobile-group-chat-actions hidden">
-          <span class="mobile-drawer-section-title">Group Actions</span>
+          <span class="mobile-drawer-section-title"><%= t("common.mobile_nav.group_actions") %></span>
           <div id="mobile-drawer-group-actions-list"></div>
         </div>
       </div>
@@ -720,7 +756,7 @@
         </div>
         <button type="button" id="mobile-logout-button" class="red-btn mobile-logout-btn">
           <i class="bi bi-box-arrow-in-left"></i>
-          <span>Logout</span>
+          <span><%= t("common.profile_menu.logout") %></span>
         </button>
       </footer>
     </div>
@@ -731,19 +767,19 @@
     <nav class="mobile-bottomnav">
       <a href="/app/home" class="mobile-nav-item should-fill route-link<% if (resourcesRoute.includes("/home/")) { %> active<% } %>">
         <i class="bi bi-house<%_ if (resourcesRoute.includes("/home/")) { %>-fill<% } %>"></i>
-        <span>Home</span>
+        <span><%= t("common.mobile_nav.home") %></span>
       </a>
       <a href="/app/groups/my" class="mobile-nav-item should-fill route-link<% if (resourcesRoute.includes("/groups/")) { %> active<% } %>">
         <i class="bi bi-people<%_ if (resourcesRoute.includes("/groups/")) { %>-fill<% } %>"></i>
-        <span>Groups</span>
+        <span><%= t("common.mobile_nav.groups") %></span>
       </a>
       <a href="/app/quizzes/my" class="mobile-nav-item should-fill route-link<% if (resourcesRoute.includes("/quizzes/")) { %> active<% } %>">
         <i class="bi bi-clipboard-check<% if (resourcesRoute.includes("/quizzes/")) { %>-fill<% } %>"></i>
-        <span>Quizzes</span>
+        <span><%= t("common.mobile_nav.quizzes") %></span>
       </a>
       <a href="/app/settings" class="mobile-nav-item should-fill route-link<% if (resourcesRoute.includes("/settings/")) { %> active<% } %>">
         <i class="bi bi-person<%_ if (resourcesRoute.includes("/settings/")) { %>-fill<% } %>"></i>
-        <span>Settings</span>
+        <span><%= t("common.mobile_nav.settings") %></span>
       </a>
     </nav>
 

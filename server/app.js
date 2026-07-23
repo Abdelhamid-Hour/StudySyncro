@@ -10,12 +10,16 @@ const {
 } = require("./middleware/sessionVerification");
 const { renderFragmentOrLayout } = require("./utils/routing");
 const { pageNotFoundHandler } = require("./controllers/pages");
+const i18nMiddleware = require("./middleware/i18n");
 const app = express();
 
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 // Parse cookies
 app.use(cookieParser());
+// Internationalization middleware (must be after cookieParser)
+app.use(i18nMiddleware);
 // parse form data
 app.use(express.urlencoded({ extended: false }));
 // parse JSON data

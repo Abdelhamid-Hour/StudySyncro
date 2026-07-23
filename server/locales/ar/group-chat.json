@@ -1,0 +1,35 @@
+{
+  "show_info_tooltip": "عرض تفاصيل المجموعة",
+  "real_time_chat": "المحادثة الفورية",
+  "end_session": "إنهاء الجلسة",
+  "join_session": "الانضمام للجلسة",
+  "active_session_tooltip": "جلسة نشطة",
+  "create_session": "إنشاء جلسة",
+  "menu": {
+    "group_actions": "إجراءات المجموعة",
+    "group_info": "معلومات المجموعة",
+    "quizzes": "الاختبارات",
+    "session_info": "معلومات الجلسة",
+    "invite_users": "دعوة أعضاء",
+    "manage_demandes": "إدارة طلبات الانضمام",
+    "manage_members": "إدارة الأعضاء",
+    "members": "الأعضاء",
+    "remove_group": "حذف المجموعة",
+    "leave_group": "مغادرة المجموعة"
+  },
+  "emojis": {
+    "search_placeholder": "البحث عن رمز تعبيري",
+    "categories": {
+      "recent": "الأخيرة",
+      "people": "الأشخاص",
+      "animals_nature": "الحيوانات والطبيعة",
+      "food_drink": "الطعام والشراب",
+      "activity": "الأنشطة",
+      "objects": "الأشياء",
+      "symbols": "الرموز",
+      "travel_places": "السفر والأماكن",
+      "flags": "الأعلام"
+    }
+  },
+  "type_message_placeholder": "اكتب رسالة..."
+}

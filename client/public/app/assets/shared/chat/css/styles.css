@@ -48,14 +48,14 @@
 
       .expand-btn {
         top: calc(var(--primary-gap) / 2);
-        right: calc(var(--primary-gap) / 2);
+        inset-inline-end: calc(var(--primary-gap) / 2);
       }
 
       .download-btn,
       .re-send-btn,
       .retry-btn {
         top: calc(var(--primary-gap) / 2);
-        left: calc(var(--primary-gap) / 2);
+        inset-inline-start: calc(var(--primary-gap) / 2);
       }
 
       .retry-btn,
@@ -139,7 +139,7 @@
         background-color: var(--background-color);
         border: initial;
         border-radius: 1rem;
-        margin-right: auto;
+        margin-inline-end: auto;
       }
     }
 
@@ -157,7 +157,7 @@
       height: 100%;
       border-radius: var(--primary-radius);
       box-shadow: var(--primary-shadow);
-      float: right;
+      float: inline-end;
       cursor: pointer;
 
       &[src=""] {
@@ -188,7 +188,7 @@
       flex-direction: column;
       gap: calc(var(--primary-gap) / 6);
 
-      &>div {
+      & > div {
         position: relative;
         width: fit-content;
 
@@ -209,7 +209,7 @@
           font-size: var(--small-font-size);
           align-self: flex-end;
           bottom: calc(var(--primary-gap) / 3);
-          right: calc(var(--primary-gap) / 2);
+          inset-inline-end: calc(var(--primary-gap) / 2);
 
           .bi-check {
             font-size: large;
@@ -245,10 +245,10 @@
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
-        margin-right: auto;
+        margin-inline-end: auto;
         overflow: hidden;
 
-        &>* {
+        & > * {
           white-space: nowrap;
         }
 
@@ -277,11 +277,11 @@
 
     .message-received-text {
       background-color: var(--btn-background-color);
-      margin-left: calc(var(--primary-gap) / 2);
+      margin-inline-start: calc(var(--primary-gap) / 2);
     }
 
     .message-sent-text {
-      margin-right: 0.5rem;
+      margin-inline-end: 0.5rem;
     }
 
     .message-sent-text,
@@ -317,13 +317,14 @@
       display: flex;
       flex-direction: column;
       gap: calc(var(--primary-gap) / 3);
-      transition: opacity var(--primary-transition-style),
+      transition:
+        opacity var(--primary-transition-style),
         scale var(--primary-transition-style);
 
       &:has(p) {
         .re-send-btn {
           position: absolute;
-          right: -0.5rem;
+          inset-inline-end: -0.5rem;
           top: 50%;
           translate: 100% -50%;
           display: flex;
@@ -345,18 +346,20 @@
         background-color: var(--btn-background-color);
         border-end-start-radius: 12px;
         clip-path: polygon(100% 0%, 100% 100%, 0.5rem 100%, 0.5rem 0.5rem, 0 0);
-        padding-left: var(--primary-gap);
+        padding-inline-start: var(--primary-gap);
       }
 
       &.first-message-sent-text {
         background-color: var(--primary-color);
         border-end-end-radius: 13px;
-        padding-right: var(--primary-gap);
-        clip-path: polygon(100% 0,
-            calc(100% - 0.5rem) 0.5rem,
-            calc(100% - 0.5rem) 100%,
-            0 100%,
-            0 0);
+        padding-inline-end: var(--primary-gap);
+        clip-path: polygon(
+          100% 0,
+          calc(100% - 0.5rem) 0.5rem,
+          calc(100% - 0.5rem) 100%,
+          0 100%,
+          0 0
+        );
       }
 
       &::before {
@@ -368,26 +371,30 @@
       }
 
       &.first-message-sent-text::before {
-        clip-path: polygon(calc(100% - 0.5rem - 1px) 0.5rem,
-            calc(100% - 1px) 0,
-            100% 0,
-            calc(100% - 0.5rem) 0.5rem,
-            calc(100% - 0.5rem) 100%,
-            calc(100% - 0.5rem - 1px) 100%);
+        clip-path: polygon(
+          calc(100% - 0.5rem - 1px) 0.5rem,
+          calc(100% - 2px) 0,
+          100% 0,
+          calc(100% - 0.5rem - 0px) 0.5rem,
+          calc(100% - 0.5rem) 100%,
+          calc(100% - 0.5rem - 0.5px) 100%
+        );
         top: 0;
-        left: 1px;
+        inset-inline-start: 1px;
       }
 
       &.first-message-received-text::before {
-        clip-path: polygon(calc(100% - 0.5rem - 1px) 0.5rem,
-            calc(100% - 2px) 0,
-            100% 0,
-            calc(100% - 0.5rem) 0.5rem,
-            calc(100% - 0.5rem) 100%,
-            calc(100% - 0.5rem - 1px) 100%);
+        clip-path: polygon(
+          calc(100% - 0.5rem - 1px) 0.5rem,
+          calc(100% - 2px) 0,
+          100% 0,
+          calc(100% - 0.5rem) 0.5rem,
+          calc(100% - 0.5rem) 100%,
+          calc(100% - 0.5rem - 1px) 100%
+        );
         scale: -1 1;
         top: 0;
-        left: -1px;
+        inset-inline-start: -1px;
       }
     }
   }
@@ -435,7 +442,7 @@
     align-items: start;
 
     .input-message {
-      padding-left: calc(var(--primary-gap) / 3) !important;
+      padding-inline-start: calc(var(--primary-gap) / 3) !important;
       padding-block: calc(var(--primary-gap) / 3);
       margin-bottom: calc(var(--primary-gap) / 2 + 0.9906rem);
       height: 3rem;
@@ -489,7 +496,7 @@
       button {
         position: absolute;
         top: 0;
-        right: 0;
+        inset-inline-end: 0;
         translate: 50% -50%;
 
         i {
@@ -527,7 +534,7 @@
     position: absolute;
     width: calc(100% + 2px);
     top: 0;
-    left: -1px;
+    inset-inline-start: -1px;
     translate: 0 -100%;
     background-color: var(--background-color);
     border-start-start-radius: var(--primary-radius);
@@ -535,7 +542,8 @@
     display: flex;
     align-items: center;
     gap: var(--primary-gap);
-    transition: opacity var(--primary-transition-style),
+    transition:
+      opacity var(--primary-transition-style),
       height var(--primary-transition-style);
     border: var(--primary-border-style);
     color: var(--primary-color);
@@ -550,7 +558,7 @@
     outline-offset: -0.8rem;
     justify-content: center;
 
-    &>* {
+    & > * {
       opacity: 0;
       transition: all 200ms;
     }
@@ -566,7 +574,7 @@
       height: 5.4494rem;
       opacity: 1;
 
-      &>* {
+      & > * {
         opacity: 1;
       }
     }
@@ -582,8 +590,8 @@
     height: 100%;
     padding-block: 0;
     transition: var(--primary-transition-style);
-    padding-left: 5rem;
-    padding-right: calc(var(--primary-gap) / 2);
+    padding-inline-start: 5rem;
+    padding-inline-end: calc(var(--primary-gap) / 2);
     scrollbar-width: none;
     padding-top: 0.1rem;
   }
@@ -610,7 +618,7 @@
 
   button.send-btn {
     position: absolute;
-    right: calc(var(--primary-gap) / 2);
+    inset-inline-end: calc(var(--primary-gap) / 2);
     display: flex;
     align-items: center;
     height: calc(2.2875rem - var(--primary-gap) - 2px);
@@ -623,7 +631,7 @@
     height: calc(2.2875rem - var(--primary-gap) - 2px);
     width: 5.2002rem;
     position: absolute;
-    left: calc(var(--primary-gap) / 2);
+    inset-inline-start: calc(var(--primary-gap) / 2);
     bottom: calc(var(--primary-gap) / 2);
     transition: var(--primary-transition-style);
 
@@ -642,7 +650,7 @@
         flex-direction: column;
         gap: calc(var(--primary-gap) / 2);
         top: 0;
-        left: 50%;
+        inset-inline-start: 50%;
         translate: 0 calc(-100% - 1rem);
         width: 20rem;
         height: 25rem;
@@ -688,14 +696,14 @@
 
           .search-icon-container {
             position: absolute;
-            left: 0;
+            inset-inline-start: 0;
             top: 0;
             width: 2.5rem;
             height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-right: var(--primary-border-style);
+            border-inline-end: var(--primary-border-style);
             transition: var(--primary-transition-style);
             border-start-start-radius: var(--primary-radius);
             border-end-start-radius: var(--primary-radius);
@@ -707,7 +715,7 @@
             border-radius: var(--primary-radius);
             border: var(--primary-border-style);
             padding: calc(var(--primary-gap) / 2);
-            padding-left: 3rem;
+            padding-inline-start: 3rem;
             outline: 0.2rem solid transparent;
           }
         }
@@ -761,7 +769,7 @@
             display: none;
           }
 
-          section>div {
+          section > div {
             margin-top: calc(var(--primary-gap) / 2);
             display: flex;
             flex-wrap: wrap;
@@ -803,4 +811,37 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
   letter-spacing: 0.02em;
   text-transform: uppercase;
+}
+
+/* RTL clip-path rules for message cards and ::before borders */
+html[lang="ar"] .first-message-sent-text,
+[dir="rtl"] .first-message-sent-text {
+  clip-path: polygon(
+    0 0,
+    0.5rem 0.5rem,
+    0.5rem 100%,
+    100% 100%,
+    100% 0
+  ) !important;
+}
+
+html[lang="ar"] .first-message-sent-text::before,
+[dir="rtl"] .first-message-sent-text::before {
+  scale: -1 1 !important;
+}
+
+html[lang="ar"] .first-message-received-text,
+[dir="rtl"] .first-message-received-text {
+  clip-path: polygon(
+    100% 0,
+    calc(100% - 0.5rem) 0.5rem,
+    calc(100% - 0.5rem) 100%,
+    0 100%,
+    0 0
+  ) !important;
+}
+
+html[lang="ar"] .first-message-received-text::before,
+[dir="rtl"] .first-message-received-text::before {
+  scale: 1 1 !important;
 }

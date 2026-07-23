@@ -1,0 +1,49 @@
+{
+  "badges": {
+    "draft": "Draft",
+    "draft_tooltip": "Add at least 1 question to publish",
+    "published": "Published"
+  },
+  "questions_heading": "Questions",
+  "add_question": "Add Question",
+  "drag_tooltip": "Drag to Reorder",
+  "delete_question_tooltip": "Delete Question",
+  "subject_label": "Subject:",
+  "edit_subject_tooltip": "Edit Subject",
+  "edit_title_tooltip": "Edit Title",
+  "shared_in_label": "Shared In:",
+  "question_counter": "Question {count}",
+  "question_placeholder": "Enter question text here...",
+  "choices_heading": "Choices",
+  "choice_placeholder": "Enter choice {letter}",
+  "delete_choice_tooltip": "Delete Choice",
+  "add_choice": "Add Choice",
+  "correct_answer_heading": "Correct Answer",
+  "default_question_text": "A simple question text here.",
+  "enter_quiz_title_placeholder": "Enter Quiz Title",
+  "alerts": {
+    "quiz_saved_success": "Quiz saved successfully!",
+    "no_changes_to_save": "No changes to save.",
+    "failed_to_save": "Failed to save quiz. Please try again.",
+    "failed_to_update": "Failed to update {type}. Please try again.",
+    "min_choices": "You must have at least {min} choices.",
+    "max_choices": "You can only have up to {max} choices.",
+    "title_updated": "Title updated successfully!",
+    "subject_updated": "Subject updated successfully!"
+  },
+  "validation": {
+    "question_required": "Question text is required.",
+    "question_length": "Question text must be between {min} and {max} characters.",
+    "choice_required": "Choice text is required.",
+    "choice_length": "Choice text must be less than {max} characters.",
+    "min_choices_required": "At least two choices are required.",
+    "correct_answer_required": "Correct answer is required.",
+    "correct_answer_invalid": "Correct answer index is invalid."
+  },
+  "modals": {
+    "leave_editor_title": "Are you sure you want to leave?",
+    "leave_editor_desc": "You will lose all unsaved changes.",
+    "leave_editor_discard": "Discard",
+    "leave_editor_save": "Save and Leave"
+  }
+}

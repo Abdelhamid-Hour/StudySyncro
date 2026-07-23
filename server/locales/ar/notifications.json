@@ -1,0 +1,73 @@
+{
+  "categories": {
+    "Join Request": "طلب انضمام",
+    "Groups": "المجموعات",
+    "Sessions": "الجلسات",
+    "All": "الكل",
+    "General": "عام"
+  },
+  "messages": {
+    "join_request": {
+      "title": "طلب انضمام جديد",
+      "message": "طلب {senderName} الانضمام إلى مجموعة {groupName}."
+    },
+    "join_pending": {
+      "title": "تم إرسال الطلب",
+      "message": "طلبك للانضمام إلى مجموعة {groupName} قيد مراجعة المشرف."
+    },
+    "join_accepted": {
+      "title": "تم قبول طلبك",
+      "message": "تم قبول طلب انضمامك إلى مجموعة {groupName}. مرحباً بك!"
+    },
+    "join_rejected": {
+      "title": "تم رفض طلبك",
+      "message": "تم رفض طلب انضمامك إلى مجموعة {groupName} من قبل المشرف."
+    },
+    "join_invite": {
+      "title": "دعوة للانضمام",
+      "message": "دعاك {senderName} للانضمام إلى مجموعة {groupName}."
+    },
+    "session_started": {
+      "title": "بدأت جلسة دراسية",
+      "message": "بدأت جلسة دراسية '{sessionName}' في مجموعة {groupName}. انضم الآن!"
+    },
+    "session_ended": {
+      "title": "انتهت الجلسة الدراسية",
+      "message": "انتهت الجلسة الدراسية '{sessionName}' في مجموعة {groupName}."
+    },
+    "role_transferred": {
+      "title": "نقل صلاحيات المضيف",
+      "message": "أصبحت الآن المضيف (Host) لمجموعة {groupName}."
+    },
+    "role_demoted": {
+      "title": "تحديث الصلاحيات",
+      "message": "تم نقل صلاحيات المضيف في مجموعة {groupName} إلى {newAdminName}."
+    },
+    "member_removed": {
+      "title": "تمت إزالتك من المجموعة",
+      "message": "تمت إزالتك من مجموعة {groupName}."
+    },
+    "group_deleted": {
+      "title": "تم حذف المجموعة",
+      "message": "تم حذف المجموعة الدراسية {groupName} من قبل المضيف."
+    }
+  },
+  "styling_terms": {
+    "invited_you_to_join": "دعاك",
+    "invited_you_to_join_suffix": "للانضمام",
+    "successfully_joined": "انضم بنجاح",
+    "accepted": "تم قبول",
+    "started": "بدأت",
+    "ended": "انتهت",
+    "rejected": "تم رفض",
+    "declined": "تم رفض",
+    "removed": "تمت إزالتك",
+    "deleted": "تم حذف",
+    "demoted_from_admin": "تم تنزيل رتبتك من مشرف",
+    "demoted": "تم تنزيل رتبتك",
+    "pending_approval": "قيد مراجعة",
+    "transferred": "تم نقل",
+    "admin_role": "صلاحيات المضيف",
+    "host_role": "المضيف"
+  }
+}

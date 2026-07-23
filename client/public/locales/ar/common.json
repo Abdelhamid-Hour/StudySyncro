@@ -1,0 +1,307 @@
+{
+  "locale": "ar-SA",
+  "unknown_user": "مستخدم غير معروف",
+  "avatar_alt": "الصورة الشخصية للمستخدم",
+  "member_avatar_alt": "الصورة الشخصية للعضو",
+  "placeholders": {
+    "search_quizzes": "البحث باستخدام عنوان الاختبار أو الموضوع",
+    "search_groups": "البحث باستخدام اسم المجموعة أو الموضوع",
+    "search_quizzes_groups": "البحث باستخدام عنوان الاختبار، الموضوع أو اسم المجموعة"
+  },
+  "tooltips": {
+    "filter_by_date": "تصفية حسب التاريخ"
+  },
+  "buttons": {
+    "create_group": "إنشاء مجموعة",
+    "create_quiz": "إنشاء اختبار"
+  },
+  "tabs": {
+    "my_groups": "مجموعاتي",
+    "available_groups": "المجموعات المتاحة",
+    "my_quizzes": "اختباراتي",
+    "passed": "المجتازة"
+  },
+  "skeletons": {
+    "loading": "جاري التحميل...",
+    "error_loading": "حدث خطأ أثناء تحميل المحتوى",
+    "no_results_title": "لم يتم العثور على نتائج",
+    "no_results_desc": "لا توجد تطابقات لعملية البحث أو الفلاتر المحددة.",
+    "home": {
+      "active_sessions_heading": "الجلسات النشطة",
+      "recent_messages_heading": "الرسائل الأخيرة",
+      "ready_heading": "هل أنت مستعد لبدء التعلم معاً؟",
+      "ready_desc": "انضم إلى جلسة دراسية للتواصل مع زملائك، والمشاركة في المناقشات، وتعزيز تجربتك التعليمية. ستادي هايب يجعل التعلم التعاوني سهلاً وفعالاً!",
+      "recent_messages_sub": "أحدث المحادثات من مجموعاتك الدراسية",
+      "active_sessions_sub": "الجلسات الدراسية الجارية التي يمكنك الانضمام إليها الآن",
+      "search_placeholder": "البحث باسم الجلسة أو المجموعة"
+    },
+    "groups": {
+      "my_groups": "مجموعاتي",
+      "available_groups": "المجموعات المتاحة",
+      "create_group": "إنشاء مجموعة"
+    },
+    "quizzes": {
+      "my_quizzes": "اختباراتي",
+      "passed": "المجتازة",
+      "quiz_title": "عنوان الاختبار",
+      "group_name": "اسم المجموعة",
+      "session_name": "اسم الجلسة",
+      "submitted_at": "تاريخ التقديم",
+      "score": "النتيجة",
+      "questions": "الأسئلة",
+      "shared_in": "مشارك في",
+      "subject": "المادة"
+    },
+    "settings": {
+      "my_account": "حسابي",
+      "tabs": {
+        "profile": "المعلومات الشخصية",
+        "email": "البريد الإلكتروني",
+        "password": "كلمة المرور",
+        "delete": "إغلاق الحساب"
+      },
+      "profile_title": "التفاصيل الشخصية",
+      "profile_subtitle": "حافظ على تحديث معلوماتك.",
+      "profile_caption": "قم بتحميل صورة بصيغة JPG أو PNG أو GIF (الحد الأقصى 1 ميجابايت).",
+      "full_name": "الاسم الكامل",
+      "uid": "معرف المستخدم",
+      "modify_btn": "تعديل الملف الشخصي"
+    },
+    "quiz_editor": {
+      "quiz_editor": "محرر الاختبار",
+      "questions_list": "قائمة الأسئلة",
+      "questions": "الأسئلة",
+      "question_num": "السؤال {num}",
+      "choices_count": "{count} خيارات",
+      "subject_label": "المادة:",
+      "shared_in_label": "مشارك في:",
+      "choices_title": "الخيارات",
+      "add_choice": "إضافة خيار",
+      "correct_answer_title": "الإجابة الصحيحة"
+    },
+    "quiz_play": {
+      "time_left": "الوقت المتبقي :",
+      "skip": "تخطي",
+      "select_answer": "اختر الإجابة الصحيحة (أو اضغط 1-6 / A-F)",
+      "prev": "السابق",
+      "next": "التالي"
+    }
+  },
+  "alerts": {
+    "error_occurred": "حدث خطأ ما.",
+    "unauthorized": "🚫 غير مصرح لك بالوصول إلى هذا المحتوى. يرجى تسجيل الدخول.",
+    "invalid_file_type": "نوع الملف غير صالح. يرجى اختيار ملف آخر.",
+    "file_too_large": "حجم الملف \"{name}\" يتجاوز الحد الأقصى المسموح به وهو {max} ميجابايت.",
+    "max_files_exceeded": "يمكنك رفع 5 ملفات كحد أقصى فقط",
+    "local_id_not_found": "المعرّف المحلي غير موجود.",
+    "msg_not_found_local": "الرسالة غير موجودة في التخزين المحلي.",
+    "select_subject_error": "يرجى اختيار موضوع صالح من القائمة أو كتابة موضوع جديد.",
+    "error_loading_more": "حدث خطأ أثناء تحميل المزيد من العناصر. يرجى المحاولة لاحقاً.",
+    "password_reset_sent": "إذا كان هذا البريد الإلكتروني مسجلاً، فستتصلك رابط إعادة تعيين كلمة المرور.",
+    "password_reset_success": "تمت إعادة تعيين كلمة المرور بنجاح",
+    "try_resetting_again": "حاول إعادة تعيين كلمة المرور مرة أخرى",
+    "reset_link_expired": "انتهت صلاحية رابط إعادة تعيين كلمة المرور أو تم استخدامه بالفعل",
+    "avatar_size_exceeded": "حجم الملف يتجاوز الحد الأقصى ({size}).",
+    "subject_input_error": "يرجى إدخال موضوع صالح يتراوح طوله بين 2 و 50 حرفاً.",
+    "left_session_success": "لقد غادرت الجلسة بنجاح.",
+    "joined_session_success": "لقد انضممت إلى الجلسة بنجاح."
+  },
+  "auth_errors": {
+    "INVALID_LOGIN_CREDENTIALS": "البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.",
+    "CANCELLED_POPUP_REQUEST": "يبدو أنك أغلقت النافذة المنبثقة قبل إتمام العملية. يرجى المحاولة مرة أخرى.",
+    "EMAIL_ALREADY_IN_USE": "البريد الإلكتروني الذي أدخلته مرتبط بحساب موجود بالفعل. جرب تسجيل الدخول أو استخدم بريداً آخر.",
+    "WRONG_PASSWORD": "عذراً! كلمة المرور التي أدخلتها غير صحيحة. يرجى التحقق منها والمحاولة مرة أخرى.",
+    "POPUP_BLOCKED": "يبدو أن متصفحك قام بحظر النافذة المنبثقة. يرجى السماح بالنوافذ المنبثقة والمحاولة مرة أخرى.",
+    "POPUP_CLOSED_BY_USER": "يبدو أنك أغلقت النافذة المنبثقة قبل إتمام العملية. يرجى فتحها مرة أخرى والمحاولة.",
+    "REDIRECT_CANCELLED_BY_USER": "يبدو أنك ألغيت عملية التوجيه. يرجى المحاولة مرة أخرى لإتمام العملية.",
+    "USER_NOT_FOUND": "لم يتم العثور على حساب مرتبط بهذا البريد الإلكتروني. يرجى التحقق من بريدك أو إنشاء حساب جديد.",
+    "TOO_MANY_REQUESTS": "تم تقديم طلبات كثيرة جداً من هذا الجهاز. يرجى الانتظار قليلاً قبل المحاولة مرة أخرى."
+  },
+  "native_phrases": {
+    "group is full": "المجموعة ممتلئة بالكامل",
+    "already a member": "أنت عضو بالفعل في هذه المجموعة",
+    "already sent a request": "لقد أرسلت بالفعل طلباً للانضمام إلى هذه المجموعة",
+    "already requested": "تم إرسال طلب الانضمام مسبقاً",
+    "group does not exist": "هذه المجموعة غير موجودة",
+    "group not found": "لم يتم العثور على المجموعة",
+    "cannot join this group": "لا يمكنك الانضمام إلى هذه المجموعة",
+    "private and not visible": "هذه المجموعة خاصة وغير مرئية للعامة",
+    "invitation not found": "دعوة الانضمام غير موجودة",
+    "invitation expired": "انتهت صلاحية دعوة الانضمام",
+    "demande not found": "الطلب غير موجود",
+    "already processed": "تمت معالجة هذا الطلب بالفعل",
+    "already invited": "تمت دعوة هذا المستخدم مسبقاً",
+    "creator must transfer": "يجب على منشئ المجموعة نقل صلاحيات المضيف قبل المغادرة",
+    "must transfer your role": "يجب عليك نقل صلاحيات المضيف قبل مغادرة المجموعة",
+    "creator cannot leave": "لا يمكن لمنشئ المجموعة المغادرة دون نقل صلاحيات المضيف أو حذف المجموعة",
+    "quiz title already exists": "يوجد اختبار بنفس هذا العنوان بالفعل",
+    "already exists": "موجود بالفعل",
+    "no questions": "لا توجد أسئلة مضافة في هذا الاختبار",
+    "cannot start quiz": "لا يمكن بدء الاختبار الآن",
+    "already passed": "لقد أكملت هذا الاختبار بالفعل من قبل",
+    "session not found": "الجلسة الدراسية غير موجودة",
+    "session has ended": "انتهت الجلسة الدراسية",
+    "session already ended": "انتهت هذه الجلسة الدراسية بالفعل",
+    "already in this session": "أنت منضم بالفعل إلى هذه الجلسة الدراسية",
+    "only group creator": "فقط منشئ المجموعة أو المضيف يمكنه تنفيذ هذا الإجراء",
+    "current password is incorrect": "كلمة المرور الحالية غير صحيحة",
+    "cannot be empty": "لا يمكن أن يكون هذا الحقل فارغاً"
+  },
+  "modals": {
+    "confirm": "تأكيد",
+    "cancel": "إلغاء",
+    "yes": "نعم",
+    "no": "لا",
+    "delete": "حذف",
+    "remove": "إزالة",
+    "leave": "مغادرة",
+    "save": "حفظ",
+    "close": "إغلاق",
+    "select_subject": "اختر الموضوع",
+    "search_subject": "ابحث عن موضوع..."
+  },
+  "not_available": "غير متوفر",
+  "actions": {
+    "scroll_to_top": "التمرير إلى الأعلى",
+    "collapse_all": "طي الكل",
+    "switch_to_en": "التحويل إلى الإنجليزية",
+    "switch_to_ar": "التحويل إلى العربية"
+  },
+  "forms": {
+    "other": "أخرى",
+    "specify_and_enter": "حدد واضغط Enter",
+    "show_in_search": "إظهار في نتائج البحث",
+    "switch_to": "التبديل إلى {value}",
+    "visibility": {
+      "Private": "خاص",
+      "Public": "عام"
+    },
+    "levels": {
+      "Beginner": "مبتدئ",
+      "Intermediate": "متوسط",
+      "Advanced": "متقدم"
+    }
+  },
+  "group_chat": "دردشة المجموعة",
+  "titles": {
+    "home": "الرئيسية",
+    "group_chat": "دردشة المجموعة",
+    "available_groups": "المجموعات المتاحة",
+    "groups": "المجموعات",
+    "quiz_editor": "محرر الاختبارات",
+    "passed_quizzes": "الاختبارات المجتازة",
+    "quizzes": "الاختبارات",
+    "settings": "الإعدادات"
+  },
+  "filters": {
+    "role": "الدور",
+    "admin": "مسؤول",
+    "member": "عضو",
+    "visibility": "الرؤية",
+    "level": "المستوى",
+    "view_options": "خيارات العرض",
+    "joinable_only": "المتاحة للانضمام فقط",
+    "status": "الحالة",
+    "published": "منشور",
+    "draft": "مسودة"
+  },
+  "groups_tabs": {
+    "my_groups": "مجموعاتي",
+    "available_groups": "المجموعات المتاحة"
+  },
+  "quizzes_tabs": {
+    "my_quizzes": "اختباراتي",
+    "passed": "المجتازة",
+    "quiz_editor": "محرر الاختبار",
+    "questions_list": "قائمة الأسئلة"
+  },
+  "quiz_card": {
+    "quiz_title": "عنوان الاختبار",
+    "group_name": "اسم المجموعة",
+    "session_name": "اسم الجلسة",
+    "submitted_at": "تاريخ التقديم",
+    "score": "النتيجة",
+    "questions": "الأسئلة",
+    "shared_in": "مشارك في",
+    "subject": "المادة",
+    "groups_abbr": "م",
+    "sessions_abbr": "ج"
+  },
+  "shared_chat": {
+    "alerts": {
+      "message_max_length": "لا يمكن أن تتجاوز الرسالة {max} حرفاً",
+      "send_failed": "فشل إرسال الرسالة"
+    },
+    "drop_files": "أفلت الملفات هنا",
+    "emojis": {
+      "categories": {
+        "recent": "الأخيرة",
+        "people": "الأشخاص",
+        "animals_nature": "الحيوانات والطبيعة",
+        "food_drink": "الطعام والشراب",
+        "activity": "الأنشطة",
+        "objects": "الأشياء",
+        "symbols": "الرموز",
+        "travel_places": "السفر والأماكن",
+        "flags": "الأعلام"
+      },
+      "no_match": "لم يتم العثور على رموز تعبيرية",
+      "search_placeholder": "البحث عن الرموز التعبيرية..."
+    },
+    "unread_messages": "رسائل غير مقروءة",
+    "tooltips": {
+      "add_new_line": "إضافة سطر جديد"
+    }
+  },
+  "shared_groups": {
+    "actions": {
+      "join_now": "انضم الآن",
+      "request_to_join": "طلب انضمام"
+    },
+    "badges": {
+      "host": "المضيف",
+      "member": "عضو"
+    },
+    "skeletons": {
+      "no_groups_joined_title": "لم تنضم لأي مجموعة",
+      "no_groups_joined_desc": "أنت لم تنضم إلى أي مجموعة بعد.",
+      "no_groups_available_title": "لا توجد مجموعات متاحة",
+      "no_groups_available_desc": "لا توجد مجموعات متاحة في الوقت الحالي.",
+      "no_groups_found_title": "لم يتم العثور على مجموعات",
+      "no_groups_found_desc": "لا توجد مجموعات تطابق بحثك أو الفلتر."
+    }
+  },
+  "shared_quizzes": {
+    "answered": "تمت الإجابة",
+    "choices_count": "{count} خيارات",
+    "finished_date": "تم الانتهاء في",
+    "question_num": "السؤال {num}",
+    "questions_count": "{count} أسئلة",
+    "quiz_title_placeholder": "اختبار بدون عنوان",
+    "status": {
+      "correct": "صحيح",
+      "incorrect": "خاطئ",
+      "skipped": "تم التخطي"
+    }
+  },
+  "greetings": {
+    "hello": "مرحباً",
+    "welcome": "أهلاً بك",
+    "hi": "أهلاً",
+    "greetings": "تحياتي",
+    "good_to_see_you": "سعداء برؤيتك",
+    "hey": "مرحباً",
+    "there": "يا صديقي",
+    "messages": {
+      "fantastic_day": "نتمنى لك يوماً رائعاً!",
+      "productive_session": "نتمنى لك جلسة مثمرة!",
+      "great_today": "لنجعل اليوم إنجازاً عظيماً!",
+      "make_progress": "هل أنت مستعد لتحقيق التقدم؟",
+      "wonderful_day": "نتمنى لك يوماً سعيداً!"
+    }
+  },
+  "empty_states": {
+    "no_quizzes_found": "لم يتم العثور على اختبارات !",
+    "no_groups_found": "لم يتم العثور على مجموعات !"
+  }
+}

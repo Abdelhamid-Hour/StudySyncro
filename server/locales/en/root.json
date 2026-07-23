@@ -1,0 +1,88 @@
+{
+  "nav": {
+    "features": "Features",
+    "how_it_works": "How It Works",
+    "community": "Community",
+    "toggle_theme": "Toggle Dark/Light Mode",
+    "login": "Login"
+  },
+  "hero": {
+    "title": "Elevate Your Study Sessions with Real-Time Collaboration",
+    "subtitle": "Connect with peers in structured study spaces, engage in live group discussions, test your knowledge with interactive quizzes, and master complex subjects together.",
+    "get_started_btn": "Get Started Now",
+    "explore_features_btn": "Explore Features"
+  },
+  "stats": {
+    "active_students": "Active Students & Learners",
+    "quizzes_completed": "Quizzes Completed & Graded",
+    "study_groups": "Collaborative Study Groups",
+    "productivity_boost": "Reported Productivity Boost"
+  },
+  "features": {
+    "section_title": "Everything You Need to Ace Your Exams",
+    "section_desc": "StudyHype brings all your essential study tools into one cohesive, distraction-free environment designed for maximum focus and team productivity.",
+    "spotlight_1": {
+      "badge": "Study Groups Hub",
+      "title": "Collaborative Study Spaces",
+      "desc": "Browse available study groups tailored exactly to your academic courses or launch private, invitation-only study hubs. Invite classmates, establish structured workspaces, and collaborate in real time without friction.",
+      "highlight_1": "Course-specific discovery & instant joining",
+      "highlight_2": "Private study hubs with custom invite links",
+      "highlight_3": "Dedicated activity feeds for every study circle"
+    },
+    "spotlight_2": {
+      "badge": "Instant Group Chat",
+      "title": "Real-Time Chat & Sharing",
+      "desc": "Engage in dynamic group discussions with blazing-fast messaging. Share comprehensive lecture summaries, solve challenging homework problems together, and exchange vital study notes instantly inside your group channels.",
+      "highlight_1": "Instant file sharing & rich note exchanges",
+      "highlight_2": "Threaded discussions for homework problem-solving",
+      "highlight_3": "Distraction-free, academic-focused communication"
+    },
+    "bento_1": {
+      "badge": "Timed Exam Practice",
+      "title": "Interactive Quiz Sessions",
+      "desc": "Test your retention with timed multi-choice quizzes, instant grading, keyboard shortcuts (1–6 / A–F), and detailed performance analytics to verify exam readiness."
+    },
+    "bento_2": {
+      "badge": "Custom Practice Creator",
+      "title": "Custom Exam & Quiz Editor",
+      "desc": "Empower your study circle by designing custom practice tests from scratch using our intuitive Quiz Editor. Set duration rules, add questions, and challenge classmates."
+    },
+    "bento_3": {
+      "badge": "Daily Focus Engine",
+      "title": "Smart Timers & Tasks",
+      "desc": "Stay accountable with integrated study countdown timers and objective tracking. Organize daily goals, track completed sessions, and maintain peak momentum."
+    },
+    "bento_4": {
+      "badge": "Administrative Control",
+      "title": "Comprehensive Group Management",
+      "desc": "Manage your study circle with complete administrative precision. Oversee member roles, review join requests, organize group-wide quizzes, and cultivate an elite academic workspace."
+    }
+  },
+  "workflow": {
+    "section_title": "How StudyHype Works",
+    "section_desc": "Get started in less than two minutes and transform how you prepare for exams and coursework.",
+    "step_1": {
+      "title": "Join or Create a Group",
+      "desc": "Browse available study groups in your field or launch your own private workspace for your classmates and study buddies."
+    },
+    "step_2": {
+      "title": "Collaborate & Discuss",
+      "desc": "Hop into active study sessions, exchange ideas in real-time chat, upload study materials, and answer each other's questions."
+    },
+    "step_3": {
+      "title": "Master with Quizzes",
+      "desc": "Solidify your retention by playing community quizzes, tracking your exam scores, and building practice tests with the Exam Editor."
+    }
+  },
+  "cta": {
+    "title": "Ready to Transform Your Study Experience?",
+    "desc": "Join thousands of students and learners who are already collaborating, sharing knowledge, and achieving higher exam scores on StudyHype.",
+    "btn": "Launch StudyHype Now"
+  },
+  "footer": {
+    "features": "Features",
+    "how_it_works": "How It Works",
+    "login": "Login",
+    "copyright": "StudyHype Team © 2026. All rights reserved."
+  }
+}

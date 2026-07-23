@@ -1,0 +1,61 @@
+{
+  "alerts": {
+    "profile_updated_success": "Profile updated successfully.",
+    "email_updated_success": "Email updated successfully. Please log in again.",
+    "email_added_success": "Email added successfully. Please log in again.",
+    "password_updated_success": "Password updated successfully. Please log in again.",
+    "password_added_success": "Password added successfully. Please log in again.",
+    "account_closed_success": "Account closed successfully. Bye!👋",
+    "fb_login_info": "To Verify, please login with your Facebook account.",
+    "google_login_info": "To Verify, please login with your Google account.",
+    "incorrect_password": "Incorrect password."
+  },
+  "modals": {
+    "delete_account_confirm_title": "Are you sure you want to delete your account?",
+    "delete_account_confirm_desc": "This action is irreversible and will result in the loss of all your data.",
+    "delete_account_confirm_btn": "Yes, delete my account"
+  },
+  "sidebar": {
+    "my_account": "My Account",
+    "tabs": {
+      "profile": "Personal Info",
+      "email": "Email Address",
+      "password": "Password",
+      "delete": "Close Account"
+    }
+  },
+  "profile": {
+    "title": "Personal Details",
+    "subtitle": "Keep your information up to date.",
+    "caption": "Upload a JPG, PNG, or GIF (Max 1MB).",
+    "full_name": "Full Name",
+    "uid": "User ID",
+    "modify_btn": "Modify Profile"
+  },
+  "buttons": {
+    "save_changes": "Save Changes",
+    "cancel": "Cancel",
+    "modify_profile": "Modify Profile",
+    "modify_email": "Modify Email"
+  },
+  "validation": {
+    "fullname_empty": "Full name cannot be empty.",
+    "fullname_invalid": "Full name must be {min}-{max} characters long, contain only letters and spaces, and include at least a first and last name.",
+    "avatar_type": "Invalid file type. Allowed types: JPEG, PNG, GIF, WEBP.",
+    "avatar_size": "File size exceeds {size} MB.",
+    "no_changes": "No changes made to save.",
+    "email_empty": "Email cannot be empty.",
+    "email_invalid": "Invalid email format ({min}-{max} characters required).",
+    "password_empty": "Password cannot be empty.",
+    "email_same": "New email cannot be the same as the current email.",
+    "current_password_required": "Current password is required.",
+    "new_password_required": "New password is required.",
+    "new_password_invalid": "New password must be between {min} and {max} characters long.",
+    "confirm_password_required": "Confirm password is required.",
+    "confirm_password_invalid": "Confirm password must be between {min} and {max} characters long.",
+    "passwords_dont_match": "New password and confirm password do not match.",
+    "new_password_same_as_current": "New password must be different from the current password.",
+    "password_required_to_delete": "Password is required to delete account.",
+    "confirm_delete": "You must confirm account deletion."
+  }
+}

@@ -4,20 +4,16 @@ import {
   clearTooltipWithTimeOut,
   db,
   formatHoursMinutes,
-  getDebounceFunc,
   getUUID,
   registerPageListener,
-  resetTooltip,
   runWhenDbReady,
   showTooltip,
-} from "../../../global/js/utils.js";
-
-import {
   fetchData,
   sendData,
   showMessageBlock,
   throttling,
-} from "../../../../../main_assets/js/utils.js";
+  t,
+} from "../../../global/js/utils.js";
 
 import {
   selectedFiles,
@@ -173,6 +169,97 @@ const initDOMVariables = () => {
   chatContainer = document.querySelector(".chat");
 };
 
+export const getEmojiPickerHTML = () => `
+  <div class="emoji-picker">
+    <button
+      type="button"
+      class="exclude-btn should-fill emoji-button open-drop-down-btn"
+    >
+      <i class="bi bi-emoji-smile"></i>
+    </button>
+    <div class="emoji-list overlay">
+      <div class="categories">
+        <a data-section-id="recent" class="recent should-fill">
+          <i class="bi bi-clock"></i>
+        </a>
+        <a data-section-id="people" class="should-fill">
+          <i class="bi bi-emoji-smile"></i>
+        </a>
+        <a data-section-id="animals_nature" class="should-fill">
+          <i class="bi bi-tree"></i>
+        </a>
+        <a data-section-id="food_drink" class="should-fill">
+          <i class="bi bi-cup"></i>
+        </a>
+        <a data-section-id="activity" class="should-fill">
+          <i class="bi bi-calendar"></i>
+        </a>
+        <a data-section-id="objects" class="should-fill">
+          <i class="bi bi-box"></i>
+        </a>
+        <a data-section-id="symbols" class="should-fill">
+          <i class="bi bi-heart"></i>
+        </a>
+        <a data-section-id="travel_places" class="should-fill">
+          <i class="bi bi-geo-alt"></i>
+        </a>
+        <a data-section-id="flags" class="should-fill">
+          <i class="bi bi-flag"></i>
+        </a>
+      </div>
+      <div class="emoji-search-container">
+        <div class="search-icon-container">
+          <i class="bi bi-search"></i>
+        </div>
+        <input
+          type="search"
+          placeholder="${t("common:shared_chat.emojis.search_placeholder")}"
+          class="emojis-search-input"
+        />
+      </div>
+      <div class="emojies-sections">
+        <section id="recent">
+          <h5>${t("common:shared_chat.emojis.categories.recent")}</h5>
+          <div class="recent-emojies"></div>
+        </section>
+        <section id="people">
+          <h5>${t("common:shared_chat.emojis.categories.people")}</h5>
+          <div class="people-emojies"></div>
+        </section>
+        <section id="animals_nature">
+          <h5>${t("common:shared_chat.emojis.categories.animals_nature")}</h5>
+          <div class="animals-nature-emojies"></div>
+        </section>
+        <section id="food_drink">
+          <h5>${t("common:shared_chat.emojis.categories.food_drink")}</h5>
+          <div class="food-drink-emojies"></div>
+        </section>
+        <section id="activity">
+          <h5>${t("common:shared_chat.emojis.categories.activity")}</h5>
+          <div class="activity-emojies"></div>
+        </section>
+        <section id="objects">
+          <h5>${t("common:shared_chat.emojis.categories.objects")}</h5>
+          <div class="objects-emojies"></div>
+        </section>
+        <section id="symbols">
+          <h5>${t("common:shared_chat.emojis.categories.symbols")}</h5>
+          <div class="symbols-emojies"></div>
+        </section>
+        <section id="travel_places">
+          <h5>${t("common:shared_chat.emojis.categories.travel_places")}</h5>
+          <div class="travel-places-emojies"></div>
+        </section>
+        <section id="flags">
+          <h5>${t("common:shared_chat.emojis.categories.flags")}</h5>
+          <div class="flags-emojies"></div>
+        </section>
+      </div>
+      <div id="search-result"></div>
+    </div>
+  </div>
+`;
+
 export const initializeEmojiPicker = (emojiList) => {
   const initSection = (emojisWrapper) => {
     emojisWrapper.style.backgroundImage = "initial";
@@ -219,7 +306,7 @@ export const handleEmojisSearch = (e, emojiesSearchResultContainer) => {
     if (!filtredEmojies.children.length) {
       const noMatchMessage = document.createElement("span");
       noMatchMessage.className = "no-match-message";
-      noMatchMessage.textContent = "No matching emojis found.";
+      noMatchMessage.textContent = t("common:shared_chat.emojis.no_match");
       return emojiesSearchResultContainer.replaceChildren(noMatchMessage);
     }
     emojiesSearchResultContainer.replaceChildren(filtredEmojies);
@@ -265,6 +352,26 @@ export const handleEmojiListClick = (e, inputMessage, emojiList) => {
     }
     localStorage.setItem("recent-used-icons", JSON.stringify(recentUsedIcons));
     updateRecentUsedEmojis(emojiList);
+  }
+};
+
+export const setupEmojiPickerListeners = ({
+  emojiList,
+  inputEl,
+  emojiesSearch,
+  searchResultContainer,
+}) => {
+  if (emojiList) {
+    initializeEmojiPicker(emojiList);
+    emojiList.addEventListener("click", (e) => {
+      handleEmojiListClick(e, inputEl, emojiList);
+      handleCategoryClick(e);
+    });
+  }
+  if (emojiesSearch && searchResultContainer) {
+    emojiesSearch.addEventListener("input", (e) => {
+      handleEmojisSearch(e, searchResultContainer);
+    });
   }
 };
 
@@ -409,7 +516,7 @@ const handleSendMessageError = (error, wrapper, formData, isFile) => {
     );
   }
   showMessageBlock(
-    error.message || "Failed to send message. Please try again.",
+    error.message || t("common:shared_chat.alerts.send_failed"),
     "error",
   );
 };
@@ -512,7 +619,7 @@ class ChatMessage {
     } catch (error) {
       console.error(error);
       showMessageBlock(
-        error.message || "Failed to send message. Please try again.",
+        error.message || t("common:shared_chat.alerts.send_failed"),
         "error",
       );
     }
@@ -536,7 +643,7 @@ class ChatMessage {
       if (!existingBanner) {
         const banner = document.createElement("div");
         banner.className = "unread-messages-banner";
-        banner.innerHTML = `<span>Unread Messages</span>`;
+        banner.innerHTML = `<span>${t("common:shared_chat.unread_messages")}</span>`;
         this.chatContainer.append(banner);
       }
     }
@@ -698,7 +805,7 @@ class ChatMessage {
     fileDetails.className = "file-details";
     const fileNameBtn = document.createElement("button");
     fileNameBtn.className = "exclude-btn file-name";
-    fileNameBtn.textContent = file.name;
+    fileNameBtn.innerHTML = `<bdi>${file.name}</bdi>`;
     const fileSizeSpan = document.createElement("span");
     fileSizeSpan.className = "file-size";
     fileSizeSpan.textContent = this.formatFileSize(file.size);
@@ -749,7 +856,7 @@ class ChatMessage {
 
   createMessageBubble(text) {
     const p = document.createElement("p");
-    p.textContent = text;
+    p.innerHTML = `<bdi>${text}</bdi>`;
     return p;
   }
 
@@ -773,7 +880,7 @@ class ChatMessage {
       const usernameSpan = document.createElement("span");
       usernameSpan.className = "username";
       usernameSpan.dataset.senderId = this.senderId;
-      usernameSpan.textContent = this.senderName;
+      usernameSpan.innerHTML = `<bdi>${this.senderName || ""}</bdi>`;
       messageWrapper.appendChild(usernameSpan);
     }
 
@@ -813,7 +920,7 @@ class ChatMessage {
       if (this.avatarSrc) {
         const avatarImg = document.createElement("img");
         avatarImg.src = this.avatarSrc;
-        avatarImg.alt = "User Avatar";
+        avatarImg.alt = t("common:avatar_alt");
         avatarDiv.appendChild(avatarImg);
       } else {
         const avatarIcon = document.createElement("i");
@@ -845,53 +952,66 @@ const clearChatInputs = () => {
   }
 };
 
-const handleFiles = (files) => {
+export const handleFiles = (
+  files,
+  container = inputChatContainer,
+  dataTransfer = selectedFiles,
+) => {
   for (const f of Array.from(files)) {
-    if (selectedFiles.items.length >= 5) {
-      return showMessageBlock(
-        "You can only upload a maximum of 5 files",
-        "error",
-      );
+    if (dataTransfer.items.length >= 5) {
+      return showMessageBlock(t("common:alerts.max_files_exceeded"), "error");
     }
     const isSupportedType = Object.values(FILE_ALLOWED_TYPES).find((types) =>
       types.includes(f.type),
     );
     if (!isSupportedType) {
-      showMessageBlock("Invalid file type. Please select other file.", "error");
+      showMessageBlock(t("common:alerts.invalid_file_type"), "error");
       continue;
     }
     if (f.size > MAXFILESIZE) {
       showMessageBlock(
-        `File "${f.name}" size exceeds the maximum limit of ${
-          MAXFILESIZE / (1024 * 1024)
-        } MB.`,
+        t("common:alerts.file_too_large", {
+          name: f.name,
+          max: Math.round(MAXFILESIZE / (1024 * 1024)),
+        }),
         "error",
       );
       continue;
     }
-    selectedFiles.items.add(f);
-    displayFile(f);
+    dataTransfer.items.add(f);
+    displayFile(f, container, dataTransfer);
   }
 };
 
-const displayFile = async (file) => {
-  let filesView = document.querySelector(".files-view");
+export const displayFile = async (
+  file,
+  container = inputChatContainer,
+  dataTransfer = selectedFiles,
+) => {
+  let filesView =
+    container?.querySelector(".files-view") ||
+    document.querySelector(".files-view");
   if (!filesView) {
     filesView = document.createElement("div");
     filesView.className = "files-view";
-    inputChatContainer.append(filesView);
+    (container || inputChatContainer).append(filesView);
     filesView.addEventListener("click", (e) => {
       const btn = e.target.closest(".remove-file-btn");
-      if (e.target.closest(".remove-file-btn")) {
+      if (btn) {
         const targetFileName = btn.previousElementSibling?.dataset.fileName;
-        const fileIndex = Array.from(selectedFiles.items).findIndex((f) => {
-          return f.getAsFile().name === targetFileName;
+        const fileIndex = Array.from(dataTransfer.items).findIndex((f) => {
+          return (
+            f.name === targetFileName ||
+            f.getAsFile?.()?.name === targetFileName
+          );
         });
 
-        selectedFiles.items.remove(fileIndex);
+        if (fileIndex !== -1) {
+          dataTransfer.items.remove(fileIndex);
+        }
         btn.parentElement.remove();
       }
-      if (!selectedFiles.items.length) {
+      if (!dataTransfer.items.length) {
         filesView.remove();
       }
     });
@@ -902,9 +1022,10 @@ const displayFile = async (file) => {
   const closIcon = document.createElement("i");
   closIcon.className = "bi bi-x-circle-fill";
   closeBtn.append(closIcon);
-  const isImg = file.type.startsWith("image/");
-  if (isImg) {
-    const elementName = isImg ? "img" : "video";
+  const isImgOrVideo =
+    file.type.startsWith("image/") || file.type.startsWith("video/");
+  if (isImgOrVideo) {
+    const elementName = file.type.startsWith("image/") ? "img" : "video";
     const mediaContainer = document.createElement("div");
     mediaContainer.className = "media-preview";
     const mediaElement = document.createElement(elementName);
@@ -912,7 +1033,7 @@ const displayFile = async (file) => {
     mediaElement.src = "/app/assets/shared/chat/imgs/img-placeholder.png";
     mediaContainer.appendChild(getMediaLoader());
     setFileURL(file, mediaElement, true);
-    if (isImg) mediaElement.alt = file.name;
+    if (file.type.startsWith("image/")) mediaElement.alt = file.name;
     mediaContainer.append(mediaElement, closeBtn);
 
     filesView.append(mediaContainer);
@@ -924,12 +1045,53 @@ const displayFile = async (file) => {
     typeBadge.textContent = file.name.split(".").pop().toUpperCase();
     const fileName = document.createElement("span");
     fileName.className = "file-name";
-    fileName.textContent = file.name;
+    fileName.innerHTML = `<bdi>${file.name}</bdi>`;
     fileName.dataset.fileName = file.name;
 
     filePreview.append(typeBadge, fileName, closeBtn);
     filesView.append(filePreview);
   }
+};
+
+export const setupChatFileInputListeners = ({
+  imageInput,
+  fileInput,
+  container = inputChatContainer,
+  dataTransfer = selectedFiles,
+}) => {
+  if (imageInput) {
+    imageInput.addEventListener("change", () => {
+      if (imageInput.files.length) {
+        handleFiles(imageInput.files, container, dataTransfer);
+      }
+      imageInput.value = "";
+    });
+  }
+  if (fileInput) {
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files.length) {
+        handleFiles(fileInput.files, container, dataTransfer);
+      }
+      fileInput.value = "";
+    });
+  }
+};
+
+export const sendChatMessagePayload = async ({
+  groupId = "",
+  sessionId = "",
+  message = null,
+  file = null,
+  timestamp = Date.now(),
+}) => {
+  const formData = new FormData();
+  if (groupId) formData.append("groupId", groupId);
+  if (sessionId) formData.append("sessionId", sessionId);
+  formData.append("timestamp", timestamp);
+  formData.append("localId", getUUID());
+  if (message) formData.append("message", message);
+  if (file) formData.append("file", file);
+  return await sendData("/api/send-message", formData, "POST");
 };
 
 const handleChatInput = async (sessionId, groupId) => {
@@ -943,7 +1105,7 @@ const handleChatInput = async (sessionId, groupId) => {
   const inputValue = inputMessage.value.trim();
   if (inputValue.length > MESSAGE_MAX_LENGTH) {
     showMessageBlock(
-      `Message cannot exceed ${MESSAGE_MAX_LENGTH} characters.`,
+      t("common:shared_chat.alerts.message_max_length", { max: MESSAGE_MAX_LENGTH }),
       "info",
     );
     return;
@@ -973,7 +1135,7 @@ const handleDragEnter = (e) => {
     const icon = document.createElement("i");
     icon.className = "bi bi-plus-circle";
     const text = document.createElement("span");
-    text.textContent = "Drop files here to add to your message.";
+    text.textContent = t("common:shared_chat.drop_files");
     dropArea.append(icon, text);
     inputChatContainer.append(dropArea);
   }
@@ -983,7 +1145,7 @@ const handleDragEnter = (e) => {
 };
 
 const showEnterTooltip = (target) => {
-  showTooltip(target, globalTooltip, "To add a new line, press Ctrl + Enter");
+  showTooltip(target, globalTooltip, t("common:shared_chat.tooltips.add_new_line"));
   clearTooltipWithTimeOut(target);
 };
 
@@ -1052,10 +1214,14 @@ const handleMessagesContainerClick = async (e) => {
       );
       const messageId = messageContainer?.dataset.messageId;
       const localId = messageContainer?.dataset.localId;
-      if (!localId) return showMessageBlock("Local ID not found.", "error");
+      if (!localId)
+        return showMessageBlock(t("common:alerts.local_id_not_found"), "error");
       const message = await getMsgFromIndexedDB(localId);
       if (!message)
-        return showMessageBlock("Message not found in local storage.", "error");
+        return showMessageBlock(
+          t("common:alerts.msg_not_found_local"),
+          "error",
+        );
       reSendBtn.remove();
       const Icon = messageContainer.querySelector(".message-info i");
       Icon.className = "bi bi-clock";
@@ -1354,7 +1520,7 @@ const createChatFrag = async (messages) => {
         {
           isSender: message.isSender,
           avatarSrc: message.sender.photoURL || "",
-          senderName: message.sender.fullName || "Unknown User",
+          senderName: message.sender.fullName || t("common:unknown_user"),
           localId: message.isSender ? message.localId : "",
           messageId: message.id || "",
           isLocalMsg: message.isLocalMsg || false,
@@ -1510,7 +1676,7 @@ const handleInitialUnreadBannerAndScroll = async (
 
       const banner = document.createElement("div");
       banner.className = "unread-messages-banner";
-      banner.innerHTML = `<span>Unread Messages</span>`;
+      banner.innerHTML = `<span>${t("common:shared_chat.unread_messages")}</span>`;
 
       const bubbleContainer =
         firstUnseenEl.closest(".message-sent, .message-received") ||
@@ -1567,8 +1733,8 @@ const initChatLoader = async (groupId, sessionId) => {
       emptyState: {
         noFilter: {
           icon: "bi-chat",
-          title: "No Messages",
-          desc: "No messages in this chat.",
+          title: t("group-chat:skeletons.no_messages_title"),
+          desc: t("group-chat:skeletons.no_messages_desc"),
         },
       },
     },
@@ -1591,17 +1757,7 @@ export const iniChat = (groupId = "", sessionId = "") => {
 
   inputMessage.addEventListener("keydown", handleEnterKeyWithTooltip);
 
-  fileInput.addEventListener("change", () => {
-    if (fileInput.files.length) {
-      handleFiles(fileInput.files);
-    }
-  });
-
-  imageInput.addEventListener("change", () => {
-    if (imageInput.files.length) {
-      handleFiles(imageInput.files);
-    }
-  });
+  setupChatFileInputListeners({ imageInput, fileInput });
 
   messagesContainer.addEventListener("click", handleMessagesContainerClick);
 
@@ -1619,14 +1775,10 @@ export const iniChat = (groupId = "", sessionId = "") => {
     true,
   );
 
-  initializeEmojiPicker(emojiList);
-
-  emojiList.addEventListener("click", (e) => {
-    handleEmojiListClick(e, inputMessage, emojiList);
-    handleCategoryClick(e);
-  });
-
-  emojiesSearch.addEventListener("input", (e) => {
-    handleEmojisSearch(e, emojiesSearchResultContainer);
+  setupEmojiPickerListeners({
+    emojiList,
+    inputEl: inputMessage,
+    emojiesSearch,
+    searchResultContainer: emojiesSearchResultContainer,
   });
 };

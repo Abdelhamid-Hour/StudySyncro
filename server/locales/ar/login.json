@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "page_title": "تسجيل الدخول إلى حسابك في StudyHype",
+    "meta_description": "سجل الدخول إلى StudyHype للوصول إلى الاختبارات والمحادثات الفورية وجلسات الدراسة الجماعية."
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "back_to_home": "العودة إلى الرئيسية",
+    "toggle_theme": "تبديل الوضع الداكن/الفاتح",
+    "switch_lang": "تغيير اللغة"
+  },
+  "aside": {
+    "welcome_title": "👋 مرحبًا بك في StudyHype",
+    "welcome_desc": "مرحبًا بك! هل أنت مستعد للانضمام إلى أروع مجتمع دراسي؟ أنشئ حسابك الآن للوصول إلى موارد حصرية، والتواصل مع طلاب يشاركونك نفس الاهتمامات، والارتقاء بتجربتك التعليمية!",
+    "drop_file": "اسحب الملف أو انقر لاختيار صورة الملف الشخصي",
+    "allowed_types": "أنواع الملفات المسموح بها:",
+    "file_formats": "JPG, PNG, JPEG, WEBP.",
+    "max_size": "الحد الأقصى لحجم الملف: 200KB"
+  },
+  "header": {
+    "login_to": "تسجيل الدخول إلى",
+    "create": "أنشئ",
+    "your_account": "حسابك"
+  },
+  "sign_in_form": {
+    "email_label": "البريد الإلكتروني",
+    "password_label": "كلمة المرور",
+    "forgot_password": "نسيت كلمة المرور؟",
+    "sign_in_btn": "تسجيل الدخول",
+    "new_to_studyhype": "جديد في StudyHype؟",
+    "create_account_link": "إنشاء حساب"
+  },
+  "sign_up_form": {
+    "first_name_label": "الاسم الأول",
+    "last_name_label": "اسم العائلة",
+    "email_label": "البريد الإلكتروني",
+    "password_label": "كلمة المرور",
+    "confirm_password_label": "تأكيد كلمة المرور",
+    "sign_up_btn": "إنشاء حساب",
+    "already_have_account": "لديك حساب بالفعل؟",
+    "sign_in_link": "تسجيل الدخول"
+  },
+  "providers": {
+    "or": "أو",
+    "google_sign_in": "تسجيل الدخول عبر Google",
+    "facebook_sign_in": "تسجيل الدخول عبر Facebook"
+  }
+}

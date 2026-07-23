@@ -3,11 +3,9 @@ import {
   PASSWORD_MAX_LENGTH,
   EMAIL_MIN_LENGTH,
   EMAIL_MAX_LENGTH,
-} from "../../../main_assets/js/variables.js";
-import {
   NAME_TITLE_MIN_LENGTH,
   NAME_TITLE_MAX_LENGTH,
-} from "../../../app/assets/global/js/variables.js";
+} from "../../../main_assets/js/variables.js";
 
 export const loginForm = document.getElementById("login-form");
 export const eyeIcons = document.querySelectorAll(".eye-icon");
@@ -65,10 +63,8 @@ export const fileinput = avatarContainer.querySelector("input");
 export const forgotPasswordLink =
   signInFormContainer.querySelector("#forgot-password");
 
-export let signInFormHeight =
-  signInFormContainer.getBoundingClientRect().height;
-export let signUpFormHeight =
-  signUpFormContainer.getBoundingClientRect().height;
+export let signInFormHeight = 0;
+export let signUpFormHeight = 0;
 // get the first external styles
 export const stylsheet = document.getElementById("stylesheet").sheet;
 

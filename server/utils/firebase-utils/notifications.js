@@ -174,13 +174,10 @@ const updateJoinRequestNotificationStatus = async (
 
     if (!snapshot.empty) {
       const doc = snapshot.docs[0];
-      const data = doc.data();
       await doc.ref.update({
         read: true,
         type: newStatus === "accepted" ? "join_accepted" : "join_rejected",
-        message: `Join request from ${
-          data.metadata?.senderName || "user"
-        } for group ${data.metadata?.groupName || "group"} was ${newStatus}.`,
+        "metadata.status": newStatus,
       });
     }
   } catch (error) {
@@ -206,13 +203,10 @@ const updateJoinInviteNotificationStatus = async (
 
     if (!snapshot.empty) {
       const doc = snapshot.docs[0];
-      const data = doc.data();
       await doc.ref.update({
         read: true,
         type: newStatus === "accepted" ? "join_accepted" : "join_rejected",
-        message: `Invitation to join group ${
-          data.metadata?.groupName || "group"
-        } was ${newStatus}.`,
+        "metadata.status": newStatus,
       });
     }
   } catch (error) {
@@ -229,8 +223,6 @@ const notifyJoinRequest = async (
 ) => {
   await addNotification(adminId, {
     type: "join_request",
-    title: "Join Request",
-    message: `${applicantUser.fullName || "A user"} has requested to join your group ${groupName}.`,
     category: "Join Request",
     read: false,
     metadata: {
@@ -245,8 +237,6 @@ const notifyJoinRequest = async (
 
   await addNotification(applicantUser.uid || applicantUser.id, {
     type: "join_pending",
-    title: "Request Sent",
-    message: `Your request to join ${groupName} is pending approval.`,
     category: "Groups",
     read: false,
     metadata: { groupId, groupName, demandeId },
@@ -261,13 +251,9 @@ const notifyJoinResult = async (
 ) => {
   await addNotification(applicantId, {
     type: isAccepted ? "join_accepted" : "join_rejected",
-    title: isAccepted ? "Request Accepted" : "Request Rejected",
-    message: isAccepted
-      ? `You've successfully joined the group ${groupName}.`
-      : `Your request to join ${groupName} was rejected.`,
     category: "Groups",
     read: false,
-    metadata: { groupId, groupName },
+    metadata: { groupId, groupName, isAccepted: Boolean(isAccepted) },
   });
 };
 
@@ -299,8 +285,6 @@ const notifyGroupInvite = async (
 
     await addNotification(invitedUserId, {
       type: "join_invite",
-      title: "Group Invitation",
-      message: `${senderUser.fullName || "A group admin"} invited you to join the group ${groupName}.`,
       category: "Join Request",
       read: false,
       metadata: {
@@ -371,10 +355,6 @@ const notifySessionStatus = async (
       .doc();
     batch.set(notifRef, {
       type: isStarted ? "session_started" : "session_ended",
-      title: isStarted ? "Session Started" : "Session Ended",
-      message: isStarted
-        ? `A new session "${sessionName}" has started in ${groupName}.`
-        : `The session "${sessionName}" in ${groupName} has ended.`,
       category: "Sessions",
       metadata: {
         groupId,
@@ -427,8 +407,6 @@ const notifyRoleTransfer = async (
   if (newAdminId) {
     await addNotification(newAdminId, {
       type: "role_transferred",
-      title: "Role Transferred",
-      message: `Admin role was transferred to you in ${groupName}.`,
       category: "Groups",
       read: false,
       metadata: { groupId, groupName },
@@ -437,11 +415,9 @@ const notifyRoleTransfer = async (
   if (oldAdminId) {
     await addNotification(oldAdminId, {
       type: "role_demoted",
-      title: "Role Transferred",
-      message: `You've been demoted from Admin in ${groupName}.`,
       category: "Groups",
       read: false,
-      metadata: { groupId, groupName },
+      metadata: { groupId, groupName, newAdminId, newAdminName },
     });
   }
 };
@@ -449,8 +425,6 @@ const notifyRoleTransfer = async (
 const notifyMemberRemoved = async (removedUserId, groupId, groupName) => {
   await addNotification(removedUserId, {
     type: "member_removed",
-    title: "Removed from Group",
-    message: `You were removed from ${groupName} by the admin.`,
     category: "Groups",
     read: false,
     metadata: { groupId, groupName },
@@ -460,8 +434,6 @@ const notifyMemberRemoved = async (removedUserId, groupId, groupName) => {
 const notifyGroupDeleted = async (members = [], groupId, groupName) => {
   await addNotificationsToUsers(members, {
     type: "group_deleted",
-    title: "Group Deleted",
-    message: `The group ${groupName} has been deleted.`,
     category: "Groups",
     metadata: { groupId, groupName },
   });

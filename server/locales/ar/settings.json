@@ -1,0 +1,59 @@
+{
+  "title": "حسابي",
+  "tabs": {
+    "personal_info": "المعلومات الشخصية",
+    "email_address": "عنوان البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "close_account": "إغلاق الحساب"
+  },
+  "close_account": {
+    "heading": "إغلاق الحساب",
+    "sub": "سيتم حذف جميع بياناتك بشكل دائم.",
+    "warning_title": "تنبيه: إجراء غير قابل للتراجع",
+    "warning_desc": "بمجرد إغلاق حسابك، لا توجد أي طريقة لاستعادة بياناتك.",
+    "confirm_checkbox": "أدرك أن هذا الإجراء لا يمكن التراجع عنه.",
+    "submit_btn": "إغلاق الحساب",
+    "password_label": "كلمة المرور",
+    "password_placeholder": "أدخل كلمة المرور لتأكيد الهوية"
+  },
+  "password": {
+    "heading_change": "تغيير كلمة المرور",
+    "heading_add": "إضافة كلمة مرور",
+    "sub": "اختر كلمة مرور قوية وآمنة.",
+    "current_label": "كلمة المرور الحالية",
+    "current_placeholder": "كلمة المرور الحالية",
+    "new_label": "كلمة المرور الجديدة",
+    "new_placeholder": "كلمة المرور الجديدة",
+    "confirm_label": "تأكيد كلمة المرور",
+    "confirm_placeholder": "تأكيد كلمة المرور",
+    "submit_change_btn": "تغيير كلمة المرور",
+    "submit_add_btn": "إضافة كلمة مرور"
+  },
+  "email": {
+    "heading_change": "تغيير البريد الإلكتروني",
+    "heading_add": "إضافة بريد إلكتروني",
+    "sub_change": "التبديل إلى عنوان بريد إلكتروني جديد.",
+    "sub_add": "إضافة عنوان بريد إلكتروني للحساب.",
+    "label": "البريد الإلكتروني",
+    "placeholder": "البريد الإلكتروني",
+    "current_password_label": "كلمة المرور الحالية",
+    "current_password_placeholder": "أدخل كلمة المرور الخاصة بك",
+    "submit_change_btn": "تغيير البريد الإلكتروني",
+    "submit_add_btn": "إضافة بريد إلكتروني",
+    "external_provider_info": "لا يمكنك تغيير البريد الإلكتروني لأنه مرتبط بمزود خدمة خارجي (مثل Google)."
+  },
+  "personal_info": {
+    "heading": "التفاصيل الشخصية",
+    "sub": "حافظ على تحديث معلوماتك.",
+    "avatar_caption": "قم بتحميل صورة بصيغة JPG أو PNG أو GIF (الحد الأقصى 1 ميجابايت).",
+    "full_name_label": "الاسم الكامل",
+    "full_name_placeholder": "أدخل اسمك الكامل",
+    "uid_label": "معرف المستخدم (User ID)",
+    "modify_btn": "تعديل الملف الشخصي"
+  },
+  "error_page": {
+    "back_to_dashboard": "العودة إلى لوحة التحكم",
+    "go_to_login": "الذهاب إلى صفحة تسجيل الدخول",
+    "go_back": "الرجوع للخلف"
+  }
+}

@@ -1,11 +1,15 @@
 import { topSideBarMiddle } from "../../../global/js/variables.js";
-import { enableMobileTabs, navigateTo, toReadableDate } from "../../../global/js/utils.js";
+import {
+  enableMobileTabs,
+  navigateTo,
+  t,
+  toReadableDate,
+} from "../../../global/js/utils.js";
 import { openQuizResultOverlay } from "../../../shared/quiz-result/js/utils.js";
 import {
   initFiltersInputListener,
   Loader,
 } from "../../../shared/loader/js/utils.js";
-
 
 const getScoreClass = (score) => {
   if (score >= 80) return "excellent";
@@ -17,11 +21,11 @@ const getScoreClass = (score) => {
 const createPassedQuizCard = (quiz = {}) => {
   const {
     id = "",
-    title = "Untitled Quiz",
+    title = "",
     score = 0,
-    groupName = "Unknown Group",
+    groupName = "",
     submittedAt = "",
-    sessionName = "Unknown Session",
+    sessionName = "",
   } = quiz;
 
   const card = document.createElement("div");
@@ -30,7 +34,7 @@ const createPassedQuizCard = (quiz = {}) => {
         <div class="quiz-title-container info-container">
             <label class="quiz-title-label">
                 <span class="icon-box"><i class="bi bi-card-text"></i></span>
-                Quiz Title
+                ${t("common:quiz_card.quiz_title")}
             </label>
             <div class="quiz-title content"></div>
         </div>
@@ -39,7 +43,7 @@ const createPassedQuizCard = (quiz = {}) => {
                 <span class="icon-box">
                     <i class="bi bi-people"></i>
                 </span>
-                Group Name
+                ${t("common:quiz_card.group_name")}
             </label>
             <div class="group-name content"></div>
         </div>
@@ -48,7 +52,7 @@ const createPassedQuizCard = (quiz = {}) => {
         <span class="icon-box">
         <i class="bi bi-journal-bookmark"></i>
         </span>
-        Session Name
+        ${t("common:quiz_card.session_name")}
         </label>
         <div class="session-name content"></div>
         </div>
@@ -57,7 +61,7 @@ const createPassedQuizCard = (quiz = {}) => {
                 <span class="icon-box">
                     <i class="bi bi-calendar-check"></i>
                 </span>
-                Submitted At
+                ${t("common:quiz_card.submitted_at")}
             </label>
             <div class="submitted-at content"></div>
         </div>
@@ -66,27 +70,30 @@ const createPassedQuizCard = (quiz = {}) => {
                 <span class="icon-box">
                     <i class="bi bi-trophy"></i>
                 </span>
-                Score
+                ${t("common:quiz_card.score")}
             </label>
             <div class="score ${getScoreClass(score)} content">%</div>
         </div>
         <div class="action-btns">
             <button class="view-quiz-result-btn" data-quiz-id="${id}">
                 <i class="bi bi-eye"></i>
-                View Result
+                ${t("quizzes:view_result")}
             </button>
             <button class="retake-quiz-btn" data-quiz-id="${id}">
                 <i class="bi bi-arrow-repeat"></i>
-                Retake
+                ${t("quizzes:retake")}
             </button>
         </div>
     `;
 
-  card.querySelector(".quiz-title").textContent = title;
+  card.querySelector(".quiz-title").textContent =
+    title || t("quizzes:untitled_quiz");
   card.querySelector(".score").textContent = `${score}%`;
-  card.querySelector(".group-name").textContent = groupName;
+  card.querySelector(".group-name").textContent =
+    groupName || t("quizzes:unknown_group");
   card.querySelector(".submitted-at").textContent = toReadableDate(submittedAt);
-  card.querySelector(".session-name").textContent = sessionName;
+  card.querySelector(".session-name").textContent =
+    sessionName || t("quizzes:unknown_session");
 
   return card;
 };
@@ -98,7 +105,7 @@ const createPassedQuizLoadingCard = () => {
         <div class="quiz-title-container info-container">
             <label class="quiz-title-label">
                 <span class="icon-box"><i class="bi bi-card-text"></i></span>
-                Quiz Title
+                ${t("common:quiz_card.quiz_title")}
             </label>
             <div class="quiz-title content loading-opacity-animation"></div>
         </div>
@@ -107,7 +114,7 @@ const createPassedQuizLoadingCard = () => {
                 <span class="icon-box">
                     <i class="bi bi-trophy"></i>
                 </span>
-                Score
+                ${t("common:quiz_card.score")}
             </label>
             <div class="score content loading-opacity-animation"></div>
         </div>
@@ -116,7 +123,7 @@ const createPassedQuizLoadingCard = () => {
                 <span class="icon-box">
                     <i class="bi bi-people"></i>
                 </span>
-                Group Name
+                ${t("common:quiz_card.group_name")}
             </label>
             <div class="group-name content loading-opacity-animation"></div>
         </div>
@@ -125,7 +132,7 @@ const createPassedQuizLoadingCard = () => {
                 <span class="icon-box">
                     <i class="bi bi-calendar-check"></i>
                 </span>
-                Submitted At
+                ${t("common:quiz_card.submitted_at")}
             </label>
             <div class="submitted-at content loading-opacity-animation"></div>
         </div>
@@ -134,7 +141,7 @@ const createPassedQuizLoadingCard = () => {
                 <span class="icon-box">
                     <i class="bi bi-journal-bookmark"></i>
                 </span>
-                Session Name
+                ${t("common:quiz_card.session_name")}
             </label>
             <div class="session-name content loading-opacity-animation"></div>
         </div>
@@ -176,16 +183,16 @@ export const initLazyLoadingLoader = () => {
       emptyState: {
         noFilter: {
           icon: "bi-award",
-          title: "No Passed Quizzes",
-          desc: "You haven't completed any quizzes yet. Join a study session and take a quiz to see your achievements here!",
+          title: t("quizzes:skeletons.no_passed_quizzes_title"),
+          desc: t("quizzes:skeletons.no_passed_quizzes_desc"),
         },
         filtered: {
           icon: "bi-award",
-          title: "No Passed Quizzes Found",
-          desc: "No passed quizzes match your filter criteria.",
+          title: t("quizzes:skeletons.no_passed_quizzes_found_title"),
+          desc: t("quizzes:skeletons.no_passed_quizzes_found_desc"),
         },
       },
-    }
+    },
   );
 
   initFiltersInputListener(loader, topSideBarMiddle);

@@ -1,9 +1,12 @@
-import { showMessageBlock } from "../../../../../main_assets/js/utils.js";
 import {
   DESCRIPTION_MAX_LENGTH,
   hoverTooltip,
 } from "../../../global/js/variables.js";
-import { getDebounceFunc } from "../../../global/js/utils.js";
+import {
+  getDebounceFunc,
+  t,
+  showMessageBlock,
+} from "../../../global/js/utils.js";
 import {
   levelValues,
   subjectMenuObject,
@@ -23,7 +26,7 @@ export const setUpSelectMenu = (
   container,
   getSelectMenuHtml,
   isGlobalSelect,
-  onSelect
+  onSelect,
 ) => {
   const selectMenu = container.querySelector(`.select-menu`);
   if (!selectMenu) return;
@@ -35,7 +38,7 @@ export const setUpSelectMenu = (
   }
   const searchInput = selectMenu.querySelector(".select-search input");
   const selectButtonValue = container.querySelector(
-    ".subject-value, .quiz-value"
+    ".subject-value, .quiz-value",
   );
 
   const closeMenuBtn = selectMenu.querySelector(".close-select-menu-btn");
@@ -55,12 +58,14 @@ export const setUpSelectMenu = (
   searchInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      const otherSubjectInput = selectMenu.querySelector(".other-subject-input");
+      const otherSubjectInput = selectMenu.querySelector(
+        ".other-subject-input",
+      );
       if (otherSubjectInput && otherSubjectInput.value.trim().length > 1) {
         handleOtherSubjectInputKeydown(
           { key: "Enter", currentTarget: otherSubjectInput },
           selectButtonValue,
-          selectMenu
+          selectMenu,
         );
         selectMenu.classList.remove("open-overlay");
         document.body.style.pointerEvents = "auto";
@@ -70,21 +75,26 @@ export const setUpSelectMenu = (
 
   // Handle subject selection from the list
   selectMenu.addEventListener("click", (e) =>
-    HandleSelection(e, selectButtonValue, isGlobalSelect, onSelect)
+    HandleSelection(e, selectButtonValue, isGlobalSelect, onSelect),
   );
 
   // Handle custom subject input
   if (!isGlobalSelect) {
     const otherSubjectInput = selectMenu.querySelector(".other-subject-input");
     otherSubjectInput?.addEventListener("keydown", (e) =>
-      handleOtherSubjectInputKeydown(e, selectButtonValue, selectMenu)
+      handleOtherSubjectInputKeydown(e, selectButtonValue, selectMenu),
     );
   }
 };
 
 const HandleSelection = (e, selectButtonValue, isGlobalSelect, onSelect) => {
   const selectedItem = e.target.closest(".select-item");
-  if (!selectedItem || selectedItem.classList.contains("loading-card") || e.target.closest(".loading-card")) return;
+  if (
+    !selectedItem ||
+    selectedItem.classList.contains("loading-card") ||
+    e.target.closest(".loading-card")
+  )
+    return;
 
   if (!selectButtonValue.style.color) {
     selectButtonValue.style.color = "var(--primary-text-color)";
@@ -98,21 +108,18 @@ const HandleSelection = (e, selectButtonValue, isGlobalSelect, onSelect) => {
       setSelectValue(selectButtonValue, selectedValue);
     }
   } else {
-    showMessageBlock(
-      "Please select a valid subject from the list or specify a new one.",
-      "error"
-    );
+    showMessageBlock(t("common:alerts.select_subject_error"), "error");
   }
 };
 
 export const createSubjectSelectMenu = () => {
   let html = `
     <div class="mobile-select-menu-header">
-      <h4>Select Subject</h4>
-      <button type="button" class="exclude-btn close-select-menu-btn" title="Close"><i class="bi bi-x-lg"></i></button>
+      <h4>${t("common:modals.select_subject")}</h4>
+      <button type="button" class="exclude-btn close-select-menu-btn" title="${t("common:modals.close")}"><i class="bi bi-x-lg"></i></button>
     </div>
     <div class="select-search">
-      <input id="select-search" type="search" placeholder="Search subject..." />
+      <input id="select-search" type="search" placeholder="${t("common:modals.search_subject")}" />
     </div>
   `;
 
@@ -124,7 +131,7 @@ export const createSubjectSelectMenu = () => {
       if (groupIdx < arr.length - 1) {
         html += `<hr class="separator">`;
       }
-    }
+    },
   );
 
   return html;
@@ -132,16 +139,16 @@ export const createSubjectSelectMenu = () => {
 
 const createSubjectSelectMenuGroup = (group, subjects) => {
   let groupHtml = `<div class="select-group drop-down-group">`;
-  groupHtml += `<div class="select-group-label drop-down-group-label">${group}</div>`;
+  groupHtml += `<div class="select-group-label drop-down-group-label">${group === "Other" ? t("common:forms.other") : group}</div>`;
   groupHtml += `<hr class="separator">`;
 
   if (group === "Other") {
-    groupHtml += `<input type="text" id="other-subject-input" class="other-subject-input" placeholder="${subjects[0]}" />`;
+    groupHtml += `<input type="text" id="other-subject-input" class="other-subject-input" placeholder="${t("common:forms.specify_and_enter")}" />`;
   } else {
     groupHtml += subjects
       .map(
         (subject) =>
-          `<div class="select-item drop-down-item" data-value="${subject}">${subject}</div>`
+          `<div class="select-item drop-down-item" data-value="${subject}">${subject}</div>`,
       )
       .join("");
   }
@@ -182,10 +189,7 @@ const clearOtherSubjectInput = (otherSubjectInput, selectMenu) => {
 
 const showSubjectInputError = (otherSubjectInput) => {
   otherSubjectInput.style.borderColor = "var(--error-color)";
-  showMessageBlock(
-    "Please enter a valid subject between 2 and 50 characters long.",
-    "error"
-  );
+  showMessageBlock(t("common:alerts.subject_input_error"), "error");
 };
 
 const removeErrorMessage = () => {
@@ -252,7 +256,7 @@ export const createShowInSearchLabel = (checked, disabled) => {
                 <svg viewBox="0 0 64 64" height="2em" width="2em">
                 <path d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16" pathLength="575.0541381835938" class="path"></path>
               </svg>
-              Show in Search Results
+              <span>${t("common:forms.show_in_search")}</span>
             `;
   return showInSearchLabel;
 };
@@ -265,20 +269,34 @@ export const setUpSwitchBtn = (wrapper) => {
       : levelValues;
     const valueElement = wrapper.querySelector(".input");
 
+    const getLocalizedValue = (val) => {
+      const typeKey = wrapper.querySelector(".visibility-input")
+        ? "visibility"
+        : "levels";
+      return t(`common:forms.${typeKey}.${val}`, { defaultValue: val });
+    };
+
     const updateTooltip = (nextIndex) => {
       const nextValue = validValues[nextIndex];
-      btn.setAttribute("data-tooltip", `Switch to ${nextValue}`);
-      hoverTooltip.textContent = `Switch to ${nextValue}`;
+      const localizedNext = getLocalizedValue(nextValue);
+      btn.setAttribute(
+        "data-tooltip",
+        t("common:forms.switch_to", { value: localizedNext }),
+      );
+      hoverTooltip.textContent = t("common:forms.switch_to", {
+        value: localizedNext,
+      });
     };
 
     // Set initial tooltip
     const currentValue = valueElement.nextElementSibling?.matches(
-      'input[type="hidden"]'
+      'input[type="hidden"]',
     )
       ? valueElement.nextElementSibling.value
       : valueElement?.dataset.value;
     const currentIndex = validValues.indexOf(currentValue);
     if (currentIndex !== -1) {
+      valueElement.textContent = getLocalizedValue(validValues[currentIndex]);
       updateTooltip((currentIndex + 1) % validValues.length);
     } else {
       console.error("Invalid value:", currentValue);
@@ -286,7 +304,7 @@ export const setUpSwitchBtn = (wrapper) => {
 
     const cycleRadioSelection = () => {
       const currentValue = valueElement.nextElementSibling?.matches(
-        'input[type="hidden"]'
+        'input[type="hidden"]',
       )
         ? valueElement.nextElementSibling.value
         : valueElement?.dataset.value;
@@ -294,7 +312,7 @@ export const setUpSwitchBtn = (wrapper) => {
 
       if (checkedIndex !== -1) {
         const newIndex = (checkedIndex + 1) % validValues.length;
-        valueElement.textContent = validValues[newIndex];
+        valueElement.textContent = getLocalizedValue(validValues[newIndex]);
         if (wrapper.querySelector(".visibility-input")) {
           if (validValues[newIndex] === "Private") {
             // Create the label element for "Show in Search Results"
@@ -302,7 +320,7 @@ export const setUpSwitchBtn = (wrapper) => {
             wrapper.appendChild(showInSearchLabel);
           } else {
             const showInSearchLabel = wrapper.querySelector(
-              ".show-in-search-label"
+              ".show-in-search-label",
             );
             if (showInSearchLabel) {
               showInSearchLabel.remove();

@@ -2,13 +2,13 @@
   <section class="questions-panel">
     <header class="questions-header">
       <h4 class="panel-title">
-        Questions
-        <span class="count badge simple-badge"><%= questions.length %></span>
+        <%= t("quizzes:labels.questions") %>
+        <span class="count badge simple-badge"><bdi><%= questions.length %></bdi></span>
       </h4>
       <button
         type="button"
         class="add-question-btn exclude-btn should-fill"
-        data-tooltip="Add Question"
+        data-tooltip="<%= t('quizzes:editor.add_question') %>"
       >
         <i class="bi bi-plus-circle"></i>
       </button>
@@ -29,23 +29,23 @@
                 <span class="icon-box">
                   <i class="bi bi-patch-question"></i>
                 </span>
-                <span class="question-count counter">Question <%= idx + 1 %></span>
+                <span class="question-count counter"><%= t("quizzes:editor.question_num", { num: idx + 1 }) %></span>
               </h4>
               <button
                 type="button"
                 class="exclude-btn drag-handle has-tooltip"
-                data-tooltip="Drag to Reorder"
+                data-tooltip="<%= t('quizzes:editor.drag_to_reorder') %>"
               >
                 <i class="drag-icon"></i>
               </button>
             </header>
-            <p class="question-text"><%= q.text %></p>
+            <p class="question-text"><bdi><%= q.text %></bdi></p>
             <footer class="question-card-footer">
-              <span class="choices-count"><%= q.choices.length %> Choices</span>
+              <span class="choices-count"><%= t("quizzes:plural_counts.choices", { count: q.choices.length }) %></span>
               <button
                 type="button"
                 class="delete-question-btn exclude-btn has-tooltip"
-                data-tooltip="Delete Question"
+                data-tooltip="<%= t('quizzes:editor.delete_question') %>"
               >
                 <i class="bi bi-trash3"></i>
               </button>
@@ -64,12 +64,12 @@
             <span class="icon-box">
               <i class="bi bi-book"></i>
             </span>
-            Subject:
+            <%= t("quizzes:editor.subject_label") %>
           </span>
-          <span class="subject-value value"><%= subject %></span>
+          <span class="subject-value value"><bdi><%= subject %></bdi></span>
           <button
             class="exclude-btn edit-subject-btn has-tooltip"
-            data-tooltip="Edit Subject"
+            data-tooltip="<%= t('quizzes:editor.edit_subject') %>"
             type="button"
           >
             <i class="bi bi-pencil-square"></i>
@@ -78,10 +78,10 @@
       </div>
       <div class="title">
         <div class="container">
-          <h4 class="title-text"><%= title %></h4>
+          <h4 class="title-text"><bdi><%= title %></bdi></h4>
           <button
             class="exclude-btn edit-title-btn has-tooltip"
-            data-tooltip="Edit Title"
+            data-tooltip="<%= t('quizzes:editor.edit_title') %>"
             type="button"
           >
             <i class="bi bi-pencil-square"></i>
@@ -93,15 +93,15 @@
           <span class="icon-box">
             <i class="bi bi-people"></i>
           </span>
-          Shared In:
+          <%= t("quizzes:editor.shared_in_label") %>
         </span>
         <span class="groups-count value">
-          <span class="count badge simple-badge"><%= formatNumber(groupsCount) %></span>
-          Group<%= groupsCount === 1 ? '' : 's' %>
+          <span class="count badge simple-badge"><bdi><%= formatNumber(groupsCount) %></bdi></span>
+          <%= t("quizzes:plural_counts.groups", { count: groupsCount }) %>
         </span>
         <span class="sessions-count value">
-          <span class="count badge simple-badge"><%= formatNumber(sessionsCount) %></span>
-          Session<%= sessionsCount === 1 ? '' : 's' %>
+          <span class="count badge simple-badge"><bdi><%= formatNumber(sessionsCount) %></bdi></span>
+          <%= t("quizzes:plural_counts.sessions", { count: sessionsCount }) %>
         </span>
       </span>
     </header>
@@ -113,19 +113,19 @@
               <span class="icon-box">
                 <i class="bi bi-patch-question"></i>
               </span>
-              <span class="question-count counter">Question <%= idx + 1 %></span>
+              <span class="question-count counter"><%= t("quizzes:editor.question_num", { num: idx + 1 }) %></span>
             </h4>
             <button
               type="button"
               class="delete-question-btn exclude-btn has-tooltip"
-              data-tooltip="Delete Choice"
+              data-tooltip="<%= t('quizzes:editor.delete_question') %>"
             >
               <i class="bi bi-trash3"></i>
             </button>
           </header>
           <textarea
             class="question-input input"
-            placeholder="Enter question text here..."
+            placeholder="<%= t('quizzes:editor.question_placeholder') %>"
             id="question-text"
             style="height: 45px"
           ><%= q.text %></textarea>
@@ -134,7 +134,7 @@
               <span class="icon-box">
                 <i class="bi bi-list-ol"></i>
               </span>
-              Choices
+              <%= t("quizzes:editor.choices") %>
             </h5>
             <div class="choices-list">
               <% q.choices.forEach(function(choice, cidx) { %>
@@ -143,13 +143,13 @@
                   <input
                     type="text"
                     class="choice-input input"
-                    placeholder="Enter choice <%= String.fromCharCode(65 + cidx) %>"
+                    placeholder="<%= t('quizzes:editor.choice_placeholder', { letter: String.fromCharCode(65 + cidx) }) %>"
                     value="<%= choice %>"
                   />
                   <button
                     type="button"
                     class="delete-choice-btn exclude-btn has-tooltip"
-                    data-tooltip="Delete Choice"
+                    data-tooltip="<%= t('quizzes:editor.delete_choice') %>"
                   >
                     <i class="bi bi-trash3"></i>
                   </button>
@@ -158,14 +158,14 @@
             </div>
             <button type="button" class="add-choice-btn small-btn">
               <i class="bi bi-plus-circle"></i>
-              Add Choice
+              <%= t("quizzes:editor.add_choice") %>
             </button>
             <hr />
             <h5 class="correct-answer-title section-title">
               <span class="icon-box">
                 <i class="bi bi-check-circle"></i>
               </span>
-              Correct Answer
+              <%= t("quizzes:editor.correct_answer") %>
             </h5>
             <div class="correct-answer-select">
               <div class="icon-box">

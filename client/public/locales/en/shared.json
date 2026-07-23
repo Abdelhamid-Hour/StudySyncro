@@ -1,0 +1,21 @@
+{
+  "header": {
+    "login_to": "Login to",
+    "create": "Create"
+  },
+  "auth_errors": {
+    "INVALID_LOGIN_CREDENTIALS": "Invalid email or password. Please try again.",
+    "CANCELLED_POPUP_REQUEST": "It looks like you closed the popup before completing the action. Please try again.",
+    "EMAIL_ALREADY_IN_USE": "The email address you entered is already associated with an account. Try logging in or use a different email.",
+    "WRONG_PASSWORD": "Oops! The password you entered is incorrect. Please double-check and try again.",
+    "POPUP_BLOCKED": "It seems like the popup was blocked by your browser. Please allow popups and try again.",
+    "POPUP_CLOSED_BY_USER": "It looks like you closed the popup before completing the action. Please open it again and try.",
+    "REDIRECT_CANCELLED_BY_USER": "It seems you canceled the redirect action. Please try again to complete the process.",
+    "USER_NOT_FOUND": "We couldn't find an account with that email address. Please check your email or create a new account.",
+    "TOO_MANY_REQUESTS": "Too many requests have been made from this device. Please wait a while before trying again."
+  },
+  "actions": {
+    "switch_to_en": "Switch to English",
+    "switch_to_ar": "Switch to Arabic"
+  }
+}

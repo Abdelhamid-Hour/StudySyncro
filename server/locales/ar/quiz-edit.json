@@ -1,0 +1,22 @@
+{
+  "badges": {
+    "draft": "مسودة",
+    "draft_tooltip": "أضف سؤالاً واحداً على الأقل للنشر",
+    "published": "منشور"
+  },
+  "questions_heading": "الأسئلة",
+  "add_question": "إضافة سؤال",
+  "drag_tooltip": "اسحب لإعادة الترتيب",
+  "delete_question_tooltip": "حذف السؤال",
+  "subject_label": "المادة:",
+  "edit_subject_tooltip": "تعديل المادة",
+  "edit_title_tooltip": "تعديل العنوان",
+  "shared_in_label": "مشارك في:",
+  "question_counter": "السؤال {count}",
+  "question_placeholder": "اكتب نص السؤال هنا...",
+  "choices_heading": "الخيارات",
+  "choice_placeholder": "اكتب الخيار {letter}",
+  "delete_choice_tooltip": "حذف الخيار",
+  "add_choice": "إضافة خيار",
+  "correct_answer_heading": "الإجابة الصحيحة"
+}

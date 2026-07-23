@@ -17,7 +17,7 @@
     .editor-header::before {
       content: "";
       position: absolute;
-      left: 0;
+      inset-inline-start: 0;
       width: 100%;
       height: calc(var(--primary-gap) * 2);
       z-index: 1;
@@ -62,6 +62,7 @@
     padding: var(--primary-gap);
     flex-grow: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     scrollbar-width: none;
     scroll-padding-top: 1rem;
   }
@@ -252,7 +253,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border-right: var(--primary-border-style);
+                border-inline-end: var(--primary-border-style);
               }
 
               .delete-choice-btn {
@@ -281,7 +282,7 @@
                 background-color: transparent;
                 font-size: var(--small-font-size);
                 transition: background-color var(--primary-transition-style);
-                border-right: var(--primary-border-style);
+                border-inline-end: var(--primary-border-style);
 
                 &:focus {
                   background-color: var(--inputs-background-color);
@@ -352,7 +353,7 @@
   flex-direction: column;
   overflow: hidden;
   grid-column: 1 / span 1;
-  border-right: var(--primary-border-style);
+  border-inline-end: var(--primary-border-style);
 
   .questions-header {
     display: flex;
@@ -396,7 +397,6 @@
         box-shadow: var(--primary-hover-shadow);
       }
       .exclude-btn {
-        translate: calc(var(--primary-gap) / 2) 0;
         &:hover {
           background-color: var(--container-background-color);
           box-shadow: var(--primary-shadow);
@@ -469,6 +469,7 @@ button:has(.bi-trash3) {
     .questions-panel {
       height: 100%;
       display: none;
+      border: none;
     }
 
     .question-editor-panel {

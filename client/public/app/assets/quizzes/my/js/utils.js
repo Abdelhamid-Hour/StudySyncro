@@ -1,9 +1,4 @@
 import {
-  sendData,
-  showMessageBlock,
-  isNativeDomainCondition,
-} from "../../../../../main_assets/js/utils.js";
-import {
   globalTooltip,
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
@@ -14,10 +9,13 @@ import {
   resetTooltip,
   showErrorTooltip,
   navigateTo,
-  getLoader,
   handleApiAction,
   formatNumber,
   enableMobileTabs,
+  sendData,
+  showMessageBlock,
+  isNativeDomainCondition,
+  t,
 } from "../../../global/js/utils.js";
 import {
   handleFormSubmit,
@@ -33,7 +31,7 @@ export const handleQuizCreateClick = () => {
     "create-quiz-overlay",
     [".close-quiz-overlay"],
     getQuizOverlay,
-    setUpQuizOverlay
+    setUpQuizOverlay,
   );
 };
 
@@ -42,7 +40,7 @@ const handleQuizDuplicateClick = (quizId) => {
     "duplicate-quiz-overlay",
     [".close-duplicate-quiz-overlay"],
     getDuplicateQuizOverlay,
-    (backdropElement) => setUpDuplicateQuizOverlay(backdropElement, quizId)
+    (backdropElement) => setUpDuplicateQuizOverlay(backdropElement, quizId),
   );
 };
 
@@ -62,7 +60,13 @@ const setUpDuplicateQuizOverlay = (backdropElement, quizId) => {
     form,
     () => validateQuizTitleField(quizTitle),
     (quizData) =>
-      handleDuplicateQuizSubmit(quizData, form, duplicateBtn, quizId, quizTitle)
+      handleDuplicateQuizSubmit(
+        quizData,
+        form,
+        duplicateBtn,
+        quizId,
+        quizTitle,
+      ),
   );
 };
 
@@ -70,12 +74,12 @@ const handleCreateQuizSubmit = async (quizData, form, createBtn) => {
   const quizTitleInput = form.querySelector(".quiz-title-field input");
 
   return handleApiAction("/create-quiz", { quizData }, createBtn, {
-    successMsg: "Quiz created successfully.",
+    successMsg: t("quizzes:alerts.quiz_created"),
     getExtraData: async () => {
       const quizTitle = quizData["quiz-title"] ?? "";
       const titleIsAvailable = await checkQuizTitleAvailability(
         quizTitle,
-        quizTitleInput
+        quizTitleInput,
       );
 
       if (!titleIsAvailable) return null;
@@ -101,7 +105,7 @@ export const initQuizForm = () => {
         quizTitle,
         subject,
       }),
-    (quizData) => handleCreateQuizSubmit(quizData, form, createBtn)
+    (quizData) => handleCreateQuizSubmit(quizData, form, createBtn),
   );
 };
 
@@ -110,16 +114,16 @@ const handleDuplicateQuizSubmit = async (
   form,
   duplicateBtn,
   quizId,
-  quizTitleInput
+  quizTitleInput,
 ) => {
   const title = quizData.title ?? "";
 
   return handleApiAction("/duplicate-quiz", { quizId }, duplicateBtn, {
-    successMsg: "Quiz duplicated successfully.",
+    successMsg: t("quizzes:alerts.quiz_duplicated"),
     getExtraData: async () => {
       const titleIsAvailable = await checkQuizTitleAvailability(
         title,
-        quizTitleInput
+        quizTitleInput,
       );
 
       if (!titleIsAvailable) return null;
@@ -136,7 +140,7 @@ const validateQuizTitleField = (quizTitleInput) => {
   const quizTitleValue = quizTitleInput?.value ?? "";
 
   if (!quizTitleValue.trim()) {
-    showErrorTooltip("Quiz Title is required.", quizTitleInput);
+    showErrorTooltip(t("quizzes:validation.title_required"), quizTitleInput);
     return false;
   }
 
@@ -145,8 +149,11 @@ const validateQuizTitleField = (quizTitleInput) => {
     quizTitleValue.length > NAME_TITLE_MAX_LENGTH
   ) {
     showErrorTooltip(
-      `Quiz Title must be between ${NAME_TITLE_MIN_LENGTH} and ${NAME_TITLE_MAX_LENGTH} characters.`,
-      quizTitleInput
+      t("quizzes:validation.title_length", {
+        min: NAME_TITLE_MIN_LENGTH,
+        max: NAME_TITLE_MAX_LENGTH,
+      }),
+      quizTitleInput,
     );
     return false;
   }
@@ -171,8 +178,10 @@ const checkQuizTitleAvailability = async (title, quizTitleInput) => {
     resetTooltip(globalTooltip, quizTitleInput.closest(".field-container"));
     return true;
   } catch (error) {
-    const isNative = error.isNative || error.data?.isNative || isNativeDomainCondition(error);
-    const notifType = error.type || error.data?.type || (isNative ? "info" : "error");
+    const isNative =
+      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const notifType =
+      error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error("Error: ", error);
     showMessageBlock(error.message, notifType);
     return false;
@@ -188,7 +197,7 @@ const chechQuizValues = (inputs) => {
   }
 
   if (!subjectValue.trim()) {
-    showErrorTooltip("Subject is required.", subject);
+    showErrorTooltip(t("quizzes:validation.subject_required"), subject);
     return false;
   } else {
     resetTooltip(globalTooltip, subject.closest(".field-container"));
@@ -199,7 +208,7 @@ const chechQuizValues = (inputs) => {
 
 const getQuizOverlay = () => `<div class="overlay-model create-quiz-overlay">
         <header>
-          <h3>Create New Quiz</h3>
+          <h3>${t("quizzes:create_new_quiz")}</h3>
           <button
             type="button"
             class="exclude-btn close-quiz-overlay"
@@ -221,7 +230,7 @@ const getQuizOverlay = () => `<div class="overlay-model create-quiz-overlay">
               id="quiz-title"
               name="quiz-title"
               class="input"
-              placeholder="Title"
+              placeholder="${t("quizzes:title_placeholder")}"
             />
           </div>
           <div class="field-container subject-field">
@@ -230,7 +239,7 @@ const getQuizOverlay = () => `<div class="overlay-model create-quiz-overlay">
             </div>
             <div class="select-trigger input">
               <button type="button" class="exclude-btn open-drop-down-btn">
-                <span class="subject-value">Subject</span>
+                <span class="subject-value">${t("common:quiz_card.subject")}</span>
                 <input type="hidden" name="subject" value="" />
                 <i class="bi bi-chevron-down"></i>
               </button>
@@ -239,13 +248,14 @@ const getQuizOverlay = () => `<div class="overlay-model create-quiz-overlay">
               ></div>
             </div>
           </div>
-          <button type="submit" class="blue-btn create-btn">Create</button>
+          <button type="submit" class="blue-btn create-btn">${t("quizzes:create")}</button>
         </form>
       </div>`;
 
-const getDuplicateQuizOverlay = () => `<div class="overlay-model duplicate-quiz-overlay">
+const getDuplicateQuizOverlay =
+  () => `<div class="overlay-model duplicate-quiz-overlay">
         <header>
-          <h3>Duplicate Quiz</h3>
+          <h3>${t("quizzes:duplicate_quiz")}</h3>
           <button
             type="button"
             class="exclude-btn close-duplicate-quiz-overlay"
@@ -267,10 +277,10 @@ const getDuplicateQuizOverlay = () => `<div class="overlay-model duplicate-quiz-
               id="duplicate-quiz-title"
               name="title"
               class="input"
-              placeholder="New title"
+              placeholder="${t("quizzes:new_title_placeholder")}"
             />
           </div>
-          <button type="submit" class="blue-btn create-btn duplicate-btn">Duplicate</button>
+          <button type="submit" class="blue-btn create-btn duplicate-btn">${t("quizzes:duplicate")}</button>
         </form>
       </div>`;
 
@@ -297,11 +307,11 @@ const getCriteria = () => {
 const getcreateQuizCardFunc = (quiz = {}) => {
   const {
     id = "",
-    title = "Untitled Quiz",
+    title = "",
     questionsCount = 0,
     sharedGroups = 0,
     sharedSessions = 0,
-    subject = "Unknown",
+    subject = "",
     status = "",
   } = quiz;
 
@@ -313,13 +323,13 @@ const getcreateQuizCardFunc = (quiz = {}) => {
       <header class="quiz-card-header">
         ${
           status === "draft"
-            ? `<span class="badge gray-badge has-tooltip" data-tooltip="Add at least 1 question to publish">
+            ? `<span class="badge gray-badge has-tooltip" data-tooltip="${t("quizzes:tooltips.add_at_least_1_question")}">
                 <i class="bi bi-pencil"></i>
-                Draft
+                ${t("common:filters.draft")}
               </span>`
             : `<span class="badge green-badge">
                 <i class="bi bi-check"></i>
-                Published
+                ${t("common:filters.published")}
               </span>`
         }
         <div>
@@ -337,7 +347,7 @@ const getcreateQuizCardFunc = (quiz = {}) => {
                 data-quiz-id="${id}"
               >
                 <i class="bi bi-pencil-square"></i>
-                Edit
+                ${t("quizzes:edit")}
               </button>
               <button
                 type="button"
@@ -345,7 +355,7 @@ const getcreateQuizCardFunc = (quiz = {}) => {
                 data-quiz-id="${id}"
               >
                 <i class="bi bi-eye"></i>
-                Preview
+                ${t("quizzes:preview")}
               </button>
               <button
                 type="button"
@@ -353,7 +363,7 @@ const getcreateQuizCardFunc = (quiz = {}) => {
                 data-quiz-id="${id}"
               >
                 <i class="bi bi-files"></i>
-                Duplicate
+                ${t("quizzes:duplicate")}
               </button>
               <button
                 type="button"
@@ -361,7 +371,7 @@ const getcreateQuizCardFunc = (quiz = {}) => {
                 data-quiz-id="${id}"
               >
                 <i class="bi bi-trash3"></i>
-                Remove
+                ${t("quizzes:remove")}
               </button>
             </div>
           </div>
@@ -370,46 +380,47 @@ const getcreateQuizCardFunc = (quiz = {}) => {
       <div class="quiz-title-container info-container">
         <label class="quiz-title-label">
           <span class="icon-box"><i class="bi bi-card-text"></i></span>
-          Quiz title
+          ${t("common:quiz_card.quiz_title")}
         </label>
         <div class="quiz-title content"></div>
       </div>
       <div class="questions-count-container info-container small-container">
         <label class="questions-count-label">
           <span class="icon-box"><i class="bi bi-question-circle"></i></span>
-          Questions
+          ${t("common:quiz_card.questions")}
         </label>
         <span class="count content"></span>
       </div>
       <div class="shared-in-container info-container">
         <label class="shared-in-label">
           <span class="icon-box"><i class="bi bi-people"></i></span>
-          Shared in
+          ${t("common:quiz_card.shared_in")}
         </label>
         <div class="content">
-          <span class="count content has-tooltip" data-tooltip="Groups | Sessions">
+          <span class="count content has-tooltip" data-tooltip="${t("quizzes:tooltips.groups_sessions")}">
             ${formatNumber(sharedGroups)}
-            <sup>Gr</sup>
+            <sup>${t("common:quiz_card.groups_abbr")}</sup>
             | ${formatNumber(sharedSessions)}
-            <sup>Ses</sup>
+            <sup>${t("common:quiz_card.sessions_abbr")}</sup>
           </span>
         </div>
       </div>
       <div class="subject-container info-container small-container">
         <label class="subject-label">
           <span class="icon-box"><i class="bi bi-book"></i></span>
-          Subject
+          ${t("common:quiz_card.subject")}
         </label>
-        <span class="subject content">${subject}</span>
+        <span class="subject content"></span>
       </div>
   `;
 
   // Set values safely
-  card.querySelector(".quiz-title.content").textContent = title;
+  card.querySelector(".quiz-title.content").textContent =
+    title || t("quizzes:untitled_quiz");
   card.querySelector(".questions-count-container .count.content").textContent =
     formatNumber(questionsCount);
   card.querySelector(".subject-container .subject.content").textContent =
-    subject;
+    subject || t("quizzes:unknown");
 
   return card;
 };
@@ -427,21 +438,21 @@ const createUserQuizLoadingCard = () => {
       <div class="quiz-title-container info-container">
         <label class="quiz-title-label">
           <span class="icon-box"><i class="bi bi-card-text"></i></span>
-          Quiz title
+          ${t("common:quiz_card.quiz_title")}
         </label>
         <div class="quiz-title content loading-opacity-animation"></div>
       </div>
       <div class="questions-count-container info-container small-container">
         <label class="questions-count-label">
           <span class="icon-box"><i class="bi bi-question-circle"></i></span>
-          Questions
+          ${t("common:quiz_card.questions")}
         </label>
         <span class="count content loading-opacity-animation"></span>
       </div>
       <div class="shared-in-container info-container">
         <label class="shared-in-label">
           <span class="icon-box"><i class="bi bi-people"></i></span>
-          Shared in
+          ${t("common:quiz_card.shared_in")}
         </label>
         <div class="content">
           <span class="count content loading-opacity-animation"></span>
@@ -450,7 +461,7 @@ const createUserQuizLoadingCard = () => {
       <div class="subject-container info-container small-container">
         <label class="subject-label">
           <span class="icon-box"><i class="bi bi-book"></i></span>
-          Subject
+          ${t("common:quiz_card.subject")}
         </label>
         <span class="subject content loading-opacity-animation"></span>
       </div>
@@ -470,16 +481,16 @@ export const initLazyLoadingLoader = () => {
       emptyState: {
         noFilter: {
           icon: "bi-file-earmark-plus",
-          title: "No Quizzes Created",
-          desc: "You haven't created any quizzes yet. Click the 'Create Quiz' button to get started!",
+          title: t("quizzes:skeletons.no_quizzes_created_title"),
+          desc: t("quizzes:skeletons.no_quizzes_created_desc"),
         },
         filtered: {
           icon: "bi-file-earmark-plus",
-          title: "No Quizzes Found",
-          desc: "No quizzes match your filter criteria. Try adjusting your search or filters.",
+          title: t("quizzes:skeletons.no_quizzes_found_title"),
+          desc: t("quizzes:skeletons.no_quizzes_found_desc"),
         },
       },
-    }
+    },
   );
 
   initFiltersInputListener(loader, topSideBarMiddle);
@@ -506,7 +517,7 @@ export const handleQuizCardBtns = (e) => {
   if (deleteBtn) {
     const quizId = deleteBtn.dataset.quizId;
     handleApiAction("/remove-quiz/" + quizId, {}, null, {
-      successMsg: "Quiz deleted successfully.",
+      successMsg: t("quizzes:alerts.quiz_deleted"),
       onSuccess: () => quizCard?.remove(),
       method: "DELETE",
     });

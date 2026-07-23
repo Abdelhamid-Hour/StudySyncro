@@ -1,22 +1,26 @@
-import { fetchData, sendData } from "../../../../../main_assets/js/utils.js";
 import {
   enableMobileTabs,
   openOverlayModal,
+  t,
+  fetchData,
+  sendData,
 } from "../../../global/js/utils.js";
 import { Loader } from "../../../shared/loader/js/utils.js";
 import { joinSession } from "../../../shared/session/js/utils.js";
 import { handletTasksListners } from "../../../shared/tasks/js/utils.js";
 import { sessionsContainer, messagesContainer } from "./dom-variables.js";
 import {
-  initializeEmojiPicker,
-  handleEmojiListClick,
-  handleCategoryClick,
-  handleEmojisSearch,
+  setupEmojiPickerListeners,
+  setupChatFileInputListeners,
+  sendChatMessagePayload,
+  getEmojiPickerHTML,
 } from "../../../shared/chat/js/utils.js";
+import { initFiltersInputListener } from "../../../shared/loader/js/utils.js";
 
-export const sessionViewSkeleton = `<div class="loading-animation overlay-model session-view-overlay">
+export const sessionViewSkeleton =
+  () => `<div class="loading-animation overlay-model session-view-overlay">
   <header>
-    <h3>Session Details</h3>
+    <h3>${t("home:session_details")}</h3>
     <button
       type="button"
       class="exclude-btn close-session-view-overlay should-fill"
@@ -65,18 +69,18 @@ export const sessionViewSkeleton = `<div class="loading-animation overlay-model 
 
     <div class="session-tasks">
       <header>
-        <h3 class="title"><i class="bi bi-ui-checks"></i>Tasks</h3>
+        <h3 class="title"><i class="bi bi-ui-checks"></i>${t("home:tasks")}</h3>
         <div class="btns">
           <button
             type="button"
-            data-tooltip="Scroll To Top"
+            data-tooltip="${t("common:actions.scroll_to_top")}"
             class="exclude-btn scroll-to-top has-tooltip"
           >
             <i class="bi bi-arrow-up-short"></i>
           </button>
           <button
             type="button"
-            data-tooltip="Collapse All"
+            data-tooltip="${t("common:actions.collapse_all")}"
             class="exclude-btn collapse-all has-tooltip"
           >
             <i class="bi bi-arrows-expand"></i>
@@ -110,7 +114,7 @@ export const sessionViewSkeleton = `<div class="loading-animation overlay-model 
   <button
     type="button"
     class="loading-opacity-animation"
-    style="width: 40%; height: 2rem; margin-left: auto"
+    style="width: 40%; height: 2rem; margin-inline-start: auto"
   ></button>
 </div>
 `;
@@ -137,7 +141,7 @@ export const handleSessionBtns = async (e) => {
           );
         }
       },
-      sessionViewSkeleton,
+      sessionViewSkeleton(),
     );
   }
 
@@ -225,7 +229,7 @@ const createSessionCard = (session) => {
         <h3 class="session-name">
           <span class="session-title"></span>
           <span class="joined-count badge simple-badge">
-            <span class="joined-count-value"></span> Joined Users
+            <span class="joined-count-value"></span> ${t("home:session_card.joined_users")}
           </span>
         </h3>
         <span class="group badge">
@@ -236,12 +240,12 @@ const createSessionCard = (session) => {
       <div class="meta-info">
         <span class="badge blue-badge">
           <i class="bi bi-clock-fill"></i>
-          Duration
+          ${t("home:session_card.duration")}
           <span class="duration"></span>
         </span>
         <span class="badge simple-badge">
           <i class="bi bi-list-task"></i>
-          <span class="tasks-count"></span> Tasks
+          <span class="tasks-count"></span> ${t("home:session_card.tasks")}
         </span>
       </div>
     </header>
@@ -250,50 +254,50 @@ const createSessionCard = (session) => {
       <div class="footer-meta-info">
         <span class="badge green-badge">
           <i class="bi bi-play-circle"></i>
-          Start At:
+          ${t("home:session_card.start_at")}
           <span class="duration"></span>
         </span>
         <span class="badge orange-badge">
           <i class="bi bi-stopwatch"></i>
-          End At:
+          ${t("home:session_card.end_at")}
           <span class="duration"></span>
         </span>
       </div>
       <div class="action-buttons" data-session-id="">
         <button type="button" class="join-session blue-btn">
           <i class="bi bi-box-arrow-in-right"></i>
-          Join Session
+          ${t("home:session_card.join_session")}
         </button>
         <button type="button" class="should-fill view-details">
           <i class="bi bi-info-circle"></i>
-          View Details
+          ${t("home:session_card.view_details")}
         </button>
       </div>
     </footer>
   `;
 
-  card.querySelector(".session-title").textContent = session.name || "";
-  card.querySelector(".joined-count-value").textContent =
-    session.joinedCount ?? 0;
-  card.querySelector(".group-name").textContent = session.groupName || "N/A";
-  card.querySelector(".meta-info .blue-badge .duration").textContent =
-    session.duration || "N/A";
-  card.querySelector(".meta-info .tasks-count").textContent =
-    session.tasksCount ?? 0;
-  card.querySelector(".session-description").textContent =
-    session.description || "";
-  card.querySelector(".footer-meta-info .green-badge .duration").textContent =
-    session.startTime || "N/A";
-  card.querySelector(".footer-meta-info .orange-badge .duration").textContent =
-    session.endTime || "N/A";
+  card.querySelector(".session-title").innerHTML =
+    `<bdi>${session.name || ""}</bdi>`;
+  card.querySelector(".joined-count-value").innerHTML =
+    `<bdi>${session.joinedCount ?? 0}</bdi>`;
+  card.querySelector(".group-name").innerHTML =
+    `<bdi>${session.groupName || t("common:not_available")}</bdi>`;
+  card.querySelector(".meta-info .blue-badge .duration").innerHTML =
+    `<bdi>${session.duration || t("common:not_available")}</bdi>`;
+  card.querySelector(".meta-info .tasks-count").innerHTML =
+    `<bdi>${session.tasksCount ?? 0}</bdi>`;
+  card.querySelector(".session-description").innerHTML =
+    `<bdi>${session.description || ""}</bdi>`;
+  card.querySelector(".footer-meta-info .green-badge .duration").innerHTML =
+    `<bdi>${session.startTime || t("common:not_available")}</bdi>`;
+  card.querySelector(".footer-meta-info .orange-badge .duration").innerHTML =
+    `<bdi>${session.endTime || t("common:not_available")}</bdi>`;
   card
     .querySelector(".action-buttons")
     .setAttribute("data-session-id", session.id || "");
 
   return card;
 };
-
-import { initFiltersInputListener } from "../../../shared/loader/js/utils.js";
 
 const getSearchCriteria = () => {
   const searchInput = document.querySelector("#active-sessions-search-input");
@@ -313,13 +317,13 @@ export const initSessionsLoader = () => {
       emptyState: {
         noFilter: {
           icon: "bi-clock-history",
-          title: "No Active Sessions",
-          desc: "There are no study sessions currently active. You can start one or wait for others to join.",
+          title: t("home:skeletons.no_active_sessions_title"),
+          desc: t("home:skeletons.no_active_sessions_desc"),
         },
         filtered: {
           icon: "bi-clock-history",
-          title: "No Active Sessions Found",
-          desc: "We couldn't find any active sessions matching your search query.",
+          title: t("home:skeletons.no_active_sessions_filtered_title"),
+          desc: t("home:skeletons.no_active_sessions_filtered_desc"),
         },
       },
     },
@@ -410,8 +414,8 @@ const initActiveSessionsStream = () => {
                 <div class="empty-icon-container">
                   <i class="bi bi-clock-history"></i>
                 </div>
-                <h3>No Active Sessions</h3>
-                <p>There are no study sessions currently active. You can start one or wait for others to join.</p>
+                <h3>${t("home:skeletons.no_active_sessions_title")}</h3>
+                <p>${t("home:skeletons.no_active_sessions_desc")}</p>
               </div>
             `;
           }
@@ -434,13 +438,14 @@ export const formatTimeAgo = (timestamp) => {
   if (!timestamp) return "";
   const diff = Date.now() - Number(timestamp);
   const seconds = Math.floor(diff / 1000);
-  if (seconds < 60) return "Just now";
+  if (seconds < 60) return t("home:recent.time.just_now");
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60)
+    return t("home:recent.time.ago_minutes", { count: minutes });
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return t("home:recent.time.ago_hours", { count: hours });
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days}d ago`;
+  if (days < 7) return t("home:recent.time.ago_days", { count: days });
   const date = new Date(Number(timestamp));
   return date.toLocaleDateString();
 };
@@ -488,7 +493,8 @@ export const handleRecentMessageBtns = async (e) => {
     if (prevBtn) {
       prevBtn.classList.remove("active-reply");
       prevBtn.removeAttribute("data-reply-open");
-      prevBtn.innerHTML = '<i class="bi bi-reply"></i> Reply';
+      prevBtn.innerHTML =
+        '<i class="bi bi-reply"></i> ' + t("home:recent.reply");
     }
 
     if (replyBtn == prevBtn) {
@@ -505,7 +511,8 @@ export const handleRecentMessageBtns = async (e) => {
 
     replyBtn.classList.add("active-reply");
     replyBtn.setAttribute("data-reply-open", "true");
-    replyBtn.innerHTML = '<i class="bi bi-x-circle"></i> Close';
+    replyBtn.innerHTML =
+      '<i class="bi bi-x-circle"></i> ' + t("home:recent.close");
 
     const sharedReplyBox = ensureSharedRecentMessagesReplyBox();
     if (!sharedReplyBox) return;
@@ -552,96 +559,9 @@ const ensureSharedRecentMessagesReplyBox = () => {
         <label for="shared-file-upload">
           <i class="bi bi-paperclip"></i>
         </label>
-        <div class="emoji-picker">
-          <button
-            type="button"
-            class="exclude-btn should-fill emoji-button open-drop-down-btn"
-          >
-            <i class="bi bi-emoji-smile"></i>
-          </button>
-          <div class="emoji-list overlay">
-            <div class="categories">
-              <a data-section-id="recent" class="recent should-fill">
-                <i class="bi bi-clock"></i>
-              </a>
-              <a data-section-id="people" class="should-fill">
-                <i class="bi bi-emoji-smile"></i>
-              </a>
-              <a data-section-id="animals_nature" class="should-fill">
-                <i class="bi bi-tree"></i>
-              </a>
-              <a data-section-id="food_drink" class="should-fill">
-                <i class="bi bi-cup"></i>
-              </a>
-              <a data-section-id="activity" class="should-fill">
-                <i class="bi bi-calendar"></i>
-              </a>
-              <a data-section-id="objects" class="should-fill">
-                <i class="bi bi-box"></i>
-              </a>
-              <a data-section-id="symbols" class="should-fill">
-                <i class="bi bi-heart"></i>
-              </a>
-              <a data-section-id="travel_places" class="should-fill">
-                <i class="bi bi-geo-alt"></i>
-              </a>
-              <a data-section-id="flags" class="should-fill">
-                <i class="bi bi-flag"></i>
-              </a>
-            </div>
-            <div class="emoji-search-container">
-              <div class="search-icon-container">
-                <i class="bi bi-search"></i>
-              </div>
-              <input
-                type="search"
-                placeholder="Search for emoji"
-                class="emojis-search-input"
-              />
-            </div>
-            <div class="emojies-sections">
-              <section id="recent">
-                <h5>Recent</h5>
-                <div class="recent-emojies"></div>
-              </section>
-              <section id="people">
-                <h5>People</h5>
-                <div class="people-emojies"></div>
-              </section>
-              <section id="animals_nature">
-                <h5>Animals &amp; Nature</h5>
-                <div class="animals-nature-emojies"></div>
-              </section>
-              <section id="food_drink">
-                <h5>Food &amp; Drink</h5>
-                <div class="food-drink-emojies"></div>
-              </section>
-              <section id="activity">
-                <h5>Activity</h5>
-                <div class="activity-emojies"></div>
-              </section>
-              <section id="objects">
-                <h5>Objects</h5>
-                <div class="objects-emojies"></div>
-              </section>
-              <section id="symbols">
-                <h5>Symbols</h5>
-                <div class="symbols-emojies"></div>
-              </section>
-              <section id="travel_places">
-                <h5>Travel &amp; Places</h5>
-                <div class="travel-places-emojies"></div>
-              </section>
-              <section id="flags">
-                <h5>Flags</h5>
-                <div class="flags-emojies"></div>
-              </section>
-            </div>
-            <div id="search-result"></div>
-          </div>
-        </div>
+        ${getEmojiPickerHTML()}
       </div>
-      <textarea placeholder="Type a message..." class="input-message shared-reply-input"></textarea>
+      <textarea placeholder="${t("home:recent.type_message_placeholder")}" class="input-message shared-reply-input"></textarea>
       <button type="button" class="send-btn exclude-btn should-fill shared-send-btn">
         <i class="bi bi-send"></i>
       </button>
@@ -678,106 +598,19 @@ const ensureSharedRecentMessagesReplyBox = () => {
   const imageInput = sharedReplyBox.querySelector("#shared-image-upload");
   const fileInput = sharedReplyBox.querySelector("#shared-file-upload");
 
-  if (emojiList) {
-    initializeEmojiPicker(emojiList);
-    emojiList.addEventListener("click", (e) => {
-      handleEmojiListClick(e, textarea, emojiList);
-      handleCategoryClick(e);
-    });
-  }
+  setupEmojiPickerListeners({
+    emojiList,
+    inputEl: textarea,
+    emojiesSearch,
+    searchResultContainer: emojiesSearchResultContainer,
+  });
 
-  if (emojiesSearch) {
-    emojiesSearch.addEventListener("input", (e) => {
-      handleEmojisSearch(e, emojiesSearchResultContainer);
-    });
-  }
-
-  const displaySharedFile = (file) => {
-    let filesView = inputMessageContainer.querySelector(".files-view");
-    if (!filesView) {
-      filesView = document.createElement("div");
-      filesView.className = "files-view";
-      inputMessageContainer.append(filesView);
-      filesView.addEventListener("click", (e) => {
-        const btn = e.target.closest(".remove-file-btn");
-        if (btn) {
-          const targetFileName = btn.previousElementSibling?.dataset.fileName;
-          const fileIndex = Array.from(sharedFilesInstance.items).findIndex(
-            (f) =>
-              f.name === targetFileName ||
-              f.getAsFile?.()?.name === targetFileName,
-          );
-          if (fileIndex !== -1) {
-            sharedFilesInstance.items.remove(fileIndex);
-          }
-          btn.parentElement.remove();
-        }
-        if (!sharedFilesInstance.items.length) {
-          filesView.remove();
-        }
-      });
-    }
-
-    const removeBtn = document.createElement("button");
-    removeBtn.type = "button";
-    removeBtn.className = "exclude-btn remove-file-btn";
-    removeBtn.innerHTML = `<i class="bi bi-x-circle-fill"></i>`;
-
-    const isImg = file.type.startsWith("image/");
-    if (isImg) {
-      const mediaContainer = document.createElement("div");
-      mediaContainer.className = "media-preview";
-      const mediaElement = document.createElement(
-        file.type.startsWith("video/") ? "video" : "img",
-      );
-      mediaElement.dataset.fileName = file.name;
-      mediaElement.src = URL.createObjectURL(file);
-      if (isImg) mediaElement.alt = file.name;
-      mediaContainer.append(mediaElement, removeBtn);
-      filesView.append(mediaContainer);
-    } else {
-      const filePreview = document.createElement("div");
-      filePreview.className = "file";
-      const typeBadge = document.createElement("span");
-      typeBadge.className = "badge badge-type";
-      typeBadge.textContent = file.name.split(".").pop().toUpperCase();
-      const fileName = document.createElement("span");
-      fileName.className = "file-name";
-      fileName.textContent = file.name;
-      fileName.dataset.fileName = file.name;
-      filePreview.append(typeBadge, fileName, removeBtn);
-      filesView.append(filePreview);
-    }
-  };
-
-  const handleSharedFiles = (files) => {
-    for (const f of Array.from(files)) {
-      if (sharedFilesInstance.items.length >= 5) {
-        alert("You can only upload a maximum of 5 files");
-        return;
-      }
-      if (f.size > 50 * 1024 * 1024) {
-        alert(`File "${f.name}" size exceeds 50MB.`);
-        continue;
-      }
-      sharedFilesInstance.items.add(f);
-      displaySharedFile(f);
-    }
-  };
-
-  if (imageInput) {
-    imageInput.addEventListener("change", () => {
-      if (imageInput.files.length) handleSharedFiles(imageInput.files);
-      imageInput.value = "";
-    });
-  }
-
-  if (fileInput) {
-    fileInput.addEventListener("change", () => {
-      if (fileInput.files.length) handleSharedFiles(fileInput.files);
-      fileInput.value = "";
-    });
-  }
+  setupChatFileInputListeners({
+    imageInput,
+    fileInput,
+    container: inputMessageContainer,
+    dataTransfer: sharedFilesInstance,
+  });
 
   const closeSharedReplyBox = () => {
     textarea.value = "";
@@ -788,7 +621,7 @@ const ensureSharedRecentMessagesReplyBox = () => {
     document.querySelectorAll(".recent-message .reply").forEach((btn) => {
       btn.classList.remove("active-reply");
       btn.removeAttribute("data-reply-open");
-      btn.innerHTML = '<i class="bi bi-reply"></i> Reply';
+      btn.innerHTML = '<i class="bi bi-reply"></i> ' + t("home:recent.reply");
     });
   };
 
@@ -811,38 +644,21 @@ const ensureSharedRecentMessagesReplyBox = () => {
     const originalContent = textMsgEl ? textMsgEl.innerHTML : "";
 
     const displaySummary =
-      text || (filesToSend.length ? `Attachment (${filesToSend.length})` : "");
+      text ||
+      (filesToSend.length
+        ? t("home:recent.attachment", { count: filesToSend.length })
+        : "");
     if (textMsgEl) {
       textMsgEl.innerHTML = `<span class="icon-box"><i class="bi bi-clock"></i></span> ${displaySummary}`;
     }
 
     try {
       if (text) {
-        const formData = new FormData();
-        formData.append("groupId", groupId);
-        formData.append("message", text);
-        formData.append("timestamp", Date.now());
-        formData.append(
-          "localId",
-          typeof crypto !== "undefined" && crypto.randomUUID
-            ? crypto.randomUUID()
-            : Date.now().toString(),
-        );
-        await sendData("/api/send-message", formData, "POST");
+        await sendChatMessagePayload({ groupId, message: text });
       }
 
       for (const file of filesToSend) {
-        const formData = new FormData();
-        formData.append("groupId", groupId);
-        formData.append("file", file);
-        formData.append("timestamp", Date.now());
-        formData.append(
-          "localId",
-          typeof crypto !== "undefined" && crypto.randomUUID
-            ? crypto.randomUUID()
-            : Date.now().toString(),
-        );
-        await sendData("/api/send-message", formData, "POST");
+        await sendChatMessagePayload({ groupId, file });
       }
 
       if (textMsgEl && textMsgEl.isConnected) {
@@ -898,15 +714,16 @@ const createRecentMessageCard = (data) => {
   card.className = `recent-message card-item ${hasUnread ? "has-unread" : ""}`;
   card.setAttribute("data-group-id", data.groupId || "");
   card.setAttribute("data-last-update", data.lastUpdate || 0);
+  card.setAttribute("data-unread-count", data.unreadCount || 0);
 
   const unreadBadgeHtml = hasUnread
-    ? `<span class="unread-count blue-badge badge">${data.unreadCount} New Message${data.unreadCount > 1 ? "s" : ""}</span>`
+    ? `<span class="unread-count blue-badge badge">${t("home:recent.new_messages", { count: data.unreadCount })}</span>`
     : "";
 
   const markReadBtnHtml = hasUnread
     ? `<button type="button" class="mark-read">
         <i class="bi bi-check2-all"></i>
-        Mark as read
+        ${t("home:recent.mark_as_read")}
       </button>`
     : "";
 
@@ -925,8 +742,8 @@ const createRecentMessageCard = (data) => {
       <div class="profile-info">
         ${avatarHtml}
         <div class="details">
-          <span class="user">${data.lastMessage?.senderName || data.lastMessageSender || "Someone"}</span>
-          <span class="group">${data.groupName || "Study Group"}</span>
+          <span class="user"><bdi>${data.lastMessage?.senderName || data.lastMessageSender || t("home:recent.someone")}</bdi></span>
+          <span class="group"><bdi>${data.groupName || t("home:recent.study_group")}</bdi></span>
         </div>
       </div>
       <div class="meta-info">
@@ -935,16 +752,16 @@ const createRecentMessageCard = (data) => {
       </div>
     </header>
     <p class="text-message">
-      ${data.lastMessage?.text || data.lastMessageText || "No messages yet"}
+      <bdi>${data.lastMessage?.text || data.lastMessageText || t("home:skeletons.no_messages_yet_title")}</bdi>
     </p>
     <div class="action-buttons" data-group-id="${data.groupId}">
       <button type="button" class="should-fill reply-group">
         <i class="bi bi-reply"></i>
-        Reply In Group
+        ${t("home:recent.reply_in_group")}
       </button>
       <button type="button" class="should-fill reply">
         <i class="bi bi-reply"></i>
-        Reply
+        ${t("home:recent.reply")}
       </button>
       ${markReadBtnHtml}
     </div>
@@ -993,8 +810,8 @@ export const initRecentMessagesLoader = () => {
       emptyState: {
         noFilter: {
           icon: "bi-chat-text-fill",
-          title: "No Messages Yet",
-          desc: "No recent messages yet. Join or create a study group to start collaborating and sharing messages!",
+          title: t("home:skeletons.no_messages_yet_title"),
+          desc: t("home:skeletons.no_messages_yet_desc"),
         },
       },
     },
@@ -1022,6 +839,19 @@ const initRecentMessagesStream = () => {
         `.recent-message[data-group-id="${data.groupId}"]`,
       );
       if (existingCard) {
+        if (!data.removed) {
+          const oldTime = Number(
+            existingCard.getAttribute("data-last-update") || 0,
+          );
+          const oldUnread = Number(
+            existingCard.getAttribute("data-unread-count") || 0,
+          );
+          const newTime = Number(data.lastUpdate || 0);
+          const newUnread = Number(data.unreadCount || 0);
+          if (oldTime === newTime && oldUnread === newUnread) {
+            return;
+          }
+        }
         existingCard.remove();
       }
 
@@ -1038,8 +868,8 @@ const initRecentMessagesStream = () => {
                 <div class="empty-icon-container">
                   <i class="bi bi-chat-text-fill"></i>
                 </div>
-                <h3>No Messages Yet</h3>
-                <p>No recent messages yet. Join or create a study group to start collaborating and sharing messages!</p>
+                <h3>${t("home:skeletons.no_messages_yet_title")}</h3>
+                <p>${t("home:skeletons.no_messages_yet_desc")}</p>
               </div>
             `;
           }

@@ -119,7 +119,7 @@ body {
   position: relative;
 
   &:has(i + i) {
-    margin-right: 0.2rem;
+    margin-inline-end: 0.2rem;
   }
 
   i {
@@ -129,7 +129,7 @@ body {
       position: absolute;
       font-size: var(--x-small-font-size);
       bottom: 0;
-      right: 0;
+      inset-inline-end: 0;
       translate: 25% 0;
       border-radius: 50%;
       background-color: var(--btn-background-color);
@@ -201,7 +201,7 @@ body {
     padding-block-start: calc(var(--primary-gap) / 3);
     position: sticky;
     top: 0;
-    left: 0;
+    inset-inline-start: 0;
     overflow: hidden;
     margin-bottom: calc(var(--primary-gap) / 2);
     background-color: var(--btn-background-color);
@@ -233,7 +233,7 @@ body {
   position: absolute;
   z-index: 999 !important;
   bottom: 0;
-  left: 0;
+  inset-inline-start: 0;
   width: max-content;
   translate: 0 calc(100% + 0.5rem);
   background-color: var(--btn-background-color);
@@ -462,7 +462,7 @@ i {
     border: var(--primary-border-style);
     background-color: var(--inputs-icons-background-color);
     position: absolute;
-    left: 0;
+    inset-inline-start: 0;
     top: 0;
     width: 3.5rem;
     height: 100%;
@@ -470,7 +470,7 @@ i {
     align-items: center;
     justify-content: center;
     font-size: larger;
-    border-right: var(--primary-border-style);
+    border-inline-end: var(--primary-border-style);
     transition:
       background-color var(--primary-transition-style),
       color var(--primary-transition-style);
@@ -494,7 +494,7 @@ i {
   input[type="search"] {
     padding: var(--primary-gap);
     width: 100%;
-    padding-left: 4rem;
+    padding-inline-start: 4rem;
     background-color: var(--btn-background-color);
     border: var(--primary-border-style);
     border-radius: var(--primary-radius);
@@ -579,7 +579,7 @@ textarea {
       ul {
         position: absolute;
         bottom: 0;
-        left: 0;
+        inset-inline-start: 0;
         background-color: var(--btn-background-color);
         width: 100%;
         overflow: hidden;
@@ -698,7 +698,7 @@ textarea {
 .left-side-bar {
   grid-area: left-side-bar;
   width: 13.1973rem;
-  border-right: 1px solid var(--container-border-color);
+  border-inline-end: 1px solid var(--container-border-color);
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -743,6 +743,16 @@ textarea {
     font-size: var(--xx-large-font-size);
     transition: var(--primary-transition-style);
     gap: 0.1rem;
+
+    h6 {
+      font-family:
+        "Inter",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        sans-serif;
+    }
   }
 
   .side-bar-icons {
@@ -758,13 +768,17 @@ textarea {
     .bottom-side-bar-icons {
       display: flex;
       flex-direction: column;
-      width: 100%;
       gap: var(--primary-gap);
+
+      &.top-side-bar-icons {
+        width: 100%;
+      }
 
       &.bottom-side-bar-icons {
         .nav-link,
         .nav-btn {
-          width: fit-content;
+          justify-content: center;
+          align-items: center;
         }
 
         .notification-container {
@@ -775,7 +789,7 @@ textarea {
           .notification-badge {
             position: absolute;
             top: 0;
-            right: 0;
+            inset-inline-end: 0;
             background-color: var(--red-color, #ef4444);
             color: white;
             font-size: 0.625rem;
@@ -817,8 +831,6 @@ textarea {
       .nav-btn {
         cursor: pointer;
         display: flex;
-        justify-content: flex-start;
-        align-items: end;
         gap: var(--primary-gap);
         border-radius: var(--primary-radius);
         padding: calc(var(--primary-gap) / 2);
@@ -831,6 +843,9 @@ textarea {
         h3 {
           font-weight: normal;
           align-content: end;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         &:hover {
@@ -908,8 +923,8 @@ main {
     content: "";
     position: absolute;
     border-top: 0.4rem solid var(--primary-color);
-    border-left: 0.4rem solid transparent;
-    border-right: 0.4rem solid transparent;
+    border-inline-start: 0.4rem solid transparent;
+    border-inline-end: 0.4rem solid transparent;
     bottom: -0.3rem;
   }
 
@@ -917,7 +932,69 @@ main {
     &::before {
       rotate: -90deg;
       right: -0.5rem;
+      left: auto;
       bottom: initial;
+    }
+  }
+
+  &.from-right {
+    &::before {
+      rotate: 90deg;
+      left: -0.5rem;
+      right: auto;
+      bottom: initial;
+    }
+  }
+
+  &.from-top {
+    &::before {
+      rotate: 180deg;
+      top: -0.3rem;
+      bottom: initial;
+    }
+  }
+
+  &.above-right {
+    &::before {
+      left: var(--arrow-offset, 1rem);
+      translate: -50% 0;
+      right: auto;
+      bottom: -0.3rem;
+      top: auto;
+      rotate: 0deg;
+    }
+  }
+
+  &.above-left {
+    &::before {
+      right: var(--arrow-offset, 1rem);
+      translate: 50% 0;
+      left: auto;
+      bottom: -0.3rem;
+      top: auto;
+      rotate: 0deg;
+    }
+  }
+
+  &.below-right {
+    &::before {
+      left: var(--arrow-offset, 1rem);
+      translate: -50% 0;
+      right: auto;
+      top: -0.3rem;
+      bottom: auto;
+      rotate: 180deg;
+    }
+  }
+
+  &.below-left {
+    &::before {
+      right: var(--arrow-offset, 1rem);
+      translate: 50% 0;
+      left: auto;
+      top: -0.3rem;
+      bottom: auto;
+      rotate: 180deg;
     }
   }
 }
@@ -926,7 +1003,7 @@ main {
   position: fixed;
   width: 100%;
   height: 100%;
-  left: 0;
+  inset-inline-start: 0;
   top: 0;
   z-index: 9998;
   background-color: rgba(37, 37, 37, 0.468);
@@ -974,7 +1051,7 @@ main {
   scale: initial;
   position: absolute;
   bottom: 3.5rem !important;
-  left: calc(3.9625rem + 0.8rem);
+  inset-inline-start: calc(3.9625rem + 0.8rem);
   top: auto !important;
   translate: none !important;
   width: min(21.875rem, calc(100vw - 5rem));
@@ -1127,8 +1204,8 @@ main {
       gap: var(--primary-gap);
       padding: 1rem;
       border-bottom: var(--primary-border-style);
-      border-left: 2px solid transparent;
-      border-right: 2px solid transparent;
+      border-inline-start: 2px solid transparent;
+      border-inline-end: 2px solid transparent;
       transition:
         background-color var(--primary-transition-style),
         border-color var(--primary-transition-style);
@@ -1148,7 +1225,7 @@ main {
 
       &.unread {
         background-color: rgba(59, 130, 246, 0.03);
-        padding-right: 2rem;
+        padding-inline-end: 2rem;
 
         &:hover {
           background-color: rgba(59, 130, 246, 0.06);
@@ -1157,7 +1234,7 @@ main {
         &::before {
           content: "";
           position: absolute;
-          right: 0.5rem;
+          inset-inline-end: 0.5rem;
           top: 1.125rem;
           width: 0.5rem;
           height: 0.5rem;
@@ -1271,7 +1348,7 @@ main {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            margin-left: auto;
+            margin-inline-start: auto;
 
             button {
               padding: 0.3125rem 0.875rem;
@@ -1696,7 +1773,7 @@ label.container svg {
   .date-badge {
     position: absolute;
     top: 0;
-    right: 0;
+    inset-inline-end: 0;
     translate: 0 -50%;
     border: var(--primary-border-style);
     transition:
@@ -1731,7 +1808,7 @@ label.container svg {
     min-width: 0;
     pointer-events: auto;
     position: absolute;
-    right: calc(var(--primary-gap) / 2);
+    inset-inline-end: calc(var(--primary-gap) / 2);
     top: 50%;
     translate: 0 -50%;
 
@@ -1775,41 +1852,41 @@ label.container svg {
 
 .three-body__dot:nth-child(1) {
   bottom: 5%;
-  left: 0;
+  inset-inline-start: 0;
   transform: rotate(60deg);
   transform-origin: 50% 85%;
 }
 
 .three-body__dot:nth-child(1)::after {
   bottom: 0;
-  left: 0;
+  inset-inline-start: 0;
   animation: wobble1 var(--uib-speed) infinite ease-in-out;
   animation-delay: calc(var(--uib-speed) * -0.3);
 }
 
 .three-body__dot:nth-child(2) {
   bottom: 5%;
-  right: 0;
+  inset-inline-end: 0;
   transform: rotate(-60deg);
   transform-origin: 50% 85%;
 }
 
 .three-body__dot:nth-child(2)::after {
   bottom: 0;
-  left: 0;
+  inset-inline-start: 0;
   animation: wobble1 var(--uib-speed) infinite calc(var(--uib-speed) * -0.15)
     ease-in-out;
 }
 
 .three-body__dot:nth-child(3) {
   bottom: -5%;
-  left: 0;
+  inset-inline-start: 0;
   transform: translateX(116.666%);
 }
 
 .three-body__dot:nth-child(3)::after {
   top: 0;
-  left: 0;
+  inset-inline-start: 0;
   animation: wobble2 var(--uib-speed) infinite ease-in-out;
 }
 
@@ -1865,7 +1942,7 @@ label.container svg {
   content: "";
   position: absolute;
   top: 0;
-  left: 0;
+  inset-inline-start: 0;
   height: 100%;
   width: 100%;
   border-radius: 50%;
@@ -2083,9 +2160,9 @@ nav.mobile-bottomnav {
   .notifications-overlay {
     position: fixed !important;
     top: 50% !important;
-    left: 50% !important;
+    inset-inline-start: 50% !important;
     bottom: auto !important;
-    right: auto !important;
+    inset-inline-end: auto !important;
     translate: -50% -50% !important;
     width: 100% !important;
     height: 100% !important;
@@ -2298,14 +2375,14 @@ nav.mobile-bottomnav {
     align-items: center !important;
     gap: 0.5rem 0.75rem !important;
     width: 100% !important;
-    padding-left: 6.25rem !important;
+    padding-inline-start: 6.25rem !important;
     position: relative !important;
     min-height: 1.5rem !important;
   }
 
   .mobile-search-box .filter-section .filter-title {
     position: absolute !important;
-    left: 0 !important;
+    inset-inline-start: 0 !important;
     top: 0.15rem !important;
     width: 5.75rem !important;
     font-size: 0.75rem !important;
@@ -2406,12 +2483,12 @@ nav.mobile-bottomnav {
   div.mobile-master-drawer {
     position: fixed;
     top: 0;
-    right: 0;
+    inset-inline-end: 0;
     width: 18rem;
     max-width: 85vw;
     height: 100vh;
     background-color: var(--container-background-color);
-    border-left: 1px solid var(--primary-border-color);
+    border-inline-start: 1px solid var(--primary-border-color);
     box-shadow: -0.25rem 0 1.5rem rgba(0, 0, 0, 0.25);
     z-index: 998;
     display: flex !important;
@@ -2430,6 +2507,24 @@ nav.mobile-bottomnav {
     justify-content: space-between;
     padding: 1rem;
     border-bottom: 1px solid var(--primary-border-color);
+
+    button {
+      background: var(--btn-background-color);
+      border-radius: var(--primary-radius);
+      height: 100%;
+      aspect-ratio: 1 / 1;
+      justify-content: center;
+    }
+
+    .lang-toggle-btn {
+      margin-left: auto;
+      margin-right: var(--primary-gap);
+      transition: color var(--primary-transition-style);
+
+      &:hover {
+        color: var(--primary-color);
+      }
+    }
   }
 
   .mobile-drawer-close-btn {
@@ -2583,11 +2678,83 @@ nav.mobile-bottomnav {
 
   .input-message-container {
     .input-message {
-      padding-left: 3.3rem !important;
+      padding-inline-start: 3.3rem !important;
     }
 
     div.icons {
       width: initial;
     }
   }
+}
+
+/* ==========================================================================
+   RTL (Arabic) Directional Icons & Horizontal Animation Rules
+   ========================================================================== */
+
+/* 4. Directional Icons & Arrows Flip
+   Flips horizontal pointing arrows (back carets, send icon, logout/join box-arrows, sidebar icon).
+   Vertical chevrons (chevron-down) and refresh/spin arrows (arrow-repeat) remain untouched. */
+[dir="rtl"] .bi-caret-left-fill,
+[dir="rtl"] .bi-arrow-left,
+[dir="rtl"] .bi-arrow-right,
+[dir="rtl"] .bi-arrow-right-circle-fill,
+[dir="rtl"] .bi-send, .bi-send-fill,
+[dir="rtl"] .bi-box-arrow-in-right,
+[dir="rtl"] .bi-box-arrow-in-left,
+[dir="rtl"] .bi-box-arrow-right,
+[dir="rtl"] .bi-box-arrow-left {
+  transform: scaleX(-1);
+  display: inline-block;
+}
+
+/* Sidebar Toggle Icon Flip
+   When sidebar is open in RTL, flip the icon to depict a right sidebar.
+   When sidebar is collapsed in RTL (.left-side-bar:has(.should-hide.hidden)),
+   your existing LTR flip rule (scaleX(-1)) will combine with this or override appropriately. */
+
+.left-side-bar {
+  .open-close-side-bar-btn {
+    i {
+      transform: scaleX(-1);
+    }
+  }
+}
+
+[dir="rtl"] .left-side-bar:has(.should-hide.hidden) {
+  .open-close-side-bar-btn {
+    i {
+      transform: initial !important;
+    }
+  }
+}
+
+[dir="rtl"] .top-side-bar .profile-info {
+  gap: initial !important;
+  margin-bottom: 0.1rem;
+}
+
+/* 5. Horizontal Animations & Transforms (translateX & translate) */
+
+/* Mobile Master Drawer
+   In LTR (`inset-inline-end: 0`), it sits on the right (`right: 0`) and slides rightward (+100%) when closed.
+   In RTL (`inset-inline-end: 0`), it sits on the left (`left: 0`) and must slide leftward (-100%) when closed.
+   Also flips the box-shadow angle from left (-0.25rem) to right (+0.25rem). */
+[dir="rtl"] div.mobile-master-drawer {
+  transform: translateX(-100%);
+  box-shadow: 0.25rem 0 1.5rem rgba(0, 0, 0, 0.25);
+}
+
+[dir="rtl"] div.mobile-master-drawer.open {
+  transform: translateX(0) !important;
+}
+
+/* Desktop Left Sidebar Collapsing Animation
+   When text/icons hide inside the sidebar (.should-hide),
+   the origin and slide direction must push rightward (+30%) instead of leftward (-30%). */
+[dir="rtl"] .left-side-bar .should-hide {
+  transform-origin: right;
+}
+
+[dir="rtl"] .left-side-bar .hidden {
+  translate: 30%;
 }

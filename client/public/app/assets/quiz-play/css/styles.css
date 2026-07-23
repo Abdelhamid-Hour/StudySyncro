@@ -1,7 +1,7 @@
 .quiz-view {
   position: fixed;
   z-index: 905;
-  left: 0;
+  inset-inline-start: 0;
   top: 0;
   width: 100%;
   height: 100%;
@@ -17,7 +17,7 @@
     z-index: 1;
     position: absolute;
     top: var(--primary-gap);
-    right: var(--primary-gap);
+    inset-inline-end: var(--primary-gap);
 
     &:hover {
       background-color: var(--btn-background-color);
@@ -42,7 +42,7 @@
 
     .timer {
       position: absolute;
-      left: var(--primary-gap);
+      inset-inline-start: var(--primary-gap);
       display: flex;
       align-items: center;
       gap: calc(var(--primary-gap) / 2);
@@ -234,7 +234,7 @@
 
     #lottie-animation {
       bottom: 1%;
-      left: 17%;
+      inset-inline-start: 17%;
       width: 40%;
     }
   }
@@ -246,7 +246,7 @@
     }
     #lottie-animation {
       bottom: 1%;
-      left: 20%;
+      inset-inline-start: 20%;
       width: 40%;
     }
   }
@@ -272,7 +272,7 @@
 
   .quiz-svg-exam-container {
     position: absolute;
-    left: 10%;
+    inset-inline-start: 10%;
     width: 15%;
     animation:
       enter-fade-up 0.7s cubic-bezier(0.25, 0.8, 0.25, 1) forwards,
@@ -287,7 +287,7 @@
       position: absolute;
       font-size: 1.8vw;
       top: 8%;
-      left: 3%;
+      inset-inline-start: 3%;
       rotate: -7deg;
       width: 8vw;
       text-align: center;
@@ -311,22 +311,22 @@
   }
 
   .quiz-svg-planet {
-    left: 5%;
+    inset-inline-start: 5%;
     bottom: 8%;
   }
 
   .quiz-svg-books-3 {
-    left: 15%;
+    inset-inline-start: 15%;
     bottom: 8%;
   }
 
   .quiz-svg-earth {
-    left: 55%;
+    inset-inline-start: 55%;
     bottom: 8%;
   }
 
   .quiz-svg-book {
-    right: 10%;
+    inset-inline-end: 10%;
     animation:
       enter-fade-up 0.7s cubic-bezier(0.25, 0.8, 0.25, 1) forwards,
       book-nod 3s ease-in-out infinite !important;
@@ -334,13 +334,13 @@
   }
 
   .quiz-svg-rectangle {
-    right: 10%;
+    inset-inline-end: 10%;
     bottom: 10%;
   }
 
   .quiz-svg-clock {
     width: 6%;
-    left: 32%;
+    inset-inline-start: 32%;
     top: 25%;
     scale: 1.5;
     animation:
@@ -350,7 +350,7 @@
 
   .quiz-svg-nodes {
     width: 2%;
-    left: 50%;
+    inset-inline-start: 50%;
     top: 35%;
     animation:
       enter-fade-up 0.7s cubic-bezier(0.25, 0.8, 0.25, 1) forwards,
@@ -359,7 +359,7 @@
 
   .quiz-svg-rect {
     width: 2%;
-    left: 55%;
+    inset-inline-start: 55%;
     top: 50%;
     animation:
       enter-fade-up 0.7s cubic-bezier(0.25, 0.8, 0.25, 1) forwards,
@@ -369,7 +369,7 @@
   .meta-result {
     position: absolute;
     top: 50%;
-    right: 20%;
+    inset-inline-end: 20%;
     width: 15%;
     translate: 0 -50%;
     display: flex;
@@ -415,7 +415,7 @@
   #lottie-animation {
     position: absolute;
     bottom: 8%;
-    left: 28%;
+    inset-inline-start: 28%;
     width: 25%;
   }
 }
@@ -575,13 +575,13 @@
     }
 
     .quiz-svg-books-3 {
-      left: initial;
-      right: 3rem;
+      inset-inline-start: initial;
+      inset-inline-end: 3rem;
       width: 7rem;
     }
 
     .quiz-svg-clock {
-      left: 50%;
+      inset-inline-start: 50%;
       translate: -50%;
       width: 4rem;
     }
@@ -598,7 +598,7 @@
       .result-title {
         font-size: 13cqw;
         top: 10cqw;
-        left: 14cqw;
+        inset-inline-start: 14cqw;
       }
     }
 
@@ -613,25 +613,25 @@
 
     .quiz-svg-rect {
       top: 45%;
-      left: 50%;
+      inset-inline-start: 50%;
       width: 1rem;
     }
 
     .quiz-svg-rectangle {
       bottom: initial;
       top: 0;
-      left: 5%;
+      inset-inline-start: 5%;
       width: 5rem;
     }
 
     .meta-result {
       width: 35%;
       translate: -25% -50%;
-      right: 0;
+      inset-inline-end: 0;
     }
 
     #lottie-animation {
-      left: 0 !important;
+      inset-inline-start: 0 !important;
       bottom: 0 !important;
       width: 66% !important;
     }

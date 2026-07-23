@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "page_title": "Login to your StudyHype account",
+    "meta_description": "Login to StudyHype to access quizzes, real-time chat, and group study sessions."
+  },
+  "nav": {
+    "home": "Home",
+    "back_to_home": "Back to Home",
+    "toggle_theme": "Toggle Dark/Light Mode",
+    "switch_lang": "Switch Language"
+  },
+  "aside": {
+    "welcome_title": "👋 Welcome to StudyHype",
+    "welcome_desc": "Hey there! Ready to join the coolest study community around? Create an account now to access exclusive resources, connect with like-minded students, and elevate your learning experience!",
+    "drop_file": "Drop the file or click to choose a profile picture",
+    "allowed_types": "Allowed file types:",
+    "file_formats": "JPG, PNG, JPEG, WEBP.",
+    "max_size": "Max file size: 200KB"
+  },
+  "header": {
+    "login_to": "Login to",
+    "create": "Create",
+    "your_account": "Your Account"
+  },
+  "sign_in_form": {
+    "email_label": "Email",
+    "password_label": "Password",
+    "forgot_password": "Forgot Password?",
+    "sign_in_btn": "Sign In",
+    "new_to_studyhype": "New to StudyHype?",
+    "create_account_link": "Create an account"
+  },
+  "sign_up_form": {
+    "first_name_label": "First Name",
+    "last_name_label": "Last Name",
+    "email_label": "Email",
+    "password_label": "Password",
+    "confirm_password_label": "Confirm Password",
+    "sign_up_btn": "Sign Up",
+    "already_have_account": "Already have an account?",
+    "sign_in_link": "Sign In"
+  },
+  "providers": {
+    "or": "Or",
+    "google_sign_in": "Sign In with Google",
+    "facebook_sign_in": "Sign In with Facebook"
+  }
+}

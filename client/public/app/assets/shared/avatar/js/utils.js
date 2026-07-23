@@ -2,13 +2,14 @@ import {
   MAX_AVATAR_SIZE,
   PROFILE_ALLOWED_TYPES,
 } from "../../../../../main_assets/js/variables.js";
+import { t } from "../../../../../main_assets/js/i18n.js";
 
 const handleFileAndvisuallyShowAvatar = (file, container) => {
   if (file) {
     const sizeKB = file.size;
     if (sizeKB > MAX_AVATAR_SIZE) {
       showAvatarError(
-        `File size exceeds the limit of ${MAX_AVATAR_SIZE}.`,
+        t("common:alerts.avatar_size_exceeded", { size: MAX_AVATAR_SIZE }),
         container
       );
       return;
@@ -28,12 +29,12 @@ const showAvatarError = (message, container) => {
   ).innerHTML = `<i class="bi bi-exclamation-circle"></i>${message}`;
 };
 
-const handleFileInput = (file, avatarContainer, avatarAside = null) => {
+const handleFileInput = (file, avatarContainer) => {
   const fileInput = avatarContainer.querySelector("input");
   if (fileInput.disabled) return;
   if (!(file && PROFILE_ALLOWED_TYPES.includes(file.type)))
     return showAvatarError(
-      "Invalid file type. Please select a valid image file.",
+      t("common:alerts.invalid_file_type"),
       avatarContainer
     );
   handleFileAndvisuallyShowAvatar(file, avatarContainer);

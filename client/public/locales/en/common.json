@@ -1,0 +1,312 @@
+{
+  "locale": "en-US",
+  "unknown_user": "Unknown User",
+  "avatar_alt": "User Avatar",
+  "member_avatar_alt": "Member Avatar",
+  "placeholders": {
+    "search_quizzes": "Search By Quiz Title or Subject",
+    "search_groups": "Search By Group Name or Subject",
+    "search_quizzes_groups": "Search By Quiz Title, Subject or Group Name"
+  },
+  "tooltips": {
+    "filter_by_date": "Filter By Date"
+  },
+  "buttons": {
+    "create_group": "Create Group",
+    "create_quiz": "Create Quiz"
+  },
+  "tabs": {
+    "my_groups": "My Groups",
+    "available_groups": "Available Groups",
+    "my_quizzes": "My Quizzes",
+    "passed": "Passed"
+  },
+  "skeletons": {
+    "loading": "Loading...",
+    "error_loading": "Error loading content",
+    "no_results_title": "No Results Found",
+    "no_results_desc": "No matches found for your search or filters.",
+    "home": {
+      "active_sessions_heading": "Active Sessions",
+      "recent_messages_heading": "Recent Messages",
+      "ready_heading": "Ready to start learning together?",
+      "ready_desc": "Join a study session to connect with peers, participate in discussions, and enhance your learning experience. StudyHype makes collaborative learning easy and effective!",
+      "recent_messages_sub": "Latest conversations from your study groups",
+      "active_sessions_sub": "Ongoing study sessions you can join now",
+      "search_placeholder": "Search by session or group name"
+    },
+    "groups": {
+      "my_groups": "My Groups",
+      "available_groups": "Available Groups",
+      "create_group": "Create Group"
+    },
+    "quizzes": {
+      "my_quizzes": "My Quizzes",
+      "passed": "Passed",
+      "quiz_title": "Quiz Title",
+      "group_name": "Group Name",
+      "session_name": "Session Name",
+      "submitted_at": "Submitted At",
+      "score": "Score",
+      "questions": "Questions",
+      "shared_in": "Shared in",
+      "subject": "Subject"
+    },
+    "settings": {
+      "my_account": "My Account",
+      "tabs": {
+        "profile": "Personal Info",
+        "email": "Email Address",
+        "password": "Password",
+        "delete": "Close Account"
+      },
+      "profile_title": "Personal Details",
+      "profile_subtitle": "Keep your information up to date.",
+      "profile_caption": "Upload a JPG, PNG, or GIF (Max 1MB).",
+      "full_name": "Full Name",
+      "uid": "User ID",
+      "modify_btn": "Modify Profile"
+    },
+    "quiz_editor": {
+      "quiz_editor": "Quiz Editor",
+      "questions_list": "Questions List",
+      "questions": "Questions",
+      "question_num": "Question {num}",
+      "choices_count": "{count} Choices",
+      "subject_label": "Subject:",
+      "shared_in_label": "Shared In:",
+      "choices_title": "Choices",
+      "add_choice": "Add Choice",
+      "correct_answer_title": "Correct Answer"
+    },
+    "quiz_play": {
+      "time_left": "Time Left :",
+      "skip": "Skip",
+      "select_answer": "Select the correct Answer (Or press 1-6 / A-F)",
+      "prev": "Previous",
+      "next": "Next"
+    }
+  },
+  "alerts": {
+    "error_occurred": "An error occurred.",
+    "unauthorized": "🚫 You are not authorized to access this resource. Please log in.",
+    "invalid_file_type": "Invalid file type. Please select other file.",
+    "file_too_large": "File \"{name}\" size exceeds the maximum limit of {max} MB.",
+    "max_files_exceeded": "You can only upload a maximum of 5 files",
+    "local_id_not_found": "Local ID not found.",
+    "msg_not_found_local": "Message not found in local storage.",
+    "select_subject_error": "Please select a valid subject from the list or specify a new one.",
+    "error_loading_more": "Error loading more items. Please try again later.",
+    "password_reset_sent": "If this email is registered, you will receive a password reset link.",
+    "password_reset_success": "Password reset successful",
+    "try_resetting_again": "Try resetting your password again",
+    "reset_link_expired": "Your request to reset your password has expired or the link has already been used",
+    "avatar_size_exceeded": "File size exceeds the limit of {size}.",
+    "subject_input_error": "Please enter a valid subject between 2 and 50 characters long.",
+    "left_session_success": "You have left the session successfully.",
+    "joined_session_success": "You have joined the session successfully."
+  },
+  "auth_errors": {
+    "INVALID_LOGIN_CREDENTIALS": "Invalid email or password. Please try again.",
+    "CANCELLED_POPUP_REQUEST": "It looks like you closed the popup before completing the action. Please try again.",
+    "EMAIL_ALREADY_IN_USE": "The email address you entered is already associated with an account. Try logging in or use a different email.",
+    "WRONG_PASSWORD": "Oops! The password you entered is incorrect. Please double-check and try again.",
+    "POPUP_BLOCKED": "It seems like the popup was blocked by your browser. Please allow popups and try again.",
+    "POPUP_CLOSED_BY_USER": "It looks like you closed the popup before completing the action. Please open it again and try.",
+    "REDIRECT_CANCELLED_BY_USER": "It seems you canceled the redirect action. Please try again to complete the process.",
+    "USER_NOT_FOUND": "We couldn't find an account with that email address. Please check your email or create a new account.",
+    "TOO_MANY_REQUESTS": "Too many requests have been made from this device. Please wait a while before trying again."
+  },
+  "native_phrases": {
+    "group is full": "Group is full",
+    "already a member": "You are already a member of this group",
+    "already sent a request": "You have already sent a request to join",
+    "already requested": "Join request already submitted",
+    "group does not exist": "This group does not exist",
+    "group not found": "Group not found",
+    "cannot join this group": "Cannot join this group",
+    "private and not visible": "This group is private and not visible",
+    "invitation not found": "Invitation not found",
+    "invitation expired": "Invitation has expired",
+    "demande not found": "Request not found",
+    "already processed": "This request has already been processed",
+    "already invited": "User has already been invited",
+    "creator must transfer": "Creator must transfer host role before leaving",
+    "must transfer your role": "You must transfer your host role before leaving",
+    "creator cannot leave": "Group creator cannot leave without transferring host role or deleting the group",
+    "quiz title already exists": "A quiz with this title already exists",
+    "already exists": "Already exists",
+    "no questions": "No questions provided for this quiz",
+    "cannot start quiz": "Cannot start quiz",
+    "already passed": "You have already completed this quiz",
+    "session not found": "Study session not found",
+    "session has ended": "Study session has ended",
+    "session already ended": "Study session has already ended",
+    "already in this session": "You are already in this study session",
+    "only group creator": "Only the group creator or host can perform this action",
+    "current password is incorrect": "Current password is incorrect",
+    "cannot be empty": "Cannot be empty"
+  },
+  "modals": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "yes": "Yes",
+    "no": "No",
+    "delete": "Delete",
+    "remove": "Remove",
+    "leave": "Leave",
+    "save": "Save",
+    "close": "Close",
+    "select_subject": "Select Subject",
+    "search_subject": "Search subject..."
+  },
+  "not_available": "N/A",
+  "actions": {
+    "scroll_to_top": "Scroll To Top",
+    "collapse_all": "Collapse All",
+    "switch_to_en": "Switch to English",
+    "switch_to_ar": "Switch to Arabic"
+  },
+  "forms": {
+    "other": "Other",
+    "specify_and_enter": "Specify and press Enter",
+    "show_in_search": "Show in Search Results",
+    "switch_to": "Switch to {value}",
+    "visibility": {
+      "Private": "Private",
+      "Public": "Public"
+    },
+    "levels": {
+      "Beginner": "Beginner",
+      "Intermediate": "Intermediate",
+      "Advanced": "Advanced"
+    }
+  },
+  "group_chat": "Group Chat",
+  "titles": {
+    "home": "Home",
+    "group_chat": "Group Chat",
+    "available_groups": "Available Groups",
+    "groups": "Groups",
+    "quiz_editor": "Quiz Editor",
+    "passed_quizzes": "Passed Quizzes",
+    "quizzes": "Quizzes",
+    "settings": "Settings"
+  },
+  "filters": {
+    "role": "Role",
+    "admin": "Admin",
+    "member": "Member",
+    "visibility": "Visibility",
+    "level": "Level",
+    "view_options": "View Options",
+    "joinable_only": "Joinable Only",
+    "status": "Status",
+    "published": "Published",
+    "draft": "Draft"
+  },
+  "groups_tabs": {
+    "my_groups": "My Groups",
+    "available_groups": "Available Groups"
+  },
+  "quizzes_tabs": {
+    "my_quizzes": "My Quizzes",
+    "passed": "Passed",
+    "quiz_editor": "Quiz Editor",
+    "questions_list": "Questions List"
+  },
+  "quiz_card": {
+    "quiz_title": "Quiz Title",
+    "group_name": "Group Name",
+    "session_name": "Session Name",
+    "submitted_at": "Submitted At",
+    "score": "Score",
+    "questions": "Questions",
+    "shared_in": "Shared in",
+    "subject": "Subject",
+    "groups_abbr": "Gr",
+    "sessions_abbr": "Ses"
+  },
+  "placeholders": {
+    "search_quizzes": "Search By Quiz Title or Subject",
+    "search_groups": "Search By Group Name or Subject",
+    "search_quizzes_groups": "Search By Quiz Title, Subject or Group Name"
+  },
+  "shared_chat": {
+    "alerts": {
+      "message_max_length": "Message cannot exceed {max} characters",
+      "send_failed": "Failed to send message"
+    },
+    "drop_files": "Drop files here",
+    "emojis": {
+      "categories": {
+        "recent": "Recent",
+        "people": "People",
+        "animals_nature": "Animals & Nature",
+        "food_drink": "Food & Drink",
+        "activity": "Activity",
+        "objects": "Objects",
+        "symbols": "Symbols",
+        "travel_places": "Travel & Places",
+        "flags": "Flags"
+      },
+      "no_match": "No emojis found",
+      "search_placeholder": "Search emojis..."
+    },
+    "unread_messages": "Unread messages",
+    "tooltips": {
+      "add_new_line": "Add new line"
+    }
+  },
+  "shared_groups": {
+    "actions": {
+      "join_now": "Join Now",
+      "request_to_join": "Request to Join"
+    },
+    "badges": {
+      "host": "Host",
+      "member": "Member"
+    },
+    "skeletons": {
+      "no_groups_joined_title": "No groups joined",
+      "no_groups_joined_desc": "You haven't joined any groups yet.",
+      "no_groups_available_title": "No groups available",
+      "no_groups_available_desc": "There are no available groups at the moment.",
+      "no_groups_found_title": "No groups found",
+      "no_groups_found_desc": "No groups match your search or filter."
+    }
+  },
+  "shared_quizzes": {
+    "answered": "Answered",
+    "choices_count": "{count} Choices",
+    "finished_date": "Finished on",
+    "question_num": "Question {num}",
+    "questions_count": "{count} Questions",
+    "quiz_title_placeholder": "Untitled Quiz",
+    "status": {
+      "correct": "Correct",
+      "incorrect": "Incorrect",
+      "skipped": "Skipped"
+    }
+  },
+  "greetings": {
+    "hello": "Hello",
+    "welcome": "Welcome",
+    "hi": "Hi",
+    "greetings": "Greetings",
+    "good_to_see_you": "Good to see you",
+    "hey": "Hey",
+    "there": "there",
+    "messages": {
+      "fantastic_day": "Hope you have a fantastic day!",
+      "productive_session": "Wishing you a productive session!",
+      "great_today": "Let's achieve something great today!",
+      "make_progress": "Ready to make progress?",
+      "wonderful_day": "Have a wonderful day ahead!"
+    }
+  },
+  "empty_states": {
+    "no_quizzes_found": "No Quizzes found !",
+    "no_groups_found": "No Groups found !"
+  }
+}

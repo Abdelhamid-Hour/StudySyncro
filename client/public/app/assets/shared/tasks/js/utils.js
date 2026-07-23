@@ -122,7 +122,7 @@ function resetDragState() {
     width: "",
     position: "",
     top: "",
-    left: "",
+    insetInlineStart: "",
   });
   document.body.style.userSelect = "";
   dragging.dragEl.classList.remove("dragging");

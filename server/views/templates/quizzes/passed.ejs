@@ -9,37 +9,37 @@
       <div class="quiz-title-container info-container">
         <label class="quiz-title-label">
           <span class="icon-box"><i class="bi bi-card-text"></i></span>
-          Quiz Title
+          <%= t("quizzes:labels.quiz_title") %>
         </label>
-        <div class="quiz-title content"><%= quiz.title %></div>
+        <div class="quiz-title content"><bdi><%= quiz.title %></bdi></div>
       </div>
       <div class="group-name-container info-container">
         <label class="group-name-label">
           <span class="icon-box">
             <i class="bi bi-people"></i>
           </span>
-          Group Name
+          <%= t("quizzes:labels.group_name") %>
         </label>
-        <div class="group-name content"><%= quiz.groupName %></div>
+        <div class="group-name content"><bdi><%= quiz.groupName %></bdi></div>
       </div>
       <div class="session-name-container info-container">
         <label class="session-name-label">
           <span class="icon-box">
             <i class="bi bi-journal-bookmark"></i>
           </span>
-          Session Name
+          <%= t("quizzes:labels.session_name") %>
         </label>
-        <div class="session-name content"><%= quiz.sessionName || "N/A" %></div>
+        <div class="session-name content"><bdi><%= quiz.sessionName || "N/A" %></bdi></div>
       </div>
             <div class="submitted-at-container info-container">
         <label class="submitted-at-label">
           <span class="icon-box">
             <i class="bi bi-calendar-check"></i>
           </span>
-          Submitted At
+          <%= t("quizzes:labels.submitted_at") %>
         </label>
         <div class="submitted-at content">
-          <%= toReadableDate(quiz.submittedAt) %>
+          <bdi><%= toReadableDate(quiz.submittedAt) %></bdi>
         </div>
       </div>
       <div class="score-container info-container">
@@ -47,7 +47,7 @@
           <span class="icon-box">
             <i class="bi bi-trophy"></i>
           </span>
-          Score
+          <%= t("quizzes:labels.score") %>
         </label>
         <div class="score <%= getScoreClass(quiz.score) %> content">
           <%= quiz.score %>%
@@ -56,11 +56,11 @@
       <div class="action-btns">
         <button class="view-quiz-result-btn" data-quiz-id="<%= quiz.id %>">
           <i class="bi bi-eye"></i>
-          View Result
+          <%= t("quizzes:actions.view_result") %>
         </button>
         <button class="retake-quiz-btn" data-quiz-id="<%= quiz.id %>">
           <i class="bi bi-arrow-repeat"></i>
-          Retake
+          <%= t("quizzes:actions.retake") %>
         </button>
       </div>
     </div>
@@ -70,8 +70,8 @@
       <div class="empty-icon-container">
         <i class="bi bi-award"></i>
       </div>
-      <h3>No Passed Quizzes</h3>
-      <p>You haven't completed any quizzes yet. Join a study session and take a quiz to see your achievements here!</p>
+      <h3><%= t("quizzes:passed.empty_heading") %></h3>
+      <p><%= t("quizzes:passed.empty_desc") %></p>
     </div>
   <% } %>
 </div>

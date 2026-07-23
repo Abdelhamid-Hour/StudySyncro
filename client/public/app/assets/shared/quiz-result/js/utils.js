@@ -1,5 +1,9 @@
-import { fetchData } from "../../../../../main_assets/js/utils.js";
-import { openOverlayModal, scrollToView } from "../../../global/js/utils.js";
+import {
+  openOverlayModal,
+  scrollToView,
+  t,
+  fetchData,
+} from "../../../global/js/utils.js";
 
 const getStatusClass = (quizResult, questionId) => {
   const isCorrect = quizResult.correctAnswers.includes(questionId);
@@ -25,15 +29,12 @@ const getQuestionsCards = (questions, quizResult) => {
       <header class="question-card-header">
         <span class="question-number">
           <i class="bi bi-patch-question"></i>
-          Question ${index + 1}
+          ${t("common:shared_quizzes.question_num", { num: index + 1 })}
         </span>
         •
         <span class="question-status">
           <span class="${rectColorClass} rect"></span>
-          ${
-            getStatusClass(quizResult, question.id).charAt(0).toUpperCase() +
-            getStatusClass(quizResult, question.id).slice(1)
-          }
+          ${t("common:shared_quizzes.status." + getStatusClass(quizResult, question.id))}
         </span>
         <label type="button" class="exclude-btn open-btn button">
           <i class="bi bi-chevron-down"></i>
@@ -45,10 +46,11 @@ const getQuestionsCards = (questions, quizResult) => {
         ${getChoicesList(question, quizResult)}
       </div>
       <footer class="question-card-footer">
-        <span class="choices-count">${question.choices.length} Choices</span>
+        <span class="choices-count">${t("common:shared_quizzes.choices_count", { count: question.choices.length })}</span>
       </footer>
     `;
-    questionCard.querySelector(".question-text").textContent = question.text;
+    questionCard.querySelector(".question-text").innerHTML =
+      `<bdi>${question.text}</bdi>`;
     questionsList.appendChild(questionCard);
   });
 
@@ -75,7 +77,8 @@ const getChoicesList = (question, quizResult) => {
       <span class="choice-label">${String.fromCharCode(65 + index)}</span>
       <span class="choice-text"></span>
       `;
-      choice.querySelector(".choice-text").textContent = choiceText;
+      choice.querySelector(".choice-text").innerHTML =
+        `<bdi>${choiceText}</bdi>`;
       choicesList.appendChild(choice);
     });
   }
@@ -88,15 +91,21 @@ export const getResultOverlay = (quizResult, questions) => {
 
   const submittedAt = new Date(quizResult.submittedAt);
 
-  const finishedDate = submittedAt.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  const finishedTime = submittedAt.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const finishedDate = submittedAt.toLocaleDateString(
+    t("common:locale", { defaultValue: "en-US" }),
+    {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    },
+  );
+  const finishedTime = submittedAt.toLocaleTimeString(
+    t("common:locale", { defaultValue: "en-US" }),
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+    },
+  );
   const questionCount = questions.length;
   const answeredCount =
     quizResult.correctAnswers.length + quizResult.incorrectAnswers.length;
@@ -112,7 +121,9 @@ export const getResultOverlay = (quizResult, questions) => {
   resultWrapper.className = "overlay-model quiz-result-overlay";
   resultWrapper.innerHTML = `
   <header class="quiz-result-header">
-    <span class="finished-date">Finished: ${finishedDate}</span>
+    <span class="finished-date">${t("common:shared_quizzes.finished_date", {
+      date: finishedDate,
+    })}</span>
     •
     <span class="finished-time">${finishedTime}</span>
     •
@@ -120,17 +131,25 @@ export const getResultOverlay = (quizResult, questions) => {
       <span class="icon-box">
         <i class="bi bi-patch-question"></i>
       </span>
-      ${questionCount} Questions
+      ${t("common:shared_quizzes.questions_count", { count: questionCount })}
     </span>
     <button type="button" class="exclude-btn close-result-overlay-btn">
       <i class="bi bi-x-lg"></i>
     </button>
   </header>
-  <h3 class="quiz-title">${quizResult.quizTitle || "QUIZ TITLE"}</h3>
-  ${quizResult.sessionName ? `<span class="session-name"><i class="bi bi-clock-history"></i> ${quizResult.sessionName}</span>` : ""}
+  <h3 class="quiz-title"><bdi>${
+    quizResult.quizTitle || t("common:shared_quizzes.quiz_title_placeholder")
+  }</bdi></h3>
+  ${
+    quizResult.sessionName
+      ? `<span class="session-name"><i class="bi bi-clock-history"></i> <bdi>${quizResult.sessionName}</bdi></span>`
+      : ""
+  }
   <div class="answered">
-    <span class="answered-title">Answered :</span>
-    <span class="answered-count">${answeredCount}/${questionCount} Questions</span>
+    <span class="answered-title">${t("common:shared_quizzes.answered")} :</span>
+    <span class="answered-count">${answeredCount}/${questionCount} ${t(
+      "common:skeletons.quizzes.questions",
+    )}</span>
     •
     <span class="answered-percent">${answeredPercent}%</span>
   </div>
@@ -149,27 +168,33 @@ export const getResultOverlay = (quizResult, questions) => {
     <div class="analytics-item">
       <span class="title">
         <span class="green-rect rect"></span>
-        Correct :
+        ${t("common:shared_quizzes.status.correct")} :
       </span>
-      <span class="questions-count">${correctCount}/${questionCount} Questions</span>
+      <span class="questions-count">${correctCount}/${questionCount} ${t(
+        "common:skeletons.quizzes.questions",
+      )}</span>
       •
       <span class="percent">${correctPercent}%</span>
     </div>
     <div class="analytics-item">
       <span class="title">
         <span class="gray-rect rect"></span>
-        Skipped :
+        ${t("common:shared_quizzes.status.skipped")} :
       </span>
-      <span class="questions-count">${skippedCount}/${questionCount} Questions</span>
+      <span class="questions-count">${skippedCount}/${questionCount} ${t(
+        "common:skeletons.quizzes.questions",
+      )}</span>
       •
       <span class="percent">${skippedPercent}%</span>
     </div>
     <div class="analytics-item">
       <span class="title">
         <span class="red-rect rect"></span>
-        Incorrect :
+        ${t("common:shared_quizzes.status.incorrect")} :
       </span>
-      <span class="questions-count">${incorrectCount}/${questionCount} Questions</span>
+      <span class="questions-count">${incorrectCount}/${questionCount} ${t(
+        "common:skeletons.quizzes.questions",
+      )}</span>
       •
       <span class="percent">${incorrectPercent}%</span>
     </div>

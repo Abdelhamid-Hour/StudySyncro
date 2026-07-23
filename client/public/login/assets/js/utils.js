@@ -1,4 +1,4 @@
-import { throttling } from "../../../main_assets/js/utils.js";
+import { throttling, t } from "../../../main_assets/js/utils.js";
 import {
   passwordRegex,
   userNameRegex,
@@ -7,11 +7,9 @@ import {
   PASSWORD_MAX_LENGTH,
   EMAIL_MIN_LENGTH,
   EMAIL_MAX_LENGTH,
-} from "../../../main_assets/js/variables.js";
-import {
   NAME_TITLE_MIN_LENGTH,
   NAME_TITLE_MAX_LENGTH,
-} from "../../../app/assets/global/js/variables.js";
+} from "../../../main_assets/js/variables.js";
 import {
   stylsheet,
   signInemailField,
@@ -29,9 +27,9 @@ import {
   avatarAside,
   fileinput,
   avatarSpaceReserver,
+  updateSignFormHeights,
 } from "./dom-variables.js";
-
-let cssRulesLength = stylsheet.cssRules.length;
+let isSignUpFormInitialized = false;
 
 /**
  * Generates the CSS rules for the swap animation.
@@ -94,13 +92,18 @@ const getSwapAnimationRule = (targetFormHeight) => {
  * Initializes the sign-up form by creating and inserting animation rules.
  */
 const initializeSignUpForm = () => {
-  // create a new rule to animate the sign-up form from its signInFormHeight height to its original height
+  if (isSignUpFormInitialized) return;
+  updateSignFormHeights();
   const signUpAnimationRules = getSwapAnimationRule(signUpFormHeight);
-  stylsheet.insertRule(signUpAnimationRules.initialRule, cssRulesLength);
+  stylsheet.insertRule(
+    signUpAnimationRules.initialRule,
+    stylsheet.cssRules.length,
+  );
   stylsheet.insertRule(
     signUpAnimationRules.signUpClassAnimationRule,
-    ++cssRulesLength,
+    stylsheet.cssRules.length,
   );
+  isSignUpFormInitialized = true;
 };
 const inputsEmptying = () => {
   signInFormContainer.style.height = "";
@@ -118,6 +121,9 @@ const inputsEmptying = () => {
  * @param {Number} targetFormHeight - The target height for the sign-up form.
  */
 const swapAnimation = (targetFormHeight) => {
+  if (!isSignUpFormInitialized) {
+    initializeSignUpForm();
+  }
   inputsEmptying();
   // add the z-index based on the signUp form height
   if (targetFormHeight === signInFormHeight) {
@@ -153,17 +159,20 @@ const swapAnimation = (targetFormHeight) => {
   const signUpAnimationRules = getSwapAnimationRule(targetFormHeight);
   // delete the initial sign Up form height before removing the class animation
   // because it prevents the sign Up form to back to the initial animation height
-  stylsheet.deleteRule(--cssRulesLength);
+  stylsheet.deleteRule(stylsheet.cssRules.length - 2);
   // add the new Initial sign Up form height
-  stylsheet.insertRule(signUpAnimationRules.initialRule, ++cssRulesLength);
+  stylsheet.insertRule(
+    signUpAnimationRules.initialRule,
+    stylsheet.cssRules.length - 1,
+  );
   signUpFormContainer.classList.remove("sign-up-swap-animation");
   signInFormContainer.classList.remove("sign-in-swap-animation");
   // delete the sign Up form animation rule
-  stylsheet.deleteRule(--cssRulesLength);
+  stylsheet.deleteRule(stylsheet.cssRules.length - 1);
   // add the new sign Up form animation rule to the stylesheet as a last style
   stylsheet.insertRule(
     signUpAnimationRules.signUpClassAnimationRule,
-    ++cssRulesLength,
+    stylsheet.cssRules.length,
   );
   // force re-layout and repaint to apply the new animation
   void signInFormContainer.offsetWidth;
@@ -216,14 +225,17 @@ const validatesSignInForm = () => {
     email.length > EMAIL_MAX_LENGTH
   ) {
     showError(
-      `Please enter a valid email (${EMAIL_MIN_LENGTH}-${EMAIL_MAX_LENGTH} characters)`,
+      t("login:errors.invalid_email", {
+        min: EMAIL_MIN_LENGTH,
+        max: EMAIL_MAX_LENGTH,
+      }),
       signInemailField,
     );
     return false;
   }
 
   if (!password) {
-    showError("Please enter your password", signInPasswordField);
+    showError(t("login:errors.enter_password"), signInPasswordField);
     return false;
   }
   return true;
@@ -238,7 +250,10 @@ const verifyEmail = () => {
     email.length > EMAIL_MAX_LENGTH
   ) {
     showError(
-      `Please enter a valid email (${EMAIL_MIN_LENGTH}-${EMAIL_MAX_LENGTH} characters)`,
+      t("login:errors.invalid_email", {
+        min: EMAIL_MIN_LENGTH,
+        max: EMAIL_MAX_LENGTH,
+      }),
       signInemailField,
     );
     return false;
@@ -266,7 +281,10 @@ const validatesSignUpForm = () => {
     firstName.length > NAME_TITLE_MAX_LENGTH
   ) {
     showError(
-      `First name must be ${NAME_TITLE_MIN_LENGTH}-${NAME_TITLE_MAX_LENGTH} characters only letters`,
+      t("login:errors.first_name_format", {
+        min: NAME_TITLE_MIN_LENGTH,
+        max: NAME_TITLE_MAX_LENGTH,
+      }),
       firstNameField,
     );
     return false;
@@ -278,7 +296,10 @@ const validatesSignUpForm = () => {
     lastName.length > NAME_TITLE_MAX_LENGTH
   ) {
     showError(
-      `Last name must be ${NAME_TITLE_MIN_LENGTH}-${NAME_TITLE_MAX_LENGTH} characters only letters`,
+      t("login:errors.last_name_format", {
+        min: NAME_TITLE_MIN_LENGTH,
+        max: NAME_TITLE_MAX_LENGTH,
+      }),
       lastNameField,
     );
     return false;
@@ -290,7 +311,10 @@ const validatesSignUpForm = () => {
     email.length > EMAIL_MAX_LENGTH
   ) {
     showError(
-      `Please enter a valid email (${EMAIL_MIN_LENGTH}-${EMAIL_MAX_LENGTH} characters)`,
+      t("login:errors.invalid_email", {
+        min: EMAIL_MIN_LENGTH,
+        max: EMAIL_MAX_LENGTH,
+      }),
       signUpemailField,
     );
     return false;
@@ -298,14 +322,20 @@ const validatesSignUpForm = () => {
 
   if (!passwordRegex.test(password)) {
     showError(
-      `The password must be between ${PASSWORD_MIN_LENGTH} and ${PASSWORD_MAX_LENGTH} characters`,
+      t("login:errors.password_length", {
+        min: PASSWORD_MIN_LENGTH,
+        max: PASSWORD_MAX_LENGTH,
+      }),
       signUpPasswordField,
     );
     return false;
   }
 
   if (password !== confirmPassword) {
-    showError("Passwords do not match", signUpConfirmPasswordField);
+    showError(
+      t("login:errors.passwords_do_not_match"),
+      signUpConfirmPasswordField,
+    );
     return false;
   }
 
@@ -382,7 +412,24 @@ export const getLettersAnimation = () => {
     }, letterAnimationDuration);
   };
 };
-
+/**
+ * Generates a function to animate the letters of a word, creating a random letter animation effect.
+ *
+ * This function returns another function that, when called, will animate the letters of a given word.
+ * The animation involves replacing each letter of the word with random characters from a specified set,
+ * creating a dynamic and visually appealing effect. The animation progresses letter by letter until the
+ * entire word is displayed.
+ *
+ * @returns {(word: string, actionCallBack: Function, animationDuration: number, letterAnimationDuration: number, charactersString: string) => void} A function that animates the letters of a word.
+ *
+ * The returned function has the following parameters:
+ *
+ * @param {String} word - The word to animate.
+ * @param {Function} actionCallBack - A callback function that receives the current state of the animated word.
+ * @param {Number} animationDuration - The total duration of the animation in milliseconds.
+ * @param {Number} letterAnimationDuration - The duration between each letter's animation in milliseconds.
+ * @param {String} charactersString - A string of characters to be used in the animation. If not provided, defaults to the alphabet.
+ */
 const lettersAnimation = throttling(animationDuration, getLettersAnimation());
 
 const userNameFormat = (name) => {

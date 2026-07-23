@@ -1,4 +1,10 @@
-import { handlEyeIconsClick } from "../../../main_assets/js/utils.js";
+await initI18n(["shared", "login"], { isStatic: true });
+import {
+  handlEyeIconsClick,
+  getLang,
+  initI18n,
+  t,
+} from "../../../main_assets/js/utils.js";
 import {
   hideAvatarSide,
   initializeSignUpForm,
@@ -16,7 +22,6 @@ import {
   avatarContainer,
   avatarAside,
   updateSignFormHeights,
-  signInFormContainer,
 } from "./dom-variables.js";
 import "../../auth/auth.js";
 import { setUpFileInputListeners } from "../../../app/assets/shared/avatar/js/utils.js";
@@ -25,20 +30,25 @@ import { setUpFileInputListeners } from "../../../app/assets/shared/avatar/js/ut
 document.getElementById("sign-in-form").setAttribute("novalidate", true);
 document.getElementById("sign-up-form").setAttribute("novalidate", true);
 
-window.addEventListener("load", () => {
+if (document.readyState === "complete") {
   initializeSignUpForm();
-});
+} else {
+  window.addEventListener("load", () => {
+    initializeSignUpForm();
+  });
+}
 
 // Event listener for sign-up link click
 signUpLink.addEventListener("click", function () {
   showAvatarSide();
   lettersAnimation(
-    "Create",
+    t("shared:header.create", { defaultValue: "Create" }),
     (word) => {
       document.querySelector("h1 > span").textContent = `${word}`;
     },
     animationDuration,
     20,
+    getLang() === "ar" ? "أبثجحخدرزسشصضطظعغفقكلمنهوي" : "", // '' -> for the english fallback in the function
   );
   swapAnimationThrottling(signUpFormHeight);
 });
@@ -47,12 +57,13 @@ signUpLink.addEventListener("click", function () {
 signInLink.addEventListener("click", function () {
   hideAvatarSide();
   lettersAnimation(
-    "Login to",
+    t("shared:header.login_to", { defaultValue: "Login to" }),
     (word) => {
       document.querySelector("h1 > span").textContent = `${word}`;
     },
     animationDuration,
     20,
+    getLang() === "ar" ? "أبثجحخدرزسشصضطظعغفقكلمنهوي" : "", // '' -> for the english fallback in the function
   );
   swapAnimationThrottling(signInFormHeight);
 });
@@ -66,3 +77,44 @@ window.addEventListener("resize", () => {
 handlEyeIconsClick(eyeIcons);
 
 setUpFileInputListeners(avatarContainer, avatarAside);
+
+// theme toggle
+const toggleBtn = document.getElementById("theme-toggle-btn");
+const toggleIcon = document.getElementById("theme-toggle-icon");
+const root = document.documentElement;
+
+if (toggleBtn) {
+  toggleBtn.addEventListener("click", () => {
+    const isDark = root.getAttribute("data-theme") === "dark";
+
+    const rect = toggleBtn.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    root.style.setProperty("--theme-toggle-x", `${x}px`);
+    root.style.setProperty("--theme-toggle-y", `${y}px`);
+
+    const doSwitch = () => applyTheme(!isDark, true);
+
+    if (document.startViewTransition) {
+      document.startViewTransition(doSwitch);
+    } else {
+      doSwitch();
+    }
+  });
+}
+
+function applyTheme(toDark, save) {
+  const theme = toDark ? "dark" : "light";
+  root.setAttribute("data-theme", theme);
+  if (toggleIcon)
+    toggleIcon.className = toDark
+      ? "bi bi-sun theme-toggle-icon"
+      : "bi bi-moon theme-toggle-icon";
+  if (save) {
+    try {
+      localStorage.setItem("theme", theme);
+      localStorage.setItem("mode", theme);
+      localStorage.setItem("studyhype_theme", theme);
+    } catch (e) {}
+  }
+}

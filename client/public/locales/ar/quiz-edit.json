@@ -1,0 +1,49 @@
+{
+  "badges": {
+    "draft": "مسودة",
+    "draft_tooltip": "أضف سؤالاً واحداً على الأقل للنشر",
+    "published": "منشور"
+  },
+  "questions_heading": "الأسئلة",
+  "add_question": "إضافة سؤال",
+  "drag_tooltip": "اسحب لإعادة الترتيب",
+  "delete_question_tooltip": "حذف السؤال",
+  "subject_label": "المادة:",
+  "edit_subject_tooltip": "تعديل المادة",
+  "edit_title_tooltip": "تعديل العنوان",
+  "shared_in_label": "مشارك في:",
+  "question_counter": "السؤال {count}",
+  "question_placeholder": "اكتب نص السؤال هنا...",
+  "choices_heading": "الخيارات",
+  "choice_placeholder": "اكتب الخيار {letter}",
+  "delete_choice_tooltip": "حذف الخيار",
+  "add_choice": "إضافة خيار",
+  "correct_answer_heading": "الإجابة الصحيحة",
+  "default_question_text": "نص سؤال بسيط هنا.",
+  "enter_quiz_title_placeholder": "أدخل عنوان الاختبار",
+  "alerts": {
+    "quiz_saved_success": "تم حفظ الاختبار بنجاح!",
+    "no_changes_to_save": "لا توجد تغييرات للحفظ.",
+    "failed_to_save": "فشل حفظ الاختبار. يرجى المحاولة مرة أخرى.",
+    "failed_to_update": "فشل تحديث {type}. يرجى المحاولة مرة أخرى.",
+    "min_choices": "يجب أن يكون لديك {min} خيارات على الأقل.",
+    "max_choices": "يمكنك إضافة ما يصل إلى {max} خيارات فقط.",
+    "title_updated": "تم تحديث العنوان بنجاح!",
+    "subject_updated": "تم تحديث المادة بنجاح!"
+  },
+  "validation": {
+    "question_required": "نص السؤال مطلوب.",
+    "question_length": "يجب أن يكون نص السؤال بين {min} و {max} حرفاً.",
+    "choice_required": "نص الخيار مطلوب.",
+    "choice_length": "يجب أن يكون نص الخيار أقل من {max} حرفاً.",
+    "min_choices_required": "يجب إدخال خيارين على الأقل.",
+    "correct_answer_required": "الإجابة الصحيحة مطلوبة.",
+    "correct_answer_invalid": "مؤشر الإجابة الصحيحة غير صالح."
+  },
+  "modals": {
+    "leave_editor_title": "هل أنت متأكد أنك تريد المغادرة؟",
+    "leave_editor_desc": "ستفقد جميع التغييرات غير المحفوظة.",
+    "leave_editor_discard": "تجاهل",
+    "leave_editor_save": "حفظ ومغادرة"
+  }
+}

@@ -9,13 +9,15 @@ import {
   handleOnlineSync,
   tooltipSetup,
   updateMain,
+  initI18n,
+  t,
 } from "./utils.js";
-import { closeLeftSideBarIcon, toggleModeBtn } from "./variables.js";
+import { closeLeftSideBarIcon } from "./variables.js";
 import "../../../auth/auth.js";
 import { initNotificationsManager } from "./notifications.js";
 
+await initI18n(["common", "notifications"]);
 tooltipSetup();
-
 initNotificationsManager();
 
 document.addEventListener("dragover", (e) => e.preventDefault());
@@ -57,6 +59,7 @@ updateThemeToggleIcons(savedAppTheme);
 const themeBtns = document.querySelectorAll(
   ".toggle-container, #mobile-theme-toggle-btn",
 );
+
 themeBtns.forEach((btn) => {
   btn?.addEventListener("click", () => {
     const currentTheme =
@@ -142,7 +145,7 @@ if (sidebarTitleEl && mobilePageTitleEl) {
             class="exclude-btn show-info-btn"
           >
             <i class="bi bi-info-circle"></i>
-            Group Chat
+            ${t("common:group_chat", { defaultValue: "Group Chat" })}
           </button>
         `;
       } else {
@@ -164,6 +167,7 @@ if (sidebarTitleEl && mobilePageTitleEl) {
 // Handle mobile topbar search button click to toggle horizontal search bar
 const mobileSearchBtn = document.querySelector(".mobile-search-btn");
 const mobileSearchBox = document.getElementById("mobile-search-box");
+
 mobileSearchBtn?.addEventListener("click", (e) => {
   e.stopPropagation();
   const isHomeInactive = document.querySelector("main .active-sessions");
@@ -194,14 +198,12 @@ mobileSearchBtn?.addEventListener("click", (e) => {
 });
 
 document.addEventListener("click", (e) => {
-  console.log(e.target.tagName);
-
   if (
     mobileSearchBox &&
     !mobileSearchBox.classList.contains("hidden") &&
     !mobileSearchBox.contains(e.target) &&
     !mobileSearchBtn?.contains(e.target) &&
-    e.target.tagName !== 'HTML'
+    e.target.tagName !== "HTML"
   ) {
     mobileSearchBox.classList.add("hidden");
   }

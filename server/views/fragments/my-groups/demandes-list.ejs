@@ -5,7 +5,7 @@
         <i class="bi bi-person-fill"></i>
       </div>
       <label
-        data-tooltip="Filter By Date"
+        data-tooltip="<%= t('common.topbar.filter_date_tooltip') %>"
         class="date-label should-fill has-tooltip"
       >
         <i class="bi bi-calendar"></i>
@@ -14,11 +14,11 @@
       <input
         type="search"
         id="search"
-        placeholder="Search By Member Name or UID"
+        placeholder="<%= t('groups:demandes.search_placeholder') %>"
         autocomplete="username"
       />
     </div>
-    <label class="exclude-btn sort-button button has-tooltip" data-tooltip="Sort Demandes">
+    <label class="exclude-btn sort-button button has-tooltip" data-tooltip="<%= t('groups:demandes.sort_tooltip') %>">
       <i class="bi bi-sort-down"></i>
       <input type="checkbox" id="sort-checkbox" class="sort-checkbox" />
     </label>
@@ -31,21 +31,21 @@
         <% if (demande.photoURL) { %>
         <img src="<%= demande.photoURL %>" alt="avatar" />
         <% } else { %>
-        <h4><%= demande.fullName.charAt(0).toUpperCase() %></h4>
+        <h4><bdi><%= demande.fullName.charAt(0).toUpperCase() %></bdi></h4>
         <% } %>
       </div>
       <div class="username-container">
-        <span class="username"><%= demande.fullName %></span>
-        <span class="request-date"><%= demande.demandeDate %></span>
+        <span class="username"><bdi><%= demande.fullName %></bdi></span>
+        <span class="request-date"><bdi><%= demande.demandeDate %></bdi></span>
       </div>
       <div class="action-btns" data-user-id="<%= demande.userId %>">
         <button type="button" class="red-btn reject-btn small-btn">
           <i class="bi bi-x-circle"></i>
-          Reject
+          <%= t("groups:demandes.reject") %>
         </button>
         <button type="button" class="green-btn accept-btn small-btn">
           <i class="bi bi-check-circle"></i>
-          Accept
+          <%= t("groups:demandes.accept") %>
         </button>
       </div>
     </div>
@@ -55,8 +55,8 @@
       <div class="empty-icon-container">
         <i class="bi bi-person-check"></i>
       </div>
-      <h3>No Join Requests</h3>
-      <p>There are no pending join requests for this group.</p>
+      <h3><%= t("groups:demandes.empty_heading") %></h3>
+      <p><%= t("groups:demandes.empty_desc") %></p>
     </div>
     <% } %>
   </div>
