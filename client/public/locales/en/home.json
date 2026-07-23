@@ -1,18 +1,7 @@
 {
-  "inactive": {
-    "ready_heading": "Ready to start learning together?",
-    "ready_desc": "Join a study session to connect with peers, participate in discussions, and enhance your learning experience. StudyHype makes collaborative learning easy and effective!",
-    "recent_messages_heading": "Recent Messages",
-    "recent_messages_sub": "Latest conversations from your study groups",
-    "active_sessions_heading": "Active Sessions",
-    "active_sessions_sub": "Ongoing study sessions you can join now",
-    "search_placeholder": "Search by session or group name"
-  },
   "skeletons": {
     "no_active_sessions_title": "No Active Sessions",
     "no_active_sessions_desc": "There are no study sessions currently active. You can start one or wait for others to join.",
-    "no_active_sessions_found_title": "No Active Sessions Found",
-    "no_active_sessions_found_desc": "We couldn't find any active sessions matching your search query.",
     "no_active_sessions_filtered_title": "No Active Sessions Found",
     "no_active_sessions_filtered_desc": "We couldn't find any active sessions matching your search query.",
     "no_messages_yet_title": "No Messages Yet",
@@ -69,29 +58,16 @@
     "close": "Close",
     "type_message_placeholder": "Type a message...",
     "attachment": "Attachment ({count})",
-    "new_messages": {
-      "one": "{count} New Message",
-      "other": "{count} New Messages"
-    },
+    "new_messages": null,
     "mark_as_read": "Mark as read",
     "someone": "Someone",
     "study_group": "Study Group",
     "reply_in_group": "Reply In Group",
     "time": {
       "just_now": "Just now",
-      "recent": "Recent",
-      "ago_minutes": {
-        "one": "{count}m ago",
-        "other": "{count}m ago"
-      },
-      "ago_hours": {
-        "one": "{count}h ago",
-        "other": "{count}h ago"
-      },
-      "ago_days": {
-        "one": "{count}d ago",
-        "other": "{count}d ago"
-      }
+      "ago_minutes": null,
+      "ago_hours": null,
+      "ago_days": null
     }
   }
 }

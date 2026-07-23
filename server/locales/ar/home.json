@@ -4,14 +4,7 @@
     "ready_desc": "انضم إلى جلسة دراسية للتواصل مع زملائك، والمشاركة في المناقشات، وتعزيز تجربتك التعليمية. ستادي هايب يجعل التعلم التعاوني سهلاً وفعالاً!",
     "recent_messages_heading": "الرسائل الأخيرة",
     "recent_messages_sub": "أحدث المحادثات من مجموعاتك الدراسية",
-    "unread_messages_count": {
-      "zero": "لا توجد رسائل جديدة",
-      "one": "رسالة جديدة واحدة",
-      "two": "رسالتان جديدتان",
-      "few": "{count} رسائل جديدة",
-      "many": "{count} رسالة جديدة",
-      "other": "{count} رسالة جديدة"
-    },
+    "unread_messages_count": null,
     "reply_in_group": "الرد في المجموعة",
     "reply": "رد",
     "mark_as_read": "تحديد كمقروء",
@@ -20,23 +13,9 @@
     "active_sessions_heading": "الجلسات النشطة",
     "active_sessions_sub": "الجلسات الدراسية الجارية التي يمكنك الانضمام إليها الآن",
     "search_placeholder": "البحث باسم الجلسة أو المجموعة",
-    "joined_users_count": {
-      "zero": "لا يوجد مستخدمون منضمون",
-      "one": "مستخدم واحد منضم",
-      "two": "مستخدمان منضمان",
-      "few": "{count} مستخدمين منضمين",
-      "many": "{count} مستخدماً منضماً",
-      "other": "{count} مستخدم منضم"
-    },
+    "joined_users_count": null,
     "duration_label": "المدة",
-    "tasks_count": {
-      "zero": "لا توجد مهام",
-      "one": "مهمة واحدة",
-      "two": "مهمتان",
-      "few": "{count} مهام",
-      "many": "{count} مهمة",
-      "other": "{count} مهمة"
-    },
+    "tasks_count": null,
     "start_at": "تبدأ في:",
     "end_at": "تنتهي في:",
     "join_session": "الانضمام للجلسة",
@@ -45,31 +24,9 @@
     "empty_sessions_desc": "لا توجد جلسات دراسية نشطة حالياً. يمكنك بدء واحدة أو انتظار انضمام الآخرين.",
     "time": {
       "just_now": "الآن",
-      "recent": "الأحدث",
-      "ago_minutes": {
-        "zero": "منذ أقل من دقيقة",
-        "one": "منذ دقيقة واحدة",
-        "two": "منذ دقيقتين",
-        "few": "منذ {count} دقائق",
-        "many": "منذ {count} دقيقة",
-        "other": "منذ {count} دقيقة"
-      },
-      "ago_hours": {
-        "zero": "منذ أقل من ساعة",
-        "one": "منذ ساعة واحدة",
-        "two": "منذ ساعتين",
-        "few": "منذ {count} ساعات",
-        "many": "منذ {count} ساعة",
-        "other": "منذ {count} ساعة"
-      },
-      "ago_days": {
-        "zero": "اليوم",
-        "one": "منذ يوم واحد",
-        "two": "منذ يومين",
-        "few": "منذ {count} أيام",
-        "many": "منذ {count} يوماً",
-        "other": "منذ {count} يوم"
-      }
+      "ago_minutes": null,
+      "ago_hours": null,
+      "ago_days": null
     }
   },
   "active": {

@@ -1,4 +1,18 @@
 {
+  "errors": {
+    "invalid_email": "Please enter a valid email ({min}-{max} characters)",
+    "enter_password": "Please enter your password",
+    "first_name_format": "First name must be {min}-{max} characters only letters",
+    "last_name_format": "Last name must be {min}-{max} characters only letters",
+    "password_length": "The password must be between {min} and {max} characters",
+    "passwords_do_not_match": "Passwords do not match"
+  },
+  "messages": {
+    "reset_link_sent": "If this email is registered, you will receive a password reset link.",
+    "signed_in_redirecting": "Signed in successfully, redirecting...",
+    "account_created_verify": "Account created! A verification link has been sent to your email. Please verify before signing in.",
+    "email_unverified": "Your email address is not verified. A new verification link has been sent to your inbox. Please verify before signing in."
+  },
   "metadata": {
     "page_title": "Login to your StudyHype account",
     "meta_description": "Login to StudyHype to access quizzes, real-time chat, and group study sessions."
@@ -6,8 +20,7 @@
   "nav": {
     "home": "Home",
     "back_to_home": "Back to Home",
-    "toggle_theme": "Toggle Dark/Light Mode",
-    "switch_lang": "Switch Language"
+    "toggle_theme": "Toggle Dark/Light Mode"
   },
   "aside": {
     "welcome_title": "👋 Welcome to StudyHype",
@@ -19,7 +32,6 @@
   },
   "header": {
     "login_to": "Login to",
-    "create": "Create",
     "your_account": "Your Account"
   },
   "sign_in_form": {

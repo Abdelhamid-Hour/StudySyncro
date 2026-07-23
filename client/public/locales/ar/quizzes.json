@@ -38,64 +38,25 @@
     "title_length": "يجب أن يكون عنوان الاختبار بين {min} و {max} حرفاً.",
     "subject_required": "المادة مطلوبة."
   },
-  "question_num": "السؤال {num}",
   "choices_count": "{count} خيارات",
-  "finished_date": "تاريخ الانتهاء: {date}",
-  "questions_count": "{count} أسئلة",
   "questions_label": "أسئلة",
-  "quiz_title_placeholder": "عنوان الاختبار",
-  "answered": "المُجاب عنه",
-  "status": {
-    "correct": "صحيح",
-    "skipped": "تخطى",
-    "incorrect": "خاطئ"
-  },
-  "editor": {
-    "questions": "الأسئلة",
-    "choices_title": "الخيارات",
-    "add_choice": "إضافة خيار",
-    "subject_label": "المادة:",
-    "shared_in_label": "مشارك في:",
-    "correct_answer_title": "الإجابة الصحيحة"
-  },
   "play": {
-    "time_left": "الوقت المتبقي :",
-    "skip": "تخطي",
     "select_answer": "اختر الإجابة الصحيحة (أو اضغط 1-6 / A-F)",
-    "prev": "السابق",
     "next": "التالي",
     "finish": "إنهاء",
     "score_of": "{correct} من {total}",
     "your_score": "درجتك",
     "view_result_details": "عرض تفاصيل النتيجة",
-    "results": {
-      "excellent": {
-        "title": "عمل ممتاز!",
-        "desc": "لقد أنجزته بشكل رائع! استمر على هذا المنوال."
-      },
-      "good": {
-        "title": "أحسنت!",
-        "desc": "عمل رائع! لديك فهم جيد للمادة."
-      },
-      "average": {
-        "title": "ليس سيئاً، استمر!",
-        "desc": "أنت على وشك الوصول! استمر في العمل الجيد."
-      },
-      "poor": {
-        "title": "حظاً موفقاً في المرة القادمة!",
-        "desc": "حاول مراجعة المادة ومواصلة التدريب."
-      }
-    },
-    "grades": {
-      "excellent": "ممتاز",
-      "good": "جيد",
-      "average": "متوسط",
-      "poor": "ضعيف"
-    },
     "alerts": {
       "select_answer": "يرجى اختيار إجابة أو الضغط على زر التخطي للمتابعة.",
       "failed_load": "فشل تحميل أسئلة الاختبار. يرجى المحاولة مرة أخرى لاحقاً.",
       "failed_submit": "فشل إرسال نتيجة الاختبار. يرجى المحاولة مرة أخرى لاحقاً."
     }
+  },
+  "quiz_play": {
+    "fallback_question": "نص السؤال...",
+    "choice_a": "الخيار أ",
+    "choice_b": "الخيار ب",
+    "choice_c": "الخيار ج"
   }
 }

@@ -28,8 +28,7 @@
   "actions": {
     "view_result": "View Result",
     "view_results": "View Results",
-    "retake": "Retake",
-    "retake_quiz": "Retake Quiz"
+    "retake": "Retake"
   },
   "play": {
     "time_left": "Time Left :",
@@ -97,25 +96,9 @@
     "correct_answer": "Correct Answer"
   },
   "plural_counts": {
-    "questions": {
-      "one": "1 Question",
-      "other": "{count} Questions"
-    },
-    "choices": {
-      "one": "1 Choice",
-      "other": "{count} Choices"
-    },
-    "groups": {
-      "one": "Group",
-      "other": "Groups"
-    },
-    "sessions": {
-      "one": "Session",
-      "other": "Sessions"
-    },
-    "joined_users": {
-      "one": "{count} Joined User",
-      "other": "{count} Joined Users"
-    }
+    "choices": null,
+    "groups": null,
+    "sessions": null,
+    "joined_users": null
   }
 }

@@ -3,20 +3,5 @@
     "draft": "Draft",
     "draft_tooltip": "Add at least 1 question to publish",
     "published": "Published"
-  },
-  "questions_heading": "Questions",
-  "add_question": "Add Question",
-  "drag_tooltip": "Drag to Reorder",
-  "delete_question_tooltip": "Delete Question",
-  "subject_label": "Subject:",
-  "edit_subject_tooltip": "Edit Subject",
-  "edit_title_tooltip": "Edit Title",
-  "shared_in_label": "Shared In:",
-  "question_counter": "Question {count}",
-  "question_placeholder": "Enter question text here...",
-  "choices_heading": "Choices",
-  "choice_placeholder": "Enter choice {letter}",
-  "delete_choice_tooltip": "Delete Choice",
-  "add_choice": "Add Choice",
-  "correct_answer_heading": "Correct Answer"
+  }
 }

@@ -609,10 +609,19 @@ export const tooltipSetup = () => {
   let currentTooltipTarget = null;
   let tooltipTimer = null;
 
+  const clearAndHideTooltip = () => {
+    if (currentTooltipTarget || tooltipTimer) {
+      resetTooltip(hoverTooltip);
+      currentTooltipTarget = null;
+      clearTimeout(tooltipTimer);
+      tooltipTimer = null;
+    }
+  };
+
   document.addEventListener("mouseover", (e) => {
     const tooltipTarget = e.target.closest(".has-tooltip");
     if (tooltipTarget && tooltipTarget !== currentTooltipTarget) {
-      clearTimeout(tooltipTimer);
+      clearAndHideTooltip();
       currentTooltipTarget = tooltipTarget;
       tooltipTimer = setTimeout(
         () => showTooltip(tooltipTarget, hoverTooltip),
@@ -622,17 +631,26 @@ export const tooltipSetup = () => {
   });
 
   document.addEventListener("mouseout", (e) => {
-    // Only reset if leaving the .has-tooltip element entirely
-    if (
-      (currentTooltipTarget &&
-        !currentTooltipTarget.contains(e.relatedTarget)) ||
-      tooltipTimer
-    ) {
-      resetTooltip(hoverTooltip);
-      currentTooltipTarget = null;
-      clearTimeout(tooltipTimer);
-      tooltipTimer = null;
+    // Only reset if leaving the .has-tooltip element entirely.
+    // Ignoring internal mouse movements prevents the timer from cancelling incorrectly.
+    if (currentTooltipTarget && !currentTooltipTarget.contains(e.relatedTarget)) {
+      clearAndHideTooltip();
     }
+  });
+
+  // Hide tooltip when the target is clicked (prevents lingering over modals/dropdowns)
+  document.addEventListener("click", (e) => {
+    if (currentTooltipTarget && currentTooltipTarget.contains(e.target)) {
+      clearAndHideTooltip();
+    }
+  });
+
+  // Hide tooltips on scroll to prevent them from floating off-target
+  document.addEventListener("scroll", clearAndHideTooltip, { passive: true });
+  
+  // Hide tooltips on Escape key for accessibility
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") clearAndHideTooltip();
   });
 };
 

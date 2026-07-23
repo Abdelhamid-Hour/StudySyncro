@@ -15,23 +15,6 @@
     "delete_account_confirm_desc": "This action is irreversible and will result in the loss of all your data.",
     "delete_account_confirm_btn": "Yes, delete my account"
   },
-  "sidebar": {
-    "my_account": "My Account",
-    "tabs": {
-      "profile": "Personal Info",
-      "email": "Email Address",
-      "password": "Password",
-      "delete": "Close Account"
-    }
-  },
-  "profile": {
-    "title": "Personal Details",
-    "subtitle": "Keep your information up to date.",
-    "caption": "Upload a JPG, PNG, or GIF (Max 1MB).",
-    "full_name": "Full Name",
-    "uid": "User ID",
-    "modify_btn": "Modify Profile"
-  },
   "buttons": {
     "save_changes": "Save Changes",
     "cancel": "Cancel",

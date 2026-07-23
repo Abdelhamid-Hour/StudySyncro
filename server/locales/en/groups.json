@@ -95,13 +95,6 @@
     "type_message_placeholder": "Type a message"
   },
   "plural_counts": {
-    "extra_members": {
-      "one": "+1",
-      "other": "+{count}"
-    },
-    "members": {
-      "one": "{count} Member",
-      "other": "{count} Members"
-    }
+    "members": null
   }
 }

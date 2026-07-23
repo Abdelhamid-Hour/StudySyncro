@@ -1,18 +1,7 @@
 {
-  "inactive": {
-    "ready_heading": "هل أنت مستعد لبدء التعلم معاً؟",
-    "ready_desc": "انضم إلى جلسة دراسية للتواصل مع زملائك، والمشاركة في المناقشات، وتعزيز تجربتك التعليمية. ستادي هايب يجعل التعلم التعاوني سهلاً وفعالاً!",
-    "recent_messages_heading": "الرسائل الأخيرة",
-    "recent_messages_sub": "أحدث المحادثات من مجموعاتك الدراسية",
-    "active_sessions_heading": "الجلسات النشطة",
-    "active_sessions_sub": "الجلسات الدراسية الجارية التي يمكنك الانضمام إليها الآن",
-    "search_placeholder": "البحث باسم الجلسة أو المجموعة"
-  },
   "skeletons": {
     "no_active_sessions_title": "لا توجد جلسات نشطة",
     "no_active_sessions_desc": "لا توجد حالياً أي جلسات دراسية نشطة. يمكنك بدء جلسة جديدة أو انتظار انضمام الآخرين.",
-    "no_active_sessions_found_title": "لم يتم العثور على جلسات نشطة",
-    "no_active_sessions_found_desc": "لم نتمكن من العثور على أي جلسات نشطة تطابق استعلام البحث الخاص بك.",
     "no_active_sessions_filtered_title": "لم يتم العثور على جلسات نشطة",
     "no_active_sessions_filtered_desc": "لم نتمكن من العثور على أي جلسات نشطة تطابق استعلام البحث الخاص بك.",
     "no_messages_yet_title": "لا توجد رسائل بعد",
@@ -69,45 +58,16 @@
     "close": "إغلاق",
     "type_message_placeholder": "اكتب رسالة...",
     "attachment": "مرفق ({count})",
-    "new_messages": {
-      "zero": "لا توجد رسائل جديدة",
-      "one": "رسالة جديدة واحدة",
-      "two": "رسالتان جديدتان",
-      "few": "{count} رسائل جديدة",
-      "many": "{count} رسالة جديدة",
-      "other": "{count} رسالة جديدة"
-    },
+    "new_messages": null,
     "mark_as_read": "تحديد كمقروء",
     "someone": "شخص ما",
     "study_group": "مجموعة دراسية",
     "reply_in_group": "الرد في المجموعة",
     "time": {
       "just_now": "الآن",
-      "recent": "الأحدث",
-      "ago_minutes": {
-        "zero": "منذ أقل من دقيقة",
-        "one": "منذ دقيقة واحدة",
-        "two": "منذ دقيقتين",
-        "few": "منذ {count} دقائق",
-        "many": "منذ {count} دقيقة",
-        "other": "منذ {count} دقيقة"
-      },
-      "ago_hours": {
-        "zero": "منذ أقل من ساعة",
-        "one": "منذ ساعة واحدة",
-        "two": "منذ ساعتين",
-        "few": "منذ {count} ساعات",
-        "many": "منذ {count} ساعة",
-        "other": "منذ {count} ساعة"
-      },
-      "ago_days": {
-        "zero": "اليوم",
-        "one": "منذ يوم واحد",
-        "two": "منذ يومين",
-        "few": "منذ {count} أيام",
-        "many": "منذ {count} يوماً",
-        "other": "منذ {count} يوم"
-      }
+      "ago_minutes": null,
+      "ago_hours": null,
+      "ago_days": null
     }
   }
 }

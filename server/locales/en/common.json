@@ -13,13 +13,11 @@
     "studyhype": "StudyHype"
   },
   "avatar_alt": "User Avatar",
-  "member_avatar_alt": "Member Avatar",
   "sidebar": {
     "logo_text": "StudyHype",
     "overview": "OverView",
     "groups": "Groups",
     "quizzes": "Quizzes",
-    "settings": "Settings",
     "notifications_tooltip": "Notifications",
     "theme_tooltip": "Toggle Theme",
     "toggle_tooltip": "Toggle Sidebar",
@@ -101,9 +99,6 @@
     "close": "Close",
     "menu": "Menu",
     "retry": "Retry"
-  },
-  "time": {
-    "recent": "Recent"
   },
   "error": {
     "back_to_dashboard": "Back to Dashboard",

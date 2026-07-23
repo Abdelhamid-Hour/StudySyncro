@@ -22,7 +22,6 @@
     "passed": "المجتازة"
   },
   "skeletons": {
-    "loading": "جاري التحميل...",
     "error_loading": "حدث خطأ أثناء تحميل المحتوى",
     "no_results_title": "لم يتم العثور على نتائج",
     "no_results_desc": "لا توجد تطابقات لعملية البحث أو الفلاتر المحددة.",
@@ -97,10 +96,6 @@
     "msg_not_found_local": "الرسالة غير موجودة في التخزين المحلي.",
     "select_subject_error": "يرجى اختيار موضوع صالح من القائمة أو كتابة موضوع جديد.",
     "error_loading_more": "حدث خطأ أثناء تحميل المزيد من العناصر. يرجى المحاولة لاحقاً.",
-    "password_reset_sent": "إذا كان هذا البريد الإلكتروني مسجلاً، فستتصلك رابط إعادة تعيين كلمة المرور.",
-    "password_reset_success": "تمت إعادة تعيين كلمة المرور بنجاح",
-    "try_resetting_again": "حاول إعادة تعيين كلمة المرور مرة أخرى",
-    "reset_link_expired": "انتهت صلاحية رابط إعادة تعيين كلمة المرور أو تم استخدامه بالفعل",
     "avatar_size_exceeded": "حجم الملف يتجاوز الحد الأقصى ({size}).",
     "subject_input_error": "يرجى إدخال موضوع صالح يتراوح طوله بين 2 و 50 حرفاً.",
     "left_session_success": "لقد غادرت الجلسة بنجاح.",
@@ -150,11 +145,7 @@
   "modals": {
     "confirm": "تأكيد",
     "cancel": "إلغاء",
-    "yes": "نعم",
-    "no": "لا",
     "delete": "حذف",
-    "remove": "إزالة",
-    "leave": "مغادرة",
     "save": "حفظ",
     "close": "إغلاق",
     "select_subject": "اختر الموضوع",
@@ -163,9 +154,7 @@
   "not_available": "غير متوفر",
   "actions": {
     "scroll_to_top": "التمرير إلى الأعلى",
-    "collapse_all": "طي الكل",
-    "switch_to_en": "التحويل إلى الإنجليزية",
-    "switch_to_ar": "التحويل إلى العربية"
+    "collapse_all": "طي الكل"
   },
   "forms": {
     "other": "أخرى",
@@ -204,16 +193,6 @@
     "status": "الحالة",
     "published": "منشور",
     "draft": "مسودة"
-  },
-  "groups_tabs": {
-    "my_groups": "مجموعاتي",
-    "available_groups": "المجموعات المتاحة"
-  },
-  "quizzes_tabs": {
-    "my_quizzes": "اختباراتي",
-    "passed": "المجتازة",
-    "quiz_editor": "محرر الاختبار",
-    "questions_list": "قائمة الأسئلة"
   },
   "quiz_card": {
     "quiz_title": "عنوان الاختبار",
@@ -299,9 +278,5 @@
       "make_progress": "هل أنت مستعد لتحقيق التقدم؟",
       "wonderful_day": "نتمنى لك يوماً سعيداً!"
     }
-  },
-  "empty_states": {
-    "no_quizzes_found": "لم يتم العثور على اختبارات !",
-    "no_groups_found": "لم يتم العثور على مجموعات !"
   }
 }
