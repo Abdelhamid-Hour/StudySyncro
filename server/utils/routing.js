@@ -75,11 +75,11 @@ const setStyleRoute = (pathName) => {
   };
 };
 
-const fetchData = async (pathName, user) => {
+const fetchData = async (pathName, user, t) => {
   let templateContext = {};
   switch (pathName) {
     case "/home":
-      const payload = await fetchHomeData(user.uid);
+      const payload = await fetchHomeData(user.uid, t);
       payload.payload.extraData = {
         fullName: user.fullName,
         hasActiveSession: payload.payload.hasActiveSession || false

@@ -102,7 +102,8 @@
     "transferred": "transferred",
     "admin_role": "Admin role",
     "host_role": "Host",
-    "declined": "declined"
+    "declined": "declined",
+    "invited_you_to_join_suffix": ""
   },
   "recent": "Recent"
 }

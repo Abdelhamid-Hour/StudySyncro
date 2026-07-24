@@ -15,8 +15,8 @@ const getSessionDetails = async (sessionId) => {
   return result;
 };
 
-const fetchHomeData = async (userId) => {
-  const session = await getCurrentSessionInfo(userId); // or null
+const fetchHomeData = async (userId, t) => {
+  const session = await getCurrentSessionInfo(userId, t); // or null
 
   if (session) {
     const result = await getMessages(session.id, session.groupId, userId);

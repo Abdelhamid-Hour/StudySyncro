@@ -74,16 +74,19 @@ const toReadableDate = (TimeOrDate, type) => {
   });
 };
 
-const millisecondsToHMFormat = (ms) => {
-  if (typeof ms !== "number" || ms < 0) return "0m";
+const millisecondsToHMFormat = (ms, t) => {
+  const hUnit = t ? t("common:time.h") : "h";
+  const mUnit = t ? t("common:time.m") : "m";
+
+  if (typeof ms !== "number" || ms < 0) return `0${mUnit}`;
   const hours = Math.floor(ms / 3_600_000);
   const minutes = Math.floor((ms % 3_600_000) / 60_000);
 
   if (hours && minutes)
-    return `${hours}h ${minutes.toString().padStart(2, "0")}m`;
-  if (hours) return `${hours}h`;
-  if (minutes) return `${minutes}m`;
-  return "0m";
+    return `${hours}${hUnit} ${minutes.toString().padStart(2, "0")}${mUnit}`;
+  if (hours) return `${hours}${hUnit}`;
+  if (minutes) return `${minutes}${mUnit}`;
+  return `0${mUnit}`;
 };
 
 const formatNumber = (number) => {

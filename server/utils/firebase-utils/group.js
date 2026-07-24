@@ -16,6 +16,7 @@ const {
   notifyRoleTransfer,
   notifyGroupInvite,
   updateJoinInviteNotificationStatus,
+  markSessionStartedNotificationsEnded,
 } = require("./notifications");
 
 const createGroup = async (groupData, userData) => {
@@ -397,6 +398,11 @@ const leaveGroup = async (groupId, userId) => {
         const { leavSession } = require("./session");
         await leavSession(userId);
       }
+      
+      await markSessionStartedNotificationsEnded(
+        [userId],
+        groupSnap.data().currentSession
+      );
     }
     await rDb
       .ref(`userGroupChats/${userId}/${groupId}`)

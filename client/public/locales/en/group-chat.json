@@ -49,7 +49,7 @@
     "load_group_info_error": "An error occurred while loading group info.",
     "failed_to_load_group_info": "Failed to load group info. Please try again later.",
     "add_at_least_one_task": "You must add at least one task before finishing.",
-    "total_duration_error": "Total session duration must be between {{min}} and {{max}} minutes.",
+    "total_duration_error": "Total session duration must be between {min} and {max} minutes.",
     "complete_quiz_details": "Please complete the quiz details before finishing.",
     "session_created_success": "Session created successfully",
     "member_kicked_success": "Member kicked successfully",
@@ -61,7 +61,7 @@
     "users_invited_success": "Users invited successfully!",
     "select_user_to_add": "Please select at least one user to add.",
     "max_invite_limit": "You can only invite up to 5 users at a time.",
-    "users_found_count": "{{count}} Users Found"
+    "users_found_count": "{count} Users Found"
   },
   "type_message_placeholder": "Type a message",
   "skeletons": {
@@ -95,7 +95,7 @@
     "select_quiz": "Select Quiz",
     "search_quizzes_placeholder": "Search quizzes...",
     "no_quiz_optional": "No Quiz (Optional)",
-    "duration_label": "Duration {{duration}}",
+    "duration_label": "Duration {duration}",
     "remove_quiz_title": "Remove Quiz",
     "remove_quiz_desc": "Are you sure you want to remove the quiz?",
     "remove_quiz_confirm": "Remove Quiz",
@@ -171,13 +171,13 @@
     "quizzes": "Quizzes"
   },
   "errors": {
-    "max_members_range": "Max members should be a number between {{min}} and {{max}}",
-    "group_name_length": "Group name should be between {{min}} and {{max}} characters",
-    "description_length": "Group description should be between {{min}} and {{max}} characters",
+    "max_members_range": "Max members should be a number between {min} and {max}",
+    "group_name_length": "Group name should be between {min} and {max} characters",
+    "description_length": "Group description should be between {min} and {max} characters",
     "select_valid_option": "Please select a valid option",
     "enter_title": "Please enter a title",
-    "title_length": "Title should be between {{min}} and {{max}} characters",
+    "title_length": "Title should be between {min} and {max} characters",
     "enter_description": "Please enter a description",
-    "task_duration_range": "Task duration should be a number between {{min}} and {{max}} minutes"
+    "task_duration_range": "Task duration should be a number between {min} and {max} minutes"
   }
 }

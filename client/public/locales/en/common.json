@@ -308,5 +308,9 @@
   "empty_states": {
     "no_quizzes_found": "No Quizzes found !",
     "no_groups_found": "No Groups found !"
+  },
+  "time": {
+    "h": "h",
+    "m": "m"
   }
 }

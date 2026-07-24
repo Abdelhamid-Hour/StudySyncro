@@ -76,12 +76,12 @@
   },
   "errors": {
     "group_name_required": "اسم المجموعة مطلوب.",
-    "group_name_length": "يجب أن يتراوح اسم المجموعة بين {{min}} و {{max}} حرفاً.",
+    "group_name_length": "يجب أن يتراوح اسم المجموعة بين {min} و {max} حرفاً.",
     "description_required": "وصف المجموعة مطلوب.",
-    "description_length": "يجب أن يتراوح وصف المجموعة بين {{min}} و {{max}} حرفاً.",
+    "description_length": "يجب أن يتراوح وصف المجموعة بين {min} و {max} حرفاً.",
     "subject_required": "المادة مطلوبة.",
     "level_invalid": "المستوى غير صالح.",
-    "max_members_range": "يجب أن يكون الحد الأقصى للأعضاء رقماً بين {{min}} و {{max}}.",
+    "max_members_range": "يجب أن يكون الحد الأقصى للأعضاء رقماً بين {min} و {max}.",
     "visibility_invalid": "الخصوصية غير صالحة."
   }
 }

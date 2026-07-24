@@ -49,7 +49,7 @@ const getErrorPageContext = (page, statusCode) => {
 };
 
 const handleRoutes = async (req, res) => {
-  const payload = await fetchData(req.path, req.user);
+  const payload = await fetchData(req.path, req.user, req.t);
   const pathName = req.path === "/home" ? payload.pathName : req.path;
 
   const template = `templates${

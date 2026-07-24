@@ -72,12 +72,12 @@
   },
   "errors": {
     "group_name_required": "Group name is required.",
-    "group_name_length": "Group name must be between {{min}} and {{max}} characters.",
+    "group_name_length": "Group name must be between {min} and {max} characters.",
     "description_required": "Description is required.",
-    "description_length": "Description must be between {{min}} and {{max}} characters.",
+    "description_length": "Description must be between {min} and {max} characters.",
     "subject_required": "Subject is required.",
     "level_invalid": "Level is not valid.",
-    "max_members_range": "Max members must be a number between {{min}} and {{max}}.",
+    "max_members_range": "Max members must be a number between {min} and {max}.",
     "visibility_invalid": "Visibility is not valid."
   }
 }

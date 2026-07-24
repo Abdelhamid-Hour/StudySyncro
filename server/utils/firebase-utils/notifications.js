@@ -67,7 +67,7 @@ const getUserNotifications = async (
   userId,
   limit = INITIALE_LOADERS_COUNT,
   lastVisible = null,
-  criteria = {}
+  criteria = {},
 ) => {
   try {
     const userNotifRef = db
@@ -150,7 +150,12 @@ const markLoadedNotificationsAsRead = async (userId) => {
     return { success: true, count: docs.length };
   } catch (error) {
     console.error("Error marking notifications as read:", error);
-    return { success: false, message: error.message, isNative: false, type: "error" };
+    return {
+      success: false,
+      message: error.message,
+      isNative: false,
+      type: "error",
+    };
   }
 };
 
@@ -158,7 +163,7 @@ const updateJoinRequestNotificationStatus = async (
   userId,
   groupId,
   demandeId,
-  newStatus
+  newStatus,
 ) => {
   try {
     const notifCollection = db
@@ -176,7 +181,10 @@ const updateJoinRequestNotificationStatus = async (
       const doc = snapshot.docs[0];
       await doc.ref.update({
         read: true,
-        type: newStatus === "accepted" ? "join_accepted" : "join_rejected",
+        type:
+          newStatus === "accepted"
+            ? "join_request_accepted"
+            : "join_request_rejected",
         "metadata.status": newStatus,
       });
     }
@@ -188,7 +196,7 @@ const updateJoinRequestNotificationStatus = async (
 const updateJoinInviteNotificationStatus = async (
   userId,
   groupId,
-  newStatus
+  newStatus,
 ) => {
   try {
     const notifCollection = db
@@ -205,7 +213,10 @@ const updateJoinInviteNotificationStatus = async (
       const doc = snapshot.docs[0];
       await doc.ref.update({
         read: true,
-        type: newStatus === "accepted" ? "join_accepted" : "join_rejected",
+        type:
+          newStatus === "accepted"
+            ? "join_invite_accepted"
+            : "join_invite_rejected",
         "metadata.status": newStatus,
       });
     }
@@ -219,7 +230,7 @@ const notifyJoinRequest = async (
   groupName,
   adminId,
   applicantUser,
-  demandeId
+  demandeId,
 ) => {
   await addNotification(adminId, {
     type: "join_request",
@@ -247,7 +258,7 @@ const notifyJoinResult = async (
   applicantId,
   groupId,
   groupName,
-  isAccepted
+  isAccepted,
 ) => {
   await addNotification(applicantId, {
     type: isAccepted ? "join_accepted" : "join_rejected",
@@ -261,7 +272,7 @@ const notifyGroupInvite = async (
   groupId,
   groupName,
   senderUser,
-  invitedUserId
+  invitedUserId,
 ) => {
   try {
     const notifCollection = db
@@ -301,7 +312,10 @@ const notifyGroupInvite = async (
   }
 };
 
-const markSessionStartedNotificationsEnded = async (members = [], sessionId) => {
+const markSessionStartedNotificationsEnded = async (
+  members = [],
+  sessionId,
+) => {
   try {
     if (!sessionId || !members || !members.length) return;
     await Promise.all(
@@ -323,7 +337,7 @@ const markSessionStartedNotificationsEnded = async (members = [], sessionId) => 
           });
           await batch.commit();
         }
-      })
+      }),
     );
   } catch (err) {
     console.error("Error updating session_started notifications:", err);
@@ -337,7 +351,7 @@ const notifySessionStatus = async (
   sessionId,
   isStarted,
   members = [],
-  creatorId = null
+  creatorId = null,
 ) => {
   if (!isStarted && sessionId) {
     await markSessionStartedNotificationsEnded(members, sessionId);
@@ -402,7 +416,7 @@ const notifyRoleTransfer = async (
   groupName,
   oldAdminId,
   newAdminId,
-  newAdminName
+  newAdminName,
 ) => {
   if (newAdminId) {
     await addNotification(newAdminId, {
@@ -455,4 +469,5 @@ module.exports = {
   notifyRoleTransfer,
   notifyMemberRemoved,
   notifyGroupDeleted,
+  markSessionStartedNotificationsEnded,
 };

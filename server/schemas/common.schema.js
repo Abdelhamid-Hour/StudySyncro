@@ -56,7 +56,8 @@ const safeDate = (fieldName = "Date") =>
   z.union([z.string().trim(), z.number(), z.date()]).refine(
     (val) => {
       if (!val) return true;
-      const parsed = new Date(Number(val));
+      const date = Number(val) ||  val;
+      const parsed = new Date(date);
       return !isNaN(parsed.getTime());
     },
     { message: `${fieldName} must be a valid date string or timestamp.` },

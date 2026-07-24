@@ -117,5 +117,11 @@
       "one": "{count} Joined User",
       "other": "{count} Joined Users"
     }
+  },
+  "quiz_play": {
+    "fallback_question": "Question text...",
+    "choice_a": "Choice A",
+    "choice_b": "Choice B",
+    "choice_c": "Choice C"
   }
 }

@@ -200,15 +200,15 @@ export const dashedToCamelCase = (value) => {
 };
 
 export const millisecondsToHMFormat = (ms) => {
-  if (typeof ms !== "number" || ms < 0) return "0m";
+  if (typeof ms !== "number" || ms < 0) return `0${t("common:time.m")}`;
   const hours = Math.floor(ms / 3_600_000);
   const minutes = Math.floor((ms % 3_600_000) / 60_000);
 
   if (hours && minutes)
-    return `${hours}h ${minutes.toString().padStart(2, "0")}m`;
-  if (hours) return `${hours}h`;
-  if (minutes) return `${minutes}m`;
-  return "0m";
+    return `${hours}${t("common:time.h")} ${minutes.toString().padStart(2, "0")}${t("common:time.m")}`;
+  if (hours) return `${hours}${t("common:time.h")}`;
+  if (minutes) return `${minutes}${t("common:time.m")}`;
+  return `0${t("common:time.m")}`;
 };
 
 export const getLoadersCount = () => {
@@ -528,7 +528,8 @@ export const showTooltip = (tooltipTarget, tooltip, message, error) => {
 
   // For corner placements: Align tooltip box flush with target edge, center arrow over target
   const arrowOffset = positionInfo.width / 2;
-  const fitsExtendingRight = positionInfo.left + tooltipWidth <= window.innerWidth;
+  const fitsExtendingRight =
+    positionInfo.left + tooltipWidth <= window.innerWidth;
   const fitsExtendingLeft = positionInfo.right - tooltipWidth >= 0;
 
   if (fitsAbove) {
@@ -633,7 +634,10 @@ export const tooltipSetup = () => {
   document.addEventListener("mouseout", (e) => {
     // Only reset if leaving the .has-tooltip element entirely.
     // Ignoring internal mouse movements prevents the timer from cancelling incorrectly.
-    if (currentTooltipTarget && !currentTooltipTarget.contains(e.relatedTarget)) {
+    if (
+      currentTooltipTarget &&
+      !currentTooltipTarget.contains(e.relatedTarget)
+    ) {
       clearAndHideTooltip();
     }
   });
@@ -647,7 +651,7 @@ export const tooltipSetup = () => {
 
   // Hide tooltips on scroll to prevent them from floating off-target
   document.addEventListener("scroll", clearAndHideTooltip, { passive: true });
-  
+
   // Hide tooltips on Escape key for accessibility
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") clearAndHideTooltip();
@@ -1686,6 +1690,7 @@ export const openOverlayModal = async (
   afterLoadCallback,
   skeleton = getLoader(),
 ) => {
+  debugger;
   const backdrop = document.createElement("div");
   backdrop.className = "backdrop";
   backdrop.innerHTML = skeleton;
@@ -1698,7 +1703,7 @@ export const openOverlayModal = async (
       closeBtnClasses.forEach((c) => {
         backdrop
           .querySelector(c)
-          .addEventListener("click", () =>
+          ?.addEventListener("click", () =>
             closeOverlayModal(overlayModalCustomClassName),
           );
       });

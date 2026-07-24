@@ -50,6 +50,22 @@
     "group_deleted": {
       "title": "تم حذف المجموعة",
       "message": "تم حذف المجموعة الدراسية {groupName} من قبل المضيف."
+    },
+    "join_invite_accepted": {
+      "title": "تم قبول الدعوة",
+      "message": "تم قبول الدعوة للانضمام إلى مجموعة {groupName}."
+    },
+    "join_invite_rejected": {
+      "title": "تم رفض الدعوة",
+      "message": "تم رفض الدعوة للانضمام إلى مجموعة {groupName}."
+    },
+    "join_request_accepted": {
+      "title": "تم قبول الطلب",
+      "message": "تم قبول طلب انضمام {senderName} إلى مجموعة {groupName}."
+    },
+    "join_request_rejected": {
+      "title": "تم رفض الطلب",
+      "message": "تم رفض طلب انضمام {senderName} إلى مجموعة {groupName}."
     }
   },
   "styling_terms": {

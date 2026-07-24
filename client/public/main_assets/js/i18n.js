@@ -135,7 +135,7 @@ export const t = (key, params = {}) => {
   if (key.includes(":")) {
     const parts = key.split(":");
     ns = parts[0];
-    path = parts.slice(1).join(":");
+    path = parts[1];
   }
 
   const dictionary = localesCache[lang]?.[ns];

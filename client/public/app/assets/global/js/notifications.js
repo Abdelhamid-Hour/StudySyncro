@@ -90,8 +90,21 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
       actionType &&
       (actionType === "accepted" || actionType === "rejected")
     ) {
-      const newType =
-        actionType === "accepted" ? "join_accepted" : "join_rejected";
+      const isInvite =
+        c.getAttribute("data-is-invite") === "true" ||
+        c.getAttribute("data-type") === "join_invite";
+
+      let newType =
+        actionType === "accepted"
+          ? "join_request_accepted"
+          : "join_request_rejected";
+      if (isInvite) {
+        newType =
+          actionType === "accepted"
+            ? "join_invite_accepted"
+            : "join_invite_rejected";
+      }
+
       c.setAttribute("data-type", newType);
       if (document.contains(c)) {
         c.classList.add(
@@ -130,13 +143,10 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
       senderName = senderName || "User";
       groupName = groupName || "group";
 
-      const isInvite =
-        c.getAttribute("data-is-invite") === "true" ||
-        c.getAttribute("data-type") === "join_invite";
-      const keySuffix = actionType === "accepted" ? "accepted" : "rejected";
-      const newMsg = isInvite
-        ? t(`notifications:messages.join_invite_${keySuffix}.message`, { groupName })
-        : t(`notifications:messages.join_request_${keySuffix}.message`, { senderName, groupName });
+      const newMsg = t(`notifications:messages.${newType}.message`, {
+        senderName,
+        groupName,
+      });
       const formattedMsg = formatNotificationMessage({
         message: newMsg,
         metadata: { senderName, groupName },
@@ -266,7 +276,9 @@ const escapeHtmlStr = (str) => {
 
 const formatNotificationMessage = (notif) => {
   let msg = escapeHtmlStr(notif.message || "");
-  const adminRoleTerm = t("notifications:styling_terms.admin_role", { defaultValue: "Admin role" });
+  const adminRoleTerm = t("notifications:styling_terms.admin_role", {
+    defaultValue: "Admin role",
+  });
   if (msg.includes(adminRoleTerm)) {
     msg = msg.replace(adminRoleTerm, `<strong>${adminRoleTerm}</strong>`);
   }
@@ -275,10 +287,19 @@ const formatNotificationMessage = (notif) => {
   }
 
   const termsMap = [
-    { term: t("notifications:styling_terms.invited_you_to_join"), cls: "bold-success" },
+    {
+      term: t("notifications:styling_terms.invited_you_to_join"),
+      cls: "bold-success",
+    },
     { term: "invited you to join", cls: "bold-success" },
-    { term: t("notifications:styling_terms.invited_you_to_join_suffix"), cls: "bold-success" },
-    { term: t("notifications:styling_terms.successfully_joined"), cls: "bold-success" },
+    {
+      term: t("notifications:styling_terms.invited_you_to_join_suffix"),
+      cls: "bold-success",
+    },
+    {
+      term: t("notifications:styling_terms.successfully_joined"),
+      cls: "bold-success",
+    },
     { term: "successfully joined", cls: "bold-success" },
     { term: t("notifications:styling_terms.accepted"), cls: "bold-success" },
     { term: "accepted", cls: "bold-success" },
@@ -294,11 +315,17 @@ const formatNotificationMessage = (notif) => {
     { term: "removed", cls: "bold-danger" },
     { term: t("notifications:styling_terms.deleted"), cls: "bold-danger" },
     { term: "deleted", cls: "bold-danger" },
-    { term: t("notifications:styling_terms.demoted_from_admin"), cls: "bold-danger" },
+    {
+      term: t("notifications:styling_terms.demoted_from_admin"),
+      cls: "bold-danger",
+    },
     { term: "demoted from Admin", cls: "bold-danger" },
     { term: t("notifications:styling_terms.demoted"), cls: "bold-danger" },
     { term: "demoted", cls: "bold-danger" },
-    { term: t("notifications:styling_terms.pending_approval"), cls: "bold-warning" },
+    {
+      term: t("notifications:styling_terms.pending_approval"),
+      cls: "bold-warning",
+    },
     { term: "pending approval", cls: "bold-warning" },
     { term: t("notifications:styling_terms.transferred"), cls: "bold-warning" },
     { term: "transferred", cls: "bold-warning" },
@@ -307,7 +334,12 @@ const formatNotificationMessage = (notif) => {
     { term: notif.metadata?.senderName, cls: "" },
     { term: notif.metadata?.groupName, cls: "" },
     { term: notif.metadata?.sessionName, cls: "" },
-  ].filter((item) => item.term && typeof item.term === "string" && !item.term.startsWith("notifications:styling_terms."));
+  ].filter(
+    (item) =>
+      item.term &&
+      typeof item.term === "string" &&
+      !item.term.startsWith("notifications:styling_terms."),
+  );
 
   termsMap.sort((a, b) => b.term.length - a.term.length);
 
@@ -377,11 +409,19 @@ const createNotificationCard = (notif) => {
     notif.metadata?.isInvite
   ) {
     iconHtml = `<i class="bi bi-person-fill"></i>`;
-  } else if (type === "join_accepted") {
+  } else if (
+    type === "join_accepted" ||
+    type === "join_request_accepted" ||
+    type === "join_invite_accepted"
+  ) {
     iconHtml = `<i class="bi bi-link-45deg"></i>`;
   } else if (type === "join_pending") {
     iconHtml = `<i class="bi bi-three-dots"></i>`;
-  } else if (type === "join_rejected") {
+  } else if (
+    type === "join_rejected" ||
+    type === "join_request_rejected" ||
+    type === "join_invite_rejected"
+  ) {
     iconHtml = `<i class="bi bi-x-lg"></i>`;
   } else if (type === "member_removed") {
     iconHtml = `<i class="bi bi-person-dash-fill"></i>`;
@@ -398,7 +438,9 @@ const createNotificationCard = (notif) => {
   }
 
   const timeStr = formatNotifDate(notif.timestamp);
-  const categoryLabel = t(`notifications:categories.${notif.category || "General"}`);
+  const categoryLabel = t(
+    `notifications:categories.${notif.category || "General"}`,
+  );
 
   const notifsContainer = document.getElementById("notifications-list");
   const currentSession = notifsContainer
@@ -452,7 +494,10 @@ const createNotificationCard = (notif) => {
 
   let notifForMessage = notif;
   if (type && notif.metadata) {
-    const translatedMsg = t(`notifications:messages.${type}.message`, notif.metadata);
+    const translatedMsg = t(
+      `notifications:messages.${type}.message`,
+      notif.metadata,
+    );
     if (translatedMsg && !translatedMsg.startsWith("notifications:messages.")) {
       notifForMessage = { ...notif, message: translatedMsg };
     }
@@ -546,7 +591,7 @@ const initRealtimeNotifications = () => {
 
   if (window.Notification && Notification.permission === "default") {
     const bellBtns = document.querySelectorAll(
-      ".open-drop-down-btn[data-tooltip='Notifications'], .mobile-notif-btn",
+      ".notification-btn, .mobile-notif-btn",
     );
     bellBtns.forEach((bellBtn) => {
       bellBtn.addEventListener(
@@ -816,6 +861,7 @@ export const initNotificationsManager = () => {
   const categoryBtns = document.querySelectorAll(".notif-category-btn");
   categoryBtns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
+      debugger;
       if (btn.classList.contains("active")) return;
 
       const oldBtn = document.querySelector(".notif-category-btn.active");
@@ -856,10 +902,15 @@ export const initNotificationsManager = () => {
         });
         notifLoader.lastVisible = categoriesState[newCategory].lastVisible;
         if (!categoriesState[newCategory].cardsHtml.length) {
+          if (notifLoader.io) notifLoader.io.disconnect();
+          container.innerHTML = "";
+
           notifLoader.checkEmptyState();
-        } else if (notifLoader.lastVisible && notifLoader.sentinel) {
-          notifLoader.io.observe(notifLoader.sentinel);
-        } else if (!notifLoader.lastVisible && notifLoader.io) {
+        } else if (notifLoader.lastVisible) {
+          notifLoader.creteria = getCriteria();
+          notifLoader.initLoadingBoxes();
+          notifLoader.initObserver();
+        } else if (notifLoader.io) {
           notifLoader.io.disconnect();
         }
       } else {
@@ -872,8 +923,9 @@ export const initNotificationsManager = () => {
   });
 
   const bellBtns = document.querySelectorAll(
-    ".open-drop-down-btn[data-tooltip='Notifications'], .mobile-notif-btn",
+    ".notification-btn, .mobile-notif-btn",
   );
+
   bellBtns.forEach((bellBtn) => {
     bellBtn.addEventListener("click", () => {
       const badge = document.querySelector(".notification-badge");

@@ -83,7 +83,7 @@
                   </span>
                 </div>
                 <span class="title"><%= task.title %></span>
-                <span class="duration"><%= session.millisecondsToHMFormat( task.durationInMins * 60 * 1000 ) _%>
+                <span class="duration"><%= session.millisecondsToHMFormat( task.durationInMins * 60 * 1000, t ) _%>
                 </span>
                 <div class="icons">
                   <button type="button" data-tooltip="<%= t('quizzes:session_overlay.show_details_tooltip') %>" class="task-down-icon exclude-btn should-fill has-tooltip">

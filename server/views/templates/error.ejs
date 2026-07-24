@@ -57,17 +57,17 @@
       <% if (typeof user !== 'undefined' && user) { %>
         <a href="/app/home" class="button blue-btn home-btn">
           <i class="bi bi-house-door-fill"></i>
-          <span><%= typeof t !== 'undefined' ? t("common.error.back_to_dashboard") : "Back to Dashboard" %></span>
+          <span><%= typeof t !== 'undefined' ? t("common:error.back_to_dashboard") : "Back to Dashboard" %></span>
         </a>
       <% } else { %>
         <a href="/login" class="button blue-btn">
           <i class="bi bi-box-arrow-in-right"></i>
-          <span><%= typeof t !== 'undefined' ? t("common.error.go_to_login") : "Go to Login" %></span>
+          <span><%= typeof t !== 'undefined' ? t("common:error.go_to_login") : "Go to Login" %></span>
         </a>
       <% } %>
       <button type="button" class="gray-btn back-btn" onclick="history.back()">
         <i class="bi bi-arrow-left"></i>
-        <span><%= typeof t !== 'undefined' ? t("common.error.go_back") : "Go Back" %></span>
+        <span><%= typeof t !== 'undefined' ? t("common:error.go_back") : "Go Back" %></span>
       </button>
     </div>
   </div>

@@ -97,5 +97,11 @@
       "failed_load": "Failed to load quiz questions. Please try again later.",
       "failed_submit": "Failed to submit your quiz result. Please try again later."
     }
+  },
+  "quiz_play": {
+    "fallback_question": "Question text...",
+    "choice_a": "Choice A",
+    "choice_b": "Choice B",
+    "choice_c": "Choice C"
   }
 }

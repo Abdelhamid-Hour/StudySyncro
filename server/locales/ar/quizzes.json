@@ -137,5 +137,11 @@
       "many": "{count} مستخدماً منضماً",
       "other": "{count} مستخدم منضم"
     }
+  },
+  "quiz_play": {
+    "fallback_question": "نص السؤال...",
+    "choice_a": "الخيار أ",
+    "choice_b": "الخيار ب",
+    "choice_c": "الخيار ج"
   }
 }

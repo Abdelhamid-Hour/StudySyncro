@@ -127,6 +127,7 @@ export class Loader {
   }
 
   async loadMore(isFirstLoad = false) {
+    debugger;
     this.loading = true;
     const requestId = ++this.currentRequestId;
 

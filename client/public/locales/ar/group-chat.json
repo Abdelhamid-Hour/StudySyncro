@@ -49,7 +49,7 @@
     "load_group_info_error": "حدث خطأ أثناء تحميل معلومات المجموعة.",
     "failed_to_load_group_info": "فشل تحميل معلومات المجموعة. يرجى المحاولة مرة أخرى لاحقاً.",
     "add_at_least_one_task": "يجب عليك إضافة مهمة واحدة على الأقل قبل الإنهاء.",
-    "total_duration_error": "يجب أن تتراوح المدة الإجمالية للجلسة بين {{min}} و {{max}} دقيقة.",
+    "total_duration_error": "يجب أن تتراوح المدة الإجمالية للجلسة بين {min} و {max} دقيقة.",
     "complete_quiz_details": "يرجى إكمال تفاصيل الاختبار قبل الإنهاء.",
     "session_created_success": "تم إنشاء الجلسة بنجاح",
     "member_kicked_success": "تم طرد العضو بنجاح",
@@ -61,7 +61,7 @@
     "users_invited_success": "تمت دعوة المستخدمين بنجاح!",
     "select_user_to_add": "يرجى تحديد مستخدم واحد على الأقل للإضافة.",
     "max_invite_limit": "يمكنك دعوة ما يصل إلى 5 مستخدمين فقط في المرة الواحدة.",
-    "users_found_count": "تم العثور على {{count}} من المستخدمين"
+    "users_found_count": "تم العثور على {count} من المستخدمين"
   },
   "type_message_placeholder": "اكتب رسالة...",
   "skeletons": {
@@ -95,7 +95,7 @@
     "select_quiz": "اختر اختباراً",
     "search_quizzes_placeholder": "البحث عن اختبارات...",
     "no_quiz_optional": "بلا اختبار (اختياري)",
-    "duration_label": "المدة {{duration}}",
+    "duration_label": "المدة {duration}",
     "remove_quiz_title": "إزالة الاختبار",
     "remove_quiz_desc": "هل أنت متأكد أنك تريد إزالة هذا الاختبار؟",
     "remove_quiz_confirm": "إزالة الاختبار",
@@ -171,13 +171,13 @@
     "quizzes": "الاختبارات"
   },
   "errors": {
-    "max_members_range": "يجب أن يكون الحد الأقصى للأعضاء رقماً بين {{min}} و {{max}}",
-    "group_name_length": "يجب أن يتراوح اسم المجموعة بين {{min}} و {{max}} حرفاً",
-    "description_length": "يجب أن يتراوح وصف المجموعة بين {{min}} و {{max}} حرفاً",
+    "max_members_range": "يجب أن يكون الحد الأقصى للأعضاء رقماً بين {min} و {max}",
+    "group_name_length": "يجب أن يتراوح اسم المجموعة بين {min} و {max} حرفاً",
+    "description_length": "يجب أن يتراوح وصف المجموعة بين {min} و {max} حرفاً",
     "select_valid_option": "يرجى تحديد خيار صالح",
     "enter_title": "يرجى إدخال عنوان",
-    "title_length": "يجب أن يتراوح العنوان بين {{min}} و {{max}} حرفاً",
+    "title_length": "يجب أن يتراوح العنوان بين {min} و {max} حرفاً",
     "enter_description": "يرجى إدخال وصف",
-    "task_duration_range": "يجب أن تكون مدة المهمة رقماً بين {{min}} و {{max}} دقيقة"
+    "task_duration_range": "يجب أن تكون مدة المهمة رقماً بين {min} و {max} دقيقة"
   }
 }

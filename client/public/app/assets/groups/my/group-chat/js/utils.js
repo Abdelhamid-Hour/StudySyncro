@@ -2031,31 +2031,33 @@ export const handleAddMembersBtn = () => {
 const getAddMembersOverlay = () => {
   return `
     <div class="overlay-model add-members-overlay">
-    <header>
+      <header class="list-header">
       <h3 class="label">
         <i class="bi bi-people-fill"></i>
         ${t("group-chat:modals.invite_users_title")}
       </h3>
-      <button
-        type="button"
-        class="exclude-btn close-add-members-overlay should-fill"
-      >
-        <i class="bi bi-x-circle"></i>
+      <!-- close btn -->
+      <button type="button" class="close-overlay-btn exclude-btn">
+        <i class="bi bi-x-lg"></i>
       </button>
-    </header>
-    <div class="overlay-content">
+      </header>
       <section class="text-helper">
       ${t("group-chat:modals.invite_desc")}
       </section>
-      <div class="users-search-container search-container" id="add-members-search-container">
+      <section class="search-sec">
+      <div class="members-search users-search">
+        <div class="search-icon-container">
+        <i class="bi bi-person-fill"></i>
+        </div>
+
         <input
         type="search"
         id="search"
         placeholder="${t("group-chat:modals.search_user_placeholder")}"
         />
-        <i class="bi bi-search"></i>
       </div>
-      <div class="users-list-container" id="members-list">
+      </section>
+      <section class="users-result">
         <div class="icon-wrapper">
           <div class="empty-icon-container">
             <i class="bi bi-people"></i>
@@ -2063,16 +2065,15 @@ const getAddMembersOverlay = () => {
           <h3>${t("group-chat:skeletons.search_users_title")}</h3>
           <p>${t("group-chat:skeletons.search_users_desc")}</p>
         </div>
-      </div>
-    </div>
-    <footer>
+      </section>
+      <div class="action-btns">
       <button type="button" class="btn blue-btn confirm-btn">
         ${t("common:modals.confirm")}
       </button>
       <button type="button" class="btn gray-btn cancel-btn">
         ${t("common:modals.cancel")}
       </button>
-    </footer>
+      </div>
     </div>
     `;
 };

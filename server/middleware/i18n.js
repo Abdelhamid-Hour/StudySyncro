@@ -76,11 +76,7 @@ module.exports = (req, res, next) => {
     if (keyPath.includes(":")) {
       const colParts = keyPath.split(":");
       namespace = colParts[0];
-      path = colParts.slice(1).join(":");
-    } else if (keyPath.includes(".")) {
-      const dotParts = keyPath.split(".");
-      namespace = dotParts[0];
-      path = dotParts.slice(1).join(".");
+      path = colParts[1];
     }
 
     const keys = path.split(".");

@@ -6,7 +6,10 @@ const {
   saveGroupToUser,
 } = require("./shared");
 const { INITIALE_LOADERS_COUNT } = require("../global");
-const { notifyMemberRemoved } = require("./notifications");
+const { 
+  notifyMemberRemoved,
+  markSessionStartedNotificationsEnded, 
+} = require("./notifications");
 
 const getFormattedMembers = (members, creator, isAdmin) => {
   return members.map(({ photoURL, fullName, uid }) => ({
@@ -274,6 +277,19 @@ const kickMember = async (groupId, userId) => {
         .collection("activeSessions")
         .doc(groupSnap.data().currentSession)
         .delete();
+
+      if (
+        userSnap.exists &&
+        userSnap.data().currentSession === groupSnap.data().currentSession
+      ) {
+        const { leavSession } = require("./session");
+        await leavSession(userId);
+      }
+
+      await markSessionStartedNotificationsEnded(
+        [userId],
+        groupSnap.data().currentSession
+      );
     }
     await rDb
       .ref(`userGroupChats/${userId}/${groupId}`)

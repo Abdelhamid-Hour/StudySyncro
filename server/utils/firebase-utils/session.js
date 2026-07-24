@@ -470,7 +470,7 @@ const leavSession = async (userId) => {
   };
 };
 
-const getCurrentSessionInfo = async (userId) => {
+const getCurrentSessionInfo = async (userId, t) => {
   try {
     const userRef = db.collection("users").doc(userId);
     const userSnap = await userRef.get();
@@ -565,7 +565,7 @@ const getCurrentSessionInfo = async (userId) => {
       description: session.description,
       startDate: formatHoursMinutes(startDate),
       endDate: formatHoursMinutes(endDateTimestamp),
-      duration: millisecondsToHMFormat(session.duration * 60 * 1000),
+      duration: millisecondsToHMFormat(session.duration * 60 * 1000, t),
       joinedCount: session.userIds ? session.userIds.length : 0,
       groupId: session.groupId,
       groupName: group.name,
@@ -578,7 +578,7 @@ const getCurrentSessionInfo = async (userId) => {
   }
 };
 
-const formatSessions = (sessions) => {
+const formatSessions = (sessions, t) => {
   return sessions.map((session) => {
     const startTime = session.data().startDate;
     const endTime =
@@ -589,7 +589,7 @@ const formatSessions = (sessions) => {
       id: session.id,
       startTime: formatHoursMinutes(startTime),
       endTime: formatHoursMinutes(endTime),
-      duration: millisecondsToHMFormat(session.data().duration * 60 * 1000),
+      duration: millisecondsToHMFormat(session.data().duration * 60 * 1000, t),
     };
   });
 };
@@ -599,6 +599,7 @@ const fetchActiveSessions = async (
   count = INITIALE_LOADERS_COUNT,
   lastVisible = null,
   criteria = {},
+  t
 ) => {
   try {
     const userRef = db.collection("users").doc(userId);
@@ -629,7 +630,7 @@ const fetchActiveSessions = async (
         break;
       }
 
-      let batchSessions = formatSessions(sessionSnaps.docs);
+      let batchSessions = formatSessions(sessionSnaps.docs, t);
 
       if (criteria.search) {
         const searchTerm = criteria.search.trim().toLowerCase();
@@ -660,7 +661,7 @@ const fetchActiveSessions = async (
   }
 };
 
-const getSessionInformations = async (sessionID) => {
+const getSessionInformations = async (sessionID, t) => {
   try {
     const snap = await db.collection("sessions").doc(sessionID).get();
     const sessionData = snap.data();
@@ -700,7 +701,7 @@ const getSessionInformations = async (sessionID) => {
         description: sessionData.description || "",
         startTime: formatHoursMinutes(startDate),
         endTime: formatHoursMinutes(endTime),
-        duration: millisecondsToHMFormat(durationInMins * 60 * 1000),
+        duration: millisecondsToHMFormat(durationInMins * 60 * 1000, t),
         groupName: groupName,
         joinedUsers: sessionData.joinedUsers || [],
         joinedCount: sessionData.joinedCount || 0,
