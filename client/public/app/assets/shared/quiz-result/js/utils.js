@@ -147,8 +147,7 @@ export const getResultOverlay = (quizResult, questions) => {
   }
   <div class="answered">
     <span class="answered-title">${t("common:shared_quizzes.answered")} :</span>
-    <span class="answered-count">${answeredCount}/${questionCount} ${t(
-      "common:skeletons.quizzes.questions",
+    <span class="answered-count">${answeredCount}/${questionCount} ${t("common:quiz_card.questions",
     )}</span>
     •
     <span class="answered-percent">${answeredPercent}%</span>
@@ -170,8 +169,7 @@ export const getResultOverlay = (quizResult, questions) => {
         <span class="green-rect rect"></span>
         ${t("common:shared_quizzes.status.correct")} :
       </span>
-      <span class="questions-count">${correctCount}/${questionCount} ${t(
-        "common:skeletons.quizzes.questions",
+      <span class="questions-count">${correctCount}/${questionCount} ${t("common:quiz_card.questions",
       )}</span>
       •
       <span class="percent">${correctPercent}%</span>
@@ -181,8 +179,7 @@ export const getResultOverlay = (quizResult, questions) => {
         <span class="gray-rect rect"></span>
         ${t("common:shared_quizzes.status.skipped")} :
       </span>
-      <span class="questions-count">${skippedCount}/${questionCount} ${t(
-        "common:skeletons.quizzes.questions",
+      <span class="questions-count">${skippedCount}/${questionCount} ${t("common:quiz_card.questions",
       )}</span>
       •
       <span class="percent">${skippedPercent}%</span>
@@ -192,8 +189,7 @@ export const getResultOverlay = (quizResult, questions) => {
         <span class="red-rect rect"></span>
         ${t("common:shared_quizzes.status.incorrect")} :
       </span>
-      <span class="questions-count">${incorrectCount}/${questionCount} ${t(
-        "common:skeletons.quizzes.questions",
+      <span class="questions-count">${incorrectCount}/${questionCount} ${t("common:quiz_card.questions",
       )}</span>
       •
       <span class="percent">${incorrectPercent}%</span>

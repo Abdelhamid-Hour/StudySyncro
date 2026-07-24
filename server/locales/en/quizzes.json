@@ -1,35 +1,20 @@
 {
-  "badges": {
-    "draft": "Draft",
-    "draft_tooltip": "Add at least 1 question to publish",
-    "published": "Published"
-  },
   "menu": {
-    "edit": "Edit",
     "preview": "Preview",
     "duplicate": "Duplicate",
     "remove": "Remove"
   },
   "labels": {
-    "quiz_title": "Quiz title",
-    "questions": "Questions",
     "shared_in": "Shared in",
     "shared_in_tooltip": "Groups | Sessions",
-    "subject": "Subject",
-    "group_name": "Group Name",
     "session_name": "Session Name",
-    "submitted_at": "Submitted At",
-    "score": "Score",
     "search_placeholder": "Search By Title",
     "sort_quizzes": "Sort Quizzes",
     "admin_cant_submit": "Admin can't submit quizzes",
     "not_submitted_tooltip": "You haven't submitted the quiz"
   },
   "actions": {
-    "view_result": "View Result",
-    "view_results": "View Results",
-    "retake": "Retake",
-    "retake_quiz": "Retake Quiz"
+    "retake": "Retake"
   },
   "play": {
     "time_left": "Time Left :",
@@ -42,7 +27,6 @@
     "prev": "Previous",
     "or_press": "Or Press",
     "press": "Press",
-    "or": "Or",
     "next": "Next"
   },
   "my": {
@@ -59,24 +43,18 @@
     "ends": "Ends: {time}",
     "duration": "Duration: {time}",
     "session_quiz": "Session Quiz",
-    "tasks_heading": "Tasks",
     "show_details_tooltip": "Show Details",
     "scroll_to_top_tooltip": "Scroll To Top",
     "collapse_all_tooltip": "Collapse All",
-    "quiz_tooltip": "Quiz",
     "task_title": "Title:",
-    "task_details": "Details:",
-    "join_session": "Join Session"
+    "task_details": "Details:"
   },
   "results_overlay": {
     "title": "Users Results",
     "quiz_title_label": "Quiz Title",
     "table": {
       "profile": "Profile",
-      "full_name": "Full Name",
-      "submitted_at": "Submitted At",
       "answered_questions": "Answered Questions",
-      "score": "Score",
       "actions": "Actions"
     }
   },

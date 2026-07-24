@@ -134,7 +134,7 @@
             href="/app<%= resourcesRoute.includes('/quizzes/') ? '/quizzes/passed' : '/groups/available' _%>"
             class="tab route-link <%= resourcesRoute.includes('/quizzes/') ? 'groups-quizzes-tab' : 'available-groups-tab' %> <% if (resourcesRoute === "/groups/available/" || resourcesRoute === "/quizzes/passed/") { %> active-tab<% } %> exclude-btn"
           >
-            <%= resourcesRoute.includes('/quizzes/') ? t("common:topbar.tabs.passed_quizzes") : t("common:topbar.tabs.available_groups") %>
+            <%= resourcesRoute.includes('/quizzes/') ? t("common:topbar.tabs.passed_quizzes") : t("common:titles.available_groups") %>
           </a>
         </div>
         <% } %>
@@ -396,13 +396,13 @@
             <li class="groups should-fill">
               <a href="/app/groups/my" class="drop-down-item route-link">
                 <i class="bi bi-people"></i>
-                <%= t("common:profile_menu.my_groups") %>
+                <%= t("common:topbar.tabs.my_groups") %>
               </a>
             </li>
             <li class="quizzes should-fill">
               <a href="/app/quizzes/my" class="drop-down-item route-link">
                 <i class="bi bi-clipboard-check"></i>
-                <%= t("common:profile_menu.my_quizzes") %>
+                <%= t("common:topbar.tabs.my_quizzes") %>
               </a>
             </li>
             <li class="logout-button-li account">
@@ -418,7 +418,7 @@
     <aside class="left-side-bar">
       <div class="logo-container">
         <img src="/main_assets/images/logo-mark.svg" alt="StudyHype Logo" style="aspect-ratio: 1 / 1; width: 2.2rem; flex-shrink: 0;" />
-        <h6 class="should-hide"><%= t("common:sidebar.logo_text") %></h6>
+        <h6 class="should-hide"><%= t("common:titles.studyhype") %></h6>
       </div>
       <div class="side-bar-icons">
         <div class="top-side-bar-icons">
@@ -431,11 +431,11 @@
             class="nav-link route-link should-fill<% if (resourcesRoute.includes("/groups/")) { %> active<% } %>"
           >
             <i class="bi bi-people<%_ if (resourcesRoute.includes("/groups/")) { %>-fill<% } %>"></i>
-            <h3 class="should-hide"><%= t("common:sidebar.groups") %></h3>
+            <h3 class="should-hide"><%= t("common:titles.groups") %></h3>
           </a>
           <a href="/app/quizzes/my" class="nav-link route-link should-fill<% if (resourcesRoute.includes("/quizzes/")) { %> active<% } %>">
             <i class="bi bi-clipboard-check<% if (resourcesRoute.includes("/quizzes/")) { %>-fill<% } %>"></i>
-            <h3 class="should-hide"><%= t("common:sidebar.quizzes") %></h3>
+            <h3 class="should-hide"><%= t("common:titles.quizzes") %></h3>
           </a>
         </div>
         <div class="bottom-side-bar-icons">
@@ -450,7 +450,7 @@
             <button
               type="button"
               class="exclude-btn notification-btn open-drop-down-btn should-fill nav-btn has-tooltip"
-              data-tooltip="<%= t('common:sidebar.notifications_tooltip') %>"
+              data-tooltip="<%= t('common:notifications_drawer.title') %>"
               style="position: relative;"
             >
               <i class="bi bi-bell"></i>
@@ -490,7 +490,7 @@
       <div class="notifications-categories">
         <button type="button" class="notif-category-btn exclude-btn active" data-category="All"><%= t("common:notifications_drawer.categories.all") %></button>
         <button type="button" class="notif-category-btn exclude-btn" data-category="Join Request"><%= t("common:notifications_drawer.categories.requests") %></button>
-        <button type="button" class="notif-category-btn exclude-btn" data-category="Groups"><%= t("common:notifications_drawer.categories.groups") %></button>
+        <button type="button" class="notif-category-btn exclude-btn" data-category="Groups"><%= t("common:titles.groups") %></button>
         <button type="button" class="notif-category-btn exclude-btn" data-category="Sessions"><%= t("common:notifications_drawer.categories.sessions") %></button>
       </div>
       <div class="notifications-list" id="notifications-list" data-last-visible="<%= (typeof notificationsData !== 'undefined' && notificationsData.lastVisible) ? notificationsData.lastVisible : '' %>" data-current-session="<%= (typeof user !== 'undefined' && user && user.currentSession) ? user.currentSession : '' %>" data-current-user-id="<%= (typeof user !== 'undefined' && user && user.uid) ? user.uid : '' %>">
@@ -540,7 +540,7 @@
                 { term: t("notifications:styling_terms.demoted"), cls: "bold-danger" },
                 { term: t("notifications:styling_terms.pending_approval"), cls: "bold-warning" },
                 { term: t("notifications:styling_terms.transferred"), cls: "bold-warning" },
-                { term: t("notifications:styling_terms.host_role"), cls: "" },
+                { term: t("common:shared_terms.host"), cls: "" },
                 { term: notif.metadata?.senderName, cls: "" },
                 { term: notif.metadata?.groupName, cls: "" },
                 { term: notif.metadata?.sessionName, cls: "" }
@@ -696,7 +696,7 @@
       <% } else if (showGroupsTabs) { %>
       <div class="mobile-groups-tabs navigation-tabs groups-tabs" style="width: 100%;">
         <a href="/app/groups/my" class="tab route-link<%= resourcesRoute === '/groups/my/' ? ' active-tab' : '' %> exclude-btn"><%= t("common:topbar.tabs.my_groups") %></a>
-        <a href="/app/groups/available" class="tab route-link<%= resourcesRoute === '/groups/available/' ? ' active-tab' : '' %> exclude-btn"><%= t("common:topbar.tabs.available_groups") %></a>
+        <a href="/app/groups/available" class="tab route-link<%= resourcesRoute === '/groups/available/' ? ' active-tab' : '' %> exclude-btn"><%= t("common:titles.available_groups") %></a>
       </div>
       <% } else if (showQuizzesTabs || showQuizEditTabs) { %>
       <div class="mobile-<%= showQuizzesTabs ? 'quizzes' : 'quiz-editor' %>-tabs navigation-tabs quizzes-tabs" style="width: 100%;">
@@ -730,7 +730,7 @@
           <span class="mobile-drawer-section-title"><%= t("common:mobile_nav.app_controls") %></span>
           <button type="button" class="exclude-btn mobile-drawer-btn mobile-notif-btn open-drop-down-btn">
             <i class="bi bi-bell"></i>
-            <span><%= t("common:sidebar.notifications_tooltip") %></span>
+            <span><%= t("common:notifications_drawer.title") %></span>
             <% const mUnreadCount = (typeof notificationsData !== 'undefined' && notificationsData.unreadCount) ? notificationsData.unreadCount : 0; %>
             <span class="badge notification-badge <%= mUnreadCount > 0 ? '' : 'hidden' %>"><%= mUnreadCount > 99 ? '99+' : mUnreadCount %></span>
           </button>
@@ -767,19 +767,19 @@
     <nav class="mobile-bottomnav">
       <a href="/app/home" class="mobile-nav-item should-fill route-link<% if (resourcesRoute.includes("/home/")) { %> active<% } %>">
         <i class="bi bi-house<%_ if (resourcesRoute.includes("/home/")) { %>-fill<% } %>"></i>
-        <span><%= t("common:mobile_nav.home") %></span>
+        <span><%= t("common:titles.home") %></span>
       </a>
       <a href="/app/groups/my" class="mobile-nav-item should-fill route-link<% if (resourcesRoute.includes("/groups/")) { %> active<% } %>">
         <i class="bi bi-people<%_ if (resourcesRoute.includes("/groups/")) { %>-fill<% } %>"></i>
-        <span><%= t("common:mobile_nav.groups") %></span>
+        <span><%= t("common:titles.groups") %></span>
       </a>
       <a href="/app/quizzes/my" class="mobile-nav-item should-fill route-link<% if (resourcesRoute.includes("/quizzes/")) { %> active<% } %>">
         <i class="bi bi-clipboard-check<% if (resourcesRoute.includes("/quizzes/")) { %>-fill<% } %>"></i>
-        <span><%= t("common:mobile_nav.quizzes") %></span>
+        <span><%= t("common:titles.quizzes") %></span>
       </a>
       <a href="/app/settings" class="mobile-nav-item should-fill route-link<% if (resourcesRoute.includes("/settings/")) { %> active<% } %>">
         <i class="bi bi-person<%_ if (resourcesRoute.includes("/settings/")) { %>-fill<% } %>"></i>
-        <span><%= t("common:mobile_nav.settings") %></span>
+        <span><%= t("common:titles.settings") %></span>
       </a>
     </nav>
 

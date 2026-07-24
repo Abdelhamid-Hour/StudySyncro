@@ -1,10 +1,4 @@
 {
-  "badges": {
-    "draft": "Draft",
-    "draft_tooltip": "Add at least 1 question to publish",
-    "published": "Published"
-  },
-  "questions_heading": "Questions",
   "add_question": "Add Question",
   "drag_tooltip": "Drag to Reorder",
   "delete_question_tooltip": "Delete Question",

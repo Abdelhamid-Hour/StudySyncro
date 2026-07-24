@@ -9,7 +9,7 @@
       <div class="quiz-title-container info-container">
         <label class="quiz-title-label">
           <span class="icon-box"><i class="bi bi-card-text"></i></span>
-          <%= t("quizzes:labels.quiz_title") %>
+          <%= t("common:shared_terms.quiz_title") %>
         </label>
         <div class="quiz-title content"><bdi><%= quiz.title %></bdi></div>
       </div>
@@ -18,7 +18,7 @@
           <span class="icon-box">
             <i class="bi bi-people"></i>
           </span>
-          <%= t("quizzes:labels.group_name") %>
+          <%= t("common:shared_terms.group_name") %>
         </label>
         <div class="group-name content"><bdi><%= quiz.groupName %></bdi></div>
       </div>
@@ -36,7 +36,7 @@
           <span class="icon-box">
             <i class="bi bi-calendar-check"></i>
           </span>
-          <%= t("quizzes:labels.submitted_at") %>
+          <%= t("common:shared_terms.submitted_at") %>
         </label>
         <div class="submitted-at content">
           <bdi><%= toReadableDate(quiz.submittedAt) %></bdi>
@@ -47,7 +47,7 @@
           <span class="icon-box">
             <i class="bi bi-trophy"></i>
           </span>
-          <%= t("quizzes:labels.score") %>
+          <%= t("common:shared_terms.score") %>
         </label>
         <div class="score <%= getScoreClass(quiz.score) %> content">
           <%= quiz.score %>%
@@ -56,7 +56,7 @@
       <div class="action-btns">
         <button class="view-quiz-result-btn" data-quiz-id="<%= quiz.id %>">
           <i class="bi bi-eye"></i>
-          <%= t("quizzes:actions.view_result") %>
+          <%= t("common:shared_terms.view_result") %>
         </button>
         <button class="retake-quiz-btn" data-quiz-id="<%= quiz.id %>">
           <i class="bi bi-arrow-repeat"></i>

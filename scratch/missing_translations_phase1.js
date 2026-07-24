@@ -55,19 +55,31 @@ function getAllowedNamespacesForFile(filePath) {
   } else if (normalizedPath.includes('/app/assets/quizzes')) {
     allowed.push('quizzes');
     if (normalizedPath.includes('/quiz-editor')) allowed.push('quiz-edit');
+  } else if (normalizedPath.includes('/app/assets/quiz-play')) {
+    allowed.push('quizzes');
   } else if (normalizedPath.includes('/app/assets/home')) {
     allowed.push('home');
+    if (normalizedPath.includes('/active')) allowed.push('group-chat');
   } else if (normalizedPath.includes('/app/assets/settings')) {
     allowed.push('settings');
+  } else if (normalizedPath.includes('/app/assets/shared')) {
+    if (normalizedPath.includes('/chat')) allowed.push('group-chat');
+  } else if (normalizedPath.includes('/login')) {
+    allowed.push('login', 'shared');
+  } else if (normalizedPath.includes('/reset-password')) {
+    allowed.push('reset_password');
+  } else if (normalizedPath.includes('/main_assets')) {
+    allowed.push('shared');
   }
+  
   return allowed;
 }
 
 // --- 2. Strict Key Extraction ---
 const FrontendCodeKeys = new Map();
 const BackendCodeKeys = new Map();
-const FrontendDynamicKeys = new Set();
-const BackendDynamicKeys = new Set();
+const FrontendDynamicKeys = [];
+const BackendDynamicKeys = [];
 const FrontendNamespaceViolations = [];
 
 // \b ensures we match the function 't' and not 'setTimeout'
@@ -75,7 +87,7 @@ const tStaticRegex = /\bt\(\s*(['"`])(.*?)\1\s*(?:,|\))/g;
 // Match any t(...) to catch dynamic ones
 const tDynamicRegex = /\bt\(\s*(.*?)\s*\)/g;
 
-function extractKeys(files, keyMap, dynamicSet, isFrontend = false) {
+function extractKeys(files, keyMap, dynamicArray, isFrontend = false) {
   files.forEach(file => {
     const lines = fs.readFileSync(file, 'utf8').split('\n');
     const allowedNamespaces = isFrontend ? getAllowedNamespacesForFile(file) : null;
@@ -88,7 +100,11 @@ function extractKeys(files, keyMap, dynamicSet, isFrontend = false) {
         
         // If the key has interpolation like ${var}, it's dynamic
         if (key.includes('${')) {
-          dynamicSet.add(`[In: ${file}:${i + 1}] -> \`${key}\``);
+          dynamicArray.push({
+            file: `${file}:${i + 1}`,
+            raw: `\`${key}\``,
+            allowed: allowedNamespaces
+          });
           continue;
         }
 
@@ -120,7 +136,11 @@ function extractKeys(files, keyMap, dynamicSet, isFrontend = false) {
 
         // If it has + or ${} or no quotes, it's dynamic
         if (inner.includes('+') || inner.includes('${') || (!inner.includes('"') && !inner.includes("'") && !inner.includes("`"))) {
-          dynamicSet.add(`[In: ${file}:${i + 1}] -> ${inner}`);
+          dynamicArray.push({
+            file: `${file}:${i + 1}`,
+            raw: inner,
+            allowed: allowedNamespaces
+          });
         }
       }
     });
@@ -203,22 +223,90 @@ if (FrontendNamespaceViolations.length > 0) {
   });
 }
 
-report += "\n--- DYNAMIC KEYS (Requires Manual Checking) ---\n";
-report += "Frontend Dynamic Keys:\n";
-for (const dyn of FrontendDynamicKeys) {
-  report += `  - ${dyn}\n`;
+function extractDynamicInfo(raw) {
+  // Try to remove the options object if present: e.g. `"key", { ... }`
+  let keyPart = raw.split(',')[0].trim();
+  
+  // Extract static prefix before the first dynamic part (+ or ${)
+  let staticPrefix = keyPart;
+  if (staticPrefix.includes('${')) {
+    staticPrefix = staticPrefix.split('${')[0];
+  } else if (staticPrefix.includes('+')) {
+    staticPrefix = staticPrefix.split('+')[0];
+  }
+  
+  // Remove backticks, quotes and spaces
+  staticPrefix = staticPrefix.replace(/['"`\s]/g, '');
+  let ns = 'common';
+  if (staticPrefix.includes(':')) {
+    ns = staticPrefix.split(':')[0].trim();
+  }
+  
+  return { ns, staticPrefix };
 }
-report += "\nBackend Dynamic Keys:\n";
-for (const dyn of BackendDynamicKeys) {
-  report += `  - ${dyn}\n`;
+
+function analyzeDynamicKeys(dynamicArray, enDict, arDict, type) {
+  let dynamicReport = "";
+  for (const item of dynamicArray) {
+    const info = extractDynamicInfo(item.raw);
+    
+    // Check namespace
+    let nsStatus = "OK";
+    if (item.allowed && !item.allowed.includes(info.ns)) {
+      nsStatus = "VIOLATION (Not allowed)";
+    }
+    
+    // Check static prefix exists
+    let prefixExistsEn = false;
+    let prefixExistsAr = false;
+    let possibleChildren = new Set();
+    
+    for (const k of enDict) {
+      if (k.startsWith(info.staticPrefix)) {
+        prefixExistsEn = true;
+        const child = k.replace(info.staticPrefix, '');
+        if (child) possibleChildren.add(child.split('.')[0]);
+      }
+    }
+    for (const k of arDict) {
+      if (k.startsWith(info.staticPrefix)) {
+        prefixExistsAr = true;
+      }
+    }
+    
+    dynamicReport += `File: ${item.file}\n`;
+    dynamicReport += `  Raw Expression: ${item.raw}\n`;
+    dynamicReport += `  Static Prefix Found: "${info.staticPrefix}"\n`;
+    dynamicReport += `  Namespace Valid: ${nsStatus}\n`;
+    dynamicReport += `  Prefix Exists in Dictionaries: En: ${prefixExistsEn ? "YES" : "NO"}, Ar: ${prefixExistsAr ? "YES" : "NO"}\n`;
+    if (prefixExistsEn) {
+      const childrenArr = Array.from(possibleChildren).filter(Boolean);
+      if (childrenArr.length > 0 && childrenArr.length <= 15) {
+        dynamicReport += `  Available Children in Dict: ${childrenArr.join(', ')}\n`;
+      } else if (childrenArr.length > 15) {
+        dynamicReport += `  Available Children in Dict: ${childrenArr.slice(0, 10).join(', ')}... (+${childrenArr.length - 10} more)\n`;
+      } else {
+        dynamicReport += `  Available Children in Dict: None (Exact match only)\n`;
+      }
+    }
+    dynamicReport += "\n";
+  }
+  return dynamicReport;
 }
+
+report += "\n--- DYNAMIC KEYS ANALYSIS ---\n\n";
+report += "FRONTEND DYNAMIC KEYS:\n";
+report += analyzeDynamicKeys(FrontendDynamicKeys, ClientEnDict, ClientArDict, "FRONTEND");
+
+report += "BACKEND DYNAMIC KEYS:\n";
+report += analyzeDynamicKeys(BackendDynamicKeys, ServerEnDict, ServerArDict, "BACKEND");
 
 report += `\n=== SUMMARY ===\n`;
 report += `Frontend Missing Static Keys: ${frontMissing}\n`;
 report += `Backend Missing Static Keys: ${backMissing}\n`;
 report += `Frontend Namespace Violations: ${FrontendNamespaceViolations.length}\n`;
-report += `Frontend Dynamic Keys: ${FrontendDynamicKeys.size}\n`;
-report += `Backend Dynamic Keys: ${BackendDynamicKeys.size}\n`;
+report += `Frontend Dynamic Keys: ${FrontendDynamicKeys.length}\n`;
+report += `Backend Dynamic Keys: ${BackendDynamicKeys.length}\n`;
 
 fs.writeFileSync('d:\\PFE\\missing_translations_phase1_report.txt', report);
-console.log(`Report generated! Missing Front: ${frontMissing}, Back: ${backMissing}. Check d:\\PFE\\missing_translations_phase1_report.txt`);
+console.log(`Report generated with advanced dynamic analysis.`);

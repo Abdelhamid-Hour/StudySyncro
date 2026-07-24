@@ -112,7 +112,7 @@ const getQuizResultPage = (grade, correctCount, percentage) => {
                         <span class="icon-box">
                             <i class="bi bi-check2-circle"></i>
                         </span>
-                        ${correctCount} ${t("quizzes:questions_label")}
+                        ${correctCount} ${t("common:quiz_card.questions")}
                     </span>
                 </div>
                 <button type="button" class="blue-btn view-result-btn">
@@ -197,7 +197,7 @@ export const getQuestionTemplate = (
   <div class="question-body">
     <h4></h4>
     <div class="question-choices">
-      <span class="select-answer-label">${t("quizzes:play.select_answer")}</span>
+      <span class="select-answer-label">${t("common:skeletons.quiz_play.select_answer")}</span>
       <div class="choices-list">
       </div>
     </div>
@@ -259,8 +259,8 @@ const step = (direction) => {
   }
 
   const nextIsLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
-  if (nextIsLastQuestion) nextBtn.textContent = t("quizzes:play.finish");
-  else nextBtn.textContent = t("quizzes:play.next");
+  if (nextIsLastQuestion) nextBtn.textContent = t("common:shared_terms.finish");
+  else nextBtn.textContent = t("common:skeletons.quiz_play.next");
 
   const questionCounter = document.querySelector(".current-question-number");
   questionCounter.textContent = currentQuestionIndex + 1;

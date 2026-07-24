@@ -214,10 +214,10 @@ export const initLanguageSwitcher = () => {
       toggleBtn.setAttribute(
         "title",
         nextLang === "ar"
-          ? t("shared:actions.switch_to_en", {
+          ? t("common:actions.switch_to_en", {
               defaultValue: "Switch to English",
             })
-          : t("shared:actions.switch_to_ar", {
+          : t("common:actions.switch_to_ar", {
               defaultValue: "التحويل إلى العربية",
             }),
       );

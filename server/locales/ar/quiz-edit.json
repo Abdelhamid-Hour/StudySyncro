@@ -1,10 +1,4 @@
 {
-  "badges": {
-    "draft": "مسودة",
-    "draft_tooltip": "أضف سؤالاً واحداً على الأقل للنشر",
-    "published": "منشور"
-  },
-  "questions_heading": "الأسئلة",
   "add_question": "إضافة سؤال",
   "drag_tooltip": "اسحب لإعادة الترتيب",
   "delete_question_tooltip": "حذف السؤال",

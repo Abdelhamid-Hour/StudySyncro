@@ -19,8 +19,8 @@ export const verifyOobCode = async () => {
   try {
     await verifyPasswordResetCode(auth, oobCode);
   } catch (error) {
-    const title = t('reset_password:errors.expired_title');
-    const message = t('reset_password:errors.expired_message');
+    const title = t('common:alerts.try_resetting_again');
+    const message = t('common:alerts.reset_link_expired');
     showErrorMsg(title, message);
   }
 };
@@ -32,7 +32,7 @@ export const resetPassword = async () => {
   try {
     await confirmPasswordReset(auth, oobCode, passwordField.value);
     clearInputFields();
-    showMessageBlock(t('reset_password:messages.reset_successful'), 'success');
+    showMessageBlock(t('common:alerts.password_reset_success'), 'success');
     setTimeout(() => {
       redirectTo('/login');
     }, 1500);

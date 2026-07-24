@@ -277,7 +277,7 @@ export class Quiz extends Task {
     // Determine badge class and icon based on status
     let badgeClass = "gray-badge";
     let iconClass = "bi-hourglass";
-    let text = t("home:badge.pending");
+    let text = t("common:shared_terms.pending");
 
     if (status === "active") {
       badgeClass = "orange-badge";
@@ -515,9 +515,9 @@ export class Session {
       return;
     }
     const activeKind = activeTask.isQuiz
-      ? t("home:task.quiz")
+      ? t("common:shared_terms.quiz")
       : activeTask.isBreak
-        ? t("home:task.break")
+        ? t("common:shared_terms.break")
         : t("home:task.task");
     this.timerEls.activeTaskLabel.textContent =
       t("home:task.active_prefix", { kind: activeKind }) +
@@ -531,9 +531,9 @@ export class Session {
     }
 
     const nextKind = nextTask.isQuiz
-      ? t("home:task.quiz")
+      ? t("common:shared_terms.quiz")
       : nextTask.isBreak
-        ? t("home:task.break")
+        ? t("common:shared_terms.break")
         : t("home:task.task");
     this.timerEls.nextTaskLabel.textContent =
       t("home:task.next_prefix", { kind: nextKind }) +
@@ -554,7 +554,7 @@ export class Session {
              task.isBreak
                ? ""
                : `
-            <button type="button" data-tooltip="${t("home:task.show_details")}" class="task-down-icon exclude-btn should-fill has-tooltip">
+            <button type="button" data-tooltip="${t("common:shared_terms.show_details")}" class="task-down-icon exclude-btn should-fill has-tooltip">
               <i class="bi bi-caret-down"></i>
             </button>
            `
@@ -565,9 +565,9 @@ export class Session {
             ? ""
             : `
         <div class="task-details">
-          <h5>${t("home:task.title_label")} </h5>
+          <h5>${t("common:shared_terms.title_1")} </h5>
           <p class="task-title"></p>
-          <h5>${t("home:task.details_label")} </h5>
+          <h5>${t("common:shared_terms.details")} </h5>
           <p class="task-desc"></p>
         </div>`
         }
@@ -692,9 +692,9 @@ export class Session {
               isFirst
                 ? `data-tooltip="${t("home:task.active_task")}"`
                 : isQuiz
-                  ? `data-tooltip="${t("home:task.quiz")}"`
+                  ? `data-tooltip="${t("common:shared_terms.quiz")}"`
                   : isBreak
-                    ? `data-tooltip="${t("home:task.break")}"`
+                    ? `data-tooltip="${t("common:shared_terms.break")}"`
                     : ""
             }
             class="task-box${
@@ -714,7 +714,7 @@ export class Session {
             }">${millisecondsToHMFormat(task.durationInMins * 60 * 1000)}</span>
             ${
               !isBreak
-                ? `<button type="button" data-tooltip="${t("home:task.show_details")}" class="task-down-icon exclude-btn should-fill has-tooltip">
+                ? `<button type="button" data-tooltip="${t("common:shared_terms.show_details")}" class="task-down-icon exclude-btn should-fill has-tooltip">
                     <i class="bi bi-caret-down"></i>
                   </button>`
                 : ""
@@ -723,9 +723,9 @@ export class Session {
           ${
             !isBreak
               ? `<div class="task-details">
-                  <h5>${t("home:task.title_label")}</h5>
+                  <h5>${t("common:shared_terms.title_1")}</h5>
                   <p class="task-title"></p>
-                  <h5>${t("home:task.details_label")}</h5>
+                  <h5>${t("common:shared_terms.details")}</h5>
                   <p class="task-desc"></p>
                 </div>`
               : ""
@@ -854,7 +854,7 @@ export const initMobileTabs = () => {
     if (!mobileInActiveTabs) return;
     mobileInActiveTabs.outerHTML = `<div class="mobile-active-tabs navigation-tabs" style="width: 100%;">
         <button type="button" class="tab active-tab exclude-btn" data-target="timer-session">${t("home:tabs.timer_session")}</button>
-        <button type="button" class="tab exclude-btn" data-target="tasks">${t("home:tabs.tasks")}</button>
+        <button type="button" class="tab exclude-btn" data-target="tasks">${t("common:shared_terms.tasks")}</button>
         <button type="button" class="tab exclude-btn" data-target="chat">${t("home:tabs.chat")}</button>
     </div>`;
   }

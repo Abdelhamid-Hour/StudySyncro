@@ -1,20 +1,7 @@
 {
-  "inactive": {
-    "ready_heading": "Ready to start learning together?",
-    "ready_desc": "Join a study session to connect with peers, participate in discussions, and enhance your learning experience. StudyHype makes collaborative learning easy and effective!",
-    "recent_messages_heading": "Recent Messages",
-    "recent_messages_sub": "Latest conversations from your study groups",
-    "active_sessions_heading": "Active Sessions",
-    "active_sessions_sub": "Ongoing study sessions you can join now",
-    "search_placeholder": "Search by session or group name"
-  },
   "skeletons": {
     "no_active_sessions_title": "No Active Sessions",
     "no_active_sessions_desc": "There are no study sessions currently active. You can start one or wait for others to join.",
-    "no_active_sessions_found_title": "No Active Sessions Found",
-    "no_active_sessions_found_desc": "We couldn't find any active sessions matching your search query.",
-    "no_active_sessions_filtered_title": "No Active Sessions Found",
-    "no_active_sessions_filtered_desc": "We couldn't find any active sessions matching your search query.",
     "no_messages_yet_title": "No Messages Yet",
     "no_messages_yet_desc": "No recent messages yet. Join or create a study group to start collaborating and sharing messages!"
   },
@@ -24,22 +11,16 @@
     "retake_quiz": "Retake Quiz"
   },
   "badge": {
-    "pending": "Pending",
     "in_progress": "In Progress",
     "completed": "Completed"
   },
   "task": {
     "active_task": "Active Task",
     "next_task": "Next Task",
-    "quiz": "Quiz",
-    "break": "Break",
     "task": "Task",
     "active_prefix": "Active {kind}",
     "next_prefix": "Next {kind}",
-    "last_task_suffix": "(Last Task)",
-    "show_details": "Show Details",
-    "title_label": "Title: ",
-    "details_label": "Details: "
+    "last_task_suffix": "(Last Task)"
   },
   "alerts": {
     "error_updating_task": "Error updating task status. Please try again later.",
@@ -50,23 +31,18 @@
   },
   "tabs": {
     "timer_session": "Timer & Session",
-    "tasks": "Tasks",
     "chat": "Chat"
   },
   "session_details": "Session Details",
-  "tasks": "Tasks",
   "session_card": {
     "joined_users": "Joined Users",
     "duration": "Duration",
-    "tasks": "Tasks",
     "start_at": "Start At:",
     "end_at": "End At:",
-    "join_session": "Join Session",
     "view_details": "View Details"
   },
   "recent": {
     "reply": "Reply",
-    "close": "Close",
     "type_message_placeholder": "Type a message...",
     "attachment": "Attachment ({count})",
     "new_messages": {
@@ -79,7 +55,6 @@
     "reply_in_group": "Reply In Group",
     "time": {
       "just_now": "Just now",
-      "recent": "Recent",
       "ago_minutes": {
         "one": "{count}m ago",
         "other": "{count}m ago"

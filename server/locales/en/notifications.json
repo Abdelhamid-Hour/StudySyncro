@@ -1,9 +1,6 @@
 {
   "categories": {
     "Join Request": "Join Request",
-    "Groups": "Groups",
-    "Sessions": "Sessions",
-    "All": "All",
     "General": "General"
   },
   "messages": {
@@ -82,7 +79,6 @@
     "pending_approval": "pending approval",
     "transferred": "transferred",
     "admin_role": "Admin role",
-    "host_role": "Host",
     "declined": "declined",
     "invited_you_to_join_suffix": ""
   }

@@ -13,11 +13,11 @@
         </label>
         <label class="exclude-btn tab password-tab">
           <input type="radio" name="tab" class="password" />
-          <%= t("settings:tabs.password") %>
+          <%= t("common:shared_terms.password") %>
         </label>
         <label class="exclude-btn tab delete-account-tab">
           <input type="radio" name="tab" class="delete-account" />
-          <%= t("settings:tabs.close_account") %>
+          <%= t("common:shared_terms.close_account") %>
         </label>
       </div>
     </header>
@@ -26,7 +26,7 @@
       <!-- Close Account -->
       <div class="delete-account-tab-content tab-content">
         <header>
-          <h3><%= t("settings:close_account.heading") %></h3>
+          <h3><%= t("common:shared_terms.close_account") %></h3>
           <span><%= t("settings:close_account.sub") %></span>
         </header>
         <div class="settings-warning-block">
@@ -42,7 +42,7 @@
           <div class="password-field-container">
             
             <% if (canChangePassword && canChangeEmail) { %>
-             <label for="password-delete"><%= t("settings:close_account.password_label") %></label>
+             <label for="password-delete"><%= t("common:shared_terms.password") %></label>
               <div class="field-container password-field">
                 <div class="field-icon-container">
                   <span class="icon-box">
@@ -80,20 +80,20 @@
 
           <button type="submit" class="red-btn delete-account-btn">
             <i class="bi bi-trash3"></i>
-            <%= t("settings:close_account.submit_btn") %>
+            <%= t("common:shared_terms.close_account") %>
           </button>
         </form>
       </div>
       <!-- Password -->
       <div class="password-tab-content tab-content">
         <header>
-          <h3><%= canChangePassword ? t("settings:password.heading_change") : t("settings:password.heading_add") %></h3>
+          <h3><%= canChangePassword ? t("common:shared_terms.change_password") : t("common:shared_terms.add_password") %></h3>
           <span><%= t("settings:password.sub") %></span>
         </header>
         <form class="password-form">
 
           <% if (canChangePassword && canChangeEmail) { %>
-           <label for="current-password"><%= t("settings:password.current_label") %></label>
+           <label for="current-password"><%= t("common:shared_terms.current_password") %></label>
             <div class="field-container current-password-field">
               <div class="field-icon-container">
                 <span class="icon-box">
@@ -116,7 +116,7 @@
             </div>
           <% } %>
 
-          <label for="new-password"><%= t("settings:password.new_label") %></label>
+          <label for="new-password"><%= t("common:shared_terms.new_password") %></label>
           <div class="field-container new-password-field">
             <div class="field-icon-container">
               <span class="icon-box">
@@ -138,7 +138,7 @@
             </label>
           </div>
 
-          <label for="confirm-password"><%= t("settings:password.confirm_label") %></label>
+          <label for="confirm-password"><%= t("common:shared_terms.confirm_password") %></label>
           <div class="field-container confirm-password-field">
             <div class="field-icon-container">
               <span class="icon-box">
@@ -162,20 +162,20 @@
 
           <button type="submit" class="<%= canChangePassword ? "modify" : "add" %>-btn blue-btn">
             <i class="bi bi-pencil"></i>
-            <%= canChangePassword ? t("settings:password.submit_change_btn") : t("settings:password.submit_add_btn") %>
+            <%= canChangePassword ? t("common:shared_terms.change_password") : t("common:shared_terms.add_password") %>
           </button>
         </form>
       </div>
       <!-- Email Address -->
       <div class="email-tab-content tab-content">
         <header>
-          <h3><%= canChangeEmail ? t("settings:email.heading_change") : t("settings:email.heading_add") %></h3>
+          <h3><%= canChangeEmail ? t("common:shared_terms.change_email") : t("common:shared_terms.add_email") %></h3>
           <span><%= canChangeEmail ? t("settings:email.sub_change") : t("settings:email.sub_add") %></span>
         </header>
         <form class="email-form">
           
           <div class="email-field-container">
-            <label for="email"><%= t("settings:email.label") %></label>
+            <label for="email"><%= t("common:shared_terms.email") %></label>
             <div class="field-container email-field">
               <div class="field-icon-container">
                 <span class="icon-box">
@@ -196,7 +196,7 @@
 
           <% if (canChangePassword && canChangeEmail) { %>
           <div class="password-ckeck-field hidden">
-            <label for="password-email"><%= t("settings:email.current_password_label") %></label>
+            <label for="password-email"><%= t("common:shared_terms.current_password") %></label>
             <div class="field-container password-field">
               <div class="field-icon-container">
                 <span class="icon-box">
@@ -224,7 +224,7 @@
            <div class="action-btns">
             <button type="<%= canAddEmail || canChangeEmail && !canChangePassword ? "submit" : "button" %>" class="blue-btn <%= canChangePassword && canChangeEmail ? "modify" : canChangeEmail ? "submit-modification" : "add" %>-btn">
               <i class="bi bi-pencil"></i>
-              <%= canChangeEmail ? t("settings:email.submit_change_btn") : t("settings:email.submit_add_btn") %>
+              <%= canChangeEmail ? t("common:shared_terms.change_email") : t("common:shared_terms.add_email") %>
             </button>
           </div>
           <% } else { %>
@@ -261,7 +261,7 @@
           </div>
           <div class="info-fields">
             <div class="fields">
-              <label for="full-name"><%= t("settings:personal_info.full_name_label") %></label>
+              <label for="full-name"><%= t("common:shared_terms.full_name") %></label>
               <div class="field-container full-name-field">
                 <div class="field-icon-container">
                   <span class="icon-box">

@@ -83,14 +83,14 @@ export const getGroupId = () => {
 export const handleLeavingGroup = async (e) => {
   const res = await showConfirmationBox(
     "exclamation",
-    t("group-chat:modals.leave_group_title"),
-    t("group-chat:modals.leave_group_desc"),
+    t("common:shared_terms.leave_group"),
+    t("common:shared_terms.are_you_sure_you_want_to_leave_this_group"),
     t("common:modals.cancel"),
-    t("group-chat:modals.leave_group_confirm"),
+    t("common:modals.leave"),
   );
   if (res) {
     handleApiAction("/leave-group", { groupId: getGroupId() }, e.target, {
-      successMsg: t("group-chat:alerts.left_group_success"),
+      successMsg: t("common:shared_terms.left_group_successfully"),
       onSuccess: () => navigateTo("/groups/my"),
     });
   }
@@ -131,9 +131,9 @@ export const openGroupLeftSideBar = async (route) => {
   const SIDEBAR_TITLES = {
     "/group-info": t("group-chat:sidebar_titles.group_info"),
     "/session-info": t("group-chat:sidebar_titles.session_info"),
-    "/members-list": t("group-chat:sidebar_titles.members"),
+    "/members-list": t("common:shared_terms.members"),
     "/demandes-list": t("group-chat:sidebar_titles.join_requests"),
-    "/quizzes-list": t("group-chat:sidebar_titles.quizzes"),
+    "/quizzes-list": t("common:titles.quizzes"),
   };
   groupLeftSideBarTitle.textContent = SIDEBAR_TITLES[route] || "";
   groupLeftSideBarContent.innerHTML = getLoader();
@@ -220,7 +220,7 @@ const getSessionCreationOverlay = () => {
             </label>
             <label class="progress-end-text">
               <input type="checkbox" id="progress-end-text" />
-              ${t("group-chat:modals.session_tasks_step")}
+              ${t("common:shared_terms.tasks")}
             </label>
           </div>
         </div>
@@ -299,7 +299,7 @@ const getSessionForm = (name, description, quiz) => {
         </div>
       </div>
 
-      <button type="submit" class="blue-btn next-btn">${t("group-chat:buttons.next")}</button>
+      <button type="submit" class="blue-btn next-btn">${t("common:skeletons.quiz_play.next")}</button>
     </form>
   `;
 
@@ -427,7 +427,7 @@ const getTaskForm = (task, addQuiz, addBreak) => {
           minlength="${NAME_TITLE_MIN_LENGTH}"
           maxlength="${NAME_TITLE_MAX_LENGTH}"
           class="input"
-          placeholder="${t("group-chat:modals.task_title_placeholder")}"
+          placeholder="${t("common:shared_terms.title")}"
         />
       </div>
 
@@ -587,9 +587,9 @@ const createTaskElement = (task, idx, taskCount) => {
     <div data-task-id="${idx}" class="task-wrapper">
       <div ${
         task.isQuiz
-          ? `data-tooltip="${t("group-chat:badges.quiz")}"`
+          ? `data-tooltip="${t("common:shared_terms.quiz")}"`
           : task.isBreak
-            ? `data-tooltip="${t("group-chat:badges.break")}"`
+            ? `data-tooltip="${t("common:shared_terms.break")}"`
             : ""
       } class="task-box ${
         task.isQuiz
@@ -614,7 +614,7 @@ const createTaskElement = (task, idx, taskCount) => {
               ? ""
               : `<button
             type="button"
-            data-tooltip="${t("group-chat:tooltips.show_details")}"
+            data-tooltip="${t("common:shared_terms.show_details")}"
             class="task-down-icon exclude-btn should-fill has-tooltip"
           >
             <i class="bi bi-caret-down"></i>
@@ -624,7 +624,7 @@ const createTaskElement = (task, idx, taskCount) => {
           <div class="task-options drop-down-menu overlay">
             <button type="button" class="exclude-btn select-item drop-down-item small-btn edit-task-btn">
               <i class="bi bi-pencil"></i>
-              ${t("group-chat:actions.edit")}
+              ${t("common:shared_terms.edit")}
             </button>
             <button type="button" class="exclude-btn select-item drop-down-item small-btn red-btn remove-task-btn">
               <i class="bi bi-trash"></i>
@@ -637,9 +637,9 @@ const createTaskElement = (task, idx, taskCount) => {
         task.isBreak
           ? ""
           : `<div class="task-details">
-        <h5>${t("group-chat:info.title_label")}</h5>
+        <h5>${t("common:shared_terms.title_1")}</h5>
         <p class="task-title"></p>
-        <h5>${t("group-chat:info.details_label")}</h5>
+        <h5>${t("common:shared_terms.details")}</h5>
         <p class="task-desc"></p>
       </div>`
       }
@@ -821,13 +821,13 @@ const setUpSessionForm = (wrapper, sessionStore) => {
       emptyState: {
         noFilter: {
           icon: "bi-clipboard-x",
-          title: t("group-chat:skeletons.no_quizzes_avail_title"),
-          desc: t("group-chat:skeletons.no_quizzes_avail_desc"),
+          title: t("common:shared_terms.no_quizzes_available"),
+          desc: t("common:shared_terms.no_quizzes_have_been_created_or_shared_with_this_group_yet"),
         },
         filtered: {
           icon: "bi-search",
-          title: t("group-chat:skeletons.no_quizzes_found_title"),
-          desc: t("group-chat:skeletons.no_quizzes_found_desc"),
+          title: t("common:shared_terms.no_quizzes_found"),
+          desc: t("common:shared_terms.no_quizzes_match_your_search_or_filter_criteria"),
         },
       },
     },
@@ -886,7 +886,7 @@ const handleFinishBtnClick = async (sessionData, btn) => {
     btn.innerHTML = getLoader();
     sessionData.groupId = getGroupId();
     await sendData("/api/create-session", { sessionData });
-    showMessageBlock(t("group-chat:alerts.session_created_success"), "success");
+    showMessageBlock(t("common:shared_terms.session_created_successfully"), "success");
     navigateTo("/home");
   } catch (error) {
     const isNative =
@@ -898,7 +898,7 @@ const handleFinishBtnClick = async (sessionData, btn) => {
   } finally {
     btn.isCreating = false;
     btn.disabled = false;
-    btn.innerHTML = t("group-chat:buttons.finish");
+    btn.innerHTML = t("common:shared_terms.finish");
   }
 };
 
@@ -973,10 +973,10 @@ const setUpTasksList = (wrapper, sessionStore) => {
       if (isQuizTask) {
         const res = await showConfirmationBox(
           "exclamation",
-          t("group-chat:modals.remove_quiz_title"),
-          t("group-chat:modals.remove_quiz_desc"),
+          t("common:shared_terms.remove_quiz"),
+          t("common:shared_terms.are_you_sure_you_want_to_remove_the_quiz"),
           t("common:modals.cancel"),
-          t("group-chat:modals.remove_quiz_confirm"),
+          t("common:shared_terms.remove_quiz"),
         );
         if (res) {
           sessionData.sessionQuiz = null; // Remove the quiz from session data
@@ -1004,7 +1004,7 @@ const getTasksContainer = (
             ${t("group-chat:buttons.back")}
           </button>
           <button form="" type="submit" class="blue-btn finish-btn">
-            ${t("group-chat:buttons.finish")}
+            ${t("common:shared_terms.finish")}
           </button>
         </div>
       </div>`;
@@ -1202,10 +1202,10 @@ const handleKickMember = async (kickBtn) => {
     .getAttribute("data-member-id");
   const res = await showConfirmationBox(
     "exclamation",
-    t("group-chat:modals.kick_member_title"),
-    t("group-chat:modals.kick_member_desc"),
+    t("common:shared_terms.kick_member"),
+    t("common:shared_terms.are_you_sure_you_want_to_kick_this_member"),
     t("common:modals.cancel"),
-    t("group-chat:modals.kick_member_confirm"),
+    t("common:shared_terms.kick"),
   );
   if (!res) return;
   handleApiAction(
@@ -1213,7 +1213,7 @@ const handleKickMember = async (kickBtn) => {
     { groupId: getGroupId(), memberId },
     kickBtn,
     {
-      successMsg: t("group-chat:alerts.member_kicked_success"),
+      successMsg: t("common:shared_terms.member_kicked_successfully"),
       onSuccess: () => {
         kickBtn.closest(".member").remove();
         const badgeCount = document.querySelector(".side-bar-title .badge");
@@ -1229,10 +1229,10 @@ const handleMoveAdminRole = async (moveAdminRoleBtn) => {
     .getAttribute("data-member-id");
   const res = await showConfirmationBox(
     "exclamation",
-    t("group-chat:modals.move_admin_title"),
-    t("group-chat:modals.move_admin_desc"),
+    t("common:shared_terms.move_admin_role"),
+    t("common:shared_terms.are_you_sure_you_want_to_move_this_member_to_admin"),
     t("common:modals.cancel"),
-    t("group-chat:modals.move_admin_confirm"),
+    t("common:shared_terms.move"),
   );
   if (!res) return;
   handleApiAction(
@@ -1240,7 +1240,7 @@ const handleMoveAdminRole = async (moveAdminRoleBtn) => {
     { groupId: getGroupId(), memberId },
     moveAdminRoleBtn,
     {
-      successMsg: t("group-chat:alerts.role_transferred_success"),
+      successMsg: t("common:shared_terms.role_transferred_successfully"),
       onSuccess: () => navigateTo(`/groups/my/${getGroupId()}/chat`), // Refresh the page to reflect changes
     },
   );
@@ -1330,7 +1330,7 @@ const createQuizItem = (quiz) => {
         <span class="icon-box">
           <i class="bi bi-question-circle"></i>
         </span>
-        ${t("group-chat:info.quiz_title")}
+        ${t("common:quiz_card.quiz_title")}
       </label>
       <div class="quiz-title content"></div>
     </div>
@@ -1340,7 +1340,7 @@ const createQuizItem = (quiz) => {
           <i class="bi bi-clock-history"></i>
           <i class="bi bi-info-circle"></i>
         </span>
-        ${t("group-chat:info.session_name")}
+        ${t("common:quiz_card.session_name")}
       </label>
       <div class="session-name content"></div>
     </div>
@@ -1349,7 +1349,7 @@ const createQuizItem = (quiz) => {
         <span class="icon-box">
           <i class="bi bi-question-circle"></i>
         </span>
-        ${t("group-chat:info.questions")}
+        ${t("common:quiz_card.questions")}
       </label>
       <div class="questions content">
         <span></span>
@@ -1360,7 +1360,7 @@ const createQuizItem = (quiz) => {
         <span class="icon-box">
           <i class="bi bi-calendar-event"></i>
         </span>
-        ${t("group-chat:info.submitted_at")}
+        ${t("common:quiz_card.submitted_at")}
         ${
           !quiz.submittedAt
             ? `<i style="margin-inline-start: auto;" class="bi bi-info-circle has-tooltip" data-tooltip="${
@@ -1383,13 +1383,13 @@ const createQuizItem = (quiz) => {
         class="view-result${quiz.isAdmin ? "s" : ""}-btn should-fill"
       >
         <i class="bi bi-eye"></i>
-        ${quiz.isAdmin ? t("group-chat:buttons.view_results") : t("group-chat:buttons.view_result")}
+        ${quiz.isAdmin ? t("group-chat:buttons.view_results") : t("common:shared_terms.view_result")}
       </button>
       ${
         !quiz.isAdmin
           ? `<button type="button" class="retake-btn">
               <i class="bi bi-arrow-repeat"></i>
-              ${t("group-chat:buttons.retake")}
+              ${t("common:shared_terms.retake")}
             </button>`
           : ""
       }
@@ -1418,7 +1418,7 @@ const createQuizItemLoader = () => {
         <span class="icon-box">
           <i class="bi bi-question-circle"></i>
         </span>
-        ${t("group-chat:info.quiz_title")}
+        ${t("common:quiz_card.quiz_title")}
       </label>
       <div class="quiz-title content">
         <div class="loading-opacity-animation" style="width: 100%; height: 1.5rem; border-radius: 0.5rem;"></div>
@@ -1430,7 +1430,7 @@ const createQuizItemLoader = () => {
           <i class="bi bi-clock-history"></i>
           <i class="bi bi-info-circle"></i>
         </span>
-        ${t("group-chat:info.session_name")}
+        ${t("common:quiz_card.session_name")}
       </label>
       <div class="session-name content">
         <div class="loading-opacity-animation" style="width: 100%; height: 1.5rem; border-radius: 0.5rem;"></div>
@@ -1441,7 +1441,7 @@ const createQuizItemLoader = () => {
         <span class="icon-box">
           <i class="bi bi-question-circle"></i>
         </span>
-        ${t("group-chat:info.questions")}
+        ${t("common:quiz_card.questions")}
       </label>
       <div class="questions content">
         <div class="loading-opacity-animation" style="width: 100%; height: 1.5rem; border-radius: 0.5rem;"></div>
@@ -1452,7 +1452,7 @@ const createQuizItemLoader = () => {
         <span class="icon-box">
           <i class="bi bi-calendar-event"></i>
         </span>
-        ${t("group-chat:info.submitted_at")}
+        ${t("common:quiz_card.submitted_at")}
       </label>
       <div class="quiz-date content loading-opacity-animation" style="width: 40%; height: 1.2em; border-radius: 0.5em;"></div>
     </div>
@@ -1496,13 +1496,13 @@ export const handleQuizzesListMenuBtn = async () => {
       emptyState: {
         noFilter: {
           icon: "bi-clipboard-x",
-          title: t("group-chat:skeletons.no_quizzes_avail_title"),
-          desc: t("group-chat:skeletons.no_quizzes_avail_desc"),
+          title: t("common:shared_terms.no_quizzes_available"),
+          desc: t("common:shared_terms.no_quizzes_have_been_created_or_shared_with_this_group_yet"),
         },
         filtered: {
           icon: "bi-search",
-          title: t("group-chat:skeletons.no_quizzes_found_title"),
-          desc: t("group-chat:skeletons.no_quizzes_found_desc"),
+          title: t("common:shared_terms.no_quizzes_found"),
+          desc: t("common:shared_terms.no_quizzes_match_your_search_or_filter_criteria"),
         },
       },
     },
@@ -1529,14 +1529,14 @@ const createMemberCard = (member) => {
       member.isAdmin
         ? `<span style="margin-inline-end: auto;" class="badge orange-badge"${
             member.userIsAdmin ? ' style="margin-inline-end:auto"' : ""
-          }>${t("group-chat:badges.host")}</span>`
+          }>${t("common:shared_groups.badges.host")}</span>`
         : ""
     }
     ${
       member.userIsAdmin && !member.isAdmin
         ? `<div class="action-btns" data-member-id="${member.id}">
             <button type="button" class="red-btn kick-btn small-btn">
-              <i class="bi bi-person-dash"></i> ${t("group-chat:buttons.kick")}
+              <i class="bi bi-person-dash"></i> ${t("common:shared_terms.kick")}
             </button>
             <button type="button" class="orange-btn move-admin-role-btn small-btn">
               <i class="bi bi-person-gear"></i> ${t("group-chat:buttons.transfer_admin")}
@@ -1616,14 +1616,14 @@ export const handleSessionInfoMenuBtn = async () => {
 export const handleRemoveGroup = async (e) => {
   const res = await showConfirmationBox(
     "exclamation",
-    t("group-chat:modals.remove_group_title"),
-    t("group-chat:modals.remove_group_desc"),
+    t("common:shared_terms.remove_group"),
+    t("common:shared_terms.are_you_sure_you_want_to_remove_this_group"),
     t("common:modals.cancel"),
-    t("group-chat:modals.remove_group_confirm"),
+    t("common:modals.remove"),
   );
   if (res) {
     handleApiAction(`/remove-group/${getGroupId()}`, {}, e.target, {
-      successMsg: t("group-chat:alerts.group_removed_success"),
+      successMsg: t("common:shared_terms.group_removed_successfully"),
       onSuccess: () => navigateTo("/groups/my"),
       method: "DELETE",
     });
@@ -1658,11 +1658,11 @@ const createDemandeCard = (demande) => {
     <div class="action-btns" data-user-id="${demande.userId}">
       <button type="button" class="red-btn reject-btn small-btn">
         <i class="bi bi-x-circle"></i>
-        ${t("group-chat:buttons.reject")}
+        ${t("common:shared_terms.reject")}
       </button>
       <button type="button" class="green-btn accept-btn small-btn">
         <i class="bi bi-check-circle"></i>
-        ${t("group-chat:buttons.accept")}
+        ${t("common:shared_terms.accept")}
       </button>
     </div>
   `;
@@ -1725,13 +1725,13 @@ export const setUpDemandes = async () => {
       emptyState: {
         noFilter: {
           icon: "bi-person-check",
-          title: t("group-chat:skeletons.no_join_req_title"),
-          desc: t("group-chat:skeletons.no_join_req_desc"),
+          title: t("common:shared_terms.no_join_requests"),
+          desc: t("common:shared_terms.there_are_no_pending_join_requests_for_this_group"),
         },
         filtered: {
           icon: "bi-search",
-          title: t("group-chat:skeletons.no_requests_found_title"),
-          desc: t("group-chat:skeletons.no_requests_found_desc"),
+          title: t("common:shared_terms.no_requests_found"),
+          desc: t("common:shared_terms.no_join_requests_match_your_search_or_filter_criteria"),
         },
       },
     },
@@ -1885,7 +1885,7 @@ const handleSaveAction = async (
         : null;
 
     swapMode(infoBox, "getViewMode", updatedValue, showInSearchValue);
-    showMessageBlock(t("group-chat:alerts.group_info_updated"), "success");
+    showMessageBlock(t("common:shared_terms.group_info_updated_successfully"), "success");
   } catch (error) {
     const isNative =
       error.isNative || error.data?.isNative || isNativeDomainCondition(error);
@@ -2034,7 +2034,7 @@ const getAddMembersOverlay = () => {
       <header class="list-header">
       <h3 class="label">
         <i class="bi bi-people-fill"></i>
-        ${t("group-chat:modals.invite_users_title")}
+        ${t("common:shared_terms.invite_users")}
       </h3>
       <!-- close btn -->
       <button type="button" class="close-overlay-btn exclude-btn">
@@ -2160,7 +2160,7 @@ const inviteUsersToGroup = (users, confirmBtn) => {
 
 const handleConfirmClick = (users, confirmBtn) => {
   if (users.length === 0) {
-    showMessageBlock(t("group-chat:alerts.select_user_to_add"), "info");
+    showMessageBlock(t("common:shared_terms.please_select_at_least_one_user_to_add"), "info");
     return;
   } else {
     inviteUsersToGroup(users, confirmBtn);

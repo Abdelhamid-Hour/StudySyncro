@@ -2,7 +2,6 @@
   "inactive": {
     "ready_heading": "Ready to start learning together?",
     "ready_desc": "Join a study session to connect with peers, participate in discussions, and enhance your learning experience. StudyHype makes collaborative learning easy and effective!",
-    "recent_messages_heading": "Recent Messages",
     "recent_messages_sub": "Latest conversations from your study groups",
     "unread_messages_count": {
       "one": "1 New Message",
@@ -13,27 +12,23 @@
     "mark_as_read": "Mark as read",
     "empty_messages_heading": "No Messages Yet",
     "empty_messages_desc": "No recent messages yet. Join or create a study group to start collaborating and sharing messages!",
-    "active_sessions_heading": "Active Sessions",
     "active_sessions_sub": "Ongoing study sessions you can join now",
     "search_placeholder": "Search by session or group name",
     "joined_users_count": {
       "one": "1 Joined User",
       "other": "{count} Joined Users"
     },
-    "duration_label": "Duration",
     "tasks_count": {
       "one": "1 Task",
       "other": "{count} Tasks"
     },
     "start_at": "Start At:",
     "end_at": "End At:",
-    "join_session": "Join Session",
     "view_details": "View Details",
     "empty_sessions_heading": "No Active Sessions",
     "empty_sessions_desc": "There are no study sessions currently active. You can start one or wait for others to join.",
     "time": {
       "just_now": "Just now",
-      "recent": "Recent",
       "ago_minutes": {
         "one": "{count}m ago",
         "other": "{count}m ago"
@@ -50,26 +45,15 @@
   },
   "active": {
     "current_session": "Current Session",
-    "badge_quiz": "Quiz",
     "badge_no_quiz": "No Quiz",
-    "badge_host": "Host",
-    "badge_member": "Member",
     "session_name": "Session name",
-    "start": "Start",
-    "end": "End",
     "group_name": "Group name",
     "left": "Left",
     "elapsed": "Elapsed",
-    "quiz_title": "Quiz title",
     "no_quiz_added": "No Quiz Added To This Session",
-    "duration": "Duration",
-    "joined_count_label": "Joined Count",
     "session_description": "Session Description",
-    "end_session": "End Session",
     "leave": "Leave",
-    "tasks_heading": "Tasks",
     "ongoing": "Ongoing",
-    "completed": "Completed",
     "empty_completed_heading": "No Completed Tasks Yet",
     "empty_completed_desc": "Tasks you complete during this session will appear here.",
     "timer_heading": "Timer",
@@ -78,23 +62,15 @@
       "mins": "MINS",
       "secs": "SECS"
     },
-    "quiz_heading": "Quiz",
     "already_passed_note": "You already passed this quiz. You cannot retake it.",
     "status": {
       "in_progress": "In Progress",
-      "completed": "Completed",
       "pending": "Pending"
     },
-    "questions_label": "Questions",
     "questions_count": "{count} Questions",
     "start_in": "Start In",
     "submitted": "Submitted",
     "submitted_progress": "{submitted} of {total} Questions",
-    "your_score": "Your Score",
-    "retake_quiz": "Retake Quiz",
-    "view_results": "View Results",
-    "view_result": "View Result",
-    "chat_heading": "Chat",
-    "type_message_placeholder": "Type a message"
+    "your_score": "Your Score"
   }
 }

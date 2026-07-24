@@ -35,23 +35,6 @@
       "active_sessions_sub": "الجلسات الدراسية الجارية التي يمكنك الانضمام إليها الآن",
       "search_placeholder": "البحث باسم الجلسة أو المجموعة"
     },
-    "groups": {
-      "my_groups": "مجموعاتي",
-      "available_groups": "المجموعات المتاحة",
-      "create_group": "إنشاء مجموعة"
-    },
-    "quizzes": {
-      "my_quizzes": "اختباراتي",
-      "passed": "المجتازة",
-      "quiz_title": "عنوان الاختبار",
-      "group_name": "اسم المجموعة",
-      "session_name": "اسم الجلسة",
-      "submitted_at": "تاريخ التقديم",
-      "score": "النتيجة",
-      "questions": "الأسئلة",
-      "shared_in": "مشارك في",
-      "subject": "المادة"
-    },
     "settings": {
       "my_account": "حسابي",
       "tabs": {
@@ -68,11 +51,6 @@
       "modify_btn": "تعديل الملف الشخصي"
     },
     "quiz_editor": {
-      "quiz_editor": "محرر الاختبار",
-      "questions_list": "قائمة الأسئلة",
-      "questions": "الأسئلة",
-      "question_num": "السؤال {num}",
-      "choices_count": "{count} خيارات",
       "subject_label": "المادة:",
       "shared_in_label": "مشارك في:",
       "choices_title": "الخيارات",
@@ -185,8 +163,6 @@
   "group_chat": "دردشة المجموعة",
   "titles": {
     "home": "الرئيسية",
-    "group_chat": "دردشة المجموعة",
-    "available_groups": "المجموعات المتاحة",
     "groups": "المجموعات",
     "quiz_editor": "محرر الاختبارات",
     "passed_quizzes": "الاختبارات المجتازة",
@@ -205,14 +181,7 @@
     "published": "منشور",
     "draft": "مسودة"
   },
-  "groups_tabs": {
-    "my_groups": "مجموعاتي",
-    "available_groups": "المجموعات المتاحة"
-  },
   "quizzes_tabs": {
-    "my_quizzes": "اختباراتي",
-    "passed": "المجتازة",
-    "quiz_editor": "محرر الاختبار",
     "questions_list": "قائمة الأسئلة"
   },
   "quiz_card": {
@@ -259,8 +228,7 @@
       "request_to_join": "طلب انضمام"
     },
     "badges": {
-      "host": "المضيف",
-      "member": "عضو"
+      "host": "المضيف"
     },
     "skeletons": {
       "no_groups_joined_title": "لم تنضم لأي مجموعة",
@@ -307,5 +275,60 @@
   "time": {
     "h": "س",
     "m": "د"
+  },
+  "shared_terms": {
+    "join_session": "الانضمام للجلسة",
+    "invite_users": "دعوة أعضاء",
+    "members": "الأعضاء",
+    "leave_group": "مغادرة المجموعة",
+    "show_details": "عرض التفاصيل",
+    "left_group_successfully": "تمت مغادرة المجموعة بنجاح",
+    "session_created_successfully": "تم إنشاء الجلسة بنجاح",
+    "member_kicked_successfully": "تم طرد العضو بنجاح",
+    "role_transferred_successfully": "تم نقل الصلاحيات بنجاح",
+    "group_removed_successfully": "تم حذف المجموعة بنجاح",
+    "group_info_updated_successfully": "تم تحديث معلومات المجموعة بنجاح",
+    "please_select_at_least_one_user_to_add": "يرجى تحديد مستخدم واحد على الأقل للإضافة.",
+    "no_quizzes_available": "لا توجد اختبارات متاحة",
+    "no_quizzes_have_been_created_or_shared_with_this_group_yet": "لم يتم إنشاء أو مشاركة أي اختبارات مع هذه المجموعة بعد.",
+    "no_quizzes_found": "لم يتم العثور على اختبارات",
+    "no_quizzes_match_your_search_or_filter_criteria": "لا توجد اختبارات تطابق معايير البحث أو الفلترة.",
+    "no_join_requests": "لا توجد طلبات انضمام",
+    "there_are_no_pending_join_requests_for_this_group": "لا توجد طلبات انضمام معلقة لهذه المجموعة.",
+    "no_requests_found": "لم يتم العثور على طلبات",
+    "no_join_requests_match_your_search_or_filter_criteria": "لا توجد طلبات انضمام تطابق معايير البحث أو الفلترة.",
+    "are_you_sure_you_want_to_leave_this_group": "هل أنت متأكد أنك تريد مغادرة هذه المجموعة؟",
+    "tasks": "المهام",
+    "remove_quiz": "إزالة الاختبار",
+    "are_you_sure_you_want_to_remove_the_quiz": "هل أنت متأكد أنك تريد إزالة هذا الاختبار؟",
+    "kick_member": "طرد العضو",
+    "are_you_sure_you_want_to_kick_this_member": "هل أنت متأكد أنك تريد طرد هذا العضو؟",
+    "kick": "طرد",
+    "move_admin_role": "نقل صلاحية المضيف",
+    "are_you_sure_you_want_to_move_this_member_to_admin": "هل أنت متأكد أنك تريد جعل هذا العضو مشرفاً؟",
+    "move": "نقل",
+    "remove_group": "حذف المجموعة",
+    "are_you_sure_you_want_to_remove_this_group": "هل أنت متأكد أنك تريد حذف هذه المجموعة نهائياً؟",
+    "title": "العنوان",
+    "finish": "إنهاء",
+    "reject": "رفض",
+    "accept": "قبول",
+    "view_result": "عرض النتيجة",
+    "retake": "إعادة المحاولة",
+    "max_members": "الحد الأقصى للأعضاء",
+    "title_1": "العنوان:",
+    "details": "التفاصيل:",
+    "edit": "تعديل",
+    "quiz": "اختبار",
+    "break": "استراحة",
+    "join": "انضمام",
+    "pending": "قيد الانتظار",
+    "create": "إنشاء",
+    "subject_is_required": "المادة مطلوبة.",
+    "no_active_sessions_found": "لم يتم العثور على جلسات نشطة",
+    "we_couldn_t_find_any_active_sessions_matching_your_search_query": "لم نتمكن من العثور على أي جلسات نشطة تطابق استعلام البحث الخاص بك.",
+    "the_password_must_be_between_min_and_max_characters": "يجب أن تتكون كلمة المرور من {min} إلى {max} حرفًا",
+    "passwords_do_not_match": "كلمتا المرور غير متطابقتين",
+    "add_at_least_1_question_to_publish": "أضف سؤالاً واحداً على الأقل للنشر"
   }
 }

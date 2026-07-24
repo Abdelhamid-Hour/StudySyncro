@@ -1,9 +1,6 @@
 {
   "categories": {
     "Join Request": "طلب انضمام",
-    "Groups": "المجموعات",
-    "Sessions": "الجلسات",
-    "All": "الكل",
     "General": "عام"
   },
   "messages": {
@@ -83,7 +80,6 @@
     "demoted": "تم تنزيل رتبتك",
     "pending_approval": "قيد مراجعة",
     "transferred": "تم نقل",
-    "admin_role": "صلاحيات المضيف",
-    "host_role": "المضيف"
+    "admin_role": "صلاحيات المضيف"
   }
 }

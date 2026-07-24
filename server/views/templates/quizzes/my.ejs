@@ -4,14 +4,14 @@
     <div data-quiz-id="<%= quiz.id %>" class="quiz-card card-item">
       <header class="quiz-card-header">
         <% if (quiz.status==="draft" ) { %>
-          <span class="badge gray-badge has-tooltip" data-tooltip="<%= t('quizzes:badges.draft_tooltip') %>">
+          <span class="badge gray-badge has-tooltip" data-tooltip="<%= t('common:shared_terms.add_at_least_1_question_to_publish') %>">
             <i class="bi bi-pencil"></i>
-            <%= t("quizzes:badges.draft") %>
+            <%= t("common:filters.draft") %>
           </span>
         <% } else { %>
             <span class="badge green-badge">
               <i class="bi bi-check"></i>
-              <%= t("quizzes:badges.published") %>
+              <%= t("common:filters.published") %>
             </span>
         <% } %>
               <div>
@@ -23,7 +23,7 @@
                     <button type="button" class="drop-down-item exclude-btn edit-quiz-menu-btn"
                       data-quiz-id="<%= quiz.id %>">
                       <i class="bi bi-pencil-square"></i>
-                      <%= t("quizzes:menu.edit") %>
+                      <%= t("common:shared_terms.edit") %>
                     </button>
                     <button type="button" class="drop-down-item exclude-btn preview-quiz-menu-btn"
                       data-quiz-id="<%= quiz.id %>">
@@ -47,7 +47,7 @@
       <div class="quiz-title-container info-container">
         <label class="quiz-title-label">
           <span class="icon-box"><i class="bi bi-card-text"></i></span>
-          <%= t("quizzes:labels.quiz_title") %>
+          <%= t("common:shared_terms.quiz_title") %>
         </label>
         <div class="quiz-title content">
           <bdi><%= quiz.title %></bdi>
@@ -56,7 +56,7 @@
       <div class="questions-count-container info-container small-container">
         <label class="questions-count-label">
           <span class="icon-box"><i class="bi bi-question-circle"></i></span>
-          <%= t("quizzes:labels.questions") %>
+          <%= t("common:shared_terms.questions") %>
         </label>
         <span class="count content">
           <bdi><%= quiz.questionsCount %></bdi>
@@ -79,7 +79,7 @@
       <div class="subject-container info-container small-container">
         <label class="subject-label">
           <span class="icon-box"><i class="bi bi-book"></i></span>
-          <%= t("quizzes:labels.subject") %>
+          <%= t("common:shared_terms.subject") %>
         </label>
         <span class="subject content">
           <bdi><%= quiz.subject %></bdi>

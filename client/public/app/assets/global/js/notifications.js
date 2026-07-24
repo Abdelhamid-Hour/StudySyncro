@@ -329,7 +329,7 @@ const formatNotificationMessage = (notif) => {
     { term: "pending approval", cls: "bold-warning" },
     { term: t("notifications:styling_terms.transferred"), cls: "bold-warning" },
     { term: "transferred", cls: "bold-warning" },
-    { term: t("notifications:styling_terms.host_role"), cls: "" },
+    { term: t("common:shared_groups.badges.host"), cls: "" },
     { term: "Host", cls: "" },
     { term: notif.metadata?.senderName, cls: "" },
     { term: notif.metadata?.groupName, cls: "" },
@@ -360,7 +360,7 @@ const formatNotificationMessage = (notif) => {
 const formatNotifDate = (ts) => {
   try {
     const d = new Date(ts || Date.now());
-    if (isNaN(d.getTime())) return t("notifications:recent");
+    if (isNaN(d.getTime())) return t("common:shared_chat.emojis.categories.recent");
     return d.toLocaleString("en-US", {
       month: "short",
       day: "numeric",
@@ -369,7 +369,7 @@ const formatNotifDate = (ts) => {
       minute: "2-digit",
     });
   } catch (e) {
-    return t("notifications:recent");
+    return t("common:shared_chat.emojis.categories.recent");
   }
 };
 
@@ -465,8 +465,8 @@ const createNotificationCard = (notif) => {
   if (type === "join_request" && !notif.metadata?.isInvite) {
     actionsHtml = `
       <div class="notif-actions">
-        <button type="button" class="reject-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> ${t("notifications:actions.reject")}</button>
-        <button type="button" class="accept-btn exclude-btn small-btn" data-action="accept"><i class="bi bi-check-circle"></i> ${t("notifications:actions.accept")}</button>
+        <button type="button" class="reject-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> ${t("common:shared_terms.reject")}</button>
+        <button type="button" class="accept-btn exclude-btn small-btn" data-action="accept"><i class="bi bi-check-circle"></i> ${t("common:shared_terms.accept")}</button>
       </div>
     `;
   } else if (
@@ -475,8 +475,8 @@ const createNotificationCard = (notif) => {
   ) {
     actionsHtml = `
       <div class="notif-actions">
-        <button type="button" class="reject-invite-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> ${t("notifications:actions.reject")}</button>
-        <button type="button" class="join-invite-btn exclude-btn small-btn" data-action="join"><i class="bi bi-box-arrow-in-right"></i> ${t("notifications:actions.join")}</button>
+        <button type="button" class="reject-invite-btn exclude-btn small-btn" data-action="reject"><i class="bi bi-slash-circle"></i> ${t("common:shared_terms.reject")}</button>
+        <button type="button" class="join-invite-btn exclude-btn small-btn" data-action="join"><i class="bi bi-box-arrow-in-right"></i> ${t("common:shared_terms.join")}</button>
       </div>
     `;
   } else if (
@@ -487,7 +487,7 @@ const createNotificationCard = (notif) => {
   ) {
     actionsHtml = `
       <div class="notif-actions">
-        <button type="button" class="join-session-btn exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> ${t("notifications:actions.join")}</button>
+        <button type="button" class="join-session-btn exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> ${t("common:shared_terms.join")}</button>
       </div>
     `;
   }

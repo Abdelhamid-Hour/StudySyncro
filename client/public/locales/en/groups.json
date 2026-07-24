@@ -1,36 +1,13 @@
 {
   "alerts": {
     "group_created_success": "Group created successfully",
-    "session_created_success": "Session created successfully",
-    "group_info_updated": "Group info updated successfully",
-    "select_user_to_add": "Please select at least one user to add.",
-    "left_group_success": "Left group successfully",
-    "member_kicked_success": "Member kicked successfully",
-    "role_transferred_success": "Role transferred successfully",
-    "group_removed_success": "Group removed successfully",
     "joined_group_success_html": "You’ve successfully joined Group <b></b>",
     "join_request_sent_html": "Your request to join Group <b></b> has been sent"
   },
   "modals": {
     "create_new_group": "Create New Group",
     "join_group_title": "Join Group",
-    "join_group_desc": "Are you sure you want to join this group?",
-    "join_group_confirm": "Join",
-    "leave_group_title": "Leave Group",
-    "leave_group_desc": "Are you sure you want to leave this group?",
-    "leave_group_confirm": "Leave",
-    "remove_quiz_title": "Remove Quiz",
-    "remove_quiz_desc": "Are you sure you want to remove the quiz?",
-    "remove_quiz_confirm": "Remove Quiz",
-    "kick_member_title": "Kick Member",
-    "kick_member_desc": "Are you sure you want to kick this member?",
-    "kick_member_confirm": "Kick",
-    "move_admin_title": "Move Admin Role",
-    "move_admin_desc": "Are you sure you want to move this member to admin?",
-    "move_admin_confirm": "Move",
-    "remove_group_title": "Remove group",
-    "remove_group_desc": "Are you sure you want to remove this group?",
-    "remove_group_confirm": "Remove"
+    "join_group_desc": "Are you sure you want to join this group?"
   },
   "skeletons": {
     "no_groups_joined_title": "No Groups Joined",
@@ -39,43 +16,25 @@
     "no_groups_available_desc": "There are currently no public study groups available to join. Check back later!",
     "no_groups_found_title": "No Groups Found",
     "no_groups_found_desc": "No study groups match your search or filter criteria.",
-    "no_quizzes_avail_title": "No Quizzes Available",
     "no_quizzes_avail_desc": "No quizzes have been created for this group yet.",
-    "no_quizzes_shared_desc": "No quizzes have been created or shared with this group yet.",
     "no_quizzes_match_title": "No Quizzes Match",
-    "no_quizzes_match_desc": "No quizzes match your search.",
-    "no_quizzes_found_title": "No Quizzes Found",
-    "no_quizzes_found_desc": "No quizzes match your search or filter criteria.",
-    "no_join_req_title": "No Join Requests",
-    "no_join_req_desc": "There are no pending join requests for this group.",
-    "no_requests_found_title": "No Requests Found",
-    "no_requests_found_desc": "No join requests match your search or filter criteria."
+    "no_quizzes_match_desc": "No quizzes match your search."
   },
   "badges": {
     "host": "Host",
     "member": "Member"
   },
   "actions": {
-    "join_now": "Join Now",
-    "request_to_join": "Request to Join",
-    "view_group": "View Group",
-    "pending": "Pending"
+    "view_group": "View Group"
   },
   "forms": {
-    "group_name_placeholder": "Group Name",
-    "group_description_placeholder": "Describe your group (e.g. purpose, topics, goals)",
-    "subject_placeholder": "Subject",
-    "max_members_placeholder": "Max Members"
-  },
-  "buttons": {
-    "create": "Create"
+    "group_description_placeholder": "Describe your group (e.g. purpose, topics, goals)"
   },
   "errors": {
     "group_name_required": "Group name is required.",
     "group_name_length": "Group name must be between {min} and {max} characters.",
     "description_required": "Description is required.",
     "description_length": "Description must be between {min} and {max} characters.",
-    "subject_required": "Subject is required.",
     "level_invalid": "Level is not valid.",
     "max_members_range": "Max members must be a number between {min} and {max}.",
     "visibility_invalid": "Visibility is not valid."

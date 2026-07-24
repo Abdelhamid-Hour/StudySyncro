@@ -2,30 +2,21 @@
   "skeletons": {
     "no_quizzes_created_title": "No Quizzes Created",
     "no_quizzes_created_desc": "You haven't created any quizzes yet. Click the 'Create Quiz' button to get started!",
-    "no_quizzes_found_title": "No Quizzes Found",
     "no_quizzes_found_desc": "No quizzes match your filter criteria. Try adjusting your search or filters.",
     "no_passed_quizzes_title": "No Passed Quizzes",
     "no_passed_quizzes_desc": "You haven't completed any quizzes yet. Join a study session and take a quiz to see your achievements here!",
     "no_passed_quizzes_found_title": "No Passed Quizzes Found",
     "no_passed_quizzes_found_desc": "No passed quizzes match your filter criteria."
   },
-  "untitled_quiz": "Untitled Quiz",
   "unknown_group": "Unknown Group",
   "unknown_session": "Unknown Session",
-  "view_result": "View Result",
-  "retake": "Retake",
   "unknown": "Unknown",
-  "edit": "Edit",
   "preview": "Preview",
   "duplicate": "Duplicate",
-  "remove": "Remove",
-  "create": "Create",
-  "title_placeholder": "Title",
   "new_title_placeholder": "New title",
   "create_new_quiz": "Create New Quiz",
   "duplicate_quiz": "Duplicate Quiz",
   "tooltips": {
-    "add_at_least_1_question": "Add at least 1 question to publish",
     "groups_sessions": "Groups | Sessions"
   },
   "alerts": {
@@ -35,16 +26,10 @@
   },
   "validation": {
     "title_required": "Quiz Title is required.",
-    "title_length": "Quiz Title must be between {min} and {max} characters.",
-    "subject_required": "Subject is required."
+    "title_length": "Quiz Title must be between {min} and {max} characters."
   },
-  "question_num": "Question {num}",
-  "choices_count": "{count} Choices",
   "finished_date": "Finished: {date}",
-  "questions_count": "{count} Questions",
-  "questions_label": "Questions",
   "quiz_title_placeholder": "QUIZ TITLE",
-  "answered": "Answered",
   "status": {
     "correct": "Correct",
     "skipped": "Skipped",
@@ -59,12 +44,6 @@
     "correct_answer_title": "Correct Answer"
   },
   "play": {
-    "time_left": "Time Left :",
-    "skip": "Skip",
-    "select_answer": "Select the correct Answer (Or press 1-6 / A-F)",
-    "prev": "Previous",
-    "next": "Next",
-    "finish": "Finish",
     "score_of": "{correct} of {total}",
     "your_score": "Your Score",
     "view_result_details": "View Result Details",

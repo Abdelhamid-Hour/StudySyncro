@@ -322,7 +322,7 @@ const validatesSignUpForm = () => {
 
   if (!passwordRegex.test(password)) {
     showError(
-      t("login:errors.password_length", {
+      t("common:shared_terms.the_password_must_be_between_min_and_max_characters", {
         min: PASSWORD_MIN_LENGTH,
         max: PASSWORD_MAX_LENGTH,
       }),
@@ -333,7 +333,7 @@ const validatesSignUpForm = () => {
 
   if (password !== confirmPassword) {
     showError(
-      t("login:errors.passwords_do_not_match"),
+      t("common:shared_terms.passwords_do_not_match"),
       signUpConfirmPasswordField,
     );
     return false;

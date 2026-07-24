@@ -77,17 +77,17 @@ const createPassedQuizCard = (quiz = {}) => {
         <div class="action-btns">
             <button class="view-quiz-result-btn" data-quiz-id="${id}">
                 <i class="bi bi-eye"></i>
-                ${t("quizzes:view_result")}
+                ${t("common:shared_terms.view_result")}
             </button>
             <button class="retake-quiz-btn" data-quiz-id="${id}">
                 <i class="bi bi-arrow-repeat"></i>
-                ${t("quizzes:retake")}
+                ${t("common:shared_terms.retake")}
             </button>
         </div>
     `;
 
   card.querySelector(".quiz-title").textContent =
-    title || t("quizzes:untitled_quiz");
+    title || t("common:shared_quizzes.quiz_title_placeholder");
   card.querySelector(".score").textContent = `${score}%`;
   card.querySelector(".group-name").textContent =
     groupName || t("quizzes:unknown_group");

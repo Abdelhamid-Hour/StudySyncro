@@ -42,7 +42,7 @@ if (document.readyState === "complete") {
 signUpLink.addEventListener("click", function () {
   showAvatarSide();
   lettersAnimation(
-    t("shared:header.create", { defaultValue: "Create" }),
+    t("common:shared_terms.create", { defaultValue: "Create" }),
     (word) => {
       document.querySelector("h1 > span").textContent = `${word}`;
     },

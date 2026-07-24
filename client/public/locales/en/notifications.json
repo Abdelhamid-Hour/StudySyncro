@@ -1,11 +1,9 @@
 {
   "categories": {
     "Join Request": "Join Request",
-    "Groups": "Groups",
     "Sessions": "Sessions",
     "All": "All",
-    "General": "General",
-    "recent": "Recent"
+    "General": "General"
   },
   "messages": {
     "join_request": {
@@ -69,11 +67,6 @@
       "message": "Join request from {senderName} for group {groupName} was rejected."
     }
   },
-  "actions": {
-    "reject": "Reject",
-    "accept": "Accept",
-    "join": "Join"
-  },
   "alerts": {
     "demande_accepted": "Demande accepted",
     "demande_rejected": "Demande rejected",
@@ -101,9 +94,7 @@
     "pending_approval": "pending approval",
     "transferred": "transferred",
     "admin_role": "Admin role",
-    "host_role": "Host",
     "declined": "declined",
     "invited_you_to_join_suffix": ""
-  },
-  "recent": "Recent"
+  }
 }

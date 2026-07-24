@@ -45,7 +45,7 @@ export const metaInfoEl = {
             <span class="icon-box">
               <i class="bi bi-book"></i>
             </span>
-            ${t("quiz-edit:subject_label")}
+            ${t("common:skeletons.quiz_editor.subject_label")}
           </span>
           <span class="subject-value value"></span>
           <button

@@ -10,7 +10,7 @@
   <div class="content-blocks">
     <section class="recent-messages">
       <header>
-        <h2><%= t("home:inactive.recent_messages_heading") %></h2>
+        <h2><%= t("common:mobile_nav.recent_messages") %></h2>
         <p><%= t("home:inactive.recent_messages_sub") %></p>
       </header>
       <div class="messages-container" data-last-visible="<%= lastVisible || '' %>">
@@ -73,7 +73,7 @@
     <section class="active-sessions">
       <header>
         <div class="header-text">
-          <h2><%= t("home:inactive.active_sessions_heading") %></h2>
+          <h2><%= t("common:mobile_nav.active_sessions") %></h2>
           <p><%= t("home:inactive.active_sessions_sub") %></p>
         </div>
         <div class="active-sessions-search search">
@@ -110,7 +110,7 @@
                 <div class="meta-info">
                   <span class="badge blue-badge">
                     <i class="bi bi-clock-fill"></i>
-                    <%= t("home:inactive.duration_label") %>
+                    <%= t("common:shared_terms.duration") %>
                     <span class="duration">
                       <bdi><%= session.duration %></bdi>
                     </span>
@@ -144,7 +144,7 @@
                 <div class="action-buttons" data-session-id="<%= session.id %>">
                   <button type="button" class="join-session blue-btn">
                     <i class="bi bi-box-arrow-in-right"></i>
-                    <%= t("home:inactive.join_session") %>
+                    <%= t("common:shared_terms.join_session") %>
                   </button>
                   <button type="button" class="should-fill view-details">
                     <i class="bi bi-info-circle"></i>

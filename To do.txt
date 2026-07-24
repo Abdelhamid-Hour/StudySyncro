@@ -7,14 +7,9 @@
 // add the cloud funcs
 // decomment the fast google sign in 
 
-//join_accepted message not good with join_invite accept
-
 //  dont miss the arrow key events next and previous on arab version in quiz play
 
-if a user kicked from the group but ther session is active
-
-
-
+// the end session tbn in the group chat should removed after ending
 
 
 

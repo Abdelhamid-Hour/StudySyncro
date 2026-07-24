@@ -1,0 +1,1308 @@
+=== PHASE 2: DEDUPLICATION REPORT ===
+
+--- ENGLISH DUPLICATES (147 repeated values) ---
+Value: "Questions"
+  - common:skeletons.quizzes.questions
+  - common:skeletons.quiz_editor.questions
+  - common:quiz_card.questions
+  - group-chat:info.questions
+  - quiz-edit:questions_heading
+  - quizzes:questions_label
+  - quizzes:editor.questions
+
+Value: "Recent"
+  - common:shared_chat.emojis.categories.recent
+  - group-chat:emojis.categories.recent
+  - home:recent.time.recent
+  - notifications:categories.recent
+  - notifications:recent
+
+Value: "Available Groups"
+  - common:tabs.available_groups
+  - common:skeletons.groups.available_groups
+  - common:titles.available_groups
+  - common:groups_tabs.available_groups
+
+Value: "Group Name"
+  - common:skeletons.quizzes.group_name
+  - common:quiz_card.group_name
+  - group-chat:info.group_name
+  - groups:forms.group_name_placeholder
+
+Value: "Subject"
+  - common:skeletons.quizzes.subject
+  - common:quiz_card.subject
+  - group-chat:info.subject
+  - groups:forms.subject_placeholder
+
+Value: "Remove"
+  - common:modals.remove
+  - group-chat:modals.remove_group_confirm
+  - groups:modals.remove_group_confirm
+  - quizzes:remove
+
+Value: "Member"
+  - common:filters.member
+  - common:shared_groups.badges.member
+  - group-chat:badges.member
+  - groups:badges.member
+
+Value: "Host"
+  - common:shared_groups.badges.host
+  - group-chat:badges.host
+  - groups:badges.host
+  - notifications:styling_terms.host_role
+
+Value: "Tasks"
+  - group-chat:modals.session_tasks_step
+  - home:tabs.tasks
+  - home:tasks
+  - home:session_card.tasks
+
+Value: "Remove Quiz"
+  - group-chat:modals.remove_quiz_title
+  - group-chat:modals.remove_quiz_confirm
+  - groups:modals.remove_quiz_title
+  - groups:modals.remove_quiz_confirm
+
+Value: "My Groups"
+  - common:tabs.my_groups
+  - common:skeletons.groups.my_groups
+  - common:groups_tabs.my_groups
+
+Value: "My Quizzes"
+  - common:tabs.my_quizzes
+  - common:skeletons.quizzes.my_quizzes
+  - common:quizzes_tabs.my_quizzes
+
+Value: "Passed"
+  - common:tabs.passed
+  - common:skeletons.quizzes.passed
+  - common:quizzes_tabs.passed
+
+Value: "Quiz Title"
+  - common:skeletons.quizzes.quiz_title
+  - common:quiz_card.quiz_title
+  - group-chat:info.quiz_title
+
+Value: "Session Name"
+  - common:skeletons.quizzes.session_name
+  - common:quiz_card.session_name
+  - group-chat:info.session_name
+
+Value: "Submitted At"
+  - common:skeletons.quizzes.submitted_at
+  - common:quiz_card.submitted_at
+  - group-chat:info.submitted_at
+
+Value: "Modify Profile"
+  - common:skeletons.settings.modify_btn
+  - settings:profile.modify_btn
+  - settings:buttons.modify_profile
+
+Value: "Quiz Editor"
+  - common:skeletons.quiz_editor.quiz_editor
+  - common:titles.quiz_editor
+  - common:quizzes_tabs.quiz_editor
+
+Value: "Question {num}"
+  - common:skeletons.quiz_editor.question_num
+  - common:shared_quizzes.question_num
+  - quizzes:question_num
+
+Value: "{count} Choices"
+  - common:skeletons.quiz_editor.choices_count
+  - common:shared_quizzes.choices_count
+  - quizzes:choices_count
+
+Value: "Subject:"
+  - common:skeletons.quiz_editor.subject_label
+  - quiz-edit:subject_label
+  - quizzes:editor.subject_label
+
+Value: "Shared In:"
+  - common:skeletons.quiz_editor.shared_in_label
+  - quiz-edit:shared_in_label
+  - quizzes:editor.shared_in_label
+
+Value: "Choices"
+  - common:skeletons.quiz_editor.choices_title
+  - quiz-edit:choices_heading
+  - quizzes:editor.choices_title
+
+Value: "Add Choice"
+  - common:skeletons.quiz_editor.add_choice
+  - quiz-edit:add_choice
+  - quizzes:editor.add_choice
+
+Value: "Correct Answer"
+  - common:skeletons.quiz_editor.correct_answer_title
+  - quiz-edit:correct_answer_heading
+  - quizzes:editor.correct_answer_title
+
+Value: "Next"
+  - common:skeletons.quiz_play.next
+  - group-chat:buttons.next
+  - quizzes:play.next
+
+Value: "Leave"
+  - common:modals.leave
+  - group-chat:modals.leave_group_confirm
+  - groups:modals.leave_group_confirm
+
+Value: "Quizzes"
+  - common:titles.quizzes
+  - group-chat:menu.quizzes
+  - group-chat:sidebar_titles.quizzes
+
+Value: "Leave Group"
+  - group-chat:menu.leave_group
+  - group-chat:modals.leave_group_title
+  - groups:modals.leave_group_title
+
+Value: "No Quizzes Found"
+  - group-chat:skeletons.no_quizzes_found_title
+  - groups:skeletons.no_quizzes_found_title
+  - quizzes:skeletons.no_quizzes_found_title
+
+Value: "Kick"
+  - group-chat:modals.kick_member_confirm
+  - group-chat:buttons.kick
+  - groups:modals.kick_member_confirm
+
+Value: "Create"
+  - groups:buttons.create
+  - quizzes:create
+  - shared:header.create
+
+Value: "Create Group"
+  - common:buttons.create_group
+  - common:skeletons.groups.create_group
+
+Value: "Active Sessions"
+  - common:skeletons.home.active_sessions_heading
+  - home:inactive.active_sessions_heading
+
+Value: "Recent Messages"
+  - common:skeletons.home.recent_messages_heading
+  - home:inactive.recent_messages_heading
+
+Value: "Ready to start learning together?"
+  - common:skeletons.home.ready_heading
+  - home:inactive.ready_heading
+
+Value: "Join a study session to connect with peers, participate in discussions, and enhance your learning experience. StudyHype makes collaborative learning easy and effective!"
+  - common:skeletons.home.ready_desc
+  - home:inactive.ready_desc
+
+Value: "Latest conversations from your study groups"
+  - common:skeletons.home.recent_messages_sub
+  - home:inactive.recent_messages_sub
+
+Value: "Ongoing study sessions you can join now"
+  - common:skeletons.home.active_sessions_sub
+  - home:inactive.active_sessions_sub
+
+Value: "Search by session or group name"
+  - common:skeletons.home.search_placeholder
+  - home:inactive.search_placeholder
+
+Value: "Score"
+  - common:skeletons.quizzes.score
+  - common:quiz_card.score
+
+Value: "Shared in"
+  - common:skeletons.quizzes.shared_in
+  - common:quiz_card.shared_in
+
+Value: "My Account"
+  - common:skeletons.settings.my_account
+  - settings:sidebar.my_account
+
+Value: "Personal Info"
+  - common:skeletons.settings.tabs.profile
+  - settings:sidebar.tabs.profile
+
+Value: "Email Address"
+  - common:skeletons.settings.tabs.email
+  - settings:sidebar.tabs.email
+
+Value: "Password"
+  - common:skeletons.settings.tabs.password
+  - settings:sidebar.tabs.password
+
+Value: "Close Account"
+  - common:skeletons.settings.tabs.delete
+  - settings:sidebar.tabs.delete
+
+Value: "Personal Details"
+  - common:skeletons.settings.profile_title
+  - settings:profile.title
+
+Value: "Keep your information up to date."
+  - common:skeletons.settings.profile_subtitle
+  - settings:profile.subtitle
+
+Value: "Upload a JPG, PNG, or GIF (Max 1MB)."
+  - common:skeletons.settings.profile_caption
+  - settings:profile.caption
+
+Value: "Full Name"
+  - common:skeletons.settings.full_name
+  - settings:profile.full_name
+
+Value: "User ID"
+  - common:skeletons.settings.uid
+  - settings:profile.uid
+
+Value: "Questions List"
+  - common:skeletons.quiz_editor.questions_list
+  - common:quizzes_tabs.questions_list
+
+Value: "Time Left :"
+  - common:skeletons.quiz_play.time_left
+  - quizzes:play.time_left
+
+Value: "Skip"
+  - common:skeletons.quiz_play.skip
+  - quizzes:play.skip
+
+Value: "Select the correct Answer (Or press 1-6 / A-F)"
+  - common:skeletons.quiz_play.select_answer
+  - quizzes:play.select_answer
+
+Value: "Previous"
+  - common:skeletons.quiz_play.prev
+  - quizzes:play.prev
+
+Value: "If this email is registered, you will receive a password reset link."
+  - common:alerts.password_reset_sent
+  - login:messages.reset_link_sent
+
+Value: "Password reset successful"
+  - common:alerts.password_reset_success
+  - reset_password:messages.reset_successful
+
+Value: "Try resetting your password again"
+  - common:alerts.try_resetting_again
+  - reset_password:errors.expired_title
+
+Value: "Your request to reset your password has expired or the link has already been used"
+  - common:alerts.reset_link_expired
+  - reset_password:errors.expired_message
+
+Value: "Invalid email or password. Please try again."
+  - common:auth_errors.INVALID_LOGIN_CREDENTIALS
+  - shared:auth_errors.INVALID_LOGIN_CREDENTIALS
+
+Value: "It looks like you closed the popup before completing the action. Please try again."
+  - common:auth_errors.CANCELLED_POPUP_REQUEST
+  - shared:auth_errors.CANCELLED_POPUP_REQUEST
+
+Value: "The email address you entered is already associated with an account. Try logging in or use a different email."
+  - common:auth_errors.EMAIL_ALREADY_IN_USE
+  - shared:auth_errors.EMAIL_ALREADY_IN_USE
+
+Value: "Oops! The password you entered is incorrect. Please double-check and try again."
+  - common:auth_errors.WRONG_PASSWORD
+  - shared:auth_errors.WRONG_PASSWORD
+
+Value: "It seems like the popup was blocked by your browser. Please allow popups and try again."
+  - common:auth_errors.POPUP_BLOCKED
+  - shared:auth_errors.POPUP_BLOCKED
+
+Value: "It looks like you closed the popup before completing the action. Please open it again and try."
+  - common:auth_errors.POPUP_CLOSED_BY_USER
+  - shared:auth_errors.POPUP_CLOSED_BY_USER
+
+Value: "It seems you canceled the redirect action. Please try again to complete the process."
+  - common:auth_errors.REDIRECT_CANCELLED_BY_USER
+  - shared:auth_errors.REDIRECT_CANCELLED_BY_USER
+
+Value: "We couldn't find an account with that email address. Please check your email or create a new account."
+  - common:auth_errors.USER_NOT_FOUND
+  - shared:auth_errors.USER_NOT_FOUND
+
+Value: "Too many requests have been made from this device. Please wait a while before trying again."
+  - common:auth_errors.TOO_MANY_REQUESTS
+  - shared:auth_errors.TOO_MANY_REQUESTS
+
+Value: "Cancel"
+  - common:modals.cancel
+  - settings:buttons.cancel
+
+Value: "Close"
+  - common:modals.close
+  - home:recent.close
+
+Value: "Switch to English"
+  - common:actions.switch_to_en
+  - shared:actions.switch_to_en
+
+Value: "Switch to Arabic"
+  - common:actions.switch_to_ar
+  - shared:actions.switch_to_ar
+
+Value: "Group Chat"
+  - common:group_chat
+  - common:titles.group_chat
+
+Value: "Groups"
+  - common:titles.groups
+  - notifications:categories.Groups
+
+Value: "Visibility"
+  - common:filters.visibility
+  - group-chat:info.visibility
+
+Value: "Level"
+  - common:filters.level
+  - group-chat:info.level
+
+Value: "Published"
+  - common:filters.published
+  - quiz-edit:badges.published
+
+Value: "Draft"
+  - common:filters.draft
+  - quiz-edit:badges.draft
+
+Value: "People"
+  - common:shared_chat.emojis.categories.people
+  - group-chat:emojis.categories.people
+
+Value: "Animals & Nature"
+  - common:shared_chat.emojis.categories.animals_nature
+  - group-chat:emojis.categories.animals_nature
+
+Value: "Food & Drink"
+  - common:shared_chat.emojis.categories.food_drink
+  - group-chat:emojis.categories.food_drink
+
+Value: "Activity"
+  - common:shared_chat.emojis.categories.activity
+  - group-chat:emojis.categories.activity
+
+Value: "Objects"
+  - common:shared_chat.emojis.categories.objects
+  - group-chat:emojis.categories.objects
+
+Value: "Symbols"
+  - common:shared_chat.emojis.categories.symbols
+  - group-chat:emojis.categories.symbols
+
+Value: "Travel & Places"
+  - common:shared_chat.emojis.categories.travel_places
+  - group-chat:emojis.categories.travel_places
+
+Value: "Flags"
+  - common:shared_chat.emojis.categories.flags
+  - group-chat:emojis.categories.flags
+
+Value: "Join Now"
+  - common:shared_groups.actions.join_now
+  - groups:actions.join_now
+
+Value: "Request to Join"
+  - common:shared_groups.actions.request_to_join
+  - groups:actions.request_to_join
+
+Value: "Answered"
+  - common:shared_quizzes.answered
+  - quizzes:answered
+
+Value: "{count} Questions"
+  - common:shared_quizzes.questions_count
+  - quizzes:questions_count
+
+Value: "Untitled Quiz"
+  - common:shared_quizzes.quiz_title_placeholder
+  - quizzes:untitled_quiz
+
+Value: "Correct"
+  - common:shared_quizzes.status.correct
+  - quizzes:status.correct
+
+Value: "Incorrect"
+  - common:shared_quizzes.status.incorrect
+  - quizzes:status.incorrect
+
+Value: "Skipped"
+  - common:shared_quizzes.status.skipped
+  - quizzes:status.skipped
+
+Value: "Join Session"
+  - group-chat:join_session
+  - home:session_card.join_session
+
+Value: "Invite Users"
+  - group-chat:menu.invite_users
+  - group-chat:modals.invite_users_title
+
+Value: "Members"
+  - group-chat:menu.members
+  - group-chat:sidebar_titles.members
+
+Value: "Show Details"
+  - group-chat:tooltips.show_details
+  - home:task.show_details
+
+Value: "Left group successfully"
+  - group-chat:alerts.left_group_success
+  - groups:alerts.left_group_success
+
+Value: "Session created successfully"
+  - group-chat:alerts.session_created_success
+  - groups:alerts.session_created_success
+
+Value: "Member kicked successfully"
+  - group-chat:alerts.member_kicked_success
+  - groups:alerts.member_kicked_success
+
+Value: "Role transferred successfully"
+  - group-chat:alerts.role_transferred_success
+  - groups:alerts.role_transferred_success
+
+Value: "Group removed successfully"
+  - group-chat:alerts.group_removed_success
+  - groups:alerts.group_removed_success
+
+Value: "Group info updated successfully"
+  - group-chat:alerts.group_info_updated
+  - groups:alerts.group_info_updated
+
+Value: "Please select at least one user to add."
+  - group-chat:alerts.select_user_to_add
+  - groups:alerts.select_user_to_add
+
+Value: "No Quizzes Available"
+  - group-chat:skeletons.no_quizzes_avail_title
+  - groups:skeletons.no_quizzes_avail_title
+
+Value: "No quizzes have been created or shared with this group yet."
+  - group-chat:skeletons.no_quizzes_avail_desc
+  - groups:skeletons.no_quizzes_shared_desc
+
+Value: "No quizzes match your search or filter criteria."
+  - group-chat:skeletons.no_quizzes_found_desc
+  - groups:skeletons.no_quizzes_found_desc
+
+Value: "No Join Requests"
+  - group-chat:skeletons.no_join_req_title
+  - groups:skeletons.no_join_req_title
+
+Value: "There are no pending join requests for this group."
+  - group-chat:skeletons.no_join_req_desc
+  - groups:skeletons.no_join_req_desc
+
+Value: "No Requests Found"
+  - group-chat:skeletons.no_requests_found_title
+  - groups:skeletons.no_requests_found_title
+
+Value: "No join requests match your search or filter criteria."
+  - group-chat:skeletons.no_requests_found_desc
+  - groups:skeletons.no_requests_found_desc
+
+Value: "Are you sure you want to leave this group?"
+  - group-chat:modals.leave_group_desc
+  - groups:modals.leave_group_desc
+
+Value: "Are you sure you want to remove the quiz?"
+  - group-chat:modals.remove_quiz_desc
+  - groups:modals.remove_quiz_desc
+
+Value: "Kick Member"
+  - group-chat:modals.kick_member_title
+  - groups:modals.kick_member_title
+
+Value: "Are you sure you want to kick this member?"
+  - group-chat:modals.kick_member_desc
+  - groups:modals.kick_member_desc
+
+Value: "Move Admin Role"
+  - group-chat:modals.move_admin_title
+  - groups:modals.move_admin_title
+
+Value: "Are you sure you want to move this member to admin?"
+  - group-chat:modals.move_admin_desc
+  - groups:modals.move_admin_desc
+
+Value: "Move"
+  - group-chat:modals.move_admin_confirm
+  - groups:modals.move_admin_confirm
+
+Value: "Remove group"
+  - group-chat:modals.remove_group_title
+  - groups:modals.remove_group_title
+
+Value: "Are you sure you want to remove this group?"
+  - group-chat:modals.remove_group_desc
+  - groups:modals.remove_group_desc
+
+Value: "Title"
+  - group-chat:modals.task_title_placeholder
+  - quizzes:title_placeholder
+
+Value: "Finish"
+  - group-chat:buttons.finish
+  - quizzes:play.finish
+
+Value: "Reject"
+  - group-chat:buttons.reject
+  - notifications:actions.reject
+
+Value: "Accept"
+  - group-chat:buttons.accept
+  - notifications:actions.accept
+
+Value: "View Result"
+  - group-chat:buttons.view_result
+  - quizzes:view_result
+
+Value: "Retake"
+  - group-chat:buttons.retake
+  - quizzes:retake
+
+Value: "Max Members"
+  - group-chat:info.max_members
+  - groups:forms.max_members_placeholder
+
+Value: "Title:"
+  - group-chat:info.title_label
+  - home:task.title_label
+
+Value: "Details:"
+  - group-chat:info.details_label
+  - home:task.details_label
+
+Value: "Edit"
+  - group-chat:actions.edit
+  - quizzes:edit
+
+Value: "Quiz"
+  - group-chat:badges.quiz
+  - home:task.quiz
+
+Value: "Break"
+  - group-chat:badges.break
+  - home:task.break
+
+Value: "Join"
+  - groups:modals.join_group_confirm
+  - notifications:actions.join
+
+Value: "Pending"
+  - groups:actions.pending
+  - home:badge.pending
+
+Value: "Subject is required."
+  - groups:errors.subject_required
+  - quizzes:validation.subject_required
+
+Value: "No Active Sessions Found"
+  - home:skeletons.no_active_sessions_found_title
+  - home:skeletons.no_active_sessions_filtered_title
+
+Value: "We couldn't find any active sessions matching your search query."
+  - home:skeletons.no_active_sessions_found_desc
+  - home:skeletons.no_active_sessions_filtered_desc
+
+Value: "{count}m ago"
+  - home:recent.time.ago_minutes.one
+  - home:recent.time.ago_minutes.other
+
+Value: "{count}h ago"
+  - home:recent.time.ago_hours.one
+  - home:recent.time.ago_hours.other
+
+Value: "{count}d ago"
+  - home:recent.time.ago_days.one
+  - home:recent.time.ago_days.other
+
+Value: "The password must be between {min} and {max} characters"
+  - login:errors.password_length
+  - reset_password:errors.password_length
+
+Value: "Passwords do not match"
+  - login:errors.passwords_do_not_match
+  - reset_password:errors.passwords_do_not_match
+
+Value: "Request Accepted"
+  - notifications:messages.join_accepted.title
+  - notifications:messages.join_request_accepted.title
+
+Value: "Add at least 1 question to publish"
+  - quiz-edit:badges.draft_tooltip
+  - quizzes:tooltips.add_at_least_1_question
+
+--- ARABIC DUPLICATES (157 repeated values) ---
+Value: "الأسئلة"
+  - common:skeletons.quizzes.questions
+  - common:skeletons.quiz_editor.questions
+  - common:quiz_card.questions
+  - group-chat:info.questions
+  - quiz-edit:questions_heading
+  - quizzes:editor.questions
+
+Value: "المجموعات المتاحة"
+  - common:tabs.available_groups
+  - common:skeletons.groups.available_groups
+  - common:titles.available_groups
+  - common:groups_tabs.available_groups
+
+Value: "عنوان الاختبار"
+  - common:skeletons.quizzes.quiz_title
+  - common:quiz_card.quiz_title
+  - group-chat:info.quiz_title
+  - quizzes:quiz_title_placeholder
+
+Value: "اسم المجموعة"
+  - common:skeletons.quizzes.group_name
+  - common:quiz_card.group_name
+  - group-chat:info.group_name
+  - groups:forms.group_name_placeholder
+
+Value: "المادة"
+  - common:skeletons.quizzes.subject
+  - common:quiz_card.subject
+  - group-chat:info.subject
+  - groups:forms.subject_placeholder
+
+Value: "عضو"
+  - common:filters.member
+  - common:shared_groups.badges.member
+  - group-chat:badges.member
+  - groups:badges.member
+
+Value: "المهام"
+  - group-chat:modals.session_tasks_step
+  - home:tabs.tasks
+  - home:tasks
+  - home:session_card.tasks
+
+Value: "إزالة الاختبار"
+  - group-chat:modals.remove_quiz_title
+  - group-chat:modals.remove_quiz_confirm
+  - groups:modals.remove_quiz_title
+  - groups:modals.remove_quiz_confirm
+
+Value: "مجموعاتي"
+  - common:tabs.my_groups
+  - common:skeletons.groups.my_groups
+  - common:groups_tabs.my_groups
+
+Value: "اختباراتي"
+  - common:tabs.my_quizzes
+  - common:skeletons.quizzes.my_quizzes
+  - common:quizzes_tabs.my_quizzes
+
+Value: "المجتازة"
+  - common:tabs.passed
+  - common:skeletons.quizzes.passed
+  - common:quizzes_tabs.passed
+
+Value: "اسم الجلسة"
+  - common:skeletons.quizzes.session_name
+  - common:quiz_card.session_name
+  - group-chat:info.session_name
+
+Value: "النتيجة"
+  - common:skeletons.quizzes.score
+  - common:quiz_card.score
+  - home:quiz.view_result
+
+Value: "تعديل الملف الشخصي"
+  - common:skeletons.settings.modify_btn
+  - settings:profile.modify_btn
+  - settings:buttons.modify_profile
+
+Value: "السؤال {num}"
+  - common:skeletons.quiz_editor.question_num
+  - common:shared_quizzes.question_num
+  - quizzes:question_num
+
+Value: "{count} خيارات"
+  - common:skeletons.quiz_editor.choices_count
+  - common:shared_quizzes.choices_count
+  - quizzes:choices_count
+
+Value: "المادة:"
+  - common:skeletons.quiz_editor.subject_label
+  - quiz-edit:subject_label
+  - quizzes:editor.subject_label
+
+Value: "مشارك في:"
+  - common:skeletons.quiz_editor.shared_in_label
+  - quiz-edit:shared_in_label
+  - quizzes:editor.shared_in_label
+
+Value: "الخيارات"
+  - common:skeletons.quiz_editor.choices_title
+  - quiz-edit:choices_heading
+  - quizzes:editor.choices_title
+
+Value: "إضافة خيار"
+  - common:skeletons.quiz_editor.add_choice
+  - quiz-edit:add_choice
+  - quizzes:editor.add_choice
+
+Value: "الإجابة الصحيحة"
+  - common:skeletons.quiz_editor.correct_answer_title
+  - quiz-edit:correct_answer_heading
+  - quizzes:editor.correct_answer_title
+
+Value: "التالي"
+  - common:skeletons.quiz_play.next
+  - group-chat:buttons.next
+  - quizzes:play.next
+
+Value: "حذف"
+  - common:modals.delete
+  - group-chat:modals.remove_group_confirm
+  - groups:modals.remove_group_confirm
+
+Value: "مغادرة"
+  - common:modals.leave
+  - group-chat:modals.leave_group_confirm
+  - groups:modals.leave_group_confirm
+
+Value: "الاختبارات"
+  - common:titles.quizzes
+  - group-chat:menu.quizzes
+  - group-chat:sidebar_titles.quizzes
+
+Value: "حذف المجموعة"
+  - group-chat:menu.remove_group
+  - group-chat:modals.remove_group_title
+  - groups:modals.remove_group_title
+
+Value: "مغادرة المجموعة"
+  - group-chat:menu.leave_group
+  - group-chat:modals.leave_group_title
+  - groups:modals.leave_group_title
+
+Value: "عرض التفاصيل"
+  - group-chat:tooltips.show_details
+  - home:task.show_details
+  - home:session_card.view_details
+
+Value: "لم يتم العثور على اختبارات"
+  - group-chat:skeletons.no_quizzes_found_title
+  - groups:skeletons.no_quizzes_found_title
+  - quizzes:skeletons.no_quizzes_found_title
+
+Value: "طرد"
+  - group-chat:modals.kick_member_confirm
+  - group-chat:buttons.kick
+  - groups:modals.kick_member_confirm
+
+Value: "نقل صلاحية المضيف"
+  - group-chat:modals.move_admin_title
+  - group-chat:buttons.transfer_admin
+  - groups:modals.move_admin_title
+
+Value: "الأحدث"
+  - home:recent.time.recent
+  - notifications:categories.recent
+  - notifications:recent
+
+Value: "إنشاء مجموعة"
+  - common:buttons.create_group
+  - common:skeletons.groups.create_group
+
+Value: "الجلسات النشطة"
+  - common:skeletons.home.active_sessions_heading
+  - home:inactive.active_sessions_heading
+
+Value: "الرسائل الأخيرة"
+  - common:skeletons.home.recent_messages_heading
+  - home:inactive.recent_messages_heading
+
+Value: "هل أنت مستعد لبدء التعلم معاً؟"
+  - common:skeletons.home.ready_heading
+  - home:inactive.ready_heading
+
+Value: "انضم إلى جلسة دراسية للتواصل مع زملائك، والمشاركة في المناقشات، وتعزيز تجربتك التعليمية. ستادي هايب يجعل التعلم التعاوني سهلاً وفعالاً!"
+  - common:skeletons.home.ready_desc
+  - home:inactive.ready_desc
+
+Value: "أحدث المحادثات من مجموعاتك الدراسية"
+  - common:skeletons.home.recent_messages_sub
+  - home:inactive.recent_messages_sub
+
+Value: "الجلسات الدراسية الجارية التي يمكنك الانضمام إليها الآن"
+  - common:skeletons.home.active_sessions_sub
+  - home:inactive.active_sessions_sub
+
+Value: "البحث باسم الجلسة أو المجموعة"
+  - common:skeletons.home.search_placeholder
+  - home:inactive.search_placeholder
+
+Value: "تاريخ التقديم"
+  - common:skeletons.quizzes.submitted_at
+  - common:quiz_card.submitted_at
+
+Value: "مشارك في"
+  - common:skeletons.quizzes.shared_in
+  - common:quiz_card.shared_in
+
+Value: "حسابي"
+  - common:skeletons.settings.my_account
+  - settings:sidebar.my_account
+
+Value: "المعلومات الشخصية"
+  - common:skeletons.settings.tabs.profile
+  - settings:sidebar.tabs.profile
+
+Value: "البريد الإلكتروني"
+  - common:skeletons.settings.tabs.email
+  - settings:sidebar.tabs.email
+
+Value: "كلمة المرور"
+  - common:skeletons.settings.tabs.password
+  - settings:sidebar.tabs.password
+
+Value: "إغلاق الحساب"
+  - common:skeletons.settings.tabs.delete
+  - settings:sidebar.tabs.delete
+
+Value: "التفاصيل الشخصية"
+  - common:skeletons.settings.profile_title
+  - settings:profile.title
+
+Value: "حافظ على تحديث معلوماتك."
+  - common:skeletons.settings.profile_subtitle
+  - settings:profile.subtitle
+
+Value: "قم بتحميل صورة بصيغة JPG أو PNG أو GIF (الحد الأقصى 1 ميجابايت)."
+  - common:skeletons.settings.profile_caption
+  - settings:profile.caption
+
+Value: "الاسم الكامل"
+  - common:skeletons.settings.full_name
+  - settings:profile.full_name
+
+Value: "معرف المستخدم"
+  - common:skeletons.settings.uid
+  - settings:profile.uid
+
+Value: "محرر الاختبار"
+  - common:skeletons.quiz_editor.quiz_editor
+  - common:quizzes_tabs.quiz_editor
+
+Value: "قائمة الأسئلة"
+  - common:skeletons.quiz_editor.questions_list
+  - common:quizzes_tabs.questions_list
+
+Value: "الوقت المتبقي :"
+  - common:skeletons.quiz_play.time_left
+  - quizzes:play.time_left
+
+Value: "تخطي"
+  - common:skeletons.quiz_play.skip
+  - quizzes:play.skip
+
+Value: "اختر الإجابة الصحيحة (أو اضغط 1-6 / A-F)"
+  - common:skeletons.quiz_play.select_answer
+  - quizzes:play.select_answer
+
+Value: "السابق"
+  - common:skeletons.quiz_play.prev
+  - quizzes:play.prev
+
+Value: "تمت إعادة تعيين كلمة المرور بنجاح"
+  - common:alerts.password_reset_success
+  - reset_password:messages.reset_successful
+
+Value: "حاول إعادة تعيين كلمة المرور مرة أخرى"
+  - common:alerts.try_resetting_again
+  - reset_password:errors.expired_title
+
+Value: "البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى."
+  - common:auth_errors.INVALID_LOGIN_CREDENTIALS
+  - shared:auth_errors.INVALID_LOGIN_CREDENTIALS
+
+Value: "يبدو أنك أغلقت النافذة المنبثقة قبل إتمام العملية. يرجى المحاولة مرة أخرى."
+  - common:auth_errors.CANCELLED_POPUP_REQUEST
+  - shared:auth_errors.CANCELLED_POPUP_REQUEST
+
+Value: "البريد الإلكتروني الذي أدخلته مرتبط بحساب موجود بالفعل. جرب تسجيل الدخول أو استخدم بريداً آخر."
+  - common:auth_errors.EMAIL_ALREADY_IN_USE
+  - shared:auth_errors.EMAIL_ALREADY_IN_USE
+
+Value: "عذراً! كلمة المرور التي أدخلتها غير صحيحة. يرجى التحقق منها والمحاولة مرة أخرى."
+  - common:auth_errors.WRONG_PASSWORD
+  - shared:auth_errors.WRONG_PASSWORD
+
+Value: "يبدو أن متصفحك قام بحظر النافذة المنبثقة. يرجى السماح بالنوافذ المنبثقة والمحاولة مرة أخرى."
+  - common:auth_errors.POPUP_BLOCKED
+  - shared:auth_errors.POPUP_BLOCKED
+
+Value: "يبدو أنك أغلقت النافذة المنبثقة قبل إتمام العملية. يرجى فتحها مرة أخرى والمحاولة."
+  - common:auth_errors.POPUP_CLOSED_BY_USER
+  - shared:auth_errors.POPUP_CLOSED_BY_USER
+
+Value: "يبدو أنك ألغيت عملية التوجيه. يرجى المحاولة مرة أخرى لإتمام العملية."
+  - common:auth_errors.REDIRECT_CANCELLED_BY_USER
+  - shared:auth_errors.REDIRECT_CANCELLED_BY_USER
+
+Value: "لم يتم العثور على حساب مرتبط بهذا البريد الإلكتروني. يرجى التحقق من بريدك أو إنشاء حساب جديد."
+  - common:auth_errors.USER_NOT_FOUND
+  - shared:auth_errors.USER_NOT_FOUND
+
+Value: "تم تقديم طلبات كثيرة جداً من هذا الجهاز. يرجى الانتظار قليلاً قبل المحاولة مرة أخرى."
+  - common:auth_errors.TOO_MANY_REQUESTS
+  - shared:auth_errors.TOO_MANY_REQUESTS
+
+Value: "انتهت الجلسة الدراسية"
+  - common:native_phrases.session has ended
+  - notifications:messages.session_ended.title
+
+Value: "إلغاء"
+  - common:modals.cancel
+  - settings:buttons.cancel
+
+Value: "إزالة"
+  - common:modals.remove
+  - quizzes:remove
+
+Value: "إغلاق"
+  - common:modals.close
+  - home:recent.close
+
+Value: "التحويل إلى الإنجليزية"
+  - common:actions.switch_to_en
+  - shared:actions.switch_to_en
+
+Value: "التحويل إلى العربية"
+  - common:actions.switch_to_ar
+  - shared:actions.switch_to_ar
+
+Value: "عام"
+  - common:forms.visibility.Public
+  - notifications:categories.General
+
+Value: "متوسط"
+  - common:forms.levels.Intermediate
+  - quizzes:play.grades.average
+
+Value: "دردشة المجموعة"
+  - common:group_chat
+  - common:titles.group_chat
+
+Value: "المجموعات"
+  - common:titles.groups
+  - notifications:categories.Groups
+
+Value: "المستوى"
+  - common:filters.level
+  - group-chat:info.level
+
+Value: "منشور"
+  - common:filters.published
+  - quiz-edit:badges.published
+
+Value: "مسودة"
+  - common:filters.draft
+  - quiz-edit:badges.draft
+
+Value: "الأخيرة"
+  - common:shared_chat.emojis.categories.recent
+  - group-chat:emojis.categories.recent
+
+Value: "الأشخاص"
+  - common:shared_chat.emojis.categories.people
+  - group-chat:emojis.categories.people
+
+Value: "الحيوانات والطبيعة"
+  - common:shared_chat.emojis.categories.animals_nature
+  - group-chat:emojis.categories.animals_nature
+
+Value: "الطعام والشراب"
+  - common:shared_chat.emojis.categories.food_drink
+  - group-chat:emojis.categories.food_drink
+
+Value: "الأنشطة"
+  - common:shared_chat.emojis.categories.activity
+  - group-chat:emojis.categories.activity
+
+Value: "الأشياء"
+  - common:shared_chat.emojis.categories.objects
+  - group-chat:emojis.categories.objects
+
+Value: "الرموز"
+  - common:shared_chat.emojis.categories.symbols
+  - group-chat:emojis.categories.symbols
+
+Value: "السفر والأماكن"
+  - common:shared_chat.emojis.categories.travel_places
+  - group-chat:emojis.categories.travel_places
+
+Value: "الأعلام"
+  - common:shared_chat.emojis.categories.flags
+  - group-chat:emojis.categories.flags
+
+Value: "رسائل غير مقروءة"
+  - common:shared_chat.unread_messages
+  - group-chat:unread_messages
+
+Value: "انضم الآن"
+  - common:shared_groups.actions.join_now
+  - groups:actions.join_now
+
+Value: "طلب انضمام"
+  - common:shared_groups.actions.request_to_join
+  - notifications:categories.Join Request
+
+Value: "المضيف"
+  - common:shared_groups.badges.host
+  - notifications:styling_terms.host_role
+
+Value: "لا توجد مجموعات متاحة"
+  - common:shared_groups.skeletons.no_groups_available_title
+  - groups:skeletons.no_groups_available_title
+
+Value: "لم يتم العثور على مجموعات"
+  - common:shared_groups.skeletons.no_groups_found_title
+  - groups:skeletons.no_groups_found_title
+
+Value: "{count} أسئلة"
+  - common:shared_quizzes.questions_count
+  - quizzes:questions_count
+
+Value: "اختبار بدون عنوان"
+  - common:shared_quizzes.quiz_title_placeholder
+  - quizzes:untitled_quiz
+
+Value: "صحيح"
+  - common:shared_quizzes.status.correct
+  - quizzes:status.correct
+
+Value: "خاطئ"
+  - common:shared_quizzes.status.incorrect
+  - quizzes:status.incorrect
+
+Value: "مرحباً"
+  - common:greetings.hello
+  - common:greetings.hey
+
+Value: "عرض تفاصيل المجموعة"
+  - group-chat:show_info_tooltip
+  - group-chat:tooltips.show_group_info
+
+Value: "الانضمام للجلسة"
+  - group-chat:join_session
+  - home:session_card.join_session
+
+Value: "معلومات المجموعة"
+  - group-chat:menu.group_info
+  - group-chat:sidebar_titles.group_info
+
+Value: "معلومات الجلسة"
+  - group-chat:menu.session_info
+  - group-chat:sidebar_titles.session_info
+
+Value: "الأعضاء"
+  - group-chat:menu.members
+  - group-chat:sidebar_titles.members
+
+Value: "تمت مغادرة المجموعة بنجاح"
+  - group-chat:alerts.left_group_success
+  - groups:alerts.left_group_success
+
+Value: "تم طرد العضو بنجاح"
+  - group-chat:alerts.member_kicked_success
+  - groups:alerts.member_kicked_success
+
+Value: "تم نقل الصلاحيات بنجاح"
+  - group-chat:alerts.role_transferred_success
+  - groups:alerts.role_transferred_success
+
+Value: "تم حذف المجموعة بنجاح"
+  - group-chat:alerts.group_removed_success
+  - groups:alerts.group_removed_success
+
+Value: "تم تحديث معلومات المجموعة بنجاح"
+  - group-chat:alerts.group_info_updated
+  - groups:alerts.group_info_updated
+
+Value: "اكتب رسالة..."
+  - group-chat:type_message_placeholder
+  - home:recent.type_message_placeholder
+
+Value: "البحث عن مستخدمين"
+  - group-chat:skeletons.search_users_title
+  - groups:skeletons.search_users_title
+
+Value: "لم يتم العثور على مستخدمين"
+  - group-chat:skeletons.no_users_found_title
+  - groups:skeletons.no_users_found_title
+
+Value: "لا يوجد مستخدمون يطابقون استعلام البحث الخاص بك."
+  - group-chat:skeletons.no_users_found_desc
+  - groups:skeletons.no_users_found_desc
+
+Value: "لا توجد اختبارات متاحة"
+  - group-chat:skeletons.no_quizzes_avail_title
+  - groups:skeletons.no_quizzes_avail_title
+
+Value: "لم يتم إنشاء أو مشاركة أي اختبارات مع هذه المجموعة بعد."
+  - group-chat:skeletons.no_quizzes_avail_desc
+  - groups:skeletons.no_quizzes_shared_desc
+
+Value: "لا توجد اختبارات تطابق معايير البحث أو الفلترة."
+  - group-chat:skeletons.no_quizzes_found_desc
+  - groups:skeletons.no_quizzes_found_desc
+
+Value: "لا توجد طلبات انضمام"
+  - group-chat:skeletons.no_join_req_title
+  - groups:skeletons.no_join_req_title
+
+Value: "لا توجد طلبات انضمام معلقة لهذه المجموعة."
+  - group-chat:skeletons.no_join_req_desc
+  - groups:skeletons.no_join_req_desc
+
+Value: "لم يتم العثور على طلبات"
+  - group-chat:skeletons.no_requests_found_title
+  - groups:skeletons.no_requests_found_title
+
+Value: "لا توجد طلبات انضمام تطابق معايير البحث أو الفلترة."
+  - group-chat:skeletons.no_requests_found_desc
+  - groups:skeletons.no_requests_found_desc
+
+Value: "هل أنت متأكد أنك تريد مغادرة هذه المجموعة؟"
+  - group-chat:modals.leave_group_desc
+  - groups:modals.leave_group_desc
+
+Value: "هل أنت متأكد أنك تريد إزالة هذا الاختبار؟"
+  - group-chat:modals.remove_quiz_desc
+  - groups:modals.remove_quiz_desc
+
+Value: "طرد العضو"
+  - group-chat:modals.kick_member_title
+  - groups:modals.kick_member_title
+
+Value: "نقل"
+  - group-chat:modals.move_admin_confirm
+  - groups:modals.move_admin_confirm
+
+Value: "هل أنت متأكد أنك تريد حذف هذه المجموعة نهائياً؟"
+  - group-chat:modals.remove_group_desc
+  - groups:modals.remove_group_desc
+
+Value: "العنوان"
+  - group-chat:modals.task_title_placeholder
+  - quizzes:title_placeholder
+
+Value: "إنهاء"
+  - group-chat:buttons.finish
+  - quizzes:play.finish
+
+Value: "رفض"
+  - group-chat:buttons.reject
+  - notifications:actions.reject
+
+Value: "قبول"
+  - group-chat:buttons.accept
+  - notifications:actions.accept
+
+Value: "عرض النتيجة"
+  - group-chat:buttons.view_result
+  - quizzes:view_result
+
+Value: "الحد الأقصى للأعضاء"
+  - group-chat:info.max_members
+  - groups:forms.max_members_placeholder
+
+Value: "العنوان:"
+  - group-chat:info.title_label
+  - home:task.title_label
+
+Value: "التفاصيل:"
+  - group-chat:info.details_label
+  - home:task.details_label
+
+Value: "تعديل"
+  - group-chat:actions.edit
+  - quizzes:edit
+
+Value: "مضيف"
+  - group-chat:badges.host
+  - groups:badges.host
+
+Value: "اختبار"
+  - group-chat:badges.quiz
+  - home:task.quiz
+
+Value: "استراحة"
+  - group-chat:badges.break
+  - home:task.break
+
+Value: "انضمام"
+  - groups:modals.join_group_confirm
+  - notifications:actions.join
+
+Value: "قيد الانتظار"
+  - groups:actions.pending
+  - home:badge.pending
+
+Value: "إنشاء"
+  - groups:buttons.create
+  - quizzes:create
+
+Value: "المادة مطلوبة."
+  - groups:errors.subject_required
+  - quizzes:validation.subject_required
+
+Value: "لم يتم العثور على جلسات نشطة"
+  - home:skeletons.no_active_sessions_found_title
+  - home:skeletons.no_active_sessions_filtered_title
+
+Value: "لم نتمكن من العثور على أي جلسات نشطة تطابق استعلام البحث الخاص بك."
+  - home:skeletons.no_active_sessions_found_desc
+  - home:skeletons.no_active_sessions_filtered_desc
+
+Value: "إعادة الاختبار"
+  - home:quiz.retake_quiz
+  - quizzes:retake
+
+Value: "{count} رسالة جديدة"
+  - home:recent.new_messages.many
+  - home:recent.new_messages.other
+
+Value: "منذ {count} دقيقة"
+  - home:recent.time.ago_minutes.many
+  - home:recent.time.ago_minutes.other
+
+Value: "منذ {count} ساعة"
+  - home:recent.time.ago_hours.many
+  - home:recent.time.ago_hours.other
+
+Value: "يجب أن تتكون كلمة المرور من {min} إلى {max} حرفًا"
+  - login:errors.password_length
+  - reset_password:errors.password_length
+
+Value: "كلمتا المرور غير متطابقتين"
+  - login:errors.passwords_do_not_match
+  - reset_password:errors.passwords_do_not_match
+
+Value: "تم رفض الدعوة"
+  - notifications:messages.join_invite_rejected.title
+  - notifications:alerts.invitation_rejected
+
+Value: "تم قبول الطلب"
+  - notifications:messages.join_request_accepted.title
+  - notifications:alerts.demande_accepted
+
+Value: "تم رفض الطلب"
+  - notifications:messages.join_request_rejected.title
+  - notifications:alerts.demande_rejected
+
+Value: "تم رفض"
+  - notifications:styling_terms.rejected
+  - notifications:styling_terms.declined
+
+Value: "أضف سؤالاً واحداً على الأقل للنشر"
+  - quiz-edit:badges.draft_tooltip
+  - quizzes:tooltips.add_at_least_1_question
+

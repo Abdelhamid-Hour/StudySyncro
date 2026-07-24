@@ -2,7 +2,6 @@
   "inactive": {
     "ready_heading": "هل أنت مستعد لبدء التعلم معاً؟",
     "ready_desc": "انضم إلى جلسة دراسية للتواصل مع زملائك، والمشاركة في المناقشات، وتعزيز تجربتك التعليمية. ستادي هايب يجعل التعلم التعاوني سهلاً وفعالاً!",
-    "recent_messages_heading": "الرسائل الأخيرة",
     "recent_messages_sub": "أحدث المحادثات من مجموعاتك الدراسية",
     "unread_messages_count": {
       "zero": "لا توجد رسائل جديدة",
@@ -17,7 +16,6 @@
     "mark_as_read": "تحديد كمقروء",
     "empty_messages_heading": "لا توجد رسائل بعد",
     "empty_messages_desc": "لا توجد رسائل حديثة بعد. انضم أو أنشئ مجموعة دراسية للبدء في التعاون ومشاركة الرسائل!",
-    "active_sessions_heading": "الجلسات النشطة",
     "active_sessions_sub": "الجلسات الدراسية الجارية التي يمكنك الانضمام إليها الآن",
     "search_placeholder": "البحث باسم الجلسة أو المجموعة",
     "joined_users_count": {
@@ -28,7 +26,6 @@
       "many": "{count} مستخدماً منضماً",
       "other": "{count} مستخدم منضم"
     },
-    "duration_label": "المدة",
     "tasks_count": {
       "zero": "لا توجد مهام",
       "one": "مهمة واحدة",
@@ -39,13 +36,11 @@
     },
     "start_at": "تبدأ في:",
     "end_at": "تنتهي في:",
-    "join_session": "الانضمام للجلسة",
     "view_details": "عرض التفاصيل",
     "empty_sessions_heading": "لا توجد جلسات نشطة",
     "empty_sessions_desc": "لا توجد جلسات دراسية نشطة حالياً. يمكنك بدء واحدة أو انتظار انضمام الآخرين.",
     "time": {
       "just_now": "الآن",
-      "recent": "الأحدث",
       "ago_minutes": {
         "zero": "منذ أقل من دقيقة",
         "one": "منذ دقيقة واحدة",
@@ -74,26 +69,15 @@
   },
   "active": {
     "current_session": "الجلسة الحالية",
-    "badge_quiz": "يوجد اختبار",
     "badge_no_quiz": "بدون اختبار",
-    "badge_host": "المضيف",
-    "badge_member": "عضو",
     "session_name": "اسم الجلسة",
-    "start": "البداية",
-    "end": "النهاية",
     "group_name": "اسم المجموعة",
     "left": "المتبقي",
     "elapsed": "المقضي",
-    "quiz_title": "عنوان الاختبار",
     "no_quiz_added": "لم يتم إضافة اختبار لهذه الجلسة",
-    "duration": "المدة",
-    "joined_count_label": "عدد المنضمين",
     "session_description": "وصف الجلسة",
-    "end_session": "إنهاء الجلسة",
     "leave": "مغادرة",
-    "tasks_heading": "المهام",
     "ongoing": "الجارية",
-    "completed": "المكتملة",
     "empty_completed_heading": "لا توجد مهام مكتملة بعد",
     "empty_completed_desc": "المهام التي تكملها خلال هذه الجلسة ستظهر هنا.",
     "timer_heading": "المؤقت",
@@ -102,23 +86,15 @@
       "mins": "دقائق",
       "secs": "ثواني"
     },
-    "quiz_heading": "الاختبار",
     "already_passed_note": "لقد اجتزت هذا الاختبار بالفعل. لا يمكنك إعادته.",
     "status": {
       "in_progress": "قيد الإنجاز",
-      "completed": "مكتمل",
       "pending": "معلق"
     },
-    "questions_label": "الأسئلة",
     "questions_count": "{count} أسئلة",
     "start_in": "يبدأ خلال",
     "submitted": "تم التقديم",
     "submitted_progress": "{submitted} من {total} سؤال",
-    "your_score": "نقييمك",
-    "retake_quiz": "إعادة الاختبار",
-    "view_results": "عرض النتائج",
-    "view_result": "عرض النتيجة",
-    "chat_heading": "الدردشة",
-    "type_message_placeholder": "اكتب رسالة..."
+    "your_score": "نقييمك"
   }
 }

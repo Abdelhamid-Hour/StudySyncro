@@ -2,58 +2,34 @@
   "title": "My Account",
   "tabs": {
     "personal_info": "Personal Info",
-    "email_address": "Email Address",
-    "password": "Password",
-    "close_account": "Close Account"
+    "email_address": "Email Address"
   },
   "close_account": {
-    "heading": "Close Account",
     "sub": "All your data will be permanently deleted.",
     "warning_title": "Warning: Irreversible Action",
     "warning_desc": "Once you close your account, there is no way to recover your data.",
     "confirm_checkbox": "I understand this cannot be undone.",
-    "submit_btn": "Close Account",
-    "password_label": "Password",
     "password_placeholder": "Confirm your password"
   },
   "password": {
-    "heading_change": "Change Password",
-    "heading_add": "Add Password",
     "sub": "Choose a strong, password.",
-    "current_label": "Current Password",
     "current_placeholder": "Current password",
-    "new_label": "New Password",
     "new_placeholder": "New password",
-    "confirm_label": "Confirm Password",
-    "confirm_placeholder": "Confirm password",
-    "submit_change_btn": "Change Password",
-    "submit_add_btn": "Add Password"
+    "confirm_placeholder": "Confirm password"
   },
   "email": {
-    "heading_change": "Change Email",
-    "heading_add": "Add Email",
     "sub_change": "Switch to a new email address.",
     "sub_add": "Add a email address.",
-    "label": "Email",
     "placeholder": "email",
-    "current_password_label": "Current Password",
     "current_password_placeholder": "Enter your password",
-    "submit_change_btn": "Change Email",
-    "submit_add_btn": "Add Email",
     "external_provider_info": "You cannot change your email as it is linked to an external provider."
   },
   "personal_info": {
     "heading": "Personal Details",
     "sub": "Keep your information up to date.",
     "avatar_caption": "Upload a JPG, PNG, or GIF (Max 1MB).",
-    "full_name_label": "Full Name",
     "full_name_placeholder": "Enter your full name",
     "uid_label": "User ID",
     "modify_btn": "Modify Profile"
-  },
-  "error_page": {
-    "back_to_dashboard": "Back to Dashboard",
-    "go_to_login": "Go to Login",
-    "go_back": "Go Back"
   }
 }

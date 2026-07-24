@@ -69,7 +69,7 @@ export const sessionViewSkeleton =
 
     <div class="session-tasks">
       <header>
-        <h3 class="title"><i class="bi bi-ui-checks"></i>${t("home:tasks")}</h3>
+        <h3 class="title"><i class="bi bi-ui-checks"></i>${t("common:shared_terms.tasks")}</h3>
         <div class="btns">
           <button
             type="button"
@@ -245,7 +245,7 @@ const createSessionCard = (session) => {
         </span>
         <span class="badge simple-badge">
           <i class="bi bi-list-task"></i>
-          <span class="tasks-count"></span> ${t("home:session_card.tasks")}
+          <span class="tasks-count"></span> ${t("common:shared_terms.tasks")}
         </span>
       </div>
     </header>
@@ -266,7 +266,7 @@ const createSessionCard = (session) => {
       <div class="action-buttons" data-session-id="">
         <button type="button" class="join-session blue-btn">
           <i class="bi bi-box-arrow-in-right"></i>
-          ${t("home:session_card.join_session")}
+          ${t("common:shared_terms.join_session")}
         </button>
         <button type="button" class="should-fill view-details">
           <i class="bi bi-info-circle"></i>
@@ -322,8 +322,8 @@ export const initSessionsLoader = () => {
         },
         filtered: {
           icon: "bi-clock-history",
-          title: t("home:skeletons.no_active_sessions_filtered_title"),
-          desc: t("home:skeletons.no_active_sessions_filtered_desc"),
+          title: t("common:shared_terms.no_active_sessions_found"),
+          desc: t("common:shared_terms.we_couldn_t_find_any_active_sessions_matching_your_search_query"),
         },
       },
     },
@@ -512,7 +512,7 @@ export const handleRecentMessageBtns = async (e) => {
     replyBtn.classList.add("active-reply");
     replyBtn.setAttribute("data-reply-open", "true");
     replyBtn.innerHTML =
-      '<i class="bi bi-x-circle"></i> ' + t("home:recent.close");
+      '<i class="bi bi-x-circle"></i> ' + t("common:modals.close");
 
     const sharedReplyBox = ensureSharedRecentMessagesReplyBox();
     if (!sharedReplyBox) return;

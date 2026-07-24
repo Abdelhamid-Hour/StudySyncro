@@ -87,7 +87,7 @@ forgotPasswordLink.addEventListener("click", async () => {
     }
     await sendPasswordResetEmail(auth, signInemailField.value);
     showMessageBlock(
-      t("login:messages.reset_link_sent"),
+      t("common:alerts.password_reset_sent"),
       "success",
     );
     signInPasswordField.value = "";

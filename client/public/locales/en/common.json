@@ -35,23 +35,6 @@
       "active_sessions_sub": "Ongoing study sessions you can join now",
       "search_placeholder": "Search by session or group name"
     },
-    "groups": {
-      "my_groups": "My Groups",
-      "available_groups": "Available Groups",
-      "create_group": "Create Group"
-    },
-    "quizzes": {
-      "my_quizzes": "My Quizzes",
-      "passed": "Passed",
-      "quiz_title": "Quiz Title",
-      "group_name": "Group Name",
-      "session_name": "Session Name",
-      "submitted_at": "Submitted At",
-      "score": "Score",
-      "questions": "Questions",
-      "shared_in": "Shared in",
-      "subject": "Subject"
-    },
     "settings": {
       "my_account": "My Account",
       "tabs": {
@@ -68,11 +51,6 @@
       "modify_btn": "Modify Profile"
     },
     "quiz_editor": {
-      "quiz_editor": "Quiz Editor",
-      "questions_list": "Questions List",
-      "questions": "Questions",
-      "question_num": "Question {num}",
-      "choices_count": "{count} Choices",
       "subject_label": "Subject:",
       "shared_in_label": "Shared In:",
       "choices_title": "Choices",
@@ -185,8 +163,6 @@
   "group_chat": "Group Chat",
   "titles": {
     "home": "Home",
-    "group_chat": "Group Chat",
-    "available_groups": "Available Groups",
     "groups": "Groups",
     "quiz_editor": "Quiz Editor",
     "passed_quizzes": "Passed Quizzes",
@@ -205,14 +181,7 @@
     "published": "Published",
     "draft": "Draft"
   },
-  "groups_tabs": {
-    "my_groups": "My Groups",
-    "available_groups": "Available Groups"
-  },
   "quizzes_tabs": {
-    "my_quizzes": "My Quizzes",
-    "passed": "Passed",
-    "quiz_editor": "Quiz Editor",
     "questions_list": "Questions List"
   },
   "quiz_card": {
@@ -226,11 +195,6 @@
     "subject": "Subject",
     "groups_abbr": "Gr",
     "sessions_abbr": "Ses"
-  },
-  "placeholders": {
-    "search_quizzes": "Search By Quiz Title or Subject",
-    "search_groups": "Search By Group Name or Subject",
-    "search_quizzes_groups": "Search By Quiz Title, Subject or Group Name"
   },
   "shared_chat": {
     "alerts": {
@@ -264,8 +228,7 @@
       "request_to_join": "Request to Join"
     },
     "badges": {
-      "host": "Host",
-      "member": "Member"
+      "host": "Host"
     },
     "skeletons": {
       "no_groups_joined_title": "No groups joined",
@@ -312,5 +275,60 @@
   "time": {
     "h": "h",
     "m": "m"
+  },
+  "shared_terms": {
+    "join_session": "Join Session",
+    "invite_users": "Invite Users",
+    "members": "Members",
+    "leave_group": "Leave Group",
+    "show_details": "Show Details",
+    "left_group_successfully": "Left group successfully",
+    "session_created_successfully": "Session created successfully",
+    "member_kicked_successfully": "Member kicked successfully",
+    "role_transferred_successfully": "Role transferred successfully",
+    "group_removed_successfully": "Group removed successfully",
+    "group_info_updated_successfully": "Group info updated successfully",
+    "please_select_at_least_one_user_to_add": "Please select at least one user to add.",
+    "no_quizzes_available": "No Quizzes Available",
+    "no_quizzes_have_been_created_or_shared_with_this_group_yet": "No quizzes have been created or shared with this group yet.",
+    "no_quizzes_found": "No Quizzes Found",
+    "no_quizzes_match_your_search_or_filter_criteria": "No quizzes match your search or filter criteria.",
+    "no_join_requests": "No Join Requests",
+    "there_are_no_pending_join_requests_for_this_group": "There are no pending join requests for this group.",
+    "no_requests_found": "No Requests Found",
+    "no_join_requests_match_your_search_or_filter_criteria": "No join requests match your search or filter criteria.",
+    "are_you_sure_you_want_to_leave_this_group": "Are you sure you want to leave this group?",
+    "tasks": "Tasks",
+    "remove_quiz": "Remove Quiz",
+    "are_you_sure_you_want_to_remove_the_quiz": "Are you sure you want to remove the quiz?",
+    "kick_member": "Kick Member",
+    "are_you_sure_you_want_to_kick_this_member": "Are you sure you want to kick this member?",
+    "kick": "Kick",
+    "move_admin_role": "Move Admin Role",
+    "are_you_sure_you_want_to_move_this_member_to_admin": "Are you sure you want to move this member to admin?",
+    "move": "Move",
+    "remove_group": "Remove group",
+    "are_you_sure_you_want_to_remove_this_group": "Are you sure you want to remove this group?",
+    "title": "Title",
+    "finish": "Finish",
+    "reject": "Reject",
+    "accept": "Accept",
+    "view_result": "View Result",
+    "retake": "Retake",
+    "max_members": "Max Members",
+    "title_1": "Title:",
+    "details": "Details:",
+    "edit": "Edit",
+    "quiz": "Quiz",
+    "break": "Break",
+    "join": "Join",
+    "pending": "Pending",
+    "create": "Create",
+    "subject_is_required": "Subject is required.",
+    "no_active_sessions_found": "No Active Sessions Found",
+    "we_couldn_t_find_any_active_sessions_matching_your_search_query": "We couldn't find any active sessions matching your search query.",
+    "the_password_must_be_between_min_and_max_characters": "The password must be between {min} and {max} characters",
+    "passwords_do_not_match": "Passwords do not match",
+    "add_at_least_1_question_to_publish": "Add at least 1 question to publish"
   }
 }

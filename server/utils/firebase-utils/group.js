@@ -376,13 +376,21 @@ const leaveGroup = async (groupId, userId) => {
     }
 
     await memberSnap.ref.delete();
-    await groupRef.update({
-      membersCount: FieldValue.increment(-1),
-    });
     await userRef.collection("userGroups").doc(groupId).delete();
-    await syncUserGroupSnapshot(groupId, {
-      membersCount: FieldValue.increment(-1),
-    });
+
+    const groupData = groupSnap.data();
+    let sampleMembers = groupData.sampleMembers || [];
+    const initialSampleLength = sampleMembers.length;
+    sampleMembers = sampleMembers.filter((m) => m.uid !== userId);
+
+    const updateData = { membersCount: FieldValue.increment(-1) };
+
+    if (sampleMembers.length !== initialSampleLength) {
+      updateData.sampleMembers = sampleMembers;
+    }
+
+    await groupRef.update(updateData);
+    await syncUserGroupSnapshot(groupId, updateData);
     await refillSampleMembersIfNeeded(groupRef);
 
     if (groupSnap.data().currentSession) {

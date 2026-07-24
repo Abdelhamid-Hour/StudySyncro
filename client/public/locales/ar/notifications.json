@@ -1,11 +1,9 @@
 {
   "categories": {
     "Join Request": "طلب انضمام",
-    "Groups": "المجموعات",
     "Sessions": "الجلسات",
     "All": "الكل",
-    "General": "عام",
-    "recent": "الأحدث"
+    "General": "عام"
   },
   "messages": {
     "join_request": {
@@ -69,11 +67,6 @@
       "message": "تم رفض طلب انضمام {senderName} إلى مجموعة {groupName}."
     }
   },
-  "actions": {
-    "reject": "رفض",
-    "accept": "قبول",
-    "join": "انضمام"
-  },
   "alerts": {
     "demande_accepted": "تم قبول الطلب",
     "demande_rejected": "تم رفض الطلب",
@@ -102,8 +95,6 @@
     "demoted": "تم تنزيل رتبتك",
     "pending_approval": "قيد مراجعة",
     "transferred": "تم نقل",
-    "admin_role": "صلاحيات المضيف",
-    "host_role": "المضيف"
-  },
-  "recent": "الأحدث"
+    "admin_role": "صلاحيات المضيف"
+  }
 }

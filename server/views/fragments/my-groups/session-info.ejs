@@ -36,7 +36,7 @@
         <span class="quiz-icon icon-box">
           <i class="bi bi-question-circle"></i>
         </span>
-        <%= t("groups:session_info.quiz") %>
+        <%= t("common:shared_terms.quiz") %>
       </span>
       <span class="quiz-value value content"><bdi><%= quiz ? quiz.title : t("groups:session_info.no_quiz") %></bdi></span>
     </div>
@@ -50,7 +50,7 @@
           <span class="start-icon icon-box">
             <i class="bi bi-play-circle"></i>
           </span>
-          <%= t("groups:session_info.start") %>
+          <%= t("common:shared_terms.start") %>
         </span>
         <span class="start-value value content"><bdi><%= startTime %></bdi></span>
       </div>
@@ -61,7 +61,7 @@
           <span class="end-icon icon-box">
             <i class="bi bi-stopwatch"></i>
           </span>
-          <%= t("groups:session_info.end") %>
+          <%= t("common:shared_terms.end") %>
         </span>
         <span class="end-value value content"><bdi><%= endTime %></bdi></span>
       </div>
@@ -75,7 +75,7 @@
           <span class="duration-icon icon-box">
             <i class="bi bi-clock"></i>
           </span>
-          <%= t("groups:session_info.duration") %>
+          <%= t("common:shared_terms.duration") %>
         </span>
         <span class="duration-value value content">
           <bdi><%= duration %></bdi>
@@ -88,7 +88,7 @@
           <span class="joined-count-icon icon-box">
             <i class="bi bi-people-fill"></i>
           </span>
-          <%= t("groups:session_info.joined_count") %>
+          <%= t("common:shared_terms.joined_count") %>
         </span>
         <span class="joined-count-value value content">
           <%= t("groups:plural_counts.members", { count: joinedCount }) %>
@@ -102,7 +102,7 @@
       <span class="joined-count-icon icon-box">
         <i class="bi bi-ui-checks"></i>
       </span>
-      <%= t("quizzes:session_overlay.tasks_heading") %>
+      <%= t("common:mobile_nav.tasks") %>
       <div class="action-btns">
         <button
           type="button"
@@ -125,7 +125,7 @@
       <%_ tasks.map((task, index) => { %>
           <div class="task-wrapper">
             <div <%- task.isQuiz
-            ? `data-tooltip="${t('quizzes:session_overlay.quiz_tooltip')}"` 
+            ? `data-tooltip="${t('common:shared_terms.quiz')}"` 
             : '' %> class="task-box<%= task.isQuiz ? ' has-tooltip quiz-task-box' : '' %>">
               <div class="counter">
                 <span>
@@ -157,12 +157,12 @@
     <% if (isJoined) { %>
     <button data-session-id="<%= id %>" type="button" class="<%= isAdmin ? 'end' : 'leave' %>-btn red-btn should-fill">
       <i class="bi bi-x-circle"></i>
-      <%= isAdmin ? t("groups:session_info.end_session") : t("groups:session_info.leave_session") %>
+      <%= isAdmin ? t("common:shared_terms.end_session") : t("groups:session_info.leave_session") %>
     </button>
     <% } else { %>
     <button data-session-id="<%= id %>" type="button" class="green-btn join-btn should-fill blue-btn">
       <i class="bi bi-check-circle"></i>
-      <%= t("quizzes:session_overlay.join_session") %>
+      <%= t("common:shared_terms.join_session") %>
     </button>
     <% } %>
   </div>

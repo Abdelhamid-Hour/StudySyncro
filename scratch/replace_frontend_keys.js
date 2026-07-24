@@ -1,0 +1,64 @@
+const fs = require('fs');
+const path = require('path');
+
+const mapData = JSON.parse(fs.readFileSync('d:\\PFE\\scratch\\deduplication_map.json', 'utf8'));
+const mapping = mapData.mapping;
+
+function getAllFiles(dir, fileList = []) {
+  if (!fs.existsSync(dir)) return fileList;
+  const files = fs.readdirSync(dir);
+  for (const file of files) {
+    const filePath = path.join(dir, file);
+    if (fs.statSync(filePath).isDirectory()) {
+      if (file !== 'locales') {
+        getAllFiles(filePath, fileList);
+      }
+    } else if (file.endsWith('.js') || file.endsWith('.ejs') || file.endsWith('.html')) {
+      fileList.push(filePath);
+    }
+  }
+  return fileList;
+}
+
+const frontendFiles = getAllFiles('d:\\PFE\\client\\public');
+
+let replacementsCount = 0;
+
+frontendFiles.forEach(file => {
+  let content = fs.readFileSync(file, 'utf8');
+  let originalContent = content;
+
+  // We only replace keys that match EXACTLY in the t("...") function
+  // Sort keys by length descending to replace longer keys first (prevent partial match bugs)
+  const oldKeys = Object.keys(mapping).sort((a, b) => b.length - a.length);
+
+  oldKeys.forEach(oldKey => {
+    const canonicalKey = mapping[oldKey];
+    
+    // Replace `t("old:key")`, `t('old:key')`, `t(`old:key`)`
+    // And also without namespace if it was just matched without it? No, mapping has namespace.
+    // Use regex to strictly match the t function
+    
+    // Regex explanation:
+    // \bt\(   -> matches t(
+    // \s*     -> optional whitespace
+    // (['"`]) -> capture quote type
+    // oldKey  -> exactly the old key (escaped for regex)
+    // \1      -> match the same quote type
+    
+    const escapedOldKey = oldKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`\\bt\\(\\s*(['"\`])${escapedOldKey}\\1`, 'g');
+    
+    content = content.replace(regex, (match, quote) => {
+      replacementsCount++;
+      return `t(${quote}${canonicalKey}${quote}`;
+    });
+  });
+
+  if (content !== originalContent) {
+    fs.writeFileSync(file, content, 'utf8');
+    // console.log(`Updated ${file}`);
+  }
+});
+
+console.log(`Frontend codebase refactoring complete! Made ${replacementsCount} replacements.`);

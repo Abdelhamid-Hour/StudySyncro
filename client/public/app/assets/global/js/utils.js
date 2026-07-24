@@ -1242,9 +1242,9 @@ export const updateDocumentTitle = (path) => {
   ) {
     document.title = `StudyHype — ${t("common:titles.home", { defaultValue: "Home" })}`;
   } else if (cleanPath.includes("/groups/my/group-chat")) {
-    document.title = `StudyHype — ${t("common:titles.group_chat", { defaultValue: "Group Chat" })}`;
+    document.title = `StudyHype — ${t("common:group_chat", { defaultValue: "Group Chat" })}`;
   } else if (cleanPath.includes("/groups/available")) {
-    document.title = `StudyHype — ${t("common:titles.available_groups", { defaultValue: "Available Groups" })}`;
+    document.title = `StudyHype — ${t("common:tabs.available_groups", { defaultValue: "Available Groups" })}`;
   } else if (
     cleanPath.includes("/groups/my") ||
     cleanPath.includes("/groups")
@@ -1931,8 +1931,8 @@ export const getGroupsSkeleton = (path = "") => {
       headerContainer.classList.remove("hidden");
       headerContainer.innerHTML = `
         <div class="mobile-groups-tabs navigation-tabs groups-tabs" style="width: 100%;">
-          <a href="/app/groups/my" class="tab route-link ${userGroup ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">${t("common:skeletons.groups.my_groups")}</a>
-          <a href="/app/groups/available" class="tab route-link ${!userGroup ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">${t("common:skeletons.groups.available_groups")}</a>
+          <a href="/app/groups/my" class="tab route-link ${userGroup ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">${t("common:tabs.my_groups")}</a>
+          <a href="/app/groups/available" class="tab route-link ${!userGroup ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">${t("common:tabs.available_groups")}</a>
         </div>
       `;
     }
@@ -1976,7 +1976,7 @@ export const getGroupsSkeleton = (path = "") => {
     </div>
     ${
       userGroup
-        ? `<button type="button" class="mobile-create-group-btn create-group-btn exclude-btn" title="${t("common:skeletons.groups.create_group")}" aria-label="${t("common:skeletons.groups.create_group")}"><i class="bi bi-plus-lg"></i></button>`
+        ? `<button type="button" class="mobile-create-group-btn create-group-btn exclude-btn" title="${t("common:buttons.create_group")}" aria-label="${t("common:buttons.create_group")}"><i class="bi bi-plus-lg"></i></button>`
         : ""
     }
   `;
@@ -1993,8 +1993,8 @@ export const getQuizzesSkeleton = (path = "") => {
       headerContainer.classList.remove("hidden");
       headerContainer.innerHTML = `
         <div class="mobile-quizzes-tabs navigation-tabs quizzes-tabs" style="width: 100%;">
-          <a href="/app/quizzes/my" class="tab route-link ${!isPassed ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">${t("common:skeletons.quizzes.my_quizzes")}</a>
-          <a href="/app/quizzes/passed" class="tab route-link ${isPassed ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">${t("common:skeletons.quizzes.passed")}</a>
+          <a href="/app/quizzes/my" class="tab route-link ${!isPassed ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">${t("common:tabs.my_quizzes")}</a>
+          <a href="/app/quizzes/passed" class="tab route-link ${isPassed ? "active-tab" : ""} exclude-btn" style="pointer-events: none;">${t("common:tabs.passed")}</a>
         </div>
       `;
     }
@@ -2005,7 +2005,7 @@ export const getQuizzesSkeleton = (path = "") => {
         <div class="quiz-title-container info-container">
             <label class="quiz-title-label">
                 <span class="icon-box"><i class="bi bi-card-text"></i></span>
-                ${t("common:skeletons.quizzes.quiz_title")}
+                ${t("common:quiz_card.quiz_title")}
             </label>
             <div class="quiz-title content loading-opacity-animation"></div>
         </div>
@@ -2014,7 +2014,7 @@ export const getQuizzesSkeleton = (path = "") => {
                 <span class="icon-box">
                     <i class="bi bi-people"></i>
                 </span>
-                ${t("common:skeletons.quizzes.group_name")}
+                ${t("common:quiz_card.group_name")}
             </label>
             <div class="group-name content loading-opacity-animation"></div>
         </div>
@@ -2023,7 +2023,7 @@ export const getQuizzesSkeleton = (path = "") => {
         <span class="icon-box">
         <i class="bi bi-journal-bookmark"></i>
         </span>
-        ${t("common:skeletons.quizzes.session_name")}
+        ${t("common:quiz_card.session_name")}
         </label>
         <div class="session-name content loading-opacity-animation"></div>
         </div>
@@ -2032,7 +2032,7 @@ export const getQuizzesSkeleton = (path = "") => {
                 <span class="icon-box">
                     <i class="bi bi-calendar-check"></i>
                 </span>
-                ${t("common:skeletons.quizzes.submitted_at")}
+                ${t("common:quiz_card.submitted_at")}
             </label>
             <div class="submitted-at content loading-opacity-animation"></div>
         </div>
@@ -2041,7 +2041,7 @@ export const getQuizzesSkeleton = (path = "") => {
                 <span class="icon-box">
                     <i class="bi bi-trophy"></i>
                 </span>
-                ${t("common:skeletons.quizzes.score")}
+                ${t("common:quiz_card.score")}
             </label>
             <div class="score content loading-opacity-animation"></div>
         </div>
@@ -2063,21 +2063,21 @@ export const getQuizzesSkeleton = (path = "") => {
       <div class="quiz-title-container info-container">
         <label class="quiz-title-label">
           <span class="icon-box"><i class="bi bi-card-text"></i></span>
-          ${t("common:skeletons.quizzes.quiz_title")}
+          ${t("common:quiz_card.quiz_title")}
         </label>
         <div class="quiz-title content loading-opacity-animation"></div>
       </div>
       <div class="questions-count-container info-container small-container">
         <label class="questions-count-label">
           <span class="icon-box"><i class="bi bi-question-circle"></i></span>
-          ${t("common:skeletons.quizzes.questions")}
+          ${t("common:quiz_card.questions")}
         </label>
         <span class="count content loading-opacity-animation"></span>
       </div>
       <div class="shared-in-container info-container">
         <label class="shared-in-label">
           <span class="icon-box"><i class="bi bi-people"></i></span>
-          ${t("common:skeletons.quizzes.shared_in")}
+          ${t("common:quiz_card.shared_in")}
         </label>
         <div class="content">
           <span class="count content loading-opacity-animation"></span>
@@ -2086,7 +2086,7 @@ export const getQuizzesSkeleton = (path = "") => {
       <div class="subject-container info-container small-container">
         <label class="subject-label">
           <span class="icon-box"><i class="bi bi-book"></i></span>
-          ${t("common:skeletons.quizzes.subject")}
+          ${t("common:quiz_card.subject")}
         </label>
         <span class="subject content loading-opacity-animation"></span>
       </div>
@@ -2326,8 +2326,8 @@ export const getQuizEditorSkeleton = () => {
       headerContainer.classList.remove("hidden");
       headerContainer.innerHTML = `
         <div class="mobile-quiz-editor-tabs navigation-tabs" style="width: 100%;">
-          <button type="button" class="tab active-tab exclude-btn" data-target="quiz-editor">${t("common:skeletons.quiz_editor.quiz_editor")}</button>
-          <button type="button" class="tab exclude-btn" data-target="questions-list">${t("common:skeletons.quiz_editor.questions_list")}</button>
+          <button type="button" class="tab active-tab exclude-btn" data-target="quiz-editor">${t("common:titles.quiz_editor")}</button>
+          <button type="button" class="tab exclude-btn" data-target="questions-list">${t("common:quizzes_tabs.questions_list")}</button>
         </div>
       `;
     }
@@ -2337,7 +2337,7 @@ export const getQuizEditorSkeleton = () => {
       <section class="questions-panel">
         <header class="questions-header">
           <h4 class="panel-title">
-            ${t("common:skeletons.quiz_editor.questions")}
+            ${t("common:quiz_card.questions")}
             <span class="count badge simple-badge">0</span>
           </h4>
           <button
@@ -2360,7 +2360,7 @@ export const getQuizEditorSkeleton = () => {
                     <span class="icon-box">
                       <i class="bi bi-patch-question"></i>
                     </span>
-                    <span class="question-count counter">${t("common:skeletons.quiz_editor.question_num", { num: idx })}</span>
+                    <span class="question-count counter">${t("common:shared_quizzes.question_num", { num: idx })}</span>
                   </h4>
                   <button
                     type="button"
@@ -2372,7 +2372,7 @@ export const getQuizEditorSkeleton = () => {
                 </header>
                 <div class="loading-opacity-animation" style="width: 90%; height: 0.9rem; margin: 0.5rem 0; border-radius: 0.3rem;"></div>
                 <footer class="question-card-footer">
-                  <span class="choices-count">${t("common:skeletons.quiz_editor.choices_count", { count: 4 })}</span>
+                  <span class="choices-count">${t("common:shared_quizzes.choices_count", { count: 4 })}</span>
                   <button
                     type="button"
                     class="delete-question-btn exclude-btn"
@@ -2441,7 +2441,7 @@ export const getQuizEditorSkeleton = () => {
                   <span class="icon-box">
                     <i class="bi bi-patch-question"></i>
                   </span>
-                  <span class="question-count counter">${t("common:skeletons.quiz_editor.question_num", { num: idx })}</span>
+                  <span class="question-count counter">${t("common:shared_quizzes.question_num", { num: idx })}</span>
                 </h4>
                 <button
                   type="button"

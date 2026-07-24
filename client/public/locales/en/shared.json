@@ -1,7 +1,6 @@
 {
   "header": {
-    "login_to": "Login to",
-    "create": "Create"
+    "login_to": "Login to"
   },
   "auth_errors": {
     "INVALID_LOGIN_CREDENTIALS": "Invalid email or password. Please try again.",
@@ -13,9 +12,5 @@
     "REDIRECT_CANCELLED_BY_USER": "It seems you canceled the redirect action. Please try again to complete the process.",
     "USER_NOT_FOUND": "We couldn't find an account with that email address. Please check your email or create a new account.",
     "TOO_MANY_REQUESTS": "Too many requests have been made from this device. Please wait a while before trying again."
-  },
-  "actions": {
-    "switch_to_en": "Switch to English",
-    "switch_to_ar": "Switch to Arabic"
   }
 }

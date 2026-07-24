@@ -40,7 +40,7 @@
         <h3 class="quiz-title"><%= session.quiz.title %></h3>
         <span class="questions-count badge blue-badge">
           <%= session.quiz.questionsCount %>
-          <span><%= t("quizzes:labels.questions") %></span>
+          <span><%= t("common:shared_terms.questions") %></span>
         </span>
         <span class="start-time badge<%= session.quiz.status === 'Finished' ? ' gray-badge' : session.quiz.status === 'active' ? ' green-badge' : ' orange-badge'%>">
           <i class="bi bi-clock-fill"></i>
@@ -51,7 +51,7 @@
     <% } %>
     <div class="session-tasks">
       <header>
-        <h3 class="title"><i class="bi bi-ui-checks"></i><%= t("quizzes:session_overlay.tasks_heading") %></h3>
+        <h3 class="title"><i class="bi bi-ui-checks"></i><%= t("common:mobile_nav.tasks") %></h3>
         <div class="btns">
           <button
             type="button"
@@ -74,7 +74,7 @@
         <%_ session.tasks.map((task, index) => { %>
             <div class="task-wrapper ">
               <div <%- task instanceof Quiz 
-              ? `data-tooltip="${t('quizzes:session_overlay.quiz_tooltip')}"` 
+              ? `data-tooltip="${t('common:shared_terms.quiz')}"` 
               : '' %> class="task-box<%= task instanceof Quiz ? ' has-tooltip quiz-task-box' : '' %>">
                 <div class="counter">
                   <span>
@@ -104,6 +104,6 @@
   </div>
   <button type="button" class="join-session blue-btn">
     <i class="bi bi-box-arrow-in-right"></i>
-    <%= t("quizzes:session_overlay.join_session") %>
+    <%= t("common:shared_terms.join_session") %>
   </button>
 </div>

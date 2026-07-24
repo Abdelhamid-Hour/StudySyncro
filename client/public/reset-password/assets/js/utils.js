@@ -49,11 +49,11 @@ export const verifyPasswordFields = () => {
   const password = passwordField.value.trim();
   const confirmPassword = confirmPasswordField.value.trim();
   if (password !== confirmPassword) {
-    showError(t('reset_password:errors.passwords_do_not_match'), confirmPasswordField);
+    showError(t('common:shared_terms.passwords_do_not_match'), confirmPasswordField);
   }
 
   if (!passwordRegex.test(password)) {
-    showError(t('reset_password:errors.password_length', { min: PASSWORD_MIN_LENGTH, max: PASSWORD_MAX_LENGTH }), passwordField);
+    showError(t('common:shared_terms.the_password_must_be_between_min_and_max_characters', { min: PASSWORD_MIN_LENGTH, max: PASSWORD_MAX_LENGTH }), passwordField);
   }
 
   if (!passwordRegex.test(password) || password !== confirmPassword) {

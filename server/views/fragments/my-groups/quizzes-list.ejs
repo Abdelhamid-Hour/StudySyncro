@@ -35,7 +35,7 @@
           <span class="icon-box">
             <i class="bi bi-question-circle"></i>
           </span>
-          <%= t("quizzes:labels.quiz_title") %>
+          <%= t("common:shared_terms.quiz_title") %>
         </label>
         <div class="quiz-title content"><bdi><%= quiz.title %></bdi></div>
       </div>
@@ -54,7 +54,7 @@
           <span class="icon-box">
             <i class="bi bi-question-circle"></i>
           </span>
-          <%= t("quizzes:labels.questions") %>
+          <%= t("common:shared_terms.questions") %>
         </label>
         <div class="questions content">
           <span><bdi><%= quiz.questionsCount %></bdi></span>
@@ -65,7 +65,7 @@
           <span class="icon-box">
             <i class="bi bi-calendar-event"></i>
           </span>
-          <%= t("quizzes:labels.submitted_at") %> <% if (!quiz.submittedAt) { %>
+          <%= t("common:shared_terms.submitted_at") %> <% if (!quiz.submittedAt) { %>
           <!-- info icon -->
           <i
             style="margin-inline-start: auto;"
@@ -85,7 +85,7 @@
           class="view-result<% if(isAdmin) { %>s<% } %>-btn should-fill"
         >
           <i class="bi bi-eye"></i>
-          <%= isAdmin ? t("quizzes:actions.view_results") : t("quizzes:actions.view_result") %>
+          <%= isAdmin ? t("common:shared_terms.view_results") : t("common:shared_terms.view_result") %>
         </button>
         <% if (!isAdmin) { %>
         <button type="button" class="retake-btn">

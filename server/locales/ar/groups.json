@@ -11,8 +11,7 @@
   },
   "my": {
     "empty_heading": "لا توجد مجموعات منضم إليها",
-    "empty_desc": "أنت لست عضواً في أي مجموعات دراسية بعد. أنشئ مجموعة أو انضم إلى واحدة للبدء في التعاون!",
-    "create_group_title": "إنشاء مجموعة"
+    "empty_desc": "أنت لست عضواً في أي مجموعات دراسية بعد. أنشئ مجموعة أو انضم إلى واحدة للبدء في التعاون!"
   },
   "available": {
     "join_now": "انضم الآن",
@@ -21,28 +20,17 @@
     "empty_desc": "لا توجد حالياً مجموعات دراسية عامة متاحة للانضمام. تحقق مرة أخرى لاحقاً!"
   },
   "info": {
-    "edit": "تعديل",
-    "group_name": "اسم المجموعة",
     "group_description": "وصف المجموعة",
-    "subject": "المادة",
-    "level": "المستوى",
-    "visibility": "الظهور",
     "show_in_search": "إظهار في نتائج البحث",
     "max_members": "الحد الأقصى للأعضاء",
     "creation_date": "تاريخ الإنشاء",
-    "admin": "المشرف",
-    "members": "الأعضاء",
     "manage": "إدارة",
     "view_all": "عرض الكل",
-    "remove_group": "حذف المجموعة",
-    "leave_group": "مغادرة المجموعة",
     "demandes": "طلبات الانضمام"
   },
   "demandes": {
     "search_placeholder": "البحث باسم العضو أو معرفه",
     "sort_tooltip": "ترتيب الطلبات",
-    "reject": "رفض",
-    "accept": "قبول",
     "empty_heading": "لا توجد طلبات انضمام",
     "empty_desc": "لا توجد طلبات انضمام معلقة لهذه المجموعة."
   },
@@ -58,41 +46,8 @@
   },
   "session_info": {
     "description": "الوصف",
-    "quiz": "الاختبار",
     "no_quiz": "لا يوجد اختبار مخصص",
-    "start": "البداية",
-    "end": "النهاية",
-    "duration": "المدة",
-    "joined_count": "عدد المنضمين",
-    "end_session": "إنهاء الجلسة",
     "leave_session": "مغادرة الجلسة"
-  },
-  "chat": {
-    "show_info_tooltip": "عرض تفاصيل المجموعة",
-    "title": "الدردشة المباشرة",
-    "active_session_tooltip": "جلسة نشطة",
-    "create_session": "إنشاء جلسة",
-    "group_actions": "إجراءات المجموعة",
-    "group_info": "معلومات المجموعة",
-    "quizzes": "الاختبارات",
-    "session_info": "معلومات الجلسة",
-    "invite_users": "دعوة مستخدمين",
-    "manage_demandes": "إدارة الطلبات",
-    "manage_members": "إدارة الأعضاء",
-    "members": "الأعضاء",
-    "remove_group": "حذف المجموعة",
-    "leave_group": "مغادرة المجموعة",
-    "search_emoji_placeholder": "ابحث عن رمز تعبيري",
-    "emoji_recent": "الأحدث",
-    "emoji_people": "الأشخاص",
-    "emoji_animals_nature": "الحيوانات والطبيعة",
-    "emoji_food_drink": "الطعام والشراب",
-    "emoji_activity": "الأنشطة",
-    "emoji_objects": "الأشياء",
-    "emoji_symbols": "الرموز",
-    "emoji_travel_places": "السفر والأماكن",
-    "emoji_flags": "الأعلام",
-    "type_message_placeholder": "اكتب رسالة"
   },
   "plural_counts": {
     "extra_members": {

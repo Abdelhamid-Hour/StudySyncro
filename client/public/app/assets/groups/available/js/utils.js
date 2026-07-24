@@ -14,7 +14,7 @@ export const handleJoinGroupClick = async (joinGroupBtn) => {
     t("groups:modals.join_group_title"),
     t("groups:modals.join_group_desc"),
     t("common:modals.cancel"),
-    t("groups:modals.join_group_confirm"),
+    t("common:shared_terms.join"),
   );
 
   joinGroupBtn.disabled = false;
@@ -50,7 +50,7 @@ const getResultElement = (status, groupId) => {
     ? `<a href="/app/groups/my/${groupId}/chat" class="view-group-link">
                              <i class="bi bi-box-arrow-right"></i><span>${t("groups:actions.view_group")}</span>
                      </a>`
-    : `<span class="pending-text"><i class="bi bi-hourglass-split"></i>${t("groups:actions.pending")}</span>`;
+    : `<span class="pending-text"><i class="bi bi-hourglass-split"></i>${t("common:shared_terms.pending")}</span>`;
 };
 
 const getSuccessMessage = (status, groupName) => {

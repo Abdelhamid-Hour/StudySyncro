@@ -1,35 +1,20 @@
 {
-  "badges": {
-    "draft": "مسودة",
-    "draft_tooltip": "أضف سؤالاً واحداً على الأقل للنشر",
-    "published": "منشور"
-  },
   "menu": {
-    "edit": "تعديل",
     "preview": "معاينة",
     "duplicate": "تكرار",
     "remove": "حذف"
   },
   "labels": {
-    "quiz_title": "عنوان الاختبار",
-    "questions": "الأسئلة",
     "shared_in": "مشارك في",
     "shared_in_tooltip": "مجموعات | جلسات",
-    "subject": "المادة",
-    "group_name": "اسم المجموعة",
     "session_name": "اسم الجلسة",
-    "submitted_at": "تاريخ التقديم",
-    "score": "النتيجة",
     "search_placeholder": "البحث بالعنوان",
     "sort_quizzes": "ترتيب الاختبارات",
     "admin_cant_submit": "لا يمكن للمشرف تقديم الاختبارات",
     "not_submitted_tooltip": "لم تقم بتقديم الاختبار"
   },
   "actions": {
-    "view_result": "عرض النتيجة",
-    "view_results": "عرض النتائج",
-    "retake": "إعادة",
-    "retake_quiz": "إعادة الاختبار"
+    "retake": "إعادة"
   },
   "play": {
     "time_left": "الوقت المتبقي :",
@@ -42,7 +27,6 @@
     "prev": "السابق",
     "or_press": "أو اضغط",
     "press": "اضغط",
-    "or": "أو",
     "next": "التالي"
   },
   "my": {
@@ -59,24 +43,18 @@
     "ends": "تنتهي: {time}",
     "duration": "المدة: {time}",
     "session_quiz": "اختبار الجلسة",
-    "tasks_heading": "المهام",
     "show_details_tooltip": "عرض التفاصيل",
     "scroll_to_top_tooltip": "التمرير للأعلى",
     "collapse_all_tooltip": "طوي الكل",
-    "quiz_tooltip": "اختبار",
     "task_title": "العنوان:",
-    "task_details": "التفاصيل:",
-    "join_session": "الانضمام للجلسة"
+    "task_details": "التفاصيل:"
   },
   "results_overlay": {
     "title": "نتائج المستخدمين",
     "quiz_title_label": "عنوان الاختبار",
     "table": {
       "profile": "الملف الشخصي",
-      "full_name": "الاسم الكامل",
-      "submitted_at": "تاريخ التقديم",
       "answered_questions": "الأسئلة المجابة",
-      "score": "النتيجة",
       "actions": "الإجراءات"
     }
   },

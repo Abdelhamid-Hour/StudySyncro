@@ -1,10 +1,6 @@
 {
   "nav": {
-    "features": "Features",
-    "how_it_works": "How It Works",
-    "community": "Community",
-    "toggle_theme": "Toggle Dark/Light Mode",
-    "login": "Login"
+    "community": "Community"
   },
   "hero": {
     "title": "Elevate Your Study Sessions with Real-Time Collaboration",
@@ -80,9 +76,6 @@
     "btn": "Launch StudyHype Now"
   },
   "footer": {
-    "features": "Features",
-    "how_it_works": "How It Works",
-    "login": "Login",
     "copyright": "StudyHype Team © 2026. All rights reserved."
   }
 }

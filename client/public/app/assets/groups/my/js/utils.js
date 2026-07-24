@@ -53,7 +53,7 @@ export const getGroupOverlay = () => `
                     minlength="${NAME_TITLE_MIN_LENGTH}"
                     maxlength="${NAME_TITLE_MAX_LENGTH}"
                     class="input"
-                    placeholder="${t("groups:forms.group_name_placeholder")}"
+                    placeholder="${t("common:quiz_card.group_name")}"
                 />
             </div>
             <div class="field-container group-description-field">
@@ -81,7 +81,7 @@ export const getGroupOverlay = () => `
                     </div>
                     <div class="select-trigger input">
                         <button type="button" class="exclude-btn open-drop-down-btn">
-                            <span class="subject-value">${t("groups:forms.subject_placeholder")}</span>
+                            <span class="subject-value">${t("common:quiz_card.subject")}</span>
                             <input type="hidden" name="subject" value="" />
                             <i class="bi bi-chevron-down"></i>
                         </button>
@@ -114,7 +114,7 @@ export const getGroupOverlay = () => `
                         
                         type="number"
                         class="input"
-                        placeholder="${t("groups:forms.max_members_placeholder")}"
+                        placeholder="${t("common:shared_terms.max_members")}"
                         name="max-members"
                     />
                 </div>
@@ -133,7 +133,7 @@ export const getGroupOverlay = () => `
                     </button>
                 </div>
             </div>
-            <button type="submit" class="blue-btn create-btn">${t("groups:buttons.create")}</button>
+            <button type="submit" class="blue-btn create-btn">${t("common:shared_terms.create")}</button>
         </form>
     </div>
 </div>
@@ -187,7 +187,7 @@ const chechGroupValues = (inputs) => {
   }
 
   if (!subjectValue.trim()) {
-    showErrorTooltip(t("groups:errors.subject_required"), subject);
+    showErrorTooltip(t("common:shared_terms.subject_is_required"), subject);
     return false;
   } else {
     resetTooltip(globalTooltip, subject.closest(".field-container"));
@@ -265,7 +265,7 @@ const handleCreateGroupSubmit = async (groupData, form, createBtn) => {
   } finally {
     form.isCreating = false;
     createBtn.disabled = false;
-    createBtn.innerHTML = t("groups:buttons.create");
+    createBtn.innerHTML = t("common:shared_terms.create");
   }
   // ? its not necessary to reset the form here, as the overlay will be closed
 };

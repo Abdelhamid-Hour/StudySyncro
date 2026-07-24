@@ -59,7 +59,7 @@ groupInfoElementsMap = {
                 <i class="bi bi-people-fill"></i>
                 <i class="bi bi-info-circle"></i>
               </span>
-              ${t("group-chat:info.group_name")}
+              ${t("common:quiz_card.group_name")}
             </label>
             <input
             name="name"
@@ -80,7 +80,7 @@ groupInfoElementsMap = {
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
-              ${t("group-chat:actions.edit")}
+              ${t("common:shared_terms.edit")}
             </button>
             <div class="group-name-container info-container">
               <span class="label" id="group-name-label-view">
@@ -88,7 +88,7 @@ groupInfoElementsMap = {
                   <i class="bi bi-people-fill"></i>
                   <i class="bi bi-info-circle"></i>
                 </span>
-                ${t("group-chat:info.group_name")}
+                ${t("common:quiz_card.group_name")}
               </span>
               <span class="group-name-value value content">
               </span>
@@ -149,7 +149,7 @@ groupInfoElementsMap = {
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
-              ${t("group-chat:actions.edit")}
+              ${t("common:shared_terms.edit")}
             </button>
             <div class="group-description-container info-container">
               <span class="label">
@@ -194,7 +194,7 @@ groupInfoElementsMap = {
               <span class="subject-icon icon-box">
                 <i class="bi bi-journal-text"></i>
               </span>
-              ${t("group-chat:info.subject")}
+              ${t("common:quiz_card.subject")}
             </span>
             <div class="select-trigger input">
               <button type="button" class="exclude-btn open-drop-down-btn" id="subject-input">
@@ -216,14 +216,14 @@ groupInfoElementsMap = {
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
-              ${t("group-chat:actions.edit")}
+              ${t("common:shared_terms.edit")}
             </button>
             <div class="subject-container info-container">
               <span class="label" >
                 <span class="subject-icon icon-box">
                   <i class="bi bi-journal-text"></i>
                 </span>
-                ${t("group-chat:info.subject")}
+                ${t("common:quiz_card.subject")}
               </span>
               <span class="subject-value value content"></span>
             </div>
@@ -259,7 +259,7 @@ groupInfoElementsMap = {
                 <span class="level-icon icon-box">
                   <i class="bi bi-graph-up"></i>
                 </span>
-                ${t("group-chat:info.level")}
+                ${t("common:filters.level")}
               </label>
               <button
                 type="button"
@@ -283,14 +283,14 @@ groupInfoElementsMap = {
       wrapper.innerHTML = `
            <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
-              ${t("group-chat:actions.edit")}
+              ${t("common:shared_terms.edit")}
             </button>
             <div class="level-container info-container">
               <span class="label">
                 <span class="level-icon icon-box">
                   <i class="bi bi-graph-up"></i>
                 </span>
-                ${t("group-chat:info.level")}
+                ${t("common:filters.level")}
               </span>
               <span class="level-value value content"></span>
             </div>
@@ -328,7 +328,7 @@ groupInfoElementsMap = {
               <span class="visibility-icon icon-box">
                 <i class="bi bi-eye-fill"></i>
               </span>
-              ${t("group-chat:info.visibility")}
+              ${t("common:filters.visibility")}
             </label>
             <button
               type="button"
@@ -356,14 +356,14 @@ groupInfoElementsMap = {
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
-              ${t("group-chat:actions.edit")}
+              ${t("common:shared_terms.edit")}
             </button>
             <div class="visibility-container info-container">
               <span class="label" id="visibility-label-view">
                 <span class="visibility-icon icon-box">
                   <i class="bi bi-eye-fill"></i>
                 </span>
-                ${t("group-chat:info.visibility")}
+                ${t("common:filters.visibility")}
               </span>
               <span class="visibility-value value content"></span>
             </div>
@@ -406,7 +406,7 @@ groupInfoElementsMap = {
                 <i class="bi bi-people-fill"></i>
                 <i class="bi bi-info-circle"></i>
               </span>
-              ${t("group-chat:info.max_members")}
+              ${t("common:shared_terms.max_members")}
             </label>
             <input
             name="max-members"
@@ -428,14 +428,14 @@ groupInfoElementsMap = {
       wrapper.innerHTML = `
             <button type="button" class="exclude-btn edit-btn action-btn should-fill">
               <i class="bi bi-pencil"></i>
-              ${t("group-chat:actions.edit")}
+              ${t("common:shared_terms.edit")}
             </button>
             <div class="max-members-container info-container">
               <span class="label">
                 <span class="max-members-icon icon-box">
                   <i class="bi bi-person-plus-fill"></i>
                 </span>
-                ${t("group-chat:info.max_members")}
+                ${t("common:shared_terms.max_members")}
               </span>
               <span class="max-members-value value content"></span>
             </div>

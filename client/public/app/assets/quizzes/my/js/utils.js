@@ -197,7 +197,7 @@ const chechQuizValues = (inputs) => {
   }
 
   if (!subjectValue.trim()) {
-    showErrorTooltip(t("quizzes:validation.subject_required"), subject);
+    showErrorTooltip(t("common:shared_terms.subject_is_required"), subject);
     return false;
   } else {
     resetTooltip(globalTooltip, subject.closest(".field-container"));
@@ -230,7 +230,7 @@ const getQuizOverlay = () => `<div class="overlay-model create-quiz-overlay">
               id="quiz-title"
               name="quiz-title"
               class="input"
-              placeholder="${t("quizzes:title_placeholder")}"
+              placeholder="${t("common:shared_terms.title")}"
             />
           </div>
           <div class="field-container subject-field">
@@ -248,7 +248,7 @@ const getQuizOverlay = () => `<div class="overlay-model create-quiz-overlay">
               ></div>
             </div>
           </div>
-          <button type="submit" class="blue-btn create-btn">${t("quizzes:create")}</button>
+          <button type="submit" class="blue-btn create-btn">${t("common:shared_terms.create")}</button>
         </form>
       </div>`;
 
@@ -323,7 +323,7 @@ const getcreateQuizCardFunc = (quiz = {}) => {
       <header class="quiz-card-header">
         ${
           status === "draft"
-            ? `<span class="badge gray-badge has-tooltip" data-tooltip="${t("quizzes:tooltips.add_at_least_1_question")}">
+            ? `<span class="badge gray-badge has-tooltip" data-tooltip="${t("common:shared_terms.add_at_least_1_question_to_publish")}">
                 <i class="bi bi-pencil"></i>
                 ${t("common:filters.draft")}
               </span>`
@@ -347,7 +347,7 @@ const getcreateQuizCardFunc = (quiz = {}) => {
                 data-quiz-id="${id}"
               >
                 <i class="bi bi-pencil-square"></i>
-                ${t("quizzes:edit")}
+                ${t("common:shared_terms.edit")}
               </button>
               <button
                 type="button"
@@ -371,7 +371,7 @@ const getcreateQuizCardFunc = (quiz = {}) => {
                 data-quiz-id="${id}"
               >
                 <i class="bi bi-trash3"></i>
-                ${t("quizzes:remove")}
+                ${t("common:modals.remove")}
               </button>
             </div>
           </div>
@@ -416,7 +416,7 @@ const getcreateQuizCardFunc = (quiz = {}) => {
 
   // Set values safely
   card.querySelector(".quiz-title.content").textContent =
-    title || t("quizzes:untitled_quiz");
+    title || t("common:shared_quizzes.quiz_title_placeholder");
   card.querySelector(".questions-count-container .count.content").textContent =
     formatNumber(questionsCount);
   card.querySelector(".subject-container .subject.content").textContent =
@@ -486,7 +486,7 @@ export const initLazyLoadingLoader = () => {
         },
         filtered: {
           icon: "bi-file-earmark-plus",
-          title: t("quizzes:skeletons.no_quizzes_found_title"),
+          title: t("common:shared_terms.no_quizzes_found"),
           desc: t("quizzes:skeletons.no_quizzes_found_desc"),
         },
       },

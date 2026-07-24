@@ -14,33 +14,33 @@
     <div class="top-bar">
       <!-- inffo bootstrap icon -->
       <button
-        data-tooltip="<%= t('groups:chat.show_info_tooltip') %>"
+        data-tooltip="<%= t('common:shared_terms.show_group_details') %>"
         type="button"
         class="exclude-btn show-info-btn has-tooltip"
       >
         <i class="bi bi-info-circle"></i>
       </button>
-      <h2 class="title"><%= t("groups:chat.title") %></h2>
+      <h2 class="title"><%= t("common:shared_terms.real_time_chat") %></h2>
       <% if (sessionId) { %>
         <% if (isAdmin) { %>
           <button type="button" data-session-id="<%= sessionId %>" class="small-btn red-btn end-session">
             <i class="bi bi-stop-circle"></i>
-            <%= t("groups:session_info.end_session") %>
+            <%= t("common:shared_terms.end_session") %>
           </button>
         <% } else if (!joined) { %>
           <button type="button" data-session-id="<%= sessionId %>" class="join-session small-btn blue-btn">
             <i class="bi bi-box-arrow-in-right"></i>
-            <%= t("quizzes:session_overlay.join_session") %>
+            <%= t("common:shared_terms.join_session") %>
           </button>
         <% } %>
       <span
         class="session-active-badge badge circle-badge-1 green-badge has-tooltip"
-        data-tooltip="<%= t('groups:chat.active_session_tooltip') %>"
+        data-tooltip="<%= t('common:shared_terms.active_session') %>"
       ></span>
       <% } else if(isAdmin) { %>
       <button type="button" class="small-btn create-session-btn">
         <i class="bi bi-plus-circle"></i>
-        <span><%= t("groups:chat.create_session") %></span>
+        <span><%= t("common:shared_terms.create_session") %></span>
       </button>
       <% } %>
 
@@ -54,7 +54,7 @@
         <div class="drop-down-menu group-chat-drop-down-menu overlay">
           <div class="drop-down-group">
             <div class="drop-down-group-label">
-              <%= t("groups:chat.group_actions") %>
+              <%= t("common:mobile_nav.group_actions") %>
               <hr class="separator" />
             </div>
 
@@ -63,14 +63,14 @@
               class="drop-down-item exclude-btn group-info-menu-btn"
             >
               <i class="bi bi-info-circle"></i>
-              <%= t("groups:chat.group_info") %>
+              <%= t("common:shared_terms.group_info") %>
             </button>
             <button
               type="button"
               class="drop-down-item exclude-btn quizzes-list-menu-btn"
             >
               <i class="bi bi-clipboard-check"></i>
-              <%= t("groups:chat.quizzes") %>
+              <%= t("common:titles.quizzes") %>
             </button>
             <% if (sessionId) { %>
             <button
@@ -78,12 +78,12 @@
               class="drop-down-item exclude-btn session-info-menu-btn"
             >
               <i class="bi bi-clock-history"></i>
-              <%= t("groups:chat.session_info") %>
+              <%= t("common:shared_terms.session_info") %>
             </button>
             <% } %> <% if (isAdmin) { %>
             <button type="button" class="drop-down-item exclude-btn add-members-menu-btn">
               <i class="bi bi-person-plus"></i>
-              <%= t("groups:chat.invite_users") %>
+              <%= t("common:shared_terms.invite_users") %>
             </button>
             <% if ( isRequested) { %>
             <button
@@ -91,7 +91,7 @@
               class="drop-down-item manage-demanes-menu-btn exclude-btn"
             >
               <i class="bi bi-list-check"></i>
-              <%= t("groups:chat.manage_demandes") %>
+              <%= t("common:shared_terms.manage_demandes") %>
             </button>
             <% } %> <% } %>
             <button
@@ -99,7 +99,7 @@
               class="drop-down-item exclude-btn members-list-menu-btn"
             >
               <i class="bi bi-people"></i>
-              <%= isAdmin ? t("groups:chat.manage_members") : t("groups:chat.members") %>
+              <%= isAdmin ? t("common:shared_terms.manage_members") : t("common:shared_terms.members") %>
             </button>
             <% if (isAdmin) { %>
             <button
@@ -107,7 +107,7 @@
               class="drop-down-item exclude-btn red-btn remove-group-menu-btn"
             >
               <i class="bi bi-trash3"></i>
-              <%= t("groups:chat.remove_group") %>
+              <%= t("common:shared_terms.remove_group") %>
             </button>
             <% } else { %>
             <button
@@ -115,7 +115,7 @@
               class="drop-down-item exclude-btn red-btn leave-group-menu-btn"
             >
               <i class="bi bi-box-arrow-left"></i>
-              <%= t("groups:chat.leave_group") %>
+              <%= t("common:shared_terms.leave_group") %>
             </button>
             <% } %>
           </div>
@@ -174,46 +174,46 @@
               </div>
               <input
                 type="search"
-                placeholder="<%= t('groups:chat.search_emoji_placeholder') %>"
+                placeholder="<%= t('common:shared_terms.search_for_emoji') %>"
                 id="emojis-search-input"
                 class="emojis-search-input"
               />
             </div>
             <div class="emojies-sections">
               <section id="recent">
-                <h5><%= t("groups:chat.emoji_recent") %></h5>
+                <h5><%= t("common:time.recent") %></h5>
                 <div class="recent-emojies"></div>
               </section>
               <section id="people">
-                <h5><%= t("groups:chat.emoji_people") %></h5>
+                <h5><%= t("common:shared_terms.people") %></h5>
                 <div class="people-emojies"></div>
               </section>
               <section id="animals_nature">
-                <h5><%= t("groups:chat.emoji_animals_nature") %></h5>
+                <h5><%= t("common:shared_terms.animals_nature") %></h5>
                 <div class="animals-nature-emojies"></div>
               </section>
               <section id="food_drink">
-                <h5><%= t("groups:chat.emoji_food_drink") %></h5>
+                <h5><%= t("common:shared_terms.food_drink") %></h5>
                 <div class="food-drink-emojies"></div>
               </section>
               <section id="activity">
-                <h5><%= t("groups:chat.emoji_activity") %></h5>
+                <h5><%= t("common:shared_terms.activity") %></h5>
                 <div class="activity-emojies"></div>
               </section>
               <section id="objects">
-                <h5><%= t("groups:chat.emoji_objects") %></h5>
+                <h5><%= t("common:shared_terms.objects") %></h5>
                 <div class="objects-emojies"></div>
               </section>
               <section id="symbols">
-                <h5><%= t("groups:chat.emoji_symbols") %></h5>
+                <h5><%= t("common:shared_terms.symbols") %></h5>
                 <div class="symbols-emojies"></div>
               </section>
               <section id="travel_places">
-                <h5><%= t("groups:chat.emoji_travel_places") %></h5>
+                <h5><%= t("common:shared_terms.travel_places") %></h5>
                 <div class="travel-places-emojies"></div>
               </section>
               <section id="flags">
-                <h5><%= t("groups:chat.emoji_flags") %></h5>
+                <h5><%= t("common:shared_terms.flags") %></h5>
                 <div class="flags-emojies"></div>
               </section>
             </div>
@@ -251,7 +251,7 @@
         />
       </div>
       <textarea
-        placeholder="<%= t('groups:chat.type_message_placeholder') %>"
+        placeholder="<%= t('common:shared_terms.type_a_message') %>"
         class="input-message"
         id="input-message"
       ></textarea>

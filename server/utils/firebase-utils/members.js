@@ -256,18 +256,19 @@ const kickMember = async (groupId, userId) => {
       .collection("userGroups")
       .doc(groupId)
       .delete();
-    await groupRef.update({
-      membersCount: FieldValue.increment(-1),
-      sampleMembers: FieldValue.arrayRemove({
-        uid: userSnap.id,
-        fullName: userSnap.data().fullName,
-        email: userSnap.data().email,
-        photoURL: userSnap.data().photoURL,
-      }),
-    });
-    await syncUserGroupSnapshot(groupId, {
-      membersCount: FieldValue.increment(-1),
-    });
+    const groupData = groupSnap.data();
+    let sampleMembers = groupData.sampleMembers || [];
+    const initialSampleLength = sampleMembers.length;
+    sampleMembers = sampleMembers.filter((m) => m.uid !== userId);
+
+    const updateData = { membersCount: FieldValue.increment(-1) };
+
+    if (sampleMembers.length !== initialSampleLength) {
+      updateData.sampleMembers = sampleMembers;
+    }
+
+    await groupRef.update(updateData);
+    await syncUserGroupSnapshot(groupId, updateData);
 
     // Refill sampleMembers if less than 3
     await refillSampleMembersIfNeeded(groupRef);

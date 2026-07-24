@@ -120,7 +120,7 @@ const getQuestionEls = (questionId, questionCount) => {
                   <span class="icon-box">
                     <i class="bi bi-list-ol"></i>
                   </span>
-                  ${t("quiz-edit:choices_heading")}
+                  ${t("common:skeletons.quiz_editor.choices_title")}
                 </h5>
                 <div class="choices-list">
                   <div data-choice-id="0" class="choice correct-answer">
@@ -156,14 +156,14 @@ const getQuestionEls = (questionId, questionCount) => {
                 </div>
                 <button type="button" class="add-choice-btn small-btn">
                   <i class="bi bi-plus-circle"></i>
-                  ${t("quiz-edit:add_choice")}
+                  ${t("common:skeletons.quiz_editor.add_choice")}
                 </button>
                 <hr />
                 <h5 class="correct-answer-title section-title">
                   <span class="icon-box">
                     <i class="bi bi-check-circle"></i>
                   </span>
-                  ${t("quiz-edit:correct_answer_heading")}
+                  ${t("common:skeletons.quiz_editor.correct_answer_title")}
                 </h5>
                 <div class="correct-answer-select">
                   <div class="icon-box">
@@ -213,7 +213,7 @@ const getQuestionEls = (questionId, questionCount) => {
                   ${t("quiz-edit:default_question_text")}
                 </p>
                 <footer class="question-card-footer">
-                  <span class="choices-count">${t("quizzes:choices_count", { count: 2 })}</span>
+                  <span class="choices-count">${t("common:shared_quizzes.choices_count", { count: 2 })}</span>
                   <button type="button" class="delete-question-btn exclude-btn has-tooltip" data-tooltip="${t("quiz-edit:delete_question_tooltip")}">
                     <i class="bi bi-trash3"></i>
                   </button>
@@ -306,8 +306,7 @@ const updateChoicesCountInPanel = (choicesList) => {
   );
   if (questionCard) {
     const choiceCount = choicesList.children.length;
-    questionCard.querySelector(".choices-count").textContent = t(
-      "quizzes:choices_count",
+    questionCard.querySelector(".choices-count").textContent = t("common:shared_quizzes.choices_count",
       { count: choiceCount },
     );
   }

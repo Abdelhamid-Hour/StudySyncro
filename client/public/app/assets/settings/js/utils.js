@@ -86,7 +86,7 @@ export const enableProfileEditMode = (profileModifyBtn, e) => {
   cancelBtn.className = "gray-btn cancel-btn";
   cancelBtn.innerHTML = `
         <i class="bi bi-x-lg"></i>
-        ${t("settings:buttons.cancel")}
+        ${t("common:modals.cancel")}
       `;
   profileModifyBtn.before(cancelBtn);
   toSubmitBtn(profileModifyBtn);
@@ -108,7 +108,7 @@ const disableProfileMode = (profileSaveBtn) => {
   document.querySelector(".profile-tab-content .cancel-btn")?.remove();
   profileSaveBtn.innerHTML = `
       <i class="bi bi-pencil"></i >
-      ${t("settings:buttons.modify_profile")}
+      ${t("common:skeletons.settings.modify_btn")}
     `;
   toModifyBtn(profileSaveBtn);
   resetTooltip(globalTooltip);
@@ -197,7 +197,7 @@ const enableEmailEditMode = (emailModifyBtn, e) => {
   cancelBtn.className = "gray-btn cancel-btn";
   cancelBtn.innerHTML = `
         <i class="bi bi-x-lg"></i>
-        ${t("settings:buttons.cancel")}
+        ${t("common:modals.cancel")}
       `;
   emailModifyBtn.before(cancelBtn);
   toSubmitBtn(emailModifyBtn);
