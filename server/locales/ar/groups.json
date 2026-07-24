@@ -95,6 +95,21 @@
     "type_message_placeholder": "اكتب رسالة"
   },
   "plural_counts": {
-    "members": null
+    "extra_members": {
+      "zero": "",
+      "one": "+1",
+      "two": "+2",
+      "few": "+{count}",
+      "many": "+{count}",
+      "other": "+{count}"
+    },
+    "members": {
+      "zero": "لا يوجد أعضاء",
+      "one": "عضو واحد",
+      "two": "عضوان",
+      "few": "{count} أعضاء",
+      "many": "{count} عضواً",
+      "other": "{count} عضو"
+    }
   }
 }

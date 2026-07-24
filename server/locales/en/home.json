@@ -4,7 +4,10 @@
     "ready_desc": "Join a study session to connect with peers, participate in discussions, and enhance your learning experience. StudyHype makes collaborative learning easy and effective!",
     "recent_messages_heading": "Recent Messages",
     "recent_messages_sub": "Latest conversations from your study groups",
-    "unread_messages_count": null,
+    "unread_messages_count": {
+      "one": "1 New Message",
+      "other": "{count} New Messages"
+    },
     "reply_in_group": "Reply In Group",
     "reply": "Reply",
     "mark_as_read": "Mark as read",
@@ -13,9 +16,15 @@
     "active_sessions_heading": "Active Sessions",
     "active_sessions_sub": "Ongoing study sessions you can join now",
     "search_placeholder": "Search by session or group name",
-    "joined_users_count": null,
+    "joined_users_count": {
+      "one": "1 Joined User",
+      "other": "{count} Joined Users"
+    },
     "duration_label": "Duration",
-    "tasks_count": null,
+    "tasks_count": {
+      "one": "1 Task",
+      "other": "{count} Tasks"
+    },
     "start_at": "Start At:",
     "end_at": "End At:",
     "join_session": "Join Session",
@@ -24,9 +33,19 @@
     "empty_sessions_desc": "There are no study sessions currently active. You can start one or wait for others to join.",
     "time": {
       "just_now": "Just now",
-      "ago_minutes": null,
-      "ago_hours": null,
-      "ago_days": null
+      "recent": "Recent",
+      "ago_minutes": {
+        "one": "{count}m ago",
+        "other": "{count}m ago"
+      },
+      "ago_hours": {
+        "one": "{count}h ago",
+        "other": "{count}h ago"
+      },
+      "ago_days": {
+        "one": "{count}d ago",
+        "other": "{count}d ago"
+      }
     }
   },
   "active": {

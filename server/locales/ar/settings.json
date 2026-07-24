@@ -50,5 +50,10 @@
     "full_name_placeholder": "أدخل اسمك الكامل",
     "uid_label": "معرف المستخدم (User ID)",
     "modify_btn": "تعديل الملف الشخصي"
+  },
+  "error_page": {
+    "back_to_dashboard": "العودة إلى لوحة التحكم",
+    "go_to_login": "الذهاب إلى صفحة تسجيل الدخول",
+    "go_back": "الرجوع للخلف"
   }
 }

@@ -1,4 +1,8 @@
 {
+  "header": {
+    "login_to": "Login to",
+    "create": "Create"
+  },
   "auth_errors": {
     "INVALID_LOGIN_CREDENTIALS": "Invalid email or password. Please try again.",
     "CANCELLED_POPUP_REQUEST": "It looks like you closed the popup before completing the action. Please try again.",

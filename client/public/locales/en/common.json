@@ -22,6 +22,7 @@
     "passed": "Passed"
   },
   "skeletons": {
+    "loading": "Loading...",
     "error_loading": "Error loading content",
     "no_results_title": "No Results Found",
     "no_results_desc": "No matches found for your search or filters.",
@@ -96,6 +97,10 @@
     "msg_not_found_local": "Message not found in local storage.",
     "select_subject_error": "Please select a valid subject from the list or specify a new one.",
     "error_loading_more": "Error loading more items. Please try again later.",
+    "password_reset_sent": "If this email is registered, you will receive a password reset link.",
+    "password_reset_success": "Password reset successful",
+    "try_resetting_again": "Try resetting your password again",
+    "reset_link_expired": "Your request to reset your password has expired or the link has already been used",
     "avatar_size_exceeded": "File size exceeds the limit of {size}.",
     "subject_input_error": "Please enter a valid subject between 2 and 50 characters long.",
     "left_session_success": "You have left the session successfully.",
@@ -145,7 +150,11 @@
   "modals": {
     "confirm": "Confirm",
     "cancel": "Cancel",
+    "yes": "Yes",
+    "no": "No",
     "delete": "Delete",
+    "remove": "Remove",
+    "leave": "Leave",
     "save": "Save",
     "close": "Close",
     "select_subject": "Select Subject",
@@ -154,7 +163,9 @@
   "not_available": "N/A",
   "actions": {
     "scroll_to_top": "Scroll To Top",
-    "collapse_all": "Collapse All"
+    "collapse_all": "Collapse All",
+    "switch_to_en": "Switch to English",
+    "switch_to_ar": "Switch to Arabic"
   },
   "forms": {
     "other": "Other",
@@ -194,6 +205,16 @@
     "published": "Published",
     "draft": "Draft"
   },
+  "groups_tabs": {
+    "my_groups": "My Groups",
+    "available_groups": "Available Groups"
+  },
+  "quizzes_tabs": {
+    "my_quizzes": "My Quizzes",
+    "passed": "Passed",
+    "quiz_editor": "Quiz Editor",
+    "questions_list": "Questions List"
+  },
   "quiz_card": {
     "quiz_title": "Quiz Title",
     "group_name": "Group Name",
@@ -205,6 +226,11 @@
     "subject": "Subject",
     "groups_abbr": "Gr",
     "sessions_abbr": "Ses"
+  },
+  "placeholders": {
+    "search_quizzes": "Search By Quiz Title or Subject",
+    "search_groups": "Search By Group Name or Subject",
+    "search_quizzes_groups": "Search By Quiz Title, Subject or Group Name"
   },
   "shared_chat": {
     "alerts": {
@@ -278,5 +304,9 @@
       "make_progress": "Ready to make progress?",
       "wonderful_day": "Have a wonderful day ahead!"
     }
+  },
+  "empty_states": {
+    "no_quizzes_found": "No Quizzes found !",
+    "no_groups_found": "No Groups found !"
   }
 }

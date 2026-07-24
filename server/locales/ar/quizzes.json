@@ -28,7 +28,8 @@
   "actions": {
     "view_result": "عرض النتيجة",
     "view_results": "عرض النتائج",
-    "retake": "إعادة"
+    "retake": "إعادة",
+    "retake_quiz": "إعادة الاختبار"
   },
   "play": {
     "time_left": "الوقت المتبقي :",
@@ -96,9 +97,45 @@
     "correct_answer": "الإجابة الصحيحة"
   },
   "plural_counts": {
-    "choices": null,
-    "groups": null,
-    "sessions": null,
-    "joined_users": null
+    "questions": {
+      "zero": "لا توجد أسئلة",
+      "one": "سؤال واحد",
+      "two": "سؤالان",
+      "few": "{count} أسئلة",
+      "many": "{count} سؤالاً",
+      "other": "{count} سؤال"
+    },
+    "choices": {
+      "zero": "لا توجد خيارات",
+      "one": "خيار واحد",
+      "two": "خياران",
+      "few": "{count} خيارات",
+      "many": "{count} خياراً",
+      "other": "{count} خيار"
+    },
+    "groups": {
+      "zero": "مجموعات",
+      "one": "مجموعة",
+      "two": "مجموعتان",
+      "few": "مجموعات",
+      "many": "مجموعة",
+      "other": "مجموعة"
+    },
+    "sessions": {
+      "zero": "جلسات",
+      "one": "جلسة",
+      "two": "جلستان",
+      "few": "جلسات",
+      "many": "جلسة",
+      "other": "جلسة"
+    },
+    "joined_users": {
+      "zero": "لا يوجد مستخدمون منضمون",
+      "one": "مستخدم واحد منضم",
+      "two": "مستخدمان منضمان",
+      "few": "{count} مستخدمين منضمين",
+      "many": "{count} مستخدماً منضماً",
+      "other": "{count} مستخدم منضم"
+    }
   }
 }

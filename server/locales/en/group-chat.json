@@ -1,1 +1,35 @@
-{}
+{
+  "show_info_tooltip": "Show Group Details",
+  "real_time_chat": "Real Time Chat",
+  "end_session": "End Session",
+  "join_session": "Join Session",
+  "active_session_tooltip": "Active Session",
+  "create_session": "Create Session",
+  "menu": {
+    "group_actions": "Group Actions",
+    "group_info": "Group Info",
+    "quizzes": "Quizzes",
+    "session_info": "Session Info",
+    "invite_users": "Invite Users",
+    "manage_demandes": "Manage Demandes",
+    "manage_members": "Manage Members",
+    "members": "Members",
+    "remove_group": "Remove Group",
+    "leave_group": "Leave Group"
+  },
+  "emojis": {
+    "search_placeholder": "Search for emoji",
+    "categories": {
+      "recent": "Recent",
+      "people": "People",
+      "animals_nature": "Animals & Nature",
+      "food_drink": "Food & Drink",
+      "activity": "Activity",
+      "objects": "Objects",
+      "symbols": "Symbols",
+      "travel_places": "Travel & Places",
+      "flags": "Flags"
+    }
+  },
+  "type_message_placeholder": "Type a message"
+}

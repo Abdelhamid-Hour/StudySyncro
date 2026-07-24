@@ -1,6 +1,41 @@
 {
+  "show_info_tooltip": "عرض تفاصيل المجموعة",
+  "real_time_chat": "المحادثة الفورية",
+  "end_session": "إنهاء الجلسة",
+  "join_session": "الانضمام للجلسة",
+  "active_session_tooltip": "جلسة نشطة",
   "create_session": "إنشاء جلسة",
+  "menu": {
+    "group_actions": "إجراءات المجموعة",
+    "group_info": "معلومات المجموعة",
+    "quizzes": "الاختبارات",
+    "session_info": "معلومات الجلسة",
+    "invite_users": "دعوة أعضاء",
+    "manage_demandes": "إدارة طلبات الانضمام",
+    "manage_members": "إدارة الأعضاء",
+    "members": "الأعضاء",
+    "remove_group": "حذف المجموعة",
+    "leave_group": "مغادرة المجموعة"
+  },
+  "emojis": {
+    "search_placeholder": "البحث عن رمز تعبيري",
+    "categories": {
+      "recent": "الأخيرة",
+      "people": "الأشخاص",
+      "animals_nature": "الحيوانات والطبيعة",
+      "food_drink": "الطعام والشراب",
+      "activity": "الأنشطة",
+      "objects": "الأشياء",
+      "symbols": "الرموز",
+      "travel_places": "السفر والأماكن",
+      "flags": "الأعلام"
+    },
+    "no_match": "لم يتم العثور على رموز تعبيرية مطابقة."
+  },
+  "unread_messages": "رسائل غير مقروءة",
+  "drop_files": "أفلت الملفات هنا لإضافتها إلى رسالتك.",
   "tooltips": {
+    "add_new_line": "لإضافة سطر جديد، اضغط على Ctrl + Enter",
     "close_group_info": "إغلاق تفاصيل المجموعة",
     "show_group_info": "عرض تفاصيل المجموعة",
     "admin_cant_submit": "لا يمكن للمشرف إرسال الاختبارات",
@@ -8,6 +43,8 @@
     "show_details": "عرض التفاصيل"
   },
   "alerts": {
+    "send_failed": "فشل إرسال الرسالة. يرجى المحاولة مرة أخرى.",
+    "message_max_length": "لا يمكن أن تتجاوز الرسالة {max} حرفاً.",
     "left_group_success": "تمت مغادرة المجموعة بنجاح",
     "load_group_info_error": "حدث خطأ أثناء تحميل معلومات المجموعة.",
     "failed_to_load_group_info": "فشل تحميل معلومات المجموعة. يرجى المحاولة مرة أخرى لاحقاً.",
@@ -26,6 +63,7 @@
     "max_invite_limit": "يمكنك دعوة ما يصل إلى 5 مستخدمين فقط في المرة الواحدة.",
     "users_found_count": "تم العثور على {{count}} من المستخدمين"
   },
+  "type_message_placeholder": "اكتب رسالة...",
   "skeletons": {
     "no_messages_title": "لا توجد رسائل",
     "no_messages_desc": "لا توجد رسائل في هذه المحادثة.",

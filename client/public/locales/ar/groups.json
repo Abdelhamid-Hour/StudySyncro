@@ -1,6 +1,13 @@
 {
   "alerts": {
     "group_created_success": "تم إنشاء المجموعة بنجاح",
+    "session_created_success": "تم إنشاء الجلسة الدراسية بنجاح",
+    "group_info_updated": "تم تحديث معلومات المجموعة بنجاح",
+    "select_user_to_add": "يرجى اختيار مستخدم واحد على الأقل للإضافة.",
+    "left_group_success": "تمت مغادرة المجموعة بنجاح",
+    "member_kicked_success": "تم طرد العضو بنجاح",
+    "role_transferred_success": "تم نقل الصلاحيات بنجاح",
+    "group_removed_success": "تم حذف المجموعة بنجاح",
     "joined_group_success_html": "لقد انضممت بنجاح إلى المجموعة <b></b>",
     "join_request_sent_html": "تم إرسال طلبك للانضمام إلى المجموعة <b></b>"
   },
@@ -8,13 +15,53 @@
     "create_new_group": "إنشاء مجموعة جديدة",
     "join_group_title": "الانضمام إلى المجموعة",
     "join_group_desc": "هل أنت متأكد أنك تريد الانضمام إلى هذه المجموعة؟",
-    "join_group_confirm": "انضمام"
+    "join_group_confirm": "انضمام",
+    "leave_group_title": "مغادرة المجموعة",
+    "leave_group_desc": "هل أنت متأكد أنك تريد مغادرة هذه المجموعة؟",
+    "leave_group_confirm": "مغادرة",
+    "remove_quiz_title": "إزالة الاختبار",
+    "remove_quiz_desc": "هل أنت متأكد أنك تريد إزالة هذا الاختبار؟",
+    "remove_quiz_confirm": "إزالة الاختبار",
+    "kick_member_title": "طرد العضو",
+    "kick_member_desc": "هل أنت متأكد أنك تريد طرد هذا العضو من المجموعة؟",
+    "kick_member_confirm": "طرد",
+    "move_admin_title": "نقل صلاحية المضيف",
+    "move_admin_desc": "هل أنت متأكد أنك تريد جعل هذا العضو مشرفاً على المجموعة؟",
+    "move_admin_confirm": "نقل",
+    "remove_group_title": "حذف المجموعة",
+    "remove_group_desc": "هل أنت متأكد أنك تريد حذف هذه المجموعة نهائياً؟",
+    "remove_group_confirm": "حذف"
+  },
+  "skeletons": {
+    "no_groups_joined_title": "لم تنضم إلى أي مجموعة",
+    "no_groups_joined_desc": "لست عضواً في أي مجموعة دراسية حالياً. قم بإنشاء أو الانضمام إلى مجموعة للبدء في التعاون!",
+    "no_groups_available_title": "لا توجد مجموعات متاحة",
+    "no_groups_available_desc": "لا توجد حالياً مجموعات دراسية عامة متاحة للانضمام. تحقق مرة أخرى لاحقاً!",
+    "no_groups_found_title": "لم يتم العثور على مجموعات",
+    "no_groups_found_desc": "لا توجد مجموعات دراسية تطابق معايير البحث أو الفلترة.",
+    "no_quizzes_avail_title": "لا توجد اختبارات متاحة",
+    "no_quizzes_avail_desc": "لم يتم إنشاء أي اختبارات لهذه المجموعة بعد.",
+    "no_quizzes_shared_desc": "لم يتم إنشاء أو مشاركة أي اختبارات مع هذه المجموعة بعد.",
+    "no_quizzes_match_title": "لا توجد اختبارات مطابقة",
+    "no_quizzes_match_desc": "لا توجد اختبارات تطابق بحثك.",
+    "no_quizzes_found_title": "لم يتم العثور على اختبارات",
+    "no_quizzes_found_desc": "لا توجد اختبارات تطابق معايير البحث أو الفلترة.",
+    "no_join_req_title": "لا توجد طلبات انضمام",
+    "no_join_req_desc": "لا توجد طلبات انضمام معلقة لهذه المجموعة.",
+    "no_requests_found_title": "لم يتم العثور على طلبات",
+    "no_requests_found_desc": "لا توجد طلبات انضمام تطابق معايير البحث أو الفلترة.",
+    "search_users_title": "البحث عن مستخدمين",
+    "search_users_desc": "اكتب اسماً أو معرفاً في شريط البحث أعلاه للعثور على مستخدمين لدعوتهم.",
+    "no_users_found_title": "لم يتم العثور على مستخدمين",
+    "no_users_found_desc": "لا يوجد مستخدمون يطابقون استعلام البحث الخاص بك."
   },
   "badges": {
     "host": "مضيف",
     "member": "عضو"
   },
   "actions": {
+    "join_now": "انضم الآن",
+    "request_to_join": "طلب الانضمام",
     "view_group": "عرض المجموعة",
     "pending": "قيد الانتظار"
   },

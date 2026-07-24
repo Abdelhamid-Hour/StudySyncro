@@ -38,25 +38,64 @@
     "title_length": "Quiz Title must be between {min} and {max} characters.",
     "subject_required": "Subject is required."
   },
+  "question_num": "Question {num}",
   "choices_count": "{count} Choices",
+  "finished_date": "Finished: {date}",
+  "questions_count": "{count} Questions",
   "questions_label": "Questions",
+  "quiz_title_placeholder": "QUIZ TITLE",
+  "answered": "Answered",
+  "status": {
+    "correct": "Correct",
+    "skipped": "Skipped",
+    "incorrect": "Incorrect"
+  },
+  "editor": {
+    "questions": "Questions",
+    "choices_title": "Choices",
+    "add_choice": "Add Choice",
+    "subject_label": "Subject:",
+    "shared_in_label": "Shared In:",
+    "correct_answer_title": "Correct Answer"
+  },
   "play": {
+    "time_left": "Time Left :",
+    "skip": "Skip",
     "select_answer": "Select the correct Answer (Or press 1-6 / A-F)",
+    "prev": "Previous",
     "next": "Next",
     "finish": "Finish",
     "score_of": "{correct} of {total}",
     "your_score": "Your Score",
     "view_result_details": "View Result Details",
+    "results": {
+      "excellent": {
+        "title": "Excellent work!",
+        "desc": "You nailed it! Keep it up."
+      },
+      "good": {
+        "title": "Well done!",
+        "desc": "Great job! You have a good grasp of the material."
+      },
+      "average": {
+        "title": "Not bad, keep going!",
+        "desc": "You're almost there! Keep up the good work."
+      },
+      "poor": {
+        "title": "Better luck next time!",
+        "desc": "Try to review the material and keep practicing."
+      }
+    },
+    "grades": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "average": "Average",
+      "poor": "Poor"
+    },
     "alerts": {
       "select_answer": "Please select an answer or click the Skip button to continue.",
       "failed_load": "Failed to load quiz questions. Please try again later.",
       "failed_submit": "Failed to submit your quiz result. Please try again later."
     }
-  },
-  "quiz_play": {
-    "fallback_question": "Question text...",
-    "choice_a": "Choice A",
-    "choice_b": "Choice B",
-    "choice_c": "Choice C"
   }
 }

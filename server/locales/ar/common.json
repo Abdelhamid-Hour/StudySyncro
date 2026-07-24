@@ -13,11 +13,13 @@
     "studyhype": "ستادي هايب"
   },
   "avatar_alt": "الصورة الشخصية للمستخدم",
+  "member_avatar_alt": "الصورة الشخصية للعضو",
   "sidebar": {
     "logo_text": "StudyHype",
     "overview": "نظرة عامة",
     "groups": "المجموعات",
     "quizzes": "الاختبارات",
+    "settings": "الإعدادات",
     "notifications_tooltip": "الإشعارات",
     "theme_tooltip": "تغيير المظهر",
     "toggle_tooltip": "طوي الشريط الجانبي",
@@ -99,6 +101,9 @@
     "close": "إغلاق",
     "menu": "القائمة",
     "retry": "إعادة المحاولة"
+  },
+  "time": {
+    "recent": "الآن"
   },
   "error": {
     "back_to_dashboard": "العودة للوحة التحكم",

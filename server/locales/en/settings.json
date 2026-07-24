@@ -50,5 +50,10 @@
     "full_name_placeholder": "Enter your full name",
     "uid_label": "User ID",
     "modify_btn": "Modify Profile"
+  },
+  "error_page": {
+    "back_to_dashboard": "Back to Dashboard",
+    "go_to_login": "Go to Login",
+    "go_back": "Go Back"
   }
 }
