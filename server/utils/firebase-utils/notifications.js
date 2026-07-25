@@ -121,7 +121,7 @@ const getUserNotifications = async (
     console.error("Error fetching user notifications:", error);
     return {
       success: false,
-      message: "An error occurred while fetching notifications",
+      message: "api:an_error_occurred_while_fetching_notifications",
       isNative: false,
       type: "error",
     };

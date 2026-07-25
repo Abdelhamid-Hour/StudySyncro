@@ -18,7 +18,7 @@ const createGroupSession = async (sessionData, userId) => {
     if (!sessionData) {
       return {
         success: false,
-        message: "no data is received",
+        message: "api:no_data_is_received",
         isNative: true,
         type: "warning",
       };
@@ -29,7 +29,7 @@ const createGroupSession = async (sessionData, userId) => {
     if (!groupId)
       return {
         success: false,
-        message: "Group ID is required",
+        message: "api:group_id_is_required",
         isNative: true,
         type: "warning",
       };
@@ -37,7 +37,7 @@ const createGroupSession = async (sessionData, userId) => {
     if (!tasks || tasks.length === 0)
       return {
         success: false,
-        message: "At least one task is required to create a session",
+        message: "api:at_least_one_task_is_required_to_create_a_session",
         isNative: true,
         type: "warning",
       };
@@ -49,8 +49,7 @@ const createGroupSession = async (sessionData, userId) => {
     if (duration !== calculatedTasksDuration) {
       return {
         success: false,
-        message:
-          "Total session duration does not match the sum of task durations.",
+        message: "api:total_session_duration_does_not_match_the_sum_of_t",
         isNative: true,
         type: "warning",
       };
@@ -62,7 +61,7 @@ const createGroupSession = async (sessionData, userId) => {
     if (!groupSnap.exists) {
       return {
         success: false,
-        message: "Group does not exist",
+        message: "api:group_does_not_exist",
         isNative: true,
         type: "info",
       };
@@ -73,7 +72,7 @@ const createGroupSession = async (sessionData, userId) => {
     if (groupData.creator !== userId)
       return {
         success: false,
-        message: "You are not the creator of this group",
+        message: "api:you_are_not_the_creator_of_this_group",
         isNative: true,
         type: "warning",
       };
@@ -92,7 +91,7 @@ const createGroupSession = async (sessionData, userId) => {
       if (!quizSnap.exists) {
         return {
           success: false,
-          message: "Quiz does not exist",
+          message: "api:quiz_does_not_exist",
           isNative: true,
           type: "info",
         };
@@ -226,13 +225,13 @@ const createGroupSession = async (sessionData, userId) => {
 
     return {
       success: true,
-      message: "Session created successfully",
+      message: "api:session_created_successfully",
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
-      message: "Cant create session",
+      message: "api:cant_create_session",
       isNative: false,
       type: "error",
     };
@@ -310,7 +309,7 @@ const cancelSession = async (sessionId, userId) => {
     if (!snapshot.exists) {
       return {
         success: false,
-        message: "Session not found",
+        message: "api:session_not_found",
         isNative: true,
         type: "info",
       };
@@ -353,12 +352,12 @@ const cancelSession = async (sessionId, userId) => {
         );
         return {
           success: true,
-          message: "Session ended",
+          message: "api:session_ended",
         };
       } else {
         return {
           success: false,
-          message: "You dont have the right to end the session.",
+          message: "api:you_dont_have_the_right_to_end_the_session",
           isNative: true,
           type: "warning",
         };
@@ -411,12 +410,12 @@ const cancelSession = async (sessionId, userId) => {
       memberIds,
     );
 
-    return { success: true, message: "Session ended" };
+    return { success: true, message: "api:session_ended" };
   } catch (error) {
     console.log(error);
     return {
       success: false,
-      message: "Somethign went wrong",
+      message: "api:somethign_went_wrong",
       isNative: false,
       type: "error",
     };
@@ -431,7 +430,7 @@ const leavSession = async (userId) => {
   if (!user.data().currentSession) {
     return {
       success: false,
-      message: "User is not in any session",
+      message: "api:user_is_not_in_any_session",
       isNative: true,
       type: "info",
     };
@@ -466,7 +465,7 @@ const leavSession = async (userId) => {
   }
   return {
     success: true,
-    message: "You left the session succefully",
+    message: "api:you_left_the_session_succefully",
   };
 };
 
@@ -655,7 +654,7 @@ const fetchActiveSessions = async (
     return {
       success: false,
       isNative: false,
-      message: "Error fetching active sessions",
+      message: "api:error_fetching_active_sessions",
       type: "error",
     };
   }
@@ -675,7 +674,7 @@ const getSessionInformations = async (sessionID, t) => {
     if (!snap.exists || tasks.length === 0) {
       return {
         success: false,
-        message: "Session not found or no tasks available",
+        message: "api:session_not_found_or_no_tasks_available",
         isNative: true,
         type: "info",
       };
@@ -720,7 +719,7 @@ const getSessionInformations = async (sessionID, t) => {
     console.error("Failed to fetch session details:", error.message);
     return {
       success: false,
-      message: "Failed to fetch session details",
+      message: "api:failed_to_fetch_session_details",
       isNative: false,
       type: "error",
     };
@@ -739,7 +738,7 @@ const getActiveSession = async (userId) => {
     if (!user || !user.currentSession || user.currentSession === "") {
       return {
         success: false,
-        message: "User is not in a session",
+        message: "api:user_is_not_in_a_session",
         isNative: true,
         type: "info",
       };
@@ -754,7 +753,7 @@ const getActiveSession = async (userId) => {
       );
       return {
         success: false,
-        message: "Session not found",
+        message: "api:session_not_found",
         isNative: true,
         type: "info",
       };
@@ -775,7 +774,7 @@ const getActiveSession = async (userId) => {
       );
       return {
         success: false,
-        message: "Group not found",
+        message: "api:group_not_found",
         isNative: true,
         type: "info",
       };
@@ -811,7 +810,7 @@ const getActiveSession = async (userId) => {
     console.log("error", error);
     return {
       success: false,
-      message: "Failed to fetch active session",
+      message: "api:failed_to_fetch_active_session",
       isNative: false,
       type: "error",
     };
@@ -827,7 +826,7 @@ const joinSession = async (sessionId, userId) => {
     if (!snap.exists) {
       return {
         success: false,
-        message: "Session Not Found",
+        message: "api:session_not_found_1",
         isNative: true,
         type: "info",
       };
@@ -835,7 +834,7 @@ const joinSession = async (sessionId, userId) => {
     if (!usSnap.exists) {
       return {
         success: false,
-        message: "User Not Found",
+        message: "api:user_not_found_1",
         isNative: true,
         type: "info",
       };
@@ -856,14 +855,14 @@ const joinSession = async (sessionId, userId) => {
 
     return {
       success: true,
-      message: "You joined the session succcessfully",
+      message: "api:you_joined_the_session_succcessfully",
     };
   } catch (error) {
     console.error(error);
 
     return {
       success: false,
-      message: "Somethign wrong happened , please try again later",
+      message: "api:somethign_wrong_happened_please_try_again_later",
       isNative: false,
       type: "error",
     };

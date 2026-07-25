@@ -6,7 +6,7 @@ const sendSessionDetails = (req, res) => {
   if (!sessionResult.success) {
     return res.status(500).json({
       success: false,
-      message: sessionResult.message || "Failed to fetch session details",
+      message: res.locals.t(sessionResult.message) || "Failed to fetch session details",
       isNative: sessionResult.isNative ?? false,
       type: sessionResult.type ?? "error",
     });
@@ -21,7 +21,7 @@ const sendSessionDetails = (req, res) => {
     (err, html) => {
       if (err) {
         console.error("Error rendering session view:", err);
-        return res.status(500).json({ message: "Internal Server Error", isNative: false, type: "error" });
+        return res.status(500).json({ message: res.locals.t("api:internal_server_error"), isNative: false, type: "error" });
       }
       return res.json({ overlay: html });
     }

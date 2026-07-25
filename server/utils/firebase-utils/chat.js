@@ -25,7 +25,7 @@ const sendMessage = async (
       !file &&
       (!message || typeof message !== "string" || message.trim().length === 0)
     ) {
-      throw new Error("Cannot send an empty message without an attachment.");
+      throw new Error("api:cannot_send_an_empty_message_without_an_attachment");
     }
 
     const joinedToGroup = await db
@@ -36,10 +36,10 @@ const sendMessage = async (
       .get();
 
     if (!joinedToGroup.exists)
-      throw new Error("You Are Unauthorized to send message to this group");
+      throw new Error("api:you_are_unauthorized_to_send_message_to_this_group");
 
     if (sessionId && user.currentSession !== sessionId) {
-      throw new Error("You Are Unauthorized to send message to this session");
+      throw new Error("api:you_are_unauthorized_to_send_message_to_this_sessi");
     }
 
     const chatPath = sessionId
@@ -63,7 +63,7 @@ const sendMessage = async (
       if (!msg.exists())
         return {
           success: false,
-          message: "Message not found",
+          message: "api:message_not_found",
           messageId,
           isNative: false,
           type: "error",
@@ -71,7 +71,7 @@ const sendMessage = async (
       if (msg.val().sender.id !== user.uid)
         return {
           success: false,
-          message: "Unauthorized to edit this message",
+          message: "api:unauthorized_to_edit_this_message",
           isNative: true,
           type: "warning",
         };
@@ -248,7 +248,7 @@ const startChildAddedListener = (roomId, query) => {
     } catch (error) {
       console.error("Error in onChildAdded:", error);
       const errEntry = STREAM_MAP.get(roomId);
-      if (errEntry) broadcastMessage(roomId, { message: "Server error" }, true);
+      if (errEntry) broadcastMessage(roomId, { message: "api:server_error" }, true);
       try {
         query.off("child_added", onChildAdded);
       } catch (e) {
@@ -286,7 +286,7 @@ const broadcastMessage = (roomId, messageData, error = false) => {
       res.write(`event: ${error ? "error" : "message"}\n`);
       res.write(
         `data: ${JSON.stringify(
-          error ? { message: "DB listener error" } : messageData,
+          error ? { message: "api:db_listener_error" } : messageData,
         )}\n\n`,
       );
     } catch (err) {
@@ -387,7 +387,7 @@ const markGroupAsReadHelper = async (
     if (!snap.exists()) {
       return {
         success: false,
-        message: "Group chat state not found",
+        message: "api:group_chat_state_not_found",
         isNative: true,
         type: "info",
       };
@@ -421,7 +421,7 @@ const getUserGroupChatStateHelper = async (userId, groupId) => {
     if (!snap.exists()) {
       return {
         success: false,
-        message: "Group chat state not found",
+        message: "api:group_chat_state_not_found",
         isNative: true,
         type: "info",
       };

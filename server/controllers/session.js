@@ -20,10 +20,10 @@ const leaveSessionHandler = async (req, res) => {
   const result = await leavSession(req.user.uid, sessionId);
 
   if (result.success) {
-    return res.status(200).json({ message: result.message });
+    return res.status(200).json({ message: res.locals.t(result.message) });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -35,10 +35,10 @@ const endSessionHandler = async (req, res) => {
   const result = await cancelSession(sessionId);
 
   if (result.success) {
-    return res.status(200).json({ message: result.message });
+    return res.status(200).json({ message: res.locals.t(result.message) });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -49,10 +49,10 @@ const joinSessionHandler = async (req, res) => {
   const { sessionId } = req.body;
   const result = await joinSession(sessionId, req.user.uid);
   if (result.success) {
-    return res.status(200).json({ message: result.message });
+    return res.status(200).json({ message: res.locals.t(result.message) });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -65,10 +65,10 @@ const createSessionHandler = async (req, res) => {
   const result = await createGroupSession(sessionData, req.user.uid);
 
   if (result.success) {
-    return res.status(200).json({ message: result.message });
+    return res.status(200).json({ message: res.locals.t(result.message) });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -82,7 +82,7 @@ const getActiveSessionHandler = async (req, res) => {
     return res.status(200).json({ ...result.sessionData });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -106,7 +106,7 @@ const getActiveSessionsHandler = async (req, res) => {
       .json({ cards: result.sessions, lastVisible: result.lastVisible });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -117,10 +117,10 @@ const updateTaskStatusHandler = async (req, res) => {
   const { taskId, status } = req.body;
   const result = await changeTaskStatus(status, taskId);
   if (result.success) {
-    return res.status(200).json({ message: result.message });
+    return res.status(200).json({ message: res.locals.t(result.message) });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -220,13 +220,13 @@ const sessionStreamHandler = async (req, res) => {
 const streamSingleSessionHandler = async (req, res) => {
   const { sessionId } = req.query;
   if (!sessionId) {
-    return res.status(400).json({ message: "sessionId required", error: "sessionId required", isNative: true, type: "warning" });
+    return res.status(400).json({ message: res.locals.t("api:sessionid_required"), error: res.locals.t("api:sessionid_required"), isNative: true, type: "warning" });
   }
 
   if (sessionId && req.user.currentSession !== sessionId)
     return res
       .status(403)
-      .json({ message: "Access denied to this session stream", error: "Access denied to this session stream", isNative: true, type: "warning" });
+      .json({ message: res.locals.t("api:access_denied_to_this_session_stream"), error: res.locals.t("api:access_denied_to_this_session_stream"), isNative: true, type: "warning" });
 
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");

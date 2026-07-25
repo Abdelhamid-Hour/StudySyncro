@@ -140,7 +140,7 @@ const getUserQuizzes = async (
     console.error(error);
     return {
       success: false,
-      message: "Error fetching user quizzes",
+      message: "api:error_fetching_user_quizzes",
       isNative: false,
       type: "error",
     };
@@ -213,7 +213,7 @@ const getPassedQuizzes = async (
     console.error(error);
     return {
       success: false,
-      message: "Error fetching user quizzes",
+      message: "api:error_fetching_user_quizzes",
       isNative: false,
       type: "error",
     };
@@ -270,7 +270,7 @@ const getQuizzesByGroupId = async (
     if (!groupSnap.exists)
       return {
         success: false,
-        message: "Group Not Found",
+        message: "api:group_not_found_1",
         isNative: true,
         type: "info",
       };
@@ -338,7 +338,7 @@ const getQuizzesByGroupId = async (
     console.error(error);
     return {
       success: false,
-      message: "Error fetching quizzes",
+      message: "api:error_fetching_quizzes",
       isNative: false,
       type: "error",
     };
@@ -376,13 +376,13 @@ const createQuiz = async (examenData, userId) => {
     return {
       success: true,
       quizId: docRef.id,
-      message: "Quiz created successfully",
+      message: "api:quiz_created_successfully",
     };
   } catch (error) {
     console.log(error.message);
     return {
       success: false,
-      message: "Error creating the quizz",
+      message: "api:error_creating_the_quizz",
       isNative: false,
       type: "error",
     };
@@ -395,7 +395,7 @@ const isQuizTitleAvailable = async (title, userId, excludedQuizId = null) => {
       return {
         success: false,
         available: false,
-        message: "Quiz Title is required",
+        message: "api:quiz_title_is_required",
         isNative: true,
         type: "warning",
       };
@@ -413,7 +413,7 @@ const isQuizTitleAvailable = async (title, userId, excludedQuizId = null) => {
       return {
         success: false,
         available: false,
-        message: "You already have a quiz with this title",
+        message: "api:you_already_have_a_quiz_with_this_title",
         isNative: true,
         type: "warning",
       };
@@ -422,14 +422,14 @@ const isQuizTitleAvailable = async (title, userId, excludedQuizId = null) => {
     return {
       success: true,
       available: true,
-      message: "Quiz title is available",
+      message: "api:quiz_title_is_available",
     };
   } catch (error) {
     console.error("Error checking quiz title availability:", error);
     return {
       success: false,
       available: false,
-      message: "Failed to check quiz title availability",
+      message: "api:failed_to_check_quiz_title_availability",
       isNative: false,
       type: "error",
     };
@@ -444,12 +444,12 @@ const deleteQuiz = async (quizId) => {
 
     return {
       success: true,
-      message: "Quiz deleted successfully",
+      message: "api:quiz_deleted_successfully",
     };
   } catch (error) {
     return {
       success: false,
-      message: "Error deleting the quiz",
+      message: "api:error_deleting_the_quiz",
       isNative: false,
       type: "error",
     };
@@ -467,12 +467,12 @@ const updateQuizTitle = async (title, id, userId) => {
       });
       return {
         success: true,
-        message: "Quiz title updated successfully",
+        message: "api:quiz_title_updated_successfully",
       };
     } else {
       return {
         success: false,
-        message: "Quiz id is not valid",
+        message: "api:quiz_id_is_not_valid",
         isNative: true,
         type: "warning",
       };
@@ -481,7 +481,7 @@ const updateQuizTitle = async (title, id, userId) => {
     console.error(error);
     return {
       success: false,
-      message: "Could not update  the quiz title",
+      message: "api:could_not_update_the_quiz_title",
       isNative: false,
       type: "error",
     };
@@ -498,12 +498,12 @@ const updateQuizSubject = async (subject, id, userId) => {
       });
       return {
         success: true,
-        message: "Quiz subject updated successfully",
+        message: "api:quiz_subject_updated_successfully",
       };
     } else {
       return {
         success: false,
-        message: "Quiz id is not valid",
+        message: "api:quiz_id_is_not_valid",
         isNative: true,
         type: "warning",
       };
@@ -512,7 +512,7 @@ const updateQuizSubject = async (subject, id, userId) => {
     console.error(error);
     return {
       success: false,
-      message: "Could not update the quiz subject",
+      message: "api:could_not_update_the_quiz_subject",
       isNative: false,
       type: "error",
     };
@@ -526,7 +526,7 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
     if (!quizSnap) {
       return {
         success: false,
-        message: "Quiz not found",
+        message: "api:quiz_not_found",
         statusCode: 404,
         isNative: true,
       };
@@ -569,7 +569,7 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
     if (questions.length === 0) {
       return {
         success: false,
-        message: "No questions found in the quiz",
+        message: "api:no_questions_found_in_the_quiz",
         statusCode: 404,
       };
     }
@@ -594,14 +594,14 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
 
     return {
       success: false,
-      message: "Forbidden",
+      message: "api:forbidden",
       statusCode: 401,
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
-      message: "Error getting quiz play context",
+      message: "api:error_getting_quiz_play_context",
       statusCode: 500,
     };
   }
@@ -629,7 +629,7 @@ const getQuizPlayDetails = async (user, quizId) => {
     console.error("Error in getQuizPlayDetails:", error);
     return {
       success: false,
-      message: "Internal Server Error",
+      message: "api:internal_server_error",
       isNative: false,
       type: "error",
     };
@@ -656,14 +656,14 @@ const getQuizEditContext = async (quizId, userId) => {
       return {
         success: false,
         statusCode: 404,
-        message: "Quiz not found",
+        message: "api:quiz_not_found",
       };
 
     if (quizSnap.data().creator !== userId)
       return {
         success: false,
         statusCode: 401,
-        message: "Forbidden",
+        message: "api:forbidden",
       };
 
     const data = quizSnap.data();
@@ -683,7 +683,7 @@ const getQuizEditContext = async (quizId, userId) => {
     return {
       success: false,
       statusCode: 500,
-      message: "Internal Server Error",
+      message: "api:internal_server_error",
     };
   }
 };
@@ -693,7 +693,7 @@ const getQuizzInfo = async (quizId, userId) => {
     if (!quizId)
       return {
         success: false,
-        message: "Quiz ID is required",
+        message: "api:quiz_id_is_required",
         isNative: true,
         type: "warning",
       };
@@ -704,7 +704,7 @@ const getQuizzInfo = async (quizId, userId) => {
     if (!quizSnap.exists)
       return {
         success: false,
-        message: "Quiz not found",
+        message: "api:quiz_not_found",
         isNative: true,
         type: "info",
       };
@@ -714,7 +714,7 @@ const getQuizzInfo = async (quizId, userId) => {
     if (quiz.creator !== userId)
       return {
         success: false,
-        message: "You are not authorized to edit this quiz",
+        message: "api:you_are_not_authorized_to_edit_this_quiz",
         isNative: true,
         type: "warning",
       };
@@ -732,7 +732,7 @@ const getQuizzInfo = async (quizId, userId) => {
     console.error(error);
     return {
       success: false,
-      message: "Cant fetch the quiz questions please try again later",
+      message: "api:cant_fetch_the_quiz_questions_please_try_again_lat",
       isNative: false,
       type: "error",
     };
@@ -844,7 +844,7 @@ const modifyQuizQuestions = async (
     if (!quizSnap.exists) {
       return {
         success: false,
-        message: "Quiz not found",
+        message: "api:quiz_not_found",
         isNative: true,
         type: "info",
       };
@@ -853,7 +853,7 @@ const modifyQuizQuestions = async (
     if (quizz.creator !== userId) {
       return {
         success: false,
-        message: "You are not authorized to modify this quiz",
+        message: "api:you_are_not_authorized_to_modify_this_quiz",
         isNative: true,
         type: "warning",
       };
@@ -905,13 +905,13 @@ const modifyQuizQuestions = async (
 
     return {
       success: true,
-      message: "Quiz updated successfully",
+      message: "api:quiz_updated_successfully",
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
-      message: "Something happend while updating the quiz",
+      message: "api:something_happend_while_updating_the_quiz",
       isNative: false,
       type: "error",
     };
@@ -939,7 +939,7 @@ const getQuizResult = async (reqUserId, quizId, groupId, userId) => {
     )
       return {
         success: false,
-        message: "You are not authorized to view this quiz result.",
+        message: "api:you_are_not_authorized_to_view_this_quiz_result",
         isNative: true,
         type: "warning",
       };
@@ -953,7 +953,7 @@ const getQuizResult = async (reqUserId, quizId, groupId, userId) => {
     if (quizResultSnap.empty) {
       return {
         success: false,
-        message: "No quiz result found for this user and quiz",
+        message: "api:no_quiz_result_found_for_this_user_and_quiz",
         isNative: true,
         type: "info",
       };
@@ -985,7 +985,7 @@ const getQuizResult = async (reqUserId, quizId, groupId, userId) => {
     console.error("Error fetching quiz result:", error);
     return {
       success: false,
-      message: "Failed to fetch quiz result",
+      message: "api:failed_to_fetch_quiz_result",
       isNative: false,
       type: "error",
     };
@@ -1004,7 +1004,7 @@ const addQuizResult = async (userId, quizResult) => {
     if (!quizSnap.exists)
       return {
         success: false,
-        message: "Quiz not found",
+        message: "api:quiz_not_found",
         isNative: true,
         type: "info",
       };
@@ -1020,7 +1020,7 @@ const addQuizResult = async (userId, quizResult) => {
     if (!userData.currentSession)
       return {
         success: false,
-        message: "You are not in a session",
+        message: "api:you_are_not_in_a_session",
         isNative: true,
         type: "warning",
       };
@@ -1033,7 +1033,7 @@ const addQuizResult = async (userId, quizResult) => {
     if (!sessionSnap.exists)
       return {
         success: false,
-        message: "Session not found",
+        message: "api:session_not_found",
         isNative: true,
         type: "info",
       };
@@ -1043,7 +1043,7 @@ const addQuizResult = async (userId, quizResult) => {
     if (!session.quizId || session.quizId != quizResult.quizId)
       return {
         success: false,
-        message: "You are not in a session with this quiz",
+        message: "api:you_are_not_in_a_session_with_this_quiz",
         isNative: true,
         type: "warning",
       };
@@ -1094,19 +1094,19 @@ const addQuizResult = async (userId, quizResult) => {
     } else {
       return {
         success: true,
-        message: "You have already submitted this quiz",
+        message: "api:you_have_already_submitted_this_quiz",
       };
     }
 
     return {
       success: true,
-      message: "Quiz result saved successfully",
+      message: "api:quiz_result_saved_successfully",
     };
   } catch (error) {
     console.error("Error saving quiz result:", error);
     return {
       success: false,
-      message: "Failed to save quiz result",
+      message: "api:failed_to_save_quiz_result",
       isNative: false,
       type: "error",
     };
@@ -1122,7 +1122,7 @@ const getQuizResultsByGroup = async (quizId, groupId, userId) => {
     if (!quizSnap.exists)
       return {
         success: false,
-        message: "Quiz not found",
+        message: "api:quiz_not_found",
         isNative: true,
         type: "info",
       };
@@ -1132,7 +1132,7 @@ const getQuizResultsByGroup = async (quizId, groupId, userId) => {
     if (!groupSnap.exists)
       return {
         success: false,
-        message: "Group Not Found",
+        message: "api:group_not_found_1",
         isNative: true,
         type: "info",
       };
@@ -1140,7 +1140,7 @@ const getQuizResultsByGroup = async (quizId, groupId, userId) => {
     if (groupSnap.data().creator !== userId)
       return {
         success: false,
-        message: "You are not authorized to view this quiz results.",
+        message: "api:you_are_not_authorized_to_view_this_quiz_results",
         isNative: true,
         type: "warning",
       };
@@ -1164,7 +1164,7 @@ const getQuizResultsByGroup = async (quizId, groupId, userId) => {
     console.error("Error fetching quiz results:", error);
     return {
       success: false,
-      message: "Failed to fetch quiz results",
+      message: "api:failed_to_fetch_quiz_results",
       isNative: false,
       type: "error",
     };
@@ -1176,7 +1176,7 @@ const duplicateQuiz = async (quizId, userId, title) => {
     if (!quizId) {
       return {
         success: false,
-        message: "Quiz ID is required",
+        message: "api:quiz_id_is_required",
         isNative: true,
         type: "warning",
       };
@@ -1188,7 +1188,7 @@ const duplicateQuiz = async (quizId, userId, title) => {
     if (!quizSnap.exists)
       return {
         success: false,
-        message: "Quiz not found",
+        message: "api:quiz_not_found",
         isNative: true,
         type: "info",
       };
@@ -1197,7 +1197,7 @@ const duplicateQuiz = async (quizId, userId, title) => {
     if (quiz.creator !== userId)
       return {
         success: false,
-        message: "You are not authorized to duplicate this quiz.",
+        message: "api:you_are_not_authorized_to_duplicate_this_quiz",
         isNative: true,
         type: "warning",
       };
@@ -1236,14 +1236,14 @@ const duplicateQuiz = async (quizId, userId, title) => {
 
     return {
       success: true,
-      message: "Quiz duplicated successfully",
+      message: "api:quiz_duplicated_successfully",
       newQuizId: newQuizRef.id,
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
-      message: "Failed to duplicate quiz",
+      message: "api:failed_to_duplicate_quiz",
       isNative: false,
       type: "error",
     };

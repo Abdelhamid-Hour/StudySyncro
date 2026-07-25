@@ -54,8 +54,7 @@ const createGroup = async (groupData, userData) => {
     if (!snapshot.empty) {
       return {
         success: false,
-        message:
-          "A group with this name already exists. Please choose another name.",
+        message: "api:a_group_with_this_name_already_exists_please_choos",
         isNative: true,
         type: "warning",
       };
@@ -76,7 +75,7 @@ const createGroup = async (groupData, userData) => {
     console.log(error.message);
     return {
       success: false,
-      message: "An error occurred while creating the group. Please try again.",
+      message: "api:an_error_occurred_while_creating_the_group_please_",
       isNative: false,
       type: "error",
     };
@@ -361,7 +360,7 @@ const leaveGroup = async (groupId, userId) => {
     if (!groupSnap.exists)
       return {
         success: false,
-        message: "Group not found",
+        message: "api:group_not_found",
         isNative: true,
         type: "info",
       };
@@ -369,7 +368,7 @@ const leaveGroup = async (groupId, userId) => {
     if (!memberSnap.exists) {
       return {
         success: false,
-        message: "User not found",
+        message: "api:user_not_found",
         isNative: true,
         type: "info",
       };
@@ -419,13 +418,13 @@ const leaveGroup = async (groupId, userId) => {
 
     return {
       success: true,
-      message: "Left the group",
+      message: "api:left_the_group",
     };
   } catch (error) {
     console.log(error.message);
     return {
       success: false,
-      message: "cant leave groupe , something went wrong",
+      message: "api:cant_leave_groupe_something_went_wrong",
       isNative: false,
       type: "error",
     };
@@ -444,7 +443,7 @@ const modifyGroup = async (userId, groupId, formData) => {
     if (!isAdmin) {
       return {
         success: false,
-        message: "you dont have the right to upate the group informations.",
+        message: "api:you_dont_have_the_right_to_upate_the_group_informa",
         isNative: true,
         type: "warning",
       };
@@ -486,7 +485,7 @@ const modifyGroup = async (userId, groupId, formData) => {
     } else {
       return {
         success: false,
-        message: "No changes detected, skipping update.",
+        message: "api:no_changes_detected_skipping_update",
         isNative: true,
         type: "info",
       };
@@ -495,7 +494,7 @@ const modifyGroup = async (userId, groupId, formData) => {
     console.error("Error in modifyGroup:", error.message);
     return {
       success: false,
-      message: "Can't update group properties ! please try again later.",
+      message: "api:can_t_update_group_properties_please_try_again_lat",
       isNative: false,
       type: "error",
     };
@@ -509,7 +508,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
     if (!groupDoc.exists) {
       return {
         success: false,
-        message: "Group not found",
+        message: "api:group_not_found",
         isNative: true,
         type: "info",
       };
@@ -521,7 +520,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
         field: "name",
         validate: async (val) => {
           if (typeof val !== "string" || val.trim() === "") {
-            return { valid: false, message: "Group name cannot be empty" };
+            return { valid: false, message: "api:group_name_cannot_be_empty" };
           }
           const cleaned = val.trim();
           const snapshot = await db
@@ -533,7 +532,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
           if (isDuplicated) {
             return {
               valid: false,
-              message: "A group with this name already exists",
+              message: "api:a_group_with_this_name_already_exists",
             };
           }
           return { valid: true, value: cleaned };
@@ -543,7 +542,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
         field: "description",
         validate: (val) => {
           if (typeof val !== "string" || val.trim() === "") {
-            return { valid: false, message: "Description cannot be empty" };
+            return { valid: false, message: "api:description_cannot_be_empty" };
           }
           return { valid: true, value: val.trim() };
         },
@@ -552,7 +551,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
         field: "creator",
         validate: (val) => {
           if (typeof val !== "string" || val.trim() === "") {
-            return { valid: false, message: "Creator ID cannot be empty" };
+            return { valid: false, message: "api:creator_id_cannot_be_empty" };
           }
           return { valid: true, value: val.trim() };
         },
@@ -561,7 +560,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
         field: "subject",
         validate: (val) => {
           if (typeof val !== "string" || val.trim() === "") {
-            return { valid: false, message: "Subject cannot be empty" };
+            return { valid: false, message: "api:subject_cannot_be_empty" };
           }
           return { valid: true, value: val.trim() };
         },
@@ -570,7 +569,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
         field: "level",
         validate: (val) => {
           if (typeof val !== "string" || val.trim() === "") {
-            return { valid: false, message: "Level cannot be empty" };
+            return { valid: false, message: "api:level_cannot_be_empty" };
           }
           return { valid: true, value: val.trim() };
         },
@@ -579,7 +578,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
         field: "visibility",
         validate: (val) => {
           if (typeof val !== "string" || val.trim() === "") {
-            return { valid: false, message: "Visibility cannot be empty" };
+            return { valid: false, message: "api:visibility_cannot_be_empty" };
           }
           return { valid: true, value: val.trim() };
         },
@@ -588,13 +587,13 @@ const updateGroupProperty = async (groupId, property, newValue) => {
         field: "maxMembers",
         validate: (val) => {
           if (val === null || val === undefined || val === "") {
-            return { valid: false, message: "Max members cannot be empty" };
+            return { valid: false, message: "api:max_members_cannot_be_empty" };
           }
           const num = Number(val);
           if (isNaN(num) || num <= 0) {
             return {
               valid: false,
-              message: "Max members must be a positive number",
+              message: "api:max_members_must_be_a_positive_number",
             };
           }
           return { valid: true, value: num };
@@ -609,7 +608,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
           } else if (typeof val === "string") {
             boolValue = val.toLowerCase() === "true";
           } else {
-            return { valid: false, message: "Invalid value for showInSearch" };
+            return { valid: false, message: "api:invalid_value_for_showinsearch" };
           }
           return { valid: true, value: boolValue };
         },
@@ -620,7 +619,7 @@ const updateGroupProperty = async (groupId, property, newValue) => {
     if (!propConfig) {
       return {
         success: false,
-        message: "Invalid property type",
+        message: "api:invalid_property_type",
         isNative: true,
         type: "warning",
       };
@@ -656,13 +655,13 @@ const updateGroupProperty = async (groupId, property, newValue) => {
 
     return {
       success: true,
-      message: "Updated successfully",
+      message: "api:updated_successfully",
     };
   } catch (error) {
     console.error(`Error in updateGroupProperty: ${error.message}`);
     return {
       success: false,
-      message: "An error occurred while updating the group property",
+      message: "api:an_error_occurred_while_updating_the_group_propert",
       isNative: false,
       type: "error",
     };
@@ -679,8 +678,7 @@ const deleteGroup = async (groupId) => {
     if (groupRes.group.currentSession && groupRes.group.currentSession !== "") {
       return {
         success: false,
-        message:
-          "You cannot delete this group while an active study session is running. Please end the session first.",
+        message: "api:you_cannot_delete_this_group_while_an_active_study",
         isNative: true,
         type: "warning",
       };
@@ -703,12 +701,12 @@ const deleteGroup = async (groupId) => {
         .catch((e) => console.error(e));
     }
 
-    return { success: true, message: "Group removed" };
+    return { success: true, message: "api:group_removed" };
   } catch (error) {
     console.log(error.message);
     return {
       success: false,
-      message: "Error removing group",
+      message: "api:error_removing_group",
       isNative: false,
       type: "error",
     };
@@ -723,7 +721,7 @@ const getGroupInfo = async (groupId, userId) => {
     if (!groupSnap.exists)
       return {
         success: false,
-        message: "Group not found",
+        message: "api:group_not_found",
         isNative: true,
         type: "info",
       };
@@ -768,7 +766,7 @@ const getGroupInfo = async (groupId, userId) => {
     console.error(error);
     return {
       success: false,
-      message: "An error occurred while fetching group info. Please try again.",
+      message: "api:an_error_occurred_while_fetching_group_info_please",
       isNative: false,
       type: "error",
     };
@@ -798,7 +796,7 @@ const getChatContext = async (userId, groupId) => {
       return {
         success: false,
         statusCode: 401,
-        message: "Forbidden",
+        message: "api:forbidden",
       };
 
     const sessionSnap = group.currentSession
@@ -825,7 +823,7 @@ const getChatContext = async (userId, groupId) => {
     return {
       success: false,
       statusCode: 500,
-      message: "Internal Server Error",
+      message: "api:internal_server_error",
     };
   }
 };
@@ -838,7 +836,7 @@ const joinGroup = async (groupId, userData, isInvite = false) => {
     if (!groupSnap.exists) {
       return {
         success: false,
-        message: "Group does not exist",
+        message: "api:group_does_not_exist",
         isNative: true,
         type: "info",
       };
@@ -866,7 +864,7 @@ const joinGroup = async (groupId, userData, isInvite = false) => {
 
     return {
       success: false,
-      message: "You cannot join this group.",
+      message: "api:you_cannot_join_this_group",
       isNative: true,
       type: "info",
     };
@@ -874,7 +872,7 @@ const joinGroup = async (groupId, userData, isInvite = false) => {
     console.error("Error in joinGroup:", error);
     return {
       success: false,
-      message: "Internal server error",
+      message: "api:internal_server_error_1",
       isNative: false,
       type: "error",
     };
@@ -886,7 +884,7 @@ const inviteMembers = async (groupId, users, senderUserData) => {
     if (!groupId || !users || !Array.isArray(users) || users.length === 0) {
       return {
         success: false,
-        message: "Invalid parameters",
+        message: "api:invalid_parameters",
         isNative: true,
         type: "warning",
       };
@@ -897,7 +895,7 @@ const inviteMembers = async (groupId, users, senderUserData) => {
     if (!groupSnap.exists) {
       return {
         success: false,
-        message: "Group does not exist",
+        message: "api:group_does_not_exist",
         isNative: true,
         type: "info",
       };
@@ -938,7 +936,7 @@ const inviteMembers = async (groupId, users, senderUserData) => {
     console.error("Error in inviteMembers:", error);
     return {
       success: false,
-      message: "Failed to invite members",
+      message: "api:failed_to_invite_members",
       isNative: false,
       type: "error",
     };
@@ -948,12 +946,12 @@ const inviteMembers = async (groupId, users, senderUserData) => {
 const rejectInvite = async (groupId, userId) => {
   try {
     await updateJoinInviteNotificationStatus(userId, groupId, "rejected");
-    return { success: true, message: "Invitation rejected successfully." };
+    return { success: true, message: "api:invitation_rejected_successfully" };
   } catch (error) {
     console.error("Error in rejectInvite:", error);
     return {
       success: false,
-      message: "Failed to reject invitation.",
+      message: "api:failed_to_reject_invitation",
       isNative: false,
       type: "error",
     };

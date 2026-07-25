@@ -34,7 +34,7 @@ const updateProfile = async (fullName, avatar, user) => {
     console.error("Error updating full name:", error);
     return {
       success: false,
-      message: "Failed to update full name.",
+      message: "api:failed_to_update_full_name",
       isNative: false,
       type: "error",
     };
@@ -60,7 +60,7 @@ const getUserInfo = async (userId) => {
     console.error("Error fetching user info:", error);
     return {
       success: false,
-      message: "Failed to fetch user info.",
+      message: "api:failed_to_fetch_user_info",
       isNative: false,
       type: "error",
     };
@@ -75,7 +75,7 @@ const verifyUser = async (userId, key) => {
       admin.auth().deleteUser(credentials.uid);
       return {
         success: false,
-        message: "Please choose the correct account.",
+        message: "api:please_choose_the_correct_account",
         isNative: true,
         type: "warning",
       };
@@ -84,7 +84,7 @@ const verifyUser = async (userId, key) => {
     if (credentials.uid !== userId)
       return {
         success: false,
-        message: "Please choose the correct account.",
+        message: "api:please_choose_the_correct_account",
         isNative: true,
         type: "warning",
       };
@@ -94,7 +94,7 @@ const verifyUser = async (userId, key) => {
     console.error("Error verifying user:", error);
     return {
       success: false,
-      message: "User verification failed.",
+      message: "api:user_verification_failed",
       isNative: false,
       type: "error",
     };
@@ -120,8 +120,7 @@ const updateEmail = async (newEmail, idToken, userId) => {
     ) {
       return {
         success: false,
-        message:
-          "The account is linked to a social provider. Cannot change email.",
+        message: "api:the_account_is_linked_to_a_social_provider_cannot_",
         isNative: true,
         type: "warning",
       };
@@ -130,7 +129,7 @@ const updateEmail = async (newEmail, idToken, userId) => {
     if (!userRecord.email) {
       return {
         success: false,
-        message: "No existing email to update.",
+        message: "api:no_existing_email_to_update",
         isNative: true,
         type: "warning",
       };
@@ -138,12 +137,12 @@ const updateEmail = async (newEmail, idToken, userId) => {
 
     await admin.auth().updateUser(userId, { email: newEmail });
     await db.collection("users").doc(userId).update({ email: newEmail });
-    return { success: true, message: "Email updated successfully." };
+    return { success: true, message: "api:email_updated_successfully" };
   } catch (error) {
     console.error("Error updating email:", error);
     return {
       success: false,
-      message: "Failed to update email.",
+      message: "api:failed_to_update_email",
       isNative: false,
       type: "error",
     };
@@ -162,7 +161,7 @@ const addEmail = async (email, key, userId) => {
     if (userRecord.email) {
       return {
         success: false,
-        message: "Email already exists.",
+        message: "api:email_already_exists",
         isNative: true,
         type: "warning",
       };
@@ -170,12 +169,12 @@ const addEmail = async (email, key, userId) => {
 
     await admin.auth().updateUser(userId, { email });
     await db.collection("users").doc(userId).set({ email }, { merge: true });
-    return { success: true, message: "Email added successfully." };
+    return { success: true, message: "api:email_added_successfully" };
   } catch (error) {
     console.error("Error adding email:", error);
     return {
       success: false,
-      message: "Failed to add email.",
+      message: "api:failed_to_add_email",
       isNative: false,
       type: "error",
     };
@@ -197,19 +196,19 @@ const addPassword = async (password, key, userId) => {
     if (providers.includes("password")) {
       return {
         success: false,
-        message: "Password already set for this account.",
+        message: "api:password_already_set_for_this_account",
         isNative: true,
         type: "warning",
       };
     }
 
     await admin.auth().updateUser(userId, { password });
-    return { success: true, message: "Password added successfully." };
+    return { success: true, message: "api:password_added_successfully" };
   } catch (error) {
     console.error("Error adding password:", error);
     return {
       success: false,
-      message: "Failed to add password.",
+      message: "api:failed_to_add_password",
       isNative: false,
       type: "error",
     };
@@ -231,19 +230,19 @@ const updatePassword = async (newPassword, key, userId) => {
     if (!providers.includes("password")) {
       return {
         success: false,
-        message: "No password set for this account.",
+        message: "api:no_password_set_for_this_account",
         isNative: true,
         type: "warning",
       };
     }
 
     await admin.auth().updateUser(userId, { password: newPassword });
-    return { success: true, message: "Password updated successfully." };
+    return { success: true, message: "api:password_updated_successfully" };
   } catch (error) {
     console.error("Error updating password:", error);
     return {
       success: false,
-      message: "Failed to update password.",
+      message: "api:failed_to_update_password",
       isNative: false,
       type: "error",
     };
@@ -263,12 +262,12 @@ const closeAccount = async (key, userId) => {
     await db.collection("notifications").doc(userId).delete();
     await rDb.ref(`userGroupChats/${userId}`).remove();
 
-    return { success: true, message: "Account closed successfully." };
+    return { success: true, message: "api:account_closed_successfully" };
   } catch (error) {
     console.error("Error closing account:", error);
     return {
       success: false,
-      message: "Failed to close account.",
+      message: "api:failed_to_close_account",
       isNative: false,
       type: "error",
     };

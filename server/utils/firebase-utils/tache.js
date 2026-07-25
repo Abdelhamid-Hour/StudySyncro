@@ -90,7 +90,7 @@ const changeTaskStatus = async (status, taskId) => {
     }
     return {
       success: false,
-      message: "Task not found",
+      message: "api:task_not_found",
       isNative: true,
       type: "info",
     };
@@ -98,7 +98,7 @@ const changeTaskStatus = async (status, taskId) => {
     console.error(error);
     return {
       success: false,
-      message: "Could not update task status",
+      message: "api:could_not_update_task_status",
       isNative: false,
       type: "error",
     };

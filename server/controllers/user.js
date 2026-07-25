@@ -15,7 +15,7 @@ const getUserInfoHandler = async (req, res) => {
       .status(500)
       .json({
         success: false,
-        message: "Failed to fetch user info.",
+        message: res.locals.t("api:failed_to_fetch_user_info"),
         isNative: result.isNative ?? false,
         type: result.type ?? "error",
       });
@@ -31,12 +31,12 @@ const updateEmailHandler = async (req, res) => {
   if (!result.success) {
     return res.status(500).json({
       success: false,
-      message: result.message || "Failed to update email.",
+      message: res.locals.t(result.message) || "Failed to update email.",
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
   }
-  res.json({ success: true, message: "Email updated successfully." });
+  res.json({ success: true, message: res.locals.t("api:email_updated_successfully") });
 };
 
 const addEmailHandler = async (req, res) => {
@@ -45,12 +45,12 @@ const addEmailHandler = async (req, res) => {
   if (!result.success) {
     return res.status(500).json({
       success: false,
-      message: result.message || "Failed to add email.",
+      message: res.locals.t(result.message) || "Failed to add email.",
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
   }
-  res.json({ success: true, message: "Email added successfully." });
+  res.json({ success: true, message: res.locals.t("api:email_added_successfully") });
 };
 
 const updatePofileHandler = async (req, res) => {
@@ -63,13 +63,13 @@ const updatePofileHandler = async (req, res) => {
       .status(500)
       .json({
         success: false,
-        message: "Failed to update full name.",
+        message: res.locals.t("api:failed_to_update_full_name"),
         isNative: result.isNative ?? false,
         type: result.type ?? "error",
       });
   }
 
-  res.json({ success: true, message: "Full name updated successfully." });
+  res.json({ success: true, message: res.locals.t("api:full_name_updated_successfully") });
 };
 
 const updatePasswordHandler = async (req, res) => {
@@ -78,12 +78,12 @@ const updatePasswordHandler = async (req, res) => {
   if (!result.success) {
     return res.status(500).json({
       success: false,
-      message: result.message || "Failed to update password.",
+      message: res.locals.t(result.message) || "Failed to update password.",
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
   }
-  res.json({ success: true, message: "Password updated successfully." });
+  res.json({ success: true, message: res.locals.t("api:password_updated_successfully") });
 };
 
 const addPasswordHandler = async (req, res) => {
@@ -92,12 +92,12 @@ const addPasswordHandler = async (req, res) => {
   if (!result.success) {
     return res.status(500).json({
       success: false,
-      message: result.message || "Failed to add password.",
+      message: res.locals.t(result.message) || "Failed to add password.",
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
   }
-  res.json({ success: true, message: "Password added successfully." });
+  res.json({ success: true, message: res.locals.t("api:password_added_successfully") });
 };
 
 const closeAccountHandler = async (req, res, next) => {
@@ -106,7 +106,7 @@ const closeAccountHandler = async (req, res, next) => {
   if (!result.success) {
     return res.status(500).json({
       success: false,
-      message: result.message || "Failed to close account.",
+      message: res.locals.t(result.message) || "Failed to close account.",
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });

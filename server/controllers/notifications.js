@@ -18,14 +18,14 @@ const getUserNotificationsHandler = async (req, res) => {
       return res.status(200).json(result);
     } else {
       return res.status(500).json({
-        message: result.message || "Failed to fetch notifications",
+        message: res.locals.t(result.message) || "Failed to fetch notifications",
         isNative: result.isNative ?? false,
         type: result.type ?? "error",
       });
     }
   } catch (error) {
     console.error("Error in getUserNotificationsHandler:", error);
-    return res.status(500).json({ message: "Internal server error", isNative: false, type: "error" });
+    return res.status(500).json({ message: res.locals.t("api:internal_server_error_1"), isNative: false, type: "error" });
   }
 };
 
@@ -37,14 +37,14 @@ const markNotificationsAsReadHandler = async (req, res) => {
       return res.status(200).json(result);
     } else {
       return res.status(500).json({
-        message: result.message || "Failed to mark notifications as read",
+        message: res.locals.t(result.message) || "Failed to mark notifications as read",
         isNative: result.isNative ?? false,
         type: result.type ?? "error",
       });
     }
   } catch (error) {
     console.error("Error in markNotificationsAsReadHandler:", error);
-    return res.status(500).json({ message: "Internal server error", isNative: false, type: "error" });
+    return res.status(500).json({ message: res.locals.t("api:internal_server_error_1"), isNative: false, type: "error" });
   }
 };
 

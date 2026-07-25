@@ -22,7 +22,7 @@ const createQuizHandler = async (req, res) => {
     return res.status(200).json({ quizId: result.quizId });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -36,7 +36,7 @@ const checkQuizTitleHandler = async (req, res) => {
   if (!result.success) {
     return res.status(400).json({
       available: false,
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -44,7 +44,7 @@ const checkQuizTitleHandler = async (req, res) => {
 
   return res.status(200).json({
     available: result.available,
-    message: result.message,
+    message: res.locals.t(result.message),
   });
 };
 
@@ -63,10 +63,10 @@ const updateQuizHandler = async (req, res) => {
   );
 
   if (result.success) {
-    return res.status(200).json({ message: result.message });
+    return res.status(200).json({ message: res.locals.t(result.message) });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -83,10 +83,10 @@ const patchQuizHandler = async (req, res) => {
     : await updateQuizSubject(subject, quizId, userData.uid);
 
   if (response.success) {
-    return res.status(200).json({ message: response.message });
+    return res.status(200).json({ message: res.locals.t(response.message) });
   } else {
     return res.status(400).json({
-      message: response.message,
+      message: res.locals.t(response.message),
       isNative: response.isNative ?? false,
       type: response.type ?? "error",
     });
@@ -98,7 +98,7 @@ const getResultsListHandler = async (req, res) => {
   const result = await getQuizResultsByGroup(quizId, groupId, req.user.uid);
 
   if (!result.success) return res.status(400).json({
-    message: result.message,
+    message: res.locals.t(result.message),
     isNative: result.isNative ?? false,
     type: result.type ?? "error",
   });
@@ -112,7 +112,7 @@ const getResultsListHandler = async (req, res) => {
 
         return res
           .status(500)
-          .json({ message: "Error rendering results list", isNative: false, type: "error" });
+          .json({ message: res.locals.t("api:error_rendering_results_list"), isNative: false, type: "error" });
       }
       return res.status(200).json({ overlay: html });
     },
@@ -128,7 +128,7 @@ const getQuizDetailsHandler = async (req, res) => {
     return res.status(200).json({ ...result.quizData });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -158,10 +158,10 @@ const addQuizResultHandler = async (req, res) => {
   const result = await addQuizResult(userId, quizResult);  
 
   if (result.success) {
-    return res.status(200).json({ message: result.message });
+    return res.status(200).json({ message: res.locals.t(result.message) });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -179,7 +179,7 @@ const getExamenResultHandler = async (req, res) => {
       .json({ quizResult: result.quizResult, questions: result.questions });
   } else {
     return res.status(401).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -190,10 +190,10 @@ const removeQuizHandler = async (req, res) => {
   const { quizId } = req.params;
   const result = await deleteQuiz(quizId);
   if (result.success) {
-    return res.status(200).json({ message: result.message });
+    return res.status(200).json({ message: res.locals.t(result.message) });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -207,7 +207,7 @@ const duplicateQuizHandler = async (req, res) => {
     return res.status(200).json(result);
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });

@@ -23,7 +23,7 @@ const getGroupById = async (groupId) => {
     if (!snaphsot.exists) {
       return {
         success: false,
-        message: "Group Not Found",
+        message: "api:group_not_found_1",
         isNative: true,
         type: "info",
       };
@@ -37,7 +37,7 @@ const getGroupById = async (groupId) => {
     console.log(error.message);
     return {
       success: false,
-      message: "Internal Server Error",
+      message: "api:internal_server_error",
       isNative: false,
       type: "error",
     };
@@ -158,10 +158,10 @@ const refillSampleMembersIfNeeded = async (groupRef) => {
 
 const uploadFileToStorage = async (filePath, file, isAvatar = false) => {
   try {
-    if (!file) throw new Error("No file provided for upload");
-    if (file.size === 0) throw new Error("File is empty");
+    if (!file) throw new Error("api:no_file_provided_for_upload");
+    if (file.size === 0) throw new Error("api:file_is_empty");
     if (file.size > MAX_FILE_SIZE_50MB)
-      throw new Error("The file should be less or equal to 50MB");
+      throw new Error("api:the_file_should_be_less_or_equal_to_50mb");
 
     const isSupportedAvatarType =
       isAvatar && PROFILE_ALLOWED_TYPES.includes(file.mimetype);
@@ -171,7 +171,7 @@ const uploadFileToStorage = async (filePath, file, isAvatar = false) => {
         types.includes(file.mimetype),
       );
     if (!isSupportedAvatarType && !isSupportedFileType)
-      throw new Error("Invalid file type");
+      throw new Error("api:invalid_file_type");
 
     const fileUpload = bucket.file(
       filePath + `${Date.now()}-${file.originalname}`,

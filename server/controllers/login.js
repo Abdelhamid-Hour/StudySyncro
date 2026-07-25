@@ -17,11 +17,11 @@ const createSession = async function (req, res) {
       .auth()
       .createSessionCookie(idToken, { expiresIn });
     res.cookie("session", sessionCookie, options);
-    return res.status(200).json({ message: "Session created" });
+    return res.status(200).json({ message: res.locals.t("api:session_created") });
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({
-      message: "Error creating session",
+      message: res.locals.t("api:error_creating_session"),
       isNative: false,
       type: "error",
     });

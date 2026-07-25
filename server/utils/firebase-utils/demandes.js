@@ -21,7 +21,7 @@ const sendRequest = async (groupId, userData) => {
     if (!groupSnap.exists) {
       return {
         success: false,
-        message: "Group not found",
+        message: "api:group_not_found",
         isNative: true,
         type: "info",
       };
@@ -35,7 +35,7 @@ const sendRequest = async (groupId, userData) => {
     if (group.maxMembers <= membersCount)
       return {
         success: false,
-        message: "Group is full",
+        message: "api:group_is_full",
         isNative: true,
         type: "info",
       };
@@ -46,7 +46,7 @@ const sendRequest = async (groupId, userData) => {
 
     if (isRequestSent)
       return {
-        message: "You have already sent a request",
+        message: "api:you_have_already_sent_a_request",
         success: false,
         isNative: true,
         type: "info",
@@ -58,7 +58,7 @@ const sendRequest = async (groupId, userData) => {
 
     if (isAlreadyMember)
       return {
-        message: "You are already a member",
+        message: "api:you_are_already_a_member",
         success: false,
         isNative: true,
         type: "info",
@@ -67,7 +67,7 @@ const sendRequest = async (groupId, userData) => {
     if (!group.showInSearch)
       return {
         success: false,
-        message: "The Group Is Private and Not Visible",
+        message: "api:the_group_is_private_and_not_visible",
         isNative: true,
         type: "info",
       };
@@ -135,7 +135,7 @@ const acceptRequest = async (groupId, requestId, userId) => {
     if (groupData.creator !== userId) {
       return {
         success: false,
-        message: "Only the group creator can accept requests.",
+        message: "api:only_the_group_creator_can_accept_requests",
         isNative: true,
         type: "warning",
       };
@@ -149,7 +149,7 @@ const acceptRequest = async (groupId, requestId, userId) => {
     if (!requestToAcceptSnap.exists) {
       return {
         success: false,
-        message: "Join request not found.",
+        message: "api:join_request_not_found",
         isNative: true,
         type: "info",
       };
@@ -172,7 +172,7 @@ const acceptRequest = async (groupId, requestId, userId) => {
       await requestToAcceptSnap.ref.delete();
       return {
         success: false,
-        message: "User is already a member.",
+        message: "api:user_is_already_a_member",
         isNative: true,
         type: "info",
       };
@@ -229,7 +229,7 @@ const acceptRequest = async (groupId, requestId, userId) => {
     );
     await notifyJoinResult(requestId, groupId, groupData.name, true);
 
-    return { success: true, message: "Join request accepted successfully!" };
+    return { success: true, message: "api:join_request_accepted_successfully" };
   } catch (error) {
     console.error("Error accepting request:", error.message);
     return {
@@ -261,7 +261,7 @@ const rejectRequest = async (groupId, requestId, userId) => {
     if (group.creator !== userId) {
       return {
         success: false,
-        message: "Only the group creator can accept requests.",
+        message: "api:only_the_group_creator_can_accept_requests",
         isNative: true,
         type: "warning",
       };
@@ -275,7 +275,7 @@ const rejectRequest = async (groupId, requestId, userId) => {
     if (!requestSnap.exists)
       return {
         success: false,
-        message: "Join request not found.",
+        message: "api:join_request_not_found",
         isNative: true,
         type: "info",
       };
@@ -300,13 +300,13 @@ const rejectRequest = async (groupId, requestId, userId) => {
 
     return {
       success: true,
-      message: "Request rejected successfully.",
+      message: "api:request_rejected_successfully",
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
-      message: "Something wrong happened",
+      message: "api:something_wrong_happened",
       isNative: false,
       type: "error",
     };
@@ -343,7 +343,7 @@ const getRequests = async (groupId, userId) => {
     if (!groupSnap.exists)
       return {
         success: false,
-        message: "Group not found",
+        message: "api:group_not_found",
         isNative: true,
         type: "info",
       };
@@ -362,7 +362,7 @@ const getRequests = async (groupId, userId) => {
     console.error(error);
     return {
       success: false,
-      message: "An error occurred while fetching requests",
+      message: "api:an_error_occurred_while_fetching_requests",
       isNative: false,
       type: "error",
     };
@@ -382,7 +382,7 @@ const getDemandesByGroupId = async (
     if (!groupSnap.exists) {
       return {
         success: false,
-        message: "Group not found",
+        message: "api:group_not_found",
         isNative: true,
         type: "info",
       };
@@ -459,7 +459,7 @@ const getDemandesByGroupId = async (
     console.error("Error in getDemandes:", error);
     return {
       success: false,
-      message: "An error occurred while fetching demandes",
+      message: "api:an_error_occurred_while_fetching_demandes",
       isNative: false,
       type: "error",
     };

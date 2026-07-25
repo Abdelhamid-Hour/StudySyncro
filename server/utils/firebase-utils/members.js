@@ -44,7 +44,7 @@ const getMembers = async (
     if (!groupSnap.exists) {
       return {
         success: false,
-        message: "Group not found",
+        message: "api:group_not_found",
         isNative: true,
         type: "info",
       };
@@ -128,7 +128,7 @@ const getMembers = async (
     console.error("Error in getMembers:", error);
     return {
       success: false,
-      message: "An error occurred while fetching members",
+      message: "api:an_error_occurred_while_fetching_members",
       isNative: false,
       type: "error",
     };
@@ -150,7 +150,7 @@ const addMember = async (groupRef, userId) => {
 
     if (maxMembers) {
       return {
-        message: "Group is full",
+        message: "api:group_is_full",
         success: false,
         isNative: true,
         type: "info",
@@ -165,7 +165,7 @@ const addMember = async (groupRef, userId) => {
 
     if (isAlreadyMember) {
       return {
-        message: "You are already a member",
+        message: "api:you_are_already_a_member",
         success: false,
         isNative: true,
         type: "info",
@@ -217,7 +217,7 @@ const addMember = async (groupRef, userId) => {
   } catch (error) {
     console.error("Error in addMember function:", error);
     return {
-      message: "Internal sever error",
+      message: "api:internal_sever_error",
       success: false,
       isNative: false,
       type: "error",
@@ -236,7 +236,7 @@ const kickMember = async (groupId, userId) => {
     if (!groupSnap.exists) {
       return {
         success: false,
-        message: "Group not found",
+        message: "api:group_not_found",
         isNative: true,
         type: "info",
       };
@@ -244,7 +244,7 @@ const kickMember = async (groupId, userId) => {
     if (!memberSnap.exists) {
       return {
         success: false,
-        message: "User not found",
+        message: "api:user_not_found",
         isNative: true,
         type: "info",
       };
@@ -301,13 +301,13 @@ const kickMember = async (groupId, userId) => {
 
     return {
       success: true,
-      message: "Member kicked from group",
+      message: "api:member_kicked_from_group",
     };
   } catch (error) {
     console.error(error);
     return {
       success: false,
-      message: "Something went wrong",
+      message: "api:something_went_wrong",
       isNative: false,
       type: "error",
     };
@@ -414,7 +414,7 @@ const getUsers = async (
     console.error("Error fetching users:", error);
     return {
       success: false,
-      message: "An error occurred while fetching users",
+      message: "api:an_error_occurred_while_fetching_users",
       isNative: false,
       type: "error",
     };

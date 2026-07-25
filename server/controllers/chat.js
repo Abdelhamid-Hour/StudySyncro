@@ -35,7 +35,7 @@ const sendMessageHandler = async (req, res) => {
     (!message || typeof message !== "string" || message.trim().length === 0)
   ) {
     return res.status(400).json({
-      message: "Cannot send an empty message without an attachment.",
+      message: res.locals.t("api:cannot_send_an_empty_message_without_an_attachment"),
       isNative: true,
       type: "warning",
     });
@@ -55,10 +55,10 @@ const sendMessageHandler = async (req, res) => {
   if (result.success) {
     return res
       .status(200)
-      .json({ message: "Message sent successfully", ...result.data });
+      .json({ message: res.locals.t("api:message_sent_successfully"), ...result.data });
   }
   return res.status(500).json({
-    message: result.message || "Failed to send message",
+    message: res.locals.t(result.message) || "Failed to send message",
     messageId: result.messageId,
     isNative: result.isNative ?? false,
     type: result.type ?? "error",
@@ -74,8 +74,8 @@ const chatStreamHandler = async (req, res) => {
     return res
       .status(404)
       .json({
-        message: "Group not found",
-        error: "Group not found",
+        message: res.locals.t("api:group_not_found"),
+        error: res.locals.t("api:group_not_found"),
         isNative: false,
         type: "error",
       });
@@ -91,8 +91,8 @@ const chatStreamHandler = async (req, res) => {
     return res
       .status(403)
       .json({
-        message: "Access denied to this group chat",
-        error: "Access denied to this group chat",
+        message: res.locals.t("api:access_denied_to_this_group_chat"),
+        error: res.locals.t("api:access_denied_to_this_group_chat"),
         isNative: true,
         type: "warning",
       });
@@ -101,8 +101,8 @@ const chatStreamHandler = async (req, res) => {
     return res
       .status(403)
       .json({
-        message: "Access denied to this session chat",
-        error: "Access denied to this session chat",
+        message: res.locals.t("api:access_denied_to_this_session_chat"),
+        error: res.locals.t("api:access_denied_to_this_session_chat"),
         isNative: true,
         type: "warning",
       });
@@ -164,7 +164,7 @@ const getMessagesHandler = async (req, res) => {
     });
   } else {
     return res.status(400).json({
-      message: result.message,
+      message: res.locals.t(result.message),
       isNative: result.isNative ?? false,
       type: result.type ?? "error",
     });
@@ -197,7 +197,7 @@ const markGroupAsReadHandler = async (req, res) => {
   if (!groupId)
     return res
       .status(400)
-      .json({ message: "groupId is required", isNative: false, type: "error" });
+      .json({ message: res.locals.t("api:groupid_is_required"), isNative: false, type: "error" });
   const result = await markGroupAsReadHelper(
     req.user.uid,
     groupId,
@@ -205,10 +205,10 @@ const markGroupAsReadHandler = async (req, res) => {
     timestamp,
   );
   if (result.success) {
-    return res.status(200).json({ message: "Marked as read" });
+    return res.status(200).json({ message: res.locals.t("api:marked_as_read") });
   }
   return res.status(500).json({
-    message: result.message || "Failed to mark as read",
+    message: res.locals.t(result.message) || "Failed to mark as read",
     isNative: result.isNative ?? false,
     type: result.type ?? "error",
   });
@@ -219,14 +219,14 @@ const getUserGroupChatStateHandler = async (req, res) => {
   if (!groupId)
     return res
       .status(400)
-      .json({ message: "groupId is required", isNative: false, type: "error" });
+      .json({ message: res.locals.t("api:groupid_is_required"), isNative: false, type: "error" });
   const result = await getUserGroupChatStateHelper(req.user.uid, groupId);
   if (result.success) {
     return res.status(200).json(result.data);
   }
 
   return res.status(500).json({
-    message: result.message || "Failed to get state",
+    message: res.locals.t(result.message) || "Failed to get state",
     isNative: result.isNative ?? false,
     type: result.type ?? "error",
   });
@@ -246,7 +246,7 @@ const getRecentMessagesHandler = async (req, res) => {
     });
   }
   return res.status(500).json({
-    message: result.message,
+    message: res.locals.t(result.message),
     isNative: result.isNative ?? false,
     type: result.type ?? "error",
   });

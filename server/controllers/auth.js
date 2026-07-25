@@ -27,7 +27,7 @@ const createNewUser = async (req, res) => {
 
     if (!verifiedUid || verifiedUid !== uid) {
       return res.status(401).json({
-        message: "Unauthorized: Invalid identity token",
+        message: res.locals.t("api:unauthorized_invalid_identity_token"),
         isNative: true,
         type: "error",
       });
@@ -53,7 +53,7 @@ const createNewUser = async (req, res) => {
         const result = await uploadFileToStorage(filePath, avatar, true);
         if (!result.success)
           return res.status(500).json({
-            message: result.message,
+            message: res.locals.t(result.message),
             isNative: result.isNative ?? false,
             type: result.type ?? "error",
           });
@@ -62,11 +62,11 @@ const createNewUser = async (req, res) => {
       }
 
       if (Object.keys(updatedData).length === 0) {
-        return res.status(200).json({ message: "User data already saved" });
+        return res.status(200).json({ message: res.locals.t("api:user_data_already_saved") });
       }
 
       await userRef.update(updatedData);
-      return res.status(200).json({ message: "User data updated" });
+      return res.status(200).json({ message: res.locals.t("api:user_data_updated") });
     }
 
     const userRecord = await admin.auth().getUser(uid);
@@ -77,7 +77,7 @@ const createNewUser = async (req, res) => {
       const result = await uploadFileToStorage(filePath, avatar, true);
       if (!result.success)
         return res.status(500).json({
-          message: result.message,
+          message: res.locals.t(result.message),
           isNative: result.isNative ?? false,
           type: result.type ?? "error",
         });
@@ -104,11 +104,11 @@ const createNewUser = async (req, res) => {
       ...userData,
       createdAt: new Date().toISOString(),
     });
-    return res.status(200).json({ message: "User data saved" });
+    return res.status(200).json({ message: res.locals.t("api:user_data_saved") });
   } catch (error) {
     console.error("Error saving user data:", error);
     return res.status(500).json({
-      message: "Error saving user data",
+      message: res.locals.t("api:error_saving_user_data"),
       error: error.message,
       isNative: false,
       type: "error",
@@ -129,7 +129,7 @@ const createSession = async function (req, res) {
       !decodedToken.email_verified
     ) {
       return res.status(403).json({
-        message: "Please verify your email address before signing in.",
+        message: res.locals.t("api:please_verify_your_email_address_before_signing_in"),
         isNative: true,
         type: "warning",
       });
@@ -146,11 +146,11 @@ const createSession = async function (req, res) {
       .auth()
       .createSessionCookie(idToken, { expiresIn });
     res.cookie("session", sessionCookie, options);
-    return res.status(200).json({ message: "Session created" });
+    return res.status(200).json({ message: res.locals.t("api:session_created") });
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({
-      message: "Error creating session",
+      message: res.locals.t("api:error_creating_session"),
       isNative: false,
       type: "error",
     });
