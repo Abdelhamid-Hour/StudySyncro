@@ -445,12 +445,17 @@ export const handleKeyDown = (e) => {
     )
       return;
 
-    if (e.key === "ArrowRight" || e.key === "Enter") {
+    const isRtl = document.documentElement.dir === "rtl" || document.body.dir === "rtl";
+
+    if (e.key === "ArrowRight") {
       e.preventDefault();
-      toNextQuestion();
+      isRtl ? toPreviousQuestion() : toNextQuestion();
     } else if (e.key === "ArrowLeft") {
       e.preventDefault();
-      toPreviousQuestion();
+      isRtl ? toNextQuestion() : toPreviousQuestion();
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      toNextQuestion();
     } else if (e.key.toLowerCase() === "s") {
       e.preventDefault();
       skipQuestion();

@@ -9,9 +9,6 @@
 
 //  dont miss the arrow key events next and previous on arab version in quiz play
 
-// the end session tbn in the group chat should removed after ending
-
-
 
 
 

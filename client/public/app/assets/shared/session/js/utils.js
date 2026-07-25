@@ -1,7 +1,7 @@
 import { handleApiAction, navigateTo, t } from "../../../global/js/utils.js";
 
-export const endSession = (btn, sessionId) => {
-  handleApiAction("/end-session", { sessionId }, btn);
+export const endSession = (btn, sessionId, onSuccess) => {
+  handleApiAction("/end-session", { sessionId }, btn, onSuccess ? { onSuccess } : undefined);
 };
 
 export const leaveSession = (btn, sessionId) => {

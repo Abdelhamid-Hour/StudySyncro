@@ -1,4 +1,4 @@
-import { loadNamespace, registerPageListener } from "../../../../global/js/utils.js";
+import { loadNamespace, registerPageListener, t } from "../../../../global/js/utils.js";
 import { iniChat } from "../../../../shared/chat/js/utils.js";
 import {
   endSession,
@@ -34,9 +34,18 @@ export const init = async () => {
     joinSession(e.target.dataset.sessionId, e.target),
   );
 
-  endSessionBtn?.addEventListener("click", (e) =>
-    endSession(e.target, e.target.dataset.sessionId),
-  );
+  endSessionBtn?.addEventListener("click", (e) => {
+    const btn = e.target.closest(".end-session") || e.target;
+    endSession(btn, btn.dataset.sessionId, () => {
+      btn.outerHTML = `
+      <button type="button" class="small-btn create-session-btn">
+        <i class="bi bi-plus-circle"></i>
+        <span>${t("group-chat:create_session")}</span>
+      </button>`;
+      document.querySelector(".session-active-badge")?.remove();
+      document.querySelector(".session-info-menu-btn")?.remove();
+    });
+  });
 
   groupLeftSideBarContent?.addEventListener(
     "click",
