@@ -197,6 +197,11 @@ const createGroupSession = async (sessionData, userId) => {
         .doc(memberDoc.id)
         .collection("activeSessions")
         .doc(newSessionId);
+      if (memberDoc.id === userId) {
+        activeSessionCardData.isAdmin = true;
+      } else {
+        activeSessionCardData.isAdmin = false;
+      }
       currentBatch.set(activeSessionRef, activeSessionCardData);
       batchCount++;
       if (batchCount === 500) {
@@ -598,7 +603,7 @@ const fetchActiveSessions = async (
   count = INITIALE_LOADERS_COUNT,
   lastVisible = null,
   criteria = {},
-  t
+  t,
 ) => {
   try {
     const userRef = db.collection("users").doc(userId);

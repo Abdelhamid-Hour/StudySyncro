@@ -19,7 +19,6 @@
   "unread_messages": "رسائل غير مقروءة",
   "drop_files": "أفلت الملفات هنا لإضافتها إلى رسالتك.",
   "tooltips": {
-    "add_new_line": "لإضافة سطر جديد، اضغط على Ctrl + Enter",
     "close_group_info": "إغلاق تفاصيل المجموعة",
     "show_group_info": "عرض تفاصيل المجموعة",
     "admin_cant_submit": "لا يمكن للمشرف إرسال الاختبارات",

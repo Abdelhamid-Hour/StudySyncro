@@ -9,8 +9,7 @@
     "quiz_editor": "محرر الاختبارات",
     "settings": "الإعدادات",
     "account_settings": "إعدادات الحساب",
-    "dashboard": "لوحة التحكم",
-    "studyhype": "ستادي هايب"
+    "dashboard": "لوحة التحكم"
   },
   "avatar_alt": "الصورة الشخصية للمستخدم",
   "member_avatar_alt": "الصورة الشخصية للعضو",
@@ -108,6 +107,7 @@
     "real_time_chat": "المحادثة الفورية",
     "end_session": "إنهاء الجلسة",
     "join_session": "الانضمام للجلسة",
+    "join_requests": "طلبات الانضمام",
     "active_session": "جلسة نشطة",
     "create_session": "إنشاء جلسة",
     "group_info": "معلومات المجموعة",
@@ -159,7 +159,7 @@
     "new_password": "كلمة المرور الجديدة",
     "features": "المميزات",
     "how_it_works": "كيف يعمل",
-    "login": "تسجيل الدخول",
+    "login": "دخول",
     "close_account": "إغلاق الحساب",
     "change_password": "تغيير كلمة المرور",
     "add_password": "إضافة كلمة مرور",

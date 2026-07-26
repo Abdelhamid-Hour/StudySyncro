@@ -57,7 +57,7 @@ const getAvailableGroupsHandler = async (req, res) => {
   } = req.query;
 
   console.log("joinableOnly: ", joinableOnly);
-  
+
   const creteria = {
     level: level ? level.split(",") : [],
     visibility: visibility ? visibility.split(",") : [],
@@ -121,13 +121,15 @@ const groupFragmentHandler =
         if (err) {
           console.error("Error rendering template:", err);
           return res.status(500).json({
-            message: res.locals.t("api:failed_to_load_group_info_please_try_again_later"),
+            message: res.locals.t(
+              "api:failed_to_load_group_info_please_try_again_later",
+            ),
             isNative: false,
             type: "error",
           });
         }
 
-        const response = { template, title };
+        const response = { template, title: res.locals.t(title) };
 
         if (res.payload.context.count !== undefined)
           response.count = res.payload.context.count;
@@ -153,7 +155,13 @@ const getQuizPlayDetailsHandler = async (req, res) => {
     });
   } catch (error) {
     console.log("Error in getQuizPlayDetailsHandler:");
-    return res.status(500).json({ message: res.locals.t("api:internal_server_error"), isNative: false, type: "error" });
+    return res
+      .status(500)
+      .json({
+        message: res.locals.t("api:internal_server_error"),
+        isNative: false,
+        type: "error",
+      });
   }
 };
 
@@ -273,7 +281,7 @@ const removeGroupHandler = async (req, res) => {
 
 const getUsersHandler = async (req, res) => {
   try {
-    const { search = '', count, lastVisible = '', groupId } = req.query;
+    const { search = "", count, lastVisible = "", groupId } = req.query;
     const result = await getUsers(search, count, lastVisible, groupId);
 
     if (result.success) {
@@ -287,7 +295,14 @@ const getUsersHandler = async (req, res) => {
     }
   } catch (error) {
     console.error("Error fetching users:", error);
-    res.status(500).json({ message: res.locals.t("api:internal_server_error"), error: res.locals.t("api:internal_server_error"), isNative: false, type: "error" });
+    res
+      .status(500)
+      .json({
+        message: res.locals.t("api:internal_server_error"),
+        error: res.locals.t("api:internal_server_error"),
+        isNative: false,
+        type: "error",
+      });
   }
 };
 
@@ -397,7 +412,13 @@ const getMembersByGroup = async (req, res) => {
 const rejectInviteHandler = async (req, res) => {
   const { groupId } = req.body;
   if (!groupId) {
-    return res.status(400).json({ message: res.locals.t("api:group_id_is_required"), isNative: true, type: "warning" });
+    return res
+      .status(400)
+      .json({
+        message: res.locals.t("api:group_id_is_required"),
+        isNative: true,
+        type: "warning",
+      });
   }
   const result = await rejectInvite(groupId, req.user.uid);
   if (result.success) {

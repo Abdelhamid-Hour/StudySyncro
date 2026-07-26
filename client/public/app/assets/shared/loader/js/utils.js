@@ -127,7 +127,6 @@ export class Loader {
   }
 
   async loadMore(isFirstLoad = false) {
-    debugger;
     this.loading = true;
     const requestId = ++this.currentRequestId;
 
@@ -146,10 +145,11 @@ export class Loader {
 
       this.lastVisible = lastVisible;
 
-      if (!cards.length || (cards[0].length != undefined && !cards[0].length)) {
+      if (!cards.length || cards[0]?.length === 0) {
         this.io.unobserve(this.sentinel);
         clearLoadersBoxes();
         this.checkEmptyState();
+        this.loading = false;
         return;
       }
 

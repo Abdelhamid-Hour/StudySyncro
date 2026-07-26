@@ -1,11 +1,11 @@
-import { auth } from "../../firebase/firebaseConfig.js";
+import { auth } from "../../../../firebase/firebaseConfig.js";
 import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import {
-  InitializeGoogleOneTap,
   signInWithFacebookProviderWithPopUp,
   signInWithGoogleProviderWithPopUp,
   createAuserWithEmailAndPassword,
   signInAuserWithEmailAndPassword,
+  initializeGoogleOneTap,
 } from "./auth-functions.js";
 import {
   inputsEmptying,
@@ -13,7 +13,7 @@ import {
   validatesSignUpForm,
   userNameFormat,
   verifyEmail,
-} from "../assets/js/utils.js";
+} from "../utils.js";
 import {
   firstNameField as firstName,
   lastNameField as lastName,
@@ -27,11 +27,15 @@ import {
   googleBtn,
   formsContainer,
   forgotPasswordLink,
-  fileinput
-} from "../assets/js/dom-variables.js";
-import { showMessageBlock, checkError, t } from "../../main_assets/js/utils.js";
+  fileinput,
+} from "../dom-variables.js";
+import {
+  showMessageBlock,
+  checkError,
+  t,
+} from "../../../../main_assets/js/utils.js";
 
-InitializeGoogleOneTap(auth, showMessageBlock);
+initializeGoogleOneTap(auth, showMessageBlock);
 
 formsContainer.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
@@ -86,10 +90,7 @@ forgotPasswordLink.addEventListener("click", async () => {
       return;
     }
     await sendPasswordResetEmail(auth, signInemailField.value);
-    showMessageBlock(
-      t("common:alerts.password_reset_sent"),
-      "success",
-    );
+    showMessageBlock(t("common:alerts.password_reset_sent"), "success");
     signInPasswordField.value = "";
   } catch (error) {
     checkError(error);

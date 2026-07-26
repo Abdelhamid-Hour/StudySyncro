@@ -1,6 +1,7 @@
 {
   "header": {
-    "login_to": "Login to"
+    "login_to": "Login to",
+    "create": "create"
   },
   "auth_errors": {
     "INVALID_LOGIN_CREDENTIALS": "Invalid email or password. Please try again.",

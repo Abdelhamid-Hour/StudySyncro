@@ -14,7 +14,7 @@ import {
   redirectTo,
   sendData,
   t,
-} from "../../main_assets/js/utils.js";
+} from "../../../../main_assets/js/utils.js";
 
 const googleProvider = new GoogleAuthProvider();
 const fbProvider = new FacebookAuthProvider();
@@ -64,7 +64,14 @@ const signInWhithProvider = async function (auth, provider, callback) {
  * first param: message string and
  * second param: boolean indicating if there was an error..
  */
-const InitializeGoogleOneTap = function (auth, callback) {
+
+const showGoogleOneTap = function () {
+  console.log("passssed");
+  
+  google.accounts.id.prompt();
+};
+
+const initializeGoogleOneTap = function (auth, callback) {
   const handleCredentialResponse = async function (response) {
     try {
       // Convert Google credential to Firebase credential
@@ -79,16 +86,12 @@ const InitializeGoogleOneTap = function (auth, callback) {
     }
   };
 
-  // google.accounts.id.initialize({
-  //   client_id:
-  //     '944790274402-ggk3nn93362bqebjj2mfdvpr0mfhksgj.apps.googleusercontent.com', // Replace with your Client ID
-  //   callback: handleCredentialResponse,
-  //   cancel_on_tap_outside: false,
-  // });
-};
-
-const showGoogleOneTap = function () {
-  google.accounts.id.prompt();
+  google.accounts.id.initialize({
+    client_id:
+      "342899099971-6pfk7ej642mlt1qdgkuin0r37s1j0m96.apps.googleusercontent.com", // Replace with your Client ID
+    callback: handleCredentialResponse,
+    cancel_on_tap_outside: false,
+  });
 };
 
 /**
@@ -250,7 +253,7 @@ const sendIdToken = async function (auth, url) {
 };
 
 export {
-  InitializeGoogleOneTap,
+  initializeGoogleOneTap,
   showGoogleOneTap,
   sendIdToken,
   signInWithFacebookProviderWithPopUp,

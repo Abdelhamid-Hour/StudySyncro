@@ -1105,7 +1105,9 @@ const handleChatInput = async (sessionId, groupId) => {
   const inputValue = inputMessage.value.trim();
   if (inputValue.length > MESSAGE_MAX_LENGTH) {
     showMessageBlock(
-      t("common:shared_chat.alerts.message_max_length", { max: MESSAGE_MAX_LENGTH }),
+      t("common:shared_chat.alerts.message_max_length", {
+        max: MESSAGE_MAX_LENGTH,
+      }),
       "info",
     );
     return;
@@ -1144,11 +1146,6 @@ const handleDragEnter = (e) => {
   }, 0);
 };
 
-const showEnterTooltip = (target) => {
-  showTooltip(target, globalTooltip, t("common:shared_chat.tooltips.add_new_line"));
-  clearTooltipWithTimeOut(target);
-};
-
 export const initAndDiplayErrorTooltip = (inputContainer, message) => {
   inputContainer.querySelector(".input, input")?.focus();
   inputContainer.classList.add("error-input", "error-animation");
@@ -1156,27 +1153,18 @@ export const initAndDiplayErrorTooltip = (inputContainer, message) => {
   clearTooltipWithTimeOut(inputContainer);
 };
 
-export const handleEnterKeyWithTooltip = (function () {
-  let clickCount = 0;
-  return function (e) {
-    if (e.key === "Enter" && !e.ctrlKey) {
-      e.preventDefault();
-      sendBtn.click();
-      clickCount++;
-    }
+export const handleEnterKeyWithTooltip = function (e) {
+  if (e.key === "Enter" && !e.ctrlKey) {
+    e.preventDefault();
+    sendBtn.click();
+  }
 
-    if (e.key === "Enter" && e.ctrlKey) {
-      e.preventDefault();
-      this.value += "\n";
-      this.scrollTop = this.scrollHeight;
-    }
-
-    if (clickCount >= 5) {
-      showEnterTooltip(inputMessage);
-      clickCount = 0;
-    }
-  };
-})();
+  if (e.key === "Enter" && e.ctrlKey) {
+    e.preventDefault();
+    this.value += "\n";
+    this.scrollTop = this.scrollHeight;
+  }
+};
 
 const togglePlay = async (playButton, audio) => {
   try {

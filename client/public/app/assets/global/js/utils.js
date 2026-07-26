@@ -1690,7 +1690,6 @@ export const openOverlayModal = async (
   afterLoadCallback,
   skeleton = getLoader(),
 ) => {
-  debugger;
   const backdrop = document.createElement("div");
   backdrop.className = "backdrop";
   backdrop.innerHTML = skeleton;
@@ -2095,6 +2094,11 @@ export const getQuizzesSkeleton = (path = "") => {
     <div class="quizzes-list" style="width: 100%; height: 100%; box-sizing: border-box; overflow-y: auto;">
       ${quizCard.repeat(getLoadersCount())}
     </div>
+        ${
+          !isPassed
+            ? `<button type="button" class="mobile-create-quiz-btn create-quiz-btn exclude-btn" title="${t("common:buttons.create_quiz")}" aria-label="${t("common:buttons.create_quiz")}"><i class="bi bi-plus-lg"></i></button>`
+            : ""
+        }
   `;
 };
 
@@ -2287,6 +2291,7 @@ export const getGroupChatSkeleton = () => {
           </div>
         </div>
         <div class="input-message-container">
+          <span class="newline-hint">Shift + Enter for new line</span>
           <div class="icons">
             <label class="should-fill">
               <i class="bi bi-image"></i>
@@ -2305,7 +2310,6 @@ export const getGroupChatSkeleton = () => {
             </div>
           </div>
           <div class="input-message" style="display: flex; align-items: center; border: none; background: transparent;">
-            <span class="loading-opacity-animation" style="width: 40%; height: 1.2rem; border-radius: 0.3rem;"></span>
           </div>
           <button type="button" class="send-btn exclude-btn should-fill" disabled>
             <i class="bi bi-send"></i>

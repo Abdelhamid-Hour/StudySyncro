@@ -85,7 +85,7 @@
     <link data-dynamic="" rel="stylesheet" href="/app/assets<%- resourcesRoute %>css/styles.css" />
     <link rel="stylesheet" href="/main_assets/css/styles.css" />
     <link rel="stylesheet" href="/main_assets/css/variables_and_fonts.css" />
-    <title><%= t("common:titles.studyhype") %> — <%= resourcesRoute.includes("/home/") 
+    <title>StudyHype — <%= resourcesRoute.includes("/home/") 
       ? t("common:titles.home") 
       : resourcesRoute === '/groups/my/group-chat/' 
       ? t("common:titles.group_chat") 
@@ -418,7 +418,7 @@
     <aside class="left-side-bar">
       <div class="logo-container">
         <img src="/main_assets/images/logo-mark.svg" alt="StudyHype Logo" style="aspect-ratio: 1 / 1; width: 2.2rem; flex-shrink: 0;" />
-        <h6 class="should-hide"><%= t("common:titles.studyhype") %></h6>
+        <h6 class="should-hide">StudyHype</h6>
       </div>
       <div class="side-bar-icons">
         <div class="top-side-bar-icons">
@@ -664,7 +664,7 @@
           <% } else if (resourcesRoute.includes("/settings/")) { %>
             <%= t("common:titles.account_settings") %>
           <% } else { %>
-            <%= t("common:titles.studyhype") %>
+              StudyHype
           <% } %>
         </h1>
       </div>

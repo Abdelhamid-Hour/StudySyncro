@@ -680,6 +680,7 @@ const getTasksListContainer = (
   tasksArray = [],
 ) => `<div class="tasks-list-container">
         <header class="tasks-header">
+        <div>
           <h3>${t("group-chat:modals.tasks_list_title")}</h3>
           <div class="btns">
               <button
@@ -696,6 +697,7 @@ const getTasksListContainer = (
               </button>
           </div>
           <span class="badge simple-badge duration-badge">${t("group-chat:modals.duration_label", { duration: "0m" })}</span>
+        </div>
           <button type="button" class="small-btn create-break-btn">
             <i class="bi bi-plus-lg"></i>
             ${t("group-chat:buttons.add_break")}
@@ -767,7 +769,7 @@ const setUpSessionForm = (wrapper, sessionStore) => {
     quizzesSelectTrigger,
     () => `
     <div class="mobile-select-menu-header">
-      <h4>${t("group-chat:modals.select_quiz")}</h4>
+      <h3>${t("group-chat:modals.select_quiz")}</h3>
       <button type="button" class="exclude-btn close-select-menu-btn" title="${t("common:modals.close")}"><i class="bi bi-x-lg"></i></button>
     </div>
     <div class="select-search">

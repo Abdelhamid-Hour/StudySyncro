@@ -211,7 +211,7 @@ const acceptRequest = async (groupId, requestId, userId) => {
             startDate: sData.startDate || "",
             groupName: sData.groupName || "",
             tasksCount: sData.tasksCount || 0,
-            joinedCount: sData.joinedCount || 0,
+            joinedCount: sData.joinedCount || 0
           });
       }
     }

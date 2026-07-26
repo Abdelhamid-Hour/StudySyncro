@@ -15,7 +15,9 @@ export const init = async () => {
   await loadNamespace("quizzes");
 
   const loader = initLazyLoadingLoader();
-  quizCreateBtn?.addEventListener("click", handleQuizCreateClick);
+  document.querySelectorAll(".create-quiz-btn").forEach((btn) => {
+    btn.addEventListener("click", handleQuizCreateClick);
+  });
   quizzesListContainer?.addEventListener("click", handleQuizCardBtns);
 };
 

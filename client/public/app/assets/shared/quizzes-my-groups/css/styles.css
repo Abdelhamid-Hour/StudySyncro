@@ -70,3 +70,36 @@
     gap: calc(var(--primary-gap) / 2);
   }
 }
+
+.mobile-create-group-btn.create-group-btn,
+.mobile-create-quiz-btn.create-quiz-btn {
+  display: none;
+}
+
+@media (max-width: 48rem) {
+  .mobile-create-group-btn,
+  .mobile-create-quiz-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    bottom: 5.25rem;
+    inset-inline-end: 1.5rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50% !important;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    font-size: 1.5rem;
+    border: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    z-index: 901;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--primary-color);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      color: #ffffff;
+    }
+  }
+}

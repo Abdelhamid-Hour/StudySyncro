@@ -323,7 +323,9 @@ export const initSessionsLoader = () => {
         filtered: {
           icon: "bi-clock-history",
           title: t("common:shared_terms.no_active_sessions_found"),
-          desc: t("common:shared_terms.we_couldn_t_find_any_active_sessions_matching_your_search_query"),
+          desc: t(
+            "common:shared_terms.we_couldn_t_find_any_active_sessions_matching_your_search_query",
+          ),
         },
       },
     },
@@ -354,6 +356,8 @@ const initActiveSessionsStream = () => {
       const data = JSON.parse(event.data);
 
       if (data.newSession) {
+        debugger;
+        if (data.newSession.isAdmin) location.reload();
         // Apply current search filter
         const searchInput = document.querySelector(
           "#active-sessions-search-input",
@@ -552,6 +556,7 @@ const ensureSharedRecentMessagesReplyBox = () => {
   sharedReplyBox.style.width = "100%";
   sharedReplyBox.innerHTML = `
     <div class="input-message-container">
+      <span class="newline-hint">Shift + Enter for new line</span>
       <div class="icons">
         <label for="shared-image-upload" class="should-fill">
           <i class="bi bi-image"></i>

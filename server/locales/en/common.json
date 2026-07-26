@@ -9,8 +9,7 @@
     "quiz_editor": "Quiz Editor",
     "settings": "Settings",
     "account_settings": "Account Settings",
-    "dashboard": "Dashboard",
-    "studyhype": "StudyHype"
+    "dashboard": "Dashboard"
   },
   "avatar_alt": "User Avatar",
   "member_avatar_alt": "Member Avatar",
@@ -108,6 +107,7 @@
     "real_time_chat": "Real Time Chat",
     "end_session": "End Session",
     "join_session": "Join Session",
+    "join_requests": "Join Requests",
     "active_session": "Active Session",
     "create_session": "Create Session",
     "group_info": "Group Info",

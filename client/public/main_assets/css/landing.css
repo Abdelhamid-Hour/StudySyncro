@@ -45,8 +45,8 @@ body {
 .landing-brand {
   display: flex;
   align-items: center;
-  gap: var(--primary-gap);
-  font-size: 1.35rem;
+  gap: calc(var(--primary-gap) / 2);
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--heading-color);
   span {
@@ -57,12 +57,15 @@ body {
       "Segoe UI",
       Roboto,
       sans-serif !important;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--primary-color);
   }
-}
-
-.landing-brand i {
-  color: var(--primary-color);
-  font-size: 1.5rem;
+  img {
+    width: 1.8rem;
+    height: 1.8rem;
+    flex-shrink: 0;
+  }
 }
 
 .landing-nav-links {
@@ -92,12 +95,11 @@ body {
     padding: initial !important;
     padding-inline: var(--primary-gap) !important;
   }
-}
 
-/* Theme Toggle Button */
-.toggle-theme-btn {
-  font-size: 1.25rem !important;
-  padding: calc(var(--primary-gap) / 2) var(--primary-gap) !important;
+  .toggle-theme-btn,
+  .lang-toggle-btn {
+    padding: 0.5rem 0.8rem !important;
+  }
 }
 
 /* Hero Section (No Box / No Border) */
@@ -403,7 +405,6 @@ body {
   .feature-bento-row.bento-asymmetric {
     grid-template-columns: 1fr;
     gap: calc(var(--primary-gap) * 2.5);
-    padding: calc(var(--primary-gap) * 1.5);
   }
 }
 
@@ -562,5 +563,22 @@ body {
   .landing-footer {
     flex-direction: column;
     text-align: center;
+  }
+
+  .pro-features-showcase {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--primary-gap) * 4);
+    width: 100%;
+  }
+}
+
+@media (max-width: 28.75rem) {
+  .lang-toggle-btn span {
+    display: none;
+  }
+
+  .landing-cta-box {
+    padding: initial !important;
   }
 }

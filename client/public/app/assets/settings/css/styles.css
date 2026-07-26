@@ -145,6 +145,10 @@
       width: initial;
       font-size: var(--medium-font-size);
 
+      i {
+        display: flex;
+      }
+
       &:has(:checked) > div {
         scale: 0 1;
       }

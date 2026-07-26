@@ -159,148 +159,32 @@
 }
 
 @media (max-width: 48rem) {
-  .backdrop:has(.create-group-overlay) {
-    padding: 0 !important;
-    align-items: flex-start !important;
-    justify-content: flex-start !important;
-  }
-
-  .create-group-overlay {
-    width: 100vw !important;
-    min-width: 100vw !important;
-    max-width: 100vw !important;
-    height: 100vh !important;
-    min-height: 100vh !important;
-    max-height: 100vh !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    border: none !important;
-    box-sizing: border-box !important;
-    overflow-y: auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-start !important;
-    gap: 0 !important;
-    padding-bottom: 2rem !important;
-  }
-
-  .create-group-overlay > header {
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 10 !important;
-    background-color: var(--container-background-color) !important;
-    padding: 0.9rem 1.25rem !important;
-    border-bottom: 1px solid var(--primary-border-color) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-  }
-
-  .create-group-overlay > header h3 {
-    font-size: 1.25rem !important;
-    margin: 0 !important;
-  }
-
-  .create-group-overlay > header button.close-group-overlay {
-    position: static !important;
-    width: 2.5rem !important;
-    height: 2.5rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 1.15rem !important;
-  }
-
   .create-group-overlay .create-group-form {
-    flex: 1 1 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
+    flex-grow: 1;
+    form {
+      height: 100%;
+    }
   }
-
-  .create-group-overlay form#create-group-form {
-    flex: 1 1 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    margin: 0 !important;
-    padding: 0.85rem 1.25rem 1.5rem 1.25rem !important;
-    gap: 1.2rem !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
   .create-group-overlay .dual-container {
     display: flex !important;
     flex-direction: column !important;
-    gap: 1.35rem !important;
     width: 100% !important;
-  }
-
-  .create-group-overlay .dual-container:has(.group-subject-field),
-  .create-group-overlay .dual-container:has(.drop-down-menu) {
-    position: relative !important;
-    z-index: 90 !important;
-  }
-
-  .create-group-overlay .field-container {
-    width: 100% !important;
-    min-height: 3.25rem !important;
-    box-sizing: border-box !important;
-  }
-
-  .create-group-overlay .field-container:has(.drop-down-menu),
-  .create-group-overlay .group-subject-field {
-    position: relative !important;
-    z-index: 90 !important;
-  }
-
-  .create-group-overlay .field-container .input,
-  .create-group-overlay .field-container input,
-  .create-group-overlay .field-container textarea,
-  .create-group-overlay .field-container .select-trigger {
-    font-size: 0.95rem !important;
-  }
-
-  .create-group-overlay .field-container:has(textarea) textarea {
-    min-height: 7.5rem !important;
-    padding-top: 0.75rem !important;
-  }
-
-  .create-group-overlay button.create-btn {
-    margin-top: auto !important;
-    height: 3.25rem !important;
-    font-size: 1.05rem !important;
-    border-radius: var(--primary-radius) !important;
   }
 
   .create-group-overlay .group-subject-select-menu.open-overlay,
-  .create-group-overlay .drop-down-menu.open-overlay,
-  .create-session-overlay .drop-down-menu.open-overlay,
-  .create-quiz-overlay .drop-down-menu.open-overlay {
+  .create-session-overlay .session-quiz-select-menu.open-overlay,
+  .create-quiz-overlay .select-menu.open-overlay {
     position: fixed !important;
     top: 0 !important;
-    inset-inline-start: 0 !important;
-    inset-inline-end: 0 !important;
-    bottom: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
-    max-width: 100vw !important;
     max-height: 100vh !important;
     translate: none !important;
-    margin: 0 !important;
     border-radius: 0 !important;
     border: none !important;
     background-color: var(--container-background-color) !important;
     z-index: 9998 !important;
-    padding: 1.25rem !important;
-    box-sizing: border-box !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.35rem !important;
-    overflow-y: auto !important;
+    padding: var(--primary-gap) !important;
   }
 
   .create-group-overlay .mobile-select-menu-header,
@@ -313,12 +197,8 @@
     border-bottom: 1px solid var(--primary-border-color);
   }
 
-  .create-group-overlay .mobile-select-menu-header h4,
-  .create-session-overlay .mobile-select-menu-header h4,
   .create-quiz-overlay .mobile-select-menu-header h4 {
-    margin: 0;
-    font-size: 1.2rem;
-    color: var(--primary-text-color);
+    color: var(--primary-color);
   }
 
   .create-group-overlay .mobile-select-menu-header .close-select-menu-btn,
@@ -349,18 +229,27 @@
   .create-group-overlay .drop-down-menu.open-overlay .select-search input {
     display: block !important;
     width: 100% !important;
-    height: 3rem !important;
-    font-size: 1rem !important;
     padding: 0.75rem 1rem !important;
-    box-sizing: border-box !important;
-    background-color: var(--inputs-background-color) !important;
-    color: var(--primary-text-color) !important;
-    border: 1px solid var(--inputs-border-color) !important;
     border-radius: var(--primary-radius) !important;
   }
 
   .create-group-overlay .drop-down-menu.open-overlay .drop-down-item {
     padding: 0.9rem 1rem !important;
     font-size: 1rem !important;
+  }
+
+  .create-group-overlay,
+  .create-session-overlay {
+    min-width: 100%;
+    height: 100%;
+    border-radius: initial;
+    .field-container:has(textarea) {
+      flex-grow: 1;
+      textarea {
+        min-height: 100% !important;
+        margin-bottom: initial !important;
+        padding-bottom: calc(2rem + var(--primary-gap) / 2) !important;
+      }
+    }
   }
 }

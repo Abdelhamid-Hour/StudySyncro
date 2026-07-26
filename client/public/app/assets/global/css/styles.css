@@ -53,7 +53,7 @@ body {
   justify-content: center;
   height: calc(var(--primary-gap) / 2);
   width: calc(100% + 1rem);
-  translate: -0.5rem 0;
+  translate: 0.5rem 0;
   transition: background-color var(--primary-transition-style);
   border-radius: var(--primary-radius);
 
@@ -1026,15 +1026,7 @@ main {
   }
 }
 
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    translate: 0 20%;
-  }
-}
-
 .overlay-model {
-  animation: fade-in 300ms ease-out backwards;
   transition:
     opacity var(--primary-transition-style),
     translate var(--primary-transition-style);
@@ -1994,7 +1986,6 @@ label.container svg {
   width: 100% !important;
   max-width: 100% !important;
   height: 100%;
-  min-height: 20rem;
   margin: auto !important;
   padding: calc(var(--primary-gap) * 2);
   flex-grow: 1;
@@ -2160,9 +2151,9 @@ nav.mobile-bottomnav {
   .notifications-overlay {
     position: fixed !important;
     top: 50% !important;
-    inset-inline-start: 50% !important;
+    left: 50% !important;
     bottom: auto !important;
-    inset-inline-end: auto !important;
+    right: auto !important;
     translate: -50% -50% !important;
     width: 100% !important;
     height: 100% !important;
@@ -2256,7 +2247,6 @@ nav.mobile-bottomnav {
     border-bottom: 1px solid var(--primary-border-color);
     padding: 0.625rem 0.75rem;
     z-index: 99;
-    box-shadow: 0 4px 12px var(--primary-shadow-color);
   }
 
   .mobile-search-box.hidden {
@@ -2517,8 +2507,8 @@ nav.mobile-bottomnav {
     }
 
     .lang-toggle-btn {
-      margin-left: auto;
-      margin-right: var(--primary-gap);
+      margin-inline-end: auto;
+      margin-inline-start: var(--primary-gap);
       transition: color var(--primary-transition-style);
 
       &:hover {
@@ -2586,6 +2576,12 @@ nav.mobile-bottomnav {
     font-size: 0.875rem;
     cursor: pointer;
     box-shadow: var(--primary-shadow);
+
+    &.create-session-btn {
+      color: var(--primary-color);
+      border: var(--primary-border-style);
+      border-color: var(--primary-color);
+    }
   }
 
   .mobile-drawer-footer {
@@ -2698,7 +2694,8 @@ nav.mobile-bottomnav {
 [dir="rtl"] .bi-arrow-left,
 [dir="rtl"] .bi-arrow-right,
 [dir="rtl"] .bi-arrow-right-circle-fill,
-[dir="rtl"] .bi-send, .bi-send-fill,
+[dir="rtl"] .bi-send,
+.bi-send-fill,
 [dir="rtl"] .bi-box-arrow-in-right,
 [dir="rtl"] .bi-box-arrow-in-left,
 [dir="rtl"] .bi-box-arrow-right,

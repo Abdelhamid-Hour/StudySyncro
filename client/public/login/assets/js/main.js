@@ -23,9 +23,11 @@ import {
   avatarAside,
   updateSignFormHeights,
 } from "./dom-variables.js";
-import "../../auth/auth.js";
+import "./auth/auth.js";
 import { setUpFileInputListeners } from "../../../app/assets/shared/avatar/js/utils.js";
+import { showGoogleOneTap } from "./auth/auth-functions.js";
 
+showGoogleOneTap();
 // prevets browser default validation rules
 document.getElementById("sign-in-form").setAttribute("novalidate", true);
 document.getElementById("sign-up-form").setAttribute("novalidate", true);
@@ -42,7 +44,7 @@ if (document.readyState === "complete") {
 signUpLink.addEventListener("click", function () {
   showAvatarSide();
   lettersAnimation(
-    t("common:shared_terms.create", { defaultValue: "Create" }),
+    t("shared:header.create", { defaultValue: "Create" }),
     (word) => {
       document.querySelector("h1 > span").textContent = `${word}`;
     },

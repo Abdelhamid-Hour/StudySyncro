@@ -19,7 +19,6 @@
   "unread_messages": "Unread Messages",
   "drop_files": "Drop files here to add to your message.",
   "tooltips": {
-    "add_new_line": "To add a new line, press Ctrl + Enter",
     "close_group_info": "Close group info",
     "show_group_info": "Show group info",
     "admin_cant_submit": "Admin can't submit quizzes",

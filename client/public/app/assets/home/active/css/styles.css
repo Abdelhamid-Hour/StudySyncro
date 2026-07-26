@@ -781,8 +781,11 @@
           & > div {
             container-type: inline-size;
 
-            & > span {
+            .task-title {
               font-size: 8cqw !important;
+            }
+            .task-label {
+              font-size: 6cqw !important;
             }
           }
         }

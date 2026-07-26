@@ -11,13 +11,19 @@ const {
 const { getGroupInfo, getChatContext } = require("./firebase-utils/group");
 const { getMembers } = require("./firebase-utils/members");
 const { getSessionInformations } = require("./firebase-utils/session");
-const { millisecondsToHMFormat, Task, Quiz } = require("./global");
+const { millisecondsToHMFormat } = require("./global");
 const GroupFragmentRoutes = [
-  { route: "/group-info", title: "Group Informations" },
-  { route: "/session-info", title: "Session Informations" },
-  { route: "/members-list", title: "Members" },
-  { route: "/demandes-list", title: "Join Requests" },
-  { route: "/quizzes-list", title: "Quizzes" },
+  { route: "/group-info", title: "common:shared_terms.group_info" },
+  {
+    route: "/session-info",
+    title: "common:shared_terms.session_info",
+  },
+  { route: "/members-list", title: "common:shared_terms.members" },
+  {
+    route: "/demandes-list",
+    title: "common:shared_terms.join_requests",
+  },
+  { route: "/quizzes-list", title: "common:titles.quizzes" },
 ];
 
 const getGroupChatContext = async (userId, groupId) => {

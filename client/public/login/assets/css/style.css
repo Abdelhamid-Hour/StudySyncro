@@ -35,9 +35,8 @@ body {
   .login-top-logo {
     display: flex;
     align-items: center;
-    gap: var(--primary-gap);
+    gap: calc(var(--primary-gap) / 2);
     transition: all 0.2s ease;
-    padding: 0.45rem 1rem;
 
     img {
       width: 1.8rem;
@@ -460,6 +459,10 @@ section#forms {
           color: var(--eye-pass-color);
           cursor: pointer;
 
+          i {
+            display: flex;
+          }
+
           & > .show {
             scale: 0 1;
           }
@@ -614,25 +617,20 @@ div.separator {
 
 [dir="rtl"] #login-form {
   aside.shown {
-    translate: +100% !important;
+    translate: +100%;
   }
 }
 
-@media screen and (max-width: 48rem) {
+@media (max-width: 48rem) {
   .top-nav-bar {
     position: sticky;
-    background-color: color-mix(
-      in srgb,
-      var(--container-background-color) 75%,
-      transparent
-    );
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+    background-color: var(--container-background-color);
+    border-bottom: 1px solid var(--container-border-color);
 
     .login-top-logo {
       background-color: transparent;
       box-shadow: none;
+      padding: initial !important;
     }
   }
   main {
@@ -656,12 +654,13 @@ div.separator {
       border-radius: unset;
       padding: 1rem;
       flex-grow: 1;
+      border: none;
 
       aside {
         border: initial;
         border-radius: initial;
         &.shown {
-          translate: 0 -100%;
+          translate: 0 -100% !important;
         }
       }
       div.user-name-container {
@@ -674,6 +673,20 @@ div.separator {
             flex-basis: 50%;
           }
         }
+      }
+    }
+    #login-form:has(.shown) {
+      padding-bottom: 3rem;
+    }
+  }
+}
+
+@media (max-width: 28.0625rem) {
+  .top-nav-bar {
+    .lang-toggle-btn,
+    .home-link-btn {
+      span {
+        display: none;
       }
     }
   }

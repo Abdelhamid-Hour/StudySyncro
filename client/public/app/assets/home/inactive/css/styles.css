@@ -268,7 +268,6 @@
   padding: var(--primary-gap);
   border: var(--primary-border-style);
   box-shadow: var(--primary-shadow);
-  overflow: hidden;
 
   header {
     display: flex;
@@ -278,7 +277,6 @@
 
   .session-overlay-content {
     flex-grow: 1;
-    overflow: auto;
     scrollbar-width: none;
     display: flex;
     flex-direction: column;
@@ -346,6 +344,7 @@
     background-color: var(--btn-background-color);
     border-radius: var(--primary-radius);
     padding: var(--primary-gap);
+    box-shadow: var(--primary-shadow);
 
     .group-name-wrapper {
       display: flex;
@@ -612,8 +611,7 @@
     display: flex !important;
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 0.75rem !important;
-    padding-top: 0.75rem !important;
+    gap: var(--primary-gap);
     border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
     width: 100% !important;
   }

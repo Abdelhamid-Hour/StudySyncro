@@ -110,15 +110,8 @@
         <img
           src="/main_assets/images/logo-mark.svg"
           alt="StudyHype Logo"
-          style="width: 2.2rem; height: 2.2rem; flex-shrink: 0"
         />
         <span
-          style="
-            font-size: 1.45rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            color: var(--primary-color);
-          "
           >StudyHype</span
         >
       </a>
@@ -151,7 +144,7 @@
           <span class="lang-toggle-text"><%= lang === 'ar' ? 'EN' : 'AR' %></span>
         </button>
         <a href="/login" class="button blue-btn login-btn">
-          <span data-i18n="root:nav.login"><%= t('common:shared_terms.login') %></span>
+          <span><%= t('common:shared_terms.login') %></span>
           <i class="bi bi-arrow-right"></i>
         </a>
       </div>
@@ -589,8 +582,8 @@
       })();
     </script>
     <script type="module">
-      import { initI18n } from "/main_assets/js/i18n.js";
-      initI18n(["shared", "root"], { isStatic: true });
+      import { initLanguageSwitcher } from "/main_assets/js/i18n.js";
+      initLanguageSwitcher();
     </script>
   </body>
 </html>

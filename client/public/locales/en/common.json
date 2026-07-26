@@ -217,10 +217,7 @@
       "no_match": "No emojis found",
       "search_placeholder": "Search emojis..."
     },
-    "unread_messages": "Unread messages",
-    "tooltips": {
-      "add_new_line": "Add new line"
-    }
+    "unread_messages": "Unread messages"
   },
   "shared_groups": {
     "actions": {

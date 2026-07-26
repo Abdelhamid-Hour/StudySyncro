@@ -115,7 +115,7 @@ const HandleSelection = (e, selectButtonValue, isGlobalSelect, onSelect) => {
 export const createSubjectSelectMenu = () => {
   let html = `
     <div class="mobile-select-menu-header">
-      <h4>${t("common:modals.select_subject")}</h4>
+      <h3>${t("common:modals.select_subject")}</h3>
       <button type="button" class="exclude-btn close-select-menu-btn" title="${t("common:modals.close")}"><i class="bi bi-x-lg"></i></button>
     </div>
     <div class="select-search">

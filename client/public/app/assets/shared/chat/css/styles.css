@@ -436,7 +436,20 @@
   box-shadow: var(--primary-shadow);
   transition: height var(--primary-transition-style);
 
-  &:has(.input-message:focus) {
+  .newline-hint {
+    position: absolute;
+    inset-inline-end: 2.5rem; /* Pushes it just to the left of the send button */
+    bottom: calc(var(--primary-gap) / 1.7);
+    font-size: var(--small-font-size); /* Smaller than standard text */
+    color: var(--secondary-text-color, #666);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: var(--primary-transition-style);
+  }
+
+  &:has(.input-message:focus),
+  &:has(.input-message:not(:placeholder-shown)) {
     flex-wrap: wrap-reverse;
     height: 5.6444rem;
     align-items: start;
@@ -446,6 +459,11 @@
       padding-block: calc(var(--primary-gap) / 3);
       margin-bottom: calc(var(--primary-gap) / 2 + 0.9906rem);
       height: 3rem;
+    }
+
+    .newline-hint {
+      opacity: 0.8;
+      visibility: visible;
     }
   }
 
@@ -496,7 +514,7 @@
       button {
         position: absolute;
         top: 0;
-        inset-inline-end: 0;
+        right: 0px;
         translate: 50% -50%;
 
         i {
@@ -844,4 +862,10 @@ html[lang="ar"] .first-message-received-text,
 html[lang="ar"] .first-message-received-text::before,
 [dir="rtl"] .first-message-received-text::before {
   scale: 1 1 !important;
+}
+
+@media (max-width: 48rem) {
+  .files-view {
+    background-color: var(--container-background-color) !important;
+  }
 }

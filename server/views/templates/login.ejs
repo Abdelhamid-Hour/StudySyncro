@@ -98,7 +98,7 @@
       crossorigin="anonymous"
     />
     <!-- Google One Tap Script -->
-    <script async defer src="https://accounts.google.com/gsi/client"></script>
+    <script defer src="https://accounts.google.com/gsi/client"></script>
     <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
     <link
       rel="stylesheet"
@@ -128,7 +128,7 @@
       <div>
         <a
           href="/"
-          class="button exclude-btn"
+          class="button exclude-btn home-link-btn"
           data-i18n-title="login:nav.back_to_home"
           title="<%= t('login:nav.back_to_home') %>"
           aria-label="Back to Home"
@@ -484,6 +484,11 @@
     <script
       type="module"
       src="/login/assets/js/main.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      type="module"
+      src="/login/assets/js/auth/auth-functions.js"
       crossorigin="anonymous"
     ></script>
   </body>

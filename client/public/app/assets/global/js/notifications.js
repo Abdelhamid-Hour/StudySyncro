@@ -360,7 +360,8 @@ const formatNotificationMessage = (notif) => {
 const formatNotifDate = (ts) => {
   try {
     const d = new Date(ts || Date.now());
-    if (isNaN(d.getTime())) return t("common:shared_chat.emojis.categories.recent");
+    if (isNaN(d.getTime()))
+      return t("common:shared_chat.emojis.categories.recent");
     return d.toLocaleString("en-US", {
       month: "short",
       day: "numeric",
@@ -800,7 +801,7 @@ export const initNotificationsManager = () => {
   const createLoadingCard = () => {
     const div = document.createElement("div");
     div.className = "notif-card card-item loading-animation loading-card";
-    div.style.minHeight = "4.5rem";
+    div.style.minHeight = "fit-content";
     div.style.pointerEvents = "none";
     div.style.display = "flex";
     div.style.alignItems = "flex-start";
@@ -861,7 +862,6 @@ export const initNotificationsManager = () => {
   const categoryBtns = document.querySelectorAll(".notif-category-btn");
   categoryBtns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      debugger;
       if (btn.classList.contains("active")) return;
 
       const oldBtn = document.querySelector(".notif-category-btn.active");
