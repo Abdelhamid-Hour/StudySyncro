@@ -1195,7 +1195,11 @@ const updateTopSideBarHeader = (Title) => {
     const returnHref = linkEl.getAttribute("href") || "/app/home";
     mobileBackBtn.setAttribute("href", returnHref);
     mobileBackBtn.classList.remove("hidden");
-    if (Title.toLowerCase().includes("group chat")) {
+    if (
+      Title.toLowerCase().includes(
+        t("common:group_chat", { defaultValue: "group chat" }),
+      )
+    ) {
       mobileTitleEl.innerHTML = `
         <button
           type="button"
@@ -1435,10 +1439,10 @@ export const clearTooltipWithTimeOut = getDebounceFunc((input) => {
 }, 2000);
 
 export const handleRoutingClick = (event) => {
-  if (isRouting) {
-    event.preventDefault(); // Prevent default action (like link navigation)
-    event.stopPropagation(); // Optional: stop event from bubbling up
-  }
+  // if (isRouting) {
+  //   event.preventDefault(); // Prevent default action (like link navigation)
+  //   event.stopPropagation(); // Optional: stop event from bubbling up
+  // }
 };
 
 export const clearOverlaysModals = () => {

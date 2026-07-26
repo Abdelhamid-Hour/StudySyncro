@@ -197,6 +197,7 @@
     "sessions_abbr": "Ses"
   },
   "shared_chat": {
+    "newline_hint": "Shift + Enter for new line",
     "alerts": {
       "message_max_length": "Message cannot exceed {max} characters",
       "send_failed": "Failed to send message"

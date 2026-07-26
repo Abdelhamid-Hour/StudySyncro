@@ -5,7 +5,6 @@
 // learn mutaionObserver
 // add the cloud funcs
 
-//  add دردشة المجموع info link in virtual navigation + icon
 // tasks container should both (ongoing, completed) 50% 50% in active session in phone
 // restyle green circle for active session + join session in group chat for the phone version
 // add join btn when session active in to the menu in the group chat phone version

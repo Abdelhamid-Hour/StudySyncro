@@ -197,6 +197,7 @@
     "sessions_abbr": "ج"
   },
   "shared_chat": {
+    "newline_hint": "اضغط Shift + Enter للانتقال لسطر جديد",
     "alerts": {
       "message_max_length": "لا يمكن أن تتجاوز الرسالة {max} حرفاً",
       "send_failed": "فشل إرسال الرسالة"
