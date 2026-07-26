@@ -132,13 +132,17 @@ const mobileBackBtn = document.querySelector(".mobile-back-btn");
 
 if (sidebarTitleEl && mobilePageTitleEl) {
   const syncTitle = () => {
-    const linkEl = sidebarTitleEl.querySelector("a");
+    const linkEl = sidebarTitleEl?.querySelector("a");
     if (linkEl && mobileBackBtn) {
       const returnHref = linkEl.getAttribute("href") || "/app/home";
       mobileBackBtn.setAttribute("href", returnHref);
       mobileBackBtn.classList.remove("hidden");
       const titleText = linkEl.textContent.trim();
-      if (titleText.toLowerCase().includes("group chat")) {
+      if (
+        titleText
+          .toLowerCase()
+          .includes(t("common:group_chat", { defaultValue: "group chat" }))
+      ) {
         mobilePageTitleEl.innerHTML = `
           <button
             type="button"
@@ -180,7 +184,7 @@ mobileSearchBtn?.addEventListener("click", (e) => {
       document.querySelector(".active-sessions-search.search");
   } else if (
     topSideBarMiddle &&
-    topSideBarMiddle.querySelector(".search-container")
+    topSideBarMiddle?.querySelector(".search-container")
   ) {
     searchContentEl = topSideBarMiddle;
   }
@@ -191,7 +195,9 @@ mobileSearchBtn?.addEventListener("click", (e) => {
     }
     mobileSearchBox.classList.toggle("hidden");
     if (!mobileSearchBox.classList.contains("hidden")) {
-      const searchInput = mobileSearchBox.querySelector("input[type='search']");
+      const searchInput = mobileSearchBox?.querySelector(
+        "input[type='search']",
+      );
       searchInput?.focus();
     }
   }
