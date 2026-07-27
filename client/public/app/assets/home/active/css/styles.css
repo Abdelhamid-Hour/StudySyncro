@@ -363,6 +363,7 @@
         width: 80%;
         display: flex;
         gap: var(--primary-gap);
+        height: fit-content;
 
         & > div {
           position: relative;

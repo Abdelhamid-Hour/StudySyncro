@@ -28,6 +28,7 @@ export let groupLeftSideBar,
   addMembersMenuBtn,
   drawerSection,
   actionsList,
+  leaveSessionBtn,
   groupInfoMenuBtn;
 
 groupInfoElementsMap = {
@@ -274,7 +275,9 @@ groupInfoElementsMap = {
           </div>
           `;
       const span = wrapper.querySelector(".level-input");
-      span.textContent = t(`common:forms.levels.${value}`, { defaultValue: value });
+      span.textContent = t(`common:forms.levels.${value}`, {
+        defaultValue: value,
+      });
       span.setAttribute("data-value", value);
       return wrapper.innerHTML;
     },
@@ -296,7 +299,9 @@ groupInfoElementsMap = {
             </div>
           `;
       const content = wrapper.querySelector(".level-value.content");
-      content.textContent = t(`common:forms.levels.${value}`, { defaultValue: value });
+      content.textContent = t(`common:forms.levels.${value}`, {
+        defaultValue: value,
+      });
       return wrapper.innerHTML;
     },
   },
@@ -343,7 +348,9 @@ groupInfoElementsMap = {
           </div>
           `;
       const span = wrapper.querySelector(".visibility-input");
-      span.textContent = t(`common:forms.visibility.${value}`, { defaultValue: value });
+      span.textContent = t(`common:forms.visibility.${value}`, {
+        defaultValue: value,
+      });
       span.setAttribute("data-value", value);
       if (value === "Private") {
         const label = createShowInSearchLabel(showInSearchInput);
@@ -369,7 +376,9 @@ groupInfoElementsMap = {
             </div>
           `;
       const content = wrapper.querySelector(".visibility-value.content");
-      content.textContent = t(`common:forms.visibility.${value}`, { defaultValue: value });
+      content.textContent = t(`common:forms.visibility.${value}`, {
+        defaultValue: value,
+      });
       if (value === "Private") {
         const label = createShowInSearchLabel(showInSearchInput, true);
         wrapper.appendChild(label);
@@ -459,11 +468,9 @@ export const initDomVariables = () => {
   copyUIDMenuBtn = document.querySelector(".copy-uid-menu-btn");
   groupLeftSideBar = document.querySelector(".group-left-side-bar");
   showInfoBtn = document.querySelector(".show-info-btn");
-  createSessionBtn = document.querySelector(".create-session-btn");
+  createSessionBtn = document.querySelector(".create-session");
   groupLeftSideBarContent = document.querySelector(".left-side-bar-content");
   groupLeftSideBarTitle = groupLeftSideBar.querySelector(".side-bar-title");
-  joinSessionBtn = document.querySelector(".join-session");
-  endSessionBtn = document.querySelector(".end-session");
   drawerSection = document.querySelector(".mobile-group-chat-actions");
   actionsList = document.getElementById("mobile-drawer-group-actions-list");
 };

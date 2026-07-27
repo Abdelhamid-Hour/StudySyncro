@@ -103,6 +103,7 @@
     "sessions_abbr": "Ses"
   },
   "shared_terms": {
+    "leave_session": "Leave Session",
     "show_group_details": "Show Group Details",
     "real_time_chat": "Real Time Chat",
     "end_session": "End Session",

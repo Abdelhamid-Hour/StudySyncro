@@ -1,12 +1,25 @@
 * {
   box-sizing: border-box;
   margin: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
 }
 
 html[lang="ar"],
 html[lang="ar"] * {
-  font-family: "Tajawal", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family:
+    "Tajawal",
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
 }
 
 body {
@@ -93,6 +106,12 @@ button,
     }
   }
 
+  &.blue-btn {
+    border: 1px solid;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+  }
+
   &.orange-btn {
     color: var(--orange-color);
 
@@ -147,11 +166,6 @@ button:not(.exclude-btn),
   font-size: 1rem;
   z-index: 1;
   font-weight: normal;
-
-  &.blue-btn {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-  }
 
   &.red-btn {
     border-color: var(--error-border-color);

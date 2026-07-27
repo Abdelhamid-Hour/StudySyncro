@@ -1375,7 +1375,7 @@ main {
               }
 
               &.accept-btn,
-              &.join-session-btn,
+              &.join-session,
               &.join-invite-btn {
                 border: 1px solid #3b82f6;
                 color: #3b82f6;
@@ -2577,7 +2577,13 @@ nav.mobile-bottomnav {
     cursor: pointer;
     box-shadow: var(--primary-shadow);
 
-    &.create-session-btn {
+    .pencil {
+      height: 80%;
+      aspect-ratio: 1/1;
+      margin: auto;
+    }
+
+    &.create-session {
       color: var(--primary-color);
       border: var(--primary-border-style);
       border-color: var(--primary-color);

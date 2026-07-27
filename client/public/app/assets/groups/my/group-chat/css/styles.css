@@ -1110,38 +1110,34 @@
     position: relative;
 
     .top-bar {
+      width: fit-content !important;
       position: absolute;
       top: var(--primary-gap);
       right: var(--primary-gap);
       border: none !important;
-      width: 2.5rem !important;
       padding: initial !important;
+      z-index: 1;
+
+      & > * {
+        box-shadow: 0 0 5px var(--primary-shadow-color);
+      }
 
       .title,
       .show-info-btn {
         display: none !important;
       }
 
-      .create-session-btn {
-        aspect-ratio: 1 / 1;
-        border-radius: 50%;
-        width: 100%;
-        border: none;
-        font-size: var(--medium-font-size);
-        background-color: var(--primary-color);
-        box-shadow: 0 0 10px 4px var(--primary-shadow-color);
-
+      .create-session {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
         &:hover {
           background-color: var(--primary-color) !important;
+          color: var(--btn-hover-text-color);
           box-shadow: none !important;
 
           &::before {
             content: none;
           }
-        }
-
-        span {
-          display: none;
         }
       }
 

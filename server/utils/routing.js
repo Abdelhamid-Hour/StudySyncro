@@ -19,14 +19,8 @@ const { getUserNotifications } = require("./firebase-utils/notifications");
 const SHARED_STYLES_MAP = {
   "/home/inactive": ["/tasks", "/chat"],
   "/home/active": ["/tasks", "/chat", "/quiz-result"],
-  "/quizzes/my": ["/quizzes-groups", "/fields", "/forms", "/quizzes-my-groups"],
-  "/quizzes/passed": [
-    "/quizzes-groups",
-    "/fields",
-    "/forms",
-    "/quizzes-my-groups",
-    "/quiz-result"
-  ],
+  "/quizzes/my": ["/quizzes-groups", "/fields", "/forms"],
+  "/quizzes/passed": ["/quizzes-groups", "/fields", "/forms", "/quiz-result"],
   "/groups/my": [
     "/groups-my-available",
     "/quizzes-groups",
@@ -82,23 +76,20 @@ const fetchData = async (pathName, user, t) => {
       const payload = await fetchHomeData(user.uid, t);
       payload.payload.extraData = {
         fullName: user.fullName,
-        hasActiveSession: payload.payload.hasActiveSession || false
+        hasActiveSession: payload.payload.hasActiveSession || false,
       };
       return payload;
 
     case pathNames.groups.my:
       templateContext = {
-        ...(await getJoinedGroups(
-          user.uid,
-          {
-            level: [],
-            visibility: [],
-            available: false,
-            role: [],
-            searchTerm: "",
-            searchBy: "",
-          }
-        )),
+        ...(await getJoinedGroups(user.uid, {
+          level: [],
+          visibility: [],
+          available: false,
+          role: [],
+          searchTerm: "",
+          searchBy: "",
+        })),
         userId: user.uid,
       };
 
@@ -106,17 +97,14 @@ const fetchData = async (pathName, user, t) => {
 
     case pathNames.groups.available:
       templateContext = {
-        ...(await getAvailableGroups(
-          user.uid,
-          {
-            level: [],
-            visibility: [],
-            available: false,
-            role: [],
-            searchTerm: "",
-            searchBy: "",
-          }
-        )),
+        ...(await getAvailableGroups(user.uid, {
+          level: [],
+          visibility: [],
+          available: false,
+          role: [],
+          searchTerm: "",
+          searchBy: "",
+        })),
         userId: user.uid,
       };
 
@@ -143,7 +131,7 @@ const fetchData = async (pathName, user, t) => {
 
     case pathNames.settings:
       templateContext = await getSettingsContext(user.uid);
-      
+
       return { templateContext };
 
     default:
@@ -151,68 +139,74 @@ const fetchData = async (pathName, user, t) => {
   }
 };
 
-const renderFragmentOrLayout = (
-  template,
-  payload,
-  pathName,
-  req,
-  res
-) => {
+const renderFragmentOrLayout = (template, payload, pathName, req, res) => {
   const isFetch = req.headers?.["x-requested-with"] === "fetch"; // should I add it in front end
 
   res.setHeader("Vary", "X-Requested-With");
   res.setHeader("Cache-Control", "private, no-cache");
 
-  return res.render(template, payload.templateContext, async (err, htmlFragment) => {
-    if (err) {
-      console.error("Error rendering template:", err);
-      return res
-        .status(500)
-        .send("An error occurred while rendering the page.");
-    }
-
-    if (isFetch)
-      return res.status(200).json({
-        pathName,
-        htmlFragment: htmlFragment,
-        extraData: payload.extraData,
-      });
-
-    let notificationsData = { cards: [], count: 0, lastVisible: null, unreadCount: 0 };
-    if (req.user && req.user.uid) {
-      try {
-        const notifRes = await getUserNotifications(req.user.uid, INITIALE_LOADERS_COUNT);
-        if (notifRes && notifRes.success) {
-          notificationsData = notifRes;
-        }
-      } catch (e) {
-        console.error("Error fetching initial notifications for layout:", e);
+  return res.render(
+    template,
+    payload.templateContext,
+    async (err, htmlFragment) => {
+      if (err) {
+        console.error("Error rendering template:", err);
+        return res
+          .status(500)
+          .send("An error occurred while rendering the page.");
       }
-    }
 
-    return res.render(
-      "layout",
-      {
-        sharedStyles: setSharedStylesResources(pathName),
-        resourcesRoute: `${pathName}/`,
-        content: htmlFragment,
-        user: req.user,
-        notificationsData,
-        toReadableDate,
-        ...payload.extraData,
-      },
-      (layoutErr, fullPage) => {
-        if (layoutErr) {
-          console.error("Error rendering layout:", layoutErr);
-          return res
-            .status(500)
-            .send("An error occurred while rendering the layout.");
+      if (isFetch)
+        return res.status(200).json({
+          pathName,
+          htmlFragment: htmlFragment,
+          extraData: payload.extraData,
+        });
+
+      let notificationsData = {
+        cards: [],
+        count: 0,
+        lastVisible: null,
+        unreadCount: 0,
+      };
+      if (req.user && req.user.uid) {
+        try {
+          const notifRes = await getUserNotifications(
+            req.user.uid,
+            INITIALE_LOADERS_COUNT,
+          );
+          if (notifRes && notifRes.success) {
+            notificationsData = notifRes;
+          }
+        } catch (e) {
+          console.error("Error fetching initial notifications for layout:", e);
         }
-
-        return res.status(200).send(fullPage);
       }
-    );
-  });
+
+      return res.render(
+        "layout",
+        {
+          sharedStyles: setSharedStylesResources(pathName),
+          resourcesRoute: `${pathName}/`,
+          content: htmlFragment,
+          user: req.user,
+          notificationsData,
+          toReadableDate,
+          ...payload.extraData,
+        },
+        (layoutErr, fullPage) => {
+          if (layoutErr) {
+            console.error("Error rendering layout:", layoutErr);
+            return res
+              .status(500)
+              .send("An error occurred while rendering the layout.");
+          }
+
+          return res.status(200).send(fullPage);
+        },
+      );
+    },
+  );
 };
 
 module.exports = {

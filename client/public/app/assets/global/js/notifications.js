@@ -169,7 +169,7 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
 };
 
 const bindCardActions = (card) => {
-  const acceptBtn = card.querySelector(".accept-btn:not(.join-session-btn)");
+  const acceptBtn = card.querySelector(".accept-btn:not(.join-session)");
   const rejectBtn = card.querySelector(".reject-btn");
 
   if (acceptBtn) {
@@ -233,7 +233,7 @@ const bindCardActions = (card) => {
     });
   }
 
-  const joinSessionBtn = card.querySelector(".join-session-btn");
+  const joinSessionBtn = card.querySelector(".join-session");
   if (joinSessionBtn) {
     joinSessionBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -248,7 +248,7 @@ const bindCardActions = (card) => {
             }
             document
               .querySelectorAll(
-                `.notif-card[data-session-id="${sessionId}"] .join-session-btn`,
+                `.notif-card[data-session-id="${sessionId}"] .join-session`,
               )
               .forEach((btn) => {
                 const c = btn.closest(".notif-card");
@@ -488,7 +488,7 @@ const createNotificationCard = (notif) => {
   ) {
     actionsHtml = `
       <div class="notif-actions">
-        <button type="button" class="join-session-btn exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> ${t("common:shared_terms.join")}</button>
+        <button type="button" class="join-session exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> ${t("common:shared_terms.join")}</button>
       </div>
     `;
   }

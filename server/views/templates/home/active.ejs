@@ -103,7 +103,7 @@
         </div>
       </div>
       <div class="btns session-action-btns">
-        <button type="button" class="red-btn <%= session.isAdmin ? 'end-session-btn' : 'leave-session-btn' %>">
+        <button type="button" class="red-btn <%= session.isAdmin ? 'end-session' : 'leave-session' %>">
           <i class="bi bi-box-arrow-left"></i>
           <span><%= session.isAdmin ? t("common:shared_terms.end_session") : t("home:active.leave") %></span>
         </button>

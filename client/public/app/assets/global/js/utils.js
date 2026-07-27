@@ -661,14 +661,8 @@ export const tooltipSetup = () => {
 const SHARED_STYLES_MAP = {
   "/home/inactive": ["/tasks", "/chat"],
   "/home/active": ["/tasks", "/chat", "/quiz-result"],
-  "/quizzes/my": ["/quizzes-groups", "/fields", "/forms", "/quizzes-my-groups"],
-  "/quizzes/passed": [
-    "/quizzes-groups",
-    "/fields",
-    "/forms",
-    "/quizzes-my-groups",
-    "/quiz-result",
-  ],
+  "/quizzes/my": ["/quizzes-groups", "/fields", "/forms"],
+  "/quizzes/passed": ["/quizzes-groups", "/fields", "/forms", "/quiz-result"],
   "/groups/my": [
     "/groups-my-available",
     "/quizzes-groups",
@@ -2295,7 +2289,6 @@ export const getGroupChatSkeleton = () => {
           </div>
         </div>
         <div class="input-message-container">
-          <span class="newline-hint">Shift + Enter for new line</span>
           <div class="icons">
             <label class="should-fill">
               <i class="bi bi-image"></i>
@@ -2313,8 +2306,7 @@ export const getGroupChatSkeleton = () => {
               </button>
             </div>
           </div>
-          <div class="input-message" style="display: flex; align-items: center; border: none; background: transparent;">
-          </div>
+          <textarea placeholder="${t('common:shared_terms.type_a_message')}" id="input-message" class="input-message"></textarea>
           <button type="button" class="send-btn exclude-btn should-fill" disabled>
             <i class="bi bi-send"></i>
           </button>

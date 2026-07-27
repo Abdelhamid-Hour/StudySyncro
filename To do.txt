@@ -5,9 +5,9 @@
 // learn mutaionObserver
 // add the cloud funcs
 
+// add join btn when session active in to the menu in the group chat phone version ****
 // tasks container should both (ongoing, completed) 50% 50% in active session in phone
 // restyle green circle for active session + join session in group chat for the phone version
-// add join btn when session active in to the menu in the group chat phone version
 
 // add email verification step when the email changed
 
@@ -15,9 +15,8 @@
 // email verified succefully ui
 // restyle the msg block for phone
 
-// allow navigating fast
 
 // <bdi> when rtl
 
 //------------------------------------
-// add a soft delete option ================
+// allow navigating fast

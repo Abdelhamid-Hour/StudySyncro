@@ -31,10 +31,7 @@ export const init = async () => {
     const shownKey = "verified_shown_" + oobCode;
     if (!sessionStorage.getItem(shownKey)) {
       sessionStorage.setItem(shownKey, "true");
-      showMessageBlock(
-        t("home:alerts.email_verified_success"),
-        "success",
-      );
+      showMessageBlock(t("home:alerts.email_verified_success"), "success");
     }
     window.history.replaceState({}, document.title, window.location.pathname);
   }
@@ -42,8 +39,8 @@ export const init = async () => {
   expandDescriptionBtn.addEventListener("click", expandAndShrinkDescription);
 
   sessionActionButtons.addEventListener("click", (e) => {
-    const endSessionBtn = e.target.closest(".end-session-btn");
-    const leaveSessionBtn = e.target.closest(".leave-session-btn");
+    const endSessionBtn = e.target.closest(".end-session");
+    const leaveSessionBtn = e.target.closest(".leave-session");
 
     if (endSessionBtn) {
       endSession(endSessionBtn, Session.id);

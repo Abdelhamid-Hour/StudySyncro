@@ -80,7 +80,54 @@ export const getGroupId = () => {
   return groupId;
 };
 
+export const handleLeaveSessionBtn = () => {
+  const leaveDrawerBtn = document.querySelector(
+    ".mobile-drawer-btn.leave-session",
+  );
+  const topBarLeaveBtn = document.querySelector(".top-bar .leave-session");
+  const btn = topBarLeaveBtn || leaveDrawerBtn;
+  leaveSession(btn, btn.dataset?.sessionId, () => {
+    topBarLeaveBtn.outerHTML = `<button type="button" data-session-id="${btn.dataset?.sessionId}" class="join-session small-btn blue-btn">
+            <i class="bi bi-box-arrow-in-right"></i>
+            ${t("common:shared_terms.join_session")}
+          </button>`;
+
+    if (leaveDrawerBtn) {
+      leaveDrawerBtn.outerHTML = `<button type="button" data-session-id="${btn.dataset?.sessionId}" class="exclude-btn mobile-drawer-btn join-session blue-btn">
+            <i class="bi bi-box-arrow-in-right"></i>
+            <span>${t("common:shared_terms.join_session")}</span>
+        </button>`;
+    }
+  });
+};
+
+export const handleEndSessionBtn = () => {
+  const endSessionDrawerBtn = document.querySelector(
+    ".mobile-drawer-btn.end-session",
+  );
+  const topBarEndSessionBtn = document.querySelector(".top-bar .end-session");
+  const btn = topBarEndSessionBtn || endSessionDrawerBtn;
+  endSession(btn, btn.dataset?.sessionId, () => {
+    topBarEndSessionBtn.outerHTML = `
+      <button type="button" class="small-btn create-session">
+        <i class="bi bi-plus-circle"></i>
+        <span>${t("group-chat:create_session")}</span>
+      </button>`;
+
+    if (endSessionDrawerBtn) {
+      endSessionDrawerBtn.outerHTML = `<button type="button" class="exclude-btn mobile-drawer-btn create-session blue-btn">
+          <i class="bi bi-plus-circle"></i>
+          <span>${t("group-chat:create_session")}</span>
+        </button>`;
+    }
+
+    document.querySelector(".session-active-badge")?.remove();
+    document.querySelector(".session-info-menu-btn")?.remove();
+  });
+};
+
 export const handleLeavingGroup = async (e) => {
+  debugger;
   const res = await showConfirmationBox(
     "exclamation",
     t("common:shared_terms.leave_group"),
@@ -824,12 +871,16 @@ const setUpSessionForm = (wrapper, sessionStore) => {
         noFilter: {
           icon: "bi-clipboard-x",
           title: t("common:shared_terms.no_quizzes_available"),
-          desc: t("common:shared_terms.no_quizzes_have_been_created_or_shared_with_this_group_yet"),
+          desc: t(
+            "common:shared_terms.no_quizzes_have_been_created_or_shared_with_this_group_yet",
+          ),
         },
         filtered: {
           icon: "bi-search",
           title: t("common:shared_terms.no_quizzes_found"),
-          desc: t("common:shared_terms.no_quizzes_match_your_search_or_filter_criteria"),
+          desc: t(
+            "common:shared_terms.no_quizzes_match_your_search_or_filter_criteria",
+          ),
         },
       },
     },
@@ -888,7 +939,10 @@ const handleFinishBtnClick = async (sessionData, btn) => {
     btn.innerHTML = getLoader();
     sessionData.groupId = getGroupId();
     await sendData("/api/create-session", { sessionData });
-    showMessageBlock(t("common:shared_terms.session_created_successfully"), "success");
+    showMessageBlock(
+      t("common:shared_terms.session_created_successfully"),
+      "success",
+    );
     navigateTo("/home");
   } catch (error) {
     const isNative =
@@ -1152,7 +1206,10 @@ export const closeGroupLeftSideBar = () => {
   showInfoBtn
     .querySelector("i")
     .classList.replace("bi-x-circle", "bi-info-circle");
-  showInfoBtn.setAttribute("data-tooltip", t("group-chat:tooltips.show_group_info"));
+  showInfoBtn.setAttribute(
+    "data-tooltip",
+    t("group-chat:tooltips.show_group_info"),
+  );
 };
 
 const swapMode = (infoBox, modeFuncName, updatedValue, showInSearchValue) => {
@@ -1499,12 +1556,16 @@ export const handleQuizzesListMenuBtn = async () => {
         noFilter: {
           icon: "bi-clipboard-x",
           title: t("common:shared_terms.no_quizzes_available"),
-          desc: t("common:shared_terms.no_quizzes_have_been_created_or_shared_with_this_group_yet"),
+          desc: t(
+            "common:shared_terms.no_quizzes_have_been_created_or_shared_with_this_group_yet",
+          ),
         },
         filtered: {
           icon: "bi-search",
           title: t("common:shared_terms.no_quizzes_found"),
-          desc: t("common:shared_terms.no_quizzes_match_your_search_or_filter_criteria"),
+          desc: t(
+            "common:shared_terms.no_quizzes_match_your_search_or_filter_criteria",
+          ),
         },
       },
     },
@@ -1728,12 +1789,16 @@ export const setUpDemandes = async () => {
         noFilter: {
           icon: "bi-person-check",
           title: t("common:shared_terms.no_join_requests"),
-          desc: t("common:shared_terms.there_are_no_pending_join_requests_for_this_group"),
+          desc: t(
+            "common:shared_terms.there_are_no_pending_join_requests_for_this_group",
+          ),
         },
         filtered: {
           icon: "bi-search",
           title: t("common:shared_terms.no_requests_found"),
-          desc: t("common:shared_terms.no_join_requests_match_your_search_or_filter_criteria"),
+          desc: t(
+            "common:shared_terms.no_join_requests_match_your_search_or_filter_criteria",
+          ),
         },
       },
     },
@@ -1887,7 +1952,10 @@ const handleSaveAction = async (
         : null;
 
     swapMode(infoBox, "getViewMode", updatedValue, showInSearchValue);
-    showMessageBlock(t("common:shared_terms.group_info_updated_successfully"), "success");
+    showMessageBlock(
+      t("common:shared_terms.group_info_updated_successfully"),
+      "success",
+    );
   } catch (error) {
     const isNative =
       error.isNative || error.data?.isNative || isNativeDomainCondition(error);
@@ -1911,7 +1979,10 @@ const validateMaxMembers = (input, value) => {
   ) {
     initAndDiplayErrorTooltip(
       input.closest(".info-edit-wrapper"),
-      t("group-chat:errors.max_members_range", { min: MIN_MEMBERS, max: MAX_MEMBERS }),
+      t("group-chat:errors.max_members_range", {
+        min: MIN_MEMBERS,
+        max: MAX_MEMBERS,
+      }),
     );
     return false;
   }
@@ -1925,7 +1996,10 @@ const validateGroupName = (input, value) => {
   ) {
     initAndDiplayErrorTooltip(
       input.closest(".info-edit-wrapper"),
-      t("group-chat:errors.group_name_length", { min: NAME_TITLE_MIN_LENGTH, max: NAME_TITLE_MAX_LENGTH }),
+      t("group-chat:errors.group_name_length", {
+        min: NAME_TITLE_MIN_LENGTH,
+        max: NAME_TITLE_MAX_LENGTH,
+      }),
     );
     return false;
   }
@@ -1939,7 +2013,10 @@ const validateGroupDescription = (input, value) => {
   ) {
     initAndDiplayErrorTooltip(
       input.closest(".info-edit-wrapper"),
-      t("group-chat:errors.description_length", { min: DESCRIPTION_MIN_LENGTH, max: DESCRIPTION_MAX_LENGTH }),
+      t("group-chat:errors.description_length", {
+        min: DESCRIPTION_MIN_LENGTH,
+        max: DESCRIPTION_MAX_LENGTH,
+      }),
     );
     return false;
   }
@@ -2162,7 +2239,10 @@ const inviteUsersToGroup = (users, confirmBtn) => {
 
 const handleConfirmClick = (users, confirmBtn) => {
   if (users.length === 0) {
-    showMessageBlock(t("common:shared_terms.please_select_at_least_one_user_to_add"), "info");
+    showMessageBlock(
+      t("common:shared_terms.please_select_at_least_one_user_to_add"),
+      "info",
+    );
     return;
   } else {
     inviteUsersToGroup(users, confirmBtn);
@@ -2179,10 +2259,7 @@ const handleMembersResultsInput = (e, users, container, removeFromUsers) => {
 
   if (e.target.checked) {
     if (users.length >= 5)
-      return showMessageBlock(
-        t("group-chat:alerts.max_invite_limit"),
-        "info",
-      );
+      return showMessageBlock(t("group-chat:alerts.max_invite_limit"), "info");
 
     users.push(user.id);
     updateSelectedUsers(container, user, "add", removeFromUsers);
@@ -2202,7 +2279,9 @@ const handleUsersLoader = (data, container, users) => {
     usersResults.before(badgeCount);
   }
   if (search.value === "") return badgeCount.remove();
-  badgeCount.textContent = t("group-chat:alerts.users_found_count", { count: data.cards.length });
+  badgeCount.textContent = t("group-chat:alerts.users_found_count", {
+    count: data.cards.length,
+  });
   data.cards.forEach((card) => {
     if (users.includes(card.id)) {
       const userInResult = usersResults.querySelector(
@@ -2313,7 +2392,7 @@ const setUpAddMembersOverlay = (container) => {
 
 export const handleGroupMenuBtns = (e) => {
   const actionBtn = e.target.closest(
-    "#mobile-drawer-group-actions-list button, .group-chat-drop-down-menu button, .create-session-btn",
+    "#mobile-drawer-group-actions-list button, .group-chat-drop-down-menu button, .top-bar button",
   );
   if (!actionBtn) return;
 
@@ -2336,10 +2415,19 @@ export const handleGroupMenuBtns = (e) => {
     handleAddMembersBtn();
   } else if (actionBtn.classList.contains("leave-group-menu-btn")) {
     handleLeavingGroup();
-  } else if (actionBtn.classList.contains("create-session-btn")) {
+  } else if (actionBtn.classList.contains("create-session")) {
     handleSessionCreateClick();
   } else if (actionBtn.classList.contains("remove-group-menu-btn")) {
     handleRemoveGroup();
+  } else if (actionBtn.classList.contains("end-session")) {
+    handleEndSessionBtn();
+  } else if (actionBtn.classList.contains("join-session")) {
+    joinSession(
+      actionBtn.dataset.sessionId,
+      document.querySelector(".top-bar .join-session") || actionBtn,
+    );
+  } else if (actionBtn.classList.contains("leave-session")) {
+    handleLeaveSessionBtn();
   }
 };
 
@@ -2367,25 +2455,64 @@ export const syncMobileDrawerGroupActions = () => {
   });
 
   const topBarCreateSessionBtn = document.querySelector(
-    ".chat .top-bar .create-session-btn, .create-session-btn",
+    ".chat .top-bar .create-session",
   );
+
+  const topBarEndSessionBtn = document.querySelector(
+    ".chat .top-bar .end-session",
+  );
+
+  const topBarJoinSessionBtn = document.querySelector(
+    ".chat .top-bar .join-session",
+  );
+
+  const topBarLeaveSessionBtn = document.querySelector(
+    ".chat .top-bar .leave-session",
+  );
+
   const hasSessionInfoInDrawer = actionsList.querySelector(
     ".session-info-menu-btn",
   );
+
   if (
-    topBarCreateSessionBtn &&
-    !hasSessionInfoInDrawer &&
-    !actionsList.querySelector(".create-session-btn")
+    ((topBarCreateSessionBtn && !hasSessionInfoInDrawer) ||
+      ((topBarEndSessionBtn || topBarJoinSessionBtn || topBarLeaveSessionBtn) &&
+        hasSessionInfoInDrawer)) &&
+    !actionsList.querySelector(".create-session, .end-session")
   ) {
+    const btn =
+      topBarCreateSessionBtn ||
+      topBarEndSessionBtn ||
+      topBarJoinSessionBtn ||
+      topBarLeaveSessionBtn;
     const clone = document.createElement("button");
     clone.type = "button";
-    clone.className = "exclude-btn mobile-drawer-btn create-session-btn";
-    const icon = topBarCreateSessionBtn.querySelector("i");
+    if (btn.dataset.sessionId) clone.dataset.sessionId = btn.dataset.sessionId;
+    clone.className =
+      "exclude-btn mobile-drawer-btn " +
+      (topBarCreateSessionBtn
+        ? "create-session blue-btn"
+        : topBarJoinSessionBtn
+          ? "join-session blue-btn"
+          : topBarLeaveSessionBtn
+            ? "leave-session red-btn"
+            : "end-session red-btn");
+    const icon = btn.querySelector("i");
     const iconHtml = icon
       ? icon.outerHTML
       : '<i class="bi bi-plus-circle"></i>';
     const textContent =
-      topBarCreateSessionBtn.textContent.trim() || t("group-chat:create_session");
+      btn.textContent.trim() ||
+      t(
+        "group-chat:" +
+          (topBarCreateSessionBtn
+            ? "create_session"
+            : topBarJoinSessionBtn
+              ? "join_session"
+              : topBarLeaveSessionBtn
+                ? "leave_session"
+                : "end_session"),
+      );
     clone.innerHTML = `${iconHtml}<span>${textContent}</span>`;
     actionsList.appendChild(clone);
   }

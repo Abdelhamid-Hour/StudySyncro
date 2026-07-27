@@ -32,13 +32,18 @@
             <i class="bi bi-box-arrow-in-right"></i>
             <%= t("common:shared_terms.join_session") %>
           </button>
+        <% } else if (joined) { %>
+          <button type="button" data-session-id="<%= sessionId %>" class="leave-session small-btn red-btn">
+            <i class="bi bi-box-arrow-left"></i>
+            <%= t("common:shared_terms.leave_session") %>
+          </button>
         <% } %>
       <span
         class="session-active-badge badge circle-badge-1 green-badge has-tooltip"
         data-tooltip="<%= t('common:shared_terms.active_session') %>"
       ></span>
       <% } else if(isAdmin) { %>
-      <button type="button" class="small-btn create-session-btn">
+      <button type="button" class="small-btn create-session">
         <i class="bi bi-plus-circle"></i>
         <span><%= t("common:shared_terms.create_session") %></span>
       </button>

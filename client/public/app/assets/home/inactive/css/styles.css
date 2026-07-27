@@ -624,6 +624,7 @@
     justify-content: flex-start !important;
     gap: 0.5rem !important;
     width: 100% !important;
+    margin-top: var(--primary-gap);
   }
 
   .content-blocks .active-session footer.footer .footer-meta-info .badge {

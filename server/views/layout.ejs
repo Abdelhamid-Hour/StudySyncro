@@ -613,7 +613,7 @@
                     </div>
                   <% } else if (notif.type === 'session_started' && !(notif.metadata && notif.metadata.sessionEnded) && !isAlreadyJoined && !isCreator) { %>
                     <div class="notif-actions">
-                      <button type="button" class="join-session-btn exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> <%= t("common:notifications_drawer.actions.join") %></button>
+                      <button type="button" class="join-session exclude-btn small-btn"><i class="bi bi-box-arrow-in-right"></i> <%= t("common:notifications_drawer.actions.join") %></button>
                     </div>
                   <% } %>
                 </div>
