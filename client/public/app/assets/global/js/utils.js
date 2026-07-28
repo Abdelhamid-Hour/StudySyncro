@@ -19,6 +19,34 @@ import {
 } from "../../../../main_assets/js/utils.js";
 import { initAndDiplayErrorTooltip } from "../../shared/chat/js/utils.js";
 
+export const getClippingRect = (element) => {
+  let parent = element.parentElement;
+  while (parent && parent.tagName !== "BODY" && parent.tagName !== "HTML") {
+    const style = window.getComputedStyle(parent);
+    if (
+      style.overflow === "auto" ||
+      style.overflow === "scroll" ||
+      style.overflow === "hidden" ||
+      style.overflowY === "auto" ||
+      style.overflowY === "scroll" ||
+      style.overflowY === "hidden" ||
+      style.overflowX === "auto" ||
+      style.overflowX === "scroll" ||
+      style.overflowX === "hidden"
+    ) {
+      return parent.getBoundingClientRect();
+    }
+    parent = parent.parentElement;
+  }
+  return {
+    top: 0,
+    left: 0,
+    bottom: window.innerHeight,
+    right: window.innerWidth,
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+};
 export let _loadersCount = 4;
 export const updateLoaderCountVar = (val) => {
   _loadersCount = val;
@@ -271,17 +299,16 @@ export const adjustMenuDirection = (button, menu) => {
   const buttonRect = button.getBoundingClientRect();
   const menuWidth = menu.offsetWidth;
   const menuHeight = menu.offsetHeight;
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
   const gap = 8; // 0.5rem
 
-  const spaceBelow = viewportHeight - buttonRect.bottom;
-  const spaceAbove = buttonRect.top;
+  const clipRect = getClippingRect(button);
+  const spaceBelow = clipRect.bottom - buttonRect.bottom;
+  const spaceAbove = buttonRect.top - clipRect.top;
 
   // Assuming left: 0 aligns menu's left edge with button's left edge, extending to the right.
   // Assuming right: 0 aligns menu's right edge with button's right edge, extending to the left.
-  const fitsExtendingRight = buttonRect.left + menuWidth <= viewportWidth;
-  const fitsExtendingLeft = buttonRect.right - menuWidth >= 0;
+  const fitsExtendingRight = buttonRect.left + menuWidth <= clipRect.right;
+  const fitsExtendingLeft = buttonRect.right - menuWidth >= clipRect.left;
 
   const fitsBelow = spaceBelow >= menuHeight + gap;
   const fitsAbove = spaceAbove >= menuHeight + gap;
@@ -326,7 +353,8 @@ export const adjustMenuDirection = (button, menu) => {
       menu.style.translate = "0 calc(100% + 0.5rem)";
     }
 
-    if (buttonRect.left > viewportWidth / 2) {
+    const midPoint = clipRect.left + (clipRect.right - clipRect.left) / 2;
+    if (buttonRect.left > midPoint) {
       menu.style.left = "auto";
       menu.style.right = "0";
     } else {
@@ -1308,7 +1336,9 @@ export const updateMain = async (path, isTabLinks) => {
         window.lastExtraData || {},
       );
     }
-    const { pathName, htmlFragment, extraData } = await fetchTemplate(path);
+    const { pathName, htmlFragment, extraData } = await fetchTemplate(
+      location.href,
+    );
 
     if (thisNav !== navCounter) {
       isRouting = false;
@@ -2306,7 +2336,7 @@ export const getGroupChatSkeleton = () => {
               </button>
             </div>
           </div>
-          <textarea placeholder="${t('common:shared_terms.type_a_message')}" id="input-message" class="input-message"></textarea>
+          <textarea placeholder="${t("common:shared_terms.type_a_message")}" id="input-message" class="input-message"></textarea>
           <button type="button" class="send-btn exclude-btn should-fill" disabled>
             <i class="bi bi-send"></i>
           </button>

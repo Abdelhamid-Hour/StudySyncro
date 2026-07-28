@@ -545,6 +545,17 @@
   }
 }
 
+[dir="rtl"] {
+  .timer-digits {
+    flex-direction: row-reverse !important;
+  }
+
+  .left-key,
+  .right-key {
+    scale: -1 1;
+  }
+}
+
 @media (max-width: 48rem) {
   .questions-view {
     .quiz-header {

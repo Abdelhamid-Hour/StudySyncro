@@ -145,6 +145,8 @@ const handleQuizEditRoute = async (req, res) => {
 };
 
 const handleQuizPlayRoute = async (req, res) => {
+  console.log("req.params.quizId: ", req.params.quizId);
+
   const response = await getQuizzPlayContext(
     req.user,
     req.params.quizId,

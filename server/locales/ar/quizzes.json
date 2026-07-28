@@ -52,6 +52,8 @@
   "results_overlay": {
     "title": "نتائج المستخدمين",
     "quiz_title_label": "عنوان الاختبار",
+    "no_results": "لم يتم العثور على نتائج",
+    "no_results_description": "لا توجد نتائج متاحة لهذا الاختبار حتى الآن.",
     "table": {
       "profile": "الملف الشخصي",
       "answered_questions": "الأسئلة المجابة",

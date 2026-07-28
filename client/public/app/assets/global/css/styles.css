@@ -53,7 +53,7 @@ body {
   justify-content: center;
   height: calc(var(--primary-gap) / 2);
   width: calc(100% + 1rem);
-  margin-inline-start: -.5rem;
+  margin-inline-start: -0.5rem;
   transition: background-color var(--primary-transition-style);
   border-radius: var(--primary-radius);
 
@@ -1997,6 +1997,7 @@ label.container svg {
   .empty-icon-container {
     width: 6.5rem;
     height: 6.5rem;
+    aspect-ratio: 1/1;
     border-radius: 50%;
     background-color: var(--btn-background-color, rgba(30, 119, 253, 0.1));
     border: 1px solid var(--inputs-border-color, rgba(30, 119, 253, 0.2));

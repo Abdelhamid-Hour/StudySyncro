@@ -521,6 +521,7 @@ const updateQuizSubject = async (subject, id, userId) => {
 
 const getQuizzPlayContext = async (user, quizId, groupId) => {
   try {
+    console.log("groupId, : ", groupId);
     const quizSnap = await db.collection("quizzes").doc(quizId).get();
 
     if (!quizSnap) {
@@ -577,6 +578,12 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
     const passedORCreator = passed;
     const sessionHasQuiz =
       session && session.quizId === quizId && task && task.isQuiz;
+
+    console.log({
+      passedORCreator,
+      sessionHasQuiz,
+      isTargetGroup,
+    });
 
     if (passedORCreator || (sessionHasQuiz && isTargetGroup)) {
       return {
@@ -1113,7 +1120,13 @@ const addQuizResult = async (userId, quizResult) => {
   }
 };
 
-const getQuizResultsByGroup = async (quizId, groupId, userId) => {
+const getQuizResultsByGroup = async (
+  quizId,
+  groupId,
+  userId,
+  limit = INITIALE_LOADERS_COUNT,
+  lastVisible = null,
+) => {
   try {
     const quizSnap = await db.collection("quizzes").doc(quizId).get();
 
@@ -1145,19 +1158,37 @@ const getQuizResultsByGroup = async (quizId, groupId, userId) => {
         type: "warning",
       };
 
-    const quizResults = await db
+    let query = db
       .collection("quizResults")
       .where("quizId", "==", quizId)
       .where("groupId", "==", groupId)
-      .get();
+      .orderBy(admin.firestore.FieldPath.documentId());
+
+    if (lastVisible) {
+      const lastVisibleDoc = await db
+        .collection("quizResults")
+        .doc(lastVisible)
+        .get();
+      if (lastVisibleDoc.exists) {
+        query = query.startAfter(lastVisibleDoc);
+      }
+    }
+
+    const quizResults = await query.limit(Number(limit)).get();
 
     const results = await Promise.all(
       quizResults.docs.map((doc) => QuizResult.create(doc.data())),
     );
 
+    const newLastVisible =
+      quizResults.docs.length === Number(limit)
+        ? quizResults.docs[quizResults.docs.length - 1].id
+        : null;
+
     return {
       success: true,
       results,
+      lastVisible: newLastVisible,
       quizTitle: quiz.title,
     };
   } catch (error) {

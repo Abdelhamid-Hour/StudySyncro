@@ -8,11 +8,14 @@
 // add email verification step when the email changed
 // email verified succefully ui
 
-// solve the direction of the quiz task menu and also any overlay that appear on a scroollable container
-
 // subject, visibility, level should relative to lang, in group info 
-// restyle the msg block for phone
+// mails for the users about example invitatios, requests ...
 
 // <bdi> when rtl
 //------------------------------------
 // allow navigating fast
+
+add also the translation json files data for the error messgees
+why the quiz menu loader not fire the first time
+
+الوقت المتبقي : time order style solve it in the quiz

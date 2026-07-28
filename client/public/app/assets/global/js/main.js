@@ -122,7 +122,7 @@ mobileNotifBtn?.addEventListener("click", closeMobileDrawer);
 
 window.addEventListener("popstate", () => {
   toggleActiveLink(location.pathname);
-  updateMain(location.pathname);
+  updateMain(location.href);
 });
 
 // Auto-sync any direct changes to .sidebar-title with .mobile-page-title and mobile return btn

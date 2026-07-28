@@ -182,7 +182,9 @@ const createChoiceElement = (choice, index) => {
 
 export const getQuestionTemplate = (
   {
-    questionText = t("quizzes:quiz_play.fallback_question", { defaultValue: "Question text..." }),
+    questionText = t("quizzes:quiz_play.fallback_question", {
+      defaultValue: "Question text...",
+    }),
     choices = [
       t("quizzes:quiz_play.choice_a", { defaultValue: "Choice A" }),
       t("quizzes:quiz_play.choice_b", { defaultValue: "Choice B" }),
@@ -214,6 +216,15 @@ export const getQuestionTemplate = (
   return questionTemplate;
 };
 
+export const getGroupId = () => {
+  debugger;
+  // Example path: /quiz-play/NPsno6gxOHL6Btfr4rDG?groupId=lpAal6oGbxey5is7rsjC
+  const match = window.location.search.match(/groupId=(\w+)/);
+  const groupId = match ? match[1] : null;
+  if (!groupId) throw new Error("Quiz ID not found");
+  return groupId;
+};
+
 export const initVars = () => {
   quiz = {
     questions: [],
@@ -228,7 +239,7 @@ export const initVars = () => {
     correctAnswers: [],
     incorrectAnswers: [],
     skippedQuestions: [],
-    groupId: "",
+    groupId: getGroupId(),
     submittedAt: null,
     quizTitle: quiz.title,
   };
@@ -445,7 +456,8 @@ export const handleKeyDown = (e) => {
     )
       return;
 
-    const isRtl = document.documentElement.dir === "rtl" || document.body.dir === "rtl";
+    const isRtl =
+      document.documentElement.dir === "rtl" || document.body.dir === "rtl";
 
     if (e.key === "ArrowRight") {
       e.preventDefault();

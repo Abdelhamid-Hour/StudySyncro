@@ -56,9 +56,9 @@
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="results-list" data-last-visible="<%= lastVisible || '' %>">
         <% results.forEach(result => { %>
-        <tr>
+        <tr class="card-item">
           <td>
             <div class="avatar-cover">
               <% if (result.user.photoURL) { %>

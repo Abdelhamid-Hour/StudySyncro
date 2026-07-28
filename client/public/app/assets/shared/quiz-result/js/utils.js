@@ -215,6 +215,37 @@ const getQuizResult = async (quizId, userId, groupId) => {
   }
 };
 
+const getQuizResultSkeleton = () => {
+  return `
+  <div class="overlay-model quiz-result-overlay" style="pointer-events: none;">
+    <header class="quiz-result-header">
+      <span class="loading-opacity-animation badge gray-badge" style="width: 8rem; height: 1.5rem;"></span>
+      •
+      <span class="loading-opacity-animation badge gray-badge" style="width: 5rem; height: 1.5rem;"></span>
+      •
+      <span class="loading-opacity-animation badge gray-badge" style="width: 10rem; height: 1.5rem;"></span>
+      <button type="button" class="exclude-btn close-result-overlay-btn" disabled>
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </header>
+    <div class="quiz-title content loading-opacity-animation" style="width: 60%; height: 2rem;"></div>
+    <div class="session-name content loading-opacity-animation" style="width: 40%; height: 1.5rem;"></div>
+    <div class="answered content loading-opacity-animation" style="width: 50%; height: 1.5rem;"></div>
+    <div class="questions-rects">
+      ${Array(10).fill('<div class="status-rect gray-rect loading-opacity-animation" style="width: 2.2rem; height: 2.2rem;"></div>').join("")}
+    </div>
+    <div class="analytics">
+      <div class="analytics-item content loading-opacity-animation" style="width: 50%; height: 1.5rem;"></div>
+      <div class="analytics-item content loading-opacity-animation" style="width: 45%; height: 1.5rem;"></div>
+      <div class="analytics-item content loading-opacity-animation" style="width: 48%; height: 1.5rem;"></div>
+    </div>
+    <div class="questions-list">
+      ${Array(3).fill('<div class="question-card loading-animation loading-card" style="height: 12rem; width: 100%;"></div>').join("")}
+    </div>
+  </div>
+  `;
+};
+
 export const openQuizResultOverlay = async ({
   quizData,
   quizId,
@@ -238,7 +269,108 @@ export const openQuizResultOverlay = async ({
           if (questionsLink) scrollToView(e, questionsLink);
         });
     },
+    getQuizResultSkeleton()
   );
+};
+
+import { Loader } from "../../loader/js/utils.js";
+
+const getScoreClass = (score) => {
+  if (score >= 80) return "excellent";
+  if (score >= 60) return "good";
+  if (score >= 40) return "average";
+  return "poor";
+};
+
+const createResultCard = (result) => {
+  const tr = document.createElement("tr");
+  tr.className = "card-item";
+  
+  const avatarHtml = result.user.photoURL 
+    ? `<img src="${result.user.photoURL}" alt="avatar" width="32" height="32"/>`
+    : `<h4>${result.user.fullName.charAt(0).toUpperCase()}</h4>`;
+    
+  tr.innerHTML = `
+    <td>
+      <div class="avatar-cover">
+        ${avatarHtml}
+      </div>
+    </td>
+    <td>${result.user.fullName}</td>
+    <td>${result.resultDetails.submittedAt}</td>
+    <td>${result.resultDetails.submittedCount}</td>
+    <td class="${getScoreClass(result.score)}">${result.score}</td>
+    <td>
+      <button
+        class="small-btn show-result-btn"
+        data-user-id="${result.resultDetails.userId}"
+      >
+        <i class="bi bi-eye"></i>
+        ${t("common:shared_terms.view_result")}
+      </button>
+    </td>
+  `;
+  return tr;
+};
+
+const getQuizResultsListSkeleton = () => {
+  return `
+  <div class="results-list-overlay overlay-model" style="pointer-events: none;">
+    <header class="list-header">
+      <h3 class="label">
+        <i class="bi bi-people-fill"></i>
+        ${t("quizzes:results_overlay.title")}
+      </h3>
+      <div class="quiz-title">
+        <span class="title-label">${t("quizzes:results_overlay.quiz_title_label")}</span>
+        <div class="loading-opacity-animation" style="width: 15rem; height: 1.8rem;"></div>
+      </div>
+      <button type="button" class="close-results-overlay-btn exclude-btn" disabled>
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </header>
+    <div class="table-div">
+      <table>
+        <thead>
+          <tr>
+            <th>
+              <div><i class="bi bi-person-circle"></i> ${t("quizzes:results_overlay.table.profile")}</div>
+            </th>
+            <th>
+              <div><i class="bi bi-person"></i> ${t("common:shared_terms.full_name")}</div>
+            </th>
+            <th>
+              <div><i class="bi bi-calendar-event"></i> ${t("common:shared_terms.submitted_at")}</div>
+            </th>
+            <th>
+              <div><i class="bi bi-list-ol"></i> ${t("quizzes:results_overlay.table.answered_questions")}</div>
+            </th>
+            <th>
+              <div><i class="bi bi-bar-chart-line"></i> ${t("common:shared_terms.score")}</div>
+            </th>
+            <th>
+              <div><i class="bi bi-eye"></i> ${t("common:shared_terms.view_result")}</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="results-list">
+          ${Array(5)
+            .fill(`
+          <tr class="card-item loading-card">
+            <td><div class="avatar-cover loading-opacity-animation" style="width: 32px; height: 32px;"></div></td>
+            <td><div class="loading-opacity-animation" style="width: 70%; height: 1.2rem;"></div></td>
+            <td><div class="loading-opacity-animation" style="width: 60%; height: 1.2rem;"></div></td>
+            <td><div class="loading-opacity-animation" style="width: 40%; height: 1.2rem;"></div></td>
+            <td><div class="loading-opacity-animation" style="width: 50%; height: 1.2rem;"></div></td>
+            <td><div class="loading-opacity-animation" style="width: 80%; height: 2rem;"></div></td>
+          </tr>
+          `)
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  `;
 };
 
 export const openQuizResultsOverlay = async (quizId, groupId) => {
@@ -252,6 +384,33 @@ export const openQuizResultsOverlay = async (quizId, groupId) => {
       return overlay;
     },
     (backDrop) => {
+      const tbody = backDrop.querySelector(".results-list");
+      if (tbody) {
+        const loadingBox = document.createElement("tr");
+        loadingBox.className = "loading-card";
+        loadingBox.innerHTML = `
+          <td colspan="6" style="text-align: center; padding: 1rem;">
+            <div class="loader-spinner"></div>
+          </td>
+        `;
+        
+        new Loader(
+          tbody,
+          createResultCard,
+          `/results-list?quizId=${quizId}&groupId=${groupId}&`,
+          loadingBox,
+          {
+            emptyState: {
+              noFilter: {
+                icon: "bi-bar-chart-line",
+                title: t("quizzes:results_overlay.no_results"),
+                desc: t("quizzes:results_overlay.no_results_description"),
+              }
+            }
+          }
+        );
+      }
+
       backDrop.addEventListener("click", (e) => {
         const resultBtn = e.target.closest(".show-result-btn");
         if (resultBtn) {
@@ -260,5 +419,6 @@ export const openQuizResultsOverlay = async (quizId, groupId) => {
         }
       });
     },
+    getQuizResultsListSkeleton()
   );
 };

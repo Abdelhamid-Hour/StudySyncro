@@ -310,10 +310,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-grow: 1;
 
       .score-container {
         position: relative;
-        height: 2.3906rem;
+        padding: initial;
+        height: 100%;
         width: 5.8125rem;
         display: flex;
         align-items: center;
@@ -335,6 +337,8 @@
       }
 
       button {
+        padding-block: initial;
+        height: 100%;
         display: flex;
         gap: calc(var(--primary-gap) / 2);
 
@@ -347,6 +351,7 @@
         margin-inline-start: auto;
         display: flex;
         gap: var(--primary-gap);
+        height: 100%;
       }
     }
   }
