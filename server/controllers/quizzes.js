@@ -94,14 +94,15 @@ const patchQuizHandler = async (req, res) => {
 };
 
 const getResultsListHandler = async (req, res) => {
-  const { quizId, groupId } = req.query;
+  const { quizId, groupId } = req.query;  
   const result = await getQuizResultsByGroup(quizId, groupId, req.user.uid);
 
-  if (!result.success) return res.status(400).json({
-    message: res.locals.t(result.message),
-    isNative: result.isNative ?? false,
-    type: result.type ?? "error",
-  });
+  if (!result.success)
+    return res.status(400).json({
+      message: res.locals.t(result.message),
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
 
   return res.render(
     "fragments/resullts-list",
@@ -112,7 +113,11 @@ const getResultsListHandler = async (req, res) => {
 
         return res
           .status(500)
-          .json({ message: res.locals.t("api:error_rendering_results_list"), isNative: false, type: "error" });
+          .json({
+            message: res.locals.t("api:error_rendering_results_list"),
+            isNative: false,
+            type: "error",
+          });
       }
       return res.status(200).json({ overlay: html });
     },
@@ -137,14 +142,13 @@ const getQuizDetailsHandler = async (req, res) => {
 
 const getQuizzesListHandler = async (req, res) => {
   const { searchTerm, count, lastVisible } = req.query;
+
   const result = await getSessionQuizzes(
     req.user.uid,
     lastVisible,
     count,
     searchTerm,
   );
-  console.log("result  result result: ", result);
-  
 
   return res.status(200).json({
     ...result,
@@ -152,10 +156,9 @@ const getQuizzesListHandler = async (req, res) => {
 };
 
 const addQuizResultHandler = async (req, res) => {
-
   const quizResult = req.body.quizResult;
   const userId = req.user.uid;
-  const result = await addQuizResult(userId, quizResult);  
+  const result = await addQuizResult(userId, quizResult);
 
   if (result.success) {
     return res.status(200).json({ message: res.locals.t(result.message) });

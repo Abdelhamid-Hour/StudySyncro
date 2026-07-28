@@ -1117,7 +1117,7 @@ const getQuizResultsByGroup = async (quizId, groupId, userId) => {
   try {
     const quizSnap = await db.collection("quizzes").doc(quizId).get();
 
-    const groupSnap = await db.collection("groups").doc(quizId).get();
+    const groupSnap = await db.collection("groups").doc(groupId).get();
 
     if (!quizSnap.exists)
       return {

@@ -768,6 +768,7 @@ const shouldAddOrUpdateQuiz = (data, sessionData) => {
 };
 
 const addOrUpdateQuizTask = (data, sessionStore, wrapper) => {
+  debugger;
   const sessionData = sessionStore.sessionData;
   sessionData.sessionQuiz = {
     quiz: new Task({
@@ -788,7 +789,7 @@ const addOrUpdateQuizTask = (data, sessionStore, wrapper) => {
 
   sessionStore.taskToEdit = {
     task: sessionData.sessionQuiz.quiz,
-    index: quizIndex !== -1 ? quizIndex : 0,
+    index: quizIndex !== -1 ? quizIndex : sessionData.tasks.length - 1,
     addQuiz: true,
   };
 
@@ -938,6 +939,7 @@ const handleFinishBtnClick = async (sessionData, btn) => {
     btn.disabled = true;
     btn.innerHTML = getLoader();
     sessionData.groupId = getGroupId();
+    debugger;
     await sendData("/api/create-session", { sessionData });
     showMessageBlock(
       t("common:shared_terms.session_created_successfully"),
@@ -2390,7 +2392,7 @@ const setUpAddMembersOverlay = (container) => {
   initFiltersInputListener(loader, search);
 };
 
-export const handleGroupMenuBtns = (e) => {
+export const handleGroupBtns = (e) => {
   const actionBtn = e.target.closest(
     "#mobile-drawer-group-actions-list button, .group-chat-drop-down-menu button, .top-bar button",
   );

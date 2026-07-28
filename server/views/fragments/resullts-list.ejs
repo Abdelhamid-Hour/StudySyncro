@@ -13,6 +13,7 @@
       <i class="bi bi-x-lg"></i>
     </button>
   </header>
+  <% if (results.length > 0) { %>
   <div class="table-div">
     <table>
       <thead>
@@ -87,4 +88,13 @@
       </tbody>
     </table>
   </div>
+  <% } else { %>
+  <div class="icon-wrapper">
+    <div class="empty-icon-container">
+      <i class="bi bi-bar-chart-line"></i>
+    </div>
+    <h3><bdi><%= t("quizzes:results_overlay.no_results") %></bdi></h3>
+    <p><bdi><%= t("quizzes:results_overlay.no_results_description") %></bdi></p>
+  </div>
+  <% } %>
 </div>

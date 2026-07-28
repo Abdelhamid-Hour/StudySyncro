@@ -9,29 +9,58 @@ const LIMITS = require("./limits");
 const { INITIALE_LOADERS_COUNT } = require("../utils/global");
 
 // Matches exact task attributes accessed in session.js (lines 138-142, 634, 642, 748)
-const taskSchema = z.object({
-  title: safeString(
-    LIMITS.TASK_TITLE_MIN_LENGTH,
-    LIMITS.TASK_TITLE_MAX_LENGTH,
-    "Task Title",
-  ),
-  description: safeString(
-    LIMITS.TASK_DESCRIPTION_MIN_LENGTH,
-    LIMITS.TASK_DESCRIPTION_MAX_LENGTH,
-    "Task Description",
-  ),
-  durationInMins: safeInt(
-    LIMITS.TASK_MIN_DURATION,
-    LIMITS.TASK_MAX_DURATION,
-    "Task Duration",
-  ),
-  isBreak: safeBool().optional().default(false),
-  isQuiz: safeBool().optional().default(false),
-  status: z
-    .enum(["active", "pending", "completed"])
-    .optional()
-    .default("pending"),
-});
+const taskSchema = z
+  .object({
+    title: safeString(
+      LIMITS.TASK_TITLE_MIN_LENGTH,
+      LIMITS.TASK_TITLE_MAX_LENGTH,
+      "Task Title",
+    ).optional(),
+    description: safeString(
+      LIMITS.TASK_DESCRIPTION_MIN_LENGTH,
+      LIMITS.TASK_DESCRIPTION_MAX_LENGTH,
+      "Task Description",
+    ).optional(),
+    durationInMins: safeInt(
+      LIMITS.TASK_MIN_DURATION,
+      LIMITS.TASK_MAX_DURATION,
+      "Task Duration",
+    ),
+    isBreak: safeBool().optional().default(false),
+    isQuiz: safeBool().optional().default(false),
+    status: z
+      .enum(["active", "pending", "completed"])
+      .optional()
+      .default("pending"),
+  })
+  .superRefine((data, ctx) => {
+    // 1. Missing description for a regular task
+    if (!data.isBreak && !data.description) {
+      ctx.addIssue({
+        code: "custom", // Just use the string directly
+        message: "Description is required for non-break tasks.",
+        path: ["description"],
+      });
+    }
+
+    // 2. Unwanted description for a break
+    if (data.isBreak && data.description) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Breaks cannot have a description.",
+        path: ["description"],
+      });
+    }
+
+    // 3. Unwanted quiz for a break
+    if (data.isBreak && data.isQuiz) {
+      ctx.addIssue({
+        code: "custom",
+        message: "A task cannot be both a break and a quiz.",
+        path: ["isBreak", "isQuiz"],
+      });
+    }
+  });
 
 // Matches exact sessionData attributes accessed in createGroupSession (session.js:24 & 58)
 const createSessionSchema = z.object({
@@ -59,11 +88,6 @@ const createSessionSchema = z.object({
           LIMITS.ID_MAX_LENGTH,
           "Session Quiz ID",
         ),
-        title: safeOptionalString(
-          LIMITS.ID_MIN_LENGTH,
-          LIMITS.ID_MAX_LENGTH,
-          "Session Quiz Title",
-        ).default(""),
       })
       .optional(),
     tasks: z.array(taskSchema).min(1, "At least one task is required"),

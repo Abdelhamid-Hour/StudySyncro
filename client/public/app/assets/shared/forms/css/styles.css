@@ -159,6 +159,11 @@
 }
 
 @media (max-width: 48rem) {
+  .create-quiz-overlay,
+  .duplicate-quiz-overlay {
+    min-width: initial !important;
+    width: 90% !important;
+  }
   .create-group-overlay .create-group-form {
     flex-grow: 1;
     form {
@@ -169,6 +174,10 @@
     display: flex !important;
     flex-direction: column !important;
     width: 100% !important;
+  }
+
+  .session-quiz-select-menu.open-overlay .select-group {
+    height: 100%;
   }
 
   .create-group-overlay .group-subject-select-menu.open-overlay,

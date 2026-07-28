@@ -234,7 +234,7 @@ const quizzesListMenuQuerySchema = z.object({
     1,
     LIMITS.SEARCH_MAX_LENGTH,
     "Search Term",
-  ).default(INITIALE_LOADERS_COUNT),
+  ).default(""),
   count: safeInt(LIMITS.COUNT_MIN, LIMITS.COUNT_MAX, "Count").optional(),
   lastVisible: safeOptionalString(
     LIMITS.ID_MIN_LENGTH,

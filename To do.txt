@@ -5,18 +5,14 @@
 // learn mutaionObserver
 // add the cloud funcs
 
-// add join btn when session active in to the menu in the group chat phone version ****
-// tasks container should both (ongoing, completed) 50% 50% in active session in phone
-// restyle green circle for active session + join session in group chat for the phone version
-
 // add email verification step when the email changed
+// email verified succefully ui
+
+// solve the direction of the quiz task menu and also any overlay that appear on a scroollable container
 
 // subject, visibility, level should relative to lang, in group info 
-// email verified succefully ui
 // restyle the msg block for phone
 
-
 // <bdi> when rtl
-
 //------------------------------------
 // allow navigating fast

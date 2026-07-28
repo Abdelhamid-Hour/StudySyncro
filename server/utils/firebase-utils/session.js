@@ -46,6 +46,8 @@ const createGroupSession = async (sessionData, userId) => {
       (sum, t) => sum + (Number(t.durationInMins) || 0),
       0,
     );
+    console.log(duration, calculatedTasksDuration);
+
     if (duration !== calculatedTasksDuration) {
       return {
         success: false,

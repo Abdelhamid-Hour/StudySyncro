@@ -865,6 +865,14 @@ html[lang="ar"] .first-message-received-text::before,
 }
 
 @media (max-width: 48rem) {
+  .media-message {
+    width: 68vw !important;
+  }
+
+  .messages > div:has(.media-message)[class*="first-message"] {
+    width: fit-content !important;
+  }
+
   .files-view {
     background-color: var(--container-background-color) !important;
   }

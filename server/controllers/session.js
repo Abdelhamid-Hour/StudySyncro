@@ -97,7 +97,7 @@ const getActiveSessionsHandler = async (req, res) => {
     Number(count),
     lastVisible,
     { search },
-    req.t
+    req.t,
   );
 
   if (result.success) {
@@ -162,7 +162,7 @@ const sessionStreamHandler = async (req, res) => {
           id: sessionId,
           duration: millisecondsToHMFormat(
             (sessionData.duration || 0) * 60 * 1000,
-            req.t
+            req.t,
           ),
           startTime: startTimeVal ? formatHoursMinutes(startTimeVal) : "N/A",
           endTime: endTimeVal ? formatHoursMinutes(endTimeVal) : "N/A",
@@ -220,13 +220,21 @@ const sessionStreamHandler = async (req, res) => {
 const streamSingleSessionHandler = async (req, res) => {
   const { sessionId } = req.query;
   if (!sessionId) {
-    return res.status(400).json({ message: res.locals.t("api:sessionid_required"), error: res.locals.t("api:sessionid_required"), isNative: true, type: "warning" });
+    return res.status(400).json({
+      message: res.locals.t("api:sessionid_required"),
+      error: res.locals.t("api:sessionid_required"),
+      isNative: true,
+      type: "warning",
+    });
   }
 
   if (sessionId && req.user.currentSession !== sessionId)
-    return res
-      .status(403)
-      .json({ message: res.locals.t("api:access_denied_to_this_session_stream"), error: res.locals.t("api:access_denied_to_this_session_stream"), isNative: true, type: "warning" });
+    return res.status(403).json({
+      message: res.locals.t("api:access_denied_to_this_session_stream"),
+      error: res.locals.t("api:access_denied_to_this_session_stream"),
+      isNative: true,
+      type: "warning",
+    });
 
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
