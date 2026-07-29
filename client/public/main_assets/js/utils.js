@@ -148,18 +148,48 @@ export const isNativeDomainCondition = (errorOrMsg) => {
   return nativePhrases.some((phrase) => msg.includes(phrase));
 };
 
+// ── Route-level AbortController ──────────────────────────────────────
+// Every SPA page gets its own AbortController. When the user navigates
+// away, the router calls resetRouteController(), which:
+//   1. Aborts every in-flight fetch tied to the dying page.
+//   2. Creates a fresh controller for the incoming page.
+// If a fetch is aborted, fetchStructure returns FROZEN_PROMISE — a
+// promise that never settles — so the caller's async chain silently
+// suspends and is garbage-collected, preventing DOM-after-navigation errors.
+let currentRouteController = new AbortController();
+const FROZEN_PROMISE = new Promise(() => {});
+
+export const getRouteSignal = () => currentRouteController.signal;
+export const getFrozenPromise = () => FROZEN_PROMISE;
+
+export const resetRouteController = () => {
+  currentRouteController.abort();
+  currentRouteController = new AbortController();
+};
+
 const fetchStructure = async (url, method, options, extraHeaders) => {
   const csrfToken = getCookie("csrfToken");
 
-  const response = await fetch(url, {
-    method: method,
-    headers: {
-      ...extraHeaders,
-      csrfToken: csrfToken,
-    },
-    credentials: "include",
-    ...options,
-  });
+  let response;
+  try {
+    response = await fetch(url, {
+      method: method,
+      headers: {
+        ...extraHeaders,
+        csrfToken: csrfToken,
+      },
+      credentials: "include",
+      // Only abort GET requests on navigation.
+      // POST/PUT/DELETE (saving data) must complete on the server.
+      ...(method === "GET" && { signal: currentRouteController.signal }),
+      ...options,
+    });
+  } catch (err) {
+    // If the fetch was aborted due to navigation, freeze the caller forever
+    if (err.name === "AbortError") return FROZEN_PROMISE;
+    throw err;
+  }
+
   if (!response.ok) {
     if (response.status === 401) {
       // Handle unauthorized access

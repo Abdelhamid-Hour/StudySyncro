@@ -3,6 +3,8 @@
  * Handles dictionary fetching, caching, DOM translation, and language persistence.
  */
 
+import { getRouteSignal, getFrozenPromise } from "./utils.js";
+
 const SUPPORTED_LANGUAGES = ["en", "ar"];
 const DEFAULT_LANGUAGE = "en";
 
@@ -91,7 +93,8 @@ export const loadNamespace = async (ns = "common", lang = getLang()) => {
   }
 
   try {
-    const response = await fetch(`/locales/${lang}/${ns}.json`);
+    const signal = typeof getRouteSignal === "function" ? getRouteSignal() : undefined;
+    const response = await fetch(`/locales/${lang}/${ns}.json`, { signal });
     if (!response.ok) {
       throw new Error(
         `Failed to load namespace "${ns}" for language "${lang}" (${response.status})`,
@@ -102,6 +105,9 @@ export const loadNamespace = async (ns = "common", lang = getLang()) => {
     localesCache[lang][ns] = data;
     return data;
   } catch (error) {
+    if (error.name === "AbortError" && typeof getFrozenPromise === "function") {
+      return getFrozenPromise();
+    }
     console.error("i18n loadNamespace error:", error);
     return {};
   }

@@ -521,7 +521,6 @@ const updateQuizSubject = async (subject, id, userId) => {
 
 const getQuizzPlayContext = async (user, quizId, groupId) => {
   try {
-    console.log("groupId, : ", groupId);
     const quizSnap = await db.collection("quizzes").doc(quizId).get();
 
     if (!quizSnap) {
@@ -578,12 +577,6 @@ const getQuizzPlayContext = async (user, quizId, groupId) => {
     const passedORCreator = passed;
     const sessionHasQuiz =
       session && session.quizId === quizId && task && task.isQuiz;
-
-    console.log({
-      passedORCreator,
-      sessionHasQuiz,
-      isTargetGroup,
-    });
 
     if (passedORCreator || (sessionHasQuiz && isTargetGroup)) {
       return {

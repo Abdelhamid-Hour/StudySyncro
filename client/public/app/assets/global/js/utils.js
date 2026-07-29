@@ -15,6 +15,7 @@ import {
   sendData,
   showMessageBlock,
   isNativeDomainCondition,
+  resetRouteController,
   t,
 } from "../../../../main_assets/js/utils.js";
 import { initAndDiplayErrorTooltip } from "../../shared/chat/js/utils.js";
@@ -1297,6 +1298,7 @@ export const updateMain = async (path, isTabLinks) => {
       isRouting = false;
       return;
     }
+    resetRouteController();
     clearAllTimeOuts();
     closeAllEventSources();
     clearAllPageListeners();

@@ -12,4 +12,3 @@
 
 // <bdi> when rtl
 //------------------------------------
-// allow navigating fast
