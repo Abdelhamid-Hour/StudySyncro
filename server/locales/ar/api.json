@@ -163,5 +163,11 @@
   "no_password_set_for_this_account": "لم يتم تعيين كلمة مرور لهذا الحساب.",
   "failed_to_update_password": "فشل تحديث كلمة المرور.",
   "account_closed_successfully": "تم إغلاق الحساب بنجاح.",
-  "failed_to_close_account": "فشل إغلاق الحساب."
+  "failed_to_close_account": "فشل إغلاق الحساب.",
+  "failed_to_accept_request": "فشل في قبول الطلب.",
+  "group_visibility_updated_success": "تم تحديث مستوى رؤية المجموعة بنجاح.",
+  "group_privacy_updated_success": "تم تحديث خصوصية المجموعة بنجاح.",
+  "group_field_updated_success": "تم تحديث حقل المجموعة بنجاح.",
+  "failed_to_load_session_info": "فشل تحميل معلومات الجلسة.",
+  "task_status_updated": "تم تحديث حالة المهمة."
 }

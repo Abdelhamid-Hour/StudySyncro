@@ -26,7 +26,13 @@
   },
   "badges": {
     "host": "مضيف",
-    "member": "عضو"
+    "member": "عضو",
+    "pending": "قيد الانتظار",
+    "public": "عامة",
+    "private": "خاصة",
+    "beginner": "مبتدئ",
+    "intermediate": "متوسط",
+    "advanced": "متقدم"
   },
   "actions": {
     "view_group": "عرض المجموعة"

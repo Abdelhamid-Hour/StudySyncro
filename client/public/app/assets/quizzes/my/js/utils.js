@@ -420,7 +420,7 @@ const getcreateQuizCardFunc = (quiz = {}) => {
   card.querySelector(".questions-count-container .count.content").textContent =
     formatNumber(questionsCount);
   card.querySelector(".subject-container .subject.content").textContent =
-    subject || t("quizzes:unknown");
+    subject ? t("common:subjects." + subject, { defaultValue: subject }) : t("quizzes:unknown");
 
   return card;
 };

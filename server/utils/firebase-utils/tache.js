@@ -85,7 +85,7 @@ const changeTaskStatus = async (status, taskId) => {
       });
       return {
         success: true,
-        message: `Task ${taskId} status updated to ${status}`,
+        message: "api:task_status_updated",
       };
     }
     return {

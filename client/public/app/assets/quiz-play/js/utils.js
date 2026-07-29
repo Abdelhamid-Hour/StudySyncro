@@ -217,11 +217,8 @@ export const getQuestionTemplate = (
 };
 
 export const getGroupId = () => {
-  debugger;
-  // Example path: /quiz-play/NPsno6gxOHL6Btfr4rDG?groupId=lpAal6oGbxey5is7rsjC
   const match = window.location.search.match(/groupId=(\w+)/);
   const groupId = match ? match[1] : null;
-  if (!groupId) throw new Error("Quiz ID not found");
   return groupId;
 };
 

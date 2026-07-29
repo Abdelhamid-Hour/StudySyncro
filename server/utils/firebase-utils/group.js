@@ -459,7 +459,7 @@ const modifyGroup = async (userId, groupId, formData) => {
         });
         return {
           success: true,
-          message: `Group visibility updated successfully.`,
+          message: "api:group_visibility_updated_success",
         };
       } else if (value.showInSearch) {
         await groupRef.update({
@@ -467,7 +467,7 @@ const modifyGroup = async (userId, groupId, formData) => {
         });
         return {
           success: true,
-          message: `Groupe privacy  updated successfully.`,
+          message: "api:group_privacy_updated_success",
         };
       }
     } else if (
@@ -480,7 +480,8 @@ const modifyGroup = async (userId, groupId, formData) => {
       });
       return {
         success: true,
-        message: `Group ${fieldName} updated successfully.`,
+        message: "api:group_field_updated_success",
+        // Notice: the field name might need to be passed separately if the client expects to format the string, but since we're using generic api key, we can rely on a generic message.
       };
     } else {
       return {
@@ -776,7 +777,6 @@ const getGroupInfo = async (groupId, userId) => {
 const getChatContext = async (userId, groupId) => {
   try {
     const groupRes = await getGroupById(groupId);
-    console.log("groupRes:", groupRes); // Debugging line
 
     if (!groupRes.success) {
       const statusCode = groupRes.isNative ? 404 : 500;

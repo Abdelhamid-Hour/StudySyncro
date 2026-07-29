@@ -208,7 +208,7 @@ groupInfoElementsMap = {
           </div>
           `;
       const span = wrapper.querySelector(".subject-value.value");
-      span.textContent = value;
+      span.textContent = t(`common:subjects.${value}`, { defaultValue: value });
       span.setAttribute("data-value", value);
       return wrapper.innerHTML;
     },
@@ -230,7 +230,7 @@ groupInfoElementsMap = {
             </div>
           `;
       const content = wrapper.querySelector(".subject-value.content");
-      content.textContent = value;
+      content.textContent = t(`common:subjects.${value}`, { defaultValue: value });
       return wrapper.innerHTML;
     },
   },

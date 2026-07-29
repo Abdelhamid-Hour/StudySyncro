@@ -82,5 +82,16 @@
     "choice_a": "الخيار أ",
     "choice_b": "الخيار ب",
     "choice_c": "الخيار ج"
+  },
+  "results_overlay": {
+    "title": "نتائج المستخدمين",
+    "quiz_title_label": "عنوان الاختبار",
+    "no_results": "لم يتم العثور على نتائج",
+    "no_results_description": "لا توجد نتائج متاحة لهذا الاختبار حتى الآن.",
+    "table": {
+      "profile": "الملف الشخصي",
+      "answered_questions": "الأسئلة المجابة",
+      "actions": "الإجراءات"
+    }
   }
 }

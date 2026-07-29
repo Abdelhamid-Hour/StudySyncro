@@ -546,6 +546,16 @@
 }
 
 [dir="rtl"] {
+  .quiz-svg-exam-container {
+    .result-title {
+      z-index: 1 !important;
+      rotate: 7deg !important;
+    }
+
+    img {
+      scale: -1 1 !important;
+    }
+  }
   .timer-digits {
     flex-direction: row-reverse !important;
   }

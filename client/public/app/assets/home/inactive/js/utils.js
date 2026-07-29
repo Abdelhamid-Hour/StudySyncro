@@ -356,7 +356,6 @@ const initActiveSessionsStream = () => {
       const data = JSON.parse(event.data);
 
       if (data.newSession) {
-        debugger;
         if (data.newSession.isAdmin) location.reload();
         // Apply current search filter
         const searchInput = document.querySelector(

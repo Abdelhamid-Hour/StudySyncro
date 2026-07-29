@@ -126,7 +126,7 @@ const acceptRequest = async (groupId, requestId, userId) => {
     if (!groupSnap.exists) {
       return {
         success: false,
-        message: `Group not found.`,
+        message: "api:group_not_found_1",
         isNative: true,
         type: "info",
       };
@@ -234,9 +234,7 @@ const acceptRequest = async (groupId, requestId, userId) => {
     console.error("Error accepting request:", error.message);
     return {
       success: false,
-      message: `Failed to accept request: ${
-        error.message || "An unexpected error occurred."
-      }`,
+      message: "api:failed_to_accept_request",
       isNative: false,
       type: "error",
     };
@@ -252,7 +250,7 @@ const rejectRequest = async (groupId, requestId, userId) => {
     if (!groupSnap.exists) {
       return {
         success: false,
-        message: `Group not found.`,
+        message: "api:group_not_found_1",
         isNative: true,
         type: "info",
       };

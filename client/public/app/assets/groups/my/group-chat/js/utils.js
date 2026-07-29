@@ -127,7 +127,6 @@ export const handleEndSessionBtn = () => {
 };
 
 export const handleLeavingGroup = async (e) => {
-  debugger;
   const res = await showConfirmationBox(
     "exclamation",
     t("common:shared_terms.leave_group"),
@@ -768,7 +767,6 @@ const shouldAddOrUpdateQuiz = (data, sessionData) => {
 };
 
 const addOrUpdateQuizTask = (data, sessionStore, wrapper) => {
-  debugger;
   const sessionData = sessionStore.sessionData;
   sessionData.sessionQuiz = {
     quiz: new Task({
@@ -939,7 +937,6 @@ const handleFinishBtnClick = async (sessionData, btn) => {
     btn.disabled = true;
     btn.innerHTML = getLoader();
     sessionData.groupId = getGroupId();
-    debugger;
     await sendData("/api/create-session", { sessionData });
     showMessageBlock(
       t("common:shared_terms.session_created_successfully"),

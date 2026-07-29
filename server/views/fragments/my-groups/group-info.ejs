@@ -55,7 +55,7 @@
           </span>
           <%= t("common:shared_terms.subject") %>
         </span>
-        <span class="subject-value value content"><bdi><%= subject %></bdi></span>
+        <span class="subject-value value content"><bdi><%= t("common:subjects." + subject, { defaultValue: subject }) %></bdi></span>
       </div>
     </div>
     <div class="level-info-box info-box">
@@ -72,7 +72,7 @@
           </span>
           <%= t("common:filters.level") %>
         </span>
-        <span class="level-value value content"><bdi><%= level %></bdi></span>
+        <span class="level-value value content"><bdi><%= t("common:filters." + level.toLowerCase(), { defaultValue: level }) %></bdi></span>
       </div>
     </div>
   </div>
@@ -91,7 +91,7 @@
           </span>
           <%= t("common:filters.visibility") %>
         </span>
-        <span class="visibility-value value content"><bdi><%= visibility %></bdi></span>
+        <span class="visibility-value value content"><bdi><%= t("common:filters." + visibility.toLowerCase(), { defaultValue: visibility }) %></bdi></span>
       </div>
       <% if (visibility === 'Private') { %>
       <label class="show-in-search-label container">

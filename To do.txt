@@ -8,14 +8,8 @@
 // add email verification step when the email changed
 // email verified succefully ui
 
-// subject, visibility, level should relative to lang, in group info 
 // mails for the users about example invitatios, requests ...
 
 // <bdi> when rtl
 //------------------------------------
 // allow navigating fast
-
-add also the translation json files data for the error messgees
-why the quiz menu loader not fire the first time
-
-الوقت المتبقي : time order style solve it in the quiz

@@ -113,7 +113,7 @@ export const getcreateGroupCardFunc = (userGroup) => {
     groupCard.querySelector(".group-name").innerHTML =
       `<bdi>${group.name}</bdi>`;
     groupCard.querySelector(".subject-value").innerHTML =
-      `<bdi>${group.subject}</bdi>`;
+      `<bdi>${t("common:subjects." + group.subject, { defaultValue: group.subject })}</bdi>`;
 
     return groupCard;
   };

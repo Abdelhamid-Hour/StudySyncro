@@ -22,7 +22,13 @@
   },
   "badges": {
     "host": "Host",
-    "member": "Member"
+    "member": "Member",
+    "pending": "Pending",
+    "public": "Public",
+    "private": "Private",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
   },
   "actions": {
     "view_group": "View Group"

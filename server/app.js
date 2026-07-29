@@ -24,10 +24,6 @@ app.use(i18nMiddleware);
 app.use(express.urlencoded({ extended: false }));
 // parse JSON data
 app.use(express.json());
-app.use((req, rea, next) => {
-  console.log("frm app: ", req.url);
-  next();
-});
 
 const routes = [
   { paths: ["/quizzes", "/app/quizzes"], redirect: "/app/quizzes/my" },

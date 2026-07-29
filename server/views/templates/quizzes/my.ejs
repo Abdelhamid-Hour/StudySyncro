@@ -82,7 +82,7 @@
           <%= t("common:shared_terms.subject") %>
         </label>
         <span class="subject content">
-          <bdi><%= quiz.subject %></bdi>
+          <bdi><%= t("common:subjects." + quiz.subject, { defaultValue: quiz.subject }) %></bdi>
         </span>
       </div>
     </div>

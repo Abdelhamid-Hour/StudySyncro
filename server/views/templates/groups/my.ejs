@@ -25,7 +25,7 @@
       </header>
       <div class="group-meta">
         <h3 class="group-name"><bdi><%= group.name %></bdi></h3>
-        <span class="subject-value badge simple-badge"><bdi><%= group.subject %></bdi></span>
+        <span class="subject-value badge simple-badge"><bdi><%= t("common:subjects." + group.subject, { defaultValue: group.subject }) %></bdi></span>
       </div>
       <div
         data-tooltip="<%= group.description %>"

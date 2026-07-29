@@ -82,5 +82,16 @@
     "choice_a": "Choice A",
     "choice_b": "Choice B",
     "choice_c": "Choice C"
+  },
+  "results_overlay": {
+    "title": "Users Results",
+    "quiz_title_label": "Quiz Title",
+    "no_results": "No Results Found",
+    "no_results_description": "There are no results available for this quiz yet.",
+    "table": {
+      "profile": "Profile",
+      "answered_questions": "Answered Questions",
+      "actions": "Actions"
+    }
   }
 }

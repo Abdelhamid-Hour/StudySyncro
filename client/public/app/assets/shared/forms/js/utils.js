@@ -139,7 +139,8 @@ export const createSubjectSelectMenu = () => {
 
 const createSubjectSelectMenuGroup = (group, subjects) => {
   let groupHtml = `<div class="select-group drop-down-group">`;
-  groupHtml += `<div class="select-group-label drop-down-group-label">${group === "Other" ? t("common:forms.other") : group}</div>`;
+  const translatedGroup = group === "Other" ? t("common:forms.other") : t("common:subject_categories." + group, { defaultValue: group });
+  groupHtml += `<div class="select-group-label drop-down-group-label">${translatedGroup}</div>`;
   groupHtml += `<hr class="separator">`;
 
   if (group === "Other") {
@@ -148,7 +149,7 @@ const createSubjectSelectMenuGroup = (group, subjects) => {
     groupHtml += subjects
       .map(
         (subject) =>
-          `<div class="select-item drop-down-item" data-value="${subject}">${subject}</div>`,
+          `<div class="select-item drop-down-item" data-value="${subject}">${t("common:subjects." + subject, { defaultValue: subject })}</div>`,
       )
       .join("");
   }

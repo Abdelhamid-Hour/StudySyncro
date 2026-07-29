@@ -42,7 +42,7 @@ const getSessionInfoContext = async (groupId, userId) => {
   if (!groupSnap.exists)
     return {
       success: false,
-      message: "Group Not exists",
+      message: "api:group_not_found_1",
       isNative: true,
       type: "info",
     };
@@ -52,7 +52,7 @@ const getSessionInfoContext = async (groupId, userId) => {
   if (!res.success) {
     return {
       success: false,
-      message: res.message || "Failed to load session information",
+      message: res.message || "api:failed_to_load_session_info",
       isNative: res.isNative,
       type: res.type,
     };

@@ -34,7 +34,6 @@ const getGroupById = async (groupId) => {
       group,
     };
   } catch (error) {
-    console.log(error.message);
     return {
       success: false,
       message: "api:internal_server_error",

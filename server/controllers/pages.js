@@ -12,13 +12,7 @@ const errorPageIconClasses = {
   forbidden: "bi bi-exclamation-triangle",
 };
 
-const errorPageMessages = {
-  notFound: "Page Not Found",
-  serverError: "Server Error",
-  forbidden: "Access Forbiden",
-};
-
-const getErrorPageContext = (page, statusCode) => {
+const getErrorPageContext = (page, statusCode, t, descKey) => {
   const iconClass =
     statusCode === 500
       ? errorPageIconClasses.serverError
@@ -26,19 +20,20 @@ const getErrorPageContext = (page, statusCode) => {
         ? errorPageIconClasses.notFound
         : errorPageIconClasses.forbidden;
 
-  const description =
-    statusCode === 404
-      ? `The ${page} you are trying to access does not exist.`
+  const description = descKey
+    ? t(descKey)
+    : statusCode === 404
+      ? t("common:errors.page_not_found_desc", { page })
       : statusCode === 500
-        ? `An unexpected error occurred while trying to access the ${page}.`
-        : `You do not have permission to access this ${page}.`;
+        ? t("common:errors.server_error_desc", { page })
+        : t("common:errors.forbidden_desc", { page });
 
   const statusMessage =
     statusCode === 404
-      ? errorPageMessages.notFound
+      ? t("common:errors.page_not_found")
       : statusCode === 500
-        ? errorPageMessages.serverError
-        : errorPageMessages.forbidden;
+        ? t("common:errors.server_error")
+        : t("common:errors.forbidden");
 
   return {
     iconClass,
@@ -59,6 +54,7 @@ const handleRoutes = async (req, res) => {
         ? "/quizzes/quizzes-list"
         : pathName
   }`;
+
   return renderFragmentOrLayout(
     template,
     req.path === "/home" ? payload.payload : payload,
@@ -76,7 +72,12 @@ const handleGroupChatRoute = async (req, res) => {
       "templates/error",
       {
         templateContext: {
-          ...getErrorPageContext("group chat", result.statusCode),
+          ...getErrorPageContext(
+            "group chat",
+            result.statusCode,
+            res.locals.t,
+            result.message,
+          ),
           user: true,
         },
       },
@@ -115,7 +116,12 @@ const handleQuizEditRoute = async (req, res) => {
       "templates/error",
       {
         templateContext: {
-          ...getErrorPageContext("quiz", result.statusCode),
+          ...getErrorPageContext(
+            "quiz",
+            result.statusCode,
+            res.locals.t,
+            result.message,
+          ),
           user: true,
         },
       },
@@ -145,13 +151,12 @@ const handleQuizEditRoute = async (req, res) => {
 };
 
 const handleQuizPlayRoute = async (req, res) => {
-  console.log("req.params.quizId: ", req.params.quizId);
-
   const response = await getQuizzPlayContext(
     req.user,
     req.params.quizId,
     req.query.groupId,
   );
+
   const templateContext = response.templateContext;
 
   const payload = {
@@ -163,7 +168,12 @@ const handleQuizPlayRoute = async (req, res) => {
       "templates/error",
       {
         templateContext: {
-          ...getErrorPageContext("quiz", response.statusCode),
+          ...getErrorPageContext(
+            "quiz",
+            response.statusCode,
+            res.locals.t,
+            response.message,
+          ),
           user: true,
         },
       },
@@ -183,13 +193,13 @@ const handleQuizPlayRoute = async (req, res) => {
 };
 
 const pageNotFoundHandler = async (req, res) => {
+  const t = req.t || res.locals.t;
   const templateContext = {
     isStandalone: false,
     user: req.user,
     statusCode: 404,
-    statusMessage: "Page Not Found",
-    description:
-      "We couldn't find the page you are looking for. It might have been removed, renamed, or did not exist in the first place.",
+    statusMessage: t("common:errors.page_not_found"),
+    description: t("common:errors.page_not_found_desc_generic"),
     iconClass: "bi bi-exclamation-triangle",
   };
 
