@@ -14,7 +14,6 @@ import {
   enableMobileTabs,
   sendData,
   showMessageBlock,
-  isNativeDomainCondition,
   t,
 } from "../../../global/js/utils.js";
 import {
@@ -178,8 +177,7 @@ const checkQuizTitleAvailability = async (title, quizTitleInput) => {
     resetTooltip(globalTooltip, quizTitleInput.closest(".field-container"));
     return true;
   } catch (error) {
-    const isNative =
-      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const isNative = error.isNative || error.data?.isNative;
     const notifType =
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error("Error: ", error);
@@ -420,7 +418,9 @@ const getcreateQuizCardFunc = (quiz = {}) => {
   card.querySelector(".questions-count-container .count.content").textContent =
     formatNumber(questionsCount);
   card.querySelector(".subject-container .subject.content").textContent =
-    subject ? t("common:subjects." + subject, { defaultValue: subject }) : t("quizzes:unknown");
+    subject
+      ? t("common:subjects." + subject, { defaultValue: subject })
+      : t("quizzes:unknown");
 
   return card;
 };

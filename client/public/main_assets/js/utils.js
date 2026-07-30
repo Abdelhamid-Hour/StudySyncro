@@ -105,49 +105,6 @@ export const showMessageBlock = (message, type) => {
   }, 11200);
 };
 
-export const isNativeDomainCondition = (errorOrMsg) => {
-  if (!errorOrMsg) return false;
-  const isObj = typeof errorOrMsg === "object";
-  if (isObj && (errorOrMsg.isNative || errorOrMsg.data?.isNative)) return true;
-  if (isObj && (errorOrMsg.type === "info" || errorOrMsg.type === "warning" || errorOrMsg.data?.type === "info" || errorOrMsg.data?.type === "warning")) return true;
-
-  const msg = (isObj ? (errorOrMsg.message || errorOrMsg.data?.message || "") : errorOrMsg).toString().toLowerCase();
-  if (!msg) return false;
-
-  const nativePhrases = [
-    "group is full",
-    "already a member",
-    "already sent a request",
-    "already requested",
-    "group does not exist",
-    "group not found",
-    "cannot join this group",
-    "private and not visible",
-    "invitation not found",
-    "invitation expired",
-    "demande not found",
-    "already processed",
-    "already invited",
-    "creator must transfer",
-    "must transfer your role",
-    "creator cannot leave",
-    "quiz title already exists",
-    "already exists",
-    "no questions",
-    "cannot start quiz",
-    "already passed",
-    "session not found",
-    "session has ended",
-    "session already ended",
-    "already in this session",
-    "only group creator",
-    "current password is incorrect",
-    "cannot be empty",
-  ];
-
-  return nativePhrases.some((phrase) => msg.includes(phrase));
-};
-
 // ── Route-level AbortController ──────────────────────────────────────
 // Every SPA page gets its own AbortController. When the user navigates
 // away, the router calls resetRouteController(), which:
@@ -212,8 +169,7 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
     const error = new Error(responseData.message || t("common:alerts.error_occurred"));
     error.data = responseData;
     error.status = response.status;
-    const isNative = responseData.isNative || isNativeDomainCondition(error);
-    error.isNative = isNative;
+    error.isNative = responseData.isNative;
     error.type = responseData.type || (isNative ? "info" : "error");
     throw error;
   }

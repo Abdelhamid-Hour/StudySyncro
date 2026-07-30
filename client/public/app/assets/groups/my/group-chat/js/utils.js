@@ -27,7 +27,6 @@ import {
   fetchData,
   sendData,
   showMessageBlock,
-  isNativeDomainCondition,
 } from "../../../../global/js/utils.js";
 import {
   levelValues,
@@ -231,8 +230,7 @@ export const openGroupLeftSideBar = async (route) => {
         joinSession(joinBtn.dataset.sessionId, joinBtn),
       );
   } catch (error) {
-    const isNative =
-      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const isNative = error.isNative || error.data?.isNative;
     const notifType =
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error(error);
@@ -944,8 +942,7 @@ const handleFinishBtnClick = async (sessionData, btn) => {
     );
     navigateTo("/home");
   } catch (error) {
-    const isNative =
-      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const isNative = error.isNative || error.data?.isNative;
     const notifType =
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error("Error: ", error);
@@ -1956,8 +1953,7 @@ const handleSaveAction = async (
       "success",
     );
   } catch (error) {
-    const isNative =
-      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const isNative = error.isNative || error.data?.isNative;
     const notifType =
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.log("Error", error);

@@ -555,7 +555,7 @@ const ensureSharedRecentMessagesReplyBox = () => {
   sharedReplyBox.style.width = "100%";
   sharedReplyBox.innerHTML = `
     <div class="input-message-container">
-      <span class="newline-hint">${t("common:shared_chat.shared_chat")}</span>
+      <span class="newline-hint">${t("common:shared_chat.newline_hint")}</span>
       <div class="icons">
         <label for="shared-image-upload" class="should-fill">
           <i class="bi bi-image"></i>

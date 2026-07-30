@@ -1,14 +1,14 @@
 {
   "alerts": {
     "profile_updated_success": "Profile updated successfully.",
-    "email_updated_success": "Email updated successfully. Please log in again.",
-    "email_added_success": "Email added successfully. Please log in again.",
     "password_updated_success": "Password updated successfully. Please log in again.",
     "password_added_success": "Password added successfully. Please log in again.",
     "account_closed_success": "Account closed successfully. Bye!👋",
     "fb_login_info": "To Verify, please login with your Facebook account.",
     "google_login_info": "To Verify, please login with your Google account.",
-    "incorrect_password": "Incorrect password."
+    "incorrect_password": "Incorrect password.",
+    "email_updated_check_inbox": "Email updated successfully. Please check your inbox to verify it.",
+    "email_added_check_inbox": "Email added successfully. Please check your inbox to verify it."
   },
   "modals": {
     "delete_account_confirm_title": "Are you sure you want to delete your account?",

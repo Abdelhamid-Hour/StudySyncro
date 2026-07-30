@@ -2,12 +2,7 @@
   "badges": {
     "host": "Host",
     "member": "Member",
-    "pending": "Pending",
-    "public": "Public",
-    "private": "Private",
-    "beginner": "Beginner",
-    "intermediate": "Intermediate",
-    "advanced": "Advanced"
+    "pending": "Pending"
   },
   "my": {
     "empty_heading": "No Groups Joined",
@@ -50,10 +45,6 @@
     "leave_session": "Leave Session"
   },
   "plural_counts": {
-    "extra_members": {
-      "one": "+1",
-      "other": "+{count}"
-    },
     "members": {
       "one": "{count} Member",
       "other": "{count} Members"

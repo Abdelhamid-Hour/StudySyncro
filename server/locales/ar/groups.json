@@ -2,12 +2,7 @@
   "badges": {
     "host": "المضيف",
     "member": "عضو",
-    "pending": "قيد الانتظار",
-    "public": "عامة",
-    "private": "خاصة",
-    "beginner": "مبتدئ",
-    "intermediate": "متوسط",
-    "advanced": "متقدم"
+    "pending": "قيد الانتظار"
   },
   "my": {
     "empty_heading": "لا توجد مجموعات منضم إليها",
@@ -50,14 +45,6 @@
     "leave_session": "مغادرة الجلسة"
   },
   "plural_counts": {
-    "extra_members": {
-      "zero": "",
-      "one": "+1",
-      "two": "+2",
-      "few": "+{count}",
-      "many": "+{count}",
-      "other": "+{count}"
-    },
     "members": {
       "zero": "لا يوجد أعضاء",
       "one": "عضو واحد",

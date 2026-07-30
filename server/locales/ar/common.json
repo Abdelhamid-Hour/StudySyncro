@@ -116,7 +116,6 @@
     "real_time_chat": "المحادثة الفورية",
     "end_session": "إنهاء الجلسة",
     "join_session": "الانضمام للجلسة",
-    "join_requests": "طلبات الانضمام",
     "active_session": "جلسة نشطة",
     "create_session": "إنشاء جلسة",
     "leave_session": "مغادرة الجلسة",
@@ -328,16 +327,5 @@
     "Urban Planning": "التخطيط الحضري",
     "Biomedical Engineering": "الهندسة الطبية الحيوية",
     "Specify and press Enter": "حدد واضغط Enter"
-  },
-  "subject_categories": {
-    "Fundamental Sciences": "العلوم الأساسية",
-    "Computer Science & Engineering": "علوم الحاسوب والهندسة",
-    "Humanities & Social Sciences": "العلوم الإنسانية والاجتماعية",
-    "Languages & Literature": "اللغات والأدب",
-    "Arts & Culture": "الفنون والثقافة",
-    "Education & Sports": "التعليم والرياضة",
-    "Business & Management": "الأعمال والإدارة",
-    "Health & Life Sciences": "العلوم الصحية والحياتية",
-    "Specialties & Interdisciplinary": "التخصصات المتعددة"
   }
 }

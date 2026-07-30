@@ -6,7 +6,6 @@
     "last_name_format": "Last name must be {min}-{max} characters only letters"
   },
   "messages": {
-    "account_created_redirecting": "Account created successfully, redirecting...",
     "signed_in_redirecting": "Signed in successfully, redirecting...",
     "account_created_verify": "Account created! A verification link has been sent to your email. Please verify before signing in.",
     "email_unverified": "Your email address is not verified. A new verification link has been sent to your inbox. Please verify before signing in.",

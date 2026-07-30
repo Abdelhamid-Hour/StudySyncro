@@ -1,23 +1,5 @@
 {
-  "show_info_tooltip": "Show Group Details",
-  "real_time_chat": "Real Time Chat",
-  "end_session": "End Session",
-  "active_session_tooltip": "Active Session",
   "create_session": "Create Session",
-  "menu": {
-    "group_actions": "Group Actions",
-    "group_info": "Group Info",
-    "session_info": "Session Info",
-    "manage_demandes": "Manage Demandes",
-    "manage_members": "Manage Members",
-    "remove_group": "Remove Group"
-  },
-  "emojis": {
-    "search_placeholder": "Search for emoji",
-    "no_match": "No matching emojis found."
-  },
-  "unread_messages": "Unread Messages",
-  "drop_files": "Drop files here to add to your message.",
   "tooltips": {
     "close_group_info": "Close group info",
     "show_group_info": "Show group info",
@@ -25,8 +7,6 @@
     "you_havent_submitted": "You haven't submitted the quiz"
   },
   "alerts": {
-    "send_failed": "Failed to send message. Please try again.",
-    "message_max_length": "Message cannot exceed {max} characters.",
     "load_group_info_error": "An error occurred while loading group info.",
     "failed_to_load_group_info": "Failed to load group info. Please try again later.",
     "add_at_least_one_task": "You must add at least one task before finishing.",
@@ -38,7 +18,6 @@
     "max_invite_limit": "You can only invite up to 5 users at a time.",
     "users_found_count": "{count} Users Found"
   },
-  "type_message_placeholder": "Type a message",
   "skeletons": {
     "no_messages_title": "No Messages",
     "no_messages_desc": "No messages in this chat.",

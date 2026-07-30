@@ -22,7 +22,6 @@
     "passed": "المجتازة"
   },
   "skeletons": {
-    "loading": "جاري التحميل...",
     "error_loading": "حدث خطأ أثناء تحميل المحتوى",
     "no_results_title": "لم يتم العثور على نتائج",
     "no_results_desc": "لا توجد تطابقات لعملية البحث أو الفلاتر المحددة.",
@@ -95,41 +94,9 @@
     "USER_NOT_FOUND": "لم يتم العثور على حساب مرتبط بهذا البريد الإلكتروني. يرجى التحقق من بريدك أو إنشاء حساب جديد.",
     "TOO_MANY_REQUESTS": "تم تقديم طلبات كثيرة جداً من هذا الجهاز. يرجى الانتظار قليلاً قبل المحاولة مرة أخرى."
   },
-  "native_phrases": {
-    "group is full": "المجموعة ممتلئة بالكامل",
-    "already a member": "أنت عضو بالفعل في هذه المجموعة",
-    "already sent a request": "لقد أرسلت بالفعل طلباً للانضمام إلى هذه المجموعة",
-    "already requested": "تم إرسال طلب الانضمام مسبقاً",
-    "group does not exist": "هذه المجموعة غير موجودة",
-    "group not found": "لم يتم العثور على المجموعة",
-    "cannot join this group": "لا يمكنك الانضمام إلى هذه المجموعة",
-    "private and not visible": "هذه المجموعة خاصة وغير مرئية للعامة",
-    "invitation not found": "دعوة الانضمام غير موجودة",
-    "invitation expired": "انتهت صلاحية دعوة الانضمام",
-    "demande not found": "الطلب غير موجود",
-    "already processed": "تمت معالجة هذا الطلب بالفعل",
-    "already invited": "تمت دعوة هذا المستخدم مسبقاً",
-    "creator must transfer": "يجب على منشئ المجموعة نقل صلاحيات المضيف قبل المغادرة",
-    "must transfer your role": "يجب عليك نقل صلاحيات المضيف قبل مغادرة المجموعة",
-    "creator cannot leave": "لا يمكن لمنشئ المجموعة المغادرة دون نقل صلاحيات المضيف أو حذف المجموعة",
-    "quiz title already exists": "يوجد اختبار بنفس هذا العنوان بالفعل",
-    "already exists": "موجود بالفعل",
-    "no questions": "لا توجد أسئلة مضافة في هذا الاختبار",
-    "cannot start quiz": "لا يمكن بدء الاختبار الآن",
-    "already passed": "لقد أكملت هذا الاختبار بالفعل من قبل",
-    "session not found": "الجلسة الدراسية غير موجودة",
-    "session has ended": "انتهت الجلسة الدراسية",
-    "session already ended": "انتهت هذه الجلسة الدراسية بالفعل",
-    "already in this session": "أنت منضم بالفعل إلى هذه الجلسة الدراسية",
-    "only group creator": "فقط منشئ المجموعة أو المضيف يمكنه تنفيذ هذا الإجراء",
-    "current password is incorrect": "كلمة المرور الحالية غير صحيحة",
-    "cannot be empty": "لا يمكن أن يكون هذا الحقل فارغاً"
-  },
   "modals": {
     "confirm": "تأكيد",
     "cancel": "إلغاء",
-    "yes": "نعم",
-    "no": "لا",
     "delete": "حذف",
     "remove": "إزالة",
     "leave": "مغادرة",
@@ -266,10 +233,6 @@
       "wonderful_day": "نتمنى لك يوماً سعيداً!"
     }
   },
-  "empty_states": {
-    "no_quizzes_found": "لم يتم العثور على اختبارات !",
-    "no_groups_found": "لم يتم العثور على مجموعات !"
-  },
   "time": {
     "h": "س",
     "m": "د"
@@ -331,7 +294,6 @@
     "show_group_details": "عرض تفاصيل المجموعة",
     "real_time_chat": "المحادثة الفورية",
     "end_session": "إنهاء الجلسة",
-    "join_requests": "طلبات الانضمام",
     "active_session": "جلسة نشطة",
     "create_session": "إنشاء جلسة",
     "leave_session": "مغادرة الجلسة",
@@ -534,27 +496,5 @@
     "Urban Planning": "التخطيط الحضري",
     "Biomedical Engineering": "الهندسة الطبية الحيوية",
     "Specify and press Enter": "حدد واضغط Enter"
-  },
-  "subject_categories": {
-    "Fundamental Sciences": "العلوم الأساسية",
-    "Computer Science & Engineering": "علوم الحاسوب والهندسة",
-    "Humanities & Social Sciences": "العلوم الإنسانية والاجتماعية",
-    "Languages & Literature": "اللغات والأدب",
-    "Arts & Culture": "الفنون والثقافة",
-    "Education & Sports": "التعليم والرياضة",
-    "Business & Management": "الأعمال والإدارة",
-    "Health & Life Sciences": "العلوم الصحية والحياتية",
-    "Specialties & Interdisciplinary": "التخصصات المتعددة"
-  },
-  "quiz_id_not_found": "لم يتم العثور على معرف الاختبار",
-  "invalid_questions_data": "بيانات الأسئلة غير صالحة.",
-  "invalid_email_or_password_please_try_aga": "البريد الإلكتروني أو كلمة المرور غير صالحة. يرجى المحاولة مرة أخرى.",
-  "it_looks_like_you_closed_the_popup_befor": "يبدو أنك أغلقت النافذة المنبثقة قبل إكمال الإجراء. يرجى المحاولة مرة أخرى.",
-  "the_email_address_you_entered_is_already": "عنوان البريد الإلكتروني الذي أدخلته مرتبط بالفعل بحساب. حاول تسجيل الدخول أو استخدم بريدًا إلكترونيًا مختلفًا.",
-  "oops_the_password_you_entered_is_incorre": "عذرًا! كلمة المرور التي أدخلتها غير صحيحة. يرجى التحقق منها والمحاولة مرة أخرى.",
-  "it_seems_like_the_popup_was_blocked_by_y": "يبدو أن متصفحك قام بحظر النافذة المنبثقة. يرجى السماح بالنوافذ المنبثقة والمحاولة مرة أخرى.",
-  "it_looks_like_you_closed_the_popup_befor_1": "يبدو أنك أغلقت النافذة المنبثقة قبل إكمال الإجراء. يرجى فتحها والمحاولة مرة أخرى.",
-  "it_seems_you_canceled_the_redirect_actio": "يبدو أنك ألغيت إجراء إعادة التوجيه. يرجى المحاولة مرة أخرى لإكمال العملية.",
-  "we_couldn_t_find_an_account_with_that_em": "لم نتمكن من العثور على حساب بهذا البريد الإلكتروني. يرجى التحقق من بريدك الإلكتروني أو إنشاء حساب جديد.",
-  "too_many_requests_have_been_made_from_th": "تم إجراء عدد كبير جدًا من الطلبات من هذا الجهاز. يرجى الانتظار قليلاً قبل المحاولة مرة أخرى."
+  }
 }

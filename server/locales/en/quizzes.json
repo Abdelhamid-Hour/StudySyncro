@@ -77,10 +77,6 @@
     "correct_answer": "Correct Answer"
   },
   "plural_counts": {
-    "questions": {
-      "one": "1 Question",
-      "other": "{count} Questions"
-    },
     "choices": {
       "one": "1 Choice",
       "other": "{count} Choices"

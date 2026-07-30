@@ -1,23 +1,5 @@
 {
-  "show_info_tooltip": "عرض تفاصيل المجموعة",
-  "real_time_chat": "المحادثة الفورية",
-  "end_session": "إنهاء الجلسة",
-  "active_session_tooltip": "جلسة نشطة",
   "create_session": "إنشاء جلسة",
-  "menu": {
-    "group_actions": "إجراءات المجموعة",
-    "group_info": "معلومات المجموعة",
-    "session_info": "معلومات الجلسة",
-    "manage_demandes": "إدارة طلبات الانضمام",
-    "manage_members": "إدارة الأعضاء",
-    "remove_group": "حذف المجموعة"
-  },
-  "emojis": {
-    "search_placeholder": "البحث عن رمز تعبيري",
-    "no_match": "لم يتم العثور على رموز تعبيرية مطابقة."
-  },
-  "unread_messages": "رسائل غير مقروءة",
-  "drop_files": "أفلت الملفات هنا لإضافتها إلى رسالتك.",
   "tooltips": {
     "close_group_info": "إغلاق تفاصيل المجموعة",
     "show_group_info": "عرض تفاصيل المجموعة",
@@ -25,8 +7,6 @@
     "you_havent_submitted": "لم تقم بإرسال الاختبار بعد"
   },
   "alerts": {
-    "send_failed": "فشل إرسال الرسالة. يرجى المحاولة مرة أخرى.",
-    "message_max_length": "لا يمكن أن تتجاوز الرسالة {max} حرفاً.",
     "load_group_info_error": "حدث خطأ أثناء تحميل معلومات المجموعة.",
     "failed_to_load_group_info": "فشل تحميل معلومات المجموعة. يرجى المحاولة مرة أخرى لاحقاً.",
     "add_at_least_one_task": "يجب عليك إضافة مهمة واحدة على الأقل قبل الإنهاء.",
@@ -38,7 +18,6 @@
     "max_invite_limit": "يمكنك دعوة ما يصل إلى 5 مستخدمين فقط في المرة الواحدة.",
     "users_found_count": "تم العثور على {count} من المستخدمين"
   },
-  "type_message_placeholder": "اكتب رسالة...",
   "skeletons": {
     "no_messages_title": "لا توجد رسائل",
     "no_messages_desc": "لا توجد رسائل في هذه المحادثة.",

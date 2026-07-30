@@ -19,7 +19,6 @@ import {
   fetchData,
   sendData,
   showMessageBlock,
-  isNativeDomainCondition,
   t,
 } from "../../../../global/js/utils.js";
 import { setUpSelectMenu } from "../../../../shared/forms/js/utils.js";
@@ -306,7 +305,8 @@ const updateChoicesCountInPanel = (choicesList) => {
   );
   if (questionCard) {
     const choiceCount = choicesList.children.length;
-    questionCard.querySelector(".choices-count").textContent = t("common:shared_quizzes.choices_count",
+    questionCard.querySelector(".choices-count").textContent = t(
+      "common:shared_quizzes.choices_count",
       { count: choiceCount },
     );
   }
@@ -518,8 +518,7 @@ export const initializeInitialData = async () => {
   try {
     initialData = await fetchData("/quiz-details/" + getQuizId());
   } catch (error) {
-    const isNative =
-      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const isNative = error.isNative || error.data?.isNative;
     const notifType =
       error.type || error.data?.type || (isNative ? "info" : "error");
     showMessageBlock(error.message, notifType);
@@ -582,8 +581,7 @@ export const handleSaveBtn = async (type, btn) => {
       "success",
     );
   } catch (error) {
-    const isNative =
-      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const isNative = error.isNative || error.data?.isNative;
     const notifType =
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error(`Failed to update ${type}:`, error);
@@ -812,8 +810,7 @@ const saveQuizToServer = async (questions) => {
     // update the initialData with the new questions
     initialData.questions = questions;
   } catch (error) {
-    const isNative =
-      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const isNative = error.isNative || error.data?.isNative;
     const notifType =
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error("Failed to save quiz:", error);

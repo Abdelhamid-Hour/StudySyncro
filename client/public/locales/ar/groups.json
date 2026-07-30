@@ -9,30 +9,10 @@
     "join_group_title": "الانضمام إلى المجموعة",
     "join_group_desc": "هل أنت متأكد أنك تريد الانضمام إلى هذه المجموعة؟"
   },
-  "skeletons": {
-    "no_groups_joined_title": "لم تنضم إلى أي مجموعة",
-    "no_groups_joined_desc": "لست عضواً في أي مجموعة دراسية حالياً. قم بإنشاء أو الانضمام إلى مجموعة للبدء في التعاون!",
-    "no_groups_available_title": "لا توجد مجموعات متاحة",
-    "no_groups_available_desc": "لا توجد حالياً مجموعات دراسية عامة متاحة للانضمام. تحقق مرة أخرى لاحقاً!",
-    "no_groups_found_title": "لم يتم العثور على مجموعات",
-    "no_groups_found_desc": "لا توجد مجموعات دراسية تطابق معايير البحث أو الفلترة.",
-    "no_quizzes_avail_desc": "لم يتم إنشاء أي اختبارات لهذه المجموعة بعد.",
-    "no_quizzes_match_title": "لا توجد اختبارات مطابقة",
-    "no_quizzes_match_desc": "لا توجد اختبارات تطابق بحثك.",
-    "search_users_title": "البحث عن مستخدمين",
-    "search_users_desc": "اكتب اسماً أو معرفاً في شريط البحث أعلاه للعثور على مستخدمين لدعوتهم.",
-    "no_users_found_title": "لم يتم العثور على مستخدمين",
-    "no_users_found_desc": "لا يوجد مستخدمون يطابقون استعلام البحث الخاص بك."
-  },
   "badges": {
     "host": "مضيف",
     "member": "عضو",
-    "pending": "قيد الانتظار",
-    "public": "عامة",
-    "private": "خاصة",
-    "beginner": "مبتدئ",
-    "intermediate": "متوسط",
-    "advanced": "متقدم"
+    "pending": "قيد الانتظار"
   },
   "actions": {
     "view_group": "عرض المجموعة"

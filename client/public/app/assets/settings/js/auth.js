@@ -10,7 +10,6 @@ import {
   checkError,
   fetchData,
   showMessageBlock,
-  isNativeDomainCondition,
 } from "../../global/js/utils.js";
 import { AUTH_ERRORS } from "../../global/js/variables.js";
 
@@ -42,8 +41,7 @@ export const getFreshTokenId = async (password) => {
       showMessageBlock(t("settings:alerts.incorrect_password"), "warning");
       return null;
     }
-    const isNative =
-      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const isNative = error.isNative || error.data?.isNative;
     const notifType =
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) checkError(error);

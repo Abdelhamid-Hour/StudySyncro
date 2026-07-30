@@ -15,7 +15,6 @@ import {
   getLoader,
   sendData,
   showMessageBlock,
-  isNativeDomainCondition,
   t,
 } from "../../../global/js/utils.js";
 import {
@@ -256,8 +255,7 @@ const handleCreateGroupSubmit = async (groupData, form, createBtn) => {
     showMessageBlock(t("groups:alerts.group_created_success"), "success");
     navigateTo("/groups/my");
   } catch (error) {
-    const isNative =
-      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const isNative = error.isNative || error.data?.isNative;
     const notifType =
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error("Error: ", error);

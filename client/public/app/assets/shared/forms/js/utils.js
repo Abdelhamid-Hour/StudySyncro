@@ -139,7 +139,7 @@ export const createSubjectSelectMenu = () => {
 
 const createSubjectSelectMenuGroup = (group, subjects) => {
   let groupHtml = `<div class="select-group drop-down-group">`;
-  const translatedGroup = group === "Other" ? t("common:forms.other") : t("common:subject_categories." + group, { defaultValue: group });
+  const translatedGroup = group === "Other" ? t("common:forms.other") : t("common:subjects." + group, { defaultValue: group });
   groupHtml += `<div class="select-group-label drop-down-group-label">${translatedGroup}</div>`;
   groupHtml += `<hr class="separator">`;
 

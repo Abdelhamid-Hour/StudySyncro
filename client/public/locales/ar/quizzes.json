@@ -28,20 +28,10 @@
     "title_required": "عنوان الاختبار مطلوب.",
     "title_length": "يجب أن يكون عنوان الاختبار بين {min} و {max} حرفاً."
   },
-  "finished_date": "تاريخ الانتهاء: {date}",
-  "quiz_title_placeholder": "عنوان الاختبار",
-  "status": {
-    "correct": "صحيح",
-    "skipped": "تخطى",
-    "incorrect": "خاطئ"
-  },
   "editor": {
-    "questions": "الأسئلة",
-    "choices_title": "الخيارات",
     "add_choice": "إضافة خيار",
     "subject_label": "المادة:",
-    "shared_in_label": "مشارك في:",
-    "correct_answer_title": "الإجابة الصحيحة"
+    "shared_in_label": "مشارك في:"
   },
   "play": {
     "score_of": "{correct} من {total}",

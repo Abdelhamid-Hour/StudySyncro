@@ -28,20 +28,10 @@
     "title_required": "Quiz Title is required.",
     "title_length": "Quiz Title must be between {min} and {max} characters."
   },
-  "finished_date": "Finished: {date}",
-  "quiz_title_placeholder": "QUIZ TITLE",
-  "status": {
-    "correct": "Correct",
-    "skipped": "Skipped",
-    "incorrect": "Incorrect"
-  },
   "editor": {
-    "questions": "Questions",
-    "choices_title": "Choices",
     "add_choice": "Add Choice",
     "subject_label": "Subject:",
-    "shared_in_label": "Shared In:",
-    "correct_answer_title": "Correct Answer"
+    "shared_in_label": "Shared In:"
   },
   "play": {
     "score_of": "{correct} of {total}",

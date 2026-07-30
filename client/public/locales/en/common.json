@@ -22,7 +22,6 @@
     "passed": "Passed"
   },
   "skeletons": {
-    "loading": "Loading...",
     "error_loading": "Error loading content",
     "no_results_title": "No Results Found",
     "no_results_desc": "No matches found for your search or filters.",
@@ -95,41 +94,9 @@
     "USER_NOT_FOUND": "We couldn't find an account with that email address. Please check your email or create a new account.",
     "TOO_MANY_REQUESTS": "Too many requests have been made from this device. Please wait a while before trying again."
   },
-  "native_phrases": {
-    "group is full": "Group is full",
-    "already a member": "You are already a member of this group",
-    "already sent a request": "You have already sent a request to join",
-    "already requested": "Join request already submitted",
-    "group does not exist": "This group does not exist",
-    "group not found": "Group not found",
-    "cannot join this group": "Cannot join this group",
-    "private and not visible": "This group is private and not visible",
-    "invitation not found": "Invitation not found",
-    "invitation expired": "Invitation has expired",
-    "demande not found": "Request not found",
-    "already processed": "This request has already been processed",
-    "already invited": "User has already been invited",
-    "creator must transfer": "Creator must transfer host role before leaving",
-    "must transfer your role": "You must transfer your host role before leaving",
-    "creator cannot leave": "Group creator cannot leave without transferring host role or deleting the group",
-    "quiz title already exists": "A quiz with this title already exists",
-    "already exists": "Already exists",
-    "no questions": "No questions provided for this quiz",
-    "cannot start quiz": "Cannot start quiz",
-    "already passed": "You have already completed this quiz",
-    "session not found": "Study session not found",
-    "session has ended": "Study session has ended",
-    "session already ended": "Study session has already ended",
-    "already in this session": "You are already in this study session",
-    "only group creator": "Only the group creator or host can perform this action",
-    "current password is incorrect": "Current password is incorrect",
-    "cannot be empty": "Cannot be empty"
-  },
   "modals": {
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "yes": "Yes",
-    "no": "No",
     "delete": "Delete",
     "remove": "Remove",
     "leave": "Leave",
@@ -266,10 +233,6 @@
       "wonderful_day": "Have a wonderful day ahead!"
     }
   },
-  "empty_states": {
-    "no_quizzes_found": "No Quizzes found !",
-    "no_groups_found": "No Groups found !"
-  },
   "time": {
     "h": "h",
     "m": "m"
@@ -332,7 +295,6 @@
     "show_group_details": "Show Group Details",
     "real_time_chat": "Real Time Chat",
     "end_session": "End Session",
-    "join_requests": "Join Requests",
     "active_session": "Active Session",
     "create_session": "Create Session",
     "group_info": "Group Info",
@@ -534,27 +496,5 @@
     "Urban Planning": "Urban Planning",
     "Biomedical Engineering": "Biomedical Engineering",
     "Specify and press Enter": "Specify and press Enter"
-  },
-  "subject_categories": {
-    "Fundamental Sciences": "Fundamental Sciences",
-    "Computer Science & Engineering": "Computer Science & Engineering",
-    "Humanities & Social Sciences": "Humanities & Social Sciences",
-    "Languages & Literature": "Languages & Literature",
-    "Arts & Culture": "Arts & Culture",
-    "Education & Sports": "Education & Sports",
-    "Business & Management": "Business & Management",
-    "Health & Life Sciences": "Health & Life Sciences",
-    "Specialties & Interdisciplinary": "Specialties & Interdisciplinary"
-  },
-  "quiz_id_not_found": "Quiz ID not found",
-  "invalid_questions_data": "Invalid questions data.",
-  "invalid_email_or_password_please_try_aga": "Invalid email or password. Please try again.",
-  "it_looks_like_you_closed_the_popup_befor": "It looks like you closed the popup before completing the action. Please try again.",
-  "the_email_address_you_entered_is_already": "The email address you entered is already associated with an account. Try logging in or use a different email.",
-  "oops_the_password_you_entered_is_incorre": "Oops! The password you entered is incorrect. Please double-check and try again.",
-  "it_seems_like_the_popup_was_blocked_by_y": "It seems like the popup was blocked by your browser. Please allow popups and try again.",
-  "it_looks_like_you_closed_the_popup_befor_1": "It looks like you closed the popup before completing the action. Please open it again and try.",
-  "it_seems_you_canceled_the_redirect_actio": "It seems you canceled the redirect action. Please try again to complete the process.",
-  "we_couldn_t_find_an_account_with_that_em": "We couldn't find an account with that email address. Please check your email or create a new account.",
-  "too_many_requests_have_been_made_from_th": "Too many requests have been made from this device. Please wait a while before trying again."
+  }
 }

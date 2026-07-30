@@ -9,26 +9,10 @@
     "join_group_title": "Join Group",
     "join_group_desc": "Are you sure you want to join this group?"
   },
-  "skeletons": {
-    "no_groups_joined_title": "No Groups Joined",
-    "no_groups_joined_desc": "You are not a member of any study groups yet. Create or join a group to begin collaborating!",
-    "no_groups_available_title": "No Groups Available",
-    "no_groups_available_desc": "There are currently no public study groups available to join. Check back later!",
-    "no_groups_found_title": "No Groups Found",
-    "no_groups_found_desc": "No study groups match your search or filter criteria.",
-    "no_quizzes_avail_desc": "No quizzes have been created for this group yet.",
-    "no_quizzes_match_title": "No Quizzes Match",
-    "no_quizzes_match_desc": "No quizzes match your search."
-  },
   "badges": {
     "host": "Host",
     "member": "Member",
-    "pending": "Pending",
-    "public": "Public",
-    "private": "Private",
-    "beginner": "Beginner",
-    "intermediate": "Intermediate",
-    "advanced": "Advanced"
+    "pending": "Pending"
   },
   "actions": {
     "view_group": "View Group"

@@ -77,14 +77,6 @@
     "correct_answer": "الإجابة الصحيحة"
   },
   "plural_counts": {
-    "questions": {
-      "zero": "لا توجد أسئلة",
-      "one": "سؤال واحد",
-      "two": "سؤالان",
-      "few": "{count} أسئلة",
-      "many": "{count} سؤالاً",
-      "other": "{count} سؤال"
-    },
     "choices": {
       "zero": "لا توجد خيارات",
       "one": "خيار واحد",

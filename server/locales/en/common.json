@@ -117,7 +117,6 @@
     "real_time_chat": "Real Time Chat",
     "end_session": "End Session",
     "join_session": "Join Session",
-    "join_requests": "Join Requests",
     "active_session": "Active Session",
     "create_session": "Create Session",
     "group_info": "Group Info",
@@ -328,16 +327,5 @@
     "Urban Planning": "Urban Planning",
     "Biomedical Engineering": "Biomedical Engineering",
     "Specify and press Enter": "Specify and press Enter"
-  },
-  "subject_categories": {
-    "Fundamental Sciences": "Fundamental Sciences",
-    "Computer Science & Engineering": "Computer Science & Engineering",
-    "Humanities & Social Sciences": "Humanities & Social Sciences",
-    "Languages & Literature": "Languages & Literature",
-    "Arts & Culture": "Arts & Culture",
-    "Education & Sports": "Education & Sports",
-    "Business & Management": "Business & Management",
-    "Health & Life Sciences": "Health & Life Sciences",
-    "Specialties & Interdisciplinary": "Specialties & Interdisciplinary"
   }
 }

@@ -14,7 +14,6 @@ import {
   fetchTemplate,
   sendData,
   showMessageBlock,
-  isNativeDomainCondition,
   resetRouteController,
   t,
 } from "../../../../main_assets/js/utils.js";
@@ -198,8 +197,7 @@ export const handleApiAction = async (
     if (successMsg) showMessageBlock(successMsg, "success");
     if (typeof onSuccess === "function") onSuccess(response);
   } catch (error) {
-    const isNative =
-      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const isNative = error.isNative || error.data?.isNative;
     const notifType =
       error.type || error.data?.type || (isNative ? "info" : "error");
 
@@ -776,8 +774,7 @@ const setScriptRoute = async (pathName, thisNav) => {
     if (thisNav !== navCounter) return;
     module.init?.();
   } catch (error) {
-    const isNative =
-      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const isNative = error.isNative || error.data?.isNative;
     const notifType =
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error(error);
@@ -1385,8 +1382,7 @@ export const updateMain = async (path, isTabLinks) => {
       );
     }
   } catch (error) {
-    const isNative =
-      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const isNative = error.isNative || error.data?.isNative;
     const notifType =
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error(error);
@@ -1742,8 +1738,7 @@ export const openOverlayModal = async (
       }
     }
   } catch (error) {
-    const isNative =
-      error.isNative || error.data?.isNative || isNativeDomainCondition(error);
+    const isNative = error.isNative || error.data?.isNative;
     const notifType =
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error(error);
