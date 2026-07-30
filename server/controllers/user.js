@@ -6,19 +6,18 @@ const {
   closeAccount,
   addPassword,
 } = require("../utils/firebase-utils/user");
+const { clearCookies } = require("../middleware/clearCookies");
 
 const getUserInfoHandler = async (req, res) => {
   const result = await getUserInfo(req.user.uid);
 
   if (!result.success) {
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: res.locals.t("api:failed_to_fetch_user_info"),
-        isNative: result.isNative ?? false,
-        type: result.type ?? "error",
-      });
+    return res.status(500).json({
+      success: false,
+      message: res.locals.t("api:failed_to_fetch_user_info"),
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 
   res.json({ email: result.email, provider: result.provider });
@@ -36,7 +35,11 @@ const updateEmailHandler = async (req, res) => {
       type: result.type ?? "error",
     });
   }
-  res.json({ success: true, message: res.locals.t("api:email_updated_successfully") });
+  clearCookies(res, ["session", "SECRET", "csrfToken"]);
+  res.json({
+    success: true,
+    message: res.locals.t("api:email_updated_successfully"),
+  });
 };
 
 const addEmailHandler = async (req, res) => {
@@ -50,26 +53,32 @@ const addEmailHandler = async (req, res) => {
       type: result.type ?? "error",
     });
   }
-  res.json({ success: true, message: res.locals.t("api:email_added_successfully") });
+  const { clearCookies } = require("../middleware/clearCookies");
+  clearCookies(res, ["session", "SECRET", "csrfToken"]);
+  res.json({
+    success: true,
+    message: res.locals.t("api:email_added_successfully"),
+  });
 };
 
 const updatePofileHandler = async (req, res) => {
   const avatar = req.file;
-  const fullName  = req.body.fullName;
+  const fullName = req.body.fullName;
   const result = await updateProfile(fullName, avatar, req.user);
 
   if (!result.success) {
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: res.locals.t("api:failed_to_update_full_name"),
-        isNative: result.isNative ?? false,
-        type: result.type ?? "error",
-      });
+    return res.status(500).json({
+      success: false,
+      message: res.locals.t("api:failed_to_update_full_name"),
+      isNative: result.isNative ?? false,
+      type: result.type ?? "error",
+    });
   }
 
-  res.json({ success: true, message: res.locals.t("api:full_name_updated_successfully") });
+  res.json({
+    success: true,
+    message: res.locals.t("api:full_name_updated_successfully"),
+  });
 };
 
 const updatePasswordHandler = async (req, res) => {
@@ -83,7 +92,10 @@ const updatePasswordHandler = async (req, res) => {
       type: result.type ?? "error",
     });
   }
-  res.json({ success: true, message: res.locals.t("api:password_updated_successfully") });
+  res.json({
+    success: true,
+    message: res.locals.t("api:password_updated_successfully"),
+  });
 };
 
 const addPasswordHandler = async (req, res) => {
@@ -97,7 +109,10 @@ const addPasswordHandler = async (req, res) => {
       type: result.type ?? "error",
     });
   }
-  res.json({ success: true, message: res.locals.t("api:password_added_successfully") });
+  res.json({
+    success: true,
+    message: res.locals.t("api:password_added_successfully"),
+  });
 };
 
 const closeAccountHandler = async (req, res, next) => {

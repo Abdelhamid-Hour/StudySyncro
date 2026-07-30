@@ -60,6 +60,23 @@ const closeAccountSchema = z.object({
     .max(5000, "ID Token is too long."),
 });
 
+const insertUserDataSchema = z.object({
+  uid: safeString(1, 128, "User ID"),
+  fullName: safeString(
+    LIMITS.NAME_TITLE_MIN_LENGTH,
+    LIMITS.NAME_TITLE_MAX_LENGTH,
+    "Full Name",
+  ).regex(LIMITS.USERNAME_REGEX, "Full Name must only contain letters and spaces").optional(),
+  email: safeEmail("Email").optional(),
+  photoURL: z.string().optional(),
+  idToken: z
+    .string({ required_error: "ID Token is required." })
+    .trim()
+    .min(10, "ID Token is invalid.")
+    .max(5000, "ID Token is too long.")
+    .optional(),
+});
+
 module.exports = {
   updateEmailSchema,
   addEmailSchema,
@@ -67,4 +84,5 @@ module.exports = {
   updatePasswordSchema,
   addPasswordSchema,
   closeAccountSchema,
+  insertUserDataSchema,
 };

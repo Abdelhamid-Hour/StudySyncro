@@ -5,10 +5,11 @@ export const PASSWORD_MAX_LENGTH = 128;
 export const NAME_TITLE_MAX_LENGTH = 50;
 export const NAME_TITLE_MIN_LENGTH = 3;
 export const passwordRegex = new RegExp(
-  `^[\\w .-]{${PASSWORD_MIN_LENGTH},${PASSWORD_MAX_LENGTH}}$`,
+  `^[\\p{L}\\w .\\-]{${PASSWORD_MIN_LENGTH},${PASSWORD_MAX_LENGTH}}$`,
+  'u'
 );
 export const emailRegex = /^[a-z0-9]+@[a-z0-9]+\.[a-z0-9]+$/;
-export const userNameRegex = /^[A-Za-z]+( [A-Za-z]+)*$/;
+export const userNameRegex = /^[\p{L}]+( [\p{L}]+)*$/u;
 export const AUTH_ERRORS = {
   INVALID_LOGIN_CREDENTIALS: {
     code: "auth/invalid-credential",

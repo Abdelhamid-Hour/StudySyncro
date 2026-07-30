@@ -6,6 +6,7 @@ import {
   createAuserWithEmailAndPassword,
   signInAuserWithEmailAndPassword,
   initializeGoogleOneTap,
+  getLoader,
 } from "./auth-functions.js";
 import {
   inputsEmptying,
@@ -37,6 +38,22 @@ import {
 
 initializeGoogleOneTap(auth, showMessageBlock);
 
+const urlParams = new URLSearchParams(window.location.search);
+const errorParam = urlParams.get("error");
+if (errorParam) {
+  const errorMap = {
+    expired: t("login:messages.verification_expired"),
+    invalid: t("login:messages.verification_invalid"),
+    used: t("login:messages.verification_used"),
+    failed: t("login:messages.verification_failed")
+  };
+  
+  if (errorMap[errorParam]) {
+    showMessageBlock(errorMap[errorParam], "error");
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+}
+
 formsContainer.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
     if (e.target.matches("#sign-in-form input")) {
@@ -49,23 +66,35 @@ formsContainer.addEventListener("keyup", (e) => {
 
 signInBtn.addEventListener("click", async () => {
   if (!validatesSignInForm()) return;
-  signInAuserWithEmailAndPassword(
+  
+  const originalText = signInBtn.innerHTML;
+  signInBtn.disabled = true;
+  signInBtn.innerHTML = getLoader();
+
+  await signInAuserWithEmailAndPassword(
     auth,
     signInemailField.value,
     signInPasswordField.value,
     showMessageBlock,
   );
+  
+  signInBtn.innerHTML = originalText;
+  signInBtn.disabled = false;
   inputsEmptying();
 });
 
-signUpBtn.addEventListener("click", () => {
+signUpBtn.addEventListener("click", async () => {
   if (!validatesSignUpForm()) return;
 
   const fullName = `${userNameFormat(firstName.value)} ${userNameFormat(
     lastName.value,
   )}`;
 
-  createAuserWithEmailAndPassword(
+  const originalText = signUpBtn.innerHTML;
+  signUpBtn.disabled = true;
+  signUpBtn.innerHTML = getLoader();
+
+  await createAuserWithEmailAndPassword(
     auth,
     fullName,
     signUpemailField.value,
@@ -73,6 +102,9 @@ signUpBtn.addEventListener("click", () => {
     signUpPasswordField.value,
     showMessageBlock,
   );
+  
+  signUpBtn.innerHTML = originalText;
+  signUpBtn.disabled = false;
   inputsEmptying();
 });
 

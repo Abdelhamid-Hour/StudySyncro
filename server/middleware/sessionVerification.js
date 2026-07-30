@@ -56,7 +56,8 @@ const requireAuthForPages = async (req, res, next) => {
   // If arriving from email verification link, verify right on the backend and create session directly
   if (req.query.mode === "verifyEmail" && req.query.oobCode) {
     try {     
-      const apiKey = process.env.FIREBASE_API_KEY;
+      const apiKey = req.query.apiKey || process.env.FIREBASE_API_KEY;
+      
       const response = await fetch(
         `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${apiKey}`,
         {
@@ -66,48 +67,65 @@ const requireAuthForPages = async (req, res, next) => {
         },
       );
 
-      if (response.ok) {
-        const data = await response.json();
-        const expiresIn = 60 * 60 * 24 * 5 * 1000;
-        const options = { maxAge: expiresIn, httpOnly: true, secure: true };
-
-        const secret = await tokens.secret();
-        const csrfToken = tokens.create(secret);
-        res.cookie("SECRET", secret, options);
-        res.cookie("csrfToken", csrfToken, {
-          secure: true,
-          maxAge: expiresIn,
-        });
-
-        const sessionCookie = await admin
-          .auth()
-          .createSessionCookie(data.idToken, { expiresIn });
-        res.cookie("session", sessionCookie, options);
-
-        const userDoc = await db.collection("users").doc(data.localId).get();
-        let userData = userDoc.data();
-        if (!userDoc.exists || !userData) {
-          userData = {
-            uid: data.localId,
-            email: data.email || "",
-            fullName: "User",
-            photoURL:
-              "https://api.dicebear.com/7.x/identicon/svg?seed=" +
-              encodeURIComponent(data.localId),
-            createdAt: new Date().toISOString(),
-          };
-          await db.collection("users").doc(data.localId).set(userData);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        let errCode = "failed";
+        if (data.error && data.error.message) {
+          if (data.error.message === "EXPIRED_OOB_CODE") errCode = "expired";
+          else if (data.error.message === "INVALID_OOB_CODE") errCode = "invalid";
+          else errCode = "used"; 
         }
-
-        req.user = {
-          uid: data.localId,
-          email_verified: true,
-          ...userData,
-        };
-        return next();
+        const error = new Error("Email verification API failed");
+        error.errCode = errCode;
+        throw error;
       }
+
+      const customToken = await admin.auth().createCustomToken(data.localId);
+      const signInResponse = await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${apiKey}`,
+        {
+          method: "POST",
+          body: JSON.stringify({ token: customToken, returnSecureToken: true }),
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (!signInResponse.ok) {
+        const error = new Error("Custom token sign in failed");
+        error.errCode = "failed";
+        throw error;
+      }
+
+      const signInData = await signInResponse.json();
+
+      const expiresIn = 60 * 60 * 24 * 5 * 1000;
+      const options = { maxAge: expiresIn, httpOnly: true, secure: true };
+
+      const secret = await tokens.secret();
+      const csrfToken = tokens.create(secret);
+      res.cookie("SECRET", secret, options);
+      res.cookie("csrfToken", csrfToken, {
+        secure: true,
+        maxAge: expiresIn,
+      });
+
+      const sessionCookie = await admin
+        .auth()
+        .createSessionCookie(signInData.idToken, { expiresIn });
+      res.cookie("session", sessionCookie, options);
+      
+      res.cookie("verified", "true", { maxAge: 60000 });
+
+      return res.redirect("/app/home");
     } catch (err) {
-      console.error("Error verifying action code in requireAuthForPages:", err);
+      console.error("Error verifying action code in requireAuthForPages:", err.message);
+      try {
+        await verifySessionCookie(req);
+        return res.redirect("/app/home");
+      } catch (sessionErr) {
+        return res.redirect(`/login?error=${err.errCode || 'failed'}`);
+      }
     }
   }
 

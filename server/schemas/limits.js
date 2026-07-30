@@ -38,7 +38,10 @@ const LIMITS = {
 };
 
 LIMITS.PASSWORD_REGEX = new RegExp(
-  `^[\\w .-]{${LIMITS.PASSWORD_MIN_LENGTH},${LIMITS.PASSWORD_MAX_LENGTH}}$`,
+  `^[\\p{L}\\w .\\-]{${LIMITS.PASSWORD_MIN_LENGTH},${LIMITS.PASSWORD_MAX_LENGTH}}$`,
+  "u",
 );
+
+LIMITS.USERNAME_REGEX = /^[\p{L}]+( [\p{L}]+)*$/u;
 
 module.exports = LIMITS;

@@ -135,9 +135,37 @@ const updateEmail = async (newEmail, idToken, userId) => {
       };
     }
 
-    await admin.auth().updateUser(userId, { email: newEmail });
+    await admin.auth().updateUser(userId, { email: newEmail, emailVerified: false });
     await db.collection("users").doc(userId).update({ email: newEmail });
-    return { success: true, message: "api:email_updated_successfully" };
+
+    // The old idToken is stale after updateUser, so we mint a fresh one
+    const apiKey = process.env.FIREBASE_API_KEY || "AIzaSyBQD23tZrfSimPKW8sFIzC_1MoNFGZ9e7A";
+    const customToken = await admin.auth().createCustomToken(userId);
+    const tokenRes = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: customToken, returnSecureToken: true }),
+      }
+    );
+    const tokenData = await tokenRes.json();
+
+    if (tokenData.idToken) {
+      await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            requestType: "VERIFY_EMAIL",
+            idToken: tokenData.idToken,
+          }),
+        }
+      );
+    }
+
+    return { success: true, message: "api:email_updated_check_inbox" };
   } catch (error) {
     console.error("Error updating email:", error);
     return {
@@ -167,9 +195,37 @@ const addEmail = async (email, key, userId) => {
       };
     }
 
-    await admin.auth().updateUser(userId, { email });
+    await admin.auth().updateUser(userId, { email, emailVerified: false });
     await db.collection("users").doc(userId).set({ email }, { merge: true });
-    return { success: true, message: "api:email_added_successfully" };
+
+    // The old idToken is stale after updateUser, so we mint a fresh one
+    const apiKey = process.env.FIREBASE_API_KEY || "AIzaSyBQD23tZrfSimPKW8sFIzC_1MoNFGZ9e7A";
+    const customToken = await admin.auth().createCustomToken(userId);
+    const tokenRes = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: customToken, returnSecureToken: true }),
+      }
+    );
+    const tokenData = await tokenRes.json();
+
+    if (tokenData.idToken) {
+      await fetch(
+        `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            requestType: "VERIFY_EMAIL",
+            idToken: tokenData.idToken,
+          }),
+        }
+      );
+    }
+
+    return { success: true, message: "api:email_added_check_inbox" };
   } catch (error) {
     console.error("Error adding email:", error);
     return {

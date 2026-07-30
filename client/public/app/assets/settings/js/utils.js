@@ -288,10 +288,12 @@ export const handleEmailSaveBtn = () => {
         },
         emailSaveBtn,
         {
-          successMsg: t("settings:alerts.email_updated_success"),
+          successMsg: t("settings:alerts.email_updated_check_inbox"),
           onSuccess: () => {
             if (emailSaveBtn) disableEmailEditMode(emailSaveBtn);
-            redirectTo("/login");
+            setTimeout(() => {
+              redirectTo("/login");
+            }, 3500);
           },
           method: "PATCH",
           toOldBtn: emailSubmitBtn ? true : false,
@@ -307,8 +309,12 @@ export const handleEmailSaveBtn = () => {
         },
         emailAddBtn,
         {
-          successMsg: t("settings:alerts.email_added_success"),
-          onSuccess: () => redirectTo("/login"),
+          successMsg: t("settings:alerts.email_added_check_inbox"),
+          onSuccess: () => {
+            setTimeout(() => {
+              redirectTo("/login");
+            }, 3500);
+          },
           method: "POST",
           getExtraData: async () => await getFreshTokenId(data["password"]),
         },

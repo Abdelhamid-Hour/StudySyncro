@@ -133,6 +133,7 @@ const {
   updatePasswordSchema,
   addPasswordSchema,
   closeAccountSchema,
+  insertUserDataSchema,
 } = require("../schemas/users.schema");
 const {
   getUserNotificationsQuerySchema,
@@ -140,7 +141,7 @@ const {
 
 const apiRouter = express.Router();
 
-apiRouter.post("/insert-user-data", upload.single("file"), createNewUser);
+apiRouter.post("/insert-user-data", upload.single("file"), validate({ body: insertUserDataSchema }), createNewUser);
 
 apiRouter.get(
   "/session-details/:id",

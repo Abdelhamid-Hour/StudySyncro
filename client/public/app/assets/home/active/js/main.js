@@ -24,16 +24,9 @@ export const init = async () => {
   initMobileTabs();
   initDomVariables();
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const oobCode = urlParams.get("oobCode");
-  const mode = urlParams.get("mode");
-  if (mode === "verifyEmail" && oobCode) {
-    const shownKey = "verified_shown_" + oobCode;
-    if (!sessionStorage.getItem(shownKey)) {
-      sessionStorage.setItem(shownKey, "true");
-      showMessageBlock(t("home:alerts.email_verified_success"), "success");
-    }
-    window.history.replaceState({}, document.title, window.location.pathname);
+  if (document.cookie.includes("verified=true")) {
+    document.cookie = "verified=; Max-Age=-99999999; path=/;";
+    showMessageBlock(t("home:alerts.email_verified_success"), "success");
   }
 
   expandDescriptionBtn.addEventListener("click", expandAndShrinkDescription);

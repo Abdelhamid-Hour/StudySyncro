@@ -9,6 +9,10 @@
     "account_created_redirecting": "Account created successfully, redirecting...",
     "signed_in_redirecting": "Signed in successfully, redirecting...",
     "account_created_verify": "Account created! A verification link has been sent to your email. Please verify before signing in.",
-    "email_unverified": "Your email address is not verified. A new verification link has been sent to your inbox. Please verify before signing in."
+    "email_unverified": "Your email address is not verified. A new verification link has been sent to your inbox. Please verify before signing in.",
+    "verification_expired": "Your verification link has expired. Please sign in to request a new one.",
+    "verification_invalid": "The verification link is invalid. Please check the link and try again.",
+    "verification_used": "This email has already been verified or the link was already used.",
+    "verification_failed": "Something went wrong verifying your email. Please try again."
   }
 }
