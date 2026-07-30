@@ -77,5 +77,15 @@
   },
   "footer": {
     "copyright": "StudyHype Team © 2026. All rights reserved."
+  },
+  "images": {
+    "dashboard_preview": "StudyHype Dashboard Interface Preview",
+    "study_groups": "Study Groups Interface",
+    "chat_interface": "Real-Time Chat Interface",
+    "quizzes_preview": "Interactive Quizzes Preview",
+    "quiz_editor": "Custom Quiz Editor Preview",
+    "timer_tasks": "Study Timer & Tasks Preview",
+    "group_management": "Group Management Interface",
+    "logo_alt": "StudyHype Logo"
   }
 }

@@ -105,7 +105,8 @@
     "page_not_found_desc": "الصفحة {page} التي تحاول الوصول إليها غير موجودة.",
     "server_error_desc": "حدث خطأ غير متوقع أثناء محاولة الوصول إلى {page}.",
     "forbidden_desc": "ليس لديك الصلاحية للوصول إلى {page}.",
-    "page_not_found_desc_generic": "لم نتمكن من العثور على الصفحة التي تبحث عنها. ربما تمت إزالتها، أو تغيير اسمها، أو أنها لم تكن موجودة في الأساس."
+    "page_not_found_desc_generic": "لم نتمكن من العثور على الصفحة التي تبحث عنها. ربما تمت إزالتها، أو تغيير اسمها، أو أنها لم تكن موجودة في الأساس.",
+    "server_error_desc_generic": "حدث خطأ غير متوقع في الخادم. يرجى المحاولة مرة أخرى لاحقًا."
   },
   "quiz_card": {
     "groups_abbr": "م",
@@ -327,5 +328,67 @@
     "Urban Planning": "التخطيط الحضري",
     "Biomedical Engineering": "الهندسة الطبية الحيوية",
     "Specify and press Enter": "حدد واضغط Enter"
+  },
+  "shared_texts": {
+    "admin_can_t_submit_quizzes": "لا يمكن للمشرف تقديم الاختبارات",
+    "you_haven_t_submitted_the_quiz": "لم تقم بتقديم الاختبار",
+    "failed_to_load_group_info_plea": "فشل تحميل معلومات المجموعة. يرجى المحاولة مرة أخرى لاحقًا.",
+    "description": "الوصف",
+    "group_description": "وصف المجموعة",
+    "pending": "معلق",
+    "no_active_sessions": "لا توجد جلسات نشطة",
+    "there_are_no_study_sessions_cu": "لا توجد جلسات دراسية نشطة حالياً. يمكنك بدء واحدة أو انتظار انضمام الآخرين.",
+    "no_messages_yet": "لا توجد رسائل بعد",
+    "no_recent_messages_yet_join_or": "لا توجد رسائل حديثة بعد. انضم أو أنشئ مجموعة دراسية للبدء في التعاون ومشاركة الرسائل!",
+    "in_progress": "قيد الإنجاز",
+    "session_ended": "انتهت الجلسة",
+    "session_details": "تفاصيل الجلسة",
+    "start_at": "تبدأ في:",
+    "end_at": "تنتهي في:",
+    "view_details": "عرض التفاصيل",
+    "reply": "رد",
+    "mark_as_read": "تحديد كمقروء",
+    "reply_in_group": "الرد في المجموعة",
+    "just_now": "الآن",
+    "one_count_m_ago_other_count_m": {
+      "zero": "منذ أقل من دقيقة",
+      "one": "منذ دقيقة واحدة",
+      "two": "منذ دقيقتين",
+      "few": "منذ {count} دقائق",
+      "many": "منذ {count} دقيقة",
+      "other": "منذ {count} دقيقة"
+    },
+    "one_count_h_ago_other_count_h": {
+      "zero": "منذ أقل من ساعة",
+      "one": "منذ ساعة واحدة",
+      "two": "منذ ساعتين",
+      "few": "منذ {count} ساعات",
+      "many": "منذ {count} ساعة",
+      "other": "منذ {count} ساعة"
+    },
+    "one_count_d_ago_other_count_d": {
+      "zero": "اليوم",
+      "one": "منذ يوم واحد",
+      "two": "منذ يومين",
+      "few": "منذ {count} أيام",
+      "many": "منذ {count} يوماً",
+      "other": "منذ {count} يوم"
+    },
+    "request_accepted": "Request Accepted",
+    "drag_to_reorder": "اسحب لإعادة الترتيب",
+    "delete_question": "حذف السؤال",
+    "edit_subject": "تعديل المادة",
+    "edit_title": "تعديل العنوان",
+    "enter_question_text_here": "اكتب نص السؤال هنا...",
+    "enter_choice_letter": "اكتب الخيار {letter}",
+    "delete_choice": "حذف الخيار",
+    "no_quizzes_created": "لا توجد اختبارات منشأة",
+    "you_haven_t_created_any_quizze": "لم تقم بإنشاء أي اختبارات بعد. انقر على زر 'إنشاء اختبار' للبدء!",
+    "no_passed_quizzes": "لا توجد اختبارات مجتازة",
+    "you_haven_t_completed_any_quiz": "لم تكمل أي اختبارات بعد. انضم إلى جلسة دراسية وخذ اختباراً لرؤية إنجازاتك هنا!",
+    "preview": "معاينة",
+    "duplicate": "تكرار",
+    "groups_sessions": "مجموعات | جلسات",
+    "your_score": "نقييمك"
   }
 }

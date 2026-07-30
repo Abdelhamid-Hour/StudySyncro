@@ -11,11 +11,6 @@
       "many": "{count} رسالة جديدة",
       "other": "{count} رسالة جديدة"
     },
-    "reply_in_group": "الرد في المجموعة",
-    "reply": "رد",
-    "mark_as_read": "تحديد كمقروء",
-    "empty_messages_heading": "لا توجد رسائل بعد",
-    "empty_messages_desc": "لا توجد رسائل حديثة بعد. انضم أو أنشئ مجموعة دراسية للبدء في التعاون ومشاركة الرسائل!",
     "active_sessions_sub": "الجلسات الدراسية الجارية التي يمكنك الانضمام إليها الآن",
     "search_placeholder": "البحث باسم الجلسة أو المجموعة",
     "joined_users_count": {
@@ -33,38 +28,6 @@
       "few": "{count} مهام",
       "many": "{count} مهمة",
       "other": "{count} مهمة"
-    },
-    "start_at": "تبدأ في:",
-    "end_at": "تنتهي في:",
-    "view_details": "عرض التفاصيل",
-    "empty_sessions_heading": "لا توجد جلسات نشطة",
-    "empty_sessions_desc": "لا توجد جلسات دراسية نشطة حالياً. يمكنك بدء واحدة أو انتظار انضمام الآخرين.",
-    "time": {
-      "just_now": "الآن",
-      "ago_minutes": {
-        "zero": "منذ أقل من دقيقة",
-        "one": "منذ دقيقة واحدة",
-        "two": "منذ دقيقتين",
-        "few": "منذ {count} دقائق",
-        "many": "منذ {count} دقيقة",
-        "other": "منذ {count} دقيقة"
-      },
-      "ago_hours": {
-        "zero": "منذ أقل من ساعة",
-        "one": "منذ ساعة واحدة",
-        "two": "منذ ساعتين",
-        "few": "منذ {count} ساعات",
-        "many": "منذ {count} ساعة",
-        "other": "منذ {count} ساعة"
-      },
-      "ago_days": {
-        "zero": "اليوم",
-        "one": "منذ يوم واحد",
-        "two": "منذ يومين",
-        "few": "منذ {count} أيام",
-        "many": "منذ {count} يوماً",
-        "other": "منذ {count} يوم"
-      }
     }
   },
   "active": {
@@ -87,14 +50,9 @@
       "secs": "ثواني"
     },
     "already_passed_note": "لقد اجتزت هذا الاختبار بالفعل. لا يمكنك إعادته.",
-    "status": {
-      "in_progress": "قيد الإنجاز",
-      "pending": "معلق"
-    },
     "questions_count": "{count} أسئلة",
     "start_in": "يبدأ خلال",
     "submitted": "تم التقديم",
-    "submitted_progress": "{submitted} من {total} سؤال",
-    "your_score": "نقييمك"
+    "submitted_progress": "{submitted} من {total} سؤال"
   }
 }

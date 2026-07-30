@@ -28,12 +28,12 @@
                     <button type="button" class="drop-down-item exclude-btn preview-quiz-menu-btn"
                       data-quiz-id="<%= quiz.id %>">
                       <i class="bi bi-eye"></i>
-                      <%= t("quizzes:menu.preview") %>
+                      <%= t("common:shared_texts.preview") %>
                     </button>
                     <button type="button" class="drop-down-item exclude-btn duplicate-quiz-menu-btn"
                       data-quiz-id="<%= quiz.id %>">
                       <i class="bi bi-files"></i>
-                      <%= t("quizzes:menu.duplicate") %>
+                      <%= t("common:shared_texts.duplicate") %>
                     </button>
                     <button type="button" class="drop-down-item exclude-btn red-btn remove-quiz-menu-btn"
                       data-quiz-id="<%= quiz.id %>">
@@ -68,7 +68,7 @@
           <%= t("quizzes:labels.shared_in") %>
         </label>
         <div class="content">
-          <span class="count content has-tooltip" data-tooltip="<%= t('quizzes:labels.shared_in_tooltip') %>">
+          <span class="count content has-tooltip" data-tooltip="<%= t('common:shared_texts.groups_sessions') %>">
             <bdi><%= formatNumber(quiz.groupsCount) %></bdi>
               <sup><%= t("common:quiz_card.groups_abbr") %></sup>
               | <bdi><%= formatNumber(quiz.sessionsCount) %></bdi>
@@ -92,8 +92,8 @@
         <div class="empty-icon-container">
           <i class="bi bi-file-earmark-plus"></i>
         </div>
-        <h3><%= t("quizzes:my.empty_heading") %></h3>
-        <p><%= t("quizzes:my.empty_desc") %></p>
+        <h3><%= t("common:shared_texts.no_quizzes_created") %></h3>
+        <p><%= t("common:shared_texts.you_haven_t_created_any_quizze") %></p>
       </div>
   <% } %>
 </div>

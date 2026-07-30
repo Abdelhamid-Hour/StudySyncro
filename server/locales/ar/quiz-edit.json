@@ -1,10 +1,3 @@
 {
-  "drag_tooltip": "اسحب لإعادة الترتيب",
-  "delete_question_tooltip": "حذف السؤال",
-  "edit_subject_tooltip": "تعديل المادة",
-  "edit_title_tooltip": "تعديل العنوان",
-  "question_counter": "السؤال {count}",
-  "question_placeholder": "اكتب نص السؤال هنا...",
-  "choice_placeholder": "اكتب الخيار {letter}",
-  "delete_choice_tooltip": "حذف الخيار"
+  "question_counter": "السؤال {count}"
 }

@@ -357,7 +357,7 @@
            <div class="badges">
             <span class="status-badge badge <%= session.quiz.status === 'active' ? 'orange-badge' : session.quiz.status === 'completed' ? 'green-badge' : 'gray-badge' %>">
                 <i class="bi <%= session.quiz.status === 'active' ? 'bi-clock-history' : session.quiz.status === 'completed' ? 'bi-check-circle' : 'bi-hourglass' %>"></i>
-              <%= session.quiz.status === 'active' ? t("home:active.status.in_progress") : session.quiz.status === 'completed' ? t("common:shared_terms.completed") : t("home:active.status.pending") %>
+              <%= session.quiz.status === 'active' ? t("common:shared_texts.in_progress") : session.quiz.status === 'completed' ? t("common:shared_terms.completed") : t("common:shared_texts.pending") %>
             </span>
           </div>
           <% } %>
@@ -397,7 +397,7 @@
         <footer class="quiz-footer">
           <% if (!session.isAdmin && session.quiz && session.quiz.passed) { %>
            <div class="score-container<%= !session.quiz ? ' no-quiz' : '' %> info-container">
-            <label><%= t("home:active.your_score") %></label>
+            <label><%= t("common:shared_texts.your_score") %></label>
             <span class="score"><%= session.quiz && session.quiz.passed ? `${session.quiz.percentage}%` : '_____' %></span>
           </div>
           <% } %>

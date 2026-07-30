@@ -1,17 +1,12 @@
 {
   "menu": {
-    "preview": "Preview",
-    "duplicate": "Duplicate",
     "remove": "Remove"
   },
   "labels": {
     "shared_in": "Shared in",
-    "shared_in_tooltip": "Groups | Sessions",
     "session_name": "Session Name",
     "search_placeholder": "Search By Title",
-    "sort_quizzes": "Sort Quizzes",
-    "admin_cant_submit": "Admin can't submit quizzes",
-    "not_submitted_tooltip": "You haven't submitted the quiz"
+    "sort_quizzes": "Sort Quizzes"
   },
   "actions": {
     "retake": "Retake"
@@ -29,16 +24,7 @@
     "press": "Press",
     "next": "Next"
   },
-  "my": {
-    "empty_heading": "No Quizzes Created",
-    "empty_desc": "You haven't created any quizzes yet. Click the 'Create Quiz' button to get started!"
-  },
-  "passed": {
-    "empty_heading": "No Passed Quizzes",
-    "empty_desc": "You haven't completed any quizzes yet. Join a study session and take a quiz to see your achievements here!"
-  },
   "session_overlay": {
-    "title": "Session Details",
     "started": "Started: {time}",
     "ends": "Ends: {time}",
     "duration": "Duration: {time}",
@@ -63,16 +49,9 @@
   "editor": {
     "add_question": "Add Question",
     "question_num": "Question {num}",
-    "drag_to_reorder": "Drag to Reorder",
-    "delete_question": "Delete Question",
     "subject_label": "Subject:",
-    "edit_subject": "Edit Subject",
-    "edit_title": "Edit Title",
     "shared_in_label": "Shared In:",
-    "question_placeholder": "Enter question text here...",
     "choices": "Choices",
-    "choice_placeholder": "Enter choice {letter}",
-    "delete_choice": "Delete Choice",
     "add_choice": "Add Choice",
     "correct_answer": "Correct Answer"
   },

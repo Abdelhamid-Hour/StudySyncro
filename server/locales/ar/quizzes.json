@@ -1,17 +1,12 @@
 {
   "menu": {
-    "preview": "معاينة",
-    "duplicate": "تكرار",
     "remove": "حذف"
   },
   "labels": {
     "shared_in": "مشارك في",
-    "shared_in_tooltip": "مجموعات | جلسات",
     "session_name": "اسم الجلسة",
     "search_placeholder": "البحث بالعنوان",
-    "sort_quizzes": "ترتيب الاختبارات",
-    "admin_cant_submit": "لا يمكن للمشرف تقديم الاختبارات",
-    "not_submitted_tooltip": "لم تقم بتقديم الاختبار"
+    "sort_quizzes": "ترتيب الاختبارات"
   },
   "actions": {
     "retake": "إعادة"
@@ -29,16 +24,7 @@
     "press": "اضغط",
     "next": "التالي"
   },
-  "my": {
-    "empty_heading": "لا توجد اختبارات منشأة",
-    "empty_desc": "لم تقم بإنشاء أي اختبارات بعد. انقر على زر 'إنشاء اختبار' للبدء!"
-  },
-  "passed": {
-    "empty_heading": "لا توجد اختبارات مجتازة",
-    "empty_desc": "لم تكمل أي اختبارات بعد. انضم إلى جلسة دراسية وخذ اختباراً لرؤية إنجازاتك هنا!"
-  },
   "session_overlay": {
-    "title": "تفاصيل الجلسة",
     "started": "بدأت: {time}",
     "ends": "تنتهي: {time}",
     "duration": "المدة: {time}",
@@ -63,16 +49,9 @@
   "editor": {
     "add_question": "إضافة سؤال",
     "question_num": "السؤال {num}",
-    "drag_to_reorder": "اسحب لإعادة الترتيب",
-    "delete_question": "حذف السؤال",
     "subject_label": "المادة:",
-    "edit_subject": "تعديل المادة",
-    "edit_title": "تعديل العنوان",
     "shared_in_label": "مشارك في:",
-    "question_placeholder": "اكتب نص السؤال هنا...",
     "choices": "الخيارات",
-    "choice_placeholder": "اكتب الخيار {letter}",
-    "delete_choice": "حذف الخيار",
     "add_choice": "إضافة خيار",
     "correct_answer": "الإجابة الصحيحة"
   },

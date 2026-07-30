@@ -13,7 +13,6 @@
       "message": "طلبك للانضمام إلى مجموعة {groupName} قيد مراجعة المشرف."
     },
     "join_accepted": {
-      "title": "تم قبول طلبك",
       "message": "تم قبول طلب انضمامك إلى مجموعة {groupName}. مرحباً بك!"
     },
     "join_rejected": {
@@ -57,7 +56,6 @@
       "message": "تم رفض الدعوة للانضمام إلى مجموعة {groupName}."
     },
     "join_request_accepted": {
-      "title": "تم قبول الطلب",
       "message": "تم قبول طلب انضمام {senderName} إلى مجموعة {groupName}."
     },
     "join_request_rejected": {

@@ -151,9 +151,17 @@ const renderFragmentOrLayout = (template, payload, pathName, req, res) => {
     async (err, htmlFragment) => {
       if (err) {
         console.error("Error rendering template:", err);
+        const t = res.locals.t;
         return res
           .status(500)
-          .send("An error occurred while rendering the page.");
+          .render("templates/error", {
+            isStandalone: true,
+            user: req.user,
+            statusCode: 500,
+            statusMessage: t ? t("common:errors.server_error") : "Server Error",
+            description: t ? t("common:errors.server_error_desc", { page: pathName }) : "An error occurred while rendering the page.",
+            iconClass: "bi bi-x-circle",
+          });
       }
 
       if (isFetch)
@@ -197,9 +205,17 @@ const renderFragmentOrLayout = (template, payload, pathName, req, res) => {
         (layoutErr, fullPage) => {
           if (layoutErr) {
             console.error("Error rendering layout:", layoutErr);
+            const t = res.locals.t;
             return res
               .status(500)
-              .send("An error occurred while rendering the layout.");
+              .render("templates/error", {
+                isStandalone: true,
+                user: req.user,
+                statusCode: 500,
+                statusMessage: t ? t("common:errors.server_error") : "Server Error",
+                description: t ? t("common:errors.server_error_desc", { page: "layout" }) : "An error occurred while rendering the layout.",
+                iconClass: "bi bi-x-circle",
+              });
           }
 
           return res.status(200).send(fullPage);

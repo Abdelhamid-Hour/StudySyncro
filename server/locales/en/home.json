@@ -7,11 +7,6 @@
       "one": "1 New Message",
       "other": "{count} New Messages"
     },
-    "reply_in_group": "Reply In Group",
-    "reply": "Reply",
-    "mark_as_read": "Mark as read",
-    "empty_messages_heading": "No Messages Yet",
-    "empty_messages_desc": "No recent messages yet. Join or create a study group to start collaborating and sharing messages!",
     "active_sessions_sub": "Ongoing study sessions you can join now",
     "search_placeholder": "Search by session or group name",
     "joined_users_count": {
@@ -21,26 +16,6 @@
     "tasks_count": {
       "one": "1 Task",
       "other": "{count} Tasks"
-    },
-    "start_at": "Start At:",
-    "end_at": "End At:",
-    "view_details": "View Details",
-    "empty_sessions_heading": "No Active Sessions",
-    "empty_sessions_desc": "There are no study sessions currently active. You can start one or wait for others to join.",
-    "time": {
-      "just_now": "Just now",
-      "ago_minutes": {
-        "one": "{count}m ago",
-        "other": "{count}m ago"
-      },
-      "ago_hours": {
-        "one": "{count}h ago",
-        "other": "{count}h ago"
-      },
-      "ago_days": {
-        "one": "{count}d ago",
-        "other": "{count}d ago"
-      }
     }
   },
   "active": {
@@ -63,14 +38,9 @@
       "secs": "SECS"
     },
     "already_passed_note": "You already passed this quiz. You cannot retake it.",
-    "status": {
-      "in_progress": "In Progress",
-      "pending": "Pending"
-    },
     "questions_count": "{count} Questions",
     "start_in": "Start In",
     "submitted": "Submitted",
-    "submitted_progress": "{submitted} of {total} Questions",
-    "your_score": "Your Score"
+    "submitted_progress": "{submitted} of {total} Questions"
   }
 }

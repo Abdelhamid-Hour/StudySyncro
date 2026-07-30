@@ -39,21 +39,21 @@
                 </div>
               </header>
               <p class="text-message">
-                <bdi><%= msg.lastMessage?.text || msg.lastMessageText || t("home:inactive.empty_messages_heading") %></bdi>
+                <bdi><%= msg.lastMessage?.text || msg.lastMessageText || t("common:shared_texts.no_messages_yet") %></bdi>
               </p>
               <div class="action-buttons" data-group-id="<%= msg.groupId || '' %>">
                 <button type="button" class="should-fill reply-group">
                   <i class="bi bi-reply"></i>
-                  <%= t("home:inactive.reply_in_group") %>
+                  <%= t("common:shared_texts.reply_in_group") %>
                 </button>
                 <button type="button" class="should-fill reply">
                   <i class="bi bi-reply"></i>
-                  <%= t("home:inactive.reply") %>
+                  <%= t("common:shared_texts.reply") %>
                 </button>
                 <% if (hasUnread) { %>
                 <button type="button" class="mark-read">
                   <i class="bi bi-check2-all"></i>
-                  <%= t("home:inactive.mark_as_read") %>
+                  <%= t("common:shared_texts.mark_as_read") %>
                 </button>
                 <% } %>
               </div>
@@ -64,8 +64,8 @@
             <div class="empty-icon-container">
               <i class="bi bi-chat-text-fill"></i>
             </div>
-            <h3><%= t("home:inactive.empty_messages_heading") %></h3>
-            <p><%= t("home:inactive.empty_messages_desc") %></p>
+            <h3><%= t("common:shared_texts.no_messages_yet") %></h3>
+            <p><%= t("common:shared_texts.no_recent_messages_yet_join_or") %></p>
           </div>
         <% } %>
       </div>
@@ -128,14 +128,14 @@
                 <div class="footer-meta-info">
                   <span class="badge green-badge">
                     <i class="bi bi-play-circle"></i>
-                    <%= t("home:inactive.start_at") %>
+                    <%= t("common:shared_texts.start_at") %>
                     <span class="duration">
                       <bdi><%= session.startTime %></bdi>
                     </span>
                   </span>
                   <span class="badge orange-badge">
                     <i class="bi bi-stopwatch"></i>
-                    <%= t("home:inactive.end_at") %>
+                    <%= t("common:shared_texts.end_at") %>
                     <span class="duration">
                       <bdi><%= session.endTime %></bdi>
                     </span>
@@ -148,7 +148,7 @@
                   </button>
                   <button type="button" class="should-fill view-details">
                     <i class="bi bi-info-circle"></i>
-                    <%= t("home:inactive.view_details") %>
+                    <%= t("common:shared_texts.view_details") %>
                   </button>
                 </div>
               </footer>
@@ -159,8 +159,8 @@
                   <div class="empty-icon-container">
                     <i class="bi bi-clock-history"></i>
                   </div>
-                  <h3><%= t("home:inactive.empty_sessions_heading") %></h3>
-                  <p><%= t("home:inactive.empty_sessions_desc") %></p>
+                  <h3><%= t("common:shared_texts.no_active_sessions") %></h3>
+                  <p><%= t("common:shared_texts.there_are_no_study_sessions_cu") %></p>
                 </div>
                 <% } %>
       </div>

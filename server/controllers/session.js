@@ -97,7 +97,7 @@ const getActiveSessionsHandler = async (req, res) => {
     Number(count),
     lastVisible,
     { search },
-    req.t,
+    res.locals.t,
   );
 
   if (result.success) {
@@ -162,7 +162,7 @@ const sessionStreamHandler = async (req, res) => {
           id: sessionId,
           duration: millisecondsToHMFormat(
             (sessionData.duration || 0) * 60 * 1000,
-            req.t,
+            res.locals.t,
           ),
           startTime: startTimeVal ? formatHoursMinutes(startTimeVal) : "N/A",
           endTime: endTimeVal ? formatHoursMinutes(endTimeVal) : "N/A",

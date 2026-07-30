@@ -13,7 +13,6 @@
       "message": "Your request to join {groupName} is pending admin approval."
     },
     "join_accepted": {
-      "title": "Request Accepted",
       "message": "Your request to join {groupName} has been accepted. Welcome!"
     },
     "join_rejected": {
@@ -57,7 +56,6 @@
       "message": "Invitation to join group {groupName} was rejected."
     },
     "join_request_accepted": {
-      "title": "Request Accepted",
       "message": "Join request from {senderName} for group {groupName} was accepted."
     },
     "join_request_rejected": {

@@ -10,9 +10,7 @@
 // <bdi> when rtl
 //------------------------------------
 // change .send("An error occurred while rendering the page."); to a page also add a try catch in handleRoutes adn return a page
-// verify json files if it has the same lang in the same file -- active
-// at end, verify the keys and missed translaton adn duplicated data
-// add data locales json for the eror and validate schema messages
+
 // secure the api keys and firebase connection
 // update env in production 
 // change this in deployment  process.env.FIREBASE_API_KEY || "AIzaSyBQD23tZrfSimPKW8sFIzC_1MoNFGZ9e7A";

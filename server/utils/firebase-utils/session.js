@@ -359,7 +359,7 @@ const cancelSession = async (sessionId, userId) => {
         );
         return {
           success: true,
-          message: "api:session_ended",
+          message: "common:shared_texts.session_ended",
         };
       } else {
         return {
@@ -417,7 +417,7 @@ const cancelSession = async (sessionId, userId) => {
       memberIds,
     );
 
-    return { success: true, message: "api:session_ended" };
+    return { success: true, message: "common:shared_texts.session_ended" };
   } catch (error) {
     console.log(error);
     return {

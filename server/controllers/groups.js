@@ -122,7 +122,7 @@ const groupFragmentHandler =
           console.error("Error rendering template:", err);
           return res.status(500).json({
             message: res.locals.t(
-              "api:failed_to_load_group_info_please_try_again_later",
+              "common:shared_texts.failed_to_load_group_info_plea",
             ),
             isNative: false,
             type: "error",

@@ -34,7 +34,7 @@
               <button
                 type="button"
                 class="exclude-btn drag-handle has-tooltip"
-                data-tooltip="<%= t('quizzes:editor.drag_to_reorder') %>"
+                data-tooltip="<%= t('common:shared_texts.drag_to_reorder') %>"
               >
                 <i class="drag-icon"></i>
               </button>
@@ -45,7 +45,7 @@
               <button
                 type="button"
                 class="delete-question-btn exclude-btn has-tooltip"
-                data-tooltip="<%= t('quizzes:editor.delete_question') %>"
+                data-tooltip="<%= t('common:shared_texts.delete_question') %>"
               >
                 <i class="bi bi-trash3"></i>
               </button>
@@ -69,7 +69,7 @@
           <span class="subject-value value"><bdi><%= t("common:subjects." + subject, { defaultValue: subject }) %></bdi></span>
           <button
             class="exclude-btn edit-subject-btn has-tooltip"
-            data-tooltip="<%= t('quizzes:editor.edit_subject') %>"
+            data-tooltip="<%= t('common:shared_texts.edit_subject') %>"
             type="button"
           >
             <i class="bi bi-pencil-square"></i>
@@ -81,7 +81,7 @@
           <h4 class="title-text"><bdi><%= title %></bdi></h4>
           <button
             class="exclude-btn edit-title-btn has-tooltip"
-            data-tooltip="<%= t('quizzes:editor.edit_title') %>"
+            data-tooltip="<%= t('common:shared_texts.edit_title') %>"
             type="button"
           >
             <i class="bi bi-pencil-square"></i>
@@ -118,14 +118,14 @@
             <button
               type="button"
               class="delete-question-btn exclude-btn has-tooltip"
-              data-tooltip="<%= t('quizzes:editor.delete_question') %>"
+              data-tooltip="<%= t('common:shared_texts.delete_question') %>"
             >
               <i class="bi bi-trash3"></i>
             </button>
           </header>
           <textarea
             class="question-input input"
-            placeholder="<%= t('quizzes:editor.question_placeholder') %>"
+            placeholder="<%= t('common:shared_texts.enter_question_text_here') %>"
             id="question-text"
             style="height: 45px"
           ><%= q.text %></textarea>
@@ -143,13 +143,13 @@
                   <input
                     type="text"
                     class="choice-input input"
-                    placeholder="<%= t('quizzes:editor.choice_placeholder', { letter: String.fromCharCode(65 + cidx) }) %>"
+                    placeholder="<%= t('common:shared_texts.enter_choice_letter', { letter: String.fromCharCode(65 + cidx) }) %>"
                     value="<%= choice %>"
                   />
                   <button
                     type="button"
                     class="delete-choice-btn exclude-btn has-tooltip"
-                    data-tooltip="<%= t('quizzes:editor.delete_choice') %>"
+                    data-tooltip="<%= t('common:shared_texts.delete_choice') %>"
                   >
                     <i class="bi bi-trash3"></i>
                   </button>

@@ -1,8 +1,7 @@
 {
   "badges": {
     "host": "Host",
-    "member": "Member",
-    "pending": "Pending"
+    "member": "Member"
   },
   "my": {
     "empty_heading": "No Groups Joined",
@@ -15,7 +14,6 @@
     "empty_desc": "There are currently no public study groups available to join. Check back later!"
   },
   "info": {
-    "group_description": "Group Description",
     "show_in_search": "Show in Search Results",
     "max_members": "Max Members",
     "creation_date": "Creation date",
@@ -40,7 +38,6 @@
     "empty_desc": "No quizzes have been created or shared with this group yet."
   },
   "session_info": {
-    "description": "Description",
     "no_quiz": "No Quiz Assigned"
   },
   "plural_counts": {

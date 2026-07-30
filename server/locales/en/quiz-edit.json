@@ -1,10 +1,3 @@
 {
-  "drag_tooltip": "Drag to Reorder",
-  "delete_question_tooltip": "Delete Question",
-  "edit_subject_tooltip": "Edit Subject",
-  "edit_title_tooltip": "Edit Title",
-  "question_counter": "Question {count}",
-  "question_placeholder": "Enter question text here...",
-  "choice_placeholder": "Enter choice {letter}",
-  "delete_choice_tooltip": "Delete Choice"
+  "question_counter": "Question {count}"
 }

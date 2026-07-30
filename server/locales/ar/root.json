@@ -77,5 +77,15 @@
   },
   "footer": {
     "copyright": "فريق ‎StudyHype © 2026.‎ جميع الحقوق محفوظة."
+  },
+  "images": {
+    "dashboard_preview": "معاينة واجهة لوحة تحكم StudyHype",
+    "study_groups": "واجهة المجموعات الدراسية",
+    "chat_interface": "واجهة الدردشة المباشرة",
+    "quizzes_preview": "معاينة الاختبارات التفاعلية",
+    "quiz_editor": "معاينة محرر الاختبارات المخصص",
+    "timer_tasks": "معاينة مؤقت الدراسة والمهام",
+    "group_management": "واجهة إدارة المجموعات",
+    "logo_alt": "شعار StudyHype"
   }
 }

@@ -108,13 +108,13 @@ const formatTimeAgo = (timestamp, t = null) => {
   if (!timestamp) return "";
   const diff = Date.now() - Number(timestamp);
   const seconds = Math.floor(diff / 1000);
-  if (seconds < 60) return t ? t("home:inactive.time.just_now") : "Just now";
+  if (seconds < 60) return t ? t("common:shared_texts.just_now") : "Just now";
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return t ? t("home:inactive.time.ago_minutes", { count: minutes }) : `${minutes}m ago`;
+  if (minutes < 60) return t ? t("common:shared_texts.one_count_m_ago_other_count_m", { count: minutes }) : `${minutes}m ago`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return t ? t("home:inactive.time.ago_hours", { count: hours }) : `${hours}h ago`;
+  if (hours < 24) return t ? t("common:shared_texts.one_count_h_ago_other_count_h", { count: hours }) : `${hours}h ago`;
   const days = Math.floor(hours / 24);
-  if (days < 7) return t ? t("home:inactive.time.ago_days", { count: days }) : `${days}d ago`;
+  if (days < 7) return t ? t("common:shared_texts.one_count_d_ago_other_count_d", { count: days }) : `${days}d ago`;
   const date = new Date(Number(timestamp));
   return date.toLocaleDateString();
 };

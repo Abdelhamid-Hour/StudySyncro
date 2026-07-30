@@ -1,0 +1,216 @@
+=== PHASE 2: DEDUPLICATION REPORT ===
+
+--- ENGLISH DUPLICATES (19 repeated values) ---
+Value: "Subject:"
+  - common:skeletons.quiz_editor.subject_label
+  - quizzes:editor.subject_label
+
+Value: "Shared In:"
+  - common:skeletons.quiz_editor.shared_in_label
+  - quizzes:editor.shared_in_label
+
+Value: "Add Choice"
+  - common:skeletons.quiz_editor.add_choice
+  - quizzes:editor.add_choice
+
+Value: "Invalid email or password. Please try again."
+  - common:auth_errors.INVALID_LOGIN_CREDENTIALS
+  - shared:auth_errors.INVALID_LOGIN_CREDENTIALS
+
+Value: "It looks like you closed the popup before completing the action. Please try again."
+  - common:auth_errors.CANCELLED_POPUP_REQUEST
+  - shared:auth_errors.CANCELLED_POPUP_REQUEST
+
+Value: "The email address you entered is already associated with an account. Try logging in or use a different email."
+  - common:auth_errors.EMAIL_ALREADY_IN_USE
+  - shared:auth_errors.EMAIL_ALREADY_IN_USE
+
+Value: "Oops! The password you entered is incorrect. Please double-check and try again."
+  - common:auth_errors.WRONG_PASSWORD
+  - shared:auth_errors.WRONG_PASSWORD
+
+Value: "It seems like the popup was blocked by your browser. Please allow popups and try again."
+  - common:auth_errors.POPUP_BLOCKED
+  - shared:auth_errors.POPUP_BLOCKED
+
+Value: "It looks like you closed the popup before completing the action. Please open it again and try."
+  - common:auth_errors.POPUP_CLOSED_BY_USER
+  - shared:auth_errors.POPUP_CLOSED_BY_USER
+
+Value: "It seems you canceled the redirect action. Please try again to complete the process."
+  - common:auth_errors.REDIRECT_CANCELLED_BY_USER
+  - shared:auth_errors.REDIRECT_CANCELLED_BY_USER
+
+Value: "We couldn't find an account with that email address. Please check your email or create a new account."
+  - common:auth_errors.USER_NOT_FOUND
+  - shared:auth_errors.USER_NOT_FOUND
+
+Value: "Too many requests have been made from this device. Please wait a while before trying again."
+  - common:auth_errors.TOO_MANY_REQUESTS
+  - shared:auth_errors.TOO_MANY_REQUESTS
+
+Value: "Member"
+  - common:filters.member
+  - groups:badges.member
+
+Value: "Pending"
+  - common:shared_terms.pending
+  - groups:badges.pending
+
+Value: "Host"
+  - common:shared_terms.host
+  - groups:badges.host
+
+Value: "{count}m ago"
+  - home:recent.time.ago_minutes.one
+  - home:recent.time.ago_minutes.other
+
+Value: "{count}h ago"
+  - home:recent.time.ago_hours.one
+  - home:recent.time.ago_hours.other
+
+Value: "{count}d ago"
+  - home:recent.time.ago_days.one
+  - home:recent.time.ago_days.other
+
+Value: "Request Accepted"
+  - notifications:messages.join_accepted.title
+  - notifications:messages.join_request_accepted.title
+
+--- ARABIC DUPLICATES (34 repeated values) ---
+Value: "البريد الإلكتروني"
+  - common:skeletons.settings.tabs.email
+  - common:shared_terms.email
+
+Value: "المادة:"
+  - common:skeletons.quiz_editor.subject_label
+  - quizzes:editor.subject_label
+
+Value: "مشارك في:"
+  - common:skeletons.quiz_editor.shared_in_label
+  - quizzes:editor.shared_in_label
+
+Value: "إضافة خيار"
+  - common:skeletons.quiz_editor.add_choice
+  - quizzes:editor.add_choice
+
+Value: "البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى."
+  - common:auth_errors.INVALID_LOGIN_CREDENTIALS
+  - shared:auth_errors.INVALID_LOGIN_CREDENTIALS
+
+Value: "يبدو أنك أغلقت النافذة المنبثقة قبل إتمام العملية. يرجى المحاولة مرة أخرى."
+  - common:auth_errors.CANCELLED_POPUP_REQUEST
+  - shared:auth_errors.CANCELLED_POPUP_REQUEST
+
+Value: "البريد الإلكتروني الذي أدخلته مرتبط بحساب موجود بالفعل. جرب تسجيل الدخول أو استخدم بريداً آخر."
+  - common:auth_errors.EMAIL_ALREADY_IN_USE
+  - shared:auth_errors.EMAIL_ALREADY_IN_USE
+
+Value: "عذراً! كلمة المرور التي أدخلتها غير صحيحة. يرجى التحقق منها والمحاولة مرة أخرى."
+  - common:auth_errors.WRONG_PASSWORD
+  - shared:auth_errors.WRONG_PASSWORD
+
+Value: "يبدو أن متصفحك قام بحظر النافذة المنبثقة. يرجى السماح بالنوافذ المنبثقة والمحاولة مرة أخرى."
+  - common:auth_errors.POPUP_BLOCKED
+  - shared:auth_errors.POPUP_BLOCKED
+
+Value: "يبدو أنك أغلقت النافذة المنبثقة قبل إتمام العملية. يرجى فتحها مرة أخرى والمحاولة."
+  - common:auth_errors.POPUP_CLOSED_BY_USER
+  - shared:auth_errors.POPUP_CLOSED_BY_USER
+
+Value: "يبدو أنك ألغيت عملية التوجيه. يرجى المحاولة مرة أخرى لإتمام العملية."
+  - common:auth_errors.REDIRECT_CANCELLED_BY_USER
+  - shared:auth_errors.REDIRECT_CANCELLED_BY_USER
+
+Value: "لم يتم العثور على حساب مرتبط بهذا البريد الإلكتروني. يرجى التحقق من بريدك أو إنشاء حساب جديد."
+  - common:auth_errors.USER_NOT_FOUND
+  - shared:auth_errors.USER_NOT_FOUND
+
+Value: "تم تقديم طلبات كثيرة جداً من هذا الجهاز. يرجى الانتظار قليلاً قبل المحاولة مرة أخرى."
+  - common:auth_errors.TOO_MANY_REQUESTS
+  - shared:auth_errors.TOO_MANY_REQUESTS
+
+Value: "عام"
+  - common:forms.visibility.Public
+  - notifications:categories.General
+
+Value: "متوسط"
+  - common:forms.levels.Intermediate
+  - quizzes:play.grades.average
+
+Value: "عضو"
+  - common:filters.member
+  - groups:badges.member
+
+Value: "عنوان الاختبار"
+  - common:quiz_card.quiz_title
+  - common:shared_terms.quiz_title
+
+Value: "النتيجة"
+  - common:quiz_card.score
+  - home:quiz.view_result
+
+Value: "طلب انضمام"
+  - common:shared_groups.actions.request_to_join
+  - notifications:categories.Join Request
+
+Value: "مرحباً"
+  - common:greetings.hello
+  - common:greetings.hey
+
+Value: "عرض التفاصيل"
+  - common:shared_terms.show_details
+  - home:session_card.view_details
+
+Value: "نقل صلاحية المضيف"
+  - common:shared_terms.move_admin_role
+  - group-chat:buttons.transfer_admin
+
+Value: "قيد الانتظار"
+  - common:shared_terms.pending
+  - groups:badges.pending
+
+Value: "عرض تفاصيل المجموعة"
+  - common:shared_terms.show_group_details
+  - group-chat:tooltips.show_group_info
+
+Value: "معلومات المجموعة"
+  - common:shared_terms.group_info
+  - group-chat:sidebar_titles.group_info
+
+Value: "معلومات الجلسة"
+  - common:shared_terms.session_info
+  - group-chat:sidebar_titles.session_info
+
+Value: "اكتب رسالة..."
+  - common:shared_terms.type_a_message
+  - home:recent.type_message_placeholder
+
+Value: "{count} رسالة جديدة"
+  - home:recent.new_messages.many
+  - home:recent.new_messages.other
+
+Value: "منذ {count} دقيقة"
+  - home:recent.time.ago_minutes.many
+  - home:recent.time.ago_minutes.other
+
+Value: "منذ {count} ساعة"
+  - home:recent.time.ago_hours.many
+  - home:recent.time.ago_hours.other
+
+Value: "تم رفض الدعوة"
+  - notifications:messages.join_invite_rejected.title
+  - notifications:alerts.invitation_rejected
+
+Value: "تم قبول الطلب"
+  - notifications:messages.join_request_accepted.title
+  - notifications:alerts.demande_accepted
+
+Value: "تم رفض الطلب"
+  - notifications:messages.join_request_rejected.title
+  - notifications:alerts.demande_rejected
+
+Value: "تم رفض"
+  - notifications:styling_terms.rejected
+  - notifications:styling_terms.declined
+

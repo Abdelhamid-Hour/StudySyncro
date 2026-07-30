@@ -49,6 +49,44 @@ app.use("/api", requireAuthForAPI, apiRouter);
 // 404 Page not Found
 app.all("*", pageNotFoundHandler);
 
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error("Unhandled Application Error:", err);
+
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  if (req.path.startsWith("/api")) {
+    return res
+      .status(500)
+      .json({
+        success: false,
+        isNative: false,
+        message: "Internal Server Error",
+      });
+  }
+
+  const t = (res.locals && res.locals.t) || ((k) => k);
+  const isStandalone = !req.path.startsWith("/app");
+
+  try {
+    res.status(500).render("templates/error", {
+      isStandalone,
+      user: req.user,
+      statusCode: 500,
+      statusMessage: t("common:errors.server_error") || "Server Error",
+      description:
+        t("common:errors.server_error_desc_generic") ||
+        "An unexpected error occurred.",
+      iconClass: "bi bi-x-circle",
+    });
+  } catch (fallbackErr) {
+    console.error("Failed to render error template:", fallbackErr);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
