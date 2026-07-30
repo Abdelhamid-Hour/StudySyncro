@@ -21,29 +21,27 @@ const validate = (schemas) => async (req, res, next) => {
     }
     next();
   } catch (err) {
-    // log the fielde or the data name that made the problem :
-    console.log("data name: ", err);
 
     if (err instanceof ZodError || err?.issues || err?.errors) {
       const issuesList = err.issues || err.errors || [];
+      const t = (res.locals && res.locals.t) ? res.locals.t : (key, options) => (options && options.defaultValue ? options.defaultValue : key);
       const details = Array.isArray(issuesList)
         ? issuesList.map((e) => ({
             field: Array.isArray(e?.path)
               ? e.path.join(".")
               : String(e?.path || ""),
-            message: e?.message || "Invalid value",
+            message: t(e?.message, { defaultValue: e?.message || t("api:invalid_value", { defaultValue: "Invalid value" }) }),
             code: e?.code || "invalid_input",
           }))
         : [
             {
               field: "",
-              message: err?.message || "Request validation failed.",
+              message: t(err?.message, { defaultValue: err?.message || t("api:request_validation_failed", { defaultValue: "Request validation failed." }) }),
               code: "VALIDATION_ERROR",
             },
           ];
 
-      const rootMessage = details[0]?.message || "Request validation failed.";
-      console.log("rootMessage: ", rootMessage);
+      const rootMessage = details[0]?.message || t("api:request_validation_failed", { defaultValue: "Request validation failed." });
 
       return res.status(400).json({
         success: false,

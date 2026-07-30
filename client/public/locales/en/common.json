@@ -545,5 +545,16 @@
     "Business & Management": "Business & Management",
     "Health & Life Sciences": "Health & Life Sciences",
     "Specialties & Interdisciplinary": "Specialties & Interdisciplinary"
-  }
+  },
+  "quiz_id_not_found": "Quiz ID not found",
+  "invalid_questions_data": "Invalid questions data.",
+  "invalid_email_or_password_please_try_aga": "Invalid email or password. Please try again.",
+  "it_looks_like_you_closed_the_popup_befor": "It looks like you closed the popup before completing the action. Please try again.",
+  "the_email_address_you_entered_is_already": "The email address you entered is already associated with an account. Try logging in or use a different email.",
+  "oops_the_password_you_entered_is_incorre": "Oops! The password you entered is incorrect. Please double-check and try again.",
+  "it_seems_like_the_popup_was_blocked_by_y": "It seems like the popup was blocked by your browser. Please allow popups and try again.",
+  "it_looks_like_you_closed_the_popup_befor_1": "It looks like you closed the popup before completing the action. Please open it again and try.",
+  "it_seems_you_canceled_the_redirect_actio": "It seems you canceled the redirect action. Please try again to complete the process.",
+  "we_couldn_t_find_an_account_with_that_em": "We couldn't find an account with that email address. Please check your email or create a new account.",
+  "too_many_requests_have_been_made_from_th": "Too many requests have been made from this device. Please wait a while before trying again."
 }

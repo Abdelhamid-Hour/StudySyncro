@@ -5,7 +5,7 @@ const verifyCSRFToken = function (req) {
   const csrfToken = req.headers['csrftoken'] || '';
   const secret = req.cookies.SECRET || '';
     if (!tokens.verify(secret, csrfToken))
-      throw new Error('Invalid CSRF token');
+      throw new Error("api:invalid_csrf_token");
 };
 
 module.exports = { verifyCSRFToken, tokens };

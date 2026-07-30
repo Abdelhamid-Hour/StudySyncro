@@ -39,8 +39,7 @@ const sendMessageSchema = z
     ).default(""),
   })
   .refine((data) => data.groupId || data.sessionId, {
-    message:
-      "At least one of 'groupId' or 'sessionId' must be provided when sending a message.",
+    message: "api:at_least_one_of_groupid_or_sessionid_mus",
   });
 
 // Matches markGroupAsReadHandler (controllers/chat.js:160)
@@ -77,7 +76,7 @@ const chatMessagesQuerySchema = z
     ).default(""),
   })
   .refine((data) => data.groupId || data.sessionId, {
-    message: "At least one of 'groupId' or 'sessionId' must be provided.",
+    message: "api:at_least_one_of_groupid_or_sessionid_mus_1",
   });
 
 // Matches chatStreamHandler query (controllers/chat.js:56-57)
@@ -95,7 +94,7 @@ const chatStreamQuerySchema = z
     ).default(""),
   })
   .refine((data) => data.groupId || data.sessionId, {
-    message: "At least one of 'groupId' or 'sessionId' must be provided.",
+    message: "api:at_least_one_of_groupid_or_sessionid_mus_1",
   });
 
 // Matches getRecentMessagesHandler query (controllers/chat.js:190)

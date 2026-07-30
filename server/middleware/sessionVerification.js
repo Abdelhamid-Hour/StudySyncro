@@ -13,7 +13,7 @@ const verifySessionCookie = async function (req) {
     decodedClaims.firebase.sign_in_provider === "password" &&
     !decodedClaims.email_verified
   ) {
-    throw new Error("Email not verified");
+    throw new Error("api:email_not_verified");
   }
 
   const userDoc = await db.collection("users").doc(decodedClaims.uid).get();
@@ -76,7 +76,7 @@ const requireAuthForPages = async (req, res, next) => {
           else if (data.error.message === "INVALID_OOB_CODE") errCode = "invalid";
           else errCode = "used"; 
         }
-        const error = new Error("Email verification API failed");
+        const error = new Error("api:email_verification_api_failed");
         error.errCode = errCode;
         throw error;
       }
@@ -92,7 +92,7 @@ const requireAuthForPages = async (req, res, next) => {
       );
 
       if (!signInResponse.ok) {
-        const error = new Error("Custom token sign in failed");
+        const error = new Error("api:custom_token_sign_in_failed");
         error.errCode = "failed";
         throw error;
       }
@@ -135,7 +135,7 @@ const requireAuthForPages = async (req, res, next) => {
     return next();
   } catch (error) {
     clearCookies(res, ["session", "SECRET", "csrfToken"]);
-    if (isFetch) return res.status(401).json({ message: "Unauthorized" });
+    if (isFetch) return res.status(401).json({ message: "api:unauthorized" });
     return res.redirect("/login");
   }
 };
@@ -162,7 +162,7 @@ const requireAuthForAPI = async (req, res, next) => {
     return next();
   } catch (error) {
     clearCookies(res, ["session", "SECRET", "csrfToken"]);
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.status(401).json({ message: "api:unauthorized" });
   }
 };
 

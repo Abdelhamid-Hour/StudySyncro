@@ -23,8 +23,7 @@ const safeLevelQuery = () =>
         return items.every((item) => allowedLevels.includes(item));
       },
       {
-        message:
-          "Level query must only contain 'Beginner', 'Intermediate', and/or 'Advanced'.",
+        message: "api:level_query_must_only_contain_beginner_i",
       },
     );
 
@@ -41,8 +40,7 @@ const safeRoleQuery = () =>
         return items.every((item) => allowedRoles.includes(item));
       },
       {
-        message:
-          "Role query must only contain 'admin', 'member', and/or 'creator'.",
+        message: "api:role_query_must_only_contain_admin_membe",
       },
     );
 
@@ -59,8 +57,7 @@ const safeVisibilityQuery = () =>
         return items.every((item) => allowedVisibility.includes(item));
       },
       {
-        message:
-          "Visibility query must only contain 'Public' and/or 'Private'.",
+        message: "api:visibility_query_must_only_contain_publi",
       },
     );
 

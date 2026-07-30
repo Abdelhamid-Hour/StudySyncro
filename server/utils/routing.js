@@ -135,7 +135,7 @@ const fetchData = async (pathName, user, t) => {
       return { templateContext };
 
     default:
-      throw new Error("Invalide Template");
+      throw new Error("api:invalide_template");
   }
 };
 

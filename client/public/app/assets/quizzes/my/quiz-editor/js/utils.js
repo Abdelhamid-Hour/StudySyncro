@@ -44,7 +44,7 @@ export let updatedData = {
 const getQuizId = () => {
   const match = window.location.pathname.match(/\/quizzes\/my\/([^/]+)\/edit/);
   const quizId = match ? match[1] : null;
-  if (!quizId) throw new Error("Quiz ID not found");
+  if (!quizId) throw new Error("common:quiz_id_not_found");
   return quizId;
 };
 
@@ -846,7 +846,7 @@ export const prepareQuizData = (checkValidity) => {
 
 export const saveQuiz = async () => {
   const questions = prepareQuizData(true);
-  if (!questions) return new Error("Invalid questions data.");
+  if (!questions) return new Error("common:invalid_questions_data");
 
   if (
     updatedData.newQuestions.length === 0 &&

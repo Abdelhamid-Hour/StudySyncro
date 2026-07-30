@@ -71,7 +71,7 @@ const safeSortQuery = () =>
     .string()
     .trim()
     .refine((val) => ["asc", "desc"].includes(val.toLowerCase()), {
-      message: "Sort must be 'asc' or 'desc'.",
+      message: "api:sort_must_be_asc_or_desc",
     });
 
 /**
@@ -97,7 +97,7 @@ const safeEmail = (fieldName = "Email") =>
       invalid_type_error: `${fieldName} must be a valid string.`,
     })
     .trim()
-    .email({ message: "Must be a valid email address." })
+    .email({ message: "api:must_be_a_valid_email_address" })
     .min(
       LIMITS.EMAIL_MIN_LENGTH || 5,
       `${fieldName} must be at least ${LIMITS.EMAIL_MIN_LENGTH} characters.`,

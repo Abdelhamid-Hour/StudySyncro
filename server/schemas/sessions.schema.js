@@ -38,7 +38,7 @@ const taskSchema = z
     if (!data.isBreak && !data.description) {
       ctx.addIssue({
         code: "custom", // Just use the string directly
-        message: "Description is required for non-break tasks.",
+        message: "api:description_is_required_for_non_break_ta",
         path: ["description"],
       });
     }
@@ -47,7 +47,7 @@ const taskSchema = z
     if (data.isBreak && data.description) {
       ctx.addIssue({
         code: "custom",
-        message: "Breaks cannot have a description.",
+        message: "api:breaks_cannot_have_a_description",
         path: ["description"],
       });
     }
@@ -56,7 +56,7 @@ const taskSchema = z
     if (data.isBreak && data.isQuiz) {
       ctx.addIssue({
         code: "custom",
-        message: "A task cannot be both a break and a quiz.",
+        message: "api:a_task_cannot_be_both_a_break_and_a_quiz",
         path: ["isBreak", "isQuiz"],
       });
     }

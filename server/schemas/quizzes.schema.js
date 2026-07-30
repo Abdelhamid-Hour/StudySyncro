@@ -88,8 +88,7 @@ const updateQuizSchema = z
       data.newQuestions.length > 0 ||
       data.deletedQuestions.length > 0,
     {
-      message:
-        "At least one of 'updatedQuestions', 'newQuestions', or 'deletedQuestions' must not be empty when updating quiz questions.",
+      message: "api:at_least_one_of_updatedquestions_newques",
     },
   );
 
@@ -109,8 +108,7 @@ const patchQuizSchema = z
     ).default(""),
   })
   .refine((data) => data.title || data.subject, {
-    message:
-      "At least one of 'title' or 'subject' must be provided when updating a quiz.",
+    message: "api:at_least_one_of_title_or_subject_must_be",
   });
 
 // Matches duplicateQuizHandler (controllers/quizzes.js:178)
@@ -186,7 +184,7 @@ const quizzesQuerySchema = z.object({
         const allowedStatus = ["draft", "published"];
         return items.every((item) => allowedStatus.includes(item));
       },
-      { message: "Status query contains invalid status items." },
+      { message: "api:status_query_contains_invalid_status_ite" },
     )
     .optional(),
 });

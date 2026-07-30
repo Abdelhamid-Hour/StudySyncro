@@ -76,7 +76,7 @@ export const getGroupId = () => {
   // Example path: /app/groups/my/CKrhlort4dLmUq9zRtOl/chat
   const match = window.location.pathname.match(/\/groups\/my\/([^/]+)\/chat/);
   const groupId = match ? match[1] : null;
-  if (!groupId) throw new Error("Quiz ID not found");
+  if (!groupId) throw new Error("common:quiz_id_not_found");
   return groupId;
 };
 
