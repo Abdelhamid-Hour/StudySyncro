@@ -261,7 +261,7 @@ export class Quiz extends Task {
     retakeBtn.className = "retake-btn";
     retakeBtn.innerHTML = `
       <i class="bi bi-arrow-clockwise"></i>
-      ${t("home:quiz.retake_quiz")}
+      ${t("common:shared_terms.retake_quiz")}
     `;
     retakeBtn.addEventListener("click", () => {
       navigateTo(`/quiz-play/${this.UID}`);
@@ -286,7 +286,7 @@ export class Quiz extends Task {
     } else if (status === "completed") {
       badgeClass = "green-badge";
       iconClass = "bi-check-circle";
-      text = t("home:badge.completed");
+      text = t("common:shared_terms.completed");
     }
 
     badge.classList.remove("gray-badge", "orange-badge", "green-badge");

@@ -1,5 +1,4 @@
 {
-  "create_session": "إنشاء جلسة",
   "tooltips": {
     "close_group_info": "إغلاق تفاصيل المجموعة",
     "show_group_info": "عرض تفاصيل المجموعة",
@@ -52,7 +51,6 @@
   "buttons": {
     "back": "رجوع",
     "transfer_admin": "نقل صلاحية المضيف",
-    "view_results": "عرض النتائج",
     "add_quiz": "إضافة اختبار",
     "add_break": "إضافة استراحة",
     "update_quiz": "تحديث الاختبار",

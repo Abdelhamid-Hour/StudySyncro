@@ -66,7 +66,7 @@ export const getcreateGroupCardFunc = (userGroup) => {
             ? `<span class="badge ${
                 group.isHost ? "orange-badge" : "blue-badge"
               }">
-                ${group.isHost ? t("common:shared_groups.badges.host") : t("common:filters.member")}
+                ${group.isHost ? t("common:shared_terms.host") : t("common:filters.member")}
             </span>`
             : groupLevel
         }

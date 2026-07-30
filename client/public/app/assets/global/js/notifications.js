@@ -329,7 +329,7 @@ const formatNotificationMessage = (notif) => {
     { term: "pending approval", cls: "bold-warning" },
     { term: t("notifications:styling_terms.transferred"), cls: "bold-warning" },
     { term: "transferred", cls: "bold-warning" },
-    { term: t("common:shared_groups.badges.host"), cls: "" },
+    { term: t("common:shared_terms.host"), cls: "" },
     { term: "Host", cls: "" },
     { term: notif.metadata?.senderName, cls: "" },
     { term: notif.metadata?.groupName, cls: "" },

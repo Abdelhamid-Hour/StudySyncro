@@ -110,13 +110,13 @@ export const handleEndSessionBtn = () => {
     topBarEndSessionBtn.outerHTML = `
       <button type="button" class="small-btn create-session">
         <i class="bi bi-plus-circle"></i>
-        <span>${t("group-chat:create_session")}</span>
+        <span>${t("common:shared_terms.create_session")}</span>
       </button>`;
 
     if (endSessionDrawerBtn) {
       endSessionDrawerBtn.outerHTML = `<button type="button" class="exclude-btn mobile-drawer-btn create-session blue-btn">
           <i class="bi bi-plus-circle"></i>
-          <span>${t("group-chat:create_session")}</span>
+          <span>${t("common:shared_terms.create_session")}</span>
         </button>`;
     }
 
@@ -1438,7 +1438,7 @@ const createQuizItem = (quiz) => {
         class="view-result${quiz.isAdmin ? "s" : ""}-btn should-fill"
       >
         <i class="bi bi-eye"></i>
-        ${quiz.isAdmin ? t("group-chat:buttons.view_results") : t("common:shared_terms.view_result")}
+        ${quiz.isAdmin ? t("common:shared_terms.view_results") : t("common:shared_terms.view_result")}
       </button>
       ${
         !quiz.isAdmin
@@ -1588,7 +1588,7 @@ const createMemberCard = (member) => {
       member.isAdmin
         ? `<span style="margin-inline-end: auto;" class="badge orange-badge"${
             member.userIsAdmin ? ' style="margin-inline-end:auto"' : ""
-          }>${t("common:shared_groups.badges.host")}</span>`
+          }>${t("common:shared_terms.host")}</span>`
         : ""
     }
     ${

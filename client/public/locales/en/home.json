@@ -7,12 +7,10 @@
   },
   "quiz": {
     "view_result": "Result",
-    "view_results": "Results",
-    "retake_quiz": "Retake Quiz"
+    "view_results": "Results"
   },
   "badge": {
-    "in_progress": "In Progress",
-    "completed": "Completed"
+    "in_progress": "In Progress"
   },
   "task": {
     "active_task": "Active Task",
@@ -36,7 +34,6 @@
   "session_details": "Session Details",
   "session_card": {
     "joined_users": "Joined Users",
-    "duration": "Duration",
     "start_at": "Start At:",
     "end_at": "End At:",
     "view_details": "View Details"

@@ -38,14 +38,11 @@
       "my_account": "حسابي",
       "tabs": {
         "profile": "المعلومات الشخصية",
-        "email": "البريد الإلكتروني",
-        "password": "كلمة المرور",
-        "delete": "إغلاق الحساب"
+        "email": "البريد الإلكتروني"
       },
       "profile_title": "التفاصيل الشخصية",
       "profile_subtitle": "حافظ على تحديث معلوماتك.",
       "profile_caption": "قم بتحميل صورة بصيغة JPG أو PNG أو GIF (الحد الأقصى 1 ميجابايت).",
-      "full_name": "الاسم الكامل",
       "uid": "معرف المستخدم",
       "modify_btn": "تعديل الملف الشخصي"
     },
@@ -172,15 +169,7 @@
     "drop_files": "أفلت الملفات هنا",
     "emojis": {
       "categories": {
-        "recent": "الأخيرة",
-        "people": "الأشخاص",
-        "animals_nature": "الحيوانات والطبيعة",
-        "food_drink": "الطعام والشراب",
-        "activity": "الأنشطة",
-        "objects": "الأشياء",
-        "symbols": "الرموز",
-        "travel_places": "السفر والأماكن",
-        "flags": "الأعلام"
+        "recent": "الأخيرة"
       },
       "no_match": "لم يتم العثور على رموز تعبيرية",
       "search_placeholder": "البحث عن الرموز التعبيرية..."
@@ -191,9 +180,6 @@
     "actions": {
       "join_now": "انضم الآن",
       "request_to_join": "طلب انضمام"
-    },
-    "badges": {
-      "host": "المضيف"
     },
     "skeletons": {
       "no_groups_joined_title": "لم تنضم لأي مجموعة",
@@ -311,8 +297,6 @@
     "travel_places": "السفر والأماكن",
     "flags": "الأعلام",
     "type_a_message": "اكتب رسالة...",
-    "group_name": "اسم المجموعة",
-    "subject": "المادة",
     "start": "البداية",
     "end": "النهاية",
     "duration": "المدة",
@@ -320,18 +304,14 @@
     "host": "المضيف",
     "quiz_title": "عنوان الاختبار",
     "completed": "المكتملة",
-    "questions": "الأسئلة",
     "retake_quiz": "إعادة الاختبار",
     "view_results": "عرض النتائج",
     "toggle_dark_light_mode": "تبديل الوضع الداكن/الفاتح",
-    "login_to": "تسجيل الدخول إلى",
     "email": "البريد الإلكتروني",
     "password": "كلمة المرور",
     "sign_in": "تسجيل الدخول",
     "confirm_password": "تأكيد كلمة المرور",
     "or": "أو",
-    "submitted_at": "تاريخ التقديم",
-    "score": "النتيجة",
     "full_name": "الاسم الكامل",
     "reset_your_password": "إعادة تعيين كلمة المرور",
     "new_password": "كلمة المرور الجديدة",
@@ -494,7 +474,6 @@
     "Social Innovation": "الابتكار الاجتماعي",
     "Design Thinking": "التفكير التصميمي",
     "Urban Planning": "التخطيط الحضري",
-    "Biomedical Engineering": "الهندسة الطبية الحيوية",
-    "Specify and press Enter": "حدد واضغط Enter"
+    "Biomedical Engineering": "الهندسة الطبية الحيوية"
   }
 }

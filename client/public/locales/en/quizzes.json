@@ -75,8 +75,6 @@
   },
   "results_overlay": {
     "title": "Users Results",
-    "quiz_title_label": "Quiz Title",
-    "no_results": "No Results Found",
     "no_results_description": "There are no results available for this quiz yet.",
     "table": {
       "profile": "Profile",

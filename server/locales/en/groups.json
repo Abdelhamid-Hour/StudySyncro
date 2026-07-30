@@ -41,8 +41,7 @@
   },
   "session_info": {
     "description": "Description",
-    "no_quiz": "No Quiz Assigned",
-    "leave_session": "Leave Session"
+    "no_quiz": "No Quiz Assigned"
   },
   "plural_counts": {
     "members": {

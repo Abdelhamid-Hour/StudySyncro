@@ -240,7 +240,7 @@ const createSessionCard = (session) => {
       <div class="meta-info">
         <span class="badge blue-badge">
           <i class="bi bi-clock-fill"></i>
-          ${t("home:session_card.duration")}
+          ${t("common:shared_terms.duration")}
           <span class="duration"></span>
         </span>
         <span class="badge simple-badge">

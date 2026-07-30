@@ -322,7 +322,7 @@ const getQuizResultsListSkeleton = () => {
         ${t("quizzes:results_overlay.title")}
       </h3>
       <div class="quiz-title">
-        <span class="title-label">${t("quizzes:results_overlay.quiz_title_label")}</span>
+        <span class="title-label">${t("common:quiz_card.quiz_title")}</span>
         <div class="loading-opacity-animation" style="width: 15rem; height: 1.8rem;"></div>
       </div>
       <button type="button" class="close-results-overlay-btn exclude-btn" disabled>
@@ -340,13 +340,13 @@ const getQuizResultsListSkeleton = () => {
               <div><i class="bi bi-person"></i> ${t("common:shared_terms.full_name")}</div>
             </th>
             <th>
-              <div><i class="bi bi-calendar-event"></i> ${t("common:shared_terms.submitted_at")}</div>
+              <div><i class="bi bi-calendar-event"></i> ${t("common:quiz_card.submitted_at")}</div>
             </th>
             <th>
               <div><i class="bi bi-list-ol"></i> ${t("quizzes:results_overlay.table.answered_questions")}</div>
             </th>
             <th>
-              <div><i class="bi bi-bar-chart-line"></i> ${t("common:shared_terms.score")}</div>
+              <div><i class="bi bi-bar-chart-line"></i> ${t("common:quiz_card.score")}</div>
             </th>
             <th>
               <div><i class="bi bi-eye"></i> ${t("common:shared_terms.view_result")}</div>
@@ -403,7 +403,7 @@ export const openQuizResultsOverlay = async (quizId, groupId) => {
             emptyState: {
               noFilter: {
                 icon: "bi-bar-chart-line",
-                title: t("quizzes:results_overlay.no_results"),
+                title: t("common:skeletons.no_results_title"),
                 desc: t("quizzes:results_overlay.no_results_description"),
               }
             }

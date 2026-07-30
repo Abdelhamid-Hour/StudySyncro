@@ -2144,11 +2144,11 @@ export const getSettingsSkeleton = () => {
             </label>
             <label class="exclude-btn tab password-tab">
               <input type="radio" name="tab" class="password" disabled />
-              ${t("common:skeletons.settings.tabs.password")}
+              ${t("common:shared_terms.password")}
             </label>
             <label class="exclude-btn tab delete-account-tab">
               <input type="radio" name="tab" class="delete-account" disabled />
-              ${t("common:skeletons.settings.tabs.delete")}
+              ${t("common:shared_terms.close_account")}
             </label>
           </div>
         </header>
@@ -2172,7 +2172,7 @@ export const getSettingsSkeleton = () => {
               </div>
               <div class="info-fields">
                 <div class="fields">
-                  <label for="full-name">${t("common:skeletons.settings.full_name")}</label>
+                  <label for="full-name">${t("common:shared_terms.full_name")}</label>
                   <div class="field-container full-name-field">
                     <div class="field-icon-container">
                       <span class="icon-box">

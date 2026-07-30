@@ -7,12 +7,10 @@
   },
   "quiz": {
     "view_result": "النتيجة",
-    "view_results": "النتائج",
-    "retake_quiz": "إعادة الاختبار"
+    "view_results": "النتائج"
   },
   "badge": {
-    "in_progress": "جاري التنفيذ",
-    "completed": "مكتمل"
+    "in_progress": "جاري التنفيذ"
   },
   "task": {
     "active_task": "المهمة النشطة",
@@ -36,7 +34,6 @@
   "session_details": "تفاصيل الجلسة",
   "session_card": {
     "joined_users": "مستخدم منضم",
-    "duration": "المدة",
     "start_at": "تبدأ في:",
     "end_at": "تنتهي في:",
     "view_details": "عرض التفاصيل"

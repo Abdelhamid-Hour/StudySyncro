@@ -41,8 +41,7 @@
   },
   "session_info": {
     "description": "الوصف",
-    "no_quiz": "لا يوجد اختبار مخصص",
-    "leave_session": "مغادرة الجلسة"
+    "no_quiz": "لا يوجد اختبار مخصص"
   },
   "plural_counts": {
     "members": {

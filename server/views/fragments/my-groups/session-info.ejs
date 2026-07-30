@@ -157,7 +157,7 @@
     <% if (isJoined) { %>
     <button data-session-id="<%= id %>" type="button" class="<%= isAdmin ? 'end' : 'leave' %>-btn red-btn should-fill">
       <i class="bi bi-x-circle"></i>
-      <%= isAdmin ? t("common:shared_terms.end_session") : t("groups:session_info.leave_session") %>
+      <%= isAdmin ? t("common:shared_terms.end_session") : t("common:shared_terms.leave_session") %>
     </button>
     <% } else { %>
     <button data-session-id="<%= id %>" type="button" class="green-btn join-btn should-fill blue-btn">

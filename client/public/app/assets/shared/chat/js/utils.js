@@ -223,35 +223,35 @@ export const getEmojiPickerHTML = () => `
           <div class="recent-emojies"></div>
         </section>
         <section id="people">
-          <h5>${t("common:shared_chat.emojis.categories.people")}</h5>
+          <h5>${t("common:shared_terms.people")}</h5>
           <div class="people-emojies"></div>
         </section>
         <section id="animals_nature">
-          <h5>${t("common:shared_chat.emojis.categories.animals_nature")}</h5>
+          <h5>${t("common:shared_terms.animals_nature")}</h5>
           <div class="animals-nature-emojies"></div>
         </section>
         <section id="food_drink">
-          <h5>${t("common:shared_chat.emojis.categories.food_drink")}</h5>
+          <h5>${t("common:shared_terms.food_drink")}</h5>
           <div class="food-drink-emojies"></div>
         </section>
         <section id="activity">
-          <h5>${t("common:shared_chat.emojis.categories.activity")}</h5>
+          <h5>${t("common:shared_terms.activity")}</h5>
           <div class="activity-emojies"></div>
         </section>
         <section id="objects">
-          <h5>${t("common:shared_chat.emojis.categories.objects")}</h5>
+          <h5>${t("common:shared_terms.objects")}</h5>
           <div class="objects-emojies"></div>
         </section>
         <section id="symbols">
-          <h5>${t("common:shared_chat.emojis.categories.symbols")}</h5>
+          <h5>${t("common:shared_terms.symbols")}</h5>
           <div class="symbols-emojies"></div>
         </section>
         <section id="travel_places">
-          <h5>${t("common:shared_chat.emojis.categories.travel_places")}</h5>
+          <h5>${t("common:shared_terms.travel_places")}</h5>
           <div class="travel-places-emojies"></div>
         </section>
         <section id="flags">
-          <h5>${t("common:shared_chat.emojis.categories.flags")}</h5>
+          <h5>${t("common:shared_terms.flags")}</h5>
           <div class="flags-emojies"></div>
         </section>
       </div>

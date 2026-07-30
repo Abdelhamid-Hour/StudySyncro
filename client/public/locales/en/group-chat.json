@@ -1,5 +1,4 @@
 {
-  "create_session": "Create Session",
   "tooltips": {
     "close_group_info": "Close group info",
     "show_group_info": "Show group info",
@@ -52,7 +51,6 @@
   "buttons": {
     "back": "Back",
     "transfer_admin": "Transfer Host",
-    "view_results": "View Results",
     "add_quiz": "Add Quiz",
     "add_break": "Add Break",
     "update_quiz": "Update Quiz",
