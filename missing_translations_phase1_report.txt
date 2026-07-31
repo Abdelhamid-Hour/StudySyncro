@@ -1,25 +1,25 @@
 === PHASE 1: TRANSLATIONS REPORT ===
 
 --- MISSING STATIC KEYS ---
-[FRONTEND] KEY: "login:messages.verification_expired"
-  Status: Missing in ARABIC
+[FRONTEND] KEY: "quizzes:results_overlay.title"
+  Status: Missing in BOTH (En & Ar)
   Found in code at:
-    - d:\PFE\client\public\login\assets\js\auth\auth.js:45
+    - d:\PFE\client\public\app\assets\shared\quiz-result\js\utils.js:322
 
-[FRONTEND] KEY: "login:messages.verification_invalid"
-  Status: Missing in ARABIC
+[FRONTEND] KEY: "quizzes:results_overlay.table.profile"
+  Status: Missing in BOTH (En & Ar)
   Found in code at:
-    - d:\PFE\client\public\login\assets\js\auth\auth.js:46
+    - d:\PFE\client\public\app\assets\shared\quiz-result\js\utils.js:337
 
-[FRONTEND] KEY: "login:messages.verification_used"
-  Status: Missing in ARABIC
+[FRONTEND] KEY: "quizzes:results_overlay.table.answered_questions"
+  Status: Missing in BOTH (En & Ar)
   Found in code at:
-    - d:\PFE\client\public\login\assets\js\auth\auth.js:47
+    - d:\PFE\client\public\app\assets\shared\quiz-result\js\utils.js:346
 
-[FRONTEND] KEY: "login:messages.verification_failed"
-  Status: Missing in ARABIC
+[FRONTEND] KEY: "quizzes:results_overlay.no_results_description"
+  Status: Missing in BOTH (En & Ar)
   Found in code at:
-    - d:\PFE\client\public\login\assets\js\auth\auth.js:48
+    - d:\PFE\client\public\app\assets\shared\quiz-result\js\utils.js:407
 
 
 --- FRONTEND NAMESPACE VIOLATIONS ---
@@ -61,28 +61,28 @@ File: d:\PFE\client\public\app\assets\groups\my\group-chat\js\dom-variables.js:2
   Static Prefix Found: "common:subjects."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+139 more)
+  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+148 more)
 
 File: d:\PFE\client\public\app\assets\groups\my\group-chat\js\dom-variables.js:211
   Raw Expression: `common:subjects.${value}`, { defaultValue: value }
   Static Prefix Found: "common:subjects."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+139 more)
+  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+148 more)
 
 File: d:\PFE\client\public\app\assets\groups\my\group-chat\js\dom-variables.js:233
   Raw Expression: `common:subjects.${value}`
   Static Prefix Found: "common:subjects."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+139 more)
+  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+148 more)
 
 File: d:\PFE\client\public\app\assets\groups\my\group-chat\js\dom-variables.js:233
   Raw Expression: `common:subjects.${value}`, { defaultValue: value }
   Static Prefix Found: "common:subjects."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+139 more)
+  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+148 more)
 
 File: d:\PFE\client\public\app\assets\groups\my\group-chat\js\dom-variables.js:278
   Raw Expression: `common:forms.levels.${value}`
@@ -138,7 +138,7 @@ File: d:\PFE\client\public\app\assets\quizzes\my\js\utils.js:422
   Static Prefix Found: "common:subjects."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+139 more)
+  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+148 more)
 
 File: d:\PFE\client\public\app\assets\quizzes\my\quiz-editor\js\utils.js:352
   Raw Expression: "quiz-edit:choice_placeholder", { letter: String.fromCharCode(65 + choiceCount
@@ -152,14 +152,14 @@ File: d:\PFE\client\public\app\assets\shared\forms\js\utils.js:142
   Static Prefix Found: "common:subjects."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+139 more)
+  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+148 more)
 
 File: d:\PFE\client\public\app\assets\shared\forms\js\utils.js:152
   Raw Expression: "common:subjects." + subject, { defaultValue: subject }
   Static Prefix Found: "common:subjects."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+139 more)
+  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+148 more)
 
 File: d:\PFE\client\public\app\assets\shared\forms\js\utils.js:277
   Raw Expression: `common:forms.${typeKey}.${val}`
@@ -194,7 +194,7 @@ File: d:\PFE\client\public\app\assets\shared\groups-my-available\js\utils.js:116
   Static Prefix Found: "common:subjects."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+139 more)
+  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+148 more)
 
 File: d:\PFE\client\public\app\assets\shared\quiz-result\js\utils.js:32
   Raw Expression: "common:shared_quizzes.question_num", { num: index + 1 }
@@ -237,7 +237,7 @@ File: d:\PFE\server\views\fragments\my-groups\group-info.ejs:58
   Static Prefix Found: "common:subjects."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+140 more)
+  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+149 more)
 
 File: d:\PFE\server\views\fragments\my-groups\group-info.ejs:75
   Raw Expression: "common:filters." + level.toLowerCase(
@@ -261,53 +261,53 @@ File: d:\PFE\server\views\layout.ejs:515
   Available Children in Dict: join_request, join_pending, join_accepted, join_rejected, join_invite, session_started, session_ended, role_transferred, role_demoted, member_removed, group_deleted, join_invite_accepted, join_invite_rejected, join_request_accepted, join_request_rejected
 
 File: d:\PFE\server\views\templates\groups\available.ejs:12
-  Raw Expression: 'groups:badges.' + group.visibility.toLowerCase(
-  Static Prefix Found: "groups:badges."
+  Raw Expression: 'common:filters.' + group.visibility.toLowerCase(
+  Static Prefix Found: "common:filters."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: host, member
+  Available Children in Dict: role, admin, member, visibility, private, public, level, advanced, intermediate, beginner, view_options, joinable_only, status, published, draft
 
 File: d:\PFE\server\views\templates\groups\available.ejs:17
-  Raw Expression: 'groups:badges.' + group.level.toLowerCase(
-  Static Prefix Found: "groups:badges."
+  Raw Expression: 'common:filters.' + group.level.toLowerCase(
+  Static Prefix Found: "common:filters."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: host, member
+  Available Children in Dict: role, admin, member, visibility, private, public, level, advanced, intermediate, beginner, view_options, joinable_only, status, published, draft
 
 File: d:\PFE\server\views\templates\groups\available.ejs:22
   Raw Expression: "common:subjects." + group.subject, { defaultValue: group.subject }
   Static Prefix Found: "common:subjects."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+140 more)
+  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+149 more)
 
 File: d:\PFE\server\views\templates\groups\my.ejs:16
-  Raw Expression: 'groups:badges.' + group.visibility.toLowerCase(
-  Static Prefix Found: "groups:badges."
+  Raw Expression: 'common:filters.' + group.visibility.toLowerCase(
+  Static Prefix Found: "common:filters."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: host, member
+  Available Children in Dict: role, admin, member, visibility, private, public, level, advanced, intermediate, beginner, view_options, joinable_only, status, published, draft
 
 File: d:\PFE\server\views\templates\groups\my.ejs:28
   Raw Expression: "common:subjects." + group.subject, { defaultValue: group.subject }
   Static Prefix Found: "common:subjects."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+140 more)
+  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+149 more)
 
 File: d:\PFE\server\views\templates\groups\my.ejs:40
-  Raw Expression: 'groups:badges.' + group.level.toLowerCase(
-  Static Prefix Found: "groups:badges."
+  Raw Expression: 'common:filters.' + group.level.toLowerCase(
+  Static Prefix Found: "common:filters."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: host, member
+  Available Children in Dict: role, admin, member, visibility, private, public, level, advanced, intermediate, beginner, view_options, joinable_only, status, published, draft
 
 File: d:\PFE\server\views\templates\quizzes\my.ejs:85
   Raw Expression: "common:subjects." + quiz.subject, { defaultValue: quiz.subject }
   Static Prefix Found: "common:subjects."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+140 more)
+  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+149 more)
 
 File: d:\PFE\server\views\templates\quizzes\quiz-editor.ejs:32
   Raw Expression: "quizzes:editor.question_num", { num: idx + 1 }
@@ -321,7 +321,7 @@ File: d:\PFE\server\views\templates\quizzes\quiz-editor.ejs:69
   Static Prefix Found: "common:subjects."
   Namespace Valid: OK
   Prefix Exists in Dictionaries: En: YES, Ar: YES
-  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+140 more)
+  Available Children in Dict: Mathematics, Linear Algebra, Real Analysis, Complex Analysis, Topology, General Physics, Classical Mechanics, Thermodynamics, Electromagnetism, Optics... (+149 more)
 
 File: d:\PFE\server\views\templates\quizzes\quiz-editor.ejs:116
   Raw Expression: "quizzes:editor.question_num", { num: idx + 1 }

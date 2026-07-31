@@ -327,7 +327,16 @@
     "Design Thinking": "Design Thinking",
     "Urban Planning": "Urban Planning",
     "Biomedical Engineering": "Biomedical Engineering",
-    "Specify and press Enter": "Specify and press Enter"
+    "Specify and press Enter": "Specify and press Enter",
+    "Fundamental Sciences": "Fundamental Sciences",
+    "Computer Science & Engineering": "Computer Science & Engineering",
+    "Humanities & Social Sciences": "Humanities & Social Sciences",
+    "Languages & Literature": "Languages & Literature",
+    "Arts & Culture": "Arts & Culture",
+    "Education & Sports": "Education & Sports",
+    "Business & Management": "Business & Management",
+    "Health & Life Sciences": "Health & Life Sciences",
+    "Specialties & Interdisciplinary": "Specialties & Interdisciplinary"
   },
   "shared_texts": {
     "admin_can_t_submit_quizzes": "Admin can't submit quizzes",

@@ -1,6 +1,6 @@
 import { Loader } from "../../shared/loader/js/utils.js";
 import { handleApiAction, t } from "./utils.js";
-import { sendData } from "../../../../main_assets/js/utils.js";
+import { sendData, showMessageBlock } from "../../../../main_assets/js/utils.js";
 import { INITIALE_LOADERS_COUNT } from "./variables.js";
 
 const categoriesState = {
@@ -639,15 +639,27 @@ const initRealtimeNotifications = () => {
       }
 
       if (
-        window.Notification &&
-        Notification.permission === "granted" &&
         notif.changeType === "added" &&
         (!notif.read || notif.read === "false" || notif.read === false)
       ) {
-        new Notification(notif.title || "StudyHype Notification", {
-          body: notif.message || "",
-          icon: "/app/assets/global/images/logo.png",
-        });
+        if (window.Notification && Notification.permission === "granted") {
+          new Notification(notif.title || "StudyHype Notification", {
+            body: notif.message || "",
+            icon: "/app/assets/global/images/logo.png",
+          });
+        }
+        
+        let notifForMessage = notif;
+        if (notif.type && notif.metadata) {
+          const translatedMsg = t(
+            `notifications:messages.${notif.type}.message`,
+            notif.metadata,
+          );
+          if (translatedMsg && !translatedMsg.startsWith("notifications:messages.")) {
+            notifForMessage = { ...notif, message: translatedMsg };
+          }
+        }
+        showMessageBlock(formatNotificationMessage(notifForMessage) || notif.message, "info");
       }
 
       const existingDomCard = document.querySelector(

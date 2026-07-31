@@ -474,6 +474,24 @@
     "Social Innovation": "Social Innovation",
     "Design Thinking": "Design Thinking",
     "Urban Planning": "Urban Planning",
-    "Biomedical Engineering": "Biomedical Engineering"
+    "Biomedical Engineering": "Biomedical Engineering",
+    "Fundamental Sciences": "Fundamental Sciences",
+    "Computer Science & Engineering": "Computer Science & Engineering",
+    "Humanities & Social Sciences": "Humanities & Social Sciences",
+    "Languages & Literature": "Languages & Literature",
+    "Arts & Culture": "Arts & Culture",
+    "Education & Sports": "Education & Sports",
+    "Business & Management": "Business & Management",
+    "Health & Life Sciences": "Health & Life Sciences",
+    "Specialties & Interdisciplinary": "Specialties & Interdisciplinary"
+  },
+  "results_overlay": {
+    "title": "Users Results",
+    "no_results_description": "There are no results available for this quiz yet.",
+    "table": {
+      "profile": "Profile",
+      "answered_questions": "Answered Questions",
+      "actions": "Actions"
+    }
   }
 }

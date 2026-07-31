@@ -474,6 +474,24 @@
     "Social Innovation": "الابتكار الاجتماعي",
     "Design Thinking": "التفكير التصميمي",
     "Urban Planning": "التخطيط الحضري",
-    "Biomedical Engineering": "الهندسة الطبية الحيوية"
+    "Biomedical Engineering": "الهندسة الطبية الحيوية",
+    "Fundamental Sciences": "العلوم الأساسية",
+    "Computer Science & Engineering": "علوم وهندسة الحاسوب",
+    "Humanities & Social Sciences": "العلوم الإنسانية والاجتماعية",
+    "Languages & Literature": "اللغات والأدب",
+    "Arts & Culture": "الفنون والثقافة",
+    "Education & Sports": "التربية والرياضة",
+    "Business & Management": "الأعمال والإدارة",
+    "Health & Life Sciences": "الصحة وعلوم الحياة",
+    "Specialties & Interdisciplinary": "التخصصات والتخصصات المتداخلة"
+  },
+  "results_overlay": {
+    "title": "نتائج المستخدمين",
+    "no_results_description": "لا توجد نتائج متاحة لهذا الاختبار حتى الآن.",
+    "table": {
+      "profile": "الملف الشخصي",
+      "answered_questions": "الأسئلة المجابة",
+      "actions": "الإجراءات"
+    }
   }
 }

@@ -13,7 +13,7 @@
         <span
           class="badge <%= group.visibility.charAt(0).toLowerCase() + group.visibility.slice(1) _%>-badge"
         >
-          <%= t('groups:badges.' + group.visibility.toLowerCase()) || group.visibility %>
+          <%= t('common:filters.' + group.visibility.toLowerCase()) || group.visibility %>
         </span>
         <span class="badge <%= group.isHost ? 'orange-badge' : 'blue-badge' %>">
           <% if (group.isHost) { %>
@@ -37,7 +37,7 @@
         <span
           class="level-value badge <%= group.level === 'Intermediate' ? 'blue-badge' : group.level === 'Advanced' ? 'orange-badge' : 'gray-badge' %>"
         >
-          <%= t('groups:badges.' + group.level.toLowerCase()) || group.level %>
+          <%= t('common:filters.' + group.level.toLowerCase()) || group.level %>
         </span>
         <div class="avatars">
           <% group.avatars.forEach(({photoURL, fullName}) => { %>

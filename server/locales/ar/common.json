@@ -327,7 +327,16 @@
     "Design Thinking": "التفكير التصميمي",
     "Urban Planning": "التخطيط الحضري",
     "Biomedical Engineering": "الهندسة الطبية الحيوية",
-    "Specify and press Enter": "حدد واضغط Enter"
+    "Specify and press Enter": "حدد واضغط Enter",
+    "Fundamental Sciences": "العلوم الأساسية",
+    "Computer Science & Engineering": "علوم وهندسة الحاسوب",
+    "Humanities & Social Sciences": "العلوم الإنسانية والاجتماعية",
+    "Languages & Literature": "اللغات والأدب",
+    "Arts & Culture": "الفنون والثقافة",
+    "Education & Sports": "التربية والرياضة",
+    "Business & Management": "الأعمال والإدارة",
+    "Health & Life Sciences": "الصحة وعلوم الحياة",
+    "Specialties & Interdisciplinary": "التخصصات والتخصصات المتداخلة"
   },
   "shared_texts": {
     "admin_can_t_submit_quizzes": "لا يمكن للمشرف تقديم الاختبارات",
