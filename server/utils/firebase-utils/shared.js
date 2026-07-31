@@ -125,33 +125,49 @@ const syncUserGroupRemoval = async (groupId) => {
 };
 
 const refillSampleMembersIfNeeded = async (groupRef) => {
-  const groupAfterUpdate = (await groupRef.get()).data();
-  let sampleMembers = structuredClone(groupAfterUpdate.sampleMembers) || [];
-
-  if (sampleMembers.length < 2) {
-    // Get all current members
-    const membersSnap = await groupRef.collection("members").limit(2).get();
-    const members = membersSnap.docs.map((doc) => doc.data());
-    // Filter out already in sampleMembers
-    const sampleUids = new Set(sampleMembers.map((m) => m.uid));
-    for (const m of members) {
-      if (!sampleUids.has(m.uid)) {
-        sampleMembers.push({
-          uid: m.uid,
-          fullName: m.fullName,
-          email: m.email,
-          photoURL: m.photoURL,
-        });
-        if (sampleMembers.length === 2) break;
+  try {
+    const txResult = await db.runTransaction(async (t) => {
+      const groupDoc = await t.get(groupRef);
+      if (!groupDoc.exists) return { abort: true };
+      
+      const groupData = groupDoc.data();
+      let sampleMembers = structuredClone(groupData.sampleMembers) || [];
+      
+      if (sampleMembers.length >= 2) {
+        return { abort: true };
       }
-    }
-    // Only update if sampleMembers actually changed
-    const prevSampleMembers = groupAfterUpdate.sampleMembers || [];
 
-    if (sampleMembers.length !== prevSampleMembers.length) {
-      await groupRef.update({ sampleMembers });
-      await syncUserGroupSnapshot(groupRef.id, { sampleMembers });
+      // Read members subcollection
+      const membersSnap = await t.get(groupRef.collection("members").limit(2));
+      const members = membersSnap.docs.map((doc) => doc.data());
+      
+      const sampleUids = new Set(sampleMembers.map((m) => m.uid));
+      for (const m of members) {
+        if (!sampleUids.has(m.uid)) {
+          sampleMembers.push({
+            uid: m.uid,
+            fullName: m.fullName,
+            email: m.email,
+            photoURL: m.photoURL,
+          });
+          if (sampleMembers.length === 2) break;
+        }
+      }
+
+      const prevSampleMembers = groupData.sampleMembers || [];
+      if (sampleMembers.length !== prevSampleMembers.length) {
+        t.update(groupRef, { sampleMembers });
+        return { abort: false, sampleMembers };
+      }
+      
+      return { abort: true };
+    });
+
+    if (!txResult.abort) {
+      await syncUserGroupSnapshot(groupRef.id, { sampleMembers: txResult.sampleMembers });
     }
+  } catch (error) {
+    console.error("Error in refillSampleMembersIfNeeded:", error);
   }
 };
 

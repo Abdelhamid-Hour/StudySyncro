@@ -138,50 +138,57 @@ const getMembers = async (
 const addMember = async (groupRef, userId) => {
   try {
     const userRef = db.collection("users").doc(userId);
-    const userSnap = await userRef.get();
-    const groupSnap = await groupRef.get();
+    const memberDocRef = groupRef.collection("members").doc(userId);
 
-    const group = groupSnap.data();
-    // Ensure members is always an array
-    const membersCount = (
-      await groupRef.collection("members").count().get()
-    ).data().count;
-    const maxMembers = membersCount >= group.maxMembers;
+    // --- Transaction: atomically check limits & duplicates, then write ---
+    const txResult = await db.runTransaction(async (t) => {
+      const [userSnap, groupSnap, memberSnap] = await Promise.all([
+        t.get(userRef),
+        t.get(groupRef),
+        t.get(memberDocRef),
+      ]);
 
-    if (maxMembers) {
+      if (!groupSnap.exists) {
+        return { abort: true, message: "api:group_not_found", isNative: true, type: "info" };
+      }
+
+      const group = groupSnap.data();
+      const membersCount = group.membersCount || 0;
+
+      if (membersCount >= group.maxMembers) {
+        return { abort: true, message: "api:group_is_full", isNative: true, type: "info" };
+      }
+
+      if (memberSnap.exists) {
+        return { abort: true, message: "api:you_are_already_a_member", isNative: true, type: "info" };
+      }
+
+      const userData = userSnap.data();
+
+      t.set(memberDocRef, {
+        uid: userId,
+        fullName: userData.fullName,
+        email: userData.email,
+        photoURL: userData.photoURL,
+      });
+      t.update(groupRef, {
+        membersCount: FieldValue.increment(1),
+      });
+
+      return { abort: false, group };
+    });
+
+    if (txResult.abort) {
       return {
-        message: "api:group_is_full",
+        message: txResult.message,
         success: false,
-        isNative: true,
-        type: "info",
+        isNative: txResult.isNative,
+        type: txResult.type,
       };
     }
 
-    const userData = userSnap.data();
-
-    const isAlreadyMember = (
-      await groupRef.collection("members").doc(userId).get()
-    ).exists;
-
-    if (isAlreadyMember) {
-      return {
-        message: "api:you_are_already_a_member",
-        success: false,
-        isNative: true,
-        type: "info",
-      };
-    }
-
-    // Add user to group members
-    await groupRef.collection("members").doc(userId).set({
-      uid: userId,
-      fullName: userData.fullName,
-      email: userData.email,
-      photoURL: userData.photoURL,
-    });
-    await groupRef.update({
-      membersCount: FieldValue.increment(1),
-    });
+    // --- Post-transaction side effects (don't need atomicity) ---
+    const group = txResult.group;
     await saveGroupToUser(userId, groupRef.id, group);
     await syncUserGroupSnapshot(groupRef.id, {
       membersCount: FieldValue.increment(1),
@@ -228,60 +235,71 @@ const addMember = async (groupRef, userId) => {
 const kickMember = async (groupId, userId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
-    const groupSnap = await groupRef.get();
-    const memberSnap = await groupRef.collection("members").doc(userId).get();
+    const memberDocRef = groupRef.collection("members").doc(userId);
     const userRef = db.collection("users").doc(userId);
-    const userSnap = await userRef.get();
+    const userGroupRef = db.collection("users").doc(userId).collection("userGroups").doc(groupId);
 
-    if (!groupSnap.exists) {
+    // --- Transaction: atomically verify & remove member ---
+    const txResult = await db.runTransaction(async (t) => {
+      const [groupSnap, memberSnap, userSnap] = await Promise.all([
+        t.get(groupRef),
+        t.get(memberDocRef),
+        t.get(userRef),
+      ]);
+
+      if (!groupSnap.exists) {
+        return { abort: true, message: "api:group_not_found", isNative: true, type: "info" };
+      }
+      if (!memberSnap.exists) {
+        return { abort: true, message: "api:user_not_found", isNative: true, type: "info" };
+      }
+
+      const groupData = groupSnap.data();
+      let sampleMembers = groupData.sampleMembers || [];
+      const initialSampleLength = sampleMembers.length;
+      sampleMembers = sampleMembers.filter((m) => m.uid !== userId);
+
+      const updateData = { membersCount: FieldValue.increment(-1) };
+      if (sampleMembers.length !== initialSampleLength) {
+        updateData.sampleMembers = sampleMembers;
+      }
+
+      t.delete(memberDocRef);
+      t.delete(userGroupRef);
+      t.update(groupRef, updateData);
+
+      return {
+        abort: false,
+        groupData,
+        updateData,
+        userSnap,
+      };
+    });
+
+    if (txResult.abort) {
       return {
         success: false,
-        message: "api:group_not_found",
-        isNative: true,
-        type: "info",
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
       };
     }
-    if (!memberSnap.exists) {
-      return {
-        success: false,
-        message: "api:user_not_found",
-        isNative: true,
-        type: "info",
-      };
-    }
-    await memberSnap.ref.delete();
-    await db
-      .collection("users")
-      .doc(userId)
-      .collection("userGroups")
-      .doc(groupId)
-      .delete();
-    const groupData = groupSnap.data();
-    let sampleMembers = groupData.sampleMembers || [];
-    const initialSampleLength = sampleMembers.length;
-    sampleMembers = sampleMembers.filter((m) => m.uid !== userId);
 
-    const updateData = { membersCount: FieldValue.increment(-1) };
+    // --- Post-transaction side effects ---
+    const { groupData, updateData, userSnap } = txResult;
 
-    if (sampleMembers.length !== initialSampleLength) {
-      updateData.sampleMembers = sampleMembers;
-    }
-
-    await groupRef.update(updateData);
     await syncUserGroupSnapshot(groupId, updateData);
-
-    // Refill sampleMembers if less than 3
     await refillSampleMembersIfNeeded(groupRef);
 
-    if (groupSnap.data().currentSession) {
+    if (groupData.currentSession) {
       await userRef
         .collection("activeSessions")
-        .doc(groupSnap.data().currentSession)
+        .doc(groupData.currentSession)
         .delete();
 
       if (
         userSnap.exists &&
-        userSnap.data().currentSession === groupSnap.data().currentSession
+        userSnap.data().currentSession === groupData.currentSession
       ) {
         const { leavSession } = require("./session");
         await leavSession(userId);
@@ -289,7 +307,7 @@ const kickMember = async (groupId, userId) => {
 
       await markSessionStartedNotificationsEnded(
         [userId],
-        groupSnap.data().currentSession
+        groupData.currentSession
       );
     }
     await rDb
@@ -297,7 +315,7 @@ const kickMember = async (groupId, userId) => {
       .remove()
       .catch((e) => console.error(e));
 
-    await notifyMemberRemoved(userId, groupId, groupSnap.data().name);
+    await notifyMemberRemoved(userId, groupId, groupData.name);
 
     return {
       success: true,

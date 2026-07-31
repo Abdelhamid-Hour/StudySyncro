@@ -1,8 +1,6 @@
 // index and optimize website for searche engines
 // add metadata and metadata handler to the login page
 // use post css to generate the css files
-// improve website operations with transactions
-// learn mutaionObserver
 // add the cloud funcs
 
 // mails for the users about example invitatios, requests ...
@@ -12,3 +10,14 @@
 // secure the api keys and firebase connection
 // update env in production 
 // change this in deployment  process.env.FIREBASE_API_KEY || "AIzaSyBQD23tZrfSimPKW8sFIzC_1MoNFGZ9e7A";
+
+
+
+
+
+
+
+
+
+
+// learn mutaionObserver

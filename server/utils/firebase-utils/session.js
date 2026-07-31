@@ -4,6 +4,7 @@ const {
   formatHoursMinutes,
   millisecondsToHMFormat,
   INITIALE_LOADERS_COUNT,
+  MAX_SESSION_TASKS,
 } = require("../global");
 const {
   notifySessionStatus,
@@ -11,7 +12,6 @@ const {
 } = require("./notifications");
 const { getQuizResult, isQuizPassed } = require("./examen");
 const { getTasks } = require("./tache");
-const { syncUserGroupSnapshot } = require("./shared");
 
 const createGroupSession = async (sessionData, userId) => {
   try {
@@ -42,6 +42,14 @@ const createGroupSession = async (sessionData, userId) => {
         type: "warning",
       };
 
+    if (tasks.length > MAX_SESSION_TASKS)
+      return {
+        success: false,
+        message: "api:too_many_tasks",
+        isNative: true,
+        type: "warning",
+      };
+
     const calculatedTasksDuration = tasks.reduce(
       (sum, t) => sum + (Number(t.durationInMins) || 0),
       0,
@@ -58,26 +66,38 @@ const createGroupSession = async (sessionData, userId) => {
     }
 
     const groupRef = db.collection("groups").doc(groupId);
-    const groupSnap = await groupRef.get();
 
-    if (!groupSnap.exists) {
+    // --- Transaction: atomically verify creator & reserve session slot ---
+    const txResult = await db.runTransaction(async (t) => {
+      const groupSnap = await t.get(groupRef);
+
+      if (!groupSnap.exists) {
+        return { abort: true, message: "api:group_does_not_exist", isNative: true, type: "info" };
+      }
+
+      const groupData = groupSnap.data();
+
+      if (groupData.creator !== userId) {
+        return { abort: true, message: "api:you_are_not_the_creator_of_this_group", isNative: true, type: "warning" };
+      }
+
+      if (groupData.currentSession) {
+        return { abort: true, message: "api:group_already_has_an_active_session", isNative: true, type: "warning" };
+      }
+
+      return { abort: false, groupData };
+    });
+
+    if (txResult.abort) {
       return {
         success: false,
-        message: "api:group_does_not_exist",
-        isNative: true,
-        type: "info",
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
       };
     }
 
-    const groupData = groupSnap.data();
-
-    if (groupData.creator !== userId)
-      return {
-        success: false,
-        message: "api:you_are_not_the_creator_of_this_group",
-        isNative: true,
-        type: "warning",
-      };
+    const groupData = txResult.groupData;
 
     let quizId = "";
 
@@ -122,7 +142,7 @@ const createGroupSession = async (sessionData, userId) => {
       duration: duration || 0,
       startDate: new Date().toISOString(),
       groupId: groupId || "",
-      groupName: groupSnap.data().name || "",
+      groupName: groupData.name || "",
       tasksCount: tasks.length || 0,
       joinedCount: 0,
       joinedUsers: [],
@@ -311,94 +331,73 @@ const updateActiveSessionFanOut = async (groupId, sessionId, data) => {
 const cancelSession = async (sessionId, userId) => {
   try {
     const sessionRef = db.collection("sessions").doc(sessionId);
-    const snapshot = await sessionRef.get();
 
-    if (!snapshot.exists) {
+    // --- Transaction: atomically verify session & update status ---
+    const txResult = await db.runTransaction(async (t) => {
+      const snapshot = await t.get(sessionRef);
+
+      if (!snapshot.exists) {
+        return { abort: true, message: "api:session_not_found", isNative: true, type: "info" };
+      }
+
+      const session = snapshot.data();
+      const isAdmin = session.creator === userId;
+
+      if (!isAdmin) {
+        const time =
+          new Date(session.startDate).getTime() + session.duration * 1000 * 60;
+        const timestamp = Date.now();
+
+        if (timestamp >= time) {
+          t.update(sessionRef, {
+            status: "finished",
+            updatedAt: FieldValue.serverTimestamp(),
+          });
+          return { abort: false, session, action: "finished" };
+        } else {
+          return { abort: true, message: "api:you_dont_have_the_right_to_end_the_session", isNative: true, type: "warning" };
+        }
+      }
+
+      // Admin abort
+      t.update(sessionRef, {
+        status: "aborted",
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+
+      const gRef = db.collection("groups").doc(session.groupId);
+      const gSnap = await t.get(gRef);
+      if (gSnap.exists) {
+        t.update(gRef, { currentSession: "" });
+      }
+
+      return { abort: false, session, action: "aborted" };
+    });
+
+    if (txResult.abort) {
       return {
         success: false,
-        message: "api:session_not_found",
-        isNative: true,
-        type: "info",
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
       };
     }
 
-    const usRef = db.collection("users");
-    const usersRef = usRef.where("currentSession", "==", sessionId);
-    const snap = await usersRef.get();
+    // --- Post-transaction side effects ---
+    const { session, action } = txResult;
 
-    const groupRef = db.collection("groups");
-
-    const session = snapshot.data();
-
-    const isAdmin = session.creator === userId;
-
-    if (!isAdmin) {
-      const time =
-        new Date(session.startDate).getTime() + session.duration * 1000 * 60;
-      const timestamp = Date.now();
-
-      if (timestamp >= time) {
-        await sessionRef.update({
-          status: "finished",
-          updatedAt: FieldValue.serverTimestamp(),
-        });
-        await deleteActiveSessionFanOut(session.groupId, sessionId);
-        const membersSnap = await db
-          .collection("groups")
-          .doc(session.groupId)
-          .collection("members")
-          .get();
-        const memberIds = membersSnap.docs.map((doc) => doc.id);
-        await notifySessionStatus(
-          session.groupId,
-          session.groupName,
-          session.name,
-          sessionId,
-          false,
-          memberIds,
+    if (action === "aborted") {
+      // Clear currentSession for all users in this session
+      const usRef = db.collection("users");
+      const usersRef = usRef.where("currentSession", "==", sessionId);
+      const snap = await usersRef.get();
+      if (!snap.empty) {
+        const promises = snap.docs.map((doc) =>
+          usRef.doc(doc.id).update({ currentSession: "" })
         );
-        return {
-          success: true,
-          message: "common:shared_texts.session_ended",
-        };
-      } else {
-        return {
-          success: false,
-          message: "api:you_dont_have_the_right_to_end_the_session",
-          isNative: true,
-          type: "warning",
-        };
+        await Promise.all(promises);
       }
     }
-
-    sessionRef.update({
-      status: "aborted",
-      updatedAt: FieldValue.serverTimestamp(),
-    });
-
-    let promises = [];
-
-    if (!snap.empty) {
-      promises = snap.docs.map((doc) => {
-        const reference = usRef.doc(doc.id);
-        return reference.update({
-          currentSession: "",
-        });
-      });
-    }
-
-    const gRefernce = groupRef.doc(session.groupId);
-    const gSnap = await gRefernce.get();
-
-    if (gSnap.exists) {
-      promises.push(
-        gRefernce.update({
-          currentSession: "",
-        }),
-      );
-    }
-
-    await Promise.all(promises);
 
     await deleteActiveSessionFanOut(session.groupId, sessionId);
 
@@ -430,50 +429,73 @@ const cancelSession = async (sessionId, userId) => {
 };
 
 const leavSession = async (userId) => {
-  const userSnap = db.collection("users").doc(userId);
+  try {
+    const userRef = db.collection("users").doc(userId);
 
-  const user = await userSnap.get();
+    // --- Transaction: atomically read user session & update ---
+    const txResult = await db.runTransaction(async (t) => {
+      const userSnap = await t.get(userRef);
 
-  if (!user.data().currentSession) {
+      if (!userSnap.data().currentSession) {
+        return { abort: true, message: "api:user_is_not_in_any_session", isNative: true, type: "info" };
+      }
+
+      const currentSessionId = userSnap.data().currentSession;
+      const sessionRef = db.collection("sessions").doc(currentSessionId);
+      const sessionSnap = await t.get(sessionRef);
+
+      if (sessionSnap.exists) {
+        t.update(sessionRef, {
+          joinedUsers: FieldValue.arrayRemove(userId),
+          joinedCount: FieldValue.increment(-1),
+        });
+      }
+
+      t.update(userRef, {
+        currentSession: "",
+      });
+
+      return {
+        abort: false,
+        sessionId: currentSessionId,
+        groupId: sessionSnap.exists ? sessionSnap.data().groupId : null,
+      };
+    });
+
+    if (txResult.abort) {
+      return {
+        success: false,
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
+      };
+    }
+
+    // --- Post-transaction side effects ---
+    if (txResult.groupId) {
+      await updateActiveSessionFanOut(
+        txResult.groupId,
+        txResult.sessionId,
+        {
+          joinedCount: FieldValue.increment(-1),
+        },
+      );
+    }
+    await updateSessionNotificationJoined(userId, txResult.sessionId, false);
+
+    return {
+      success: true,
+      message: "api:you_left_the_session_succefully",
+    };
+  } catch (error) {
+    console.error("Error in leavSession:", error);
     return {
       success: false,
-      message: "api:user_is_not_in_any_session",
-      isNative: true,
-      type: "info",
+      message: "api:somethign_went_wrong",
+      isNative: false,
+      type: "error",
     };
   }
-
-  const sessionSnap = await db
-    .collection("sessions")
-    .doc(user.data().currentSession)
-    .get();
-
-  if (sessionSnap.exists) {
-    await sessionSnap.ref.update({
-      joinedUsers: FieldValue.arrayRemove(userId),
-      joinedCount: FieldValue.increment(-1),
-    });
-    // Fan out joinedCount decrement
-    await updateActiveSessionFanOut(
-      sessionSnap.data().groupId,
-      user.data().currentSession,
-      {
-        joinedCount: FieldValue.increment(-1),
-      },
-    );
-  }
-
-  const leftSessionId = user.data().currentSession;
-  await userSnap.update({
-    currentSession: "",
-  });
-  if (leftSessionId) {
-    await updateSessionNotificationJoined(userId, leftSessionId, false);
-  }
-  return {
-    success: true,
-    message: "api:you_left_the_session_succefully",
-  };
 };
 
 const getCurrentSessionInfo = async (userId, t) => {
@@ -827,35 +849,44 @@ const getActiveSession = async (userId) => {
 const joinSession = async (sessionId, userId) => {
   try {
     const ref = db.collection("sessions").doc(sessionId);
-    const snap = await ref.get();
     const userRef = db.collection("users").doc(userId);
-    const usSnap = await userRef.get();
-    if (!snap.exists) {
-      return {
-        success: false,
-        message: "api:session_not_found_1",
-        isNative: true,
-        type: "info",
-      };
-    }
-    if (!usSnap.exists) {
-      return {
-        success: false,
-        message: "api:user_not_found_1",
-        isNative: true,
-        type: "info",
-      };
-    }
-    await ref.update({
-      joinedUsers: FieldValue.arrayUnion(userId),
-      joinedCount: FieldValue.increment(1),
-    });
-    await userRef.update({
-      currentSession: sessionId,
+
+    // --- Transaction: atomically verify & update join state ---
+    const txResult = await db.runTransaction(async (t) => {
+      const [snap, usSnap] = await Promise.all([
+        t.get(ref),
+        t.get(userRef),
+      ]);
+
+      if (!snap.exists) {
+        return { abort: true, message: "api:session_not_found_1", isNative: true, type: "info" };
+      }
+      if (!usSnap.exists) {
+        return { abort: true, message: "api:user_not_found_1", isNative: true, type: "info" };
+      }
+
+      t.update(ref, {
+        joinedUsers: FieldValue.arrayUnion(userId),
+        joinedCount: FieldValue.increment(1),
+      });
+      t.update(userRef, {
+        currentSession: sessionId,
+      });
+
+      return { abort: false, groupId: snap.data().groupId };
     });
 
-    // Fan out joinedCount increment
-    await updateActiveSessionFanOut(snap.data().groupId, sessionId, {
+    if (txResult.abort) {
+      return {
+        success: false,
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
+      };
+    }
+
+    // --- Post-transaction side effects ---
+    await updateActiveSessionFanOut(txResult.groupId, sessionId, {
       joinedCount: FieldValue.increment(1),
     });
     await updateSessionNotificationJoined(userId, sessionId, true);

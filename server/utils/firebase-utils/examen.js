@@ -3,7 +3,7 @@ const { db, admin } = require("../../firebase/firebaseAdmin");
 const { getQuestions, getQuizDuration } = require("./question");
 const { toReadableDate } = require("../global");
 const { getGroupById } = require("./shared");
-const { INITIALE_LOADERS_COUNT } = require("../global");
+const { INITIALE_LOADERS_COUNT, MAX_QUIZ_QUESTIONS } = require("../global");
 
 class QuizResult {
   constructor(resultDetails, user) {
@@ -347,35 +347,64 @@ const getQuizzesByGroupId = async (
 
 const createQuiz = async (examenData, userId) => {
   try {
-    const titleAvailability = await isQuizTitleAvailable(
-      examenData["quiz-title"],
-      userId,
-    );
-
-    if (!titleAvailability.available) {
+    const title = examenData["quiz-title"];
+    if (!title || !title.trim()) {
       return {
         success: false,
-        message: titleAvailability.message,
-        isNative: titleAvailability.isNative || true,
-        type: titleAvailability.type || "warning",
+        message: "api:quiz_title_is_required",
+        isNative: true,
+        type: "warning",
       };
     }
 
-    const examenRef = db.collection("quizzes");
-    const newExamen = {
-      title: examenData["quiz-title"],
-      subject: examenData.subject,
-      creator: userId,
-      sessionsCount: 0,
-      groupsCount: 0,
-      createdAt: new Date().toISOString(),
-      questionsCount: 0,
-      status: "draft",
-    };
-    const docRef = await examenRef.add(newExamen);
+    const quizzesRef = db.collection("quizzes");
+    const cleanedTitle = title.trim();
+
+    const txResult = await db.runTransaction(async (t) => {
+      const snapshot = await t.get(
+        quizzesRef
+          .where("title", "==", cleanedTitle)
+          .where("creator", "==", userId)
+      );
+
+      if (!snapshot.empty) {
+        return {
+          abort: true,
+          message: "api:you_already_have_a_quiz_with_this_title",
+          isNative: true,
+          type: "warning",
+        };
+      }
+
+      const newExamen = {
+        title: cleanedTitle,
+        subject: examenData.subject,
+        creator: userId,
+        sessionsCount: 0,
+        groupsCount: 0,
+        createdAt: new Date().toISOString(),
+        questionsCount: 0,
+        status: "draft",
+      };
+
+      const newDocRef = quizzesRef.doc();
+      t.set(newDocRef, newExamen);
+
+      return { abort: false, quizId: newDocRef.id };
+    });
+
+    if (txResult.abort) {
+      return {
+        success: false,
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
+      };
+    }
+
     return {
       success: true,
-      quizId: docRef.id,
+      quizId: txResult.quizId,
       message: "api:quiz_created_successfully",
     };
   } catch (error) {
@@ -459,24 +488,30 @@ const deleteQuiz = async (quizId) => {
 const updateQuizTitle = async (title, id, userId) => {
   try {
     const ref = db.collection("quizzes").doc(id);
-    const snapShot = await ref.get();
-    const quiz = snapShot.data();
-    if (snapShot.exists && quiz.creator === userId) {
-      await ref.update({
-        title: title,
-      });
-      return {
-        success: true,
-        message: "api:quiz_title_updated_successfully",
-      };
-    } else {
+
+    const txResult = await db.runTransaction(async (t) => {
+      const snapShot = await t.get(ref);
+      if (!snapShot.exists || snapShot.data().creator !== userId) {
+        return { abort: true, message: "api:quiz_id_is_not_valid", isNative: true, type: "warning" };
+      }
+
+      t.update(ref, { title: title });
+      return { abort: false };
+    });
+
+    if (txResult.abort) {
       return {
         success: false,
-        message: "api:quiz_id_is_not_valid",
-        isNative: true,
-        type: "warning",
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
       };
     }
+
+    return {
+      success: true,
+      message: "api:quiz_title_updated_successfully",
+    };
   } catch (error) {
     console.error(error);
     return {
@@ -490,24 +525,30 @@ const updateQuizTitle = async (title, id, userId) => {
 const updateQuizSubject = async (subject, id, userId) => {
   try {
     const ref = db.collection("quizzes").doc(id);
-    const snapShot = await ref.get();
-    const quiz = snapShot.data();
-    if (snapShot.exists && quiz.creator === userId) {
-      await ref.update({
-        subject: subject,
-      });
-      return {
-        success: true,
-        message: "api:quiz_subject_updated_successfully",
-      };
-    } else {
+
+    const txResult = await db.runTransaction(async (t) => {
+      const snapShot = await t.get(ref);
+      if (!snapShot.exists || snapShot.data().creator !== userId) {
+        return { abort: true, message: "api:quiz_id_is_not_valid", isNative: true, type: "warning" };
+      }
+
+      t.update(ref, { subject: subject });
+      return { abort: false };
+    });
+
+    if (txResult.abort) {
       return {
         success: false,
-        message: "api:quiz_id_is_not_valid",
-        isNative: true,
-        type: "warning",
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
       };
     }
+
+    return {
+      success: true,
+      message: "api:quiz_subject_updated_successfully",
+    };
   } catch (error) {
     console.error(error);
     return {
@@ -837,70 +878,73 @@ const modifyQuizQuestions = async (
 ) => {
   try {
     const quizzRef = db.collection("quizzes").doc(quizzId);
-    const quizSnap = await quizzRef.get();
     const questionsRef = quizzRef.collection("questions");
-    const quizz = quizSnap.data();
 
-    if (!quizSnap.exists) {
-      return {
-        success: false,
-        message: "api:quiz_not_found",
-        isNative: true,
-        type: "info",
-      };
-    }
+    const txResult = await db.runTransaction(async (t) => {
+      const quizSnap = await t.get(quizzRef);
 
-    if (quizz.creator !== userId) {
-      return {
-        success: false,
-        message: "api:you_are_not_authorized_to_modify_this_quiz",
-        isNative: true,
-        type: "warning",
-      };
-    }
+      if (!quizSnap.exists) {
+        return { abort: true, message: "api:quiz_not_found", isNative: true, type: "info" };
+      }
 
-    const operations = [];
-    if (updatedQuestions.length > 0) {
-      const updates = updatedQuestions.map((q) => {
-        const ref = questionsRef.doc(q.id);
-        return ref.update({
+      const quizz = quizSnap.data();
+      if (quizz.creator !== userId) {
+        return {
+          abort: true,
+          message: "api:you_are_not_authorized_to_modify_this_quiz",
+          isNative: true,
+          type: "warning",
+        };
+      }
+
+      updatedQuestions.forEach((q) => {
+        t.update(questionsRef.doc(q.id), {
           text: q.text,
           choices: q.choices,
           correctAnswerIndex: parseInt(q.correctAnswerIndex, 10),
         });
       });
-      operations.push(...updates);
-    }
-    if (deletedQuestions.length > 0) {
-      const suppression = deletedQuestions.map((q) => {
-        return questionsRef.doc(q).delete();
+
+      deletedQuestions.forEach((q) => {
+        t.delete(questionsRef.doc(q));
       });
-      operations.push(...suppression);
-    }
-    if (newQuestions.length > 0) {
-      const creation = newQuestions.map((q) => {
-        return questionsRef.doc(q.id).set({
+
+      newQuestions.forEach((q) => {
+        t.set(questionsRef.doc(q.id), {
           text: q.text,
           choices: q.choices,
           correctAnswerIndex: parseInt(q.correctAnswerIndex, 10),
         });
       });
-      operations.push(...creation);
-    }
 
-    await Promise.all(operations);
+      const sizeDelta = newQuestions.length - deletedQuestions.length;
+      const newSize = (quizz.questionsCount || 0) + sizeDelta;
+      if (newSize > MAX_QUIZ_QUESTIONS) {
+        return {
+          abort: true,
+          message: "api:too_many_questions",
+          isNative: true,
+          type: "warning",
+        };
+      }
+      
+      const updates = { questionsCount: newSize };
+      if (quizz.status === "draft" && newSize > 0) {
+        updates.status = "published";
+      }
 
-    const snap = await questionsRef.count().get();
-    const size = snap.data().count;
+      t.update(quizzRef, updates);
 
-    quizzRef.update({
-      questionsCount: size,
+      return { abort: false };
     });
 
-    if (quizz.status === "draft" && size > 0) {
-      await quizzRef.update({
-        status: "published",
-      });
+    if (txResult.abort) {
+      return {
+        success: false,
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
+      };
     }
 
     return {
@@ -995,93 +1039,109 @@ const getQuizResult = async (reqUserId, quizId, groupId, userId) => {
 const addQuizResult = async (userId, quizResult) => {
   try {
     const userRef = db.collection("users").doc(userId);
-    const userData = (await userRef.get()).data();
-    const quizSnap = await db
-      .collection("quizzes")
-      .doc(quizResult.quizId)
-      .get();
-
-    if (!quizSnap.exists)
-      return {
-        success: false,
-        message: "api:quiz_not_found",
-        isNative: true,
-        type: "info",
-      };
-
-    const quizTitle = quizSnap.data().title;
-
     const quizResultRef = db.collection("quizResults");
-    const existingResult = await quizResultRef
-      .where("userId", "==", userId)
-      .where("quizId", "==", quizResult.quizId)
-      .get();
 
-    if (!userData.currentSession)
-      return {
-        success: false,
-        message: "api:you_are_not_in_a_session",
-        isNative: true,
-        type: "warning",
+    // --- Transaction: atomically check for existing result & add new one ---
+    const txResult = await db.runTransaction(async (t) => {
+      const userSnap = await t.get(userRef);
+      const userData = userSnap.data();
+
+      const quizSnap = await t.get(
+        db.collection("quizzes").doc(quizResult.quizId)
+      );
+
+      if (!quizSnap.exists) {
+        return { abort: true, message: "api:quiz_not_found", isNative: true, type: "info" };
+      }
+
+      if (!userData.currentSession) {
+        return { abort: true, message: "api:you_are_not_in_a_session", isNative: true, type: "warning" };
+      }
+
+      const sessionRef = db.collection("sessions").doc(userData.currentSession);
+      const sessionSnap = await t.get(sessionRef);
+
+      if (!sessionSnap.exists) {
+        return { abort: true, message: "api:session_not_found", isNative: true, type: "info" };
+      }
+
+      const session = sessionSnap.data();
+
+      if (!session.quizId || session.quizId != quizResult.quizId) {
+        return { abort: true, message: "api:you_are_not_in_a_session_with_this_quiz", isNative: true, type: "warning" };
+      }
+
+      // Check for existing result transactionally
+      const existingResult = await t.get(
+        quizResultRef
+          .where("userId", "==", userId)
+          .where("quizId", "==", quizResult.quizId)
+      );
+
+      if (!existingResult.empty) {
+        return { abort: true, message: "api:you_have_already_submitted_this_quiz", isAlreadySubmitted: true };
+      }
+
+      const quizTitle = quizSnap.data().title;
+      const submittedCount =
+        quizResult.correctAnswers.length + quizResult.incorrectAnswers.length;
+
+      const newResult = {
+        userId,
+        ...quizResult,
+        submittedCount,
+        sessionName: session.name,
+        sessionId: userData.currentSession,
+        groupId: session.groupId,
+        quizTitle,
       };
 
-    const sessionSnap = await db
-      .collection("sessions")
-      .doc(userData.currentSession)
-      .get();
+      // Add the result document
+      const newResultRef = quizResultRef.doc();
+      t.set(newResultRef, newResult);
 
-    if (!sessionSnap.exists)
+      return {
+        abort: false,
+        quizTitle,
+        session,
+        currentSession: userData.currentSession,
+      };
+    });
+
+    if (txResult.abort) {
+      if (txResult.isAlreadySubmitted) {
+        return {
+          success: true,
+          message: txResult.message,
+        };
+      }
       return {
         success: false,
-        message: "api:session_not_found",
-        isNative: true,
-        type: "info",
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
       };
+    }
 
-    const session = sessionSnap.data();
-
-    if (!session.quizId || session.quizId != quizResult.quizId)
-      return {
-        success: false,
-        message: "api:you_are_not_in_a_session_with_this_quiz",
-        isNative: true,
-        type: "warning",
-      };
-
+    // --- Post-transaction side effects ---
+    const { session } = txResult;
+    
+    // Get questionsCount from session safely outside transaction
+    const sessionRef = db.collection("sessions").doc(txResult.currentSession);
     const questionsCount = (
-      await sessionSnap.ref.collection("quizQuestions").count().get()
+      await sessionRef.collection("quizQuestions").count().get()
     ).data().count;
 
-    const submittedCount =
-      quizResult.correctAnswers.length + quizResult.incorrectAnswers.length;
-    const newResult = {
-      userId,
-      ...quizResult,
-      submittedCount,
-      sessionName: session.name,
-      sessionId: userData.currentSession,
-      groupId: session.groupId,
-      quizTitle,
-    };
-
-    if (existingResult.empty) {
-      await quizResultRef.add(newResult);
-      const quizSnap = await db
-        .collection("quizzes")
-        .doc(quizResult.quizId)
-        .get();
-      const groupRes = await getGroupById(sessionSnap.data().groupId);
-      const quiz = quizSnap.data();
-      if (!groupRes.success) return groupRes;
+    const groupRes = await getGroupById(session.groupId);
+    if (groupRes.success) {
       const group = groupRes.group;
-
       await userRef
         .collection("passedQuizzes")
         .doc(quizResult.groupId)
         .collection("passedQuizzesRecords")
         .doc(quizResult.quizId)
         .set({
-          title: quiz.title,
+          title: txResult.quizTitle,
           submittedAt: quizResult.submittedAt,
           groupName: group.name,
           score: Math.round(
@@ -1091,11 +1151,6 @@ const addQuizResult = async (userId, quizResult) => {
           userId,
           sessionName: session.name,
         });
-    } else {
-      return {
-        success: true,
-        message: "api:you_have_already_submitted_this_quiz",
-      };
     }
 
     return {
@@ -1206,62 +1261,81 @@ const duplicateQuiz = async (quizId, userId, title) => {
       };
     }
 
-    const quizRef = db.collection("quizzes");
-    const quizSnap = await quizRef.doc(quizId).get();
+    const quizzesRef = db.collection("quizzes");
+    const quizDocRef = quizzesRef.doc(quizId);
 
-    if (!quizSnap.exists)
-      return {
-        success: false,
-        message: "api:quiz_not_found",
-        isNative: true,
-        type: "info",
+    const txResult = await db.runTransaction(async (t) => {
+      const quizSnap = await t.get(quizDocRef);
+
+      if (!quizSnap.exists) {
+        return { abort: true, message: "api:quiz_not_found", isNative: true, type: "info" };
+      }
+
+      const quiz = quizSnap.data();
+      if (quiz.creator !== userId) {
+        return {
+          abort: true,
+          message: "api:you_are_not_authorized_to_duplicate_this_quiz",
+          isNative: true,
+          type: "warning",
+        };
+      }
+
+      const newTitle = title || `${quiz.title} (Copy)`;
+      const cleanedTitle = newTitle.trim();
+
+      const titleCheckSnap = await t.get(
+        quizzesRef
+          .where("title", "==", cleanedTitle)
+          .where("creator", "==", userId)
+          .limit(1)
+      );
+
+      if (!titleCheckSnap.empty) {
+        return {
+          abort: true,
+          message: "api:you_already_have_a_quiz_with_this_title",
+          isNative: true,
+          type: "warning",
+        };
+      }
+
+      const newQuiz = {
+        ...quiz,
+        title: cleanedTitle,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
       };
 
-    const quiz = quizSnap.data();
-    if (quiz.creator !== userId)
+      const newQuizRef = quizzesRef.doc();
+      t.set(newQuizRef, newQuiz);
+
+      return { abort: false, newQuizId: newQuizRef.id };
+    });
+
+    if (txResult.abort) {
       return {
         success: false,
-        message: "api:you_are_not_authorized_to_duplicate_this_quiz",
-        isNative: true,
-        type: "warning",
-      };
-
-    const newTitle = title || `${quiz.title} (Copy)`;
-    const titleAvailability = await isQuizTitleAvailable(newTitle, userId);
-
-    if (!titleAvailability.available) {
-      return {
-        success: false,
-        message: titleAvailability.message,
-        isNative: titleAvailability.isNative || true,
-        type: titleAvailability.type || "warning",
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
       };
     }
 
-    const newQuiz = {
-      ...quiz,
-      title: newTitle,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    };
-
-    // add also the questions subcollection to the new quiz
-    const questionsSnap = await quizRef
-      .doc(quizId)
-      .collection("questions")
-      .get();
-    const newQuizRef = await quizRef.add(newQuiz);
-    const newQuestionsRef = newQuizRef.collection("questions");
+    // add also the questions subcollection to the new quiz (outside tx to avoid write limits)
+    const questionsSnap = await quizDocRef.collection("questions").get();
+    const newQuestionsRef = quizzesRef.doc(txResult.newQuizId).collection("questions");
+    
     await Promise.all(
       questionsSnap.docs.map((doc) => {
         const questionData = doc.data();
         return newQuestionsRef.doc(doc.id).set(questionData);
-      }),
+      })
     );
 
     return {
       success: true,
       message: "api:quiz_duplicated_successfully",
-      newQuizId: newQuizRef.id,
+      newQuizId: txResult.newQuizId,
     };
   } catch (error) {
     console.error(error);

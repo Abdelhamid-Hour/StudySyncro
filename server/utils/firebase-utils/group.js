@@ -22,52 +22,71 @@ const {
 const createGroup = async (groupData, userData) => {
   try {
     const groupRef = db.collection("groups");
-    const snapshot = await groupRef
-      .where("name", "==", groupData["group-name"])
-      .get();
 
-    const newGrop = {
-      name: groupData["group-name"],
-      description: groupData["group-description"],
-      subject: groupData.subject,
-      level: groupData.level,
-      maxMembers: groupData["max-members"],
-      visibility: groupData.visibility,
-      creationDate: new Date().toISOString(),
-      creator: userData.uid,
-      membersCount: 1,
-      sampleMembers: [
-        {
-          uid: userData.uid,
-          fullName: userData.fullName,
-          email: userData.email,
-          photoURL: userData.photoURL,
-        },
-      ],
-      showInSearch:
-        groupData.visibility === "Private" && !groupData["show-in-search"]
-          ? false
-          : true,
-      currentSession: "",
-    };
+    const txResult = await db.runTransaction(async (t) => {
+      const snapshot = await t.get(
+        groupRef.where("name", "==", groupData["group-name"])
+      );
 
-    if (!snapshot.empty) {
+      if (!snapshot.empty) {
+        return {
+          abort: true,
+          message: "api:a_group_with_this_name_already_exists_please_choos",
+          isNative: true,
+          type: "warning",
+        };
+      }
+
+      const newGroup = {
+        name: groupData["group-name"],
+        description: groupData["group-description"],
+        subject: groupData.subject,
+        level: groupData.level,
+        maxMembers: groupData["max-members"],
+        visibility: groupData.visibility,
+        creationDate: new Date().toISOString(),
+        creator: userData.uid,
+        membersCount: 1,
+        sampleMembers: [
+          {
+            uid: userData.uid,
+            fullName: userData.fullName,
+            email: userData.email,
+            photoURL: userData.photoURL,
+          },
+        ],
+        showInSearch:
+          groupData.visibility === "Private" && !groupData["show-in-search"]
+            ? false
+            : true,
+        currentSession: "",
+      };
+
+      const newGroupDoc = groupRef.doc();
+      const memberDoc = newGroupDoc.collection("members").doc(userData.uid);
+
+      t.set(newGroupDoc, newGroup);
+      t.set(memberDoc, {
+        uid: userData.uid,
+        fullName: userData.fullName,
+        email: userData.email,
+        photoURL: userData.photoURL,
+      });
+
+      return { abort: false, groupId: newGroupDoc.id, newGroup };
+    });
+
+    if (txResult.abort) {
       return {
         success: false,
-        message: "api:a_group_with_this_name_already_exists_please_choos",
-        isNative: true,
-        type: "warning",
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
       };
     }
 
-    const groupDoc = await groupRef.add(newGrop);
-    groupDoc.collection("members").doc(userData.uid).set({
-      uid: userData.uid,
-      fullName: userData.fullName,
-      email: userData.email,
-      photoURL: userData.photoURL,
-    });
-    await saveGroupToUser(userData.uid, groupDoc.id, newGrop);
+    await saveGroupToUser(userData.uid, txResult.groupId, txResult.newGroup);
+
     return {
       success: true,
     };
@@ -354,53 +373,71 @@ const getJoinedGroups = async (
 const leaveGroup = async (groupId, userId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
-    const groupSnap = await groupRef.get();
+    const memberDocRef = groupRef.collection("members").doc(userId);
     const userRef = db.collection("users").doc(userId);
-    const memberSnap = await groupRef.collection("members").doc(userId).get();
-    if (!groupSnap.exists)
-      return {
-        success: false,
-        message: "api:group_not_found",
-        isNative: true,
-        type: "info",
-      };
+    const userGroupRef = userRef.collection("userGroups").doc(groupId);
 
-    if (!memberSnap.exists) {
+    // --- Transaction: atomically verify & remove member ---
+    const txResult = await db.runTransaction(async (t) => {
+      const [groupSnap, memberSnap, userSnap] = await Promise.all([
+        t.get(groupRef),
+        t.get(memberDocRef),
+        t.get(userRef),
+      ]);
+
+      if (!groupSnap.exists) {
+        return { abort: true, message: "api:group_not_found", isNative: true, type: "info" };
+      }
+      if (!memberSnap.exists) {
+        return { abort: true, message: "api:user_not_found", isNative: true, type: "info" };
+      }
+
+      const groupData = groupSnap.data();
+      let sampleMembers = groupData.sampleMembers || [];
+      const initialSampleLength = sampleMembers.length;
+      sampleMembers = sampleMembers.filter((m) => m.uid !== userId);
+
+      const updateData = { membersCount: FieldValue.increment(-1) };
+      if (sampleMembers.length !== initialSampleLength) {
+        updateData.sampleMembers = sampleMembers;
+      }
+
+      t.delete(memberDocRef);
+      t.delete(userGroupRef);
+      t.update(groupRef, updateData);
+
+      return {
+        abort: false,
+        groupData,
+        updateData,
+        userSnap,
+      };
+    });
+
+    if (txResult.abort) {
       return {
         success: false,
-        message: "api:user_not_found",
-        isNative: true,
-        type: "info",
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
       };
     }
 
-    await memberSnap.ref.delete();
-    await userRef.collection("userGroups").doc(groupId).delete();
+    // --- Post-transaction side effects ---
+    const { groupData, updateData, userSnap } = txResult;
 
-    const groupData = groupSnap.data();
-    let sampleMembers = groupData.sampleMembers || [];
-    const initialSampleLength = sampleMembers.length;
-    sampleMembers = sampleMembers.filter((m) => m.uid !== userId);
-
-    const updateData = { membersCount: FieldValue.increment(-1) };
-
-    if (sampleMembers.length !== initialSampleLength) {
-      updateData.sampleMembers = sampleMembers;
-    }
-
-    await groupRef.update(updateData);
     await syncUserGroupSnapshot(groupId, updateData);
     await refillSampleMembersIfNeeded(groupRef);
 
-    if (groupSnap.data().currentSession) {
+    if (groupData.currentSession) {
       await userRef
         .collection("activeSessions")
-        .doc(groupSnap.data().currentSession)
+        .doc(groupData.currentSession)
         .delete();
-      const userSnap = await userRef.get();
+
       if (
         userSnap.exists &&
-        userSnap.data().currentSession === groupSnap.data().currentSession
+        userSnap.data().currentSession === groupData.currentSession
       ) {
         const { leavSession } = require("./session");
         await leavSession(userId);
@@ -408,7 +445,7 @@ const leaveGroup = async (groupId, userId) => {
       
       await markSessionStartedNotificationsEnded(
         [userId],
-        groupSnap.data().currentSession
+        groupData.currentSession
       );
     }
     await rDb
@@ -433,64 +470,73 @@ const leaveGroup = async (groupId, userId) => {
 
 const modifyGroup = async (userId, groupId, formData) => {
   try {
-    const groupRes = await getGroupById(groupId);
     const groupRef = db.collection("groups").doc(groupId);
-    const snaphsot = await groupRef.get();
-    if (!groupRes.success) return groupRes;
-    const group = groupRes.group;
-    let isAdmin = true;
-    isAdmin = group.creator === userId;
-    if (!isAdmin) {
+    
+    const txResult = await db.runTransaction(async (t) => {
+      const snapshot = await t.get(groupRef);
+      if (!snapshot.exists) {
+        return { abort: true, message: "api:group_not_found", isNative: true, type: "warning" };
+      }
+
+      const group = snapshot.data();
+      if (group.creator !== userId) {
+        return {
+          abort: true,
+          message: "api:you_dont_have_the_right_to_upate_the_group_informa",
+          isNative: true,
+          type: "warning",
+        };
+      }
+
+      const fieldName = formData.fieldName;
+      const value = formData.value;
+      
+      let updateData = null;
+      let message = "";
+
+      if (fieldName === "visibility") {
+        if (value.visibility) {
+          updateData = { visibility: value.visibility };
+          message = "api:group_visibility_updated_success";
+        } else if (value.showInSearch !== undefined) {
+          updateData = { showInSearch: value.showInSearch };
+          message = "api:group_privacy_updated_success";
+        }
+      } else if (
+        (fieldName != "" && fieldName != "visibility") ||
+        value != ""
+      ) {
+        updateData = { [fieldName]: value };
+        message = "api:group_field_updated_success";
+      } else {
+        return {
+          abort: true,
+          message: "api:no_changes_detected_skipping_update",
+          isNative: true,
+          type: "info",
+        };
+      }
+
+      if (updateData) {
+        t.update(groupRef, updateData);
+      }
+
+      return { abort: false, message };
+    });
+
+    if (txResult.abort) {
       return {
         success: false,
-        message: "api:you_dont_have_the_right_to_upate_the_group_informa",
-        isNative: true,
-        type: "warning",
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
       };
     }
 
-    const fieldName = formData.fieldName;
-    const value = formData.value;
-    // hnaya acheck using the keys to inssure that there is fileds to upddate heheh
-    if (fieldName === "visibility") {
-      if (value.visibility) {
-        await groupRef.update({
-          visibility: value.visibility,
-        });
-        return {
-          success: true,
-          message: "api:group_visibility_updated_success",
-        };
-      } else if (value.showInSearch) {
-        await groupRef.update({
-          showInSearch: value.showInSearch,
-        });
-        return {
-          success: true,
-          message: "api:group_privacy_updated_success",
-        };
-      }
-    } else if (
-      (fieldName != "" && fieldName != "visibility") ||
-      value != "" ||
-      snaphsot.exists
-    ) {
-      await groupRef.update({
-        [fieldName]: value,
-      });
-      return {
-        success: true,
-        message: "api:group_field_updated_success",
-        // Notice: the field name might need to be passed separately if the client expects to format the string, but since we're using generic api key, we can rely on a generic message.
-      };
-    } else {
-      return {
-        success: false,
-        message: "api:no_changes_detected_skipping_update",
-        isNative: true,
-        type: "info",
-      };
-    }
+    return {
+      success: true,
+      message: txResult.message,
+    };
   } catch (error) {
     console.error("Error in modifyGroup:", error.message);
     return {
@@ -505,152 +551,157 @@ const modifyGroup = async (userId, groupId, formData) => {
 const updateGroupProperty = async (groupId, property, newValue) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
-    const groupDoc = await groupRef.get();
-    if (!groupDoc.exists) {
-      return {
-        success: false,
-        message: "api:group_not_found",
-        isNative: true,
-        type: "info",
+
+    const txResult = await db.runTransaction(async (t) => {
+      const groupDoc = await t.get(groupRef);
+      if (!groupDoc.exists) {
+        return { abort: true, message: "api:group_not_found", isNative: true, type: "info" };
+      }
+
+      // Map of valid properties, their Firestore field name, and verification/sanitization logic
+      const propertyMap = {
+        name: {
+          field: "name",
+          validate: async (val) => {
+            if (typeof val !== "string" || val.trim() === "") {
+              return { valid: false, message: "api:group_name_cannot_be_empty" };
+            }
+            const cleaned = val.trim();
+            const snapshot = await t.get(
+              db.collection("groups").where("name", "==", cleaned).limit(2)
+            );
+            const isDuplicated = snapshot.docs.some((doc) => doc.id !== groupId);
+            if (isDuplicated) {
+              return {
+                valid: false,
+                message: "api:a_group_with_this_name_already_exists",
+              };
+            }
+            return { valid: true, value: cleaned };
+          },
+        },
+        description: {
+          field: "description",
+          validate: (val) => {
+            if (typeof val !== "string" || val.trim() === "") {
+              return { valid: false, message: "api:description_cannot_be_empty" };
+            }
+            return { valid: true, value: val.trim() };
+          },
+        },
+        creator: {
+          field: "creator",
+          validate: (val) => {
+            if (typeof val !== "string" || val.trim() === "") {
+              return { valid: false, message: "api:creator_id_cannot_be_empty" };
+            }
+            return { valid: true, value: val.trim() };
+          },
+        },
+        subject: {
+          field: "subject",
+          validate: (val) => {
+            if (typeof val !== "string" || val.trim() === "") {
+              return { valid: false, message: "api:subject_cannot_be_empty" };
+            }
+            return { valid: true, value: val.trim() };
+          },
+        },
+        level: {
+          field: "level",
+          validate: (val) => {
+            if (typeof val !== "string" || val.trim() === "") {
+              return { valid: false, message: "api:level_cannot_be_empty" };
+            }
+            return { valid: true, value: val.trim() };
+          },
+        },
+        visibility: {
+          field: "visibility",
+          validate: (val) => {
+            if (typeof val !== "string" || val.trim() === "") {
+              return { valid: false, message: "api:visibility_cannot_be_empty" };
+            }
+            return { valid: true, value: val.trim() };
+          },
+        },
+        maxMembers: {
+          field: "maxMembers",
+          validate: (val) => {
+            if (val === null || val === undefined || val === "") {
+              return { valid: false, message: "api:max_members_cannot_be_empty" };
+            }
+            const num = Number(val);
+            if (isNaN(num) || num <= 0) {
+              return {
+                valid: false,
+                message: "api:max_members_must_be_a_positive_number",
+              };
+            }
+            return { valid: true, value: num };
+          },
+        },
+        showInSearch: {
+          field: "showInSearch",
+          validate: (val) => {
+            let boolValue;
+            if (typeof val === "boolean") {
+              boolValue = val;
+            } else if (typeof val === "string") {
+              boolValue = val.toLowerCase() === "true";
+            } else {
+              return { valid: false, message: "api:invalid_value_for_showinsearch" };
+            }
+            return { valid: true, value: boolValue };
+          },
+        },
       };
-    }
 
-    // Map of valid properties, their Firestore field name, and verification/sanitization logic
-    const propertyMap = {
-      name: {
-        field: "name",
-        validate: async (val) => {
-          if (typeof val !== "string" || val.trim() === "") {
-            return { valid: false, message: "api:group_name_cannot_be_empty" };
-          }
-          const cleaned = val.trim();
-          const snapshot = await db
-            .collection("groups")
-            .where("name", "==", cleaned)
-            .limit(2)
-            .get();
-          const isDuplicated = snapshot.docs.some((doc) => doc.id !== groupId);
-          if (isDuplicated) {
-            return {
-              valid: false,
-              message: "api:a_group_with_this_name_already_exists",
-            };
-          }
-          return { valid: true, value: cleaned };
-        },
-      },
-      description: {
-        field: "description",
-        validate: (val) => {
-          if (typeof val !== "string" || val.trim() === "") {
-            return { valid: false, message: "api:description_cannot_be_empty" };
-          }
-          return { valid: true, value: val.trim() };
-        },
-      },
-      creator: {
-        field: "creator",
-        validate: (val) => {
-          if (typeof val !== "string" || val.trim() === "") {
-            return { valid: false, message: "api:creator_id_cannot_be_empty" };
-          }
-          return { valid: true, value: val.trim() };
-        },
-      },
-      subject: {
-        field: "subject",
-        validate: (val) => {
-          if (typeof val !== "string" || val.trim() === "") {
-            return { valid: false, message: "api:subject_cannot_be_empty" };
-          }
-          return { valid: true, value: val.trim() };
-        },
-      },
-      level: {
-        field: "level",
-        validate: (val) => {
-          if (typeof val !== "string" || val.trim() === "") {
-            return { valid: false, message: "api:level_cannot_be_empty" };
-          }
-          return { valid: true, value: val.trim() };
-        },
-      },
-      visibility: {
-        field: "visibility",
-        validate: (val) => {
-          if (typeof val !== "string" || val.trim() === "") {
-            return { valid: false, message: "api:visibility_cannot_be_empty" };
-          }
-          return { valid: true, value: val.trim() };
-        },
-      },
-      maxMembers: {
-        field: "maxMembers",
-        validate: (val) => {
-          if (val === null || val === undefined || val === "") {
-            return { valid: false, message: "api:max_members_cannot_be_empty" };
-          }
-          const num = Number(val);
-          if (isNaN(num) || num <= 0) {
-            return {
-              valid: false,
-              message: "api:max_members_must_be_a_positive_number",
-            };
-          }
-          return { valid: true, value: num };
-        },
-      },
-      showInSearch: {
-        field: "showInSearch",
-        validate: (val) => {
-          let boolValue;
-          if (typeof val === "boolean") {
-            boolValue = val;
-          } else if (typeof val === "string") {
-            boolValue = val.toLowerCase() === "true";
-          } else {
-            return { valid: false, message: "api:invalid_value_for_showinsearch" };
-          }
-          return { valid: true, value: boolValue };
-        },
-      },
-    };
+      const propConfig = propertyMap[property];
+      if (!propConfig) {
+        return { abort: true, message: "api:invalid_property_type", isNative: true, type: "warning" };
+      }
 
-    const propConfig = propertyMap[property];
-    if (!propConfig) {
-      return {
-        success: false,
-        message: "api:invalid_property_type",
-        isNative: true,
-        type: "warning",
-      };
-    }
+      const validation = await propConfig.validate(newValue);
+      if (!validation.valid) {
+        return { abort: true, message: validation.message, isNative: true, type: "warning" };
+      }
 
-    const validation = await propConfig.validate(newValue);
-    if (!validation.valid) {
-      return {
-        success: false,
-        message: validation.message,
-        isNative: true,
-        type: "warning",
-      };
-    }
-
-    await groupRef.update({
-      [propConfig.field]: validation.value,
-    });
-
-    if (!["maxMembers", "showInSearch", "currentSession"].includes(property))
-      await syncUserGroupSnapshot(groupId, {
+      t.update(groupRef, {
         [propConfig.field]: validation.value,
       });
 
-    if (propConfig.field === "creator") {
+      return {
+        abort: false,
+        field: propConfig.field,
+        value: validation.value,
+        groupData: groupDoc.data(),
+      };
+    });
+
+    if (txResult.abort) {
+      return {
+        success: false,
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
+      };
+    }
+
+    const { field, value, groupData } = txResult;
+
+    if (!["maxMembers", "showInSearch", "currentSession"].includes(property)) {
+      await syncUserGroupSnapshot(groupId, {
+        [field]: value,
+      });
+    }
+
+    if (field === "creator") {
       await notifyRoleTransfer(
         groupId,
-        groupDoc.data().name,
-        groupDoc.data().creator,
-        validation.value,
+        groupData.name,
+        groupData.creator,
+        value,
       );
     }
 
@@ -672,29 +723,48 @@ const updateGroupProperty = async (groupId, property, newValue) => {
 const deleteGroup = async (groupId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
-    const groupRes = await getGroupById(groupId);
 
-    if (!groupRes.success) return groupRes;
+    const txResult = await db.runTransaction(async (t) => {
+      const groupDoc = await t.get(groupRef);
+      if (!groupDoc.exists) {
+        return { abort: true, message: "api:group_not_found", isNative: true, type: "info" };
+      }
 
-    if (groupRes.group.currentSession && groupRes.group.currentSession !== "") {
+      const group = groupDoc.data();
+      if (group.currentSession && group.currentSession !== "") {
+        return {
+          abort: true,
+          message: "api:you_cannot_delete_this_group_while_an_active_study",
+          isNative: true,
+          type: "warning",
+        };
+      }
+
+      t.delete(groupRef);
+      return { abort: false, groupName: group.name };
+    });
+
+    if (txResult.abort) {
       return {
         success: false,
-        message: "api:you_cannot_delete_this_group_while_an_active_study",
-        isNative: true,
-        type: "warning",
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
       };
     }
 
+    // After transaction, clean up subcollections and references
     const membersSnap = await groupRef.collection("members").get();
     const memberIds = membersSnap.docs.map((doc) => doc.id);
 
     await syncUserGroupRemoval(groupId);
-    await groupRef.delete();
-    await notifyGroupDeleted(memberIds, groupId, groupRes.group.name);
+    await notifyGroupDeleted(memberIds, groupId, txResult.groupName);
+    
     await rDb
       .ref(`groups/${groupId}/chat`)
       .remove()
       .catch((e) => console.error(e));
+      
     for (const memberId of memberIds) {
       await rDb
         .ref(`userGroupChats/${memberId}/${groupId}`)

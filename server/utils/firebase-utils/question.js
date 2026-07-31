@@ -74,56 +74,7 @@ const getQuizDuration = async (user) => {
   }
 };
 
-const modifierQuestion = async (questionId, propertie, value) => {
-  try {
-    const ref = tacheRef.doc(questionId);
-    const snaphsot = await ref.get();
-    const question = snaphsot.data();
-    const isNotEmpty = value.trim() != "";
-    if (question) {
-      await ref.update({
-        propertie: value,
-      });
-      switch (propertie) {
-        case "text":
-          if (isNotEmpty) {
-            await ref.update({
-              text: value,
-            });
-            return true;
-          }
-          break;
-
-        case "choix":
-          if (isNotEmpty) {
-            await ref.update({
-              choix: [...question.choix, value],
-            });
-            return true;
-          }
-          break;
-        case "reponse":
-          if (isNotEmpty) {
-            await ref.update({
-              reponse: value,
-            });
-            return true;
-          }
-          break;
-        default:
-          return false;
-      }
-    } else {
-      return false;
-    }
-  } catch (error) {
-    console.log(error.message);
-    return false;
-  }
-};
-
 module.exports = {
-  modifierQuestion,
   getQuestions,
   getQuizDuration,
 };

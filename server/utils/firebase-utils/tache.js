@@ -16,78 +16,26 @@ const getTasks = async (sessionId) => {
   }));
 };
 
-const modifieTache = async (propertie, newValue, tacheId) => {
-  try {
-    const ref = tacheRef.doc(tacheId);
-    const snaphsot = await ref.get();
-    const tache = snaphsot.data();
-    const isEmpty = newValue.trim() == "";
-    if (tache) {
-      if (!isEmpty) {
-        switch (propertie) {
-          case "title":
-            await ref.update({
-              title: newValue,
-            });
-            return true;
-          case "description":
-            await ref.update({
-              description: newValue,
-            });
-            return true;
-          case "duration":
-            await ref.update({
-              duration: newValue,
-            });
-            return true;
-          case "state":
-            await ref.update({
-              state: newValue,
-            });
-            return true;
-          default:
-            return false;
-        }
-      }
-    } else {
-      return false;
-    }
-  } catch (error) {
-    console.log(error.message);
-    return false;
-  }
-};
-
-const deleteTache = async (tacheId) => {
-  try {
-    const ref = tacheRef.doc(tacheId);
-    const snaphsot = await ref.get();
-    const tache = snaphsot.data();
-    if (tache) {
-      await ref.delete();
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    console.log(error.message);
-    return false;
-  }
-};
-
 const changeTaskStatus = async (status, taskId) => {
   try {
     const ref = db.collection("tasks").doc(taskId);
-    const snap = await ref.get();
-    if (snap.exists) {
-      await ref.update({
-        status,
-      });
+
+    const txResult = await db.runTransaction(async (t) => {
+      const snap = await t.get(ref);
+      if (snap.exists) {
+        t.update(ref, { status });
+        return { abort: false };
+      }
+      return { abort: true };
+    });
+
+    if (!txResult.abort) {
       return {
         success: true,
         message: "api:task_status_updated",
       };
     }
+    
     return {
       success: false,
       message: "api:task_not_found",
@@ -107,7 +55,5 @@ const changeTaskStatus = async (status, taskId) => {
 
 module.exports = {
   changeTaskStatus,
-  deleteTache,
   getTasks,
-  modifieTache,
 };

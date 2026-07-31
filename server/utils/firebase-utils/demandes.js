@@ -16,71 +16,62 @@ const {
 const sendRequest = async (groupId, userData) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
-    const groupSnap = await groupRef.get();
-
-    if (!groupSnap.exists) {
-      return {
-        success: false,
-        message: "api:group_not_found",
-        isNative: true,
-        type: "info",
-      };
-    }
-
-    const group = groupSnap.data();
-    const membersCount = (
-      await groupRef.collection("members").count().get()
-    ).data().count;
-
-    if (group.maxMembers <= membersCount)
-      return {
-        success: false,
-        message: "api:group_is_full",
-        isNative: true,
-        type: "info",
-      };
-
-    const isRequestSent = (
-      await groupRef.collection("requests").doc(userData.uid).get()
-    ).exists;
-
-    if (isRequestSent)
-      return {
-        message: "api:you_have_already_sent_a_request",
-        success: false,
-        isNative: true,
-        type: "info",
-      };
-
-    const isAlreadyMember = (
-      await groupRef.collection("members").doc(userData.uid).get()
-    ).exists;
-
-    if (isAlreadyMember)
-      return {
-        message: "api:you_are_already_a_member",
-        success: false,
-        isNative: true,
-        type: "info",
-      };
-
-    if (!group.showInSearch)
-      return {
-        success: false,
-        message: "api:the_group_is_private_and_not_visible",
-        isNative: true,
-        type: "info",
-      };
+    const requestDocRef = groupRef.collection("requests").doc(userData.uid);
+    const memberDocRef = groupRef.collection("members").doc(userData.uid);
 
     const demandeDate = new Date().toISOString();
 
-    await groupRef.collection("requests").doc(userData.uid).set({
-      uid: userData.uid,
-      fullName: userData.fullName,
-      email: userData.email,
-      photoURL: userData.photoURL,
-      demandeDate,
+    const txResult = await db.runTransaction(async (t) => {
+      const [groupSnap, requestSnap, memberSnap] = await Promise.all([
+        t.get(groupRef),
+        t.get(requestDocRef),
+        t.get(memberDocRef),
+      ]);
+
+      if (!groupSnap.exists) {
+        return { abort: true, message: "api:group_not_found", isNative: true, type: "info" };
+      }
+
+      const group = groupSnap.data();
+      const membersCount = group.membersCount || 0;
+
+      if (group.maxMembers <= membersCount) {
+        return { abort: true, message: "api:group_is_full", isNative: true, type: "info" };
+      }
+
+      if (requestSnap.exists) {
+        return { abort: true, message: "api:you_have_already_sent_a_request", isNative: true, type: "info" };
+      }
+
+      if (memberSnap.exists) {
+        return { abort: true, message: "api:you_are_already_a_member", isNative: true, type: "info" };
+      }
+
+      if (!group.showInSearch) {
+        return { abort: true, message: "api:the_group_is_private_and_not_visible", isNative: true, type: "info" };
+      }
+
+      t.set(requestDocRef, {
+        uid: userData.uid,
+        fullName: userData.fullName,
+        email: userData.email,
+        photoURL: userData.photoURL,
+        demandeDate,
+      });
+
+      return { abort: false, group };
     });
+
+    if (txResult.abort) {
+      return {
+        success: false,
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
+      };
+    }
+
+    const group = txResult.group;
 
     await db
       .collection("users")
@@ -120,78 +111,81 @@ const sendRequest = async (groupId, userData) => {
 const acceptRequest = async (groupId, requestId, userId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
-    const groupSnap = await groupRef.get();
-    const groupData = groupSnap.data();
+    const requestDocRef = groupRef.collection("requests").doc(requestId);
+    const memberDocRef = groupRef.collection("members").doc(requestId);
 
-    if (!groupSnap.exists) {
-      return {
-        success: false,
-        message: "api:group_not_found_1",
-        isNative: true,
-        type: "info",
+    const txResult = await db.runTransaction(async (t) => {
+      const [groupSnap, requestSnap, memberSnap] = await Promise.all([
+        t.get(groupRef),
+        t.get(requestDocRef),
+        t.get(memberDocRef),
+      ]);
+
+      if (!groupSnap.exists) {
+        return { abort: true, message: "api:group_not_found_1", isNative: true, type: "info" };
+      }
+
+      const groupData = groupSnap.data();
+
+      if (groupData.creator !== userId) {
+        return { abort: true, message: "api:only_the_group_creator_can_accept_requests", isNative: true, type: "warning" };
+      }
+
+      if (!requestSnap.exists) {
+        return { abort: true, message: "api:join_request_not_found", isNative: true, type: "info" };
+      }
+
+      if (memberSnap.exists) {
+        t.delete(requestDocRef);
+        return { abort: true, message: "api:user_is_already_a_member", isNative: true, type: "info" };
+      }
+
+      const requestToAccept = requestSnap.data();
+      const newMember = {
+        uid: requestToAccept.uid,
+        fullName: requestToAccept.fullName,
+        email: requestToAccept.email,
+        photoURL: requestToAccept.photoURL,
       };
-    }
 
-    if (groupData.creator !== userId) {
-      return {
-        success: false,
-        message: "api:only_the_group_creator_can_accept_requests",
-        isNative: true,
-        type: "warning",
-      };
-    }
+      t.set(memberDocRef, newMember);
+      t.update(groupRef, { membersCount: FieldValue.increment(1) });
+      t.delete(requestDocRef);
 
-    const requestToAcceptSnap = await groupRef
-      .collection("requests")
-      .doc(requestId)
-      .get();
-
-    if (!requestToAcceptSnap.exists) {
-      return {
-        success: false,
-        message: "api:join_request_not_found",
-        isNative: true,
-        type: "info",
-      };
-    }
-
-    const requestToAccept = requestToAcceptSnap.data();
-
-    const newMember = {
-      uid: requestToAccept.uid,
-      fullName: requestToAccept.fullName,
-      email: requestToAccept.email,
-      photoURL: requestToAccept.photoURL,
-    };
-
-    const isAlreadyMember = (
-      await groupRef.collection("members").doc(newMember.uid).get()
-    ).exists;
-
-    if (isAlreadyMember) {
-      await requestToAcceptSnap.ref.delete();
-      return {
-        success: false,
-        message: "api:user_is_already_a_member",
-        isNative: true,
-        type: "info",
-      };
-    }
-
-    await groupRef.collection("members").doc(newMember.uid).set(newMember);
-    await groupRef.update({
-      membersCount: FieldValue.increment(1),
+      return { abort: false, groupData, newMember };
     });
+
+    if (txResult.abort) {
+      return {
+        success: false,
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
+      };
+    }
+
+    const { groupData, newMember } = txResult;
     const userRef = db.collection("users").doc(newMember.uid);
+
     await saveGroupToUser(newMember.uid, groupId, groupData);
     await syncUserGroupSnapshot(groupId, {
       membersCount: FieldValue.increment(1),
     });
-    await requestToAcceptSnap.ref.delete();
     await userRef
       .collection("sentRequests")
       .doc(groupId)
-      .update({ status: "accepted" });
+      .update({
+        status: "accepted",
+      });
+
+    await updateJoinRequestNotificationStatus(
+      userId,
+      groupId,
+      requestId,
+      "accepted",
+    );
+    await notifyJoinResult(requestId, groupId, groupData.name, true);
+
     await refillSampleMembersIfNeeded(groupRef);
 
     if (groupData.currentSession) {
@@ -216,25 +210,22 @@ const acceptRequest = async (groupId, requestId, userId) => {
       }
     }
 
-    await updateJoinRequestNotificationStatus(
-      userId,
-      groupId,
-      requestId,
-      "accepted",
-    );
     await updateJoinInviteNotificationStatus(
       newMember.uid,
       groupId,
       "accepted",
     );
-    await notifyJoinResult(requestId, groupId, groupData.name, true);
 
-    return { success: true, message: "api:join_request_accepted_successfully" };
+    return {
+      success: true,
+      message: "api:request_accepted_successfully",
+      newMember,
+    };
   } catch (error) {
-    console.error("Error accepting request:", error.message);
+    console.error(error);
     return {
       success: false,
-      message: "api:failed_to_accept_request",
+      message: "api:error_accepting_the_request",
       isNative: false,
       type: "error",
     };
@@ -244,46 +235,47 @@ const acceptRequest = async (groupId, requestId, userId) => {
 const rejectRequest = async (groupId, requestId, userId) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
-    const groupSnap = await groupRef.get();
-    const group = groupSnap.data();
+    const requestDocRef = groupRef.collection("requests").doc(requestId);
 
-    if (!groupSnap.exists) {
+    const txResult = await db.runTransaction(async (t) => {
+      const [groupSnap, requestSnap] = await Promise.all([
+        t.get(groupRef),
+        t.get(requestDocRef),
+      ]);
+
+      if (!groupSnap.exists) {
+        return { abort: true, message: "api:group_not_found_1", isNative: true, type: "info" };
+      }
+
+      const group = groupSnap.data();
+
+      if (group.creator !== userId) {
+        return { abort: true, message: "api:only_the_group_creator_can_accept_requests", isNative: true, type: "warning" };
+      }
+
+      if (!requestSnap.exists) {
+        return { abort: true, message: "api:join_request_not_found", isNative: true, type: "info" };
+      }
+
+      t.delete(requestDocRef);
+
+      return { abort: false, groupName: group.name };
+    });
+
+    if (txResult.abort) {
       return {
         success: false,
-        message: "api:group_not_found_1",
-        isNative: true,
-        type: "info",
+        message: txResult.message,
+        isNative: txResult.isNative,
+        type: txResult.type,
       };
     }
 
-    if (group.creator !== userId) {
-      return {
-        success: false,
-        message: "api:only_the_group_creator_can_accept_requests",
-        isNative: true,
-        type: "warning",
-      };
-    }
-
-    const requestSnap = await groupRef
-      .collection("requests")
-      .doc(requestId)
-      .get();
-
-    if (!requestSnap.exists)
-      return {
-        success: false,
-        message: "api:join_request_not_found",
-        isNative: true,
-        type: "info",
-      };
-
-    await requestSnap.ref.delete();
     await db
       .collection("users")
       .doc(requestId)
       .collection("sentRequests")
-      .doc(groupRef.id)
+      .doc(groupId)
       .update({
         status: "rejected",
       });
@@ -294,7 +286,7 @@ const rejectRequest = async (groupId, requestId, userId) => {
       requestId,
       "rejected",
     );
-    await notifyJoinResult(requestId, groupId, group.name, false);
+    await notifyJoinResult(requestId, groupId, txResult.groupName, false);
 
     return {
       success: true,
@@ -304,7 +296,7 @@ const rejectRequest = async (groupId, requestId, userId) => {
     console.error(error);
     return {
       success: false,
-      message: "api:something_wrong_happened",
+      message: "api:error_rejecting_the_request",
       isNative: false,
       type: "error",
     };
@@ -332,39 +324,6 @@ const getFilteredRequests = (criteria, demandes) => {
     return matchSearch && matchDate;
   });
   return getFormatedRequests(demandes);
-};
-
-const getRequests = async (groupId, userId) => {
-  try {
-    const groupRef = db.collection("groups").doc(groupId);
-    const groupSnap = await groupRef.get();
-    if (!groupSnap.exists)
-      return {
-        success: false,
-        message: "api:group_not_found",
-        isNative: true,
-        type: "info",
-      };
-    const creator = groupSnap.data().creator;
-    const requestsSnap = await groupRef.collection("requests").get();
-    const requests = getFormatedRequests(requestsSnap.docs);
-    return {
-      success: true,
-      context: {
-        count: requests.length,
-        isAdmin: creator === userId,
-        demandes: requests,
-      },
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      success: false,
-      message: "api:an_error_occurred_while_fetching_requests",
-      isNative: false,
-      type: "error",
-    };
-  }
 };
 
 const getDemandesByGroupId = async (
@@ -465,7 +424,6 @@ const getDemandesByGroupId = async (
 };
 
 module.exports = {
-  getRequests,
   sendRequest,
   acceptRequest,
   rejectRequest,

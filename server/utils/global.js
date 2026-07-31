@@ -1,5 +1,7 @@
 const MAX_FILE_SIZE_50MB = 50 * 1024 * 1024; // 50MB
 const INITIALE_LOADERS_COUNT = 20;
+const MAX_SESSION_TASKS = 50;
+const MAX_QUIZ_QUESTIONS = 100;
 class Task {
   constructor({
     title,
@@ -110,11 +112,22 @@ const formatTimeAgo = (timestamp, t = null) => {
   const seconds = Math.floor(diff / 1000);
   if (seconds < 60) return t ? t("common:shared_texts.just_now") : "Just now";
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return t ? t("common:shared_texts.one_count_m_ago_other_count_m", { count: minutes }) : `${minutes}m ago`;
+  if (minutes < 60)
+    return t
+      ? t("common:shared_texts.one_count_m_ago_other_count_m", {
+          count: minutes,
+        })
+      : `${minutes}m ago`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return t ? t("common:shared_texts.one_count_h_ago_other_count_h", { count: hours }) : `${hours}h ago`;
+  if (hours < 24)
+    return t
+      ? t("common:shared_texts.one_count_h_ago_other_count_h", { count: hours })
+      : `${hours}h ago`;
   const days = Math.floor(hours / 24);
-  if (days < 7) return t ? t("common:shared_texts.one_count_d_ago_other_count_d", { count: days }) : `${days}d ago`;
+  if (days < 7)
+    return t
+      ? t("common:shared_texts.one_count_d_ago_other_count_d", { count: days })
+      : `${days}d ago`;
   const date = new Date(Number(timestamp));
   return date.toLocaleDateString();
 };
@@ -131,4 +144,6 @@ module.exports = {
   pathNames,
   Task,
   Quiz,
+  MAX_SESSION_TASKS,
+  MAX_QUIZ_QUESTIONS,
 };

@@ -4,6 +4,8 @@ export const PASSWORD_MIN_LENGTH = 6;
 export const PASSWORD_MAX_LENGTH = 128;
 export const NAME_TITLE_MAX_LENGTH = 50;
 export const NAME_TITLE_MIN_LENGTH = 3;
+export const MAX_SESSION_TASKS = 50;
+export const MAX_QUIZ_QUESTIONS = 100;
 export const passwordRegex = new RegExp(
   `^[\\p{L}\\w .\\-]{${PASSWORD_MIN_LENGTH},${PASSWORD_MAX_LENGTH}}$`,
   'u'

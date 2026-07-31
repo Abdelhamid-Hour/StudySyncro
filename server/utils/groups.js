@@ -1,11 +1,9 @@
 // const { get } = require("../routes/api-routes");
 const { db } = require("../firebase/firebaseAdmin");
 const {
-  getRequests,
   getDemandesByGroupId,
 } = require("./firebase-utils/demandes");
 const {
-  getUserQuizzes,
   getQuizzesByGroupId,
 } = require("./firebase-utils/examen");
 const { getGroupInfo, getChatContext } = require("./firebase-utils/group");
