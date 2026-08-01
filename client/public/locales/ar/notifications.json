@@ -72,7 +72,8 @@
     "demande_rejected": "تم رفض الطلب",
     "joined_group_success": "تم الانضمام إلى المجموعة بنجاح!",
     "invitation_rejected": "تم رفض الدعوة",
-    "joined_session_success": "تم الانضمام إلى الجلسة الدراسية بنجاح"
+    "joined_session_success": "تم الانضمام إلى الجلسة الدراسية بنجاح",
+    "accept_invite_desc": "لقد تمت دعوتك للانضمام إلى \"{{groupName}}\". هل تود قبول هذه الدعوة؟"
   },
   "skeletons": {
     "no_notifications_yet_title": "لا توجد إشعارات بعد",

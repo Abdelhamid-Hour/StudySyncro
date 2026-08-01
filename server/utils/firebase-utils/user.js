@@ -139,7 +139,7 @@ const updateEmail = async (newEmail, idToken, userId) => {
     await db.collection("users").doc(userId).update({ email: newEmail });
 
     // The old idToken is stale after updateUser, so we mint a fresh one
-    const apiKey = process.env.FIREBASE_API_KEY || "AIzaSyBQD23tZrfSimPKW8sFIzC_1MoNFGZ9e7A";
+    const apiKey = process.env.FIREBASE_API_KEY;
     const customToken = await admin.auth().createCustomToken(userId);
     const tokenRes = await fetch(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${apiKey}`,
@@ -199,7 +199,7 @@ const addEmail = async (email, key, userId) => {
     await db.collection("users").doc(userId).set({ email }, { merge: true });
 
     // The old idToken is stale after updateUser, so we mint a fresh one
-    const apiKey = process.env.FIREBASE_API_KEY || "AIzaSyBQD23tZrfSimPKW8sFIzC_1MoNFGZ9e7A";
+    const apiKey = process.env.FIREBASE_API_KEY;
     const customToken = await admin.auth().createCustomToken(userId);
     const tokenRes = await fetch(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${apiKey}`,

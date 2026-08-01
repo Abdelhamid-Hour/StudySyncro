@@ -1,5 +1,7 @@
 const { db } = require("../../firebase/firebaseAdmin");
+const admin = require("firebase-admin");
 const { INITIALE_LOADERS_COUNT } = require("../global");
+const emailService = require("../email-service");
 
 const resolveTimestamp = (ts) => {
   if (!ts) return Date.now();
@@ -8,6 +10,35 @@ const resolveTimestamp = (ts) => {
   if (typeof ts === "number") return ts;
   const d = new Date(ts).getTime();
   return isNaN(d) ? Date.now() : d;
+};
+
+const getUserEmail = async (userId) => {
+  if (!userId) return null;
+  try {
+    const doc = await db.collection("users").doc(userId).get();
+    if (doc.exists) return doc.data().email;
+  } catch (err) {
+    console.error("Error getting user email:", err);
+  }
+  return null;
+};
+
+const getUsersEmails = async (userIds) => {
+  if (!userIds || userIds.length === 0) return [];
+  const emails = [];
+  try {
+    const uniqueIds = [...new Set(userIds)];
+    for (let i = 0; i < uniqueIds.length; i += 30) {
+      const chunk = uniqueIds.slice(i, i + 30);
+      const snap = await db.collection("users").where(admin.firestore.FieldPath.documentId(), "in", chunk).get();
+      snap.docs.forEach(doc => {
+        if (doc.data().email) emails.push(doc.data().email);
+      });
+    }
+  } catch (err) {
+    console.error("Error getting user emails:", err);
+  }
+  return emails;
 };
 
 const addNotification = async (userId, notification) => {
@@ -252,6 +283,11 @@ const notifyJoinRequest = async (
     read: false,
     metadata: { groupId, groupName, demandeId },
   });
+
+  // Send Email
+  const adminEmail = await getUserEmail(adminId);
+  const applicantName = applicantUser.fullName || "A user";
+  emailService.sendAdminJoinRequestEmail(adminEmail, applicantName, groupName, groupId).catch(console.error);
 };
 
 const notifyJoinResult = async (
@@ -266,6 +302,10 @@ const notifyJoinResult = async (
     read: false,
     metadata: { groupId, groupName, isAccepted: Boolean(isAccepted) },
   });
+
+  // Send Email
+  const applicantEmail = await getUserEmail(applicantId);
+  emailService.sendJoinResultEmail(applicantEmail, groupName, isAccepted, groupId).catch(console.error);
 };
 
 const notifyGroupInvite = async (
@@ -307,6 +347,12 @@ const notifyGroupInvite = async (
         isInvite: true,
       },
     });
+
+    // Send Email
+    const invitedEmail = await getUserEmail(invitedUserId);
+    const senderName = senderUser.fullName || "Admin";
+    emailService.sendGroupInviteEmail(invitedEmail, groupName, senderName, groupId).catch(console.error);
+
   } catch (error) {
     console.error("Error in notifyGroupInvite:", error);
   }
@@ -385,6 +431,13 @@ const notifySessionStatus = async (
     });
   }
   await batch.commit();
+
+  // Send Email if session started
+  if (isStarted) {
+    const studentIds = members.filter(uid => uid !== creatorId); // exclude admin from the email blast
+    const studentEmails = await getUsersEmails(studentIds);
+    emailService.sendSessionStartedEmail(studentEmails, { sessionName, groupName }, groupId, sessionId).catch(console.error);
+  }
 };
 
 const updateSessionNotificationJoined = async (userId, sessionId, joined) => {

@@ -2761,3 +2761,259 @@ export const toReadableDate = (TimeOrDate, type) => {
     hour12: false,
   });
 };
+
+export const initEmailActionTriggers = async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const inviteId = urlParams.get("inviteId");
+  const sessionId = urlParams.get("sessionId");
+  const groupName = urlParams.get("groupName") || "the group";
+  const sessionName = urlParams.get("sessionName") || "a live session";
+
+  if (inviteId) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+    const res = await showConfirmationBox(
+      "confirmation",
+      t("notifications:alerts.accept_invite_desc", {
+        groupName,
+        defaultValue: `You have been invited to join "${groupName}". Would you like to accept this invitation?`,
+      }),
+      t("common:shared_terms.accept", { defaultValue: "Accept" }),
+      t("common:shared_terms.cancel", { defaultValue: "Cancel" }),
+    );
+
+    if (res) {
+      handleApiAction(
+        "/join-group",
+        { groupId: inviteId, isInvite: true },
+        null,
+        {
+          successMsg: t("notifications:alerts.joined_group_success", {
+            defaultValue: "Successfully joined the group!",
+          }),
+          onSuccess: () => {
+            window.location.href = `/app/groups/my/${inviteId}/chat`;
+          },
+        },
+      );
+    }
+  }
+
+  if (sessionId) {
+    const match = window.location.pathname.match(
+      /\/app\/groups\/my\/([^/]+)\/chat/,
+    );
+    const groupId = match ? match[1] : null;
+
+    if (groupId) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+      const res = await showConfirmationBox(
+        "confirmation",
+        t("common:shared_terms.join_session_desc", {
+          sessionName,
+          groupName,
+          defaultValue: `A live session "${sessionName}" is happening right now in "${groupName}". Would you like to join?`,
+        }),
+        t("common:shared_terms.join", { defaultValue: "Join Session" }),
+        t("common:shared_terms.cancel", { defaultValue: "Cancel" }),
+      );
+
+      if (res) {
+        handleApiAction("/join-session", { sessionId }, null, {
+          onSuccess: () => {
+            window.location.reload();
+          },
+        });
+      }
+    }
+  }
+};
+
+// --- Refactored from main.js ---
+export const preventDragOver = (e) => e.preventDefault();
+
+export const handleIconsHoverEnter = (e) => handelIconsHover(e, true);
+export const handleIconsHoverLeave = (e) => handelIconsHover(e, false);
+
+const updateThemeToggleIcons = (theme) => {
+  const icons = document.querySelectorAll(".theme-toggle-icon");
+  icons.forEach((icon) => {
+    if (theme === "dark") {
+      icon.classList.remove("bi-moon", "bi-moon-fill");
+      icon.classList.add("bi-sun");
+    } else {
+      icon.classList.remove("bi-sun", "bi-sun-fill");
+      icon.classList.add("bi-moon");
+    }
+  });
+};
+
+export const initTheme = () => {
+  const savedAppTheme = localStorage.getItem("theme") || "light";
+  document.documentElement.setAttribute("data-theme", savedAppTheme);
+  updateThemeToggleIcons(savedAppTheme);
+};
+
+export const initThemeToggle = () => {
+  const themeBtns = document.querySelectorAll(
+    ".toggle-container, #mobile-theme-toggle-btn",
+  );
+  themeBtns.forEach((btn) => {
+    btn?.addEventListener("click", () => {
+      const currentTheme =
+        document.documentElement.getAttribute("data-theme") || "dark";
+      const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+      const rect = btn.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      document.documentElement.style.setProperty("--theme-toggle-x", `${x}px`);
+      document.documentElement.style.setProperty("--theme-toggle-y", `${y}px`);
+
+      const applyTheme = () => {
+        document.documentElement.setAttribute("data-theme", newTheme);
+        updateThemeToggleIcons(newTheme);
+        try {
+          localStorage.setItem("theme", newTheme);
+          localStorage.setItem("mode", newTheme);
+          localStorage.setItem("studyhype_theme", newTheme);
+        } catch (e) {}
+      };
+
+      if (document.startViewTransition) {
+        document.startViewTransition(applyTheme);
+      } else {
+        applyTheme();
+      }
+    });
+  });
+};
+
+export const initMobileDrawer = () => {
+  const mobileMasterMenuBtn = document.querySelector(".mobile-master-menu-btn");
+  const mobileMasterDrawer = document.querySelector(".mobile-master-drawer");
+  const mobileDrawerCloseBtn = document.querySelector(
+    ".mobile-drawer-close-btn",
+  );
+  const mobileDrawerBackdrop = document.querySelector(
+    ".mobile-drawer-backdrop",
+  );
+  const mobileLogoutBtn = document.getElementById("mobile-logout-button");
+  const mobileNotifBtn = document.querySelector(".mobile-notif-btn");
+
+  const openMobileDrawer = () => {
+    mobileMasterDrawer?.classList.add("open");
+    mobileDrawerBackdrop?.classList.add("open");
+  };
+
+  const closeMobileDrawer = () => {
+    mobileMasterDrawer?.classList.remove("open");
+    mobileDrawerBackdrop?.classList.remove("open");
+  };
+
+  mobileMasterMenuBtn?.addEventListener("click", openMobileDrawer);
+  mobileDrawerCloseBtn?.addEventListener("click", closeMobileDrawer);
+  mobileDrawerBackdrop?.addEventListener("click", closeMobileDrawer);
+
+  mobileLogoutBtn?.addEventListener("click", () => {
+    document.getElementById("logout-button")?.click();
+  });
+
+  mobileNotifBtn?.addEventListener("click", closeMobileDrawer);
+};
+
+export const handlePopState = () => {
+  toggleActiveLink(location.pathname);
+  updateMain(location.href);
+};
+
+export const initSidebarTitleSync = () => {
+  const sidebarTitleEl = document.querySelector(".sidebar-title");
+  const mobilePageTitleEl = document.querySelector(".mobile-page-title");
+  const mobileBackBtn = document.querySelector(".mobile-back-btn");
+
+  if (sidebarTitleEl && mobilePageTitleEl) {
+    const syncTitle = () => {
+      const linkEl = sidebarTitleEl?.querySelector("a");
+      if (linkEl && mobileBackBtn) {
+        const returnHref = linkEl.getAttribute("href") || "/app/home";
+        mobileBackBtn.setAttribute("href", returnHref);
+        mobileBackBtn.classList.remove("hidden");
+        const titleText = linkEl.textContent.trim();
+        if (
+          titleText
+            .toLowerCase()
+            .includes(t("common:group_chat", { defaultValue: "group chat" }))
+        ) {
+          mobilePageTitleEl.innerHTML = `
+            <button
+              type="button"
+              class="exclude-btn show-info-btn"
+            >
+              <i class="bi bi-info-circle"></i>
+              ${t("common:group_chat", { defaultValue: "Group Chat" })}
+            </button>
+          `;
+        } else {
+          mobilePageTitleEl.textContent = titleText;
+        }
+      } else {
+        if (mobileBackBtn) mobileBackBtn.classList.add("hidden");
+        mobilePageTitleEl.innerHTML = sidebarTitleEl.innerHTML;
+      }
+    };
+    const observer = new MutationObserver(syncTitle);
+    observer.observe(sidebarTitleEl, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+  }
+};
+
+export const initMobileSearch = () => {
+  const mobileSearchBtn = document.querySelector(".mobile-search-btn");
+  const mobileSearchBox = document.getElementById("mobile-search-box");
+
+  mobileSearchBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isHomeInactive = document.querySelector("main .active-sessions");
+    const topSideBarMiddle = document.querySelector(".top-side-bar-middele");
+
+    let searchContentEl = null;
+    if (isHomeInactive) {
+      searchContentEl =
+        mobileSearchBox?.querySelector(".active-sessions-search.search") ||
+        document.querySelector(".active-sessions-search.search");
+    } else if (
+      topSideBarMiddle &&
+      topSideBarMiddle?.querySelector(".search-container")
+    ) {
+      searchContentEl = topSideBarMiddle;
+    }
+
+    if (mobileSearchBox && searchContentEl) {
+      if (!mobileSearchBox.contains(searchContentEl)) {
+        mobileSearchBox.appendChild(searchContentEl);
+      }
+      mobileSearchBox.classList.toggle("hidden");
+      if (!mobileSearchBox.classList.contains("hidden")) {
+        const searchInput = mobileSearchBox?.querySelector(
+          "input[type='search']",
+        );
+        searchInput?.focus();
+      }
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    if (
+      mobileSearchBox &&
+      !mobileSearchBox.classList.contains("hidden") &&
+      !mobileSearchBox.contains(e.target) &&
+      !mobileSearchBtn?.contains(e.target) &&
+      e.target.tagName !== "HTML"
+    ) {
+      mobileSearchBox.classList.add("hidden");
+    }
+  });
+};

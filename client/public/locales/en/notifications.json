@@ -72,7 +72,8 @@
     "demande_rejected": "Demande rejected",
     "joined_group_success": "Joined group successfully!",
     "invitation_rejected": "Invitation rejected",
-    "joined_session_success": "Joined the session successfully"
+    "joined_session_success": "Joined the session successfully",
+    "accept_invite_desc": "You have been invited to join \"{{groupName}}\". Would you like to accept this invitation?"
   },
   "skeletons": {
     "no_notifications_yet_title": "No notifications yet",

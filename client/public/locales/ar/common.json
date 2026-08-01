@@ -323,7 +323,9 @@
     "add_password": "إضافة كلمة مرور",
     "current_password": "كلمة المرور الحالية",
     "change_email": "تغيير البريد الإلكتروني",
-    "add_email": "إضافة بريد إلكتروني"
+    "add_email": "إضافة بريد إلكتروني",
+    "join_session_desc": "جلسة مباشرة \"{{sessionName}}\" تقام الآن في \"{{groupName}}\". هل تود الانضمام؟",
+    "cancel": "إلغاء"
   },
   "subjects": {
     "Mathematics": "الرياضيات",

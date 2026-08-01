@@ -56,7 +56,7 @@ const requireAuthForPages = async (req, res, next) => {
   // If arriving from email verification link, verify right on the backend and create session directly
   if (req.query.mode === "verifyEmail" && req.query.oobCode) {
     try {     
-      const apiKey = req.query.apiKey || process.env.FIREBASE_API_KEY;
+      const apiKey = process.env.FIREBASE_API_KEY;
       
       const response = await fetch(
         `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${apiKey}`,

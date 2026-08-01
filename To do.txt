@@ -3,15 +3,13 @@
 // use post css to generate the css files
 // add the cloud funcs
 
-// mails for the users about example invitatios, requests ...
-
 // <bdi> when rtl
 //------------------------------------
 // secure the api keys and firebase connection
 // update env in production 
-// change this in deployment  process.env.FIREBASE_API_KEY || "AIzaSyBQD23tZrfSimPKW8sFIzC_1MoNFGZ9e7A";
-
-
+// change this in deployment:
+- APP_URL 
+- require("dotenv").config(); and remove it from package
 
 
 

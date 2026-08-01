@@ -323,7 +323,9 @@
     "add_password": "Add Password",
     "current_password": "Current Password",
     "change_email": "Change Email",
-    "add_email": "Add Email"
+    "add_email": "Add Email",
+    "join_session_desc": "A live session \"{{sessionName}}\" is happening right now in \"{{groupName}}\". Would you like to join?",
+    "cancel": "Cancel"
   },
   "subjects": {
     "Mathematics": "Mathematics",
