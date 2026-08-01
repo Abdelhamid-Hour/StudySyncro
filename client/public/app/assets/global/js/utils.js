@@ -2773,12 +2773,13 @@ export const initEmailActionTriggers = async () => {
     window.history.replaceState({}, document.title, window.location.pathname);
     const res = await showConfirmationBox(
       "confirmation",
+      t("notifications:alerts.group_invitation", { defaultValue: "Group Invitation" }),
       t("notifications:alerts.accept_invite_desc", {
         groupName,
         defaultValue: `You have been invited to join "${groupName}". Would you like to accept this invitation?`,
       }),
-      t("common:shared_terms.accept", { defaultValue: "Accept" }),
       t("common:shared_terms.cancel", { defaultValue: "Cancel" }),
+      t("common:shared_terms.accept", { defaultValue: "Accept" }),
     );
 
     if (res) {
@@ -2808,13 +2809,14 @@ export const initEmailActionTriggers = async () => {
       window.history.replaceState({}, document.title, window.location.pathname);
       const res = await showConfirmationBox(
         "confirmation",
+        t("common:shared_terms.live_session", { defaultValue: "Live Session" }),
         t("common:shared_terms.join_session_desc", {
           sessionName,
           groupName,
           defaultValue: `A live session "${sessionName}" is happening right now in "${groupName}". Would you like to join?`,
         }),
-        t("common:shared_terms.join", { defaultValue: "Join Session" }),
         t("common:shared_terms.cancel", { defaultValue: "Cancel" }),
+        t("common:shared_terms.join", { defaultValue: "Join Session" }),
       );
 
       if (res) {

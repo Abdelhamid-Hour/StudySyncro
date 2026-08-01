@@ -70,10 +70,11 @@
   "alerts": {
     "demande_accepted": "Demande accepted",
     "demande_rejected": "Demande rejected",
-    "joined_group_success": "Joined group successfully!",
+    "joined_group_success": "Successfully joined the group!",
     "invitation_rejected": "Invitation rejected",
     "joined_session_success": "Joined the session successfully",
-    "accept_invite_desc": "You have been invited to join \"{{groupName}}\". Would you like to accept this invitation?"
+    "accept_invite_desc": "You have been invited to join {groupName}. Would you like to accept this invitation?",
+    "group_invitation": "Group Invitation"
   },
   "skeletons": {
     "no_notifications_yet_title": "No notifications yet",
