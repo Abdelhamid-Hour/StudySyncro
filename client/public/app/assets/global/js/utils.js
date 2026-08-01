@@ -2299,8 +2299,8 @@ export const getGroupChatSkeleton = () => {
                       <div class="media-div loading-opacity-animation" style="width: 100%; height: auto; aspect-ratio: 16/9">
                       </div>
 
-                      <button type="button" class="expand-btn loading-opacity-animation" style="width: 2rem"></button>
-                      <a class="download-btn button loading-opacity-animation" style="width: 2rem"></a>
+                      <button type="button" class="expand-btn loading-opacity-animation" style="width: 2rem" disabled></button>
+                      <a class="download-btn button loading-opacity-animation" style="width: 2rem" disabled></a>
                     </div>
 
                     <span class="message-info loading-opacity-animation" style="width: 10%"></span>

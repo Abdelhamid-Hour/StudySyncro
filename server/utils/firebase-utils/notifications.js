@@ -2,6 +2,7 @@ const { db } = require("../../firebase/firebaseAdmin");
 const admin = require("firebase-admin");
 const { INITIALE_LOADERS_COUNT } = require("../global");
 const emailService = require("../email-service");
+const { sendPushNotification } = require("../push-service");
 
 const resolveTimestamp = (ts) => {
   if (!ts) return Date.now();
@@ -53,6 +54,9 @@ const addNotification = async (userId, notification) => {
       timestamp: Date.now(),
       read: false,
     });
+    
+    // Trigger web push
+    sendPushNotification(userId, notification).catch(console.error);
   } catch (error) {
     console.error("Failed to add notification:", error);
   }
@@ -89,6 +93,13 @@ const addNotificationsToUsers = async (userIds = [], notification) => {
       fanoutBatches.push(currentBatch.commit());
     }
     await Promise.all(fanoutBatches);
+
+    // Trigger web push for all users asynchronously
+    userIds.forEach(userId => {
+      if (userId) {
+        sendPushNotification(userId, notification).catch(console.error);
+      }
+    });
   } catch (error) {
     console.error("Failed to add notifications in batch:", error);
   }
@@ -429,6 +440,22 @@ const notifySessionStatus = async (
       timestamp: now,
       read: false,
     });
+    
+    // Trigger web push
+    sendPushNotification(userId, {
+      type: isStarted ? "session_started" : "session_ended",
+      category: "Sessions",
+      metadata: {
+        groupId,
+        groupName,
+        sessionId,
+        sessionName,
+        sessionEnded: !isStarted,
+        creatorId: creatorId || "",
+        isAdmin,
+        joined,
+      },
+    }).catch(console.error);
   }
   await batch.commit();
 

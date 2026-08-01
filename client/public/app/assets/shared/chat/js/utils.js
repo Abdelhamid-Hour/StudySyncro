@@ -1561,10 +1561,12 @@ const getMessageLoader = () => {
             type="button"
             class="expand-btn loading-opacity-animation"
             style="width: 2rem"
+            disabled
           ></button>
           <a
             class="download-btn button loading-opacity-animation"
             style="width: 2rem"
+            disabled
           ></a>
         </div>
 
@@ -1636,7 +1638,17 @@ const handleInitialUnreadBannerAndScroll = async (
     return;
   }
 
-  if (!lastSeenMsg || !cards.length) {
+  if (!cards.length) {
+    scrollToBottom(messagesContainer);
+    await updateLastSeenFromDOM(groupId, sessionId);
+    return;
+  }
+
+  if (isFirstLoad) {
+    lastSeenMsg = await getLastSeenMessage(groupId, sessionId);
+  }
+
+  if (!lastSeenMsg) {
     scrollToBottom(messagesContainer);
     await updateLastSeenFromDOM(groupId, sessionId);
     return;
@@ -1704,7 +1716,6 @@ const afterAppendRes = (data, groupId, sessionId = "") => {
 };
 
 const initChatLoader = async (groupId, sessionId) => {
-  lastSeenMsg = await getLastSeenMessage(groupId, sessionId);
   const loader = new Loader(
     messagesContainer,
     createChatFrag,

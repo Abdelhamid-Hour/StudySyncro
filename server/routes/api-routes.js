@@ -58,6 +58,8 @@ const {
   getUserNotificationsHandler,
   markNotificationsAsReadHandler,
   streamNotificationsHandler,
+  subscribePushHandler,
+  getVapidPublicKeyHandler,
 } = require("../controllers/notifications");
 const { GroupFragmentRoutes } = require("../utils/groups");
 const {
@@ -483,5 +485,7 @@ apiRouter.get(
 );
 apiRouter.get("/notifications/stream", streamNotificationsHandler);
 apiRouter.post("/notifications/mark-read", markNotificationsAsReadHandler);
+apiRouter.post("/notifications/subscribe", subscribePushHandler);
+apiRouter.get("/notifications/vapidPublicKey", getVapidPublicKeyHandler);
 
 module.exports = apiRouter;

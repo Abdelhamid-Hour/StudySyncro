@@ -115,8 +115,44 @@ const streamNotificationsHandler = async (req, res) => {
   });
 };
 
+const subscribePushHandler = async (req, res) => {
+  try {
+    const { subscription } = req.body;
+    const userId = req.user.uid;
+    const lang = req.cookies.lang || "en";
+
+    if (!subscription || !subscription.endpoint) {
+      return res.status(400).json({ error: "Invalid subscription object" });
+    }
+    
+    subscription.lang = lang;
+
+    await db
+      .collection("users")
+      .doc(userId)
+      .collection("pushSubscriptions")
+      .doc(subscription.keys.auth) // Use auth key as document ID for uniqueness
+      .set(subscription);
+
+    return res.status(200).json({ message: "Subscription saved successfully." });
+  } catch (error) {
+    console.error("Error in subscribePushHandler:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getVapidPublicKeyHandler = (req, res) => {
+  const publicKey = process.env.VAPID_PUBLIC_KEY;
+  if (!publicKey) {
+    return res.status(500).json({ error: "VAPID Public Key not configured on server" });
+  }
+  return res.status(200).json({ publicKey });
+};
+
 module.exports = {
   getUserNotificationsHandler,
   markNotificationsAsReadHandler,
   streamNotificationsHandler,
+  subscribePushHandler,
+  getVapidPublicKeyHandler,
 };

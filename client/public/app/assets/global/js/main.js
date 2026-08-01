@@ -18,6 +18,7 @@ import {
   initSidebarTitleSync,
   initMobileSearch,
 } from "./utils.js";
+import { initPushNotifications } from "./push-manager.js";
 import { closeLeftSideBarIcon } from "./variables.js";
 import "../../../auth/auth.js";
 import { initNotificationsManager } from "./notifications.js";
@@ -50,3 +51,6 @@ initSidebarTitleSync();
 initMobileSearch();
 
 initEmailActionTriggers();
+
+// Initialize Push Notifications
+initPushNotifications();

@@ -420,10 +420,8 @@ const getUserGroupChatStateHelper = async (userId, groupId) => {
     const snap = await ref.once("value");
     if (!snap.exists()) {
       return {
-        success: false,
-        message: "api:group_chat_state_not_found",
-        isNative: true,
-        type: "info",
+        success: true,
+        data: {}
       };
     }
     return { success: true, data: snap.val() };
