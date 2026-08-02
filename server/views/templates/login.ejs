@@ -19,37 +19,48 @@
     />
     <meta
       name="keywords"
-      content="StudyHive, login, online learning, real-time chat, quizzes, student collaboration"
+      content="<%= t('login:metadata.keywords', { defaultValue: 'StudyHype, login, online learning, real-time chat, quizzes, student collaboration' }) %>"
     />
-    <meta name="author" content="StudyHive Team" />
+    <meta name="author" content="StudyHype Team" />
     <meta name="robots" content="index, follow" />
-    <meta property="og:title" content="Login - StudyHive" />
+    <link rel="canonical" href="<%= fullUrl %>" />
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:site_name" content="StudyHype" />
+    <meta property="og:locale" content="<%= lang === 'ar' ? 'ar_AR' : 'en_US' %>" />
+    <meta property="og:title" content="<%= t('login:metadata.page_title') %>" />
     <meta
       property="og:description"
-      content="Login to access StudyHive's interactive study tools."
+      content="<%= t('login:metadata.meta_description') %>"
     />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="<%= fullUrl %>" />
     <meta
       property="og:image"
-      content="https://yourwebsite.com/images/login-preview.png"
+      content="/images/home/active-home-page-light.webp"
     />
-    <meta property="og:url" content="https://yourwebsite.com/login" />
-    <meta property="og:type" content="website" />
+
+    <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Login - StudyHive" />
+    <meta name="twitter:title" content="<%= t('login:metadata.page_title') %>" />
     <meta
       name="twitter:description"
-      content="Sign in to StudyHive and collaborate with your study group."
+      content="<%= t('login:metadata.meta_description') %>"
     />
     <meta
       name="twitter:image"
-      content="https://yourwebsite.com/images/login-preview.png"
+      content="/images/home/active-home-page-light.webp"
     />
+
+    <!-- Preconnect to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <!-- Favicon and Theme -->
-    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <meta name="theme-color" content="#9235e8ff" />
     <meta name="application-name" content="StudyHype" />
-    <link rel="canonical" href="https://example.com/current-page" />
     <!-- Performance Optimization -->
     <link
       rel="preconnect"
@@ -122,7 +133,7 @@
   <body>
     <div class="top-nav-bar">
       <a href="/" class="login-top-logo button exclude-btn">
-        <img src="/main_assets/images/logo-mark.svg" alt="StudyHype Logo" />
+        <img src="/images/logo-mark.svg" alt="<%= t('common:images.logo_alt', { defaultValue: 'StudyHype Logo' }) %>" />
         <span>StudyHype</span>
       </a>
       <div>
@@ -167,7 +178,7 @@
           </section>
           <label id="avatar-container">
             <div>
-              <img src="/login/assets/images/user.png" alt="<%= t('common:avatar_alt') %>" />
+              <img src="/login/assets/images/user.webp" alt="<%= t('common:avatar_alt') %>" />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -198,6 +209,10 @@
             </div>
             <span class="error"></span>
           </label>
+          <button type="button" id="clear-avatar-btn" class="exclude-btn" style="display: none;">
+            <i class="bi bi-trash3-fill"></i>
+            <span data-i18n="login:aside.remove_avatar"><%= t('login:aside.remove_avatar', { defaultValue: 'Remove Avatar' }) %></span>
+          </button>
         </aside>
         <header>
           <h1>

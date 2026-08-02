@@ -1,30 +1,34 @@
-import { passwordRegex, PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH } from '../../../main_assets/js/variables.js';
-import { t } from '../../../main_assets/js/i18n.js';
-import { main, passwordField, confirmPasswordField } from './dom-variables.js';
+import {
+  passwordRegex,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
+} from "../../../main_assets/js/variables.js";
+import { t } from "../../../main_assets/js/i18n.js";
+import { main, passwordField, confirmPasswordField } from "./dom-variables.js";
 export const splitUrlParams = (paramName) => {
   const searchParams = new URLSearchParams(location.search);
   return searchParams.get(paramName);
 };
 
 export const clearInputFields = () => {
-  passwordField.value = '';
-  confirmPasswordField.value = '';
+  passwordField.value = "";
+  confirmPasswordField.value = "";
 };
 const hideErrors = (...elements) => {
   elements.forEach((element) => {
     const container = element.parentElement.parentElement;
-    container.classList.remove('error-input');
-    container.classList.remove('error-animation');
+    container.classList.remove("error-input");
+    container.classList.remove("error-animation");
     void container.offsetWidth;
-    container.nextElementSibling.firstElementChild.innerHTML = '';
+    container.nextElementSibling.firstElementChild.innerHTML = "";
   });
 };
 
 export const showError = (errorMessage, element) => {
   const container = element.parentElement.parentElement;
   container.nextElementSibling.firstElementChild.innerHTML = `<span>&#xF333;</span> ${errorMessage}`;
-  container.classList.add('error-input');
-  container.classList.add('error-animation');
+  container.classList.add("error-input");
+  container.classList.add("error-animation");
   element.focus();
 };
 
@@ -40,8 +44,8 @@ export const showErrorMsg = (title, message) => {
   </span>
   </div>
         `;
-  main.style.backgroundColor = 'var(--error-block-background-color)';
-  main.style.borderColor = 'var(--error-block-border-color)';
+  main.style.backgroundColor = "var(--error-block-background-color)";
+  main.style.borderColor = "var(--error-block-border-color)";
 };
 
 export const verifyPasswordFields = () => {
@@ -49,11 +53,20 @@ export const verifyPasswordFields = () => {
   const password = passwordField.value.trim();
   const confirmPassword = confirmPasswordField.value.trim();
   if (password !== confirmPassword) {
-    showError(t('common:shared_terms.passwords_do_not_match'), confirmPasswordField);
+    showError(
+      t("common:shared_terms.passwords_do_not_match"),
+      confirmPasswordField,
+    );
   }
 
   if (!passwordRegex.test(password)) {
-    showError(t('common:shared_terms.the_password_must_be_between_min_and_max_characters', { min: PASSWORD_MIN_LENGTH, max: PASSWORD_MAX_LENGTH }), passwordField);
+    showError(
+      t(
+        "common:shared_terms.the_password_must_be_between_min_and_max_characters",
+        { min: PASSWORD_MIN_LENGTH, max: PASSWORD_MAX_LENGTH },
+      ),
+      passwordField,
+    );
   }
 
   if (!passwordRegex.test(password) || password !== confirmPassword) {

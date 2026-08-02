@@ -9,7 +9,7 @@
     "quiz_editor": "محرر الاختبارات",
     "settings": "الإعدادات",
     "account_settings": "إعدادات الحساب",
-    "dashboard": "لوحة التحكم"
+    "dashboard": "لوحة القيادة"
   },
   "avatar_alt": "الصورة الشخصية للمستخدم",
   "member_avatar_alt": "الصورة الشخصية للعضو",
@@ -399,5 +399,8 @@
     "duplicate": "تكرار",
     "groups_sessions": "مجموعات | جلسات",
     "your_score": "نقييمك"
+  },
+  "images": {
+    "logo_alt": "شعار StudyHype"
   }
 }

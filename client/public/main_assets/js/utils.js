@@ -70,7 +70,7 @@ export const removeBlock = function () {
  */
 export const showMessageBlock = (message, type) => {
   let messagesBlocksWrapper = document.querySelector(
-    ".messages-blocks-wrapper"
+    ".messages-blocks-wrapper",
   );
   if (!messagesBlocksWrapper) {
     messagesBlocksWrapper = document.createElement("div");
@@ -83,10 +83,10 @@ export const showMessageBlock = (message, type) => {
     type === "error"
       ? "exclamation-circle-fill"
       : type === "warning"
-      ? "exclamation-triangle-fill"
-      : type === "info"
-      ? "info-circle-fill"
-      : "check-circle-fill";
+        ? "exclamation-triangle-fill"
+        : type === "info"
+          ? "info-circle-fill"
+          : "check-circle-fill";
   msgBlock.innerHTML = `
     <p>
       <i class="bi bi-${iconClass}"></i>
@@ -150,10 +150,7 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
   if (!response.ok) {
     if (response.status === 401) {
       // Handle unauthorized access
-      showMessageBlock(
-        t("common:alerts.unauthorized"),
-        "warning"
-      );
+      showMessageBlock(t("common:alerts.unauthorized"), "warning");
       setTimeout(() => {
         redirectTo("/login");
       }, 2000);
@@ -165,8 +162,12 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
       history.back();
     }
 
-    const responseData = await response.json().catch(() => ({ message: t("common:alerts.error_occurred") }));
-    const error = new Error(responseData.message || t("common:alerts.error_occurred"));
+    const responseData = await response
+      .json()
+      .catch(() => ({ message: t("common:alerts.error_occurred") }));
+    const error = new Error(
+      responseData.message || t("common:alerts.error_occurred"),
+    );
     error.data = responseData;
     error.status = response.status;
     error.isNative = responseData.isNative;
@@ -182,11 +183,7 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
  * @param {String} url - The URL to send data to
  * @param {Object} data - The data to send
  */
-export const sendData = async (
-  url,
-  data,
-  method = "POST"
-) => {
+export const sendData = async (url, data, method = "POST") => {
   const options = {};
   if (data) {
     options.body = data instanceof FormData ? data : JSON.stringify(data);
@@ -202,7 +199,7 @@ export const fetchTemplate = async (url) => {
     url,
     "GET",
     {},
-    { "x-requested-with": "fetch" }
+    { "x-requested-with": "fetch" },
   );
   return response;
 };
@@ -228,7 +225,9 @@ export const checkError = function (error) {
   }
   for (const key in AUTH_ERRORS) {
     if (AUTH_ERRORS[key].code === error.code) {
-      error.message = t(`shared:auth_errors.${key}`, { defaultValue: t(`common:auth_errors.${key}`, { defaultValue: AUTH_ERRORS[key].message }) });
+      error.message = t(`shared:auth_errors.${key}`, {
+        defaultValue: AUTH_ERRORS[key].message,
+      });
       return;
     }
   }

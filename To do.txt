@@ -3,7 +3,6 @@
 // use post css to generate the css files
 // add the cloud funcs
 
-
 // <bdi> when rtl
 //------------------------------------
 // secure the api keys and firebase connection
@@ -11,6 +10,7 @@
 // change this in deployment:
 - APP_URL 
 - require("dotenv").config(); and remove it from package
+
 
 // you have a free domains names in github
 

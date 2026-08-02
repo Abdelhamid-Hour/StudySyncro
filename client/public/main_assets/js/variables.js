@@ -50,7 +50,7 @@ export const AUTH_ERRORS = {
     message: "Too many requests have been made from this device. Please wait a while before trying again.",
   },
 };
-export const MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5MB
+export const MAX_AVATAR_SIZE = 2 * 1024 * 1024; // 5MB
 export const PROFILE_ALLOWED_TYPES = [
   "image/jpeg",
   "image/png",

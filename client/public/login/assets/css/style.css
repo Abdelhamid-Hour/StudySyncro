@@ -250,6 +250,27 @@ main {
         display: none;
       }
     }
+
+    #clear-avatar-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--error-color);
+      background: transparent;
+      color: var(--error-color);
+      cursor: pointer;
+      transition: all 200ms ease;
+      font-weight: 500;
+      width: 90%;
+      margin-top: -1rem;
+    }
+    #clear-avatar-btn:hover {
+      background: var(--error-color);
+      color: white;
+    }
   }
 
   h1 {

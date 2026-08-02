@@ -359,9 +359,18 @@
     "mark_as_read": "Mark as read",
     "reply_in_group": "Reply In Group",
     "just_now": "Just now",
-    "one_count_m_ago_other_count_m": "{\"one\":\"{count}m ago\",\"other\":\"{count}m ago\"}",
-    "one_count_h_ago_other_count_h": "{\"one\":\"{count}h ago\",\"other\":\"{count}h ago\"}",
-    "one_count_d_ago_other_count_d": "{\"one\":\"{count}d ago\",\"other\":\"{count}d ago\"}",
+    "one_count_m_ago_other_count_m": {
+      "one": "{count}m ago",
+      "other": "{count}m ago"
+    },
+    "one_count_h_ago_other_count_h": {
+      "one": "{count}h ago",
+      "other": "{count}h ago"
+    },
+    "one_count_d_ago_other_count_d": {
+      "one": "{count}d ago",
+      "other": "{count}d ago"
+    },
     "request_accepted": "Request Accepted",
     "drag_to_reorder": "Drag to Reorder",
     "delete_question": "Delete Question",
@@ -378,5 +387,8 @@
     "duplicate": "Duplicate",
     "groups_sessions": "Groups | Sessions",
     "your_score": "Your Score"
+  },
+  "images": {
+    "logo_alt": "StudyHype Logo"
   }
 }

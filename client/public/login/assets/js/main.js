@@ -80,6 +80,25 @@ handlEyeIconsClick(eyeIcons);
 
 setUpFileInputListeners(avatarContainer, avatarAside);
 
+// Clear avatar button logic
+import { fileinput, clearAvatarBtn } from "./dom-variables.js";
+
+// Let's hook up the clear button click event:
+clearAvatarBtn.addEventListener("click", () => {
+  // Clear the file input
+  fileinput.value = "";
+  
+  // Reset the image to default
+  const img = avatarContainer.querySelector("img");
+  img.src = "/login/assets/images/user.webp";
+  
+  // Hide the button
+  clearAvatarBtn.style.display = "none";
+  
+  // Clear any errors
+  avatarContainer.querySelector(".error").innerHTML = "";
+});
+
 // theme toggle
 const toggleBtn = document.getElementById("theme-toggle-btn");
 const toggleIcon = document.getElementById("theme-toggle-icon");

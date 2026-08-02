@@ -6,14 +6,6 @@ import { t } from "../../../../../main_assets/js/i18n.js";
 
 const handleFileAndvisuallyShowAvatar = (file, container) => {
   if (file) {
-    const sizeKB = file.size;
-    if (sizeKB > MAX_AVATAR_SIZE) {
-      showAvatarError(
-        t("common:alerts.avatar_size_exceeded", { size: MAX_AVATAR_SIZE }),
-        container
-      );
-      return;
-    }
     const reader = new FileReader();
     container.querySelector(".error").innerHTML = "";
     reader.readAsDataURL(file);
@@ -24,20 +16,53 @@ const handleFileAndvisuallyShowAvatar = (file, container) => {
 };
 
 const showAvatarError = (message, container) => {
-  container.querySelector(
-    ".error"
-  ).innerHTML = `<i class="bi bi-exclamation-circle"></i>${message}`;
+  container.querySelector(".error").innerHTML =
+    `<i class="bi bi-exclamation-circle"></i>${message}`;
 };
 
 const handleFileInput = (file, avatarContainer) => {
   const fileInput = avatarContainer.querySelector("input");
   if (fileInput.disabled) return;
-  if (!(file && PROFILE_ALLOWED_TYPES.includes(file.type)))
+  
+  if (!file) {
+    // User cancelled dialog or input was cleared programmatically
+    fileInput.value = "";
+    avatarContainer.querySelector("img").src = "/login/assets/images/user.webp"; // fallback 
+    avatarContainer.querySelector(".error").innerHTML = "";
+    // Hide clear button if it exists in the DOM alongside the container
+    const clearBtn = avatarContainer.nextElementSibling;
+    if (clearBtn && clearBtn.id === "clear-avatar-btn") clearBtn.style.display = "none";
+    return;
+  }
+
+  if (!PROFILE_ALLOWED_TYPES.includes(file.type)) {
+    fileInput.value = ""; // Clear bad file
+    avatarContainer.querySelector("img").src = "/login/assets/images/user.webp"; // Reset preview
+    const clearBtn = avatarContainer.nextElementSibling;
+    if (clearBtn && clearBtn.id === "clear-avatar-btn") clearBtn.style.display = "none";
     return showAvatarError(
-      t("common:alerts.invalid_file_type"),
-      avatarContainer
+      t("shared:alerts.invalid_file_type"),
+      avatarContainer,
     );
+  }
+
+  if (file.size > MAX_AVATAR_SIZE) {
+    fileInput.value = ""; // Clear bad file
+    avatarContainer.querySelector("img").src = "/login/assets/images/user.webp"; // Reset preview
+    const clearBtn = avatarContainer.nextElementSibling;
+    if (clearBtn && clearBtn.id === "clear-avatar-btn") clearBtn.style.display = "none";
+    return showAvatarError(
+      t("shared:alerts.avatar_size_exceeded", {
+        size: MAX_AVATAR_SIZE / (1024 * 1024),
+      }),
+      avatarContainer,
+    );
+  }
+
   handleFileAndvisuallyShowAvatar(file, avatarContainer);
+  // Show clear button if it exists
+  const clearBtn = avatarContainer.nextElementSibling;
+  if (clearBtn && clearBtn.id === "clear-avatar-btn") clearBtn.style.display = "flex";
 };
 
 export const setUpFileInputListeners = (avatarContainer, avatarAside) => {
@@ -70,7 +95,12 @@ export const setUpFileInputListeners = (avatarContainer, avatarAside) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     avatarContainer.classList.remove("file-drag-start");
-    handleFileInput(file, avatarContainer, avatarAside);
+    
+    if (file) {
+      fileinput.files = e.dataTransfer.files;
+      // Dispatch change event so other listeners (like clear button) can react
+      fileinput.dispatchEvent(new Event('change'));
+    }
   });
 
   avatarContainer.addEventListener("dragover", (e) => {

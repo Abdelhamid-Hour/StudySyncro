@@ -7,7 +7,6 @@ import {
   EMAIL_MIN_LENGTH,
   EMAIL_MAX_LENGTH,
   emailRegex,
-  MAX_AVATAR_SIZE,
   PROFILE_ALLOWED_TYPES,
   passwordRegex,
   userNameRegex,
@@ -148,7 +147,7 @@ const checkValidation = () => {
     return false;
   } else if (avatarFile && avatarFile.size > MAX_AVATAR_SIZE) {
     showErrorTooltip(
-      t("settings:validation.avatar_size", {
+      t("shared:alerts.avatar_size_exceeded", {
         size: MAX_AVATAR_SIZE / (1024 * 1024),
       }),
       avatarInput,

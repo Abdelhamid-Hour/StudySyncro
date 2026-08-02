@@ -1,5 +1,6 @@
 {
   "metadata": {
+    "keywords": "StudyHype, login, online learning, real-time chat, quizzes, student collaboration",
     "page_title": "Login to your StudyHype account",
     "meta_description": "Login to StudyHype to access quizzes, real-time chat, and group study sessions."
   },
@@ -12,7 +13,8 @@
     "drop_file": "Drop the file or click to choose a profile picture",
     "allowed_types": "Allowed file types:",
     "file_formats": "JPG, PNG, JPEG, WEBP.",
-    "max_size": "Max file size: 200KB"
+    "max_size": "Max file size: 200KB",
+    "remove_avatar": "Remove Avatar"
   },
   "header": {
     "your_account": "Your Account"

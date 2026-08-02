@@ -3,6 +3,10 @@
     "create": "create",
     "login_to": "Login to"
   },
+  "alerts": {
+    "invalid_file_type": "Invalid file type. Please select other file.",
+    "avatar_size_exceeded": "File size exceeds the limit of {size}MB."
+  },
   "auth_errors": {
     "INVALID_LOGIN_CREDENTIALS": "Invalid email or password. Please try again.",
     "CANCELLED_POPUP_REQUEST": "It looks like you closed the popup before completing the action. Please try again.",

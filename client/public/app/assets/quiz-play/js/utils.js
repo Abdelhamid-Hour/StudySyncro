@@ -6,6 +6,7 @@ import {
   t,
 } from "../../global/js/utils.js";
 import { openQuizResultOverlay } from "../../shared/quiz-result/js/utils.js";
+import { PENDING_ONLINE_SYNC_OPS } from "../../global/js/variables.js";
 import {
   hoursEl,
   minutesEl,
@@ -435,12 +436,31 @@ const finishQuiz = async () => {
 };
 
 const submitExamenResult = async () => {
+  const trySubmit = async () => {
+    try {
+      await sendData("/api/add-quiz-result", { quizResult });
+    } catch (error) {
+      if (navigator.onLine) {
+        console.error("Failed to submit examen result:", error);
+        showMessageBlock(t("quizzes:play.alerts.failed_submit"), "error");
+      }
+    }
+  };
+
+  if (!navigator.onLine) {
+    PENDING_ONLINE_SYNC_OPS.push(trySubmit);
+    return;
+  }
+
   try {
     await sendData("/api/add-quiz-result", { quizResult });
   } catch (error) {
-    console.error("Failed to submit examen result:", error);
-    showMessageBlock(t("quizzes:play.alerts.failed_submit"), "error");
-    return;
+    if (!navigator.onLine) {
+      PENDING_ONLINE_SYNC_OPS.push(trySubmit);
+    } else {
+      console.error("Failed to submit examen result:", error);
+      showMessageBlock(t("quizzes:play.alerts.failed_submit"), "error");
+    }
   }
 };
 

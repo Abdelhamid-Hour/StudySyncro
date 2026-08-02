@@ -87,5 +87,10 @@
     "timer_tasks": "Study Timer & Tasks Preview",
     "group_management": "Group Management Interface",
     "logo_alt": "StudyHype Logo"
+  },
+  "landing_seo": {
+    "description": "StudyHype is a collaborative learning platform featuring real-time group study sessions, interactive chat, custom quiz editors, and productivity timers.",
+    "keywords": "StudyHype, study groups, online learning, collaborative studying, real-time chat, quizzes, exam editor, study timer",
+    "og_title": "StudyHype — Collaborative Study Spaces"
   }
 }

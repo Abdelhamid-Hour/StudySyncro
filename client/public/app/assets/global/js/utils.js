@@ -18,6 +18,7 @@ import {
   t,
 } from "../../../../main_assets/js/utils.js";
 import { initAndDiplayErrorTooltip } from "../../shared/chat/js/utils.js";
+import { syncMissedNotifications } from "./notifications.js";
 
 export const getClippingRect = (element) => {
   let parent = element.parentElement;
@@ -124,8 +125,22 @@ request.onerror = (event) => {
 };
 
 export const handleOnlineSync = () => {
+  showMessageBlock(t("common:alerts.back_online", { defaultValue: "Connection restored!" }), "success");
   PENDING_ONLINE_SYNC_OPS.forEach((f) => f());
   PENDING_ONLINE_SYNC_OPS.length = 0;
+
+  // Sync missed notifications by completely resetting the loader
+  syncMissedNotifications();
+
+  // Virtual nav for Active Sessions & Chat to fetch missed data
+  const path = window.location.pathname;
+  if (path.includes("/home") || path.includes("/chat")) {
+    window.dispatchEvent(new PopStateEvent("popstate", { state: {} }));
+  }
+};
+
+export const handleOffline = () => {
+  showMessageBlock(t("common:alerts.offline", { defaultValue: "You are offline!" }), "error");
 };
 
 export const runWhenDbReady = (fn) => {
@@ -2773,7 +2788,9 @@ export const initEmailActionTriggers = async () => {
     window.history.replaceState({}, document.title, window.location.pathname);
     const res = await showConfirmationBox(
       "confirmation",
-      t("notifications:alerts.group_invitation", { defaultValue: "Group Invitation" }),
+      t("notifications:alerts.group_invitation", {
+        defaultValue: "Group Invitation",
+      }),
       t("notifications:alerts.accept_invite_desc", {
         groupName,
         defaultValue: `You have been invited to join "${groupName}". Would you like to accept this invitation?`,

@@ -60,6 +60,7 @@ export const avatarAside = document.querySelector("aside");
 export const avatarSpaceReserver = document.getElementById("space-reserver");
 export const avatarContainer = document.getElementById("avatar-container");
 export const fileinput = avatarContainer.querySelector("input");
+export const clearAvatarBtn = document.getElementById("clear-avatar-btn");
 export const forgotPasswordLink =
   signInFormContainer.querySelector("#forgot-password");
 

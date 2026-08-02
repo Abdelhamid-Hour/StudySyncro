@@ -645,7 +645,7 @@ const initRealtimeNotifications = () => {
         if (window.Notification && Notification.permission === "granted") {
           new Notification(notif.title || "StudyHype Notification", {
             body: notif.message || "",
-            icon: "/app/assets/global/images/logo.png",
+            icon: "/images/android-chrome-192x192.png",
           });
         }
         
@@ -949,4 +949,48 @@ export const initNotificationsManager = () => {
 
   window.clearAllNotifCardsUnreadState = clearAllNotifCardsUnreadState;
   initRealtimeNotifications();
+};
+
+export const syncMissedNotifications = async () => {
+  const container = document.getElementById("notifications-list");
+  if (!container || !notifLoader) return;
+  
+  Object.keys(categoriesState).forEach((cat) => {
+    categoriesState[cat].isLoaded = false;
+    categoriesState[cat].cardsHtml = [];
+    categoriesState[cat].lastVisible = "";
+  });
+  
+  container.innerHTML = "";
+  
+  try {
+    const data = await sendData("/api/notifications?count=20", {}, "GET");
+    if (data && data.success) {
+      // 1. Reset and set absolute badge count
+      updateBadgeCount(-999999); // completely reset
+      if (data.unreadCount > 0) {
+        updateBadgeCount(data.unreadCount);
+      }
+
+      // 2. Generate and mount cards
+      data.cards.forEach((notif) => {
+        const card = createNotificationCard(notif);
+        container.appendChild(card);
+      });
+
+      // 3. Set data-last-visible and init
+      if (data.lastVisible) {
+        container.setAttribute("data-last-visible", data.lastVisible);
+      } else {
+        container.removeAttribute("data-last-visible");
+      }
+      
+      if (notifEventSource) {
+        notifEventSource.close();
+      }
+      initNotificationsManager();
+    }
+  } catch (e) {
+    console.error("Failed to sync offline notifications", e);
+  }
 };

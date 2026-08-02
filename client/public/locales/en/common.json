@@ -64,8 +64,7 @@
   "alerts": {
     "error_occurred": "An error occurred.",
     "unauthorized": "🚫 You are not authorized to access this resource. Please log in.",
-    "invalid_file_type": "Invalid file type. Please select other file.",
-    "file_too_large": "File \"{name}\" size exceeds the maximum limit of {max} MB.",
+    "file_too_large": "File {name} size exceeds the maximum limit of {max}MB.",
     "max_files_exceeded": "You can only upload a maximum of 5 files",
     "local_id_not_found": "Local ID not found.",
     "msg_not_found_local": "Message not found in local storage.",
@@ -75,21 +74,11 @@
     "password_reset_success": "Password reset successful",
     "try_resetting_again": "Try resetting your password again",
     "reset_link_expired": "Your request to reset your password has expired or the link has already been used",
-    "avatar_size_exceeded": "File size exceeds the limit of {size}.",
     "subject_input_error": "Please enter a valid subject between 2 and 50 characters long.",
     "left_session_success": "You have left the session successfully.",
-    "joined_session_success": "You have joined the session successfully."
-  },
-  "auth_errors": {
-    "INVALID_LOGIN_CREDENTIALS": "Invalid email or password. Please try again.",
-    "CANCELLED_POPUP_REQUEST": "It looks like you closed the popup before completing the action. Please try again.",
-    "EMAIL_ALREADY_IN_USE": "The email address you entered is already associated with an account. Try logging in or use a different email.",
-    "WRONG_PASSWORD": "Oops! The password you entered is incorrect. Please double-check and try again.",
-    "POPUP_BLOCKED": "It seems like the popup was blocked by your browser. Please allow popups and try again.",
-    "POPUP_CLOSED_BY_USER": "It looks like you closed the popup before completing the action. Please open it again and try.",
-    "REDIRECT_CANCELLED_BY_USER": "It seems you canceled the redirect action. Please try again to complete the process.",
-    "USER_NOT_FOUND": "We couldn't find an account with that email address. Please check your email or create a new account.",
-    "TOO_MANY_REQUESTS": "Too many requests have been made from this device. Please wait a while before trying again."
+    "joined_session_success": "You have joined the session successfully.",
+    "back_online": "Connection restored! Syncing data...",
+    "offline": "You are offline. Some features may be unavailable."
   },
   "modals": {
     "confirm": "Confirm",
@@ -324,7 +313,7 @@
     "current_password": "Current Password",
     "change_email": "Change Email",
     "add_email": "Add Email",
-    "join_session_desc": "A live session \"{{sessionName}}\" is happening right now in \"{{groupName}}\". Would you like to join?",
+    "join_session_desc": "A live session {sessionName} is happening right now in {groupName}. Would you like to join?",
     "cancel": "Cancel"
   },
   "subjects": {

@@ -108,8 +108,8 @@ self.addEventListener("push", function (event) {
 
       const options = {
         body: body,
-        icon: "/app/assets/images/logo.png",
-        badge: "/app/assets/images/logo.png",
+        icon: "/images/android-chrome-192x192.png",
+        badge: "/images/android-chrome-192x192.png",
         data: payload,
       };
 

@@ -322,10 +322,13 @@ const validatesSignUpForm = () => {
 
   if (!passwordRegex.test(password)) {
     showError(
-      t("common:shared_terms.the_password_must_be_between_min_and_max_characters", {
-        min: PASSWORD_MIN_LENGTH,
-        max: PASSWORD_MAX_LENGTH,
-      }),
+      t(
+        "common:shared_terms.the_password_must_be_between_min_and_max_characters",
+        {
+          min: PASSWORD_MIN_LENGTH,
+          max: PASSWORD_MAX_LENGTH,
+        },
+      ),
       signUpPasswordField,
     );
     return false;
@@ -443,7 +446,7 @@ const hideAvatarSide = () => {
   fileinput.value = "";
   fileinput.disabled = true;
   avatarSpaceReserver.classList.remove("shown");
-  avatarAside.querySelector("img").src = "./assets/images/user.png";
+  avatarAside.querySelector("img").src = "/login/assets/images/user.webp";
   setTimeout(() => {
     avatarAside.querySelector("div").style.display = "none";
   }, animationDuration);

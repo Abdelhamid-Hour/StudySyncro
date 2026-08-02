@@ -15,35 +15,67 @@
     <title><%= t("api:studyhype_elevate_your_learning_with_rea") %></title>
     <meta
       name="description"
-      content="StudyHype is a collaborative learning platform featuring real-time group study sessions, interactive chat, custom quiz editors, and productivity timers."
+      content="<%= t('root:landing_seo.description', { defaultValue: 'StudyHype is a collaborative learning platform featuring real-time group study sessions, interactive chat, custom quiz editors, and productivity timers.' }) %>"
     />
     <meta
       name="keywords"
-      content="StudyHype, study groups, online learning, collaborative studying, real-time chat, quizzes, exam editor, study timer"
+      content="<%= t('root:landing_seo.keywords', { defaultValue: 'StudyHype, study groups, online learning, collaborative studying, real-time chat, quizzes, exam editor, study timer' }) %>"
     />
     <meta name="author" content="StudyHype Team" />
     <meta name="robots" content="index, follow" />
     <meta name="application-name" content="StudyHype" />
     <meta name="theme-color" content="#1e77fd" />
+    <link rel="canonical" href="<%= fullUrl %>" />
 
     <!-- Open Graph / Social Sharing -->
+    <meta property="og:site_name" content="StudyHype" />
+    <meta property="og:locale" content="<%= lang === 'ar' ? 'ar_AR' : 'en_US' %>" />
     <meta
       property="og:title"
-      content="StudyHype — Collaborative Study Spaces"
+      content="<%= t('root:landing_seo.og_title', { defaultValue: 'StudyHype — Collaborative Study Spaces' }) %>"
     />
     <meta
       property="og:description"
-      content="Join study groups, take interactive quizzes, and collaborate in real-time with peers around the world."
+      content="<%= t('root:landing_seo.description', { defaultValue: 'Join study groups, take interactive quizzes, and collaborate in real-time with peers around the world.' }) %>"
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://app.studyhype.com/" />
+    <meta property="og:url" content="<%= fullUrl %>" />
     <meta
       property="og:image"
-      content="/main_assets/images/hero-dashboard.svg"
+      content="/images/home/active-home-page.webp"
     />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="<%= t('root:landing_seo.og_title', { defaultValue: 'StudyHype — Collaborative Study Spaces' }) %>" />
+    <meta name="twitter:description" content="<%= t('root:landing_seo.description', { defaultValue: 'Join study groups, take interactive quizzes, and collaborate in real-time with peers around the world.' }) %>" />
+    <meta name="twitter:image" content="/images/home/active-home-page.webp" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "StudyHype",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Any",
+      "url": "<%= baseUrl %>",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <!-- Preconnect to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- Favicon and Icons -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="manifest" href="/manifest.json">
 
     <!-- Preloading Critical Resources -->
     <meta
@@ -106,7 +138,7 @@
     <nav class="landing-nav">
       <a href="/" class="landing-brand" style="text-decoration: none">
         <img
-          src="/main_assets/images/logo-mark.svg"
+          src="/images/logo-mark.svg"
           alt="<%= t('root:images.logo_alt') %>"
         />
         <span
@@ -174,9 +206,9 @@
         <!-- Hero Showcase Mockup -->
         <div class="hero-showcase-box">
           <img
-            src="/main_assets/images/home/active-home-page-light.png"
-            data-dark-src="/main_assets/images/home/active-home-page.png"
-            data-light-src="/main_assets/images/home/active-home-page-light.png"
+            src="/images/home/active-home-page-light.webp"
+            data-dark-src="/images/home/active-home-page.webp"
+            data-light-src="/images/home/active-home-page-light.webp"
             alt="<%= t('root:images.dashboard_preview') %>"
           />
         </div>
@@ -259,9 +291,10 @@
             <div class="spotlight-visual">
               <div class="feature-img-frame">
                 <img
-                  src="/main_assets/images/groups/available-groups-light.png"
-                  data-dark-src="/main_assets/images/groups/available-groups.png"
-                  data-light-src="/main_assets/images/groups/available-groups-light.png"
+                  loading="lazy"
+                  src="/images/groups/available-groups-light.webp"
+                  data-dark-src="/images/groups/available-groups.webp"
+                  data-light-src="/images/groups/available-groups-light.webp"
                   alt="<%= t('root:images.study_groups') %>"
                 />
               </div>
@@ -273,9 +306,10 @@
             <div class="spotlight-visual">
               <div class="feature-img-frame">
                 <img
-                  src="/main_assets/images/chat/group-chat-light.png"
-                  data-dark-src="/main_assets/images/chat/group-chat.png"
-                  data-light-src="/main_assets/images/chat/group-chat-light.png"
+                  loading="lazy"
+                  src="/images/chat/group-chat-light.webp"
+                  data-dark-src="/images/chat/group-chat.webp"
+                  data-light-src="/images/chat/group-chat-light.webp"
                   alt="<%= t('root:images.chat_interface') %>"
                 />
               </div>
@@ -336,9 +370,10 @@
               <div class="bento-visual">
                 <div class="feature-img-frame">
                   <img
-                    src="/main_assets/images/quiz/quiz-play-light.png"
-                    data-dark-src="/main_assets/images/quiz/quiz-play.png"
-                    data-light-src="/main_assets/images/quiz/quiz-play-light.png"
+                    loading="lazy"
+                    src="/images/quiz/quiz-play-light.webp"
+                    data-dark-src="/images/quiz/quiz-play.webp"
+                    data-light-src="/images/quiz/quiz-play-light.webp"
                     alt="<%= t('root:images.quizzes_preview') %>"
                   />
                 </div>
@@ -363,9 +398,10 @@
               <div class="bento-visual">
                 <div class="feature-img-frame">
                   <img
-                    src="/main_assets/images/quiz/quiz-edit-light.png"
-                    data-dark-src="/main_assets/images/quiz/quiz-edit.png"
-                    data-light-src="/main_assets/images/quiz/quiz-edit-light.png"
+                    loading="lazy"
+                    src="/images/quiz/quiz-edit-light.webp"
+                    data-dark-src="/images/quiz/quiz-edit.webp"
+                    data-light-src="/images/quiz/quiz-edit-light.webp"
                     alt="<%= t('root:images.quiz_editor') %>"
                   />
                 </div>
@@ -393,9 +429,10 @@
               <div class="bento-visual">
                 <div class="feature-img-frame">
                   <img
-                    src="/main_assets/images/home/timer-and-tasks-light.png"
-                    data-dark-src="/main_assets/images/home/timer-and-tasks.png"
-                    data-light-src="/main_assets/images/home/timer-and-tasks-light.png"
+                    loading="lazy"
+                    src="/images/home/timer-and-tasks-light.webp"
+                    data-dark-src="/images/home/timer-and-tasks.webp"
+                    data-light-src="/images/home/timer-and-tasks-light.webp"
                     alt="<%= t('root:images.timer_tasks') %>"
                   />
                 </div>
@@ -420,9 +457,10 @@
               <div class="bento-visual">
                 <div class="feature-img-frame">
                   <img
-                    src="/main_assets/images/groups/my-groups-light.png"
-                    data-dark-src="/main_assets/images/groups/my-groups.png"
-                    data-light-src="/main_assets/images/groups/my-groups-light.png"
+                    loading="lazy"
+                    src="/images/groups/my-groups-light.webp"
+                    data-dark-src="/images/groups/my-groups.webp"
+                    data-light-src="/images/groups/my-groups-light.webp"
                     alt="<%= t('root:images.group_management') %>"
                   />
                 </div>
@@ -499,7 +537,7 @@
           "
         >
           <img
-            src="/main_assets/images/logo-mark.svg"
+            src="/images/logo-mark.svg"
             alt="<%= t('root:images.logo_alt') %>"
             style="width: 1.8rem; height: 1.8rem"
           />

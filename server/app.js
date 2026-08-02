@@ -21,6 +21,14 @@ app.set("views", path.join(__dirname, "views"));
 app.use(cookieParser());
 // Internationalization middleware (must be after cookieParser)
 app.use(i18nMiddleware);
+
+// Global SEO / Dynamic URL middleware
+app.use((req, res, next) => {
+  res.locals.baseUrl = req.protocol + "://" + req.get("host");
+  res.locals.fullUrl = res.locals.baseUrl + req.originalUrl;
+  next();
+});
+
 // parse form data
 app.use(express.urlencoded({ extended: false }));
 // parse JSON data
