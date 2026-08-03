@@ -17,7 +17,8 @@
     "overview": "نظرة عامة",
     "theme_tooltip": "تغيير المظهر",
     "toggle_tooltip": "طوي الشريط الجانبي",
-    "switch_language_tooltip": "تغيير اللغة"
+    "switch_language_tooltip": "تغيير اللغة",
+    "offline": "أنت غير متصل بالإنترنت"
   },
   "topbar": {
     "greeting_hello": "مرحباً {fullName} 👋",

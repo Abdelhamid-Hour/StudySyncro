@@ -821,6 +821,17 @@ textarea {
             transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
           }
         }
+
+        .offline-status-btn {
+          transition: all var(--primary-transition-style);
+          color: var(--warning-block-text-color);
+
+          &.online {
+            opacity: 0;
+            visibility: hidden;
+            scale: .95;
+          }
+        }
       }
 
       .nav-btn {

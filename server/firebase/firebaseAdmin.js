@@ -6,8 +6,8 @@ const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: "studyhype-653c2.firebasestorage.app",
-  databaseURL: "https://studyhype-653c2-default-rtdb.firebaseio.com",
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
 });
 
 const db = admin.firestore();

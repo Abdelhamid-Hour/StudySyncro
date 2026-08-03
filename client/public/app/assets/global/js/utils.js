@@ -1,24 +1,25 @@
 import {
+  fetchTemplate,
+  resetRouteController,
+  sendData,
+  showMessageBlock,
+  t,
+} from "../../../../main_assets/js/utils.js";
+import { initAndDiplayErrorTooltip } from "../../shared/chat/js/utils.js";
+import { syncMissedNotifications } from "./notifications.js";
+import {
   globalTooltip,
   hoverTooltip,
   mainContainer,
+  offlineStatusBtn,
   PENDING_ONLINE_SYNC_OPS,
   timers,
   topSideBarFooter,
   topSideBarHeader,
   topSideBarMiddle,
 } from "./variables.js";
-export * from "../../../../main_assets/js/utils.js";
 export * from "../../../../main_assets/js/i18n.js";
-import {
-  fetchTemplate,
-  sendData,
-  showMessageBlock,
-  resetRouteController,
-  t,
-} from "../../../../main_assets/js/utils.js";
-import { initAndDiplayErrorTooltip } from "../../shared/chat/js/utils.js";
-import { syncMissedNotifications } from "./notifications.js";
+export * from "../../../../main_assets/js/utils.js";
 
 export const getClippingRect = (element) => {
   let parent = element.parentElement;
@@ -124,8 +125,17 @@ request.onerror = (event) => {
   console.error("IndexedDB error:", event.target.error);
 };
 
+export const updateOfflineStatusIndicator = (isOffline) => {
+  if (!offlineStatusBtn) return;
+  offlineStatusBtn.classList.toggle("online", !isOffline);
+};
+
 export const handleOnlineSync = () => {
-  showMessageBlock(t("common:alerts.back_online", { defaultValue: "Connection restored!" }), "success");
+  updateOfflineStatusIndicator(false);
+  showMessageBlock(
+    t("common:alerts.back_online", { defaultValue: "Connection restored!" }),
+    "success",
+  );
   PENDING_ONLINE_SYNC_OPS.forEach((f) => f());
   PENDING_ONLINE_SYNC_OPS.length = 0;
 
@@ -140,7 +150,11 @@ export const handleOnlineSync = () => {
 };
 
 export const handleOffline = () => {
-  showMessageBlock(t("common:alerts.offline", { defaultValue: "You are offline!" }), "error");
+  updateOfflineStatusIndicator(true);
+  showMessageBlock(
+    t("common:alerts.offline", { defaultValue: "You are offline!" }),
+    "error",
+  );
 };
 
 export const runWhenDbReady = (fn) => {

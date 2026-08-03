@@ -4,6 +4,7 @@ export const profileBtn = document.querySelector(".profile-btn");
 export const closeLeftSideBarIcon = document.querySelector(
   ".open-close-side-bar-btn",
 );
+export const offlineStatusBtn = document.querySelector(".offline-status-btn");
 export const topSideBarHeader = document.querySelector(".top-sidebar-header");
 export const topSideBarMiddle = document.querySelector(".top-side-bar-middele");
 export const topSideBarFooter = document.querySelector(".top-side-bar-footer");

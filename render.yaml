@@ -11,3 +11,7 @@ services:
         value: production
       - key: FIREBASE_SERVICE_ACCOUNT
         sync: false
+      - key: FIREBASE_STORAGE_BUCKET
+        sync: false
+      - key: FIREBASE_DATABASE_URL
+        sync: false

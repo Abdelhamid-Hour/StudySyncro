@@ -18,6 +18,7 @@ import {
   tooltipSetup,
   initI18n,
   initEmailActionTriggers,
+  updateOfflineStatusIndicator,
 } from "./utils.js";
 import { initPushNotifications } from "./push-manager.js";
 import { closeLeftSideBarIcon } from "./variables.js";
@@ -46,6 +47,8 @@ document.addEventListener("click", handleNavigation);
 initTheme();
 initThemeToggle();
 initMobileDrawer();
+
+updateOfflineStatusIndicator(!navigator.onLine);
 
 window.addEventListener("popstate", handlePopState);
 

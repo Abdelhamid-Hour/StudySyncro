@@ -444,6 +444,13 @@
           </a>
         </div>
         <div class="bottom-side-bar-icons">
+          <button
+            type="button"
+            class="exclude-btn offline-status-btn nav-btn has-tooltip online"
+            data-tooltip="<%= t('common:sidebar.offline', { defaultValue: 'You are offline' }) %>"
+          >
+            <i class="bi bi-wifi-off"></i>
+          </button>
           <button type="button" style="padding-bottom: initial;" class="exclude-btn toggle-container nav-btn should-fill" title="<%= t('common:sidebar.theme_tooltip') %>">
             <i class="bi bi-moon theme-toggle-icon"></i>
           </button>

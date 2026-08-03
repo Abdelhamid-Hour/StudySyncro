@@ -1,6 +1,10 @@
 import { Loader } from "../../shared/loader/js/utils.js";
 import { handleApiAction, t } from "./utils.js";
-import { sendData, showMessageBlock } from "../../../../main_assets/js/utils.js";
+import {
+  fetchData,
+  sendData,
+  showMessageBlock,
+} from "../../../../main_assets/js/utils.js";
 import { INITIALE_LOADERS_COUNT } from "./variables.js";
 
 const categoriesState = {
@@ -648,18 +652,24 @@ const initRealtimeNotifications = () => {
             icon: "/images/android-chrome-192x192.png",
           });
         }
-        
+
         let notifForMessage = notif;
         if (notif.type && notif.metadata) {
           const translatedMsg = t(
             `notifications:messages.${notif.type}.message`,
             notif.metadata,
           );
-          if (translatedMsg && !translatedMsg.startsWith("notifications:messages.")) {
+          if (
+            translatedMsg &&
+            !translatedMsg.startsWith("notifications:messages.")
+          ) {
             notifForMessage = { ...notif, message: translatedMsg };
           }
         }
-        showMessageBlock(formatNotificationMessage(notifForMessage) || notif.message, "info");
+        showMessageBlock(
+          formatNotificationMessage(notifForMessage) || notif.message,
+          "info",
+        );
       }
 
       const existingDomCard = document.querySelector(
@@ -954,17 +964,17 @@ export const initNotificationsManager = () => {
 export const syncMissedNotifications = async () => {
   const container = document.getElementById("notifications-list");
   if (!container || !notifLoader) return;
-  
+
   Object.keys(categoriesState).forEach((cat) => {
     categoriesState[cat].isLoaded = false;
     categoriesState[cat].cardsHtml = [];
     categoriesState[cat].lastVisible = "";
   });
-  
+
   container.innerHTML = "";
-  
+
   try {
-    const data = await sendData("/api/notifications?count=20", {}, "GET");
+    const data = await fetchData("/api/notifications?count=20");
     if (data && data.success) {
       // 1. Reset and set absolute badge count
       updateBadgeCount(-999999); // completely reset
@@ -984,7 +994,7 @@ export const syncMissedNotifications = async () => {
       } else {
         container.removeAttribute("data-last-visible");
       }
-      
+
       if (notifEventSource) {
         notifEventSource.close();
       }

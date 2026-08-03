@@ -17,7 +17,8 @@
     "overview": "OverView",
     "theme_tooltip": "Toggle Theme",
     "toggle_tooltip": "Toggle Sidebar",
-    "switch_language_tooltip": "Switch Language"
+    "switch_language_tooltip": "Switch Language",
+    "offline": "You are offline"
   },
   "topbar": {
     "greeting_hello": "Hello {fullName} 👋",
