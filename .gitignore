@@ -4,3 +4,4 @@ client/public/package.json
 .env
 server/.env
 server/firebase/firebaseConfig.json
+Todo.txt
