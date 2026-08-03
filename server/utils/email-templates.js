@@ -1,4 +1,4 @@
-const APP_URL = "http://localhost:5000";
+const APP_URL = process.env.RENDER_EXTERNAL_URL || "http://localhost:5000";
 
 const getFooter = () => `
   <br/>

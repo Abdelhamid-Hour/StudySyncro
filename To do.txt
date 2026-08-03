@@ -4,11 +4,6 @@
 //------------------------------------
 // secure the api keys and firebase connection
 // update env in production 
-// change this in deployment:
-- APP_URL 
-- require("dotenv").config(); and remove it from package
-// enalble HSTS
-// .gitignore
 
 // you have a free domains names in github
 
