@@ -1,6 +1,5 @@
 const admin = require("firebase-admin");
 const { getStorage } = require("firebase-admin/storage");
-// const {} = require('');
 const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
   ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
   : require("./firebaseConfig.json");
