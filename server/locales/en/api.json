@@ -181,5 +181,6 @@
   "task_status_updated": "Task status updated.",
   "email_updated_check_inbox": "Email updated. Please check your inbox to verify it.",
   "email_added_check_inbox": "Email added. Please check your inbox to verify it.",
-  "group_already_has_an_active_session": "This group already has an active session."
+  "group_already_has_an_active_session": "This group already has an active session.",
+  "session_already_finished": "Session has already been finished"
 }

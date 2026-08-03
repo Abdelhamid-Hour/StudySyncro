@@ -32,7 +32,7 @@ const leaveSessionHandler = async (req, res) => {
 
 const endSessionHandler = async (req, res) => {
   const { sessionId } = req.body;
-  const result = await cancelSession(sessionId);
+  const result = await cancelSession(sessionId, req.user.uid);
 
   if (result.success) {
     return res.status(200).json({ message: res.locals.t(result.message) });

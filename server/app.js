@@ -12,6 +12,8 @@ const {
 const { renderFragmentOrLayout } = require("./utils/routing");
 const { pageNotFoundHandler } = require("./controllers/pages");
 const i18nMiddleware = require("./middleware/i18n");
+const startSessionCleaner = require("./utils/cron/sessionCleaner");
+
 const app = express();
 
 app.set("view engine", "ejs");
@@ -67,13 +69,11 @@ app.use((err, req, res, next) => {
   }
 
   if (req.path.startsWith("/api")) {
-    return res
-      .status(500)
-      .json({
-        success: false,
-        isNative: false,
-        message: "Internal Server Error",
-      });
+    return res.status(500).json({
+      success: false,
+      isNative: false,
+      message: "Internal Server Error",
+    });
   }
 
   const t = (res.locals && res.locals.t) || ((k) => k);
@@ -100,4 +100,5 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  startSessionCleaner();
 });

@@ -182,5 +182,6 @@
   "request_validation_failed": "فشل التحقق من الطلب.",
   "email_updated_check_inbox": "تم تحديث البريد الإلكتروني. يرجى التحقق من صندوق الوارد للتحقق منه.",
   "email_added_check_inbox": "تمت إضافة البريد الإلكتروني. يرجى التحقق من صندوق الوارد للتحقق منه.",
-  "group_already_has_an_active_session": "هذه المجموعة لديها جلسة نشطة بالفعل."
+  "group_already_has_an_active_session": "هذه المجموعة لديها جلسة نشطة بالفعل.",
+  "session_already_finished": "تم الانتهاء من الجلسة بالفعل"
 }

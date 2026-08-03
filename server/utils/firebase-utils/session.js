@@ -72,17 +72,32 @@ const createGroupSession = async (sessionData, userId) => {
       const groupSnap = await t.get(groupRef);
 
       if (!groupSnap.exists) {
-        return { abort: true, message: "api:group_does_not_exist", isNative: true, type: "info" };
+        return {
+          abort: true,
+          message: "api:group_does_not_exist",
+          isNative: true,
+          type: "info",
+        };
       }
 
       const groupData = groupSnap.data();
 
       if (groupData.creator !== userId) {
-        return { abort: true, message: "api:you_are_not_the_creator_of_this_group", isNative: true, type: "warning" };
+        return {
+          abort: true,
+          message: "api:you_are_not_the_creator_of_this_group",
+          isNative: true,
+          type: "warning",
+        };
       }
 
       if (groupData.currentSession) {
-        return { abort: true, message: "api:group_already_has_an_active_session", isNative: true, type: "warning" };
+        return {
+          abort: true,
+          message: "api:group_already_has_an_active_session",
+          isNative: true,
+          type: "warning",
+        };
       }
 
       return { abort: false, groupData };
@@ -136,14 +151,19 @@ const createGroupSession = async (sessionData, userId) => {
       });
     }
 
+    const startDateStr = new Date().toISOString();
+    const durationMs = (duration || 0) * 60 * 1000;
+    
     const newSessionData = {
       name: name || "",
       description: description || "",
       duration: duration || 0,
-      startDate: new Date().toISOString(),
+      startDate: startDateStr,
+      endTime: Date.now() + durationMs,
       groupId: groupId || "",
       groupName: groupData.name || "",
-      tasksCount: tasks.length || 0,
+      creator: userId,
+      tasksCount: tasks ? tasks.length : 0,
       joinedCount: 0,
       joinedUsers: [],
       quizId: quizId,
@@ -328,7 +348,7 @@ const updateActiveSessionFanOut = async (groupId, sessionId, data) => {
   }
 };
 
-const cancelSession = async (sessionId, userId) => {
+const cancelSession = async (sessionId, userId, force = false) => {
   try {
     const sessionRef = db.collection("sessions").doc(sessionId);
 
@@ -337,11 +357,26 @@ const cancelSession = async (sessionId, userId) => {
       const snapshot = await t.get(sessionRef);
 
       if (!snapshot.exists) {
-        return { abort: true, message: "api:session_not_found", isNative: true, type: "info" };
+        return {
+          abort: true,
+          message: "api:session_not_found",
+          isNative: true,
+          type: "info",
+        };
       }
 
       const session = snapshot.data();
-      const isAdmin = session.creator === userId;
+
+      if (session.status !== "active") {
+        return {
+          abort: true,
+          message: "api:session_already_finished",
+          isNative: true,
+          type: "info",
+        };
+      }
+
+      const isAdmin = session.creator === userId || force;
 
       if (!isAdmin) {
         const time =
@@ -355,7 +390,12 @@ const cancelSession = async (sessionId, userId) => {
           });
           return { abort: false, session, action: "finished" };
         } else {
-          return { abort: true, message: "api:you_dont_have_the_right_to_end_the_session", isNative: true, type: "warning" };
+          return {
+            abort: true,
+            message: "api:you_dont_have_the_right_to_end_the_session",
+            isNative: true,
+            type: "warning",
+          };
         }
       }
 
@@ -393,7 +433,7 @@ const cancelSession = async (sessionId, userId) => {
       const snap = await usersRef.get();
       if (!snap.empty) {
         const promises = snap.docs.map((doc) =>
-          usRef.doc(doc.id).update({ currentSession: "" })
+          usRef.doc(doc.id).update({ currentSession: "" }),
         );
         await Promise.all(promises);
       }
@@ -437,7 +477,12 @@ const leavSession = async (userId) => {
       const userSnap = await t.get(userRef);
 
       if (!userSnap.data().currentSession) {
-        return { abort: true, message: "api:user_is_not_in_any_session", isNative: true, type: "info" };
+        return {
+          abort: true,
+          message: "api:user_is_not_in_any_session",
+          isNative: true,
+          type: "info",
+        };
       }
 
       const currentSessionId = userSnap.data().currentSession;
@@ -473,13 +518,9 @@ const leavSession = async (userId) => {
 
     // --- Post-transaction side effects ---
     if (txResult.groupId) {
-      await updateActiveSessionFanOut(
-        txResult.groupId,
-        txResult.sessionId,
-        {
-          joinedCount: FieldValue.increment(-1),
-        },
-      );
+      await updateActiveSessionFanOut(txResult.groupId, txResult.sessionId, {
+        joinedCount: FieldValue.increment(-1),
+      });
     }
     await updateSessionNotificationJoined(userId, txResult.sessionId, false);
 
@@ -853,16 +894,23 @@ const joinSession = async (sessionId, userId) => {
 
     // --- Transaction: atomically verify & update join state ---
     const txResult = await db.runTransaction(async (t) => {
-      const [snap, usSnap] = await Promise.all([
-        t.get(ref),
-        t.get(userRef),
-      ]);
+      const [snap, usSnap] = await Promise.all([t.get(ref), t.get(userRef)]);
 
       if (!snap.exists) {
-        return { abort: true, message: "api:session_not_found_1", isNative: true, type: "info" };
+        return {
+          abort: true,
+          message: "api:session_not_found_1",
+          isNative: true,
+          type: "info",
+        };
       }
       if (!usSnap.exists) {
-        return { abort: true, message: "api:user_not_found_1", isNative: true, type: "info" };
+        return {
+          abort: true,
+          message: "api:user_not_found_1",
+          isNative: true,
+          type: "info",
+        };
       }
 
       t.update(ref, {

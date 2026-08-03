@@ -1,7 +1,6 @@
 // index and optimize website for searche engines
 // add metadata and metadata handler to the login page
 // use post css to generate the css files
-// add the cloud funcs
 
 // <bdi> when rtl
 //------------------------------------
