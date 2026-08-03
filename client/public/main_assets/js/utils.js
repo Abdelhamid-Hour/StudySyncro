@@ -1,24 +1,18 @@
-import { AUTH_ERRORS } from "./variables.js";
 import {
-  t,
+  changeLanguage,
   getLang,
-  setLang,
+  initI18n,
+  initLanguageSwitcher,
   loadNamespace,
   loadNamespaces,
-  initI18n,
-  changeLanguage,
-  initLanguageSwitcher,
+  setLang,
+  t,
 } from "./i18n.js";
+import { AUTH_ERRORS } from "./variables.js";
 
 export {
-  t,
-  getLang,
-  setLang,
-  loadNamespace,
-  loadNamespaces,
-  initI18n,
-  changeLanguage,
-  initLanguageSwitcher,
+  changeLanguage, getLang, initI18n, initLanguageSwitcher, loadNamespace,
+  loadNamespaces, setLang, t
 };
 
 // Add Event listener for eye icon click to toggle password visibility

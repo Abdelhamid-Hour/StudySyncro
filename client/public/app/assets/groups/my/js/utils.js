@@ -1,4 +1,14 @@
 import {
+  getLoader,
+  navigateTo,
+  openOverlayModal,
+  resetTooltip,
+  sendData,
+  showErrorTooltip,
+  showMessageBlock,
+  t,
+} from "../../../global/js/utils.js";
+import {
   DESCRIPTION_MAX_LENGTH,
   DESCRIPTION_MIN_LENGTH,
   globalTooltip,
@@ -7,16 +17,6 @@ import {
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
 } from "../../../global/js/variables.js";
-import {
-  openOverlayModal,
-  resetTooltip,
-  showErrorTooltip,
-  navigateTo,
-  getLoader,
-  sendData,
-  showMessageBlock,
-  t,
-} from "../../../global/js/utils.js";
 import {
   levelValues,
   visibilityValues,

@@ -1,5 +1,5 @@
-import { sendData } from "../../../../main_assets/js/utils.js";
 import { getLang } from "../../../../main_assets/js/i18n.js";
+import { sendData } from "../../../../main_assets/js/utils.js";
 
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);

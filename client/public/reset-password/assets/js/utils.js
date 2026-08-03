@@ -1,10 +1,10 @@
-import {
-  passwordRegex,
-  PASSWORD_MIN_LENGTH,
-  PASSWORD_MAX_LENGTH,
-} from "../../../main_assets/js/variables.js";
 import { t } from "../../../main_assets/js/i18n.js";
-import { main, passwordField, confirmPasswordField } from "./dom-variables.js";
+import {
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  passwordRegex,
+} from "../../../main_assets/js/variables.js";
+import { confirmPasswordField, main, passwordField } from "./dom-variables.js";
 export const splitUrlParams = (paramName) => {
   const searchParams = new URLSearchParams(location.search);
   return searchParams.get(paramName);

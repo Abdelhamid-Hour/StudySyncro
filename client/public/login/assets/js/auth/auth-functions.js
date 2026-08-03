@@ -1,13 +1,13 @@
 import {
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  sendEmailVerification,
-  GoogleAuthProvider,
-  signInWithCredential,
-  signInWithPopup,
-  updateProfile,
   FacebookAuthProvider,
+  GoogleAuthProvider,
+  sendEmailVerification,
+  signInWithCredential,
+  signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
+  updateProfile,
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import {
   checkError,
@@ -288,11 +288,6 @@ const sendIdToken = async function (auth, url) {
 };
 
 export {
-  initializeGoogleOneTap,
-  showGoogleOneTap,
-  sendIdToken,
-  signInWithFacebookProviderWithPopUp,
-  signInWithGoogleProviderWithPopUp,
-  createAuserWithEmailAndPassword,
-  signInAuserWithEmailAndPassword,
+  createAuserWithEmailAndPassword, initializeGoogleOneTap, sendIdToken, showGoogleOneTap, signInAuserWithEmailAndPassword, signInWithFacebookProviderWithPopUp,
+  signInWithGoogleProviderWithPopUp
 };

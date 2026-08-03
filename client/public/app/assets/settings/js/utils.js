@@ -1,40 +1,40 @@
 import {
-  globalTooltip,
-  NAME_TITLE_MIN_LENGTH,
-  NAME_TITLE_MAX_LENGTH,
-  PASSWORD_MIN_LENGTH,
-  PASSWORD_MAX_LENGTH,
-  EMAIL_MIN_LENGTH,
-  EMAIL_MAX_LENGTH,
-  emailRegex,
-  PROFILE_ALLOWED_TYPES,
-  passwordRegex,
-  userNameRegex,
-} from "../../global/js/variables.js";
-import {
   handleApiAction,
+  redirectTo,
   resetTooltip,
   showConfirmationBox,
   showErrorTooltip,
   t,
-  redirectTo,
 } from "../../global/js/utils.js";
+import {
+  EMAIL_MAX_LENGTH,
+  EMAIL_MIN_LENGTH,
+  emailRegex,
+  globalTooltip,
+  NAME_TITLE_MAX_LENGTH,
+  NAME_TITLE_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  passwordRegex,
+  PROFILE_ALLOWED_TYPES,
+  userNameRegex,
+} from "../../global/js/variables.js";
 import { handleFormSubmit } from "../../shared/forms/js/utils.js";
 import { getFreshTokenId } from "./auth.js";
 import {
   avatarCaption,
+  avatarContainer,
   avatarHover,
   avatarInput,
-  fullNameInput,
-  passwordCheckContainer,
-  passwordEmailInput,
   confirmPasswordInput,
   currentPasswordInput,
-  newPasswordInput,
-  passwordDeleteInput,
   deleteAccountConfirmation,
   emailInput,
-  avatarContainer,
+  fullNameInput,
+  newPasswordInput,
+  passwordCheckContainer,
+  passwordDeleteInput,
+  passwordEmailInput,
 } from "./dom-variables.js";
 
 const oldValues = {

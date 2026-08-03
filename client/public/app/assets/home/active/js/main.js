@@ -1,23 +1,23 @@
 import {
-  registerPageListener,
   loadNamespaces,
+  registerPageListener,
   showMessageBlock,
   t,
 } from "../../../global/js/utils.js";
+import { iniChat } from "../../../shared/chat/js/utils.js";
+import { endSession, leaveSession } from "../../../shared/session/js/utils.js";
+import { handletTasksListners } from "../../../shared/tasks/js/utils.js";
+import {
+  expandDescriptionBtn,
+  initDomVariables,
+  sessionActionButtons,
+} from "./dom-variables.js";
 import {
   expandAndShrinkDescription,
   initMobileTabs,
   Session,
   startSession,
 } from "./utils.js";
-import {
-  expandDescriptionBtn,
-  initDomVariables,
-  sessionActionButtons,
-} from "./dom-variables.js";
-import { handletTasksListners } from "../../../shared/tasks/js/utils.js";
-import { iniChat } from "../../../shared/chat/js/utils.js";
-import { endSession, leaveSession } from "../../../shared/session/js/utils.js";
 
 export const init = async () => {
   await loadNamespaces(["home", "group-chat"]);

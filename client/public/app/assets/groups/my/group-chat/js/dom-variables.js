@@ -1,3 +1,4 @@
+import { t } from "../../../../../../main_assets/js/i18n.js";
 import {
   DESCRIPTION_MAX_LENGTH,
   DESCRIPTION_MIN_LENGTH,
@@ -7,7 +8,6 @@ import {
   NAME_TITLE_MIN_LENGTH,
 } from "../../../../global/js/variables.js";
 import { createShowInSearchLabel } from "../../../../shared/forms/js/utils.js";
-import { t } from "../../../../../../main_assets/js/i18n.js";
 
 export let groupLeftSideBar,
   showInfoBtn,

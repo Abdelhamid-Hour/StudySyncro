@@ -1,8 +1,8 @@
 import {
+  fetchData,
   openOverlayModal,
   scrollToView,
   t,
-  fetchData,
 } from "../../../global/js/utils.js";
 
 const getStatusClass = (quizResult, questionId) => {

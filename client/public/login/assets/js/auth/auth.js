@@ -1,40 +1,40 @@
-import { auth } from "../../../../firebase/firebaseConfig.js";
 import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { auth } from "../../../../firebase/firebaseConfig.js";
 import {
-  signInWithFacebookProviderWithPopUp,
-  signInWithGoogleProviderWithPopUp,
-  createAuserWithEmailAndPassword,
-  signInAuserWithEmailAndPassword,
-  initializeGoogleOneTap,
-  getLoader,
-} from "./auth-functions.js";
+  checkError,
+  showMessageBlock,
+  t,
+} from "../../../../main_assets/js/utils.js";
+import {
+  fbBtn,
+  fileinput,
+  firstNameField as firstName,
+  forgotPasswordLink,
+  formsContainer,
+  googleBtn,
+  lastNameField as lastName,
+  signInBtn,
+  signInemailField,
+  signInPasswordField,
+  signUpBtn,
+  signUpemailField,
+  signUpPasswordField,
+} from "../dom-variables.js";
 import {
   inputsEmptying,
+  userNameFormat,
   validatesSignInForm,
   validatesSignUpForm,
-  userNameFormat,
   verifyEmail,
 } from "../utils.js";
 import {
-  firstNameField as firstName,
-  lastNameField as lastName,
-  signInemailField,
-  signInPasswordField,
-  signUpPasswordField,
-  signUpemailField,
-  signUpBtn,
-  signInBtn,
-  fbBtn,
-  googleBtn,
-  formsContainer,
-  forgotPasswordLink,
-  fileinput,
-} from "../dom-variables.js";
-import {
-  showMessageBlock,
-  checkError,
-  t,
-} from "../../../../main_assets/js/utils.js";
+  createAuserWithEmailAndPassword,
+  getLoader,
+  initializeGoogleOneTap,
+  signInAuserWithEmailAndPassword,
+  signInWithFacebookProviderWithPopUp,
+  signInWithGoogleProviderWithPopUp,
+} from "./auth-functions.js";
 
 initializeGoogleOneTap(auth, showMessageBlock);
 

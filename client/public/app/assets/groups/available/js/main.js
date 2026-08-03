@@ -1,4 +1,4 @@
-import { registerPageListener, loadNamespace } from '../../../global/js/utils.js';
+import { loadNamespace, registerPageListener } from '../../../global/js/utils.js';
 import { initLazyLoadingLoader } from '../../../shared/groups-my-available/js/utils.js';
 import { JoinGroupButtonHandler } from './utils.js';
 

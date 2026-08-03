@@ -1,15 +1,15 @@
 import {
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
   FacebookAuthProvider,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
 } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { auth } from "../../../../firebase/firebaseConfig.js";
 import {
-  t,
   checkError,
   fetchData,
   showMessageBlock,
+  t,
 } from "../../global/js/utils.js";
 import { AUTH_ERRORS } from "../../global/js/variables.js";
 

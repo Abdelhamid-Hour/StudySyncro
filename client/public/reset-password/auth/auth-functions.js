@@ -1,16 +1,16 @@
 import {
-  verifyPasswordResetCode,
   confirmPasswordReset,
+  verifyPasswordResetCode,
 } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
-import {
-  splitUrlParams,
-  showErrorMsg,
-  verifyPasswordFields,
-  clearInputFields,
-} from '../assets/js/utils.js';
 import { auth } from '../../firebase/firebaseConfig.js';
-import { showMessageBlock, redirectTo, checkError } from '../../main_assets/js/utils.js';
 import { t } from '../../main_assets/js/i18n.js';
+import { checkError, redirectTo, showMessageBlock } from '../../main_assets/js/utils.js';
+import {
+  clearInputFields,
+  showErrorMsg,
+  splitUrlParams,
+  verifyPasswordFields,
+} from '../assets/js/utils.js';
 import { passwordField } from '../assets/js/variables.js';
 
 const oobCode = splitUrlParams('oobCode');

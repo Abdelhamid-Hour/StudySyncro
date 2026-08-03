@@ -1,15 +1,15 @@
 import {
-  INITIALE_LOADERS_COUNT,
-  LOADER_COUNT,
-} from "../../../global/js/variables.js";
-import {
+  fetchData,
   getDebounceFunc,
   getLoadersCount,
   isAsync,
-  t,
-  fetchData,
   showMessageBlock,
+  t,
 } from "../../../global/js/utils.js";
+import {
+  INITIALE_LOADERS_COUNT,
+  LOADER_COUNT,
+} from "../../../global/js/variables.js";
 
 const encodeCriteria = (criteria) => {
   if (!criteria) return "";

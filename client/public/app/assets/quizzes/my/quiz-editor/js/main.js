@@ -1,4 +1,4 @@
-import { registerPageListener, loadNamespaces } from "../../../../global/js/utils.js";
+import { loadNamespaces, registerPageListener } from "../../../../global/js/utils.js";
 import { setUpDragAndDrop } from "../../../../shared/tasks/js/utils.js";
 import {
   editorHeader,
@@ -19,8 +19,8 @@ import {
   handleSidebarTitleLinkClick,
   handleTextarea,
   initializeInitialData,
-  saveQuiz,
   initMobileTabs,
+  saveQuiz,
 } from "./utils.js";
 
 export const init = async () => {

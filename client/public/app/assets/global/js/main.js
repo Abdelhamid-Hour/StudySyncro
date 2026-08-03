@@ -1,13 +1,18 @@
+import "../../../auth/auth.js";
+import { initNotificationsManager } from "./notifications.js";
+import { initPushNotifications } from "./push-manager.js";
 import {
   closeAndOpenLeftSideBar,
   handleIconsHoverEnter,
   handleIconsHoverLeave,
   handleNavigation,
-  handleOnlineSync,
   handleOffline,
+  handleOnlineSync,
   handleOverlayClose,
   handlePopState,
   handleRoutingClick,
+  initEmailActionTriggers,
+  initI18n,
   initMobileDrawer,
   initMobileSearch,
   initSidebarTitleSync,
@@ -16,14 +21,9 @@ import {
   openOverlayHandler,
   preventDragOver,
   tooltipSetup,
-  initI18n,
-  initEmailActionTriggers,
   updateOfflineStatusIndicator,
 } from "./utils.js";
-import { initPushNotifications } from "./push-manager.js";
 import { closeLeftSideBarIcon } from "./variables.js";
-import "../../../auth/auth.js";
-import { initNotificationsManager } from "./notifications.js";
 
 await initI18n(["common", "notifications", "shared"]);
 tooltipSetup();

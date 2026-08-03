@@ -1,12 +1,13 @@
+import lottie from "https://cdn.skypack.dev/lottie-web@5.12.0";
 import {
-  registerPageListener,
-  showMessageBlock,
   fetchData,
+  registerPageListener,
   sendData,
+  showMessageBlock,
   t,
 } from "../../global/js/utils.js";
-import { openQuizResultOverlay } from "../../shared/quiz-result/js/utils.js";
 import { PENDING_ONLINE_SYNC_OPS } from "../../global/js/variables.js";
+import { openQuizResultOverlay } from "../../shared/quiz-result/js/utils.js";
 import {
   hoursEl,
   minutesEl,
@@ -14,7 +15,6 @@ import {
   secondsEl,
   timerEl,
 } from "./dom-variables.js";
-import lottie from "https://cdn.skypack.dev/lottie-web@5.12.0";
 
 let quiz = {};
 

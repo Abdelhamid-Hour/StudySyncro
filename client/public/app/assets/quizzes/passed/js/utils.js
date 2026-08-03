@@ -1,15 +1,15 @@
-import { topSideBarMiddle } from "../../../global/js/variables.js";
 import {
   enableMobileTabs,
   navigateTo,
   t,
   toReadableDate,
 } from "../../../global/js/utils.js";
-import { openQuizResultOverlay } from "../../../shared/quiz-result/js/utils.js";
+import { topSideBarMiddle } from "../../../global/js/variables.js";
 import {
   initFiltersInputListener,
   Loader,
 } from "../../../shared/loader/js/utils.js";
+import { openQuizResultOverlay } from "../../../shared/quiz-result/js/utils.js";
 
 const getScoreClass = (score) => {
   if (score >= 80) return "excellent";

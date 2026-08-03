@@ -1,32 +1,32 @@
-import { throttling, t } from "../../../main_assets/js/utils.js";
+import { t, throttling } from "../../../main_assets/js/utils.js";
 import {
+  EMAIL_MAX_LENGTH,
+  EMAIL_MIN_LENGTH,
+  emailRegex,
+  NAME_TITLE_MAX_LENGTH,
+  NAME_TITLE_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
   passwordRegex,
   userNameRegex,
-  emailRegex,
-  PASSWORD_MIN_LENGTH,
-  PASSWORD_MAX_LENGTH,
-  EMAIL_MIN_LENGTH,
-  EMAIL_MAX_LENGTH,
-  NAME_TITLE_MIN_LENGTH,
-  NAME_TITLE_MAX_LENGTH,
 } from "../../../main_assets/js/variables.js";
 import {
-  stylsheet,
-  signInemailField,
-  signInPasswordField,
-  signUpemailField,
-  signUpPasswordField,
-  signUpConfirmPasswordField,
-  firstNameField,
-  lastNameField,
-  signInFormHeight,
-  signUpFormHeight,
-  signUpFormContainer,
-  signInFormContainer,
   animationDuration,
   avatarAside,
-  fileinput,
   avatarSpaceReserver,
+  fileinput,
+  firstNameField,
+  lastNameField,
+  signInemailField,
+  signInFormContainer,
+  signInFormHeight,
+  signInPasswordField,
+  signUpConfirmPasswordField,
+  signUpemailField,
+  signUpFormContainer,
+  signUpFormHeight,
+  signUpPasswordField,
+  stylsheet,
   updateSignFormHeights,
 } from "./dom-variables.js";
 let isSignUpFormInitialized = false;
@@ -463,18 +463,8 @@ const showAvatarSide = () => {
 };
 
 export {
-  swapAnimation,
-  inputsEmptying,
-  getSwapAnimationRule,
-  initializeSignUpForm,
-  showError,
-  validatesSignInForm,
-  validatesSignUpForm,
-  lettersAnimation,
-  userNameFormat,
-  hideAvatarSide,
-  showAvatarSide,
-  verifyEmail,
+  getSwapAnimationRule, hideAvatarSide, initializeSignUpForm, inputsEmptying, lettersAnimation, showAvatarSide, showError, swapAnimation, userNameFormat, validatesSignInForm,
+  validatesSignUpForm, verifyEmail
 };
 
 // home page style

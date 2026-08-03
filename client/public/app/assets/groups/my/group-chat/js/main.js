@@ -6,10 +6,10 @@ import { iniChat } from "../../../../shared/chat/js/utils.js";
 import { groupLeftSideBarContent, initDomVariables } from "./dom-variables.js";
 import {
   getGroupId,
+  handleGroupBtns,
   handleGroupLeftSideBarContent,
   handleShowInfoBtnClick,
   syncMobileDrawerGroupActions,
-  handleGroupBtns,
 } from "./utils.js";
 
 export const init = async () => {

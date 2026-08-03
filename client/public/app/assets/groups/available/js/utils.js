@@ -1,9 +1,8 @@
 import {
-  getLoader,
   handleApiAction,
   showConfirmationBox,
-  t,
   showMessageBlock,
+  t
 } from "../../../global/js/utils.js";
 
 export const handleJoinGroupClick = async (joinGroupBtn) => {

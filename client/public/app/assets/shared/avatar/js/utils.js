@@ -1,8 +1,8 @@
+import { t } from "../../../../../main_assets/js/i18n.js";
 import {
   MAX_AVATAR_SIZE,
   PROFILE_ALLOWED_TYPES,
 } from "../../../../../main_assets/js/variables.js";
-import { t } from "../../../../../main_assets/js/i18n.js";
 
 const handleFileAndvisuallyShowAvatar = (file, container) => {
   if (file) {

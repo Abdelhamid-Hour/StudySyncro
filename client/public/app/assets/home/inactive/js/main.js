@@ -1,20 +1,20 @@
 import {
-  registerPageListener,
   loadNamespace,
+  registerPageListener,
   showMessageBlock,
   t,
 } from "../../../global/js/utils.js";
 import {
   activeSessions,
-  messagesContainer,
   initDomVariables,
+  messagesContainer,
 } from "./dom-variables.js";
 import {
-  handleSessionBtns,
   handleRecentMessageBtns,
-  initSessionsLoader,
-  initRecentMessagesLoader,
+  handleSessionBtns,
   initMobileTabs,
+  initRecentMessagesLoader,
+  initSessionsLoader,
 } from "./utils.js";
 
 export const init = async () => {

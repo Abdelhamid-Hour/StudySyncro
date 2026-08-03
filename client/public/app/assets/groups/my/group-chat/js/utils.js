@@ -1,4 +1,20 @@
 import {
+  closeOverlayModal,
+  dashedToCamelCase,
+  fetchData,
+  getLoader,
+  handleApiAction,
+  millisecondsToHMFormat,
+  navigateTo,
+  openOverlayModal,
+  resetTooltip,
+  sendData,
+  showConfirmationBox,
+  showErrorTooltip,
+  showMessageBlock,
+  t,
+} from "../../../../global/js/utils.js";
+import {
   DESCRIPTION_MAX_LENGTH,
   DESCRIPTION_MIN_LENGTH,
   globalTooltip,
@@ -12,22 +28,7 @@ import {
   TASK_MAX_DURATION,
   TASK_MIN_DURATION,
 } from "../../../../global/js/variables.js";
-import {
-  getLoader,
-  resetTooltip,
-  showConfirmationBox,
-  openOverlayModal,
-  millisecondsToHMFormat,
-  showErrorTooltip,
-  dashedToCamelCase,
-  navigateTo,
-  handleApiAction,
-  closeOverlayModal,
-  t,
-  fetchData,
-  sendData,
-  showMessageBlock,
-} from "../../../../global/js/utils.js";
+import { initAndDiplayErrorTooltip } from "../../../../shared/chat/js/utils.js";
 import {
   levelValues,
   visibilityValues,
@@ -38,35 +39,34 @@ import {
   setUpSelectMenu,
   setUpSwitchBtn,
 } from "../../../../shared/forms/js/utils.js";
-import { initAndDiplayErrorTooltip } from "../../../../shared/chat/js/utils.js";
-import {
-  handletTasksListners,
-  setUpDragAndDrop,
-  Task,
-} from "../../../../shared/tasks/js/utils.js";
-import {
-  groupLeftSideBar,
-  showInfoBtn,
-  groupInfoElementsMap,
-  groupLeftSideBarContent,
-  groupLeftSideBarTitle,
-  drawerSection,
-  actionsList,
-} from "./dom-variables.js";
 import {
   initFiltersInputListener,
   Loader,
   setUpDatePicker,
 } from "../../../../shared/loader/js/utils.js";
 import {
+  openQuizResultOverlay,
+  openQuizResultsOverlay,
+} from "../../../../shared/quiz-result/js/utils.js";
+import {
   endSession,
   joinSession,
   leaveSession,
 } from "../../../../shared/session/js/utils.js";
 import {
-  openQuizResultOverlay,
-  openQuizResultsOverlay,
-} from "../../../../shared/quiz-result/js/utils.js";
+  handletTasksListners,
+  setUpDragAndDrop,
+  Task,
+} from "../../../../shared/tasks/js/utils.js";
+import {
+  actionsList,
+  drawerSection,
+  groupInfoElementsMap,
+  groupLeftSideBar,
+  groupLeftSideBarContent,
+  groupLeftSideBarTitle,
+  showInfoBtn,
+} from "./dom-variables.js";
 
 export let groupInfo;
 export let lastVisible = null;

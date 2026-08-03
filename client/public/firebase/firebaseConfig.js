@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js';
-import { getAuth, setPersistence, inMemoryPersistence } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
+import { getAuth, inMemoryPersistence, setPersistence } from 'https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBQD23tZrfSimPKW8sFIzC_1MoNFGZ9e7A",
@@ -19,5 +19,5 @@ const auth = getAuth(app);
     console.log('Auth persistence set');
 })();
 
-export { auth, app };
+export { app, auth };
 

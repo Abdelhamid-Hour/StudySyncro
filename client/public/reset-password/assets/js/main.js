@@ -1,6 +1,6 @@
 import { handlEyeIconsClick, initI18n } from "../../../main_assets/js/utils.js";
-import { eyeIcons } from "./dom-variables.js";
 import "../../auth/auth.js";
+import { eyeIcons } from "./dom-variables.js";
 
 await initI18n(["shared", "reset_password"], { isStatic: true });
 

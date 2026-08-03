@@ -1,21 +1,21 @@
 import {
+  enableMobileTabs,
+  formatNumber,
+  handleApiAction,
+  navigateTo,
+  openOverlayModal,
+  resetTooltip,
+  sendData,
+  showErrorTooltip,
+  showMessageBlock,
+  t,
+} from "../../../global/js/utils.js";
+import {
   globalTooltip,
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
   topSideBarMiddle,
 } from "../../../global/js/variables.js";
-import {
-  openOverlayModal,
-  resetTooltip,
-  showErrorTooltip,
-  navigateTo,
-  handleApiAction,
-  formatNumber,
-  enableMobileTabs,
-  sendData,
-  showMessageBlock,
-  t,
-} from "../../../global/js/utils.js";
 import {
   handleFormSubmit,
   setUpSelectMenu,

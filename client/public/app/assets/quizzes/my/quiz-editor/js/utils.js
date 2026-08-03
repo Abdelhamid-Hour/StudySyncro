@@ -1,26 +1,26 @@
 import {
-  CHOICE_TEXT_MAX_LENGTH,
-  globalTooltip,
-  QUESTION_TEXT_MAX_LENGTH,
-  QUESTION_TEXT_MIN_LENGTH,
-  hoverTooltip,
-  NAME_TITLE_MAX_LENGTH,
-  NAME_TITLE_MIN_LENGTH,
-  MIN_CHOICES_COUNT,
-  MAX_CHOICES_COUNT,
-} from "../../../../global/js/variables.js";
-import {
+  enableMobileTabs,
+  fetchData,
   getLoader,
   resetTooltip,
   scrollToView,
+  sendData,
   showConfirmationBox,
   showErrorTooltip,
-  enableMobileTabs,
-  fetchData,
-  sendData,
   showMessageBlock,
   t,
 } from "../../../../global/js/utils.js";
+import {
+  CHOICE_TEXT_MAX_LENGTH,
+  globalTooltip,
+  hoverTooltip,
+  MAX_CHOICES_COUNT,
+  MIN_CHOICES_COUNT,
+  NAME_TITLE_MAX_LENGTH,
+  NAME_TITLE_MIN_LENGTH,
+  QUESTION_TEXT_MAX_LENGTH,
+  QUESTION_TEXT_MIN_LENGTH,
+} from "../../../../global/js/variables.js";
 import { setUpSelectMenu } from "../../../../shared/forms/js/utils.js";
 import {
   editorQuestionsList,

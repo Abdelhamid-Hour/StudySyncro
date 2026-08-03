@@ -1,13 +1,13 @@
-import { timers } from "../../../global/js/variables.js";
 import {
+  fetchData,
   millisecondsToHMFormat,
   navigateTo,
   registerPageListener,
-  fetchData,
   sendData,
   showMessageBlock,
   t,
 } from "../../../global/js/utils.js";
+import { timers } from "../../../global/js/variables.js";
 import {
   openQuizResultOverlay,
   openQuizResultsOverlay,

@@ -3,7 +3,7 @@
  * Handles dictionary fetching, caching, DOM translation, and language persistence.
  */
 
-import { getRouteSignal, getFrozenPromise } from "./utils.js";
+import { getFrozenPromise, getRouteSignal } from "./utils.js";
 
 const SUPPORTED_LANGUAGES = ["en", "ar"];
 const DEFAULT_LANGUAGE = "en";

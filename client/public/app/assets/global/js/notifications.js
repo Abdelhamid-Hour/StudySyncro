@@ -1,10 +1,10 @@
-import { Loader } from "../../shared/loader/js/utils.js";
-import { handleApiAction, t } from "./utils.js";
 import {
   fetchData,
   sendData,
   showMessageBlock,
 } from "../../../../main_assets/js/utils.js";
+import { Loader } from "../../shared/loader/js/utils.js";
+import { handleApiAction, t } from "./utils.js";
 import { INITIALE_LOADERS_COUNT } from "./variables.js";
 
 const categoriesState = {

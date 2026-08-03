@@ -1,12 +1,12 @@
 import {
+  getDebounceFunc,
+  showMessageBlock,
+  t,
+} from "../../../global/js/utils.js";
+import {
   DESCRIPTION_MAX_LENGTH,
   hoverTooltip,
 } from "../../../global/js/variables.js";
-import {
-  getDebounceFunc,
-  t,
-  showMessageBlock,
-} from "../../../global/js/utils.js";
 import {
   levelValues,
   subjectMenuObject,

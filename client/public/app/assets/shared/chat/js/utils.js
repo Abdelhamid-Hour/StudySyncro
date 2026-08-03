@@ -3,30 +3,30 @@ import { emojiCategories } from "./emoji-list.js";
 import {
   clearTooltipWithTimeOut,
   db,
+  fetchData,
   formatHoursMinutes,
   getUUID,
   registerPageListener,
   runWhenDbReady,
-  showTooltip,
-  fetchData,
   sendData,
   showMessageBlock,
-  throttling,
+  showTooltip,
   t,
+  throttling,
 } from "../../../global/js/utils.js";
 
 import {
-  selectedFiles,
-  PLAYBACK_RATE,
-  FILE_ALLOWED_TYPES,
-  MAXFILESIZE,
-} from "./dom-variables.js";
-import {
   globalTooltip,
-  PENDING_ONLINE_SYNC_OPS,
   MESSAGE_MAX_LENGTH,
+  PENDING_ONLINE_SYNC_OPS,
 } from "../../../global/js/variables.js";
 import { Loader } from "../../loader/js/utils.js";
+import {
+  FILE_ALLOWED_TYPES,
+  MAXFILESIZE,
+  PLAYBACK_RATE,
+  selectedFiles,
+} from "./dom-variables.js";
 
 let inputMessage,
   imageInput,

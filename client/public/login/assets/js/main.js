@@ -1,10 +1,24 @@
 await initI18n(["shared", "login"], { isStatic: true });
+import { setUpFileInputListeners } from "../../../app/assets/shared/avatar/js/utils.js";
 import {
-  handlEyeIconsClick,
   getLang,
+  handlEyeIconsClick,
   initI18n,
   t,
 } from "../../../main_assets/js/utils.js";
+import { showGoogleOneTap } from "./auth/auth-functions.js";
+import "./auth/auth.js";
+import {
+  animationDuration,
+  avatarAside,
+  avatarContainer,
+  eyeIcons,
+  signInFormHeight,
+  signInLink,
+  signUpFormHeight,
+  signUpLink,
+  updateSignFormHeights,
+} from "./dom-variables.js";
 import {
   hideAvatarSide,
   initializeSignUpForm,
@@ -12,20 +26,6 @@ import {
   showAvatarSide,
   swapAnimationThrottling,
 } from "./utils.js";
-import {
-  eyeIcons,
-  signUpLink,
-  signInLink,
-  signUpFormHeight,
-  signInFormHeight,
-  animationDuration,
-  avatarContainer,
-  avatarAside,
-  updateSignFormHeights,
-} from "./dom-variables.js";
-import "./auth/auth.js";
-import { setUpFileInputListeners } from "../../../app/assets/shared/avatar/js/utils.js";
-import { showGoogleOneTap } from "./auth/auth-functions.js";
 
 showGoogleOneTap();
 // prevets browser default validation rules
@@ -81,7 +81,7 @@ handlEyeIconsClick(eyeIcons);
 setUpFileInputListeners(avatarContainer, avatarAside);
 
 // Clear avatar button logic
-import { fileinput, clearAvatarBtn } from "./dom-variables.js";
+import { clearAvatarBtn, fileinput } from "./dom-variables.js";
 
 // Let's hook up the clear button click event:
 clearAvatarBtn.addEventListener("click", () => {

@@ -1,21 +1,20 @@
 import {
   enableMobileTabs,
-  openOverlayModal,
-  t,
   fetchData,
+  openOverlayModal,
   sendData,
+  t,
 } from "../../../global/js/utils.js";
-import { Loader } from "../../../shared/loader/js/utils.js";
+import {
+  getEmojiPickerHTML,
+  sendChatMessagePayload,
+  setupChatFileInputListeners,
+  setupEmojiPickerListeners,
+} from "../../../shared/chat/js/utils.js";
+import { initFiltersInputListener, Loader } from "../../../shared/loader/js/utils.js";
 import { joinSession } from "../../../shared/session/js/utils.js";
 import { handletTasksListners } from "../../../shared/tasks/js/utils.js";
-import { sessionsContainer, messagesContainer } from "./dom-variables.js";
-import {
-  setupEmojiPickerListeners,
-  setupChatFileInputListeners,
-  sendChatMessagePayload,
-  getEmojiPickerHTML,
-} from "../../../shared/chat/js/utils.js";
-import { initFiltersInputListener } from "../../../shared/loader/js/utils.js";
+import { messagesContainer, sessionsContainer } from "./dom-variables.js";
 
 export const sessionViewSkeleton =
   () => `<div class="loading-animation overlay-model session-view-overlay">

@@ -1,8 +1,7 @@
 import { loadNamespace } from "../../../global/js/utils.js";
 import {
   initDomVariables,
-  quizCreateBtn,
-  quizzesListContainer,
+  quizzesListContainer
 } from "./dom-variables.js";
 import {
   handleQuizCardBtns,
