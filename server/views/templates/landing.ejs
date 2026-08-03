@@ -27,6 +27,11 @@
     <meta name="theme-color" content="#1e77fd" />
     <link rel="canonical" href="<%= fullUrl %>" />
 
+    <!-- Internationalization (i18n) SEO -->
+    <link rel="alternate" hreflang="en" href="<%= baseUrl %><%= fullUrl.split('?')[0].replace(baseUrl, '') %>?lang=en" />
+    <link rel="alternate" hreflang="ar" href="<%= baseUrl %><%= fullUrl.split('?')[0].replace(baseUrl, '') %>?lang=ar" />
+    <link rel="alternate" hreflang="x-default" href="<%= baseUrl %><%= fullUrl.split('?')[0].replace(baseUrl, '') %>" />
+
     <!-- Open Graph / Social Sharing -->
     <meta property="og:site_name" content="StudyHype" />
     <meta property="og:locale" content="<%= lang === 'ar' ? 'ar_AR' : 'en_US' %>" />
@@ -51,7 +56,7 @@
     <meta name="twitter:description" content="<%= t('root:landing_seo.description', { defaultValue: 'Join study groups, take interactive quizzes, and collaborate in real-time with peers around the world.' }) %>" />
     <meta name="twitter:image" content="/images/home/active-home-page.webp" />
 
-    <!-- JSON-LD Structured Data -->
+    <!-- JSON-LD Structured Data (Software) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -65,6 +70,17 @@
         "price": "0",
         "priceCurrency": "USD"
       }
+    }
+    </script>
+    
+    <!-- JSON-LD Structured Data (Organization) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "StudyHype",
+      "url": "<%= baseUrl %>",
+      "logo": "<%= baseUrl %>/images/logo-mark.svg"
     }
     </script>
 
@@ -147,18 +163,17 @@
       </a>
 
       <ul class="landing-nav-links">
-        <li><a href="#features" data-i18n="root:nav.features"><%= t('common:shared_terms.features') %></a></li>
+        <li><a href="#features"><%= t('common:shared_terms.features') %></a></li>
         <li>
-          <a href="#workflow" data-i18n="root:nav.how_it_works"><%= t('common:shared_terms.how_it_works') %></a>
+          <a href="#workflow"><%= t('common:shared_terms.how_it_works') %></a>
         </li>
-        <li><a href="#stats" data-i18n="root:nav.community"><%= t('root:nav.community') %></a></li>
+        <li><a href="#stats"><%= t('root:nav.community') %></a></li>
       </ul>
 
       <div class="landing-nav-actions">
         <button
           class="button exclude-btn toggle-theme-btn"
           id="theme-toggle-btn"
-          data-i18n-title="root:nav.toggle_theme"
           title="<%= t('common:shared_terms.toggle_dark_light_mode') %>"
           aria-label="Toggle Dark or Light Mode"
         >
@@ -183,20 +198,20 @@
     <main class="landing-wrapper fade-in-template">
       <!-- Hero Section -->
       <header class="landing-hero">
-        <h1 data-i18n="root:hero.title">
+        <h1>
           <%= t('root:hero.title') %>
         </h1>
-        <p data-i18n="root:hero.subtitle">
+        <p>
           <%= t('root:hero.subtitle') %>
         </p>
 
         <div class="hero-actions">
           <a href="/login" class="button blue-btn">
-            <span data-i18n="root:hero.get_started_btn"><%= t('root:hero.get_started_btn') %></span>
+            <span><%= t('root:hero.get_started_btn') %></span>
             <i class="bi bi-box-arrow-in-right"></i>
           </a>
           <a href="#features" class="button">
-            <span data-i18n="root:hero.explore_features_btn"
+            <span
               ><%= t('root:hero.explore_features_btn') %></span
             >
             <i class="bi bi-chevron-down"></i>
@@ -206,9 +221,11 @@
         <!-- Hero Showcase Mockup -->
         <div class="hero-showcase-box">
           <img
+            fetchpriority="high"
             src="/images/home/active-home-page-light.webp"
             data-dark-src="/images/home/active-home-page.webp"
             data-light-src="/images/home/active-home-page-light.webp"
+            style="width: 100%; aspect-ratio: 16/9; height: auto;"
             alt="<%= t('root:images.dashboard_preview') %>"
           />
         </div>
@@ -218,23 +235,23 @@
       <section class="landing-stats" id="stats">
         <div class="stat-box">
           <h3>15,000+</h3>
-          <p data-i18n="root:stats.active_students">
+          <p>
             <%= t('root:stats.active_students') %>
           </p>
         </div>
         <div class="stat-box">
           <h3>50,000+</h3>
-          <p data-i18n="root:stats.quizzes_completed">
+          <p>
             <%= t('root:stats.quizzes_completed') %>
           </p>
         </div>
         <div class="stat-box">
           <h3>3,500+</h3>
-          <p data-i18n="root:stats.study_groups"><%= t('root:stats.study_groups') %></p>
+          <p><%= t('root:stats.study_groups') %></p>
         </div>
         <div class="stat-box">
           <h3>98%</h3>
-          <p data-i18n="root:stats.productivity_boost">
+          <p>
             <%= t('root:stats.productivity_boost') %>
           </p>
         </div>
@@ -243,10 +260,10 @@
       <!-- Features Grid Section -->
       <section id="features">
         <div class="section-title-box">
-          <h2 data-i18n="root:features.section_title">
+          <h2>
             <%= t('root:features.section_title') %>
           </h2>
-          <p data-i18n="root:features.section_desc">
+          <p>
             <%= t('root:features.section_desc') %>
           </p>
         </div>
@@ -257,32 +274,32 @@
             <div class="spotlight-content">
               <div class="spotlight-badge">
                 <i class="bi bi-people-fill"></i>
-                <span data-i18n="root:features.spotlight_1.badge"
+                <span
                   ><%= t('root:features.spotlight_1.badge') %></span
                 >
               </div>
-              <h3 data-i18n="root:features.spotlight_1.title">
+              <h3>
                 <%= t('root:features.spotlight_1.title') %>
               </h3>
-              <p data-i18n="root:features.spotlight_1.desc">
+              <p>
                 <%= t('root:features.spotlight_1.desc') %>
               </p>
               <ul class="spotlight-highlights">
                 <li>
                   <i class="bi bi-check-circle-fill"></i>
-                  <span data-i18n="root:features.spotlight_1.highlight_1"
+                  <span
                     ><%= t('root:features.spotlight_1.highlight_1') %></span
                   >
                 </li>
                 <li>
                   <i class="bi bi-check-circle-fill"></i>
-                  <span data-i18n="root:features.spotlight_1.highlight_2"
+                  <span
                     ><%= t('root:features.spotlight_1.highlight_2') %></span
                   >
                 </li>
                 <li>
                   <i class="bi bi-check-circle-fill"></i>
-                  <span data-i18n="root:features.spotlight_1.highlight_3"
+                  <span
                     ><%= t('root:features.spotlight_1.highlight_3') %></span
                   >
                 </li>
@@ -295,6 +312,7 @@
                   src="/images/groups/available-groups-light.webp"
                   data-dark-src="/images/groups/available-groups.webp"
                   data-light-src="/images/groups/available-groups-light.webp"
+                  style="width: 100%; aspect-ratio: 16/9; height: auto;"
                   alt="<%= t('root:images.study_groups') %>"
                 />
               </div>
@@ -310,6 +328,7 @@
                   src="/images/chat/group-chat-light.webp"
                   data-dark-src="/images/chat/group-chat.webp"
                   data-light-src="/images/chat/group-chat-light.webp"
+                  style="width: 100%; aspect-ratio: 16/9; height: auto;"
                   alt="<%= t('root:images.chat_interface') %>"
                 />
               </div>
@@ -317,32 +336,32 @@
             <div class="spotlight-content">
               <div class="spotlight-badge">
                 <i class="bi bi-chat-dots-fill"></i>
-                <span data-i18n="root:features.spotlight_2.badge"
+                <span
                   ><%= t('root:features.spotlight_2.badge') %></span
                 >
               </div>
-              <h3 data-i18n="root:features.spotlight_2.title">
+              <h3>
                 <%= t('root:features.spotlight_2.title') %>
               </h3>
-              <p data-i18n="root:features.spotlight_2.desc">
+              <p>
                 <%= t('root:features.spotlight_2.desc') %>
               </p>
               <ul class="spotlight-highlights">
                 <li>
                   <i class="bi bi-check-circle-fill"></i>
-                  <span data-i18n="root:features.spotlight_2.highlight_1"
+                  <span
                     ><%= t('root:features.spotlight_2.highlight_1') %></span
                   >
                 </li>
                 <li>
                   <i class="bi bi-check-circle-fill"></i>
-                  <span data-i18n="root:features.spotlight_2.highlight_2"
+                  <span
                     ><%= t('root:features.spotlight_2.highlight_2') %></span
                   >
                 </li>
                 <li>
                   <i class="bi bi-check-circle-fill"></i>
-                  <span data-i18n="root:features.spotlight_2.highlight_3"
+                  <span
                     ><%= t('root:features.spotlight_2.highlight_3') %></span
                   >
                 </li>
@@ -356,14 +375,14 @@
               <div class="bento-header">
                 <div class="spotlight-badge">
                   <i class="bi bi-patch-question-fill"></i>
-                  <span data-i18n="root:features.bento_1.badge"
+                  <span
                     ><%= t('root:features.bento_1.badge') %></span
                   >
                 </div>
-                <h3 data-i18n="root:features.bento_1.title">
+                <h3>
                   <%= t('root:features.bento_1.title') %>
                 </h3>
-                <p data-i18n="root:features.bento_1.desc">
+                <p>
                   <%= t('root:features.bento_1.desc') %>
                 </p>
               </div>
@@ -374,6 +393,7 @@
                     src="/images/quiz/quiz-play-light.webp"
                     data-dark-src="/images/quiz/quiz-play.webp"
                     data-light-src="/images/quiz/quiz-play-light.webp"
+                    style="width: 100%; aspect-ratio: 16/9; height: auto;"
                     alt="<%= t('root:images.quizzes_preview') %>"
                   />
                 </div>
@@ -384,14 +404,14 @@
               <div class="bento-header">
                 <div class="spotlight-badge">
                   <i class="bi bi-pencil-square"></i>
-                  <span data-i18n="root:features.bento_2.badge"
+                  <span
                     ><%= t('root:features.bento_2.badge') %></span
                   >
                 </div>
-                <h3 data-i18n="root:features.bento_2.title">
+                <h3>
                   <%= t('root:features.bento_2.title') %>
                 </h3>
-                <p data-i18n="root:features.bento_2.desc">
+                <p>
                   <%= t('root:features.bento_2.desc') %>
                 </p>
               </div>
@@ -402,6 +422,7 @@
                     src="/images/quiz/quiz-edit-light.webp"
                     data-dark-src="/images/quiz/quiz-edit.webp"
                     data-light-src="/images/quiz/quiz-edit-light.webp"
+                    style="width: 100%; aspect-ratio: 16/9; height: auto;"
                     alt="<%= t('root:images.quiz_editor') %>"
                   />
                 </div>
@@ -415,14 +436,14 @@
               <div class="bento-header">
                 <div class="spotlight-badge">
                   <i class="bi bi-stopwatch-fill"></i>
-                  <span data-i18n="root:features.bento_3.badge"
+                  <span
                     ><%= t('root:features.bento_3.badge') %></span
                   >
                 </div>
-                <h3 data-i18n="root:features.bento_3.title">
+                <h3>
                   <%= t('root:features.bento_3.title') %>
                 </h3>
-                <p data-i18n="root:features.bento_3.desc">
+                <p>
                   <%= t('root:features.bento_3.desc') %>
                 </p>
               </div>
@@ -433,6 +454,7 @@
                     src="/images/home/timer-and-tasks-light.webp"
                     data-dark-src="/images/home/timer-and-tasks.webp"
                     data-light-src="/images/home/timer-and-tasks-light.webp"
+                    style="width: 100%; aspect-ratio: 16/11.3; height: auto;"
                     alt="<%= t('root:images.timer_tasks') %>"
                   />
                 </div>
@@ -443,14 +465,14 @@
               <div class="bento-header">
                 <div class="spotlight-badge">
                   <i class="bi bi-diagram-3-fill"></i>
-                  <span data-i18n="root:features.bento_4.badge"
+                  <span
                     ><%= t('root:features.bento_4.badge') %></span
                   >
                 </div>
-                <h3 data-i18n="root:features.bento_4.title">
+                <h3>
                   <%= t('root:features.bento_4.title') %>
                 </h3>
-                <p data-i18n="root:features.bento_4.desc">
+                <p>
                   <%= t('root:features.bento_4.desc') %>
                 </p>
               </div>
@@ -461,6 +483,7 @@
                     src="/images/groups/my-groups-light.webp"
                     data-dark-src="/images/groups/my-groups.webp"
                     data-light-src="/images/groups/my-groups-light.webp"
+                    style="width: 100%; aspect-ratio: 16/9; height: auto;"
                     alt="<%= t('root:images.group_management') %>"
                   />
                 </div>
@@ -473,8 +496,8 @@
       <!-- Workflow / How It Works -->
       <section id="workflow">
         <div class="section-title-box">
-          <h2 data-i18n="root:workflow.section_title"><%= t('root:workflow.section_title') %></h2>
-          <p data-i18n="root:workflow.section_desc">
+          <h2><%= t('root:workflow.section_title') %></h2>
+          <p>
             <%= t('root:workflow.section_desc') %>
           </p>
         </div>
@@ -482,28 +505,28 @@
         <div class="landing-workflow-grid">
           <div class="workflow-step-box">
             <div class="workflow-step-number">1</div>
-            <h3 data-i18n="root:workflow.step_1.title">
+            <h3>
               <%= t('root:workflow.step_1.title') %>
             </h3>
-            <p data-i18n="root:workflow.step_1.desc">
+            <p>
               <%= t('root:workflow.step_1.desc') %>
             </p>
           </div>
 
           <div class="workflow-step-box">
             <div class="workflow-step-number">2</div>
-            <h3 data-i18n="root:workflow.step_2.title">
+            <h3>
               <%= t('root:workflow.step_2.title') %>
             </h3>
-            <p data-i18n="root:workflow.step_2.desc">
+            <p>
               <%= t('root:workflow.step_2.desc') %>
             </p>
           </div>
 
           <div class="workflow-step-box">
             <div class="workflow-step-number">3</div>
-            <h3 data-i18n="root:workflow.step_3.title"><%= t('root:workflow.step_3.title') %></h3>
-            <p data-i18n="root:workflow.step_3.desc">
+            <h3><%= t('root:workflow.step_3.title') %></h3>
+            <p>
               <%= t('root:workflow.step_3.desc') %>
             </p>
           </div>
@@ -512,14 +535,14 @@
 
       <!-- Call to Action Section -->
       <section class="landing-cta-box">
-        <h2 data-i18n="root:cta.title">
+        <h2>
           <%= t('root:cta.title') %>
         </h2>
-        <p data-i18n="root:cta.desc">
+        <p>
           <%= t('root:cta.desc') %>
         </p>
         <a href="/login" class="button blue-btn">
-          <span data-i18n="root:cta.btn"><%= t('root:cta.btn') %></span>
+          <span><%= t('root:cta.btn') %></span>
           <i class="bi bi-arrow-right-circle-fill"></i>
         </a>
       </section>
@@ -547,14 +570,14 @@
         </div>
 
         <div class="landing-footer-links">
-          <a href="#features" data-i18n="root:footer.features"><%= t('common:shared_terms.features') %></a>
-          <a href="#workflow" data-i18n="root:footer.how_it_works"
+          <a href="#features"><%= t('common:shared_terms.features') %></a>
+          <a href="#workflow"
             ><%= t('common:shared_terms.how_it_works') %></a
           >
-          <a href="/login" data-i18n="root:footer.login"><%= t('common:shared_terms.login') %></a>
+          <a href="/login"><%= t('common:shared_terms.login') %></a>
         </div>
 
-        <p data-i18n="root:footer.copyright">
+        <p>
           <%= t('root:footer.copyright') %>
         </p>
       </footer>
@@ -623,3 +646,4 @@
     </script>
   </body>
 </html>
+

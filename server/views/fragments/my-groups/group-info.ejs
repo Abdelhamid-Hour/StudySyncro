@@ -153,7 +153,7 @@
             <% if (Admin.photoURL) { %>
             <img
               src="<%= Admin.photoURL %>"
-              alt="avatar"
+              alt=""
               height="70%"
               width="10%"
             />
@@ -194,7 +194,7 @@
         <div class="member">
           <div class="avatar">
             <% if (member.photoURL) { %>
-            <img src="<%= member.photoURL %>" alt="avatar" />
+            <img src="<%= member.photoURL %>" alt="" />
             <% } else { %>
             <h4><bdi><%= member.fullName.charAt(0).toUpperCase() %></bdi></h4>
             <% } %>
@@ -222,3 +222,4 @@
     <% } %>
   </div>
 </div>
+

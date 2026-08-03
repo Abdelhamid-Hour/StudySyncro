@@ -62,7 +62,7 @@
           <td>
             <div class="avatar-cover">
               <% if (result.user.photoURL) { %>
-              <img src="<%= result.user.photoURL %>" alt="avatar" width="32" height="32"/>
+              <img src="<%= result.user.photoURL %>" alt="" width="32" height="32"/>
               <% } else { %>
               <h4><%= result.user.fullName.charAt(0).toUpperCase() %></h4>
               <% } %>
@@ -98,3 +98,4 @@
   </div>
   <% } %>
 </div>
+

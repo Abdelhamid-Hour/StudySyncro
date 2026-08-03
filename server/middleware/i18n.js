@@ -47,8 +47,13 @@ const getNamespaceDictionary = (lang, namespace) => {
 module.exports = (req, res, next) => {
   let chosenLang = defaultLang;
 
+  // Priority 0: Check URL Query parameter (?lang=ar)
+  if (req.query && req.query.lang && supportedLangs.includes(req.query.lang)) {
+    chosenLang = req.query.lang;
+    res.cookie("lang", chosenLang, { maxAge: 365 * 24 * 60 * 60 * 1000, httpOnly: false });
+  }
   // Priority 1: Check Cookie
-  if (req.cookies && req.cookies.lang && supportedLangs.includes(req.cookies.lang)) {
+  else if (req.cookies && req.cookies.lang && supportedLangs.includes(req.cookies.lang)) {
     chosenLang = req.cookies.lang;
   }
   // Priority 2: Check Accept-Language Header

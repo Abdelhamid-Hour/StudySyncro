@@ -144,6 +144,8 @@ const renderFragmentOrLayout = (template, payload, pathName, req, res) => {
 
   res.setHeader("Vary", "X-Requested-With");
   res.setHeader("Cache-Control", "private, no-cache");
+  const statusCode =
+    template === "templates/error" ? payload?.templateContext?.statusCode : 200;
 
   return res.render(
     template,
@@ -152,20 +154,20 @@ const renderFragmentOrLayout = (template, payload, pathName, req, res) => {
       if (err) {
         console.error("Error rendering template:", err);
         const t = res.locals.t;
-        return res
-          .status(500)
-          .render("templates/error", {
-            isStandalone: true,
-            user: req.user,
-            statusCode: 500,
-            statusMessage: t ? t("common:errors.server_error") : "Server Error",
-            description: t ? t("common:errors.server_error_desc", { page: pathName }) : "An error occurred while rendering the page.",
-            iconClass: "bi bi-x-circle",
-          });
+        return res.status(500).render("templates/error", {
+          isStandalone: true,
+          user: req.user,
+          statusCode: 500,
+          statusMessage: t ? t("common:errors.server_error") : "Server Error",
+          description: t
+            ? t("common:errors.server_error_desc", { page: pathName })
+            : "An error occurred while rendering the page.",
+          iconClass: "bi bi-x-circle",
+        });
       }
 
       if (isFetch)
-        return res.status(200).json({
+        return res.status(statusCode || 200).json({
           pathName,
           htmlFragment: htmlFragment,
           extraData: payload.extraData,
@@ -177,6 +179,7 @@ const renderFragmentOrLayout = (template, payload, pathName, req, res) => {
         lastVisible: null,
         unreadCount: 0,
       };
+
       if (req.user && req.user.uid) {
         try {
           const notifRes = await getUserNotifications(
@@ -206,19 +209,21 @@ const renderFragmentOrLayout = (template, payload, pathName, req, res) => {
           if (layoutErr) {
             console.error("Error rendering layout:", layoutErr);
             const t = res.locals.t;
-            return res
-              .status(500)
-              .render("templates/error", {
-                isStandalone: true,
-                user: req.user,
-                statusCode: 500,
-                statusMessage: t ? t("common:errors.server_error") : "Server Error",
-                description: t ? t("common:errors.server_error_desc", { page: "layout" }) : "An error occurred while rendering the layout.",
-                iconClass: "bi bi-x-circle",
-              });
+            return res.status(500).render("templates/error", {
+              isStandalone: true,
+              user: req.user,
+              statusCode: 500,
+              statusMessage: t
+                ? t("common:errors.server_error")
+                : "Server Error",
+              description: t
+                ? t("common:errors.server_error_desc", { page: "layout" })
+                : "An error occurred while rendering the layout.",
+              iconClass: "bi bi-x-circle",
+            });
           }
 
-          return res.status(200).send(fullPage);
+          return res.status(statusCode || 200).send(fullPage);
         },
       );
     },

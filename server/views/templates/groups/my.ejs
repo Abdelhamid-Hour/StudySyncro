@@ -43,7 +43,7 @@
           <% group.avatars.forEach(({photoURL, fullName}) => { %>
           <div class="avatar">
             <% if (photoURL) { %>
-            <img src="<%= photoURL %>" alt="avatar" />
+            <img src="<%= photoURL %>" alt="" />
             <% } else { %>
             <h4><bdi><%= fullName.charAt(0).toUpperCase() %></bdi></h4>
             <% } %>
@@ -68,3 +68,4 @@
 <button type="button" class="mobile-create-group-btn create-group-btn exclude-btn" title="<%= t('common:actions.create_group') %>" aria-label="<%= t('common:actions.create_group') %>">
   <i class="bi bi-plus-lg"></i>
 </button>
+

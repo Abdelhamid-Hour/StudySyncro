@@ -29,7 +29,7 @@
     <div class="demande card-item">
       <div class="avatar">
         <% if (demande.photoURL) { %>
-        <img src="<%= demande.photoURL %>" alt="avatar" />
+        <img src="<%= demande.photoURL %>" alt="" />
         <% } else { %>
         <h4><bdi><%= demande.fullName.charAt(0).toUpperCase() %></bdi></h4>
         <% } %>
@@ -61,3 +61,4 @@
     <% } %>
   </div>
 </div>
+

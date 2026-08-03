@@ -1,5 +1,3 @@
-// index and optimize website for searche engines
-// add metadata and metadata handler to the login page
 // use post css to generate the css files
 
 // <bdi> when rtl
@@ -9,7 +7,8 @@
 // change this in deployment:
 - APP_URL 
 - require("dotenv").config(); and remove it from package
-
+// enalble HSTS
+// .gitignore
 
 // you have a free domains names in github
 

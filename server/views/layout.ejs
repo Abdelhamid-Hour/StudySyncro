@@ -379,7 +379,7 @@
               <% if (user.photoURL) { %>
                 <img
                   src="<%= user.photoURL %>"
-                  alt="avatar"
+                  alt=""
                 />
               <% } else { %>
                 <h4><%= user.fullName.charAt(0).toUpperCase() %></h4>
@@ -569,7 +569,7 @@
               const type = notif.type || "general";
               let iconHtml = `<i class="bi bi-bell-fill"></i>`;
               if (notif.metadata && notif.metadata.senderPhotoURL && (type === "join_request" || type === "member_removed" || type === "join_invite" || notif.metadata.isInvite)) {
-                iconHtml = `<img src="${escapeHtml(notif.metadata.senderPhotoURL)}" alt="avatar" />`;
+                iconHtml = `<img src="${escapeHtml(notif.metadata.senderPhotoURL)}" alt="" />`;
               } else if (type === "join_request" || type === "join_invite" || (notif.metadata && notif.metadata.isInvite)) {
                 iconHtml = `<i class="bi bi-person-fill"></i>`;
               } else if (type === "join_accepted" || type === "join_request_accepted" || type === "join_invite_accepted") {
@@ -749,7 +749,7 @@
         <div class="mobile-user-info">
           <div class="avatar">
             <% if (user.photoURL) { %>
-              <img src="<%= user.photoURL %>" alt="avatar" />
+              <img src="<%= user.photoURL %>" alt="" />
             <% } else { %>
               <h4><%= user.fullName.charAt(0).toUpperCase() %></h4>
             <% } %>
@@ -803,3 +803,4 @@
     ></script>
   </body>
 </html>
+

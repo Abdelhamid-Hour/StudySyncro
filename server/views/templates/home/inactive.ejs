@@ -22,7 +22,7 @@
                 <div class="profile-info">
                   <% const photoURL = msg.lastMessage?.senderPhotoURL || msg.lastMessage?.photoURL || msg.senderPhotoURL || msg.photoURL; %>
                   <% if (photoURL) { %>
-                    <img src="<%= photoURL %>" alt="avatar" class="icon" />
+                    <img src="<%= photoURL %>" alt="" class="icon" />
                   <% } else { %>
                     <i class="bi bi-person-circle icon"></i>
                   <% } %>
