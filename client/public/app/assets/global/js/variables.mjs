@@ -1,0 +1,43 @@
+export * from "../../../../main_assets/js/variables.mjs";
+export const signOutBtn = document.getElementById("logout-button");
+export const profileBtn = document.querySelector(".profile-btn");
+export const closeLeftSideBarIcon = document.querySelector(
+  ".open-close-side-bar-btn",
+);
+export const offlineStatusBtn = document.querySelector(".offline-status-btn");
+export const topSideBarHeader = document.querySelector(".top-sidebar-header");
+export const topSideBarMiddle = document.querySelector(".top-side-bar-middele");
+export const topSideBarFooter = document.querySelector(".top-side-bar-footer");
+export const hoverTooltip = document.getElementById("hover-tooltip");
+export const globalTooltip = document.getElementById("global-tooltip");
+export const mainContainer = document.querySelector("main");
+export const toggleModeBtn = document.querySelector(".toggle-container");
+export const timers = {};
+export const LOADER_COUNT = 20;
+export const INITIALE_LOADERS_COUNT = 20;
+export const DESCRIPTION_MAX_LENGTH = 1000;
+export const DESCRIPTION_MIN_LENGTH = 10;
+export const SESSION_MIN_DURATION = 10; // in minutes
+export const SESSION_MAX_DURATION = 1440;
+export const SESSION_DESCRIPTION_MIN_LENGTH = 5;
+export const SESSION_DESCRIPTION_MAX_LENGTH = 1000;
+export const TASK_MIN_DURATION = 1;
+export const TASK_MAX_DURATION = 140; // in minutes
+export const TASK_TITLE_MIN_LENGTH = 1;
+export const TASK_TITLE_MAX_LENGTH = 200;
+export const TASK_DESCRIPTION_MIN_LENGTH = 1;
+export const TASK_DESCRIPTION_MAX_LENGTH = 500;
+export const MAX_MEMBERS = 1000;
+export const MIN_MEMBERS = 2;
+export const QUESTION_TEXT_MAX_LENGTH = 500;
+export const QUESTION_TEXT_MIN_LENGTH = 3;
+export const CHOICE_TEXT_MAX_LENGTH = 200;
+export const CHOICE_TEXT_MIN_LENGTH = 1;
+export const MIN_CHOICES_COUNT = 2;
+export const MAX_CHOICES_COUNT = 6;
+export const SUBJECT_MIN_LENGTH = 2;
+export const SUBJECT_MAX_LENGTH = 50;
+export const MESSAGE_MAX_LENGTH = 2000;
+export const PASSWORD_MIN_LENGTH = 6;
+export const PASSWORD_MAX_LENGTH = 128;
+export const PENDING_ONLINE_SYNC_OPS = [];

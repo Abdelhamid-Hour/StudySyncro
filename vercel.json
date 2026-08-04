@@ -1,24 +1,7 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "server/app.js",
-      "use": "@vercel/node"
-    }
-  ],
+  "builds": [{ "src": "server/app.js", "use": "@vercel/node" }],
   "rewrites": [
-    {
-      "source": "/(.*\\.js)",
-      "destination": "/client/public/$1"
-    },
-    {
-      "source": "/(.*\\.css)",
-      "destination": "/client/public/$1"
-    },
-    {
-      "source": "/(.*\\.html)",
-      "destination": "/client/public/$1"
-    },
     {
       "source": "/(.*)",
       "destination": "/server/app.js"
