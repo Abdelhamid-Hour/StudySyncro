@@ -1,65 +1,76 @@
 .dual-container {
   display: grid;
   grid-template-columns: repeat(2, calc(50% - var(--primary-gap) / 2));
+  grid-gap: var(--primary-gap);
   gap: var(--primary-gap);
+}
 
-  &:has(.group-subject-field),
-  &:has(.drop-down-menu) {
+.dual-container:has(.group-subject-field),.dual-container:has(.drop-down-menu) {
     position: relative !important;
     z-index: 90 !important;
   }
-}
 
 .field-container {
   z-index: 2;
   position: relative;
+}
 
-  &:has(.drop-down-menu),
-  &:has(.select-menu) {
+.field-container:has(.drop-down-menu),.field-container:has(.select-menu) {
     z-index: 90 !important;
   }
+
+.field-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   border: 1px solid var(--inputs-border-color);
   border-radius: var(--primary-radius);
   background-color: var(--inputs-background-color);
   outline: 0.15rem solid transparent;
   width: 100%;
+  -webkit-transition:
+    border-color var(--primary-transition-style),
+    outline-color var(--primary-transition-style);
   transition:
     border-color var(--primary-transition-style),
     outline-color var(--primary-transition-style);
+}
 
-  &:focus-within,
-  &:hover {
+.field-container:focus-within,.field-container:hover {
     outline-color: var(--inputs-outline-color);
     border-color: var(--inputs-outline-color);
   }
 
-  &:focus-within {
+.field-container:focus-within {
     background-color: var(--inputs-focus-background-color);
+  }
 
-    &:has(textarea) i {
+.field-container:focus-within:has(textarea) i {
       color: var(--inputs-icons-focus-bc);
     }
 
-    .field-icon-container:not(:has(+ textarea)) {
+.field-container:focus-within .field-icon-container:not(:has( + textarea)) {
       background-color: var(--inputs-icons-focus-bc);
       color: var(--inputs-icons-focus-color);
       border-right-color: var(--inputs-outline-color);
+    }
 
-      .bi-info-circle {
+.field-container:focus-within .field-icon-container:not(:has( + textarea)) .bi-info-circle {
         background-color: var(--inputs-icons-focus-bc) !important;
       }
-    }
-  }
 
-  i:not(.bi-eye-fill) {
+.field-container i:not(.bi-eye-fill) {
     color: var(--inputs-icons-color);
   }
 
-  .icon-box {
+.field-container .icon-box {
     position: relative;
-    .bi-info-circle {
+  }
+
+.field-container .icon-box .bi-info-circle {
       position: absolute;
       font-size: var(--x-small-font-size);
       bottom: 0;
@@ -68,23 +79,32 @@
       border-radius: 50%;
       background-color: var(--inputs-icons-background-color);
     }
-  }
 
-  .field-icon-container:not(:has(+ textarea)) {
+.field-container .field-icon-container:not(:has( + textarea)) {
     position: absolute;
     background-color: var(--inputs-icons-background-color);
     border-start-start-radius: 10px;
     border-end-start-radius: 7px;
-    border-inline-end: 1px solid var(--inputs-border-color);
+    -webkit-border-end: 1px solid var(--inputs-border-color);
+            border-inline-end: 1px solid var(--inputs-border-color);
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
     width: 3rem;
     height: 100%;
     inset-inline-start: 0;
+    -webkit-transition: background-color var(--primary-transition-style);
     transition: background-color var(--primary-transition-style);
     /* ! for complating */
-    &::before {
+  }
+
+.field-container .field-icon-container:not(:has( + textarea))::before {
       content: "";
       height: 100%;
       width: 20%;
@@ -96,18 +116,23 @@
       top: 0;
       z-index: -1;
     }
-  }
 
-  .input {
+.field-container .input {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    align-items: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
     min-width: 0;
-    flex-grow: 1;
+    -webkit-box-flex: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
     padding: calc(var(--primary-gap) / 2);
     background-color: transparent;
     height: 2.5rem;
     outline: none;
     border: none;
-    margin-inline-start: 3.2rem;
+    -webkit-margin-start: 3.2rem;
+            margin-inline-start: 3.2rem;
   }
-}

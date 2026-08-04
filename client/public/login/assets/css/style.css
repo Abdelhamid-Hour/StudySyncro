@@ -9,41 +9,67 @@
 }
 
 body {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
 .top-nav-bar {
   position: absolute;
   top: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   gap: 0.8rem;
   padding: 1rem;
   z-index: 999;
-  justify-content: space-between;
-  align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   width: 100%;
+}
 
-  div {
+.top-nav-bar div {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    justify-content: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
     gap: var(--primary-gap);
   }
 
-  .login-top-logo {
+.top-nav-bar .login-top-logo {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    align-items: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
     gap: calc(var(--primary-gap) / 2);
+    -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
+  }
 
-    img {
+.top-nav-bar .login-top-logo img {
       width: 1.8rem;
       height: 1.8rem;
     }
 
-    span {
+.top-nav-bar .login-top-logo span {
       font-size: 1.25rem;
       font-weight: 800;
       color: var(--heading-color);
@@ -56,39 +82,48 @@ body {
         Roboto,
         sans-serif !important;
     }
-  }
 
-  .button {
+.top-nav-bar .button {
     padding: 0.5rem 0.8rem;
     border-radius: 5px;
     background-color: var(--btn-background-color);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    -webkit-box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   }
-}
 
 main {
   position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
   height: fit-content;
-  justify-content: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   width: 100%;
+}
 
-  #space-reserver {
+main #space-reserver {
     position: relative;
     width: 0;
+    -webkit-transition: all 700ms linear;
+    transition: all 700ms linear;
+    -webkit-transition: all var(--login-swap-animation-duration) linear;
     transition: all var(--login-swap-animation-duration) linear;
     z-index: -2;
+  }
 
-    &.shown {
+main #space-reserver.shown {
       padding: 2rem;
       width: 32%;
-      & + #login-form {
+    }
+
+main #space-reserver.shown + #login-form {
         border-start-start-radius: unset;
         border-end-start-radius: unset;
       }
-    }
-  }
-}
 /* login login block styling */
 #login-form {
   position: relative;
@@ -96,16 +131,27 @@ main {
   padding: 2rem;
   color: var(--container-text-color);
   background-color: var(--container-background-color);
-  box-shadow: 0px 0px 5px rgba(163, 163, 163, 0.377);
+  -webkit-box-shadow: 0px 0px 5px rgba(163, 163, 163, 0.377);
+          box-shadow: 0px 0px 5px rgba(163, 163, 163, 0.377);
   border: 1px solid var(--container-border-color);
   border-radius: 10px;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   gap: 1rem;
+  -webkit-transition: all 700ms linear;
+  transition: all 700ms linear;
+  -webkit-transition: all var(--login-swap-animation-duration) linear;
   transition: all var(--login-swap-animation-duration) linear;
-
-  #outline-container {
+}
+#login-form #outline-container {
     position: absolute;
     inset-inline-end: -1px;
     top: -1px;
@@ -115,20 +161,31 @@ main {
     outline: 1px solid var(--container-border-color);
     outline-offset: 0.5rem;
     z-index: -2;
+    -webkit-transition: all calc(700ms * 0.95) linear;
+    transition: all calc(700ms * 0.95) linear;
+    -webkit-transition: all calc(var(--login-swap-animation-duration) * 0.95) linear;
     transition: all calc(var(--login-swap-animation-duration) * 0.95) linear;
-
-    &:has(+ aside.shown) {
+  }
+#login-form #outline-container:has( + aside.shown) {
       width: calc(200% + 4px);
     }
-  }
-
-  aside {
-    box-sizing: border-box;
+#login-form aside {
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
     gap: 2rem;
-    align-items: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
     background-color: var(--container-background-color);
     height: calc(100% + 2px);
     width: calc(100% + 2px);
@@ -142,119 +199,158 @@ main {
     inset-inline-start: -1px;
     z-index: -1;
     translate: 0%;
+    -webkit-transition: all 700ms linear;
+    transition: all 700ms linear;
+    -webkit-transition: all var(--login-swap-animation-duration) linear;
     transition: all var(--login-swap-animation-duration) linear;
-    section {
+  }
+#login-form aside section {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-direction: column;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
       gap: 1rem;
-      p {
+    }
+#login-form aside section p {
         text-align: justify;
       }
-    }
-
-    &.shown {
+#login-form aside.shown {
       inset-inline-start: 0;
       border-start-end-radius: unset;
       border-end-end-radius: unset;
       translate: -100%;
       pointer-events: auto;
     }
-
-    #avatar-container {
+#login-form aside #avatar-container {
       position: relative;
       cursor: pointer;
       border: 2px dashed var(--primary-color);
       padding: 1.25rem 2.5rem;
       border-radius: 10px;
       width: 90%;
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      -webkit-transition: all 200ms ease-in-out;
       transition: all 200ms ease-in-out;
       gap: 1.5rem;
-
-      &:hover,
-      &.file-drag-start {
+    }
+#login-form aside #avatar-container:hover,#login-form aside #avatar-container.file-drag-start {
         background-color: rgba(53, 51, 51, 0.637);
-        & svg {
+      }
+#login-form aside #avatar-container:hover svg,#login-form aside #avatar-container.file-drag-start svg {
           /* I added !important to override the SVG style because 
           it has higher priority than the style applied with the 
           selector & > div:first-child */
           opacity: 1 !important;
-          #arrow {
+        }
+#login-form aside #avatar-container:hover svg #arrow,#login-form aside #avatar-container.file-drag-start svg #arrow {
             translate: 0 0% !important;
           }
+#login-form aside #avatar-container:hover img,#login-form aside #avatar-container.file-drag-start img {
+          -webkit-filter: brightness(50%);
+                  filter: brightness(50%);
         }
-        img {
-          filter: brightness(50%);
-        }
-      }
-
-      span {
+#login-form aside #avatar-container span {
         color: var(--error-color);
         text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
         font-size: var(--error-font-size);
         position: absolute;
         bottom: -1rem;
         translate: 0 100%;
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        align-items: flex-end;
+        -webkit-box-align: end;
+            -ms-flex-align: end;
+                align-items: flex-end;
         gap: 0.5rem;
       }
-      & > div:first-child {
+#login-form aside #avatar-container > div:first-child {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        -webkit-box-pack: center;
+            -ms-flex-pack: center;
+                justify-content: center;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
         position: relative;
+        width: -webkit-fit-content;
+        width: -moz-fit-content;
         width: fit-content;
+        -webkit-transition: all 200ms ease-in-out;
         transition: all 200ms ease-in-out;
-
-        img {
+      }
+#login-form aside #avatar-container > div:first-child img {
           position: relative;
+          -webkit-transition: all 200ms ease-in-out;
           transition: all 200ms ease-in-out;
           width: 10rem;
           aspect-ratio: 1/1;
-          clip-path: circle(50%);
+          -webkit-clip-path: circle(50%);
+                  clip-path: circle(50%);
           z-index: -1;
         }
-
-        svg {
+#login-form aside #avatar-container > div:first-child svg {
           position: absolute;
           background-color: transparent;
           height: 70%;
           width: 70%;
           fill: var(--primary-color);
-          filter: drop-shadow(0 0 2px rgba(22, 22, 22, 0.473));
+          -webkit-filter: drop-shadow(0 0 2px rgba(22, 22, 22, 0.473));
+                  filter: drop-shadow(0 0 2px rgba(22, 22, 22, 0.473));
           z-index: 1;
+          -webkit-transition: all 200ms ease-in-out;
           transition: all 200ms ease-in-out;
           opacity: 0;
-
-          #arrow {
+        }
+#login-form aside #avatar-container > div:first-child svg #arrow {
             translate: 0 30%;
+            -webkit-transition: all 300ms ease-out;
             transition: all 300ms ease-out;
           }
-        }
-      }
-      & > div.text {
+#login-form aside #avatar-container > div.text {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        flex-direction: column;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+                flex-direction: column;
         text-align: center;
         gap: 0.5rem;
-
-        p:first-child {
+      }
+#login-form aside #avatar-container > div.text p:first-child {
           font-weight: bold;
         }
-      }
-      input {
+#login-form aside #avatar-container input {
         display: none;
       }
-    }
-
-    #clear-avatar-btn {
+#login-form aside #clear-avatar-btn {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
       gap: 0.5rem;
       padding: 0.5rem 1rem;
       border-radius: 8px;
@@ -262,35 +358,41 @@ main {
       background: transparent;
       color: var(--error-color);
       cursor: pointer;
+      -webkit-transition: all 200ms ease;
       transition: all 200ms ease;
       font-weight: 500;
       width: 90%;
       margin-top: -1rem;
     }
-    #clear-avatar-btn:hover {
+#login-form aside #clear-avatar-btn:hover {
       background: var(--error-color);
       color: white;
     }
-  }
-
-  h1 {
+#login-form h1 {
     color: var(--heading-color);
     text-align: center;
   }
-}
 /* buttons styling */
 button {
+  width: 100%;
   width: var(--btn-width);
-  span {
+}
+button span {
     width: 60%;
   }
-}
 
 /* providers section styling */
 section.provider-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   padding-inline: 1rem;
   gap: 1rem;
 }
@@ -298,127 +400,186 @@ section.provider-container {
 /* forms styling */
 
 section#forms {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   position: relative;
   width: 100%;
+  gap: 1rem;
   gap: var(--form-gap);
   overflow: hidden;
+}
 
-  button {
+section#forms button {
     --btn-width: 100%;
   }
-  .sign-in-container,
-  .sign-up-container {
+
+section#forms .sign-in-container,section#forms .sign-up-container {
     width: 100%;
     visibility: hidden;
     pointer-events: none;
   }
 
-  .sign-in-container {
+section#forms .sign-in-container {
     position: relative;
     z-index: 2;
-
-    .email-container {
-      margin-bottom: 0.3rem;
-    }
   }
 
-  .sign-up-container {
+section#forms .sign-in-container .email-container {
+      margin-bottom: 0.3rem;
+    }
+
+section#forms .sign-up-container {
     position: absolute;
     overflow: hidden;
     top: 0;
   }
 
-  .active-form {
+section#forms .active-form {
     visibility: visible;
     pointer-events: auto;
   }
 
-  & > div {
+section#forms > div {
     background-color: var(--container-background-color);
     padding: 1rem 1rem 0;
   }
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: var(--form-gap);
 
-    .password-container:has(> a) {
+section#forms form {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    gap: 1rem;
+    gap: var(--form-gap);
+  }
+
+section#forms form .password-container:has( > a) {
       position: relative;
-      a {
+    }
+
+section#forms form .password-container:has( > a) a {
         position: absolute;
+        -webkit-text-decoration: underline;
         text-decoration: underline;
         cursor: pointer;
         top: 0;
         translate: 0 -100%;
         inset-inline-end: 0;
+        -webkit-transition: all var(--link-tran-duration) linear;
         transition: all var(--link-tran-duration) linear;
-        &:link,
-        &:visited,
-        &:active {
+      }
+
+section#forms form .password-container:has( > a) a:link {
           color: var(--links-color);
         }
-        &:hover {
+
+section#forms form .password-container:has( > a) a:visited {
+          color: var(--links-color);
+        }
+
+section#forms form .password-container:has( > a) a:active {
+          color: var(--links-color);
+        }
+
+section#forms form .password-container:has( > a) a:hover {
           color: var(--links-hover-color);
         }
-      }
+
+section#forms form > div.user-name-container {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+      width: 100%;
     }
 
-    & > div.user-name-container {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      i {
+section#forms form > div.user-name-container i {
         font-size: calc(var(--inputs-icons-font-size) / 1.5);
       }
-      & > div:first-child {
+
+section#forms form > div.user-name-container > div:first-child {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
+        gap: calc(1rem / 2);
         gap: calc(var(--form-gap) / 2);
-
-        .text-container {
-          flex-grow: 1;
-        }
       }
-    }
 
-    div[class^="md-"] {
+section#forms form > div.user-name-container > div:first-child .text-container {
+          -webkit-box-flex: 1;
+              -ms-flex-positive: 1;
+                  flex-grow: 1;
+        }
+
+section#forms form div[class^="md-"] {
       outline: 0.2rem solid transparent;
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
       width: 100%;
+      height: -webkit-fit-content;
+      height: -moz-fit-content;
       height: fit-content;
       border-radius: 7px;
       border: var(--inputs-border-size) solid var(--inputs-border-color);
+      -webkit-transition: all var(--inputs-outline-trans-duration) ease-out;
       transition: all var(--inputs-outline-trans-duration) ease-out;
       margin-bottom: 0.3rem;
+    }
 
-      &:has(input:focus) {
+section#forms form div[class^="md-"]:has(input:focus) {
         outline: 0.2rem solid var(--inputs-outline-color);
         border-color: var(--inputs-focus-border-color);
       }
-      &:has(input:hover) {
+
+section#forms form div[class^="md-"]:has(input:hover) {
         border-color: var(--inputs-focus-border-color);
         outline: 0.2rem solid var(--inputs-outline-color);
       }
 
-      & > div:first-child {
+section#forms form div[class^="md-"] > div:first-child {
         position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        -webkit-box-pack: center;
+            -ms-flex-pack: center;
+                justify-content: center;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
         width: 15%;
         border-start-start-radius: 10px;
         border-end-start-radius: 7px;
         background-color: var(--inputs-icons-background-color);
-        border-inline-end: var(--inputs-border-size) solid
+        -webkit-border-end: var(--inputs-border-size) solid
           var(--inputs-border-color);
+                border-inline-end: var(--inputs-border-size) solid
+          var(--inputs-border-color);
+        -webkit-transition: all var(--icons-focus-tran-duration) linear;
         transition: all var(--icons-focus-tran-duration) linear;
         color: var(--inputs-icons-color);
         font-size: var(--inputs-icons-font-size);
+      }
 
-        &::before {
+section#forms form div[class^="md-"] > div:first-child::before {
           content: "";
           height: 100%;
           width: 20%;
@@ -430,27 +591,29 @@ section#forms {
           top: 0;
           z-index: -1;
         }
-        /* inputs icons styling */
-        &:has(+ div > input:focus) {
+
+/* inputs icons styling */
+
+section#forms form div[class^="md-"] > div:first-child:has( + div > input:focus) {
           background-color: var(--inputs-icons-focus-bc);
           color: var(--inputs-icons-focus-color);
           border-right-color: var(--inputs-icons-focus-bc);
         }
 
-        &:has(+ div > input:hover) {
+section#forms form div[class^="md-"] > div:first-child:has( + div > input:hover) {
           border-right-color: var(--inputs-icons-focus-bc);
         }
-      }
 
-      div[class*="container-label"] {
+section#forms form div[class^="md-"] div[class*="container-label"] {
         width: 85%;
         position: relative;
         border-start-end-radius: 5px;
         border-end-end-radius: 5px;
 
         /* inputs styling */
+      }
 
-        input {
+section#forms form div[class^="md-"] div[class*="container-label"] input {
           color: var(--inputs-text-color);
           font-size: var(--inputs-font-size);
           background-color: var(--inputs-background-color);
@@ -458,108 +621,166 @@ section#forms {
           width: 100%;
           border-start-end-radius: 5px;
           border-end-end-radius: 5px;
-          padding-inline-start: 0.5rem;
+          -webkit-padding-start: 0.5rem;
+                  padding-inline-start: 0.5rem;
           outline: none;
           border: none;
+          -webkit-transition: all var(--inputs-focus-tran-duration) linear;
           transition: all var(--inputs-focus-tran-duration) linear;
-          &:focus,
-          &:focus + div > div {
-            background-color: var(--inputs-focus-background-color);
-          }
         }
 
-        /* eye icon */
-        .eye-icon {
+section#forms form div[class^="md-"] div[class*="container-label"] input:focus,section#forms form div[class^="md-"] div[class*="container-label"] input:focus + div > div {
+            background-color: var(--inputs-focus-background-color);
+          }
+
+/* eye icon */
+
+section#forms form div[class^="md-"] div[class*="container-label"] .eye-icon {
           position: absolute;
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
-          justify-content: center;
-          align-items: center;
+          -webkit-box-pack: center;
+              -ms-flex-pack: center;
+                  justify-content: center;
+          -webkit-box-align: center;
+              -ms-flex-align: center;
+                  align-items: center;
           top: 50%;
           inset-inline-end: 0.5rem;
           translate: 0 -50%;
           color: var(--eye-pass-color);
           cursor: pointer;
+        }
 
-          i {
+section#forms form div[class^="md-"] div[class*="container-label"] .eye-icon i {
+            display: -webkit-box;
+            display: -ms-flexbox;
             display: flex;
           }
 
-          & > .show {
+section#forms form div[class^="md-"] div[class*="container-label"] .eye-icon > .show {
             scale: 0 1;
           }
 
-          div {
+section#forms form div[class^="md-"] div[class*="container-label"] .eye-icon div {
             position: absolute;
+            display: -webkit-box;
+            display: -ms-flexbox;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            -webkit-box-pack: center;
+                -ms-flex-pack: center;
+                    justify-content: center;
+            -webkit-box-align: center;
+                -ms-flex-align: center;
+                    align-items: center;
             background-color: var(--inputs-background-color);
             padding-block: 0.1rem;
             width: 100%;
             rotate: 45deg;
+            -webkit-transition: all var(--eye-trans-duration) ease-in-out;
             transition: all var(--eye-trans-duration) ease-in-out;
+          }
 
-            hr {
+section#forms form div[class^="md-"] div[class*="container-label"] .eye-icon div hr {
               background-color: var(--eye-pass-color);
               height: 0.1rem;
               border: none;
               width: 100%;
             }
-          }
-        }
 
-        label {
+section#forms form div[class^="md-"] div[class*="container-label"] label {
           position: absolute;
-          user-select: none;
+          -webkit-user-select: none;
+             -moz-user-select: none;
+              -ms-user-select: none;
+                  user-select: none;
           top: 50%;
           inset-inline-start: 1rem;
           translate: 0 -50%;
+          width: -webkit-fit-content;
+          width: -moz-fit-content;
           width: fit-content;
+          height: -webkit-fit-content;
+          height: -moz-fit-content;
           height: fit-content;
           padding-inline: 0.1rem;
           color: var(--inputs-label-color);
           background-color: var(--inputs-background-color);
+          -webkit-transition: all var(--inputs-label-tran-duration) ease-out;
           transition: all var(--inputs-label-tran-duration) ease-out;
           cursor: text;
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
-          justify-content: center;
-          align-items: center;
+          -webkit-box-pack: center;
+              -ms-flex-pack: center;
+                  justify-content: center;
+          -webkit-box-align: center;
+              -ms-flex-align: center;
+                  align-items: center;
           z-index: 1;
+        }
 
-          div {
+section#forms form div[class^="md-"] div[class*="container-label"] label div {
             background-color: var(--inputs-background-color);
+            display: -webkit-inline-box;
+            display: -ms-inline-flexbox;
             display: inline-flex;
             height: 50%;
             width: 100%;
-            border: unset;
+            border: medium none currentcolor;
+            border: initial;
+            -webkit-transition: all var(--inputs-label-tran-duration) ease-out;
             transition: all var(--inputs-label-tran-duration) ease-out;
-            border-radius: unset;
+            border-radius: 0;
+            border-radius: initial;
             position: absolute;
             top: 0;
             z-index: -1;
           }
 
-          &:has(+ input:focus, + input:not(:placeholder-shown)) {
+section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:-moz-placeholder)) {
             color: var(--inputs-transition-label-color);
             top: -0.1rem;
             inset-inline-start: 0.5rem;
             background-color: var(--inputs-focus-background-color);
-            div {
+          }
+
+section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:-ms-input-placeholder)) {
+            color: var(--inputs-transition-label-color);
+            top: -0.1rem;
+            inset-inline-start: 0.5rem;
+            background-color: var(--inputs-focus-background-color);
+          }
+
+section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:placeholder-shown)) {
+            color: var(--inputs-transition-label-color);
+            top: -0.1rem;
+            inset-inline-start: 0.5rem;
+            background-color: var(--inputs-focus-background-color);
+          }
+
+section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:-moz-placeholder)) div {
               background-color: var(--container-background-color);
             }
-          }
-          &:has(+ input:not(:focus)) {
+
+section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:-ms-input-placeholder)) div {
+              background-color: var(--container-background-color);
+            }
+
+section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:placeholder-shown)) div {
+              background-color: var(--container-background-color);
+            }
+
+section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:not(:focus)) {
             background-color: var(--inputs-background-color);
             color: var(--inputs-label-color);
           }
-        }
-      }
-    }
-  }
 
-  /* error text styling */
+/* error text styling */
 
-  .error-container {
+section#forms .error-container {
     color: var(--error-color);
     text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
     font-size: var(--error-font-size);
@@ -567,56 +788,79 @@ section#forms {
     /* position: relative;
     top: 0.2rem; */
     /* padding-bottom: 0.5rem; */
-    & > span {
-      display: flex;
-      align-items: flex-end;
-      i {
-        font-size: var(--error-font-size) !important;
-        margin-inline-end: 0.2rem;
-      }
-    }
   }
 
-  p {
+section#forms .error-container > span {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: end;
+          -ms-flex-align: end;
+              align-items: flex-end;
+    }
+
+section#forms .error-container > span i {
+        font-size: var(--error-font-size) !important;
+        -webkit-margin-end: 0.2rem;
+                margin-inline-end: 0.2rem;
+      }
+
+section#forms p {
     margin-top: 0.5rem;
     color: var(--container-text-color);
-    a {
+  }
+
+section#forms p a {
       cursor: pointer;
+      -webkit-text-decoration: underline;
       text-decoration: underline;
+      -webkit-transition: all var(--link-tran-duration) linear;
       transition: all var(--link-tran-duration) linear;
-      &:link,
-      &:visited,
-      &:active {
+    }
+
+section#forms p a:link {
         color: var(--links-color);
       }
-      &:hover {
+
+section#forms p a:visited {
+        color: var(--links-color);
+      }
+
+section#forms p a:active {
+        color: var(--links-color);
+      }
+
+section#forms p a:hover {
         color: var(--links-hover-color);
       }
-    }
-  }
-}
 
 /* separator styling*/
 
 div.separator {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   position: relative;
+}
 
-  hr {
+div.separator hr {
     width: 100%;
     height: 1px;
     border-color: var(--container-border-color);
     margin: 1rem 0;
   }
 
-  p {
+div.separator p {
     position: absolute;
     background-color: var(--container-background-color);
     padding-inline: 0.3rem;
   }
-}
 
 @property --mask-animation-start {
   syntax: "<percentage>";
@@ -629,6 +873,13 @@ div.separator {
   inherits: false;
 }
 
+@-webkit-keyframes signUpMaskAnimation {
+  100% {
+    --mask-animation-start: 100%;
+    --mask-animation-end: 110%;
+  }
+}
+
 @keyframes signUpMaskAnimation {
   100% {
     --mask-animation-start: 100%;
@@ -636,79 +887,93 @@ div.separator {
   }
 }
 
-[dir="rtl"] #login-form {
-  aside.shown {
+[dir="rtl"] #login-form aside.shown {
     translate: +100%;
   }
-}
 
 @media (max-width: 48rem) {
   .top-nav-bar {
+    position: -webkit-sticky;
     position: sticky;
     background-color: var(--container-background-color);
     border-bottom: 1px solid var(--container-border-color);
+  }
 
-    .login-top-logo {
+    .top-nav-bar .login-top-logo {
       background-color: transparent;
-      box-shadow: none;
+      -webkit-box-shadow: none;
+              box-shadow: none;
+      padding: 0 !important;
       padding: initial !important;
     }
-  }
   main {
-    flex-direction: column;
-    align-items: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
     width: 100%;
-    flex-grow: 1;
+    -webkit-box-flex: 1;
+        -ms-flex-positive: 1;
+            flex-grow: 1;
+  }
 
-    #space-reserver {
+    main #space-reserver {
       width: 100%;
       height: 0;
-      &.shown {
-        height: 40rem;
-        & + div {
-          flex-basis: 50%;
-        }
-      }
     }
-    #login-form {
+      main #space-reserver.shown {
+        height: 40rem;
+      }
+        main #space-reserver.shown + div {
+          -ms-flex-preferred-size: 50%;
+              flex-basis: 50%;
+        }
+    main #login-form {
       width: 100% !important;
-      border-radius: unset;
+      border-radius: 0;
+      border-radius: initial;
       padding: 1rem;
-      flex-grow: 1;
+      -webkit-box-flex: 1;
+          -ms-flex-positive: 1;
+              flex-grow: 1;
       border: none;
+    }
 
-      aside {
+      main #login-form aside {
+        border: medium none currentcolor;
         border: initial;
+        border-radius: 0;
         border-radius: initial;
-        &.shown {
+      }
+        main #login-form aside.shown {
           translate: 0 -100% !important;
         }
-      }
-      div.user-name-container {
-        & > div:first-child {
+        main #login-form div.user-name-container > div:first-child {
           width: 100%;
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
-          flex-direction: row;
+          -webkit-box-orient: horizontal;
+          -webkit-box-direction: normal;
+              -ms-flex-direction: row;
+                  flex-direction: row;
+          gap: calc(1rem / 2) !important;
           gap: calc(var(--form-gap) / 2) !important;
-          & > div {
-            flex-basis: 50%;
-          }
         }
-      }
-    }
-    #login-form:has(.shown) {
+          main #login-form div.user-name-container > div:first-child > div {
+            -ms-flex-preferred-size: 50%;
+                flex-basis: 50%;
+          }
+    main #login-form:has(.shown) {
       padding-bottom: 3rem;
     }
-  }
 }
 
 @media (max-width: 28.0625rem) {
-  .top-nav-bar {
-    .lang-toggle-btn,
-    .home-link-btn {
-      span {
+      .top-nav-bar .lang-toggle-btn span,.top-nav-bar .home-link-btn span {
         display: none;
       }
-    }
-  }
 }

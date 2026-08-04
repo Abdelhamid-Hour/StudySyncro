@@ -2,96 +2,146 @@
   --form-gap: 1rem;
 }
 * {
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   font-family: "Josefin Sans";
   margin: 0px;
   padding: 0px;
 }
 
 body {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   background-color: var(--background-color);
   min-height: 100vh;
 }
 
 main {
   background-color: var(--container-background-color);
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   text-align: center;
+  gap: 1rem;
   gap: var(--form-gap);
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
   width: fit-content;
   border-radius: 10px;
   padding: 2rem;
   color: var(--primary-text-color);
-  box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
+          box-shadow: rgba(0, 0, 0, 0.18) 0px 2px 4px;
   border: 1px solid var(--container-border-color);
-  h2 {
-    color: var(--heading-color);
-  }
-  .error-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--form-gap);
-    color: var(--error-block-text-color);
-    h2 {
-      color: var(--error-block-heading-color);
-    }
-  }
 }
 
+main h2 {
+    color: var(--heading-color);
+  }
+
+main .error-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    gap: 1rem;
+    gap: var(--form-gap);
+    color: var(--error-block-text-color);
+  }
+
+main .error-container h2 {
+      color: var(--error-block-heading-color);
+    }
+
 form {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   width: 25rem;
+  gap: 1rem;
   gap: var(--form-gap);
-  div[class^="md-"] {
+}
+
+form div[class^="md-"] {
     outline: 0.2rem solid transparent;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     width: 100%;
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
     height: fit-content;
     border-radius: 7px;
     border: var(--inputs-border-size) solid var(--inputs-border-color);
+    -webkit-transition: all var(--inputs-outline-trans-duration) ease-out;
     transition: all var(--inputs-outline-trans-duration) ease-out;
+  }
 
-    &:has(input:focus) {
+form div[class^="md-"]:has(input:focus) {
       outline: 0.2rem solid var(--inputs-outline-color);
       border-color: var(--inputs-focus-border-color);
     }
 
-    div:first-child {
+form div[class^="md-"] div:first-child {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      justify-content: center;
-      align-items: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
       width: 15%;
       border-start-start-radius: 10px;
       border-end-start-radius: 7px;
       background-color: var(--inputs-icons-background-color);
-      border-inline-end: var(--inputs-border-size) solid
+      -webkit-border-end: var(--inputs-border-size) solid
         var(--inputs-border-color);
+              border-inline-end: var(--inputs-border-size) solid
+        var(--inputs-border-color);
+      -webkit-transition: all var(--icons-focus-tran-duration) linear;
       transition: all var(--icons-focus-tran-duration) linear;
       color: var(--inputs-icons-color);
       font-size: var(--inputs-icons-font-size);
 
       /* inputs icons styling */
-      &:has(+ div > input:focus) {
+    }
+
+form div[class^="md-"] div:first-child:has( + div > input:focus) {
         background-color: var(--inputs-icons-focus-bc);
         color: var(--inputs-icons-focus-color);
         border-right-color: var(--inputs-icons-focus-bc);
       }
-    }
 
-    div[class*="container-label"] {
+form div[class^="md-"] div[class*="container-label"] {
       width: 85%;
       position: relative;
       border-start-end-radius: 5px;
       border-end-end-radius: 5px;
 
       /* inputs styling */
+    }
 
-      input {
+form div[class^="md-"] div[class*="container-label"] input {
         color: var(--inputs-text-color);
         font-size: var(--inputs-font-size);
         background-color: var(--inputs-background-color);
@@ -99,18 +149,21 @@ form {
         width: 100%;
         border-start-end-radius: 5px;
         border-end-end-radius: 5px;
-        padding-inline-start: 0.5rem;
+        -webkit-padding-start: 0.5rem;
+                padding-inline-start: 0.5rem;
         outline: none;
         border: none;
+        -webkit-transition: all var(--inputs-focus-tran-duration) linear;
         transition: all var(--inputs-focus-tran-duration) linear;
-        &:focus,
-        &:focus + div > div {
-          background-color: var(--inputs-focus-background-color);
-        }
       }
 
-      /* eye icon */
-      & > div {
+form div[class^="md-"] div[class*="container-label"] input:focus,form div[class^="md-"] div[class*="container-label"] input:focus + div > div {
+          background-color: var(--inputs-focus-background-color);
+        }
+
+/* eye icon */
+
+form div[class^="md-"] div[class*="container-label"] > div {
         position: absolute;
         top: 50%;
         inset-inline-end: 0.5rem;
@@ -119,87 +172,140 @@ form {
         cursor: pointer;
       }
 
-      label {
+form div[class^="md-"] div[class*="container-label"] label {
         position: absolute;
-        user-select: none;
+        -webkit-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
         top: 50%;
         inset-inline-start: 1rem;
         translate: 0 -50%;
+        width: -webkit-fit-content;
+        width: -moz-fit-content;
         width: fit-content;
+        height: -webkit-fit-content;
+        height: -moz-fit-content;
         height: fit-content;
         padding-inline: 0.1rem;
         color: var(--inputs-label-color);
         background-color: var(--inputs-background-color);
+        -webkit-transition: all var(--inputs-label-tran-duration) ease-out;
         transition: all var(--inputs-label-tran-duration) ease-out;
         cursor: text;
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        -webkit-box-pack: center;
+            -ms-flex-pack: center;
+                justify-content: center;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
         z-index: 1;
+      }
 
-        div {
+form div[class^="md-"] div[class*="container-label"] label div {
           background-color: var(--inputs-background-color);
+          display: -webkit-inline-box;
+          display: -ms-inline-flexbox;
           display: inline-flex;
           height: 50%;
           width: 100%;
-          border: unset;
+          border: medium none currentcolor;
+          border: initial;
+          -webkit-transition: all var(--inputs-label-tran-duration) ease-out;
           transition: all var(--inputs-label-tran-duration) ease-out;
-          border-radius: unset;
+          border-radius: 0;
+          border-radius: initial;
           position: absolute;
           top: 0;
           z-index: -1;
         }
 
-        &:has(+ input:focus, + input:not(:placeholder-shown)) {
+form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:-moz-placeholder)) {
           color: var(--inputs-transition-label-color);
           top: -0.1rem;
           inset-inline-start: 0.5rem;
           background-color: var(--inputs-focus-background-color);
-          div {
+        }
+
+form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:-ms-input-placeholder)) {
+          color: var(--inputs-transition-label-color);
+          top: -0.1rem;
+          inset-inline-start: 0.5rem;
+          background-color: var(--inputs-focus-background-color);
+        }
+
+form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:placeholder-shown)) {
+          color: var(--inputs-transition-label-color);
+          top: -0.1rem;
+          inset-inline-start: 0.5rem;
+          background-color: var(--inputs-focus-background-color);
+        }
+
+form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:-moz-placeholder)) div {
             background-color: var(--container-background-color);
           }
-        }
-        &:has(+ input:not(:focus)) {
+
+form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:-ms-input-placeholder)) div {
+            background-color: var(--container-background-color);
+          }
+
+form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:placeholder-shown)) div {
+            background-color: var(--container-background-color);
+          }
+
+form div[class^="md-"] div[class*="container-label"] label:has( + input:not(:focus)) {
           background-color: var(--inputs-background-color);
           color: var(--inputs-label-color);
         }
-      }
-      .eye-icon {
-        i {
+
+form div[class^="md-"] div[class*="container-label"] .eye-icon i {
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
         }
 
-        & > .show {
+form div[class^="md-"] div[class*="container-label"] .eye-icon > .show {
           scale: 0 1;
         }
 
-        div {
+form div[class^="md-"] div[class*="container-label"] .eye-icon div {
           position: absolute;
           top: 0;
+          display: -webkit-box;
+          display: -ms-flexbox;
           display: flex;
-          justify-content: center;
-          align-items: center;
+          -webkit-box-pack: center;
+              -ms-flex-pack: center;
+                  justify-content: center;
+          -webkit-box-align: center;
+              -ms-flex-align: center;
+                  align-items: center;
           translate: 21% 20%;
           background-color: var(--inputs-background-color);
           padding-block: 1px;
           width: 100%;
+          height: -webkit-fit-content;
+          height: -moz-fit-content;
           height: fit-content;
-          transform-origin: 0 0;
+          -webkit-transform-origin: 0 0;
+                  transform-origin: 0 0;
           rotate: 45deg;
+          -webkit-transition: all var(--eye-trans-duration) ease-in-out;
           transition: all var(--eye-trans-duration) ease-in-out;
-          float: inline-end;
+          float: right;
+        }
 
-          hr {
+form div[class^="md-"] div[class*="container-label"] .eye-icon div hr {
             background-color: var(--eye-pass-color);
             height: 2px;
             border: none;
             width: 100%;
           }
-        }
-      }
-    }
-  }
-  .errorContainer {
+
+form .errorContainer {
     color: var(--error-color);
     text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
     font-size: var(--error-font-size);
@@ -207,13 +313,20 @@ form {
     position: relative;
     top: 0.4rem;
     padding-bottom: 0.5rem;
-    & > span {
-      display: flex;
-      align-items: flex-end;
-    }
   }
-  /* buttons styling */
-  button {
+
+form .errorContainer > span {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: end;
+          -ms-flex-align: end;
+              align-items: flex-end;
+    }
+
+/* buttons styling */
+
+form button {
     height: var(--btn-height);
     color: var(--btn-text-color);
     border: 1px solid var(--btn-border-color);
@@ -221,31 +334,45 @@ form {
     border-radius: 5px;
     padding: 0.5rem;
     width: var(--btn-width);
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    justify-content: space-evenly;
-    align-items: center;
+    -webkit-box-pack: space-evenly;
+        -ms-flex-pack: space-evenly;
+            justify-content: space-evenly;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
     cursor: pointer;
     font-size: medium;
+    -webkit-transition: all var(--btn-hover-tran-duration);
     transition: all var(--btn-hover-tran-duration);
-    box-shadow: 1px 1px 3px rgba(245, 245, 245, 0.445) inset;
-    &:hover {
+    -webkit-box-shadow: 1px 1px 3px rgba(245, 245, 245, 0.445) inset;
+            box-shadow: 1px 1px 3px rgba(245, 245, 245, 0.445) inset;
+  }
+
+form button:hover {
       background-color: var(--btn-hover-background-color);
       color: var(--btn-hover-text-color);
       border-color: var(--btn-hover-border-color);
       font-weight: 700;
     }
-    &:active {
-      box-shadow: 1px 1px 5px #3b3b3b inset;
+
+form button:active {
+      -webkit-box-shadow: 1px 1px 5px #3b3b3b inset;
+              box-shadow: 1px 1px 5px #3b3b3b inset;
     }
-    span {
+
+form button span {
       width: 60%;
     }
-    svg {
+
+form button svg {
       height: 100%;
+      width: -webkit-fit-content;
+      width: -moz-fit-content;
       width: fit-content;
     }
-  }
-}
 
 .error {
   --inputs-border-color: var(--error-color);
@@ -255,7 +382,10 @@ form {
   main {
     height: 100vh;
     width: 100vw;
-    border-radius: unset;
-    justify-content: center;
+    border-radius: 0;
+    border-radius: initial;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
   }
 }

@@ -4,87 +4,128 @@
   position: relative;
   height: 100%;
   padding-bottom: 0.1rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   gap: calc(var(--primary-gap) / 2);
+}
 
-  header {
+.ongoing-tasks header,.completed-tasks header,.session-tasks header {
+    position: -webkit-sticky;
     position: sticky;
     top: 0;
     padding-inline: calc(var(--primary-gap) / 2);
     padding-block: calc(var(--primary-gap) / 3);
     border-bottom: var(--primary-border-style);
+    min-height: -webkit-fit-content;
+    min-height: -moz-fit-content;
     min-height: fit-content;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    justify-content: space-between;
-    div.btns {
-      display: flex;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+  }
 
-      button {
+.ongoing-tasks header div.btns,.completed-tasks header div.btns,.session-tasks header div.btns {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+    }
+
+.ongoing-tasks header div.btns button,.completed-tasks header div.btns button,.session-tasks header div.btns button {
         border-radius: 0.2rem;
-        &:hover {
+      }
+
+.ongoing-tasks header div.btns button:hover,.completed-tasks header div.btns button:hover,.session-tasks header div.btns button:hover {
           color: var(--primary-color);
           background-color: var(--btn-background-color);
         }
-      }
-    }
-  }
-}
 
 .tasks-list {
   overflow-y: scroll;
   scrollbar-width: none;
   scroll-behavior: smooth;
+}
 
-  & .task-wrapper,
-  .completed-task {
+.tasks-list .task-wrapper,.tasks-list .completed-task {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
     gap: calc(var(--primary-gap) / 2);
     max-height: 2.8125rem;
+    -webkit-transition: max-height var(--primary-transition-style);
     transition: max-height var(--primary-transition-style);
+  }
 
-    .task-details {
+.tasks-list .task-wrapper .task-details,.tasks-list .completed-task .task-details {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-direction: column;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
       gap: calc(var(--primary-gap) / 3);
       visibility: hidden;
       pointer-events: none;
       opacity: 0;
+      -webkit-transition:
+        opacity var(--primary-transition-style) 50ms,
+        visibility var(--primary-transition-style) 300ms;
       transition:
         opacity var(--primary-transition-style) 50ms,
         visibility var(--primary-transition-style) 300ms;
       font-size: var(--small-font-size);
+    }
 
-      h5 {
+.tasks-list .task-wrapper .task-details h5,.tasks-list .completed-task .task-details h5 {
         font-size: var(--small-font-size);
         color: var(--secondary-text-color);
       }
 
-      p {
+.tasks-list .task-wrapper .task-details p,.tasks-list .completed-task .task-details p {
         text-indent: calc(var(--primary-gap) / 2);
       }
-    }
 
-    &:not(&:first-child) {
+.tasks-list .task-wrapper:not(.tasks-list .task-wrapper):not(.tasks-list .completed-task) {
       margin-top: calc(var(--primary-gap) / 2);
     }
 
-    &.show-task-details {
+.tasks-list .completed-task:not(.tasks-list .task-wrapper):not(.tasks-list .completed-task) {
+      margin-top: calc(var(--primary-gap) / 2);
+    }
+
+.tasks-list .task-wrapper.show-task-details,.tasks-list .completed-task.show-task-details {
       max-height: 20rem;
-      .task-down-icon {
+    }
+
+.tasks-list .task-wrapper.show-task-details .task-down-icon,.tasks-list .completed-task.show-task-details .task-down-icon {
         rotate: -180deg;
       }
-      .task-details {
+
+.tasks-list .task-wrapper.show-task-details .task-details,.tasks-list .completed-task.show-task-details .task-details {
         visibility: visible;
         pointer-events: initial;
         opacity: 1;
+        -webkit-transition:
+          visibility var(--primary-transition-style),
+          opacity var(--primary-transition-style);
         transition:
           visibility var(--primary-transition-style),
           opacity var(--primary-transition-style);
       }
-    }
-    .task-details {
+
+.tasks-list .task-wrapper .task-details,.tasks-list .completed-task .task-details {
       padding: calc(var(--primary-gap) / 2);
       border: var(--primary-border-style);
       border-radius: var(--primary-radius);
@@ -93,112 +134,153 @@
       scrollbar-width: none;
       overflow-y: auto;
     }
-    & div[class*="task-box"] {
+
+.tasks-list .task-wrapper div[class*="task-box"],.tasks-list .completed-task div[class*="task-box"] {
       position: relative;
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
+              justify-content: space-between;
       min-height: 2.8125rem;
       max-height: 2.8125rem;
       background-color: var(--btn-background-color);
       border-radius: var(--primary-radius);
       border: var(--primary-border-style);
+    }
 
-      &.quiz-task-box,
-      &.break-box {
-        border-inline-end: 0.4rem solid var(--primary-color);
+.tasks-list .task-wrapper div.quiz-task-box[class*="task-box"],.tasks-list .completed-task div.quiz-task-box[class*="task-box"],.tasks-list .task-wrapper div.break-box[class*="task-box"],.tasks-list .completed-task div.break-box[class*="task-box"] {
+        -webkit-border-end: 0.4rem solid var(--primary-color);
+                border-inline-end: 0.4rem solid var(--primary-color);
       }
 
-      &.quiz-task-box {
+.tasks-list .task-wrapper div.quiz-task-box[class*="task-box"],.tasks-list .completed-task div.quiz-task-box[class*="task-box"] {
         border-color: var(--green-color);
       }
 
-      &.break-box {
+.tasks-list .task-wrapper div.break-box[class*="task-box"],.tasks-list .completed-task div.break-box[class*="task-box"] {
         border-color: var(--primary-color);
-
-        span.title {
-          flex-basis: 73%;
-        }
       }
 
-      button {
+.tasks-list .task-wrapper div.break-box[class*="task-box"] span.title,.tasks-list .completed-task div.break-box[class*="task-box"] span.title {
+          -ms-flex-preferred-size: 73%;
+              flex-basis: 73%;
+        }
+
+.tasks-list .task-wrapper div[class*="task-box"] button,.tasks-list .completed-task div[class*="task-box"] button {
         cursor: pointer;
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+        -webkit-box-pack: center;
+            -ms-flex-pack: center;
+                justify-content: center;
         height: 100%;
-        i {
+      }
+
+.tasks-list .task-wrapper div[class*="task-box"] button i,.tasks-list .completed-task div[class*="task-box"] button i {
           margin-top: 0.2rem;
         }
-      }
 
-      button.task-down-icon {
+.tasks-list .task-wrapper div[class*="task-box"] button.task-down-icon,.tasks-list .completed-task div[class*="task-box"] button.task-down-icon {
+        -webkit-transition: rotate var(--primary-transition-style);
         transition: rotate var(--primary-transition-style);
       }
 
-      & > div.icons {
+.tasks-list .task-wrapper div[class*="task-box"] > div.icons,.tasks-list .completed-task div[class*="task-box"] > div.icons {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        align-items: center;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
         height: 1.5625rem;
-        flex-basis: 15%;
+        -ms-flex-preferred-size: 15%;
+            flex-basis: 15%;
         gap: calc(var(--primary-gap) / 3);
-        margin-inline-end: calc(var(--primary-gap) / 2);
-        button {
+        -webkit-margin-end: calc(var(--primary-gap) / 2);
+                margin-inline-end: calc(var(--primary-gap) / 2);
+      }
+
+.tasks-list .task-wrapper div[class*="task-box"] > div.icons button,.tasks-list .completed-task div[class*="task-box"] > div.icons button {
           /* flex-basis: 50%; */
-          margin-inline-start: auto;
+          -webkit-margin-start: auto;
+                  margin-inline-start: auto;
         }
 
-        button.task-menu-btn {
+.tasks-list .task-wrapper div[class*="task-box"] > div.icons button.task-menu-btn,.tasks-list .completed-task div[class*="task-box"] > div.icons button.task-menu-btn {
           padding-inline: calc(var(--primary-gap) / 2);
           padding-block: 0.1rem;
           border-radius: 0.2rem;
           aspect-ratio: 1/1;
-          flex-direction: column;
-          justify-content: space-evenly;
-          span {
+          -webkit-box-orient: vertical;
+          -webkit-box-direction: normal;
+              -ms-flex-direction: column;
+                  flex-direction: column;
+          -webkit-box-pack: space-evenly;
+              -ms-flex-pack: space-evenly;
+                  justify-content: space-evenly;
+        }
+
+.tasks-list .task-wrapper div[class*="task-box"] > div.icons button.task-menu-btn span,.tasks-list .completed-task div[class*="task-box"] > div.icons button.task-menu-btn span {
             border: 1px solid;
             display: block;
             height: 3px;
             aspect-ratio: 1/1;
             border-radius: 50%;
+            -webkit-transition: background-color var(--primary-transition-style);
             transition: background-color var(--primary-transition-style);
           }
-          &:hover {
-            background-color: var(--container-background-color);
 
-            span {
+.tasks-list .task-wrapper div[class*="task-box"] > div.icons button.task-menu-btn:hover,.tasks-list .completed-task div[class*="task-box"] > div.icons button.task-menu-btn:hover {
+            background-color: var(--container-background-color);
+          }
+
+.tasks-list .task-wrapper div[class*="task-box"] > div.icons button.task-menu-btn:hover span,.tasks-list .completed-task div[class*="task-box"] > div.icons button.task-menu-btn:hover span {
               border-color: var(--primary-color);
               background-color: var(--primary-color);
             }
-          }
-        }
-      }
 
-      div.counter {
+.tasks-list .task-wrapper div[class*="task-box"] div.counter,.tasks-list .completed-task div[class*="task-box"] div.counter {
         height: 100%;
-        flex-basis: 10%;
+        -ms-flex-preferred-size: 10%;
+            flex-basis: 10%;
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+        -webkit-box-pack: center;
+            -ms-flex-pack: center;
+                justify-content: center;
         font-weight: bold;
         font-size: var(--small-font-size);
-        border-inline-end: var(--primary-border-style);
+        -webkit-border-end: var(--primary-border-style);
+                border-inline-end: var(--primary-border-style);
       }
 
-      span.duration {
-        flex-basis: 15%;
+.tasks-list .task-wrapper div[class*="task-box"] span.duration,.tasks-list .completed-task div[class*="task-box"] span.duration {
+        -ms-flex-preferred-size: 15%;
+            flex-basis: 15%;
         font-size: var(--small-font-size);
         text-align: center;
       }
 
-      span.title {
-        padding-inline-start: 2%;
+.tasks-list .task-wrapper div[class*="task-box"] span.title,.tasks-list .completed-task div[class*="task-box"] span.title {
+        -webkit-padding-start: 2%;
+                padding-inline-start: 2%;
         font-size: var(--small-font-size);
-        flex-basis: 65%;
+        -ms-flex-preferred-size: 65%;
+            flex-basis: 65%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-    }
-  }
-}

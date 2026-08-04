@@ -43,7 +43,7 @@ html[data-theme="light"] {
   --inputs-focus-background-color: var(--background-color);
   --inputs-border-color: var(--container-border-color);
   /* --inputs-outline-color: var(--primary-color); */
-  --inputs-outline-color: #3284ffa9;
+  --inputs-outline-color: rgba(50,132,255,0.66275);
   --inputs-text-color: var(--btn-text-color);
   --inputs-label-color: var(--secondary-text-color);
   --inputs-transition-label-color: var(--primary-color);
@@ -69,7 +69,7 @@ html[data-theme="light"] {
   --eye-pass-color: var(--primary-color);
   --eye-trans-duration: 200ms;
   /* Error styling */
-  --error-color: #eb3b43ff;
+  --error-color: rgba(235,59,67,1);
   --error-border-color: rgb(182, 61, 61);
   --error-background-color: rgb(182, 61, 61);
   --error-font-size: var(--small-font-size);
@@ -125,7 +125,8 @@ html[data-theme="light"] {
 /* Telegram-style circular reveal transition */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation: none;
+  -webkit-animation: none;
+          animation: none;
   mix-blend-mode: normal;
 }
 
@@ -138,18 +139,69 @@ html[data-theme="light"] {
 }
 
 html[data-theme]::view-transition-new(root) {
-  animation: theme-reveal 0.7s ease-in-out;
+  -webkit-animation: theme-reveal 0.7s ease-in-out;
+          animation: theme-reveal 0.7s ease-in-out;
 }
 
-@keyframes theme-reveal {
+@-webkit-keyframes theme-reveal {
   from {
-    clip-path: circle(
+    -webkit-clip-path: circle(
+      0% at 50% 50%
+    );
+            clip-path: circle(
+      0% at 50% 50%
+    );
+    -webkit-clip-path: circle(
+      0% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%)
+    );
+            clip-path: circle(
       0% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%)
     );
   }
 
   to {
-    clip-path: circle(
+    -webkit-clip-path: circle(
+      150% at 50% 50%
+    );
+            clip-path: circle(
+      150% at 50% 50%
+    );
+    -webkit-clip-path: circle(
+      150% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%)
+    );
+            clip-path: circle(
+      150% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%)
+    );
+  }
+}
+
+@keyframes theme-reveal {
+  from {
+    -webkit-clip-path: circle(
+      0% at 50% 50%
+    );
+            clip-path: circle(
+      0% at 50% 50%
+    );
+    -webkit-clip-path: circle(
+      0% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%)
+    );
+            clip-path: circle(
+      0% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%)
+    );
+  }
+
+  to {
+    -webkit-clip-path: circle(
+      150% at 50% 50%
+    );
+            clip-path: circle(
+      150% at 50% 50%
+    );
+    -webkit-clip-path: circle(
+      150% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%)
+    );
+            clip-path: circle(
       150% at var(--theme-toggle-x, 50%) var(--theme-toggle-y, 50%)
     );
   }
