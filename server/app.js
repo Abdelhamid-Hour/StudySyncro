@@ -82,9 +82,11 @@ app.all("*", pageNotFoundHandler);
 // Global Error Handler
 app.use(globalErrorHandler);
 
-const PORT = process.env.PORT || 5000;
+// const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  startSessionCleaner();
-});
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+//   startSessionCleaner();
+// });
+
+module.exports = app;
