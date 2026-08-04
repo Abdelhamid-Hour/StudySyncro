@@ -1,4 +1,4 @@
-import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.mjs";
+import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { auth } from "../../../../firebase/firebaseConfig.mjs";
 import {
   checkError,

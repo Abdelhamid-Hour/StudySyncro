@@ -1,7 +1,7 @@
 import {
   confirmPasswordReset,
   verifyPasswordResetCode,
-} from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.mjs";
+} from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { auth } from "../../firebase/firebaseConfig.mjs";
 import { t } from "../../main_assets/js/i18n.mjs";
 import {

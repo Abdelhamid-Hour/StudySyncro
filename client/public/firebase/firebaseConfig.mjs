@@ -1,9 +1,9 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.mjs";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
 import {
   getAuth,
   inMemoryPersistence,
   setPersistence,
-} from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.mjs";
+} from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBQD23tZrfSimPKW8sFIzC_1MoNFGZ9e7A",

@@ -36,7 +36,9 @@ export const initPushNotifications = async () => {
     }
 
     // 2. Register Service Worker
-    const registration = await navigator.serviceWorker.register("/sw.mjs");
+    const registration = await navigator.serviceWorker.register("/sw.mjs", {
+      type: "module",
+    });
     console.log("Service Worker registered successfully.");
 
     // 3. Ask for permission

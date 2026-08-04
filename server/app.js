@@ -69,6 +69,7 @@ app.get("/sitemap.xml", generateSitemap);
 // authentification route
 app.use("/", authRouter);
 
+express.static.mime.define({ "application/javascript": ["mjs"] });
 // Serve the static files
 app.use(express.static(path.join(__dirname, "../client/public")));
 // application route
