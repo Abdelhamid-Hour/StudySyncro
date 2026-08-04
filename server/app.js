@@ -31,6 +31,7 @@ app.use(
   helmet({
     contentSecurityPolicy: false, // Disabled for now to avoid breaking existing scripts/images
     crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
     hsts: process.env.NODE_ENV === "production", // Disabled because production currently lacks HTTPS
   }),
 );
@@ -83,11 +84,13 @@ app.all("*", pageNotFoundHandler);
 // Global Error Handler
 app.use(globalErrorHandler);
 
-// const PORT = process.env.PORT || 5000;
+if (process.env.NODE_ENV === "production") {
+  const PORT = process.env.PORT || 5000;
 
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-//   startSessionCleaner();
-// });
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    startSessionCleaner();
+  });
+}
 
 module.exports = app;
