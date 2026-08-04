@@ -965,7 +965,7 @@ export const handleFiles = (
       types.includes(f.type),
     );
     if (!isSupportedType) {
-      showMessageBlock(t("common:alerts.invalid_file_type"), "error");
+      showMessageBlock(t("shared:alerts.invalid_file_type"), "error");
       continue;
     }
     if (f.size > MAXFILESIZE) {

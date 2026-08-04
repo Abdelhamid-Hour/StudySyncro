@@ -1,11 +1,25 @@
 {
+  "actions": {
+    "switch_to_en": "Switch to English",
+    "switch_to_ar": "Switch to Arabic"
+  },
   "header": {
     "create": "create",
     "login_to": "Login to"
   },
+  "errors": {
+    "the_password_must_be_between_min_and_max_characters": "The password must be between {min} and {max} characters",
+    "passwords_do_not_match": "Passwords do not match"
+  },
   "alerts": {
+    "error_occurred": "An error occurred.",
+    "unauthorized": "🚫 You are not authorized to access this resource. Please log in.",
     "invalid_file_type": "Invalid file type. Please select other file.",
-    "avatar_size_exceeded": "File size exceeds the limit of {size}MB."
+    "avatar_size_exceeded": "File size exceeds the limit of {size}MB.",
+    "password_reset_sent": "If this email is registered, you will receive a password reset link.",
+    "password_reset_success": "Password reset successful",
+    "try_resetting_again": "Try resetting your password again",
+    "reset_link_expired": "Your request to reset your password has expired or the link has already been used"
   },
   "auth_errors": {
     "INVALID_LOGIN_CREDENTIALS": "Invalid email or password. Please try again.",

@@ -2,7 +2,6 @@ import {
   createUserWithEmailAndPassword,
   FacebookAuthProvider,
   GoogleAuthProvider,
-  sendEmailVerification,
   signInWithCredential,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -13,6 +12,7 @@ import {
   checkError,
   redirectTo,
   sendData,
+  showMessageBlock,
   t,
 } from "../../../../main_assets/js/utils.mjs";
 
@@ -52,6 +52,24 @@ export const getLoader = () => {
 		</g>
 	</g>
 </svg>`;
+};
+
+export const initVerifyMsgBlock = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const errorParam = urlParams.get("error");
+  if (errorParam) {
+    const errorMap = {
+      expired: t("login:messages.verification_expired"),
+      invalid: t("login:messages.verification_invalid"),
+      used: t("login:messages.verification_used"),
+      failed: t("login:messages.verification_failed"),
+    };
+
+    if (errorMap[errorParam]) {
+      showMessageBlock(errorMap[errorParam], "error");
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }
 };
 
 /**
@@ -189,11 +207,6 @@ const createAuserWithEmailAndPassword = async function (
     await updateProfile(user, {
       displayName: fullName,
     });
-    const actionCodeSettings = {
-      url: window.location.origin + "/app/home",
-      handleCodeInApp: false,
-    };
-    await sendEmailVerification(user, actionCodeSettings);
 
     const idToken = await user.getIdToken();
     const formData = new FormData();
@@ -242,11 +255,7 @@ const signInAuserWithEmailAndPassword = async function (
     );
     const user = userCredential.user;
     if (!user.emailVerified) {
-      const actionCodeSettings = {
-        url: window.location.origin + "/app/home",
-        handleCodeInApp: false,
-      };
-      await sendEmailVerification(user, actionCodeSettings);
+      await sendData("/api/resend-verification", { email: user.email });
       signOut(auth);
       callback(t("login:messages.email_unverified"), "info");
       return;

@@ -61,9 +61,25 @@ const sendAdminJoinRequestEmail = async (adminEmail, applicantName, groupName, g
   await sendMailHelper(adminEmail, null, subject, html);
 };
 
+const sendEmailVerificationMail = async (userEmail, actionLink) => {
+  if (!userEmail) return;
+  const subject = `Verify Your Email for StudyHype`;
+  const html = templates.emailVerificationTemplate(actionLink);
+  await sendMailHelper(userEmail, null, subject, html);
+};
+
+const sendPasswordResetMail = async (userEmail, actionLink) => {
+  if (!userEmail) return;
+  const subject = `Reset Your StudyHype Password`;
+  const html = templates.passwordResetTemplate(actionLink);
+  await sendMailHelper(userEmail, null, subject, html);
+};
+
 module.exports = {
   sendSessionStartedEmail,
   sendJoinResultEmail,
   sendGroupInviteEmail,
   sendAdminJoinRequestEmail,
+  sendEmailVerificationMail,
+  sendPasswordResetMail,
 };

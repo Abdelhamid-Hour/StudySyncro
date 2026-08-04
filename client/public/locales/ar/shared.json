@@ -1,11 +1,25 @@
 {
+  "actions": {
+    "switch_to_en": "التحويل إلى الإنجليزية",
+    "switch_to_ar": "التحويل إلى العربية"
+  },
   "header": {
     "create": "أنشئ",
     "login_to": "تسجيل الدخول إلى"
   },
+  "errors": {
+    "the_password_must_be_between_min_and_max_characters": "يجب أن تتكون كلمة المرور من {min} إلى {max} حرفًا",
+    "passwords_do_not_match": "كلمتا المرور غير متطابقتين"
+  },
   "alerts": {
+    "error_occurred": "حدث خطأ ما.",
+    "unauthorized": "🚫 غير مصرح لك بالوصول إلى هذا المحتوى. يرجى تسجيل الدخول.",
     "invalid_file_type": "نوع الملف غير صالح. يرجى اختيار ملف آخر.",
-    "avatar_size_exceeded": "حجم الملف يتجاوز الحد الأقصى {size}MB."
+    "avatar_size_exceeded": "حجم الملف يتجاوز الحد الأقصى {size}MB.",
+    "password_reset_sent": "إذا كان هذا البريد الإلكتروني مسجلاً، فستتصلك رابط إعادة تعيين كلمة المرور.",
+    "password_reset_success": "تمت إعادة تعيين كلمة المرور بنجاح",
+    "try_resetting_again": "حاول إعادة تعيين كلمة المرور مرة أخرى",
+    "reset_link_expired": "انتهت صلاحية رابط إعادة تعيين كلمة المرور أو تم استخدامه بالفعل"
   },
   "auth_errors": {
     "INVALID_LOGIN_CREDENTIALS": "البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.",

@@ -1,12 +1,16 @@
-await initI18n(["shared", "login"], { isStatic: true });
 import { setUpFileInputListeners } from "../../../app/assets/shared/avatar/js/utils.mjs";
 import {
   getLang,
   handlEyeIconsClick,
   initI18n,
+  initThemeToggleBtn,
   t,
 } from "../../../main_assets/js/utils.mjs";
-import { showGoogleOneTap } from "./auth/auth-functions.mjs";
+await initI18n(["shared", "login"]);
+import {
+  initVerifyMsgBlock,
+  showGoogleOneTap,
+} from "./auth/auth-functions.mjs";
 import "./auth/auth.mjs";
 import {
   animationDuration,
@@ -17,6 +21,7 @@ import {
   signInLink,
   signUpFormHeight,
   signUpLink,
+  toggleBtn,
   updateSignFormHeights,
 } from "./dom-variables.mjs";
 import {
@@ -28,6 +33,8 @@ import {
 } from "./utils.mjs";
 
 showGoogleOneTap();
+initVerifyMsgBlock();
+
 // prevets browser default validation rules
 document.getElementById("sign-in-form").setAttribute("novalidate", true);
 document.getElementById("sign-up-form").setAttribute("novalidate", true);
@@ -99,43 +106,4 @@ clearAvatarBtn.addEventListener("click", () => {
   avatarContainer.querySelector(".error").innerHTML = "";
 });
 
-// theme toggle
-const toggleBtn = document.getElementById("theme-toggle-btn");
-const toggleIcon = document.getElementById("theme-toggle-icon");
-const root = document.documentElement;
-
-if (toggleBtn) {
-  toggleBtn.addEventListener("click", () => {
-    const isDark = root.getAttribute("data-theme") === "dark";
-
-    const rect = toggleBtn.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
-    root.style.setProperty("--theme-toggle-x", `${x}px`);
-    root.style.setProperty("--theme-toggle-y", `${y}px`);
-
-    const doSwitch = () => applyTheme(!isDark, true);
-
-    if (document.startViewTransition) {
-      document.startViewTransition(doSwitch);
-    } else {
-      doSwitch();
-    }
-  });
-}
-
-function applyTheme(toDark, save) {
-  const theme = toDark ? "dark" : "light";
-  root.setAttribute("data-theme", theme);
-  if (toggleIcon)
-    toggleIcon.className = toDark
-      ? "bi bi-sun theme-toggle-icon"
-      : "bi bi-moon theme-toggle-icon";
-  if (save) {
-    try {
-      localStorage.setItem("theme", theme);
-      localStorage.setItem("mode", theme);
-      localStorage.setItem("studyhype_theme", theme);
-    } catch (e) {}
-  }
-}
+initThemeToggleBtn(toggleBtn);

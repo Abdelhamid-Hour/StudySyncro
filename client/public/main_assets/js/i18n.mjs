@@ -128,11 +128,12 @@ export const loadNamespaces = async (namespaces = ["common"]) => {
 /**
  * Translates a key with optional interpolation parameters and pluralization.
  * Supports "namespace:path.to.key" notation (defaults to 'common' if no namespace given).
- * @param {string} key - Key string (e.g., "common:alerts.error_occurred" or "time.ago_minutes")
+ * @param {string} key - Key string (e.g., "shared:alerts.error_occurred" or "time.ago_minutes")
  * @param {Object} [params] - Interpolation & pluralization arguments (e.g., { count: 5, name: "file.pdf" })
  * @returns {string} - Translated and interpolated string
  */
 export const t = (key, params = {}) => {
+  if (key.includes("messages.verification_invalid")) debugger;
   if (!key || typeof key !== "string") return "";
 
   const lang = getLang();
@@ -221,10 +222,10 @@ export const initLanguageSwitcher = () => {
       toggleBtn.setAttribute(
         "title",
         nextLang === "ar"
-          ? t("common:actions.switch_to_en", {
+          ? t("shared:actions.switch_to_en", {
               defaultValue: "Switch to English",
             })
-          : t("common:actions.switch_to_ar", {
+          : t("shared:actions.switch_to_ar", {
               defaultValue: "التحويل إلى العربية",
             }),
       );
@@ -236,7 +237,6 @@ export const initLanguageSwitcher = () => {
 /**
  * Initializes client-side i18n, loads namespaces, and initializes Switchers/translateDOM.
  * @param {string[]} namespaces - Initial namespaces to load (default: ['common'])
- * @param {Object} [options] - Options like { isStatic: true }
  */
 export const initI18n = async (namespaces = ["common"]) => {
   if (Array.isArray(namespaces)) {

@@ -62,18 +62,12 @@
     }
   },
   "alerts": {
-    "error_occurred": "حدث خطأ ما.",
-    "unauthorized": "🚫 غير مصرح لك بالوصول إلى هذا المحتوى. يرجى تسجيل الدخول.",
     "file_too_large": "حجم الملف {name} يتجاوز الحد الأقصى المسموح به وهو {max} ميجابايت.",
     "max_files_exceeded": "يمكنك رفع 5 ملفات كحد أقصى فقط",
     "local_id_not_found": "المعرّف المحلي غير موجود.",
     "msg_not_found_local": "الرسالة غير موجودة في التخزين المحلي.",
     "select_subject_error": "يرجى اختيار موضوع صالح من القائمة أو كتابة موضوع جديد.",
     "error_loading_more": "حدث خطأ أثناء تحميل المزيد من العناصر. يرجى المحاولة لاحقاً.",
-    "password_reset_sent": "إذا كان هذا البريد الإلكتروني مسجلاً، فستتصلك رابط إعادة تعيين كلمة المرور.",
-    "password_reset_success": "تمت إعادة تعيين كلمة المرور بنجاح",
-    "try_resetting_again": "حاول إعادة تعيين كلمة المرور مرة أخرى",
-    "reset_link_expired": "انتهت صلاحية رابط إعادة تعيين كلمة المرور أو تم استخدامه بالفعل",
     "subject_input_error": "يرجى إدخال موضوع صالح يتراوح طوله بين 2 و 50 حرفاً.",
     "left_session_success": "لقد غادرت الجلسة بنجاح.",
     "joined_session_success": "لقد انضممت إلى الجلسة بنجاح.",
@@ -94,9 +88,7 @@
   "not_available": "غير متوفر",
   "actions": {
     "scroll_to_top": "التمرير إلى الأعلى",
-    "collapse_all": "طي الكل",
-    "switch_to_en": "التحويل إلى الإنجليزية",
-    "switch_to_ar": "التحويل إلى العربية"
+    "collapse_all": "طي الكل"
   },
   "forms": {
     "other": "أخرى",
@@ -263,8 +255,6 @@
     "subject_is_required": "المادة مطلوبة.",
     "no_active_sessions_found": "لم يتم العثور على جلسات نشطة",
     "we_couldn_t_find_any_active_sessions_matching_your_search_query": "لم نتمكن من العثور على أي جلسات نشطة تطابق استعلام البحث الخاص بك.",
-    "the_password_must_be_between_min_and_max_characters": "يجب أن تتكون كلمة المرور من {min} إلى {max} حرفًا",
-    "passwords_do_not_match": "كلمتا المرور غير متطابقتين",
     "add_at_least_1_question_to_publish": "أضف سؤالاً واحداً على الأقل للنشر",
     "show_group_details": "عرض تفاصيل المجموعة",
     "real_time_chat": "المحادثة الفورية",

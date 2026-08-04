@@ -55,9 +55,9 @@ const requireAuthForPages = async (req, res, next) => {
 
   // If arriving from email verification link, verify right on the backend and create session directly
   if (req.query.mode === "verifyEmail" && req.query.oobCode) {
-    try {     
+    try {
       const apiKey = process.env.FIREBASE_API_KEY;
-      
+
       const response = await fetch(
         `https://identitytoolkit.googleapis.com/v1/accounts:update?key=${apiKey}`,
         {
@@ -68,13 +68,16 @@ const requireAuthForPages = async (req, res, next) => {
       );
 
       const data = await response.json();
-      
+
       if (!response.ok) {
+        console.log(data);
+
         let errCode = "failed";
         if (data.error && data.error.message) {
           if (data.error.message === "EXPIRED_OOB_CODE") errCode = "expired";
-          else if (data.error.message === "INVALID_OOB_CODE") errCode = "invalid";
-          else errCode = "used"; 
+          else if (data.error.message === "INVALID_OOB_CODE")
+            errCode = "invalid";
+          else errCode = "used";
         }
         const error = new Error("api:email_verification_api_failed");
         error.errCode = errCode;
@@ -88,7 +91,7 @@ const requireAuthForPages = async (req, res, next) => {
           method: "POST",
           body: JSON.stringify({ token: customToken, returnSecureToken: true }),
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
 
       if (!signInResponse.ok) {
@@ -114,17 +117,20 @@ const requireAuthForPages = async (req, res, next) => {
         .auth()
         .createSessionCookie(signInData.idToken, { expiresIn });
       res.cookie("session", sessionCookie, options);
-      
+
       res.cookie("verified", "true", { maxAge: 60000 });
 
       return res.redirect("/app/home");
     } catch (err) {
-      console.error("Error verifying action code in requireAuthForPages:", err.message);
+      console.error(
+        "Error verifying action code in requireAuthForPages:",
+        err.message,
+      );
       try {
         await verifySessionCookie(req);
         return res.redirect("/app/home");
       } catch (sessionErr) {
-        return res.redirect(`/login?error=${err.errCode || 'failed'}`);
+        return res.redirect(`/login?error=${err.errCode || "failed"}`);
       }
     }
   }
@@ -141,7 +147,7 @@ const requireAuthForPages = async (req, res, next) => {
 };
 
 const requireAuthForAPI = async (req, res, next) => {
-  if (req.path === "/insert-user-data") {
+  if (req.path === "/insert-user-data" || req.path === "/forgot-password" || req.path === "/resend-verification") {
     return next();
   }
   try {

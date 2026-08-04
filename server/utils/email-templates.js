@@ -67,9 +67,31 @@ const adminJoinRequestTemplate = (applicantName, groupName, groupId) => `
   </div>
 `;
 
+const emailVerificationTemplate = (actionLink) => `
+  <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; margin: auto;">
+    <h2 style="color: #2563eb;">Verify Your Email Address</h2>
+    <p>Hello,</p>
+    <p>Welcome to StudyHype! Please verify your email address to access all features.</p>
+    ${getButton("Verify Email", actionLink)}
+    ${getFooter()}
+  </div>
+`;
+
+const passwordResetTemplate = (actionLink) => `
+  <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; margin: auto;">
+    <h2>Reset Your Password</h2>
+    <p>Hello,</p>
+    <p>We received a request to reset your password. If you didn't make this request, you can safely ignore this email.</p>
+    ${getButton("Reset Password", actionLink)}
+    ${getFooter()}
+  </div>
+`;
+
 module.exports = {
   sessionStartedTemplate,
   joinResultTemplate,
   groupInviteTemplate,
   adminJoinRequestTemplate,
+  emailVerificationTemplate,
+  passwordResetTemplate,
 };

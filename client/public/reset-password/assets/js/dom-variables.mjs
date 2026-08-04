@@ -3,6 +3,7 @@ import {
   PASSWORD_MIN_LENGTH,
 } from "../../../main_assets/js/variables.mjs";
 
+export const toggleBtn = document.getElementById("theme-toggle-btn");
 export const eyeIcons = document.querySelectorAll(".eye-icon");
 export const resetPasswordBtn = document.getElementById("reset-password-btn");
 export const main = document.querySelector("main");

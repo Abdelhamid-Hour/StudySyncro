@@ -1,8 +1,8 @@
-import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { auth } from "../../../../firebase/firebaseConfig.mjs";
 import {
   checkError,
   showMessageBlock,
+  sendData,
   t,
 } from "../../../../main_assets/js/utils.mjs";
 import {
@@ -37,22 +37,6 @@ import {
 } from "./auth-functions.mjs";
 
 initializeGoogleOneTap(auth, showMessageBlock);
-
-const urlParams = new URLSearchParams(window.location.search);
-const errorParam = urlParams.get("error");
-if (errorParam) {
-  const errorMap = {
-    expired: t("login:messages.verification_expired"),
-    invalid: t("login:messages.verification_invalid"),
-    used: t("login:messages.verification_used"),
-    failed: t("login:messages.verification_failed"),
-  };
-
-  if (errorMap[errorParam]) {
-    showMessageBlock(errorMap[errorParam], "error");
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
-}
 
 formsContainer.addEventListener("keyup", (e) => {
   if (e.key === "Enter") {
@@ -121,11 +105,13 @@ forgotPasswordLink.addEventListener("click", async () => {
     if (!verifyEmail()) {
       return;
     }
-    await sendPasswordResetEmail(auth, signInemailField.value);
-    showMessageBlock(t("common:alerts.password_reset_sent"), "success");
+
+    await sendData("/api/forgot-password", { email: signInemailField.value });
+
+    showMessageBlock(t("shared:alerts.password_reset_sent"), "success");
     signInPasswordField.value = "";
   } catch (error) {
     checkError(error);
-    showMessageBlock(error.message, "error");
+    showMessageBlock(error.message, error.type || "error");
   }
 });

@@ -1,7 +1,8 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
-const { createNewUser, logOut } = require("../controllers/auth");
+const { createNewUser, logOut, forgotPassword, resendVerification } = require("../controllers/auth");
 const { setSessionDetails } = require("../middleware/home");
 const { sendSessionDetails } = require("../controllers/home");
 const {
@@ -142,6 +143,26 @@ const {
 } = require("../schemas/notifications.schema");
 
 const apiRouter = express.Router();
+
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3, // Limit each IP to 3 requests per `window` (here, per hour)
+  message: { message: "Too many password reset requests from this IP, please try again after an hour." },
+  standardHeaders: true, 
+  legacyHeaders: false,
+});
+
+const resendVerificationLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3,
+  message: { message: "Too many verification email requests from this IP, please try again after an hour." },
+  standardHeaders: true, 
+  legacyHeaders: false,
+});
+
+apiRouter.post("/forgot-password", forgotPasswordLimiter, forgotPassword);
+
+apiRouter.post("/resend-verification", resendVerificationLimiter, resendVerification);
 
 apiRouter.post("/insert-user-data", upload.single("file"), validate({ body: insertUserDataSchema }), createNewUser);
 

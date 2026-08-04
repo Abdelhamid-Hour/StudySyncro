@@ -8,7 +8,7 @@ import {
   setLang,
   t,
 } from "./i18n.mjs";
-import { AUTH_ERRORS } from "./variables.mjs";
+import { AUTH_ERRORS, toggleIcon } from "./variables.mjs";
 
 export {
   changeLanguage,
@@ -19,6 +19,47 @@ export {
   loadNamespaces,
   setLang,
   t,
+};
+
+export const initThemeToggleBtn = (toggleBtn) => {  
+  if (toggleBtn) {
+    const root = document.documentElement;
+    toggleBtn.addEventListener("click", () => {
+      const isDark = root.getAttribute("data-theme") === "dark";
+
+      const rect = toggleBtn.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      root.style.setProperty("--theme-toggle-x", `${x}px`);
+      root.style.setProperty("--theme-toggle-y", `${y}px`);
+
+      const doSwitch = () => applyTheme(!isDark, true);
+
+      if (document.startViewTransition) {
+        document.startViewTransition(doSwitch);
+      } else {
+        doSwitch();
+      }
+    });
+  }
+};
+
+export const applyTheme = (toDark, save) => {
+  const root = document.documentElement;
+
+  const theme = toDark ? "dark" : "light";
+  root.setAttribute("data-theme", theme);
+  if (toggleIcon)
+    toggleIcon.className = toDark
+      ? "bi bi-sun theme-toggle-icon"
+      : "bi bi-moon theme-toggle-icon";
+  if (save) {
+    try {
+      localStorage.setItem("theme", theme);
+      localStorage.setItem("mode", theme);
+      localStorage.setItem("studyhype_theme", theme);
+    } catch (e) {}
+  }
 };
 
 // Add Event listener for eye icon click to toggle password visibility
@@ -147,10 +188,19 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
     throw err;
   }
 
+  console.log(response);
+
   if (!response.ok) {
+    if (response.status === 429) {
+      const error = new Error(t("shared:auth_errors.TOO_MANY_REQUESTS"));
+      error.isNative = true;
+      error.type = "warning";
+      throw error;
+    }
+
     if (response.status === 401) {
       // Handle unauthorized access
-      showMessageBlock(t("common:alerts.unauthorized"), "warning");
+      showMessageBlock(t("shared:alerts.unauthorized"), "warning");
       setTimeout(() => {
         redirectTo("/login");
       }, 2000);
@@ -164,9 +214,9 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
 
     const responseData = await response
       .json()
-      .catch(() => ({ message: t("common:alerts.error_occurred") }));
+      .catch(() => ({ message: t("shared:alerts.error_occurred") }));
     const error = new Error(
-      responseData.message || t("common:alerts.error_occurred"),
+      responseData.message || t("shared:alerts.error_occurred"),
     );
     error.data = responseData;
     error.status = response.status;

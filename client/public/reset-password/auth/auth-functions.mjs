@@ -15,16 +15,17 @@ import {
   splitUrlParams,
   verifyPasswordFields,
 } from "../assets/js/utils.mjs";
-import { passwordField } from "../assets/js/variables.mjs";
+import { passwordField } from "../assets/js/dom-variables.mjs";
 
 const oobCode = splitUrlParams("oobCode");
 
 export const verifyOobCode = async () => {
+  debugger;
   try {
     await verifyPasswordResetCode(auth, oobCode);
   } catch (error) {
-    const title = t("common:alerts.try_resetting_again");
-    const message = t("common:alerts.reset_link_expired");
+    const title = t("shared:alerts.try_resetting_again");
+    const message = t("shared:alerts.reset_link_expired");
     showErrorMsg(title, message);
   }
 };
@@ -36,7 +37,7 @@ export const resetPassword = async () => {
   try {
     await confirmPasswordReset(auth, oobCode, passwordField.value);
     clearInputFields();
-    showMessageBlock(t("common:alerts.password_reset_success"), "success");
+    showMessageBlock(t("shared:alerts.password_reset_success"), "success");
     setTimeout(() => {
       redirectTo("/login");
     }, 1500);

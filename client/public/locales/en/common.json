@@ -62,18 +62,12 @@
     }
   },
   "alerts": {
-    "error_occurred": "An error occurred.",
-    "unauthorized": "🚫 You are not authorized to access this resource. Please log in.",
     "file_too_large": "File {name} size exceeds the maximum limit of {max}MB.",
     "max_files_exceeded": "You can only upload a maximum of 5 files",
     "local_id_not_found": "Local ID not found.",
     "msg_not_found_local": "Message not found in local storage.",
     "select_subject_error": "Please select a valid subject from the list or specify a new one.",
     "error_loading_more": "Error loading more items. Please try again later.",
-    "password_reset_sent": "If this email is registered, you will receive a password reset link.",
-    "password_reset_success": "Password reset successful",
-    "try_resetting_again": "Try resetting your password again",
-    "reset_link_expired": "Your request to reset your password has expired or the link has already been used",
     "subject_input_error": "Please enter a valid subject between 2 and 50 characters long.",
     "left_session_success": "You have left the session successfully.",
     "joined_session_success": "You have joined the session successfully.",
@@ -94,9 +88,7 @@
   "not_available": "N/A",
   "actions": {
     "scroll_to_top": "Scroll To Top",
-    "collapse_all": "Collapse All",
-    "switch_to_en": "Switch to English",
-    "switch_to_ar": "Switch to Arabic"
+    "collapse_all": "Collapse All"
   },
   "forms": {
     "other": "Other",
@@ -263,8 +255,6 @@
     "subject_is_required": "Subject is required.",
     "no_active_sessions_found": "No Active Sessions Found",
     "we_couldn_t_find_any_active_sessions_matching_your_search_query": "We couldn't find any active sessions matching your search query.",
-    "the_password_must_be_between_min_and_max_characters": "The password must be between {min} and {max} characters",
-    "passwords_do_not_match": "Passwords do not match",
     "add_at_least_1_question_to_publish": "Add at least 1 question to publish",
     "leave_session": "Leave Session",
     "show_group_details": "Show Group Details",

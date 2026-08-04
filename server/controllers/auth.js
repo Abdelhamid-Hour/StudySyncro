@@ -2,6 +2,8 @@ const { db, admin } = require("../firebase/firebaseAdmin");
 const { clearCookies } = require("../middleware/clearCookies");
 const { tokens } = require("../middleware/csrfTokenVerification");
 const { uploadFileToStorage } = require("../utils/firebase-utils/shared");
+const { sendEmailVerificationMail, sendPasswordResetMail } = require("../utils/email-service");
+
 /**
  * Create a new user in firestore or update the user data
  * if the user is signed in with google or facebook
@@ -104,6 +106,25 @@ const createNewUser = async (req, res) => {
       ...userData,
       createdAt: new Date().toISOString(),
     });
+
+    // --- NEW: Backend-Mediated Email Verification ---
+    // If the user hasn't verified their email (and isn't using Google/Facebook)
+    if (userRecord.email && !userRecord.emailVerified && !providers.includes("google.com") && !providers.includes("facebook.com")) {
+      try {
+        const firebaseLink = await admin.auth().generateEmailVerificationLink(userRecord.email);
+        
+        // Extract oobCode to build our custom action URL
+        const urlParams = new URL(firebaseLink).searchParams;
+        const oobCode = encodeURIComponent(urlParams.get("oobCode"));
+        const customActionLink = `${process.env.RENDER_EXTERNAL_URL || "http://localhost:5000"}/app/home?mode=verifyEmail&oobCode=${oobCode}`;
+        
+        await sendEmailVerificationMail(userRecord.email, customActionLink);
+      } catch (emailError) {
+        console.error("Error sending backend email verification:", emailError);
+      }
+    }
+    // ------------------------------------------------
+
     return res.status(200).json({ message: res.locals.t("api:user_data_saved") });
   } catch (error) {
     console.error("Error saving user data:", error);
@@ -162,4 +183,68 @@ const logOut = (req, res) => {
   return res.redirect("/login");
 };
 
-module.exports = { createNewUser, createSession, logOut };
+/**
+ * Generate password reset link and send via Nodemailer
+ * @param {Request} req
+ * @param {Response} res
+ */
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: "Email is required." });
+  }
+
+  try {
+    // Generate the default Firebase link without actionCodeSettings
+    const firebaseLink = await admin.auth().generatePasswordResetLink(email);
+    
+    // Parse out the oobCode and encode it for safety
+    const urlParams = new URL(firebaseLink).searchParams;
+    const oobCode = encodeURIComponent(urlParams.get("oobCode"));
+
+    // Build the custom URL pointing to the custom reset-password page
+    const customActionLink = `${process.env.RENDER_EXTERNAL_URL || "http://localhost:5000"}/reset-password?mode=resetPassword&oobCode=${oobCode}`;
+
+    await sendPasswordResetMail(email, customActionLink);
+    return res.status(200).json({ message: "Password reset email sent." });
+  } catch (error) {
+    console.error("Error sending password reset email:", error);
+    // Return 200 even on error to prevent email enumeration attacks
+    return res.status(200).json({ message: "If the email exists, a reset link was sent." });
+  }
+};
+
+/**
+ * Generate email verification link and send via Nodemailer (Resend)
+ * @param {Request} req
+ * @param {Response} res
+ */
+const resendVerification = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ message: "Email is required." });
+  }
+
+  try {
+    const userRecord = await admin.auth().getUserByEmail(email);
+    
+    if (userRecord.emailVerified) {
+      return res.status(400).json({ message: "Email is already verified." });
+    }
+
+    const firebaseLink = await admin.auth().generateEmailVerificationLink(email);
+    const urlParams = new URL(firebaseLink).searchParams;
+    const oobCode = encodeURIComponent(urlParams.get("oobCode"));
+
+    const customActionLink = `${process.env.RENDER_EXTERNAL_URL || "http://localhost:5000"}/app/home?mode=verifyEmail&oobCode=${oobCode}`;
+
+    await sendEmailVerificationMail(email, customActionLink);
+    return res.status(200).json({ message: "Verification email resent." });
+  } catch (error) {
+    console.error("Error resending verification email:", error);
+    // Return 200 to prevent email enumeration, or 400 if user doesn't exist
+    return res.status(200).json({ message: "If the email exists and is unverified, a link was sent." });
+  }
+};
+
+module.exports = { createNewUser, createSession, logOut, forgotPassword, resendVerification };

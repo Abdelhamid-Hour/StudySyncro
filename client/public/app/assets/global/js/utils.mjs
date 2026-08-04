@@ -1,5 +1,6 @@
 import {
   fetchTemplate,
+  initThemeToggleBtn,
   resetRouteController,
   sendData,
   showMessageBlock,
@@ -234,7 +235,7 @@ export const handleApiAction = async (
       console.error("Error:", error);
     }
     showMessageBlock(
-      error.message || error.data?.message || t("common:alerts.error_occurred"),
+      error.message || error.data?.message || t("shared:alerts.error_occurred"),
       notifType,
     );
   } finally {
@@ -808,7 +809,7 @@ const setScriptRoute = async (pathName, thisNav) => {
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error(error);
     showMessageBlock(
-      error.message || t("common:alerts.error_occurred"),
+      error.message || t("shared:alerts.error_occurred"),
       notifType,
     );
   }
@@ -1416,7 +1417,7 @@ export const updateMain = async (path, isTabLinks) => {
       error.type || error.data?.type || (isNative ? "info" : "error");
     if (!isNative) console.error(error);
     showMessageBlock(
-      error.message || t("common:alerts.error_occurred"),
+      error.message || t("shared:alerts.error_occurred"),
       notifType,
     );
   } finally {
@@ -1774,7 +1775,7 @@ export const openOverlayModal = async (
     if (!isNative)
       backdrop.innerHTML = `<h2>${t("common:skeletons.error_loading")}</h2>`;
     showMessageBlock(
-      error.message || t("common:alerts.error_occurred"),
+      error.message || t("shared:alerts.error_occurred"),
       notifType,
     );
   }
@@ -2891,33 +2892,7 @@ export const initThemeToggle = () => {
     ".toggle-container, #mobile-theme-toggle-btn",
   );
   themeBtns.forEach((btn) => {
-    btn?.addEventListener("click", () => {
-      const currentTheme =
-        document.documentElement.getAttribute("data-theme") || "dark";
-      const newTheme = currentTheme === "dark" ? "light" : "dark";
-
-      const rect = btn.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
-      document.documentElement.style.setProperty("--theme-toggle-x", `${x}px`);
-      document.documentElement.style.setProperty("--theme-toggle-y", `${y}px`);
-
-      const applyTheme = () => {
-        document.documentElement.setAttribute("data-theme", newTheme);
-        updateThemeToggleIcons(newTheme);
-        try {
-          localStorage.setItem("theme", newTheme);
-          localStorage.setItem("mode", newTheme);
-          localStorage.setItem("studyhype_theme", newTheme);
-        } catch (e) {}
-      };
-
-      if (document.startViewTransition) {
-        document.startViewTransition(applyTheme);
-      } else {
-        applyTheme();
-      }
-    });
+    initThemeToggleBtn(btn);
   });
 };
 
