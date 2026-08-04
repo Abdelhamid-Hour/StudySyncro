@@ -70,7 +70,7 @@ app.get("/sitemap.xml", generateSitemap);
 app.use("/", authRouter);
 
 // Serve the static files
-// app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.static(path.join(__dirname, "../client/public")));
 // application route
 app.use("/app", requireAuthForPages, appRouter);
 // api route
