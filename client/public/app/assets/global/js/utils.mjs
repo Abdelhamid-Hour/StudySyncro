@@ -798,7 +798,7 @@ const createPreloadLink = (href) => {
 
 const setScriptRoute = async (pathName, thisNav) => {
   try {
-    const modulePath = `/app/assets${pathName}/js/main.js`;
+    const modulePath = `/app/assets${pathName}/js/main.mjs`;
     const module = await import(modulePath);
     if (thisNav !== navCounter) return;
     module.init?.();
