@@ -54,7 +54,6 @@ export let _loadersCount = 4;
 export const updateLoaderCountVar = (val) => {
   _loadersCount = val;
 };
-let isRouting = false;
 
 window.__activeEventSources = window.__activeEventSources || [];
 const OriginalEventSource = window.EventSource;
@@ -745,9 +744,6 @@ const setSharedStylesResources = async (pathName, removeOld = true) => {
     const sharedStylesLinks = document.querySelectorAll(
       'link[data-dynamic][rel="stylesheet"][href*="shared"]',
     );
-    const sharedPreloadLinks = document.querySelectorAll(
-      'link[data-dynamic][rel="preload"][href*="shared"]',
-    );
     // add new shared resources and wait for their load
     await Promise.all(
       sharedStylesRoutes.map((styleRoute) => {
@@ -772,29 +768,8 @@ const setSharedStylesResources = async (pathName, removeOld = true) => {
           l.remove();
         }
       });
-      sharedPreloadLinks.forEach((l) => {
-        const prevStyleRoute = sharedStylesRoutes.find((route) =>
-          l.href.includes(route),
-        );
-        if (!prevStyleRoute) {
-          l.remove();
-        }
-      });
     }
   }
-};
-
-const createPreloadLink = (href) => {
-  const type = href.split(".")[1] === "css" ? "style" : "script";
-  const preloadLink = document.createElement("link");
-  preloadLink.rel = type === "style" ? "preload" : "modulepreload";
-  preloadLink.href = href;
-  preloadLink.as = type;
-  preloadLink.setAttribute("data-dynamic", "");
-  if (type === "script") {
-    preloadLink.crossOrigin = "anonymous";
-  }
-  return preloadLink;
 };
 
 const setScriptRoute = async (pathName, thisNav) => {
@@ -826,11 +801,9 @@ const setStyleRoute = (pathName) => {
     stylesLink.href = href;
     stylesLink.as = "style";
     stylesLink.setAttribute("data-dynamic", "");
-    const preloadLink = createPreloadLink(href);
     stylesLink.onload = () => resolve();
     stylesLink.onerror = () => resolve();
     document.head.appendChild(stylesLink);
-    document.head.appendChild(preloadLink);
   });
 };
 
@@ -838,18 +811,10 @@ const removePreviousRessources = (keepPathName = null) => {
   const stylesLinks = document.querySelectorAll(
     'link[data-dynamic][rel="stylesheet"]:not([href*="shared"])',
   );
-  const preloadLinks = document.querySelectorAll(
-    'link[data-dynamic][rel="preload"]:not([href*="shared"]), link[data-dynamic][rel="modulepreload"]',
-  );
   const script = document.querySelector("script[data-dynamic]");
 
   script?.remove();
   stylesLinks.forEach((l) => {
-    if (!keepPathName || !l.href.includes(keepPathName)) {
-      l.remove();
-    }
-  });
-  preloadLinks.forEach((l) => {
     if (!keepPathName || !l.href.includes(keepPathName)) {
       l.remove();
     }
@@ -1322,7 +1287,6 @@ export const updateMain = async (path, isTabLinks) => {
   const thisNav = ++navCounter;
   try {
     if (thisNav !== navCounter) {
-      isRouting = false;
       return;
     }
     resetRouteController();
@@ -1370,7 +1334,6 @@ export const updateMain = async (path, isTabLinks) => {
     );
 
     if (thisNav !== navCounter) {
-      isRouting = false;
       return;
     }
 
@@ -1388,7 +1351,6 @@ export const updateMain = async (path, isTabLinks) => {
     ]);
 
     if (thisNav !== navCounter) {
-      isRouting = false;
       return;
     }
 
@@ -1420,8 +1382,6 @@ export const updateMain = async (path, isTabLinks) => {
       error.message || t("shared:alerts.error_occurred"),
       notifType,
     );
-  } finally {
-    isRouting = false;
   }
 };
 
@@ -1490,13 +1450,6 @@ export const clearTooltipWithTimeOut = getDebounceFunc((input) => {
   resetTooltip(globalTooltip, input);
 }, 2000);
 
-export const handleRoutingClick = (event) => {
-  // if (isRouting) {
-  //   event.preventDefault(); // Prevent default action (like link navigation)
-  //   event.stopPropagation(); // Optional: stop event from bubbling up
-  // }
-};
-
 export const clearOverlaysModals = () => {
   const overlaysModals = document.querySelectorAll(".backdrop");
   overlaysModals.forEach((oM) => {
@@ -1531,7 +1484,6 @@ export const handleNavigation = (e) => {
     e.preventDefault();
     const pathName = new URL(link.href).pathname;
     if (pathName !== location.pathname) {
-      isRouting = true;
       toggleActiveLink(pathName, tabLink);
       updateMain(pathName, tabLink);
       resetTooltip(hoverTooltip);

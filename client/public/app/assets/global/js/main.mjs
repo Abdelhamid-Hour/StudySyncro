@@ -10,7 +10,6 @@ import {
   handleOnlineSync,
   handleOverlayClose,
   handlePopState,
-  handleRoutingClick,
   initEmailActionTriggers,
   initI18n,
   initMobileDrawer,
@@ -41,7 +40,6 @@ document.addEventListener("mouseout", handleIconsHoverLeave);
 
 document.addEventListener("click", openOverlayHandler);
 document.addEventListener("click", handleOverlayClose);
-document.addEventListener("click", handleRoutingClick, true);
 document.addEventListener("click", handleNavigation);
 
 initTheme();

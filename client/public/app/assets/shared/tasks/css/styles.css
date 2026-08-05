@@ -97,11 +97,11 @@
         text-indent: calc(var(--primary-gap) / 2);
       }
 
-.tasks-list .task-wrapper:not(.tasks-list .task-wrapper):not(.tasks-list .completed-task) {
+.tasks-list .task-wrapper:not(:first-child) {
       margin-top: calc(var(--primary-gap) / 2);
     }
 
-.tasks-list .completed-task:not(.tasks-list .task-wrapper):not(.tasks-list .completed-task) {
+.tasks-list .completed-task:not(:first-child) {
       margin-top: calc(var(--primary-gap) / 2);
     }
 

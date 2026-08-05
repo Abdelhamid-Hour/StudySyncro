@@ -21,38 +21,8 @@
     <!-- Preloading Critical Resources -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
-    <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
-    <link
-    rel="preload"
-    href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
-    as="style"
-    id="font-arabic-preload"
-    />
-    <% } %>
-    <link
-    rel="preload"
-    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-    as="style"
-    id="font-inter-preload"
-    />
-    <link
-    rel="preload"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-      as="style"
-      />
-    <link rel="preload" href="/app/assets/global/css/styles.css" as="style" />
-    <link
-    data-dynamic=""
-    rel="preload"
-    href="/app/assets<%- resourcesRoute %>css/styles.css"
-    as="style"
-    />
-    <link rel="preload" href="/main_assets/css/styles.css" as="style" />
-    <link
-    rel="preload"
-    href="/main_assets/css/variables_and_fonts.css"
-    as="style"
-    />
+
+    <!-- Internationalization (i18n) SEO -->
     <link
     rel="modulepreload"
     href="/app/assets/global/js/main.mjs"
