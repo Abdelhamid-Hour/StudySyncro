@@ -1,11 +1,11 @@
 const APP_URL = process.env.RENDER_EXTERNAL_URL || "http://localhost:5000";
 
-const getFooter = () => `
+const getFooter = (t) => `
   <br/>
   <hr style="border: 0; border-top: 1px solid #eaeaea; margin-top: 30px;" />
   <p style="font-size: 12px; color: #888; text-align: center;">
-    This is an automated message from StudySyncro.<br/>
-    Please do not reply to this email, as this inbox is unmonitored.
+    ${t ? t("api:emails.footer_automated") : "This is an automated message from StudySyncro."}<br/>
+    ${t ? t("api:emails.footer_no_reply") : "Please do not reply to this email, as this inbox is unmonitored."}
   </p>
 `;
 
@@ -61,29 +61,29 @@ const adminJoinRequestTemplate = (applicantName, groupName, groupId) => `
     <h2>New Join Request</h2>
     <p>Hello Admin,</p>
     <p><strong>${applicantName}</strong> has requested to join your group <strong>"${groupName}"</strong>.</p>
-    <p>Please review their request in your group's sidebar.</p>
-    ${getButton("Go to Group", `${APP_URL}/app/groups/my/${groupId}/chat`)}
+    <p>Log in to your dashboard to review this request.</p>
+    ${getButton("Review Request", `${APP_URL}/app/groups/my/${groupId}/chat`)}
     ${getFooter()}
   </div>
 `;
 
-const emailVerificationTemplate = (actionLink) => `
+const emailVerificationTemplate = (actionLink, t) => `
   <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; margin: auto;">
-    <h2 style="color: #2563eb;">Verify Your Email Address</h2>
-    <p>Hello,</p>
-    <p>Welcome to StudySyncro! Please verify your email address to access all features.</p>
-    ${getButton("Verify Email", actionLink)}
-    ${getFooter()}
+    <h2 style="color: #2563eb;">${t ? t("api:emails.verify_email.title") : "Verify Your Email Address"}</h2>
+    <p>${t ? t("api:emails.verify_email.greeting") : "Hello,"}</p>
+    <p>${t ? t("api:emails.verify_email.description") : "Welcome to StudySyncro! Please verify your email address to access all features."}</p>
+    ${getButton(t ? t("api:emails.verify_email.button") : "Verify Email", actionLink)}
+    ${getFooter(t)}
   </div>
 `;
 
-const passwordResetTemplate = (actionLink) => `
+const passwordResetTemplate = (actionLink, t) => `
   <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; margin: auto;">
-    <h2>Reset Your Password</h2>
-    <p>Hello,</p>
-    <p>We received a request to reset your password. If you didn't make this request, you can safely ignore this email.</p>
-    ${getButton("Reset Password", actionLink)}
-    ${getFooter()}
+    <h2>${t ? t("api:emails.password_reset.title") : "Reset Your Password"}</h2>
+    <p>${t ? t("api:emails.password_reset.greeting") : "Hello,"}</p>
+    <p>${t ? t("api:emails.password_reset.description") : "We received a request to reset your password. If you didn't make this request, you can safely ignore this email."}</p>
+    ${getButton(t ? t("api:emails.password_reset.button") : "Reset Password", actionLink)}
+    ${getFooter(t)}
   </div>
 `;
 

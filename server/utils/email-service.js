@@ -91,17 +91,17 @@ const sendAdminJoinRequestEmail = async (
   await sendMailHelper(adminEmail, null, subject, html);
 };
 
-const sendEmailVerificationMail = async (userEmail, actionLink) => {
+const sendEmailVerificationMail = async (userEmail, actionLink, t) => {
   if (!userEmail) return;
-  const subject = `Verify Your Email for StudySyncro`;
-  const html = templates.emailVerificationTemplate(actionLink);
+  const subject = t ? t("api:emails.verify_email.subject") : "Verify Your Email for StudySyncro";
+  const html = templates.emailVerificationTemplate(actionLink, t);
   await sendMailHelper(userEmail, null, subject, html);
 };
 
-const sendPasswordResetMail = async (userEmail, actionLink) => {
+const sendPasswordResetMail = async (userEmail, actionLink, t) => {
   if (!userEmail) return;
-  const subject = `Reset Your StudySyncro Password`;
-  const html = templates.passwordResetTemplate(actionLink);
+  const subject = t ? t("api:emails.password_reset.subject") : "Reset Your StudySyncro Password";
+  const html = templates.passwordResetTemplate(actionLink, t);
   await sendMailHelper(userEmail, null, subject, html);
 };
 

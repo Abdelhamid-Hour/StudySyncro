@@ -13,6 +13,24 @@
   "access_denied_to_this_group_chat": "Access denied to this group chat",
   "access_denied_to_this_session_chat": "Access denied to this session chat",
   "groupid_is_required": "groupId is required",
+  "emails": {
+    "footer_automated": "This is an automated message from StudySyncro.",
+    "footer_no_reply": "Please do not reply to this email, as this inbox is unmonitored.",
+    "verify_email": {
+      "title": "Verify Your Email Address",
+      "greeting": "Hello,",
+      "description": "Welcome to StudySyncro! Please verify your email address to access all features.",
+      "button": "Verify Email",
+      "subject": "Verify Your Email for StudySyncro"
+    },
+    "password_reset": {
+      "title": "Reset Your Password",
+      "greeting": "Hello,",
+      "description": "We received a request to reset your password. If you didn't make this request, you can safely ignore this email.",
+      "button": "Reset Password",
+      "subject": "Reset Your StudySyncro Password"
+    }
+  },
   "marked_as_read": "Marked as read",
   "internal_server_error": "Internal Server Error",
   "group_id_is_required": "Group ID is required",

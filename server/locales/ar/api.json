@@ -13,6 +13,24 @@
   "access_denied_to_this_group_chat": "تم رفض الوصول إلى دردشة هذه المجموعة",
   "access_denied_to_this_session_chat": "تم رفض الوصول إلى دردشة هذه الجلسة",
   "groupid_is_required": "معرف المجموعة مطلوب",
+  "emails": {
+    "footer_automated": "هذه رسالة تلقائية من StudySyncro.",
+    "footer_no_reply": "يرجى عدم الرد على هذه الرسالة، لأن هذا البريد الوارد غير مراقب.",
+    "verify_email": {
+      "title": "تحقق من عنوان بريدك الإلكتروني",
+      "greeting": "مرحباً،",
+      "description": "مرحباً بك في StudySyncro! يرجى التحقق من عنوان بريدك الإلكتروني للوصول إلى جميع الميزات.",
+      "button": "تحقق من البريد الإلكتروني",
+      "subject": "التحقق من بريدك الإلكتروني لـ StudySyncro"
+    },
+    "password_reset": {
+      "title": "إعادة تعيين كلمة المرور",
+      "greeting": "مرحباً،",
+      "description": "تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بك. إذا لم تقم بهذا الطلب، يمكنك تجاهل هذه الرسالة بأمان.",
+      "button": "إعادة تعيين كلمة المرور",
+      "subject": "إعادة تعيين كلمة مرور StudySyncro الخاصة بك"
+    }
+  },
   "marked_as_read": "تم التحديد كمقروءة",
   "internal_server_error": "خطأ داخلي في الخادم",
   "group_id_is_required": "معرف المجموعة مطلوب",

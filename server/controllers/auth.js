@@ -118,7 +118,7 @@ const createNewUser = async (req, res) => {
         const oobCode = encodeURIComponent(urlParams.get("oobCode"));
         const customActionLink = `${process.env.RENDER_EXTERNAL_URL || "http://localhost:5000"}/app/home?mode=verifyEmail&oobCode=${oobCode}`;
         
-        await sendEmailVerificationMail(userRecord.email, customActionLink);
+        await sendEmailVerificationMail(userRecord.email, customActionLink, res.locals.t);
       } catch (emailError) {
         console.error("Error sending backend email verification:", emailError);
       }
@@ -205,7 +205,7 @@ const forgotPassword = async (req, res) => {
     // Build the custom URL pointing to the custom reset-password page
     const customActionLink = `${process.env.RENDER_EXTERNAL_URL || "http://localhost:5000"}/reset-password?mode=resetPassword&oobCode=${oobCode}`;
 
-    await sendPasswordResetMail(email, customActionLink);
+    await sendPasswordResetMail(email, customActionLink, res.locals.t);
     return res.status(200).json({ message: "Password reset email sent." });
   } catch (error) {
     console.error("Error sending password reset email:", error);
@@ -238,7 +238,7 @@ const resendVerification = async (req, res) => {
 
     const customActionLink = `${process.env.RENDER_EXTERNAL_URL || "http://localhost:5000"}/app/home?mode=verifyEmail&oobCode=${oobCode}`;
 
-    await sendEmailVerificationMail(email, customActionLink);
+    await sendEmailVerificationMail(email, customActionLink, res.locals.t);
     return res.status(200).json({ message: "Verification email resent." });
   } catch (error) {
     console.error("Error resending verification email:", error);
