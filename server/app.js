@@ -15,7 +15,7 @@ const { pageNotFoundHandler } = require("./controllers/pages");
 const i18nMiddleware = require("./middleware/i18n");
 const startSessionCleaner = require("./utils/cron/sessionCleaner");
 const compression = require("compression");
-const helmet = require("helmet");
+const { generateNonce, securityHeaders } = require("./middleware/security");
 const {
   setGlobalUrls,
   redirectRoute,
@@ -25,16 +25,13 @@ const {
 
 const app = express();
 
-// SEO & Performance Middleware
+// Trust Vercel's proxy so req.protocol correctly identifies HTTPS
+app.set("trust proxy", true);
+
+// SEO, Security & Performance Middleware
 app.use(compression());
-app.use(
-  helmet({
-    contentSecurityPolicy: false, // Disabled for now to avoid breaking existing scripts/images
-    crossOriginEmbedderPolicy: false,
-    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
-    hsts: process.env.NODE_ENV === "production", // Disabled because production currently lacks HTTPS
-  }),
-);
+app.use(generateNonce);
+app.use(securityHeaders);
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>
+    <script nonce="<%= nonce %>">
       (function () {
         try {
           var theme = localStorage.getItem("theme") || "light";
@@ -48,14 +48,14 @@
     <meta property="og:url" content="<%= fullUrl %>" />
     <meta
       property="og:image"
-      content="/images/home/active-home-page.webp"
+      content="<%= baseUrl %>/images/home/active-home-page.webp"
     />
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="<%= t('root:landing_seo.og_title', { defaultValue: 'StudySyncro — Collaborative Study Spaces' }) %>" />
     <meta name="twitter:description" content="<%= t('root:landing_seo.description', { defaultValue: 'Join study groups, take interactive quizzes, and collaborate in real-time with peers around the world.' }) %>" />
-    <meta name="twitter:image" content="/images/home/active-home-page.webp" />
+    <meta name="twitter:image" content="<%= baseUrl %>/images/home/active-home-page.webp" />
 
     <!-- JSON-LD Structured Data (Software) -->
     <script type="application/ld+json">
@@ -96,21 +96,24 @@
 
     <!-- Fonts & Bootstrap Icons -->
     <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap"
-      id="font-arabic"
-    />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" as="style" id="font-arabic-preload" />
     <% } %>
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-      id="font-inter"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" as="style" id="font-inter-preload" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" as="style" id="font-icons-preload" />
+    <script nonce="<%= nonce %>">
+      // Safely swap the rel attribute after the page loads without triggering CSP violations
+      document.getElementById('font-inter-preload').rel = 'stylesheet';
+      document.getElementById('font-icons-preload').rel = 'stylesheet';
+      const arabicFont = document.getElementById('font-arabic-preload');
+      if (arabicFont) arabicFont.rel = 'stylesheet';
+    </script>
+    <noscript>
+      <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" id="font-arabic" />
+      <% } %>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" id="font-inter" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    </noscript>
 
     <!-- Global Website Styles & Native Tokens -->
     <link rel="stylesheet" href="/main_assets/css/variables_and_fonts.css" />
@@ -124,6 +127,7 @@
         <img
           src="/images/logo-mark.svg"
           alt="<%= t('root:images.logo_alt') %>"
+          style="width: 1.8rem; height: 1.8rem"
         />
         <span
           >StudySyncro</span
@@ -197,7 +201,7 @@
             style="width: 100%; aspect-ratio: 16/9; height: auto;"
             alt="<%= t('root:images.dashboard_preview') %>"
           />
-          <script>
+          <script nonce="<%= nonce %>">
             (function(){
               var img = document.getElementById("hero-img-lcp");
               var isDark = document.documentElement.getAttribute("data-theme") === "dark";
@@ -560,7 +564,7 @@
     </main>
 
     <!-- Native Theme Switcher Script -->
-    <script>
+    <script nonce="<%= nonce %>">
       (function () {
         const toggleBtn = document.getElementById("theme-toggle-btn");
         const toggleIcon = document.getElementById("theme-toggle-icon");
@@ -616,7 +620,7 @@
         }
       })();
     </script>
-    <script type="module">
+    <script type="module" nonce="<%= nonce %>">
       import { initLanguageSwitcher } from "/main_assets/js/i18n.mjs";
       initLanguageSwitcher();
     </script>

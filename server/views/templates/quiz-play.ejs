@@ -1,11 +1,4 @@
 <div class="quiz-view">
-  <script>
-    window.__QUIZ_INITIAL_DATA__ = {
-      duration: <%= duration %>,
-      questions: <%- typeof questions !== 'undefined' ? JSON.stringify(questions).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026') : '[]' %>,
-      passed: <%= passed %>
-    };
-  </script>
   <a class="button close-btn exclude-btn has-tooltip" data-tooltip="<%= t('common:actions.close') %>">
     <i class="bi bi-x-lg"></i>
   </a>

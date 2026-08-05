@@ -188,8 +188,6 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
     throw err;
   }
 
-  console.log(response);
-
   if (!response.ok) {
     if (response.status === 429) {
       const error = new Error(t("shared:auth_errors.TOO_MANY_REQUESTS"));

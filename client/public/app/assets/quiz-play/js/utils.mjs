@@ -325,21 +325,11 @@ export const toPreviousQuestion = () => step(-1);
 
 export const setUpQuiz = async () => {
   try {
-    let questions, duration, passed;
-    if (
-      window.__QUIZ_INITIAL_DATA__ &&
-      window.__QUIZ_INITIAL_DATA__.questions &&
-      window.__QUIZ_INITIAL_DATA__.questions.length > 0
-    ) {
-      questions = window.__QUIZ_INITIAL_DATA__.questions;
-      duration = window.__QUIZ_INITIAL_DATA__.duration;
-      passed = window.__QUIZ_INITIAL_DATA__.passed;
-    } else {
-      const data = await fetchData("/quiz-play-details/" + quiz.id);
-      questions = data.questions;
-      duration = data.duration;
-      passed = data.passed;
-    }
+    const data = await fetchData("/quiz-play-details/" + quiz.id);
+    const questions = data.questions;
+    const duration = data.duration;
+    const passed = data.passed;
+
     quiz.duration = duration;
     quiz.questions = questions;
     quiz.passed = passed;
