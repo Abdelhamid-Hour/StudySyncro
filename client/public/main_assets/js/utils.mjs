@@ -21,7 +21,7 @@ export {
   t,
 };
 
-export const initThemeToggleBtn = (toggleBtn) => {  
+export const initThemeToggleBtn = (toggleBtn) => {
   if (toggleBtn) {
     const root = document.documentElement;
     toggleBtn.addEventListener("click", () => {
@@ -57,7 +57,7 @@ export const applyTheme = (toDark, save) => {
     try {
       localStorage.setItem("theme", theme);
       localStorage.setItem("mode", theme);
-      localStorage.setItem("studyhype_theme", theme);
+      localStorage.setItem("studysyncro_theme", theme);
     } catch (e) {}
   }
 };

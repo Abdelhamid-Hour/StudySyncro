@@ -31,6 +31,8 @@ import {
   showAvatarSide,
   swapAnimationThrottling,
 } from "./utils.mjs";
+// Clear avatar button logic
+import { clearAvatarBtn, fileinput } from "./dom-variables.mjs";
 
 showGoogleOneTap();
 initVerifyMsgBlock();
@@ -86,9 +88,6 @@ window.addEventListener("resize", () => {
 handlEyeIconsClick(eyeIcons);
 
 setUpFileInputListeners(avatarContainer, avatarAside);
-
-// Clear avatar button logic
-import { clearAvatarBtn, fileinput } from "./dom-variables.mjs";
 
 // Let's hook up the clear button click event:
 clearAvatarBtn.addEventListener("click", () => {

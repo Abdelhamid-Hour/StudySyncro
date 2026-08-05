@@ -4,7 +4,7 @@ const getFooter = () => `
   <br/>
   <hr style="border: 0; border-top: 1px solid #eaeaea; margin-top: 30px;" />
   <p style="font-size: 12px; color: #888; text-align: center;">
-    This is an automated message from StudyHype.<br/>
+    This is an automated message from StudySyncro.<br/>
     Please do not reply to this email, as this inbox is unmonitored.
   </p>
 `;
@@ -29,8 +29,8 @@ const sessionStartedTemplate = (sessionData, groupId, sessionId) => `
 `;
 
 const joinResultTemplate = (groupName, isAccepted, groupId) => {
-  const statusHtml = isAccepted 
-    ? `<span style="color: green; font-weight: bold;">Accepted</span>. You can now access the group.` 
+  const statusHtml = isAccepted
+    ? `<span style="color: green; font-weight: bold;">Accepted</span>. You can now access the group.`
     : `<span style="color: red; font-weight: bold;">Declined</span>.`;
 
   return `
@@ -71,7 +71,7 @@ const emailVerificationTemplate = (actionLink) => `
   <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; margin: auto;">
     <h2 style="color: #2563eb;">Verify Your Email Address</h2>
     <p>Hello,</p>
-    <p>Welcome to StudyHype! Please verify your email address to access all features.</p>
+    <p>Welcome to StudySyncro! Please verify your email address to access all features.</p>
     ${getButton("Verify Email", actionLink)}
     ${getFooter()}
   </div>

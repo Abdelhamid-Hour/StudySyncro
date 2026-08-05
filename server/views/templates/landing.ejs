@@ -12,18 +12,18 @@
       })();
     </script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title><%= t("api:studyhype_elevate_your_learning_with_rea") %></title>
+    <title><%= t("api:studysyncro_elevate_your_learning_with_rea") %></title>
     <meta
       name="description"
-      content="<%= t('root:landing_seo.description', { defaultValue: 'StudyHype is a collaborative learning platform featuring real-time group study sessions, interactive chat, custom quiz editors, and productivity timers.' }) %>"
+      content="<%= t('root:landing_seo.description', { defaultValue: 'StudySyncro is a collaborative learning platform featuring real-time group study sessions, interactive chat, custom quiz editors, and productivity timers.' }) %>"
     />
     <meta
       name="keywords"
-      content="<%= t('root:landing_seo.keywords', { defaultValue: 'StudyHype, study groups, online learning, collaborative studying, real-time chat, quizzes, exam editor, study timer' }) %>"
+      content="<%= t('root:landing_seo.keywords', { defaultValue: 'StudySyncro, study groups, online learning, collaborative studying, real-time chat, quizzes, exam editor, study timer' }) %>"
     />
-    <meta name="author" content="StudyHype Team" />
+    <meta name="author" content="StudySyncro Team" />
     <meta name="robots" content="index, follow" />
-    <meta name="application-name" content="StudyHype" />
+    <meta name="application-name" content="StudySyncro" />
     <meta name="theme-color" content="#1e77fd" />
     <link rel="canonical" href="<%= fullUrl %>" />
 
@@ -33,11 +33,11 @@
     <link rel="alternate" hreflang="x-default" href="<%= baseUrl %><%= fullUrl.split('?')[0].replace(baseUrl, '') %>" />
 
     <!-- Open Graph / Social Sharing -->
-    <meta property="og:site_name" content="StudyHype" />
+    <meta property="og:site_name" content="StudySyncro" />
     <meta property="og:locale" content="<%= lang === 'ar' ? 'ar_AR' : 'en_US' %>" />
     <meta
       property="og:title"
-      content="<%= t('root:landing_seo.og_title', { defaultValue: 'StudyHype — Collaborative Study Spaces' }) %>"
+      content="<%= t('root:landing_seo.og_title', { defaultValue: 'StudySyncro — Collaborative Study Spaces' }) %>"
     />
     <meta
       property="og:description"
@@ -52,7 +52,7 @@
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="<%= t('root:landing_seo.og_title', { defaultValue: 'StudyHype — Collaborative Study Spaces' }) %>" />
+    <meta name="twitter:title" content="<%= t('root:landing_seo.og_title', { defaultValue: 'StudySyncro — Collaborative Study Spaces' }) %>" />
     <meta name="twitter:description" content="<%= t('root:landing_seo.description', { defaultValue: 'Join study groups, take interactive quizzes, and collaborate in real-time with peers around the world.' }) %>" />
     <meta name="twitter:image" content="/images/home/active-home-page.webp" />
 
@@ -61,7 +61,7 @@
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      "name": "StudyHype",
+      "name": "StudySyncro",
       "applicationCategory": "EducationalApplication",
       "operatingSystem": "Any",
       "url": "<%= baseUrl %>",
@@ -78,7 +78,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "name": "StudyHype",
+      "name": "StudySyncro",
       "url": "<%= baseUrl %>",
       "logo": "<%= baseUrl %>/images/logo-mark.svg"
     }
@@ -158,7 +158,7 @@
           alt="<%= t('root:images.logo_alt') %>"
         />
         <span
-          >StudyHype</span
+          >StudySyncro</span
         >
       </a>
 
@@ -565,7 +565,7 @@
             style="width: 1.8rem; height: 1.8rem"
           />
           <span style="font-weight: 800; letter-spacing: -0.3px"
-            >StudyHype</span
+            >StudySyncro</span
           >
         </div>
 
@@ -634,7 +634,7 @@
             try {
               localStorage.setItem("theme", theme);
               localStorage.setItem("mode", theme);
-              localStorage.setItem("studyhype_theme", theme);
+              localStorage.setItem("studysyncro_theme", theme);
             } catch (e) {}
           }
         }

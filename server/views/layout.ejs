@@ -90,7 +90,7 @@
     <link data-dynamic="" rel="stylesheet" href="/app/assets<%- resourcesRoute %>css/styles.css" />
     <link rel="stylesheet" href="/main_assets/css/styles.css" />
     <link rel="stylesheet" href="/main_assets/css/variables_and_fonts.css" />
-    <title>StudyHype — <%= resourcesRoute.includes("/home/") 
+    <title>StudySyncro — <%= resourcesRoute.includes("/home/") 
       ? t("common:titles.home") 
       : resourcesRoute === '/groups/my/group-chat/' 
       ? t("common:titles.group_chat") 
@@ -422,8 +422,8 @@
     </aside>
     <aside class="left-side-bar">
       <div class="logo-container">
-        <img src="/images/logo-mark.svg" alt="<%= t('common:images.logo_alt', { defaultValue: 'StudyHype Logo' }) %>" style="aspect-ratio: 1 / 1; width: 2.2rem; flex-shrink: 0;" />
-        <h6 class="should-hide">StudyHype</h6>
+        <img src="/images/logo-mark.svg" alt="<%= t('common:images.logo_alt', { defaultValue: 'StudySyncro Logo' }) %>" style="aspect-ratio: 1 / 1; width: 2.2rem; flex-shrink: 0;" />
+        <h6 class="should-hide">StudySyncro</h6>
       </div>
       <div class="side-bar-icons">
         <div class="top-side-bar-icons">
@@ -676,7 +676,7 @@
           <% } else if (resourcesRoute.includes("/settings/")) { %>
             <%= t("common:titles.account_settings") %>
           <% } else { %>
-              StudyHype
+              StudySyncro
           <% } %>
         </h1>
       </div>

@@ -11,12 +11,14 @@ const transporter = nodemailer.createTransport({
 
 const sendMailHelper = async (to, bcc, subject, htmlContent) => {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    console.warn("EMAIL_USER or EMAIL_PASS is not set in .env. Skipping email.");
+    console.warn(
+      "EMAIL_USER or EMAIL_PASS is not set in .env. Skipping email.",
+    );
     return;
   }
 
   const mailOptions = {
-    from: '"StudyHype (No Reply)" <' + process.env.EMAIL_USER + '>',
+    from: '"StudySyncro (No Reply)" <' + process.env.EMAIL_USER + ">",
     subject: subject,
     html: htmlContent,
   };
@@ -31,46 +33,74 @@ const sendMailHelper = async (to, bcc, subject, htmlContent) => {
   }
 };
 
-const sendSessionStartedEmail = async (userEmails, sessionData, groupId, sessionId) => {
+const sendSessionStartedEmail = async (
+  userEmails,
+  sessionData,
+  groupId,
+  sessionId,
+) => {
   if (!userEmails || userEmails.length === 0) return;
   const subject = `🔴 Live Session Started: ${sessionData.sessionName}`;
-  const html = templates.sessionStartedTemplate(sessionData, groupId, sessionId);
+  const html = templates.sessionStartedTemplate(
+    sessionData,
+    groupId,
+    sessionId,
+  );
   await sendMailHelper(null, userEmails, subject, html);
 };
 
-const sendJoinResultEmail = async (userEmail, groupName, isAccepted, groupId) => {
+const sendJoinResultEmail = async (
+  userEmail,
+  groupName,
+  isAccepted,
+  groupId,
+) => {
   if (!userEmail) return;
-  const subject = isAccepted 
-    ? `✅ Accepted into ${groupName}` 
+  const subject = isAccepted
+    ? `✅ Accepted into ${groupName}`
     : `❌ Join Request Update for ${groupName}`;
   const html = templates.joinResultTemplate(groupName, isAccepted, groupId);
   await sendMailHelper(userEmail, null, subject, html);
 };
 
-const sendGroupInviteEmail = async (userEmail, groupName, senderName, groupId) => {
+const sendGroupInviteEmail = async (
+  userEmail,
+  groupName,
+  senderName,
+  groupId,
+) => {
   if (!userEmail) return;
   const subject = `📩 You have been invited to ${groupName}`;
   const html = templates.groupInviteTemplate(groupName, senderName, groupId);
   await sendMailHelper(userEmail, null, subject, html);
 };
 
-const sendAdminJoinRequestEmail = async (adminEmail, applicantName, groupName, groupId) => {
+const sendAdminJoinRequestEmail = async (
+  adminEmail,
+  applicantName,
+  groupName,
+  groupId,
+) => {
   if (!adminEmail) return;
   const subject = `🔔 New Join Request for ${groupName}`;
-  const html = templates.adminJoinRequestTemplate(applicantName, groupName, groupId);
+  const html = templates.adminJoinRequestTemplate(
+    applicantName,
+    groupName,
+    groupId,
+  );
   await sendMailHelper(adminEmail, null, subject, html);
 };
 
 const sendEmailVerificationMail = async (userEmail, actionLink) => {
   if (!userEmail) return;
-  const subject = `Verify Your Email for StudyHype`;
+  const subject = `Verify Your Email for StudySyncro`;
   const html = templates.emailVerificationTemplate(actionLink);
   await sendMailHelper(userEmail, null, subject, html);
 };
 
 const sendPasswordResetMail = async (userEmail, actionLink) => {
   if (!userEmail) return;
-  const subject = `Reset Your StudyHype Password`;
+  const subject = `Reset Your StudySyncro Password`;
   const html = templates.passwordResetTemplate(actionLink);
   await sendMailHelper(userEmail, null, subject, html);
 };

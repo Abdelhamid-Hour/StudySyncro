@@ -19,9 +19,9 @@
     />
     <meta
       name="keywords"
-      content="<%= t('login:metadata.keywords', { defaultValue: 'StudyHype, login, online learning, real-time chat, quizzes, student collaboration' }) %>"
+      content="<%= t('login:metadata.keywords', { defaultValue: 'StudySyncro, login, online learning, real-time chat, quizzes, student collaboration' }) %>"
     />
-    <meta name="author" content="StudyHype Team" />
+    <meta name="author" content="StudySyncro Team" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="<%= fullUrl %>" />
 
@@ -31,7 +31,7 @@
     <link rel="alternate" hreflang="x-default" href="<%= baseUrl %><%= fullUrl.split('?')[0].replace(baseUrl, '') %>" />
 
     <!-- Open Graph / Social Sharing -->
-    <meta property="og:site_name" content="StudyHype" />
+    <meta property="og:site_name" content="StudySyncro" />
     <meta property="og:locale" content="<%= lang === 'ar' ? 'ar_AR' : 'en_US' %>" />
     <meta property="og:title" content="<%= t('login:metadata.page_title') %>" />
     <meta
@@ -65,7 +65,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <meta name="theme-color" content="#9235e8ff" />
-    <meta name="application-name" content="StudyHype" />
+    <meta name="application-name" content="StudySyncro" />
     <!-- Performance Optimization -->
     <link
       rel="preconnect"
@@ -138,8 +138,8 @@
   <body>
     <div class="top-nav-bar">
       <a href="/" class="login-top-logo button exclude-btn">
-        <img src="/images/logo-mark.svg" alt="<%= t('common:images.logo_alt', { defaultValue: 'StudyHype Logo' }) %>" />
-        <span>StudyHype</span>
+        <img src="/images/logo-mark.svg" alt="<%= t('common:images.logo_alt', { defaultValue: 'StudySyncro Logo' }) %>" />
+        <span>StudySyncro</span>
       </a>
       <div>
         <a
@@ -284,7 +284,7 @@
               <button id="sign-in-btn" type="button"><%= t('common:shared_terms.sign_in') %></button>
             </form>
             <p>
-              <span><%= t('login:sign_in_form.new_to_studyhype') %></span>
+              <span><%= t('login:sign_in_form.new_to_studysyncro') %></span>
               <a id="sign-up-link"><%= t('login:sign_in_form.create_account_link') %></a>
             </p>
           </div>

@@ -1294,27 +1294,27 @@ export const updateDocumentTitle = (path) => {
     cleanPath === "/" ||
     cleanPath === "/app"
   ) {
-    document.title = `StudyHype — ${t("common:titles.home", { defaultValue: "Home" })}`;
+    document.title = `StudySyncro — ${t("common:titles.home", { defaultValue: "Home" })}`;
   } else if (cleanPath.includes("/groups/my/group-chat")) {
-    document.title = `StudyHype — ${t("common:group_chat", { defaultValue: "Group Chat" })}`;
+    document.title = `StudySyncro — ${t("common:group_chat", { defaultValue: "Group Chat" })}`;
   } else if (cleanPath.includes("/groups/available")) {
-    document.title = `StudyHype — ${t("common:tabs.available_groups", { defaultValue: "Available Groups" })}`;
+    document.title = `StudySyncro — ${t("common:tabs.available_groups", { defaultValue: "Available Groups" })}`;
   } else if (
     cleanPath.includes("/groups/my") ||
     cleanPath.includes("/groups")
   ) {
-    document.title = `StudyHype — ${t("common:titles.groups", { defaultValue: "Groups" })}`;
+    document.title = `StudySyncro — ${t("common:titles.groups", { defaultValue: "Groups" })}`;
   } else if (cleanPath.includes("/quizzes/my/quiz-editor")) {
-    document.title = `StudyHype — ${t("common:titles.quiz_editor", { defaultValue: "Quiz Editor" })}`;
+    document.title = `StudySyncro — ${t("common:titles.quiz_editor", { defaultValue: "Quiz Editor" })}`;
   } else if (cleanPath.includes("/quizzes/passed")) {
-    document.title = `StudyHype — ${t("common:titles.passed_quizzes", { defaultValue: "Passed Quizzes" })}`;
+    document.title = `StudySyncro — ${t("common:titles.passed_quizzes", { defaultValue: "Passed Quizzes" })}`;
   } else if (
     cleanPath.includes("/quizzes/my") ||
     cleanPath.includes("/quizzes")
   ) {
-    document.title = `StudyHype — ${t("common:titles.quizzes", { defaultValue: "Quizzes" })}`;
+    document.title = `StudySyncro — ${t("common:titles.quizzes", { defaultValue: "Quizzes" })}`;
   } else if (cleanPath.includes("/settings")) {
-    document.title = `StudyHype — ${t("common:titles.settings", { defaultValue: "Settings" })}`;
+    document.title = `StudySyncro — ${t("common:titles.settings", { defaultValue: "Settings" })}`;
   }
 };
 

@@ -1,14 +1,14 @@
 {
   "metadata": {
-    "keywords": "StudyHype, login, online learning, real-time chat, quizzes, student collaboration",
-    "page_title": "Login to your StudyHype account",
-    "meta_description": "Login to StudyHype to access quizzes, real-time chat, and group study sessions."
+    "keywords": "StudySyncro, login, online learning, real-time chat, quizzes, student collaboration",
+    "page_title": "Login to your StudySyncro account",
+    "meta_description": "Login to StudySyncro to access quizzes, real-time chat, and group study sessions."
   },
   "nav": {
     "back_to_home": "Back to Home"
   },
   "aside": {
-    "welcome_title": "👋 Welcome to StudyHype",
+    "welcome_title": "👋 Welcome to StudySyncro",
     "welcome_desc": "Hey there! Ready to join the coolest study community around? Create an account now to access exclusive resources, connect with like-minded students, and elevate your learning experience!",
     "drop_file": "Drop the file or click to choose a profile picture",
     "allowed_types": "Allowed file types:",
@@ -21,7 +21,7 @@
   },
   "sign_in_form": {
     "forgot_password": "Forgot Password?",
-    "new_to_studyhype": "New to StudyHype?",
+    "new_to_studysyncro": "New to StudySyncro?",
     "create_account_link": "Create an account"
   },
   "sign_up_form": {

@@ -647,7 +647,7 @@ const initRealtimeNotifications = () => {
         (!notif.read || notif.read === "false" || notif.read === false)
       ) {
         if (window.Notification && Notification.permission === "granted") {
-          new Notification(notif.title || "StudyHype Notification", {
+          new Notification(notif.title || "StudySyncro Notification", {
             body: notif.message || "",
             icon: "/images/android-chrome-192x192.png",
           });

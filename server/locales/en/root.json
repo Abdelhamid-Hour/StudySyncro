@@ -16,7 +16,7 @@
   },
   "features": {
     "section_title": "Everything You Need to Ace Your Exams",
-    "section_desc": "StudyHype brings all your essential study tools into one cohesive, distraction-free environment designed for maximum focus and team productivity.",
+    "section_desc": "StudySyncro brings all your essential study tools into one cohesive, distraction-free environment designed for maximum focus and team productivity.",
     "spotlight_1": {
       "badge": "Study Groups Hub",
       "title": "Collaborative Study Spaces",
@@ -55,7 +55,7 @@
     }
   },
   "workflow": {
-    "section_title": "How StudyHype Works",
+    "section_title": "How StudySyncro Works",
     "section_desc": "Get started in less than two minutes and transform how you prepare for exams and coursework.",
     "step_1": {
       "title": "Join or Create a Group",
@@ -72,25 +72,25 @@
   },
   "cta": {
     "title": "Ready to Transform Your Study Experience?",
-    "desc": "Join thousands of students and learners who are already collaborating, sharing knowledge, and achieving higher exam scores on StudyHype.",
-    "btn": "Launch StudyHype Now"
+    "desc": "Join thousands of students and learners who are already collaborating, sharing knowledge, and achieving higher exam scores on StudySyncro.",
+    "btn": "Launch StudySyncro Now"
   },
   "footer": {
-    "copyright": "StudyHype Team © 2026. All rights reserved."
+    "copyright": "StudySyncro Team © 2026. All rights reserved."
   },
   "images": {
-    "dashboard_preview": "StudyHype Dashboard Interface Preview",
+    "dashboard_preview": "StudySyncro Dashboard Interface Preview",
     "study_groups": "Study Groups Interface",
     "chat_interface": "Real-Time Chat Interface",
     "quizzes_preview": "Interactive Quizzes Preview",
     "quiz_editor": "Custom Quiz Editor Preview",
     "timer_tasks": "Study Timer & Tasks Preview",
     "group_management": "Group Management Interface",
-    "logo_alt": "StudyHype Logo"
+    "logo_alt": "StudySyncro Logo"
   },
   "landing_seo": {
-    "description": "StudyHype is a collaborative learning platform featuring real-time group study sessions, interactive chat, custom quiz editors, and productivity timers.",
-    "keywords": "StudyHype, study groups, online learning, collaborative studying, real-time chat, quizzes, exam editor, study timer",
-    "og_title": "StudyHype — Collaborative Study Spaces"
+    "description": "StudySyncro is a collaborative learning platform featuring real-time group study sessions, interactive chat, custom quiz editors, and productivity timers.",
+    "keywords": "StudySyncro, study groups, online learning, collaborative studying, real-time chat, quizzes, exam editor, study timer",
+    "og_title": "StudySyncro — Collaborative Study Spaces"
   }
 }

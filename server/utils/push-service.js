@@ -2,7 +2,7 @@ const webpush = require("web-push");
 const { db } = require("../firebase/firebaseAdmin");
 
 webpush.setVapidDetails(
-  process.env.VAPID_SUBJECT || "mailto:noreply.studyhype@gmail.com",
+  process.env.VAPID_SUBJECT || "mailto:noreply.studysyncro@gmail.com",
   process.env.VAPID_PUBLIC_KEY,
   process.env.VAPID_PRIVATE_KEY,
 );
