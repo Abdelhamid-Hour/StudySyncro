@@ -19,12 +19,12 @@
     <meta name="application-name" content="StudySyncro" />
     <meta name="theme-color" content="#1e77fd" />
     <meta name="google-site-verification" content="hZ3lBJUXzO7xxlWuhW13pPmGwNAd4d7Bzr_IgrsRli4" />
-    <link rel="canonical" href="<%= fullUrl %>" />
+    <link rel="canonical" href="<%= canonicalUrl %>" />
 
     <!-- Internationalization (i18n) SEO -->
-    <link rel="alternate" hreflang="en" href="<%= baseUrl %><%= fullUrl.split('?')[0].replace(baseUrl, '') %>?lang=en" />
-    <link rel="alternate" hreflang="ar" href="<%= baseUrl %><%= fullUrl.split('?')[0].replace(baseUrl, '') %>?lang=ar" />
-    <link rel="alternate" hreflang="x-default" href="<%= baseUrl %><%= fullUrl.split('?')[0].replace(baseUrl, '') %>" />
+    <link rel="alternate" hreflang="en" href="<%= baseUrl %><%= reqPath %>" />
+    <link rel="alternate" hreflang="ar" href="<%= baseUrl %><%= reqPath %>?lang=ar" />
+    <link rel="alternate" hreflang="x-default" href="<%= baseUrl %><%= reqPath %>" />
 
     <!-- Open Graph / Social Sharing -->
     <meta property="og:site_name" content="StudySyncro" />
@@ -38,7 +38,7 @@
       content="<%= t('root:landing_seo.description', { defaultValue: 'Join study groups, take interactive quizzes, and collaborate in real-time with peers around the world.' }) %>"
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="<%= fullUrl %>" />
+    <meta property="og:url" content="<%= canonicalUrl %>" />
     <meta
       property="og:image"
       content="<%= baseUrl %>/images/home/active-home-page.webp"
@@ -55,10 +55,14 @@
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
+      "@id": "<%= baseUrl %>/#app",
       "name": "StudySyncro",
       "applicationCategory": "EducationalApplication",
       "operatingSystem": "Any",
       "url": "<%= baseUrl %>",
+      "author": {
+        "@id": "<%= baseUrl %>/#organization"
+      },
       "offers": {
         "@type": "Offer",
         "price": "0",
@@ -72,9 +76,58 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
+      "@id": "<%= baseUrl %>/#organization",
       "name": "StudySyncro",
+      "alternateName": ["Study Syncro", "studysyncro"],
       "url": "<%= baseUrl %>",
-      "logo": "<%= baseUrl %>/images/logo-mark.svg"
+      "logo": {
+        "@type": "ImageObject",
+        "url": "<%= baseUrl %>/images/android-chrome-512x512.png",
+        "width": 512,
+        "height": 512
+      },
+      "image": "<%= baseUrl %>/images/home/active-home-page.webp",
+      "description": "<%= t('root:landing_seo.description', { defaultValue: 'StudySyncro is a collaborative learning platform featuring real-time group study sessions, interactive chat, custom quiz editors, and productivity timers.' }) %>",
+      "foundingDate": "2026"
+    }
+    </script>
+
+    <!-- JSON-LD Structured Data (WebSite) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "<%= baseUrl %>/#website",
+      "name": "StudySyncro",
+      "alternateName": "Study Syncro",
+      "url": "<%= baseUrl %>",
+      "publisher": {
+        "@id": "<%= baseUrl %>/#organization"
+      },
+      "inLanguage": ["en", "ar"],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "<%= baseUrl %>/search?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- JSON-LD Structured Data (SiteNavigationElement) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SiteNavigationElement",
+      "name": ["Features", "How It Works", "Community", "Login"],
+      "url": [
+        "<%= baseUrl %>/#features",
+        "<%= baseUrl %>/#workflow",
+        "<%= baseUrl %>/#stats",
+        "<%= baseUrl %>/login"
+      ]
     }
     </script>
 

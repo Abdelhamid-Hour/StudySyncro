@@ -219,6 +219,14 @@ button:has(> i[class*="bi"]),
   gap: calc((var(--primary-gap) / 2) + 0.2rem);
 }
 
+.button,
+button {
+  user-select: none;
+  -webkit-touch-callout: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+}
+
 button:not(.exclude-btn),
 .button:not(.exclude-btn) {
   -webkit-backface-visibility: hidden;

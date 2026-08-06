@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /app/
+Disallow: /login
+Disallow: /reset-password
 
-Sitemap: /sitemap.xml
+Sitemap: https://studysyncro.vercel.app/sitemap.xml

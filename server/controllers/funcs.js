@@ -1,6 +1,18 @@
 const setGlobalUrls = (req, res, next) => {
   res.locals.baseUrl = req.protocol + "://" + req.get("host");
   res.locals.fullUrl = res.locals.baseUrl + req.originalUrl;
+  
+  // Canonical URL: keep the 'lang' parameter if it exists (for SEO), but strip tracking parameters
+  // If lang is 'en' (the default), drop it so we consolidate English authority into the clean URL
+  const canonicalUrl = new URL(res.locals.baseUrl + req.path);
+  if (req.query.lang && req.query.lang !== "en") {
+    canonicalUrl.searchParams.set("lang", req.query.lang);
+  }
+  res.locals.canonicalUrl = canonicalUrl.toString();
+  
+  // Expose req.path for clean hreflang generation in EJS
+  res.locals.reqPath = req.path;
+  
   next();
 };
 
@@ -14,11 +26,6 @@ const generateSitemap = (req, res) => {
     <loc>${baseUrl}/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>${baseUrl}/login</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
   </url>
 </urlset>`;
 
