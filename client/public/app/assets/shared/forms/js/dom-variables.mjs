@@ -47,7 +47,7 @@ export const subjectMenuObject = {
     "Electrical Engineering",
     "Mechanical Engineering",
     "JavaScript",
-    "Node.mjs",
+    "Node.js",
     "HTML & CSS",
     "Front-end Frameworks (React, Vue, Angular)",
     "DevOps",

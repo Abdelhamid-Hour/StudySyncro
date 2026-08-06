@@ -400,13 +400,14 @@ const cancelSession = async (sessionId, userId, force = false) => {
       }
 
       // Admin abort
+      const gRef = db.collection("groups").doc(session.groupId);
+      const gSnap = await t.get(gRef);
+
       t.update(sessionRef, {
         status: "aborted",
         updatedAt: FieldValue.serverTimestamp(),
       });
 
-      const gRef = db.collection("groups").doc(session.groupId);
-      const gSnap = await t.get(gRef);
       if (gSnap.exists) {
         t.update(gRef, { currentSession: "" });
       }
