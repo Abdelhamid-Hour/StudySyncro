@@ -140,6 +140,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
     <link rel="manifest" href="/manifest.json">
 
+    <!-- [LCP Optimization] Preload Critical Image before CSS -->
+    <link rel="preload" as="image" href="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/home/active-home-page.webp' : '/images/home/active-home-page-light.webp' %>" fetchpriority="high" imagesrcset="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/home/active-home-page-mobile.webp 800w, /images/home/active-home-page.webp 1366w' : '/images/home/active-home-page-light-mobile.webp 800w, /images/home/active-home-page-light.webp 1366w' %>" imagesizes="(max-width: 600px) 800px, 1366px" />
+
     <!-- Fonts & Bootstrap Icons -->
     <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" as="style" id="font-arabic-preload" />
@@ -169,7 +172,6 @@
     <link rel="modulepreload" href="/main_assets/js/i18n.mjs" />
     <link rel="modulepreload" href="/main_assets/js/utils.mjs" />
     <link rel="modulepreload" href="/main_assets/js/variables.mjs" />
-    <link rel="preload" as="image" href="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/home/active-home-page.webp' : '/images/home/active-home-page-light.webp' %>" fetchpriority="high" imagesrcset="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/home/active-home-page-mobile.webp 400w, /images/home/active-home-page.webp 1366w' : '/images/home/active-home-page-light-mobile.webp 400w, /images/home/active-home-page-light.webp 1366w' %>" imagesizes="(max-width: 600px) 400px, 1366px" />
   </head>
   <body>
     <!-- Navigation Bar -->
@@ -248,12 +250,14 @@
             fetchpriority="high"
             decoding="sync"
             src="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/home/active-home-page.webp' : '/images/home/active-home-page-light.webp' %>"
-            srcset="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/home/active-home-page-mobile.webp 400w, /images/home/active-home-page.webp 1366w' : '/images/home/active-home-page-light-mobile.webp 400w, /images/home/active-home-page-light.webp 1366w' %>"
-            sizes="(max-width: 600px) 400px, 1366px"
+            srcset="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/home/active-home-page-mobile.webp 800w, /images/home/active-home-page.webp 1366w' : '/images/home/active-home-page-light-mobile.webp 800w, /images/home/active-home-page-light.webp 1366w' %>"
+            sizes="(max-width: 600px) 800px, 1366px"
+            fetchpriority="high"
+            decoding="sync"
             data-dark-src="/images/home/active-home-page.webp"
             data-light-src="/images/home/active-home-page-light.webp"
-            data-dark-srcset="/images/home/active-home-page-mobile.webp 400w, /images/home/active-home-page.webp 1366w"
-            data-light-srcset="/images/home/active-home-page-light-mobile.webp 400w, /images/home/active-home-page-light.webp 1366w"
+            data-dark-srcset="/images/home/active-home-page-mobile.webp 800w, /images/home/active-home-page.webp 1366w"
+            data-light-srcset="/images/home/active-home-page-light-mobile.webp 800w, /images/home/active-home-page-light.webp 1366w"
             style="width: 100%; aspect-ratio: 16/9; height: auto;"
             alt="<%= t('root:images.dashboard_preview') %>"
           />
@@ -339,8 +343,12 @@
                 <img
                   loading="lazy"
                   src="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/groups/available-groups.webp' : '/images/groups/available-groups-light.webp' %>"
+                  srcset="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/groups/available-groups-mobile.webp 800w, /images/groups/available-groups.webp 1366w' : '/images/groups/available-groups-light-mobile.webp 800w, /images/groups/available-groups-light.webp 1366w' %>"
+                  sizes="(max-width: 600px) 800px, 1366px"
                   data-dark-src="/images/groups/available-groups.webp"
                   data-light-src="/images/groups/available-groups-light.webp"
+                  data-dark-srcset="/images/groups/available-groups-mobile.webp 800w, /images/groups/available-groups.webp 1366w"
+                  data-light-srcset="/images/groups/available-groups-light-mobile.webp 800w, /images/groups/available-groups-light.webp 1366w"
                   style="width: 100%; aspect-ratio: 16/9; height: auto;"
                   alt="<%= t('root:images.study_groups') %>"
                 />
@@ -355,8 +363,12 @@
                 <img
                   loading="lazy"
                   src="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/chat/group-chat.webp' : '/images/chat/group-chat-light.webp' %>"
+                  srcset="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/chat/group-chat-mobile.webp 800w, /images/chat/group-chat.webp 1366w' : '/images/chat/group-chat-light-mobile.webp 800w, /images/chat/group-chat-light.webp 1366w' %>"
+                  sizes="(max-width: 600px) 800px, 1366px"
                   data-dark-src="/images/chat/group-chat.webp"
                   data-light-src="/images/chat/group-chat-light.webp"
+                  data-dark-srcset="/images/chat/group-chat-mobile.webp 800w, /images/chat/group-chat.webp 1366w"
+                  data-light-srcset="/images/chat/group-chat-light-mobile.webp 800w, /images/chat/group-chat-light.webp 1366w"
                   style="width: 100%; aspect-ratio: 16/9; height: auto;"
                   alt="<%= t('root:images.chat_interface') %>"
                 />
@@ -420,8 +432,12 @@
                   <img
                     loading="lazy"
                     src="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/quiz/quiz-play.webp' : '/images/quiz/quiz-play-light.webp' %>"
+                    srcset="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/quiz/quiz-play-mobile.webp 800w, /images/quiz/quiz-play.webp 1366w' : '/images/quiz/quiz-play-light-mobile.webp 800w, /images/quiz/quiz-play-light.webp 1366w' %>"
+                    sizes="(max-width: 600px) 800px, 1366px"
                     data-dark-src="/images/quiz/quiz-play.webp"
                     data-light-src="/images/quiz/quiz-play-light.webp"
+                    data-dark-srcset="/images/quiz/quiz-play-mobile.webp 800w, /images/quiz/quiz-play.webp 1366w"
+                    data-light-srcset="/images/quiz/quiz-play-light-mobile.webp 800w, /images/quiz/quiz-play-light.webp 1366w"
                     style="width: 100%; aspect-ratio: 16/9; height: auto;"
                     alt="<%= t('root:images.quizzes_preview') %>"
                   />
@@ -510,8 +526,12 @@
                   <img
                     loading="lazy"
                     src="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/groups/my-groups.webp' : '/images/groups/my-groups-light.webp' %>"
+                    srcset="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/groups/my-groups-mobile.webp 800w, /images/groups/my-groups.webp 1366w' : '/images/groups/my-groups-light-mobile.webp 800w, /images/groups/my-groups-light.webp 1366w' %>"
+                    sizes="(max-width: 600px) 800px, 1366px"
                     data-dark-src="/images/groups/my-groups.webp"
                     data-light-src="/images/groups/my-groups-light.webp"
+                    data-dark-srcset="/images/groups/my-groups-mobile.webp 800w, /images/groups/my-groups.webp 1366w"
+                    data-light-srcset="/images/groups/my-groups-light-mobile.webp 800w, /images/groups/my-groups-light.webp 1366w"
                     style="width: 100%; aspect-ratio: 16/9; height: auto;"
                     alt="<%= t('root:images.group_management') %>"
                   />
