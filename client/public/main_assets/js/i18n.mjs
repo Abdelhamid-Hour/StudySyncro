@@ -201,7 +201,15 @@ export const changeLanguage = async (newLang) => {
 
   setLang(newLang);
 
-  window.location.reload();
+  // Strip the 'lang' URL parameter before reloading, otherwise the server's Priority 0
+  // query parameter check will override the new cookie we just set!
+  const url = new URL(window.location.href);
+  if (url.searchParams.has("lang")) {
+    url.searchParams.delete("lang");
+    window.location.href = url.toString();
+  } else {
+    window.location.reload();
+  }
 };
 
 /**
