@@ -54,11 +54,7 @@ export const applyTheme = (toDark, save) => {
       ? "bi bi-sun theme-toggle-icon"
       : "bi bi-moon theme-toggle-icon";
   if (save) {
-    try {
-      localStorage.setItem("theme", theme);
-      localStorage.setItem("mode", theme);
-      localStorage.setItem("studysyncro_theme", theme);
-    } catch (e) {}
+    document.cookie = `theme=${theme}; path=/; max-age=31536000; SameSite=Lax`;
   }
 };
 
