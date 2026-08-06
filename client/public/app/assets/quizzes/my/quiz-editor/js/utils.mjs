@@ -26,7 +26,6 @@ import {
   editorQuestionsList,
   metaInfoEl,
   questionsPanelList,
-  saveQuizBtn,
 } from "./dom-variables.mjs";
 
 export let initialData = {
@@ -797,12 +796,15 @@ const getDeletedQuestionIds = (questions) => {
 };
 
 const saveQuizToServer = async (questions) => {
-  if (saveQuizBtn.isSaving) return; // Prevent multiple clicks
+  const saveBtns = document.querySelectorAll(".save-quiz-btn");
+  if (saveBtns[0]?.isSaving) return; // Prevent multiple clicks
 
   try {
-    saveQuizBtn.innerHTML = getLoader();
-    saveQuizBtn.disabled = true;
-    saveQuizBtn.isSaving = true;
+    saveBtns.forEach((btn) => {
+      btn.innerHTML = getLoader();
+      btn.disabled = true;
+      btn.isSaving = true;
+    });
     // Extract quizId from URL: /app/quizzes/anything-here/edit (Firebase UID can contain chars)
 
     await sendData("/api/update-quiz/" + quizId, updatedData, "PUT");
@@ -819,9 +821,15 @@ const saveQuizToServer = async (questions) => {
       notifType,
     );
   } finally {
-    saveQuizBtn.innerHTML = `<i class="bi bi-floppy"></i><span>${t("common:modals.save")}</span>`;
-    saveQuizBtn.disabled = false;
-    saveQuizBtn.isSaving = false;
+    saveBtns.forEach((btn) => {
+      if (btn.classList.contains("mobile-icon-btn")) {
+        btn.innerHTML = `<i class="bi bi-floppy"></i>`;
+      } else {
+        btn.innerHTML = `<i class="bi bi-floppy"></i><span>${t("common:modals.save")}</span>`;
+      }
+      btn.disabled = false;
+      btn.isSaving = false;
+    });
   }
 };
 
@@ -858,6 +866,7 @@ export const saveQuiz = async () => {
 };
 
 export const handleSidebarTitleLinkClick = async (e) => {
+  debugger;
   // Prevent multiple triggers and ensure leave property is only set on Element
   if (typeof e.target.leave === "undefined") e.target.leave = false;
   if (e.target.leave) return;
@@ -878,6 +887,7 @@ export const handleSidebarTitleLinkClick = async (e) => {
       return;
     }
 
+    e.stopPropagation();
     e.preventDefault();
 
     const res = await showConfirmationBox(

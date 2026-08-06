@@ -9,8 +9,6 @@ import {
   initDomVariables,
   panelAddQuestionBtn,
   questionsPanelList,
-  saveQuizBtn,
-  sidebarTitleLink,
 } from "./dom-variables.mjs";
 import {
   handleAddQuestion,
@@ -32,8 +30,11 @@ export const init = async () => {
 
   initializeInitialData();
 
-  saveQuizBtn?.addEventListener("click", saveQuiz);
+  document.querySelectorAll(".save-quiz-btn").forEach((btn) => {
+    btn.addEventListener("click", saveQuiz);
+  });
 
+  debugger;
   setUpDragAndDrop(".questions-list", ".question", handleEditorListDragEnd);
 
   questionsPanelList?.addEventListener("click", handleQuestionsPanelListClick);
@@ -47,7 +48,11 @@ export const init = async () => {
 
   editorQuestionsList?.addEventListener("input", handleTextarea);
 
-  sidebarTitleLink?.addEventListener("click", handleSidebarTitleLinkClick);
+  document
+    .querySelectorAll(".sidebar-title a, .mobile-back-btn")
+    .forEach((link) => {
+      link.addEventListener("click", handleSidebarTitleLinkClick);
+    });
 
   editorHeader?.addEventListener("click", (e) => {
     const editSubjectBtn = e.target.closest(".edit-subject-btn");

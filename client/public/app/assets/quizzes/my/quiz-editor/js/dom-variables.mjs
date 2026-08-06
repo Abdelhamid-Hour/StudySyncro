@@ -3,12 +3,10 @@ import { t } from "../../../../global/js/utils.mjs";
 export let editorQuestionsList,
   panelAddQuestionBtn,
   questionsPanelList,
-  saveQuizBtn,
   editSubjectBtn,
   editTitleBtn,
   saveSubjectBtn,
   editorHeader,
-  sidebarTitleLink,
   saveTitleBtn;
 
 export const metaInfoEl = {
@@ -110,11 +108,7 @@ export const initDomVariables = () => {
     ".questions-panel .add-question-btn",
   );
 
-  sidebarTitleLink = document.querySelector(".sidebar-title a");
-
   editorHeader = document.querySelector(".editor-header");
-
-  saveQuizBtn = document.querySelector(".save-quiz-btn");
 
   editSubjectBtn = document.querySelector(".edit-subject-btn");
 

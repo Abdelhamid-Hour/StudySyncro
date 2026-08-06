@@ -647,6 +647,11 @@
         </h1>
       </div>
       <div class="mobile-topbar-right">
+        <% if (resourcesRoute === '/quizzes/my/quiz-editor/') { %>
+        <button type="button" class="save-quiz-btn exclude-btn mobile-icon-btn should-fill" title="<%= t('common:actions.save') %>" style="color: var(--color-blue); font-size: 1.25rem; width: fit-content; aspect-ratio: 1/1;">
+          <i class="bi bi-floppy"></i>
+        </button>
+        <% } %>
         <button type="button" class="exclude-btn mobile-master-menu-btn" title="<%= t('common:actions.menu') %>">
           <i class="bi bi-list"></i>
         </button>

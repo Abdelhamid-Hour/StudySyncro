@@ -987,14 +987,24 @@ const createCreateBtn = (quiz) => {
   return createGroupBtn;
 };
 
-const createSaveQuizBtn = () => {
+const createSaveQuizBtn = (isMobile = false) => {
   const saveQuizBtn = document.createElement("button");
-  saveQuizBtn.className = "save-quiz-btn should-fill blue-btn";
   saveQuizBtn.type = "button";
-  saveQuizBtn.innerHTML = `
-  <i class="bi bi-floppy"></i>
-  <span>${t("common:modals.save")}</span>
-  `;
+  if (isMobile) {
+    saveQuizBtn.className = "save-quiz-btn exclude-btn mobile-icon-btn should-fill";
+    saveQuizBtn.title = t("common:actions.save");
+    saveQuizBtn.style.color = "var(--color-blue)";
+    saveQuizBtn.style.fontSize = "1.25rem";
+    saveQuizBtn.style.width = "fit-content";
+    saveQuizBtn.style.aspectRatio = "1/1";
+    saveQuizBtn.innerHTML = `<i class="bi bi-floppy"></i>`;
+  } else {
+    saveQuizBtn.className = "save-quiz-btn should-fill blue-btn";
+    saveQuizBtn.innerHTML = `
+      <i class="bi bi-floppy"></i>
+      <span>${t("common:modals.save")}</span>
+    `;
+  }
   return saveQuizBtn;
 };
 
@@ -1034,6 +1044,12 @@ const pageConfig = (key) => {
       additional: () => {
         const saveQuizBtn = createSaveQuizBtn();
         topSideBarFooter.prepend(saveQuizBtn);
+        
+        const mobileTopbarRight = document.querySelector(".mobile-topbar-right");
+        if (mobileTopbarRight && !mobileTopbarRight.querySelector(".save-quiz-btn")) {
+          const mobileSaveQuizBtn = createSaveQuizBtn(true);
+          mobileTopbarRight.prepend(mobileSaveQuizBtn);
+        }
       },
     },
   };
@@ -1050,8 +1066,8 @@ const removeCreateBtns = () => {
 };
 
 const removeSaveQuizBtn = () => {
-  const saveQuizBtn = document.querySelector(".save-quiz-btn");
-  saveQuizBtn?.remove();
+  const saveQuizBtns = document.querySelectorAll(".save-quiz-btn");
+  saveQuizBtns.forEach((btn) => btn.remove());
 };
 
 const updateTopSideBar = (pathName, extraData) => {
