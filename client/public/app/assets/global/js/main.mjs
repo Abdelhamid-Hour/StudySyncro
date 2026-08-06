@@ -15,7 +15,6 @@ import {
   initMobileDrawer,
   initMobileSearch,
   initSidebarTitleSync,
-  initTheme,
   initThemeToggle,
   openOverlayHandler,
   preventDragOver,
@@ -42,7 +41,6 @@ document.addEventListener("click", openOverlayHandler);
 document.addEventListener("click", handleOverlayClose);
 document.addEventListener("click", handleNavigation);
 
-initTheme();
 initThemeToggle();
 initMobileDrawer();
 

@@ -2,7 +2,10 @@ const { db, admin } = require("../firebase/firebaseAdmin");
 const { clearCookies } = require("../middleware/clearCookies");
 const { tokens } = require("../middleware/csrfTokenVerification");
 const { uploadFileToStorage } = require("../utils/firebase-utils/shared");
-const { sendEmailVerificationMail, sendPasswordResetMail } = require("../utils/email-service");
+const {
+  sendEmailVerificationMail,
+  sendPasswordResetMail,
+} = require("../utils/email-service");
 
 /**
  * Create a new user in firestore or update the user data
@@ -64,11 +67,15 @@ const createNewUser = async (req, res) => {
       }
 
       if (Object.keys(updatedData).length === 0) {
-        return res.status(200).json({ message: res.locals.t("api:user_data_already_saved") });
+        return res
+          .status(200)
+          .json({ message: res.locals.t("api:user_data_already_saved") });
       }
 
       await userRef.update(updatedData);
-      return res.status(200).json({ message: res.locals.t("api:user_data_updated") });
+      return res
+        .status(200)
+        .json({ message: res.locals.t("api:user_data_updated") });
     }
 
     const userRecord = await admin.auth().getUser(uid);
@@ -109,23 +116,36 @@ const createNewUser = async (req, res) => {
 
     // --- NEW: Backend-Mediated Email Verification ---
     // If the user hasn't verified their email (and isn't using Google/Facebook)
-    if (userRecord.email && !userRecord.emailVerified && !providers.includes("google.com") && !providers.includes("facebook.com")) {
+    if (
+      userRecord.email &&
+      !userRecord.emailVerified &&
+      !providers.includes("google.com") &&
+      !providers.includes("facebook.com")
+    ) {
       try {
-        const firebaseLink = await admin.auth().generateEmailVerificationLink(userRecord.email);
-        
+        const firebaseLink = await admin
+          .auth()
+          .generateEmailVerificationLink(userRecord.email);
+
         // Extract oobCode to build our custom action URL
         const urlParams = new URL(firebaseLink).searchParams;
         const oobCode = encodeURIComponent(urlParams.get("oobCode"));
         const customActionLink = `${process.env.RENDER_EXTERNAL_URL || "http://localhost:5000"}/app/home?mode=verifyEmail&oobCode=${oobCode}`;
-        
-        await sendEmailVerificationMail(userRecord.email, customActionLink, res.locals.t);
+
+        await sendEmailVerificationMail(
+          userRecord.email,
+          customActionLink,
+          res.locals.t,
+        );
       } catch (emailError) {
         console.error("Error sending backend email verification:", emailError);
       }
     }
     // ------------------------------------------------
 
-    return res.status(200).json({ message: res.locals.t("api:user_data_saved") });
+    return res
+      .status(200)
+      .json({ message: res.locals.t("api:user_data_saved") });
   } catch (error) {
     console.error("Error saving user data:", error);
     return res.status(500).json({
@@ -150,7 +170,9 @@ const createSession = async function (req, res) {
       !decodedToken.email_verified
     ) {
       return res.status(403).json({
-        message: res.locals.t("api:please_verify_your_email_address_before_signing_in"),
+        message: res.locals.t(
+          "api:please_verify_your_email_address_before_signing_in",
+        ),
         isNative: true,
         type: "warning",
       });
@@ -167,7 +189,9 @@ const createSession = async function (req, res) {
       .auth()
       .createSessionCookie(idToken, { expiresIn });
     res.cookie("session", sessionCookie, options);
-    return res.status(200).json({ message: res.locals.t("api:session_created") });
+    return res
+      .status(200)
+      .json({ message: res.locals.t("api:session_created") });
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({
@@ -180,7 +204,7 @@ const createSession = async function (req, res) {
 
 const logOut = (req, res) => {
   clearCookies(res, ["session", "SECRET", "csrfToken"]);
-  return res.redirect("/login");
+  return res.status(200).json({ success: true });
 };
 
 /**
@@ -197,7 +221,7 @@ const forgotPassword = async (req, res) => {
   try {
     // Generate the default Firebase link without actionCodeSettings
     const firebaseLink = await admin.auth().generatePasswordResetLink(email);
-    
+
     // Parse out the oobCode and encode it for safety
     const urlParams = new URL(firebaseLink).searchParams;
     const oobCode = encodeURIComponent(urlParams.get("oobCode"));
@@ -210,7 +234,9 @@ const forgotPassword = async (req, res) => {
   } catch (error) {
     console.error("Error sending password reset email:", error);
     // Return 200 even on error to prevent email enumeration attacks
-    return res.status(200).json({ message: "If the email exists, a reset link was sent." });
+    return res
+      .status(200)
+      .json({ message: "If the email exists, a reset link was sent." });
   }
 };
 
@@ -227,12 +253,14 @@ const resendVerification = async (req, res) => {
 
   try {
     const userRecord = await admin.auth().getUserByEmail(email);
-    
+
     if (userRecord.emailVerified) {
       return res.status(400).json({ message: "Email is already verified." });
     }
 
-    const firebaseLink = await admin.auth().generateEmailVerificationLink(email);
+    const firebaseLink = await admin
+      .auth()
+      .generateEmailVerificationLink(email);
     const urlParams = new URL(firebaseLink).searchParams;
     const oobCode = encodeURIComponent(urlParams.get("oobCode"));
 
@@ -243,8 +271,18 @@ const resendVerification = async (req, res) => {
   } catch (error) {
     console.error("Error resending verification email:", error);
     // Return 200 to prevent email enumeration, or 400 if user doesn't exist
-    return res.status(200).json({ message: "If the email exists and is unverified, a link was sent." });
+    return res
+      .status(200)
+      .json({
+        message: "If the email exists and is unverified, a link was sent.",
+      });
   }
 };
 
-module.exports = { createNewUser, createSession, logOut, forgotPassword, resendVerification };
+module.exports = {
+  createNewUser,
+  createSession,
+  logOut,
+  forgotPassword,
+  resendVerification,
+};

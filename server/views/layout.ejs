@@ -1,18 +1,11 @@
 <!DOCTYPE html>
-<html lang="<%= lang %>" dir="<%= dir %>">
+<html lang="<%= lang %>" dir="<%= dir %>" data-theme="<%= typeof theme !== 'undefined' ? theme : 'light' %>">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="robots" content="noindex, nofollow" />
-    <script nonce="<%= nonce %>">
-      (function() {
-        try {
-          var theme = localStorage.getItem("theme") || "light";
-          document.documentElement.setAttribute("data-theme", theme);
-        } catch(e) {}
-      })();
-    </script>
+
     
     <!-- Preconnect to Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,23 +34,10 @@
       <%- style.preloadLink %>
     <% }) %>
       <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
-      <link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" as="style" id="font-arabic-preload" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" id="font-arabic" />
       <% } %>
-      <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" as="style" id="font-inter-preload" />
-      <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" as="style" id="font-icons-preload" />
-      <script nonce="<%= nonce %>">
-        document.getElementById('font-inter-preload').rel = 'stylesheet';
-        document.getElementById('font-icons-preload').rel = 'stylesheet';
-        const arabicFont = document.getElementById('font-arabic-preload');
-        if (arabicFont) arabicFont.rel = 'stylesheet';
-      </script>
-      <noscript>
-        <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" id="font-arabic" />
-        <% } %>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" id="font-inter" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-      </noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" id="font-inter" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" id="font-icons" />
     <link rel="stylesheet" href="/app/assets/global/css/styles.css" />
     <link data-dynamic="" rel="stylesheet" href="/app/assets<%- resourcesRoute %>css/styles.css" />
     <link rel="stylesheet" href="/main_assets/css/styles.css" />
@@ -424,7 +404,7 @@
             <i class="bi bi-wifi-off"></i>
           </button>
           <button type="button" style="padding-bottom: initial;" class="exclude-btn toggle-container nav-btn should-fill" title="<%= t('common:sidebar.theme_tooltip') %>">
-            <i class="bi bi-moon theme-toggle-icon"></i>
+            <i class="bi <%= typeof theme !== 'undefined' && theme === 'dark' ? 'bi-sun' : 'bi-moon' %> theme-toggle-icon"></i>
           </button>
           <button type="button" class="exclude-btn lang-toggle-btn nav-btn should-fill" title="<%= t('common:sidebar.switch_language_tooltip') %>" style="font-weight: 700;">
             <span class="lang-toggle-text"><%= lang === 'ar' ? 'EN' : 'AR' %></span>
@@ -700,7 +680,7 @@
     <div class="mobile-master-drawer">
       <header class="mobile-drawer-header">
         <button type="button" id="mobile-theme-toggle-btn" class="exclude-btn toggle-container nav-btn should-fill" title="<%= t('common:sidebar.theme_tooltip') %>">
-          <i class="bi bi-moon theme-toggle-icon"></i>
+          <i class="bi <%= typeof theme !== 'undefined' && theme === 'dark' ? 'bi-sun' : 'bi-moon' %> theme-toggle-icon"></i>
         </button>
         <button type="button" class="exclude-btn lang-toggle-btn nav-btn should-fill" title="<%= t('common:sidebar.switch_language_tooltip') %>" style="font-weight: 700;">
           <span class="lang-toggle-text"><%= lang === 'ar' ? 'EN' : 'AR' %></span>

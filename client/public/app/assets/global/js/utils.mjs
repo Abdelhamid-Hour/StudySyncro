@@ -2820,25 +2820,6 @@ export const preventDragOver = (e) => e.preventDefault();
 export const handleIconsHoverEnter = (e) => handelIconsHover(e, true);
 export const handleIconsHoverLeave = (e) => handelIconsHover(e, false);
 
-const updateThemeToggleIcons = (theme) => {
-  const icons = document.querySelectorAll(".theme-toggle-icon");
-  icons.forEach((icon) => {
-    if (theme === "dark") {
-      icon.classList.remove("bi-moon", "bi-moon-fill");
-      icon.classList.add("bi-sun");
-    } else {
-      icon.classList.remove("bi-sun", "bi-sun-fill");
-      icon.classList.add("bi-moon");
-    }
-  });
-};
-
-export const initTheme = () => {
-  const savedAppTheme = localStorage.getItem("theme") || "light";
-  document.documentElement.setAttribute("data-theme", savedAppTheme);
-  updateThemeToggleIcons(savedAppTheme);
-};
-
 export const initThemeToggle = () => {
   const themeBtns = document.querySelectorAll(
     ".toggle-container, #mobile-theme-toggle-btn",

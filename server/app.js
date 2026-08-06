@@ -25,7 +25,7 @@ const {
 
 const app = express();
 
-// Trust Vercel's proxy so req.protocol correctly identifies HTTPS
+// // Trust Vercel's proxy so req.protocol correctly identifies HTTPS
 app.set("trust proxy", true);
 
 // SEO, Security & Performance Middleware
@@ -38,6 +38,13 @@ app.set("views", path.join(__dirname, "views"));
 
 // Parse cookies
 app.use(cookieParser());
+
+// Extract Theme from Cookie
+app.use((req, res, next) => {
+  res.locals.theme = req.cookies.theme || 'light';
+  next();
+});
+
 // Internationalization middleware (must be after cookieParser)
 app.use(i18nMiddleware);
 

@@ -1,16 +1,9 @@
 <!doctype html>
-<html lang="<%= lang %>" dir="<%= dir %>">
+<html lang="<%= lang %>" dir="<%= dir %>" data-theme="<%= typeof theme !== 'undefined' ? theme : 'light' %>">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script nonce="<%= nonce %>">
-      (function () {
-        try {
-          var theme = localStorage.getItem("theme") || "light";
-          document.documentElement.setAttribute("data-theme", theme);
-        } catch (e) {}
-      })();
-    </script>
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title><%= t("api:studysyncro_elevate_your_learning_with_rea") %></title>
     <meta
@@ -96,29 +89,34 @@
 
     <!-- Fonts & Bootstrap Icons -->
     <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" as="style" id="font-arabic-preload" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" id="font-arabic" />
     <% } %>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" as="style" id="font-inter-preload" />
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" as="style" id="font-icons-preload" />
-    <script nonce="<%= nonce %>">
-      // Safely swap the rel attribute after the page loads without triggering CSP violations
-      document.getElementById('font-inter-preload').rel = 'stylesheet';
-      document.getElementById('font-icons-preload').rel = 'stylesheet';
-      const arabicFont = document.getElementById('font-arabic-preload');
-      if (arabicFont) arabicFont.rel = 'stylesheet';
-    </script>
-    <noscript>
-      <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" id="font-arabic" />
-      <% } %>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" id="font-inter" />
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    </noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" id="font-inter" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" id="font-icons" />
 
     <!-- Global Website Styles & Native Tokens -->
     <link rel="stylesheet" href="/main_assets/css/variables_and_fonts.css" />
     <link rel="stylesheet" href="/main_assets/css/styles.css" />
     <link rel="stylesheet" href="/main_assets/css/landing.css" />
+
+    <!-- Prefetch the opposite theme images so they load instantly when toggled -->
+    <% if (typeof theme !== 'undefined' && theme === 'dark') { %>
+    <link rel="prefetch" href="/images/home/active-home-page-light.webp" as="image" />
+    <link rel="prefetch" href="/images/groups/available-groups-light.webp" as="image" />
+    <link rel="prefetch" href="/images/chat/group-chat-light.webp" as="image" />
+    <link rel="prefetch" href="/images/quiz/quiz-play-light.webp" as="image" />
+    <link rel="prefetch" href="/images/quiz/quiz-edit-light.webp" as="image" />
+    <link rel="prefetch" href="/images/home/timer-and-tasks-light.webp" as="image" />
+    <link rel="prefetch" href="/images/groups/my-groups-light.webp" as="image" />
+    <% } else { %>
+    <link rel="prefetch" href="/images/home/active-home-page.webp" as="image" />
+    <link rel="prefetch" href="/images/groups/available-groups.webp" as="image" />
+    <link rel="prefetch" href="/images/chat/group-chat.webp" as="image" />
+    <link rel="prefetch" href="/images/quiz/quiz-play.webp" as="image" />
+    <link rel="prefetch" href="/images/quiz/quiz-edit.webp" as="image" />
+    <link rel="prefetch" href="/images/home/timer-and-tasks.webp" as="image" />
+    <link rel="prefetch" href="/images/groups/my-groups.webp" as="image" />
+    <% } %>
   </head>
   <body>
     <!-- Navigation Bar -->
@@ -149,7 +147,7 @@
           title="<%= t('common:shared_terms.toggle_dark_light_mode') %>"
           aria-label="Toggle Dark or Light Mode"
         >
-          <i class="bi bi-moon theme-toggle-icon" id="theme-toggle-icon"></i>
+          <i class="bi <%= typeof theme !== 'undefined' && theme === 'dark' ? 'bi-sun' : 'bi-moon' %> theme-toggle-icon" id="theme-toggle-icon"></i>
         </button>
         <button
           class="button exclude-btn lang-toggle-btn"
@@ -195,19 +193,12 @@
           <img
             id="hero-img-lcp"
             fetchpriority="high"
-            src="/images/home/active-home-page-light.webp"
+            src="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/home/active-home-page.webp' : '/images/home/active-home-page-light.webp' %>"
             data-dark-src="/images/home/active-home-page.webp"
             data-light-src="/images/home/active-home-page-light.webp"
             style="width: 100%; aspect-ratio: 16/9; height: auto;"
             alt="<%= t('root:images.dashboard_preview') %>"
           />
-          <script nonce="<%= nonce %>">
-            (function(){
-              var img = document.getElementById("hero-img-lcp");
-              var isDark = document.documentElement.getAttribute("data-theme") === "dark";
-              if(isDark) img.src = img.getAttribute("data-dark-src");
-            })();
-          </script>
         </div>
       </header>
 
@@ -289,7 +280,7 @@
               <div class="feature-img-frame">
                 <img
                   loading="lazy"
-                  src="/images/groups/available-groups-light.webp"
+                  src="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/groups/available-groups.webp' : '/images/groups/available-groups-light.webp' %>"
                   data-dark-src="/images/groups/available-groups.webp"
                   data-light-src="/images/groups/available-groups-light.webp"
                   style="width: 100%; aspect-ratio: 16/9; height: auto;"
@@ -305,7 +296,7 @@
               <div class="feature-img-frame">
                 <img
                   loading="lazy"
-                  src="/images/chat/group-chat-light.webp"
+                  src="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/chat/group-chat.webp' : '/images/chat/group-chat-light.webp' %>"
                   data-dark-src="/images/chat/group-chat.webp"
                   data-light-src="/images/chat/group-chat-light.webp"
                   style="width: 100%; aspect-ratio: 16/9; height: auto;"
@@ -370,7 +361,7 @@
                 <div class="feature-img-frame">
                   <img
                     loading="lazy"
-                    src="/images/quiz/quiz-play-light.webp"
+                    src="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/quiz/quiz-play.webp' : '/images/quiz/quiz-play-light.webp' %>"
                     data-dark-src="/images/quiz/quiz-play.webp"
                     data-light-src="/images/quiz/quiz-play-light.webp"
                     style="width: 100%; aspect-ratio: 16/9; height: auto;"
@@ -399,7 +390,7 @@
                 <div class="feature-img-frame">
                   <img
                     loading="lazy"
-                    src="/images/quiz/quiz-edit-light.webp"
+                    src="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/quiz/quiz-edit.webp' : '/images/quiz/quiz-edit-light.webp' %>"
                     data-dark-src="/images/quiz/quiz-edit.webp"
                     data-light-src="/images/quiz/quiz-edit-light.webp"
                     style="width: 100%; aspect-ratio: 16/9; height: auto;"
@@ -431,7 +422,7 @@
                 <div class="feature-img-frame">
                   <img
                     loading="lazy"
-                    src="/images/home/timer-and-tasks-light.webp"
+                    src="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/home/timer-and-tasks.webp' : '/images/home/timer-and-tasks-light.webp' %>"
                     data-dark-src="/images/home/timer-and-tasks.webp"
                     data-light-src="/images/home/timer-and-tasks-light.webp"
                     style="width: 100%; aspect-ratio: 16/11.3; height: auto;"
@@ -460,7 +451,7 @@
                 <div class="feature-img-frame">
                   <img
                     loading="lazy"
-                    src="/images/groups/my-groups-light.webp"
+                    src="<%= typeof theme !== 'undefined' && theme === 'dark' ? '/images/groups/my-groups.webp' : '/images/groups/my-groups-light.webp' %>"
                     data-dark-src="/images/groups/my-groups.webp"
                     data-light-src="/images/groups/my-groups-light.webp"
                     style="width: 100%; aspect-ratio: 16/9; height: auto;"
@@ -570,9 +561,6 @@
         const toggleIcon = document.getElementById("theme-toggle-icon");
         const root = document.documentElement;
 
-        const savedTheme = localStorage.getItem("theme") || "light";
-        applyTheme(savedTheme === "dark", false);
-
         toggleBtn?.addEventListener("click", () => {
           const isDark = root.getAttribute("data-theme") === "dark";
 
@@ -615,6 +603,7 @@
               localStorage.setItem("theme", theme);
               localStorage.setItem("mode", theme);
               localStorage.setItem("studysyncro_theme", theme);
+              document.cookie = `theme=${theme}; path=/; max-age=31536000; SameSite=Lax`;
             } catch (e) {}
           }
         }

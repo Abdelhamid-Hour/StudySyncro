@@ -1,16 +1,9 @@
 <!doctype html>
-<html lang="<%= lang %>" dir="<%= dir %>">
+<html lang="<%= lang %>" dir="<%= dir %>" data-theme="<%= typeof theme !== 'undefined' ? theme : 'light' %>">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script nonce="<%= nonce %>">
-      (function () {
-        try {
-          var theme = localStorage.getItem("theme") || "light";
-          document.documentElement.setAttribute("data-theme", theme);
-        } catch (e) {}
-      })();
-    </script>
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title><%= t('login:metadata.page_title') %></title>
     <meta
@@ -85,23 +78,10 @@
     <!-- Google One Tap Script -->
     <script defer nonce="<%= nonce %>" src="https://accounts.google.com/gsi/client"></script>
     <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" as="style" id="font-arabic-preload" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" id="font-arabic" />
     <% } %>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" as="style" id="font-inter-preload" />
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" as="style" id="font-icons-preload" />
-    <script nonce="<%= nonce %>">
-      document.getElementById('font-inter-preload').rel = 'stylesheet';
-      document.getElementById('font-icons-preload').rel = 'stylesheet';
-      const arabicFont = document.getElementById('font-arabic-preload');
-      if (arabicFont) arabicFont.rel = 'stylesheet';
-    </script>
-    <noscript>
-      <% if (typeof lang !== 'undefined' && lang === 'ar') { %>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" id="font-arabic" />
-      <% } %>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" id="font-inter" />
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    </noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" id="font-inter" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" id="font-icons" />
     <link rel="stylesheet" href="/main_assets/css/variables_and_fonts.css" />
     <link rel="stylesheet" href="/main_assets/css/styles.css" />
     <link id="stylesheet" rel="stylesheet" href="/login/assets/css/style.css" />
@@ -128,7 +108,7 @@
           title="<%= t('common:shared_terms.toggle_dark_light_mode') %>"
           aria-label="Toggle Dark or Light Mode"
         >
-          <i class="bi bi-sun theme-toggle-icon" id="theme-toggle-icon"></i>
+          <i class="bi <%= typeof theme !== 'undefined' && theme === 'dark' ? 'bi-sun' : 'bi-moon' %> theme-toggle-icon" id="theme-toggle-icon"></i>
         </button>
         <button
           class="button exclude-btn lang-toggle-btn"
