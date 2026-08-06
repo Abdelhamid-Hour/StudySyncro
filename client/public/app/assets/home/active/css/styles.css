@@ -1174,7 +1174,9 @@
 
     .overview-active-session .chat {
       -ms-flex-preferred-size: 100vh;
+      -ms-flex-preferred-size: 100dvh;
           flex-basis: 100vh;
+          flex-basis: 100dvh;
       max-height: 100%;
       display: none !important;
     }

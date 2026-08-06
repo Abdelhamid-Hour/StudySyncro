@@ -348,8 +348,11 @@
     position: fixed !important;
     top: 0 !important;
     width: 100vw !important;
+    width: 100dvw !important;
     height: 100vh !important;
+    height: 100dvh !important;
     max-height: 100vh !important;
+    max-height: 100dvh !important;
     translate: none !important;
     border-radius: 0 !important;
     border: none !important;

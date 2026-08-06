@@ -209,6 +209,7 @@
       -ms-flex-pack: center !important;
           justify-content: center !important;
   min-height: calc(100vh - 12rem);
+  min-height: calc(100dvh - 12rem);
 }
 
 @media (max-width: 48rem) {

@@ -13,6 +13,7 @@
   border: var(--primary-border-style);
   max-width: 40rem;
   height: max(30rem, min(80vh, 45rem));
+  height: max(30rem, min(80dvh, 45rem));
 }
 
 .quiz-result-overlay .quiz-result-header {

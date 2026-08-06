@@ -25,6 +25,7 @@ body {
   backface-visibility: hidden;
   display: grid;
   max-height: 100vh;
+  max-height: 100dvh;
   overflow: hidden;
   grid-template-areas:
     "left-side-bar top-side-bar"
@@ -1165,6 +1166,7 @@ main {
   grid-area: main;
   padding: var(--primary-gap);
   height: calc(100vh - 5rem);
+  height: calc(100dvh - 5rem);
   /* width: calc(100vw - 13.1973rem); */
   -webkit-transition: var(--primary-transition-style);
   transition: var(--primary-transition-style);
@@ -2629,7 +2631,9 @@ nav.mobile-bottomnav {
         -ms-flex-direction: column !important;
             flex-direction: column !important;
     height: 100vh !important;
+    height: 100dvh !important;
     max-height: 100vh !important;
+    max-height: 100dvh !important;
     overflow: hidden !important;
   }
 
@@ -3080,6 +3084,7 @@ nav.mobile-bottomnav {
     width: 18rem;
     max-width: 85vw;
     height: 100vh;
+    height: 100dvh;
     background-color: var(--container-background-color);
     -webkit-border-start: 1px solid var(--primary-border-color);
             border-inline-start: 1px solid var(--primary-border-color);
