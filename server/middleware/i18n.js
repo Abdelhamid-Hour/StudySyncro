@@ -67,6 +67,8 @@ module.exports = (req, res, next) => {
   res.locals.lang = chosenLang;
   res.locals.dir = chosenLang === "ar" ? "rtl" : "ltr";
 
+  console.log(res.locals.dir, res.locals.lang);
+
   /**
    * Translation function attached to res.locals.t
    * @param {string} keyPath - Dot notation path, e.g., "common.logout" or "groups.header.title"

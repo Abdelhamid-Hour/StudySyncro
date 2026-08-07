@@ -28,7 +28,7 @@
     "email_verified_success": "Your email address has been successfully verified! Welcome!"
   },
   "tabs": {
-    "timer_session": "Timer & Session",
+    "timer_session": "Session",
     "chat": "Chat"
   },
   "session_details": "Session Details",
