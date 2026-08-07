@@ -67,28 +67,44 @@ let MAX_SCROLL = 0; // Maximum scroll value for the container
 let afterDragEnd = () => {};
 let draggableElSelector = "";
 
+function getClientXY(e) {
+  if (e.type.includes("touch")) {
+    return {
+      clientX: e.touches[0].clientX,
+      clientY: e.touches[0].clientY,
+    };
+  }
+  return { clientX: e.clientX, clientY: e.clientY };
+}
+
 function onTaskListMouseDown(e) {
   const handle = e.target.closest(".drag-handle");
   const draggableEl = e.target.closest(draggableElSelector);
   if (!handle || !draggableEl) return;
 
+  if (e.type === "touchstart" && e.cancelable) {
+    e.preventDefault(); // Prevent scrolling while dragging the handle
+  }
+
   document.body.style.userSelect = "none";
+
+  const { clientX, clientY } = getClientXY(e);
 
   dragging.dragEl = draggableEl;
   const dragElRect = draggableEl.getBoundingClientRect();
   const listRect = container.getBoundingClientRect();
   dragging.initialScrollTop = container.scrollTop;
-  dragging.offsetX = e.clientX - dragElRect.left;
-  dragging.offsetY = e.clientY - dragElRect.top;
+  dragging.offsetX = clientX - dragElRect.left;
+  dragging.offsetY = clientY - dragElRect.top;
 
   dragging.dragEl.style.width = `${dragElRect.width}px`;
   dragging.dragEl.style.position = "absolute";
   dragging.dragEl.style.zIndex = "1000";
 
   const offsetY =
-    e.clientY + container.scrollTop - listRect.top - dragging.offsetY;
+    clientY + container.scrollTop - listRect.top - dragging.offsetY;
 
-  const offsetX = e.clientX - listRect.left - dragging.offsetX;
+  const offsetX = clientX - listRect.left - dragging.offsetX;
   dragging.dragEl.style.top = `${offsetY}px`;
   dragging.dragEl.style.left = `${offsetX}px`;
 
@@ -222,8 +238,9 @@ function handleDropTargets() {
 function updateDraggedElementPosition(e) {
   const rect = container.getBoundingClientRect();
   const scrollTop = container.scrollTop;
-  const offsetX = e.clientX - rect.left - dragging.offsetX;
-  const offsetY = e.clientY + scrollTop - rect.top - dragging.offsetY;
+  const { clientX, clientY } = getClientXY(e);
+  const offsetX = clientX - rect.left - dragging.offsetX;
+  const offsetY = clientY + scrollTop - rect.top - dragging.offsetY;
   dragging.dragEl.style.top = offsetY + "px";
   dragging.dragEl.style.left = offsetX + "px";
 }
@@ -251,6 +268,10 @@ function handleAutoScroll() {
 function onTaskListMouseMove(e) {
   if (!dragging.dragEl) return;
 
+  if (e.type === "touchmove" && e.cancelable) {
+    e.preventDefault(); // Prevent scrolling while dragging
+  }
+
   updateDraggedElementPosition(e);
   handleDropTargets();
   handleAutoScroll();
@@ -268,7 +289,10 @@ export const setUpDragAndDrop = (
   afterDragEnd = afterDragEndCallback;
 
   container.addEventListener("mousedown", onTaskListMouseDown);
+  container.addEventListener("touchstart", onTaskListMouseDown, { passive: false });
   registerPageListener(document, "mouseup", onMouseUp);
+  registerPageListener(document, "touchend", onMouseUp);
   container.addEventListener("scroll", onTaskListScroll);
   container.addEventListener("mousemove", onTaskListMouseMove);
+  container.addEventListener("touchmove", onTaskListMouseMove, { passive: false });
 };
