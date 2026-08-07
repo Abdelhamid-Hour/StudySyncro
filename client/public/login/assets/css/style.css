@@ -13,15 +13,15 @@ body {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 
 .top-nav-bar {
@@ -34,62 +34,62 @@ body {
   padding: 1rem;
   z-index: 999;
   -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   width: 100%;
 }
 
 .top-nav-bar div {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
-    gap: var(--primary-gap);
-  }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  gap: var(--primary-gap);
+}
 
 .top-nav-bar .login-top-logo {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-    gap: calc(var(--primary-gap) / 2);
-    -webkit-transition: all 0.2s ease;
-    transition: all 0.2s ease;
-  }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: calc(var(--primary-gap) / 2);
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
 
 .top-nav-bar .login-top-logo img {
-      width: 1.8rem;
-      height: 1.8rem;
-    }
+  width: 1.8rem;
+  height: 1.8rem;
+}
 
 .top-nav-bar .login-top-logo span {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: var(--heading-color);
-      letter-spacing: -0.5px;
-      font-family:
-        "Inter",
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        sans-serif !important;
-    }
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  letter-spacing: -0.5px;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif !important;
+}
 
 .top-nav-bar .button {
-    padding: 0.5rem 0.8rem;
-    border-radius: 5px;
-    background-color: var(--btn-background-color);
-    -webkit-box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  }
+  padding: 0.5rem 0.8rem;
+  border-radius: 5px;
+  background-color: var(--btn-background-color);
+  -webkit-box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
 
 main {
   position: relative;
@@ -100,30 +100,30 @@ main {
   height: -moz-fit-content;
   height: fit-content;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   width: 100%;
 }
 
 main #space-reserver {
-    position: relative;
-    width: 0;
-    -webkit-transition: all 700ms linear;
-    transition: all 700ms linear;
-    -webkit-transition: all var(--login-swap-animation-duration) linear;
-    transition: all var(--login-swap-animation-duration) linear;
-    z-index: -2;
-  }
+  position: relative;
+  width: 0;
+  -webkit-transition: all 700ms linear;
+  transition: all 700ms linear;
+  -webkit-transition: all var(--login-swap-animation-duration) linear;
+  transition: all var(--login-swap-animation-duration) linear;
+  z-index: -2;
+}
 
 main #space-reserver.shown {
-      padding: 2rem;
-      width: 32%;
-    }
+  padding: 2rem;
+  width: 32%;
+}
 
 main #space-reserver.shown + #login-form {
-        border-start-start-radius: unset;
-        border-end-start-radius: unset;
-      }
+  border-start-start-radius: unset;
+  border-end-start-radius: unset;
+}
 /* login login block styling */
 #login-form {
   position: relative;
@@ -132,7 +132,7 @@ main #space-reserver.shown + #login-form {
   color: var(--container-text-color);
   background-color: var(--container-background-color);
   -webkit-box-shadow: 0px 0px 5px rgba(163, 163, 163, 0.377);
-          box-shadow: 0px 0px 5px rgba(163, 163, 163, 0.377);
+  box-shadow: 0px 0px 5px rgba(163, 163, 163, 0.377);
   border: 1px solid var(--container-border-color);
   border-radius: 10px;
   display: -webkit-box;
@@ -140,11 +140,11 @@ main #space-reserver.shown + #login-form {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   gap: 1rem;
   -webkit-transition: all 700ms linear;
   transition: all 700ms linear;
@@ -152,234 +152,239 @@ main #space-reserver.shown + #login-form {
   transition: all var(--login-swap-animation-duration) linear;
 }
 #login-form #outline-container {
-    position: absolute;
-    inset-inline-end: -1px;
-    top: -1px;
-    height: calc(100% + 2px);
-    width: calc(100% + 2px);
-    border-radius: 10px;
-    outline: 1px solid var(--container-border-color);
-    outline-offset: 0.5rem;
-    z-index: -2;
-    -webkit-transition: all calc(700ms * 0.95) linear;
-    transition: all calc(700ms * 0.95) linear;
-    -webkit-transition: all calc(var(--login-swap-animation-duration) * 0.95) linear;
-    transition: all calc(var(--login-swap-animation-duration) * 0.95) linear;
-  }
-#login-form #outline-container:has( + aside.shown) {
-      width: calc(200% + 4px);
-    }
+  position: absolute;
+  inset-inline-end: -1px;
+  top: -1px;
+  height: calc(100% + 2px);
+  width: calc(100% + 2px);
+  border-radius: 10px;
+  outline: 1px solid var(--container-border-color);
+  outline-offset: 0.5rem;
+  z-index: -2;
+  -webkit-transition: all calc(700ms * 0.95) linear;
+  transition: all calc(700ms * 0.95) linear;
+  -webkit-transition: all calc(var(--login-swap-animation-duration) * 0.95)
+    linear;
+  transition: all calc(var(--login-swap-animation-duration) * 0.95) linear;
+}
+#login-form #outline-container:has(+ aside.shown) {
+  width: calc(200% + 4px);
+}
 #login-form aside {
-    -webkit-box-sizing: border-box;
-            box-sizing: border-box;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
-    gap: 2rem;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-    background-color: var(--container-background-color);
-    height: calc(100% + 2px);
-    width: calc(100% + 2px);
-    border: 1px solid var(--container-border-color);
-    padding: 2rem;
-    border-radius: 10px;
-    overflow: hidden;
-    position: absolute;
-    pointer-events: auto;
-    top: -1px;
-    inset-inline-start: -1px;
-    z-index: -1;
-    translate: 0%;
-    -webkit-transition: all 700ms linear;
-    transition: all 700ms linear;
-    -webkit-transition: all var(--login-swap-animation-duration) linear;
-    transition: all var(--login-swap-animation-duration) linear;
-  }
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  gap: 2rem;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  background-color: var(--container-background-color);
+  height: calc(100% + 2px);
+  width: calc(100% + 2px);
+  border: 1px solid var(--container-border-color);
+  padding: 2rem;
+  border-radius: 10px;
+  overflow: hidden;
+  position: absolute;
+  pointer-events: auto;
+  top: -1px;
+  inset-inline-start: -1px;
+  z-index: -1;
+  translate: 0%;
+  -webkit-transition: all 700ms linear;
+  transition: all 700ms linear;
+  -webkit-transition: all var(--login-swap-animation-duration) linear;
+  transition: all var(--login-swap-animation-duration) linear;
+}
 #login-form aside section {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-          -ms-flex-direction: column;
-              flex-direction: column;
-      gap: 1rem;
-    }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  gap: 1rem;
+}
 #login-form aside section p {
-        text-align: justify;
-      }
+  text-align: justify;
+}
 #login-form aside.shown {
-      inset-inline-start: 0;
-      border-start-end-radius: unset;
-      border-end-end-radius: unset;
-      translate: -100%;
-      pointer-events: auto;
-    }
+  inset-inline-start: 0;
+  border-start-end-radius: unset;
+  border-end-end-radius: unset;
+  translate: -100%;
+  pointer-events: auto;
+}
 #login-form aside #avatar-container {
-      position: relative;
-      cursor: pointer;
-      border: 2px dashed var(--primary-color);
-      padding: 1.25rem 2.5rem;
-      border-radius: 10px;
-      width: 90%;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-          -ms-flex-direction: column;
-              flex-direction: column;
-      -webkit-box-pack: center;
-          -ms-flex-pack: center;
-              justify-content: center;
-      -webkit-box-align: center;
-          -ms-flex-align: center;
-              align-items: center;
-      -webkit-transition: all 200ms ease-in-out;
-      transition: all 200ms ease-in-out;
-      gap: 1.5rem;
-    }
-#login-form aside #avatar-container:hover,#login-form aside #avatar-container.file-drag-start {
-        background-color: rgba(53, 51, 51, 0.637);
-      }
-#login-form aside #avatar-container:hover svg,#login-form aside #avatar-container.file-drag-start svg {
-          /* I added !important to override the SVG style because 
+  position: relative;
+  cursor: pointer;
+  border: 2px dashed var(--primary-color);
+  padding: 1.25rem 2.5rem;
+  border-radius: 10px;
+  width: 90%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
+  gap: 1.5rem;
+}
+#login-form aside #avatar-container:hover,
+#login-form aside #avatar-container.file-drag-start {
+  background-color: rgba(53, 51, 51, 0.637);
+}
+#login-form aside #avatar-container:hover svg,
+#login-form aside #avatar-container.file-drag-start svg {
+  /* I added !important to override the SVG style because 
           it has higher priority than the style applied with the 
           selector & > div:first-child */
-          opacity: 1 !important;
-        }
-#login-form aside #avatar-container:hover svg #arrow,#login-form aside #avatar-container.file-drag-start svg #arrow {
-            translate: 0 0% !important;
-          }
-#login-form aside #avatar-container:hover img,#login-form aside #avatar-container.file-drag-start img {
-          -webkit-filter: brightness(50%);
-                  filter: brightness(50%);
-        }
+  opacity: 1 !important;
+}
+#login-form aside #avatar-container:hover svg #arrow,
+#login-form aside #avatar-container.file-drag-start svg #arrow {
+  translate: 0 0% !important;
+}
+#login-form aside #avatar-container:hover img,
+#login-form aside #avatar-container.file-drag-start img {
+  -webkit-filter: brightness(50%);
+  filter: brightness(50%);
+}
 #login-form aside #avatar-container span {
-        color: var(--error-color);
-        text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
-        font-size: var(--error-font-size);
-        position: absolute;
-        bottom: -1rem;
-        translate: 0 100%;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-align: end;
-            -ms-flex-align: end;
-                align-items: flex-end;
-        gap: 0.5rem;
-      }
+  color: var(--error-color);
+  text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
+  font-size: var(--error-font-size);
+  position: absolute;
+  bottom: -1rem;
+  translate: 0 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: end;
+  -ms-flex-align: end;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
 #login-form aside #avatar-container > div:first-child {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-pack: center;
-            -ms-flex-pack: center;
-                justify-content: center;
-        -webkit-box-align: center;
-            -ms-flex-align: center;
-                align-items: center;
-        position: relative;
-        width: -webkit-fit-content;
-        width: -moz-fit-content;
-        width: fit-content;
-        -webkit-transition: all 200ms ease-in-out;
-        transition: all 200ms ease-in-out;
-      }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  position: relative;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  -webkit-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
+}
 #login-form aside #avatar-container > div:first-child img {
-          position: relative;
-          -webkit-transition: all 200ms ease-in-out;
-          transition: all 200ms ease-in-out;
-          width: 10rem;
-          aspect-ratio: 1/1;
-          -webkit-clip-path: circle(50%);
-                  clip-path: circle(50%);
-          z-index: -1;
-        }
+  position: relative;
+  -webkit-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
+  width: 10rem;
+  aspect-ratio: 1/1;
+  -webkit-clip-path: circle(50%);
+  clip-path: circle(50%);
+  z-index: -1;
+}
 #login-form aside #avatar-container > div:first-child svg {
-          position: absolute;
-          background-color: transparent;
-          height: 70%;
-          width: 70%;
-          fill: var(--primary-color);
-          -webkit-filter: drop-shadow(0 0 2px rgba(22, 22, 22, 0.473));
-                  filter: drop-shadow(0 0 2px rgba(22, 22, 22, 0.473));
-          z-index: 1;
-          -webkit-transition: all 200ms ease-in-out;
-          transition: all 200ms ease-in-out;
-          opacity: 0;
-        }
+  position: absolute;
+  background-color: transparent;
+  height: 70%;
+  width: 70%;
+  fill: var(--primary-color);
+  -webkit-filter: drop-shadow(0 0 2px rgba(22, 22, 22, 0.473));
+  filter: drop-shadow(0 0 2px rgba(22, 22, 22, 0.473));
+  z-index: 1;
+  -webkit-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
+  opacity: 0;
+}
 #login-form aside #avatar-container > div:first-child svg #arrow {
-            translate: 0 30%;
-            -webkit-transition: all 300ms ease-out;
-            transition: all 300ms ease-out;
-          }
+  translate: 0 30%;
+  -webkit-transition: all 300ms ease-out;
+  transition: all 300ms ease-out;
+}
 #login-form aside #avatar-container > div.text {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-orient: vertical;
-        -webkit-box-direction: normal;
-            -ms-flex-direction: column;
-                flex-direction: column;
-        text-align: center;
-        gap: 0.5rem;
-      }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  text-align: center;
+  gap: 0.5rem;
+}
 #login-form aside #avatar-container > div.text p:first-child {
-          font-weight: bold;
-        }
+  font-weight: bold;
+}
 #login-form aside #avatar-container input {
-        display: none;
-      }
+  display: none;
+}
 #login-form aside #clear-avatar-btn {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-align: center;
-          -ms-flex-align: center;
-              align-items: center;
-      -webkit-box-pack: center;
-          -ms-flex-pack: center;
-              justify-content: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      border: 1px solid var(--error-color);
-      background: transparent;
-      color: var(--error-color);
-      cursor: pointer;
-      -webkit-transition: all 200ms ease;
-      transition: all 200ms ease;
-      font-weight: 500;
-      width: 90%;
-      margin-top: -1rem;
-    }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--error-color);
+  background: transparent;
+  color: var(--error-color);
+  cursor: pointer;
+  -webkit-transition: all 200ms ease;
+  transition: all 200ms ease;
+  font-weight: 500;
+  width: 90%;
+  margin-top: -1rem;
+}
 #login-form aside #clear-avatar-btn:hover {
-      background: var(--error-color);
-      color: white;
-    }
+  background: var(--error-color);
+  color: white;
+}
 #login-form h1 {
-    color: var(--heading-color);
-    text-align: center;
-  }
+  color: var(--heading-color);
+  text-align: center;
+}
 /* buttons styling */
 button {
   width: 100%;
   width: var(--btn-width);
 }
 button span {
-    width: 60%;
-  }
+  width: 60%;
+}
 
 /* providers section styling */
 section.provider-container {
@@ -388,11 +393,11 @@ section.provider-container {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   padding-inline: 1rem;
   gap: 1rem;
 }
@@ -405,14 +410,14 @@ section#forms {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   position: relative;
   width: 100%;
   gap: 1rem;
@@ -421,418 +426,477 @@ section#forms {
 }
 
 section#forms button {
-    --btn-width: 100%;
-  }
+  --btn-width: 100%;
+}
 
-section#forms .sign-in-container,section#forms .sign-up-container {
-    width: 100%;
-    visibility: hidden;
-    pointer-events: none;
-  }
+section#forms .sign-in-container,
+section#forms .sign-up-container {
+  width: 100%;
+  visibility: hidden;
+  pointer-events: none;
+}
 
 section#forms .sign-in-container {
-    position: relative;
-    z-index: 2;
-  }
+  position: relative;
+  z-index: 2;
+}
 
 section#forms .sign-in-container .email-container {
-      margin-bottom: 0.3rem;
-    }
+  margin-bottom: 0.3rem;
+}
 
 section#forms .sign-up-container {
-    position: absolute;
-    overflow: hidden;
-    top: 0;
-  }
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+}
 
 section#forms .active-form {
-    visibility: visible;
-    pointer-events: auto;
-  }
+  visibility: visible;
+  pointer-events: auto;
+}
 
 section#forms > div {
-    background-color: var(--container-background-color);
-    padding: 1rem 1rem 0;
-  }
+  background-color: var(--container-background-color);
+  padding: 1rem 1rem 0;
+}
 
 section#forms form {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    gap: 1rem;
-    gap: var(--form-gap);
-  }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  gap: 1rem;
+  gap: var(--form-gap);
+}
 
-section#forms form .password-container:has( > a) {
-      position: relative;
-    }
+section#forms form .password-container:has(> a) {
+  position: relative;
+}
 
-section#forms form .password-container:has( > a) a {
-        position: absolute;
-        -webkit-text-decoration: underline;
-        text-decoration: underline;
-        cursor: pointer;
-        top: 0;
-        translate: 0 -100%;
-        inset-inline-end: 0;
-        -webkit-transition: all var(--link-tran-duration) linear;
-        transition: all var(--link-tran-duration) linear;
-      }
+section#forms form .password-container:has(> a) a {
+  position: absolute;
+  -webkit-text-decoration: underline;
+  text-decoration: underline;
+  cursor: pointer;
+  top: 0;
+  translate: 0 -100%;
+  inset-inline-end: 0;
+  -webkit-transition: all var(--link-tran-duration) linear;
+  transition: all var(--link-tran-duration) linear;
+}
 
-section#forms form .password-container:has( > a) a:link {
-          color: var(--links-color);
-        }
+section#forms form .password-container:has(> a) a:link {
+  color: var(--links-color);
+}
 
-section#forms form .password-container:has( > a) a:visited {
-          color: var(--links-color);
-        }
+section#forms form .password-container:has(> a) a:visited {
+  color: var(--links-color);
+}
 
-section#forms form .password-container:has( > a) a:active {
-          color: var(--links-color);
-        }
+section#forms form .password-container:has(> a) a:active {
+  color: var(--links-color);
+}
 
-section#forms form .password-container:has( > a) a:hover {
-          color: var(--links-hover-color);
-        }
+section#forms form .password-container:has(> a) a:hover {
+  color: var(--links-hover-color);
+}
 
 section#forms form > div.user-name-container {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-          -ms-flex-direction: column;
-              flex-direction: column;
-      width: 100%;
-    }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  width: 100%;
+}
 
 section#forms form > div.user-name-container i {
-        font-size: calc(var(--inputs-icons-font-size) / 1.5);
-      }
+  font-size: calc(var(--inputs-icons-font-size) / 1.5);
+}
 
 section#forms form > div.user-name-container > div:first-child {
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        gap: calc(1rem / 2);
-        gap: calc(var(--form-gap) / 2);
-      }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: calc(1rem / 2);
+  gap: calc(var(--form-gap) / 2);
+}
 
 section#forms form > div.user-name-container > div:first-child .text-container {
-          -webkit-box-flex: 1;
-              -ms-flex-positive: 1;
-                  flex-grow: 1;
-        }
+  -webkit-box-flex: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+}
 
 section#forms form div[class^="md-"] {
-      outline: 0.2rem solid transparent;
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      width: 100%;
-      height: -webkit-fit-content;
-      height: -moz-fit-content;
-      height: fit-content;
-      border-radius: 7px;
-      border: var(--inputs-border-size) solid var(--inputs-border-color);
-      -webkit-transition: all var(--inputs-outline-trans-duration) ease-out;
-      transition: all var(--inputs-outline-trans-duration) ease-out;
-      margin-bottom: 0.3rem;
-    }
+  outline: 0.2rem solid transparent;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  border-radius: 7px;
+  border: var(--inputs-border-size) solid var(--inputs-border-color);
+  -webkit-transition: all var(--inputs-outline-trans-duration) ease-out;
+  transition: all var(--inputs-outline-trans-duration) ease-out;
+  margin-bottom: 0.3rem;
+}
 
 section#forms form div[class^="md-"]:has(input:focus) {
-        outline: 0.2rem solid var(--inputs-outline-color);
-        border-color: var(--inputs-focus-border-color);
-      }
+  outline: 0.2rem solid var(--inputs-outline-color);
+  border-color: var(--inputs-focus-border-color);
+}
 
 section#forms form div[class^="md-"]:has(input:hover) {
-        border-color: var(--inputs-focus-border-color);
-        outline: 0.2rem solid var(--inputs-outline-color);
-      }
+  border-color: var(--inputs-focus-border-color);
+  outline: 0.2rem solid var(--inputs-outline-color);
+}
 
 section#forms form div[class^="md-"] > div:first-child {
-        position: relative;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-pack: center;
-            -ms-flex-pack: center;
-                justify-content: center;
-        -webkit-box-align: center;
-            -ms-flex-align: center;
-                align-items: center;
-        width: 15%;
-        border-start-start-radius: 10px;
-        border-end-start-radius: 7px;
-        background-color: var(--inputs-icons-background-color);
-        -webkit-border-end: var(--inputs-border-size) solid
-          var(--inputs-border-color);
-                border-inline-end: var(--inputs-border-size) solid
-          var(--inputs-border-color);
-        -webkit-transition: all var(--icons-focus-tran-duration) linear;
-        transition: all var(--icons-focus-tran-duration) linear;
-        color: var(--inputs-icons-color);
-        font-size: var(--inputs-icons-font-size);
-      }
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  width: 15%;
+  border-start-start-radius: 10px;
+  border-end-start-radius: 7px;
+  background-color: var(--inputs-icons-background-color);
+  -webkit-border-end: var(--inputs-border-size) solid var(--inputs-border-color);
+  border-inline-end: var(--inputs-border-size) solid var(--inputs-border-color);
+  -webkit-transition: all var(--icons-focus-tran-duration) linear;
+  transition: all var(--icons-focus-tran-duration) linear;
+  color: var(--inputs-icons-color);
+  font-size: var(--inputs-icons-font-size);
+}
 
 section#forms form div[class^="md-"] > div:first-child::before {
-          content: "";
-          height: 100%;
-          width: 20%;
-          border-start-start-radius: 5px;
-          border-end-start-radius: 5px;
-          background-color: whitesmoke;
-          position: absolute;
-          inset-inline-start: 0;
-          top: 0;
-          z-index: -1;
-        }
+  content: "";
+  height: 100%;
+  width: 20%;
+  border-start-start-radius: 5px;
+  border-end-start-radius: 5px;
+  background-color: whitesmoke;
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  z-index: -1;
+}
 
 /* inputs icons styling */
 
-section#forms form div[class^="md-"] > div:first-child:has( + div > input:focus) {
-          background-color: var(--inputs-icons-focus-bc);
-          color: var(--inputs-icons-focus-color);
-          border-right-color: var(--inputs-icons-focus-bc);
-        }
+section#forms
+  form
+  div[class^="md-"]
+  > div:first-child:has(+ div > input:focus) {
+  background-color: var(--inputs-icons-focus-bc);
+  color: var(--inputs-icons-focus-color);
+  border-right-color: var(--inputs-icons-focus-bc);
+}
 
-section#forms form div[class^="md-"] > div:first-child:has( + div > input:hover) {
-          border-right-color: var(--inputs-icons-focus-bc);
-        }
+section#forms
+  form
+  div[class^="md-"]
+  > div:first-child:has(+ div > input:hover) {
+  border-right-color: var(--inputs-icons-focus-bc);
+}
 
 section#forms form div[class^="md-"] div[class*="container-label"] {
-        width: 85%;
-        position: relative;
-        border-start-end-radius: 5px;
-        border-end-end-radius: 5px;
+  width: 85%;
+  position: relative;
+  border-start-end-radius: 5px;
+  border-end-end-radius: 5px;
 
-        /* inputs styling */
-      }
+  /* inputs styling */
+}
 
 section#forms form div[class^="md-"] div[class*="container-label"] input {
-          color: var(--inputs-text-color);
-          font-size: var(--inputs-font-size);
-          background-color: var(--inputs-background-color);
-          height: var(--btn-height);
-          width: 100%;
-          border-start-end-radius: 5px;
-          border-end-end-radius: 5px;
-          -webkit-padding-start: 0.5rem;
-                  padding-inline-start: 0.5rem;
-          outline: none;
-          border: none;
-          -webkit-transition: all var(--inputs-focus-tran-duration) linear;
-          transition: all var(--inputs-focus-tran-duration) linear;
-        }
+  color: var(--inputs-text-color);
+  font-size: var(--inputs-font-size);
+  background-color: var(--inputs-background-color);
+  height: var(--btn-height);
+  width: 100%;
+  border-start-end-radius: 5px;
+  border-end-end-radius: 5px;
+  -webkit-padding-start: 0.5rem;
+  padding-inline-start: 0.5rem;
+  outline: none;
+  border: none;
+  -webkit-transition: all var(--inputs-focus-tran-duration) linear;
+  transition: all var(--inputs-focus-tran-duration) linear;
+}
 
-section#forms form div[class^="md-"] div[class*="container-label"] input:focus,section#forms form div[class^="md-"] div[class*="container-label"] input:focus + div > div {
-            background-color: var(--inputs-focus-background-color);
-          }
+section#forms form div[class^="md-"] div[class*="container-label"] input:focus,
+section#forms
+  form
+  div[class^="md-"]
+  div[class*="container-label"]
+  input:focus
+  + div
+  > div {
+  background-color: var(--inputs-focus-background-color);
+}
 
 /* eye icon */
 
 section#forms form div[class^="md-"] div[class*="container-label"] .eye-icon {
-          position: absolute;
-          display: -webkit-box;
-          display: -ms-flexbox;
-          display: flex;
-          -webkit-box-pack: center;
-              -ms-flex-pack: center;
-                  justify-content: center;
-          -webkit-box-align: center;
-              -ms-flex-align: center;
-                  align-items: center;
-          top: 50%;
-          inset-inline-end: 0.5rem;
-          translate: 0 -50%;
-          color: var(--eye-pass-color);
-          cursor: pointer;
-        }
+  position: absolute;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  top: 50%;
+  inset-inline-end: 0.5rem;
+  translate: 0 -50%;
+  color: var(--eye-pass-color);
+  cursor: pointer;
+}
 
 section#forms form div[class^="md-"] div[class*="container-label"] .eye-icon i {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-          }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
 
-section#forms form div[class^="md-"] div[class*="container-label"] .eye-icon > .show {
-            scale: 0 1;
-          }
+section#forms
+  form
+  div[class^="md-"]
+  div[class*="container-label"]
+  .eye-icon
+  > .show {
+  scale: 0 1;
+}
 
-section#forms form div[class^="md-"] div[class*="container-label"] .eye-icon div {
-            position: absolute;
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-pack: center;
-                -ms-flex-pack: center;
-                    justify-content: center;
-            -webkit-box-align: center;
-                -ms-flex-align: center;
-                    align-items: center;
-            background-color: var(--inputs-background-color);
-            padding-block: 0.1rem;
-            width: 100%;
-            rotate: 45deg;
-            -webkit-transition: all var(--eye-trans-duration) ease-in-out;
-            transition: all var(--eye-trans-duration) ease-in-out;
-          }
+section#forms
+  form
+  div[class^="md-"]
+  div[class*="container-label"]
+  .eye-icon
+  div {
+  position: absolute;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  background-color: var(--inputs-background-color);
+  padding-block: 0.1rem;
+  width: 100%;
+  rotate: 45deg;
+  -webkit-transition: all var(--eye-trans-duration) ease-in-out;
+  transition: all var(--eye-trans-duration) ease-in-out;
+}
 
-section#forms form div[class^="md-"] div[class*="container-label"] .eye-icon div hr {
-              background-color: var(--eye-pass-color);
-              height: 0.1rem;
-              border: none;
-              width: 100%;
-            }
+section#forms
+  form
+  div[class^="md-"]
+  div[class*="container-label"]
+  .eye-icon
+  div
+  hr {
+  background-color: var(--eye-pass-color);
+  height: 0.1rem;
+  border: none;
+  width: 100%;
+}
 
 section#forms form div[class^="md-"] div[class*="container-label"] label {
-          position: absolute;
-          -webkit-user-select: none;
-             -moz-user-select: none;
-              -ms-user-select: none;
-                  user-select: none;
-          top: 50%;
-          inset-inline-start: 1rem;
-          translate: 0 -50%;
-          width: -webkit-fit-content;
-          width: -moz-fit-content;
-          width: fit-content;
-          height: -webkit-fit-content;
-          height: -moz-fit-content;
-          height: fit-content;
-          padding-inline: 0.1rem;
-          color: var(--inputs-label-color);
-          background-color: var(--inputs-background-color);
-          -webkit-transition: all var(--inputs-label-tran-duration) ease-out;
-          transition: all var(--inputs-label-tran-duration) ease-out;
-          cursor: text;
-          display: -webkit-box;
-          display: -ms-flexbox;
-          display: flex;
-          -webkit-box-pack: center;
-              -ms-flex-pack: center;
-                  justify-content: center;
-          -webkit-box-align: center;
-              -ms-flex-align: center;
-                  align-items: center;
-          z-index: 1;
-        }
+  position: absolute;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  top: 50%;
+  inset-inline-start: 1rem;
+  translate: 0 -50%;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  padding-inline: 0.1rem;
+  color: var(--inputs-label-color);
+  background-color: var(--inputs-background-color);
+  -webkit-transition: all var(--inputs-label-tran-duration) ease-out;
+  transition: all var(--inputs-label-tran-duration) ease-out;
+  cursor: text;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  z-index: 1;
+}
 
 section#forms form div[class^="md-"] div[class*="container-label"] label div {
-            background-color: var(--inputs-background-color);
-            display: -webkit-inline-box;
-            display: -ms-inline-flexbox;
-            display: inline-flex;
-            height: 50%;
-            width: 100%;
-            border: medium none currentcolor;
-            border: initial;
-            -webkit-transition: all var(--inputs-label-tran-duration) ease-out;
-            transition: all var(--inputs-label-tran-duration) ease-out;
-            border-radius: 0;
-            border-radius: initial;
-            position: absolute;
-            top: 0;
-            z-index: -1;
-          }
+  background-color: var(--inputs-background-color);
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  height: 50%;
+  width: 100%;
+  border: medium none currentcolor;
+  border: initial;
+  -webkit-transition: all var(--inputs-label-tran-duration) ease-out;
+  transition: all var(--inputs-label-tran-duration) ease-out;
+  border-radius: 0;
+  border-radius: initial;
+  position: absolute;
+  top: 0;
+  z-index: -1;
+}
 
-section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:-moz-placeholder)) {
-            color: var(--inputs-transition-label-color);
-            top: -0.1rem;
-            inset-inline-start: 0.5rem;
-            background-color: var(--inputs-focus-background-color);
-          }
+section#forms
+  form
+  div[class^="md-"]
+  div[class*="container-label"]
+  label:has(+ input:focus, + input:not(:-moz-placeholder)) {
+  color: var(--inputs-transition-label-color);
+  top: -0.1rem;
+  inset-inline-start: 0.5rem;
+  background-color: var(--inputs-focus-background-color);
+}
 
-section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:-ms-input-placeholder)) {
-            color: var(--inputs-transition-label-color);
-            top: -0.1rem;
-            inset-inline-start: 0.5rem;
-            background-color: var(--inputs-focus-background-color);
-          }
+section#forms
+  form
+  div[class^="md-"]
+  div[class*="container-label"]
+  label:has(+ input:focus, + input:not(:-ms-input-placeholder)) {
+  color: var(--inputs-transition-label-color);
+  top: -0.1rem;
+  inset-inline-start: 0.5rem;
+  background-color: var(--inputs-focus-background-color);
+}
 
-section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:placeholder-shown)) {
-            color: var(--inputs-transition-label-color);
-            top: -0.1rem;
-            inset-inline-start: 0.5rem;
-            background-color: var(--inputs-focus-background-color);
-          }
+section#forms
+  form
+  div[class^="md-"]
+  div[class*="container-label"]
+  label:has(+ input:focus, + input:not(:placeholder-shown)) {
+  color: var(--inputs-transition-label-color);
+  top: -0.1rem;
+  inset-inline-start: 0.5rem;
+  background-color: var(--inputs-focus-background-color);
+}
 
-section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:-moz-placeholder)) div {
-              background-color: var(--container-background-color);
-            }
+section#forms
+  form
+  div[class^="md-"]
+  div[class*="container-label"]
+  label:has(+ input:focus, + input:not(:-moz-placeholder))
+  div {
+  background-color: var(--container-background-color);
+}
 
-section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:-ms-input-placeholder)) div {
-              background-color: var(--container-background-color);
-            }
+section#forms
+  form
+  div[class^="md-"]
+  div[class*="container-label"]
+  label:has(+ input:focus, + input:not(:-ms-input-placeholder))
+  div {
+  background-color: var(--container-background-color);
+}
 
-section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:focus, + input:not(:placeholder-shown)) div {
-              background-color: var(--container-background-color);
-            }
+section#forms
+  form
+  div[class^="md-"]
+  div[class*="container-label"]
+  label:has(+ input:focus, + input:not(:placeholder-shown))
+  div {
+  background-color: var(--container-background-color);
+}
 
-section#forms form div[class^="md-"] div[class*="container-label"] label:has( + input:not(:focus)) {
-            background-color: var(--inputs-background-color);
-            color: var(--inputs-label-color);
-          }
+section#forms
+  form
+  div[class^="md-"]
+  div[class*="container-label"]
+  label:has(+ input:not(:focus)) {
+  background-color: var(--inputs-background-color);
+  color: var(--inputs-label-color);
+}
 
 /* error text styling */
 
 section#forms .error-container {
-    color: var(--error-color);
-    text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
-    font-size: var(--error-font-size);
-    height: 1.2rem;
-    /* position: relative;
+  color: var(--error-color);
+  text-shadow: 0 0 1px rgba(128, 128, 128, 0.726);
+  font-size: var(--error-font-size);
+  height: 1.2rem;
+  /* position: relative;
     top: 0.2rem; */
-    /* padding-bottom: 0.5rem; */
-  }
+  /* padding-bottom: 0.5rem; */
+}
 
 section#forms .error-container > span {
-      display: -webkit-box;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-box-align: end;
-          -ms-flex-align: end;
-              align-items: flex-end;
-    }
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: end;
+  -ms-flex-align: end;
+  align-items: flex-end;
+}
 
 section#forms .error-container > span i {
-        font-size: var(--error-font-size) !important;
-        -webkit-margin-end: 0.2rem;
-                margin-inline-end: 0.2rem;
-      }
+  font-size: var(--error-font-size) !important;
+  -webkit-margin-end: 0.2rem;
+  margin-inline-end: 0.2rem;
+}
 
 section#forms p {
-    margin-top: 0.5rem;
-    color: var(--container-text-color);
-  }
+  margin-top: 0.5rem;
+  color: var(--container-text-color);
+}
 
 section#forms p a {
-      cursor: pointer;
-      -webkit-text-decoration: underline;
-      text-decoration: underline;
-      -webkit-transition: all var(--link-tran-duration) linear;
-      transition: all var(--link-tran-duration) linear;
-    }
+  cursor: pointer;
+  -webkit-text-decoration: underline;
+  text-decoration: underline;
+  -webkit-transition: all var(--link-tran-duration) linear;
+  transition: all var(--link-tran-duration) linear;
+}
 
 section#forms p a:link {
-        color: var(--links-color);
-      }
+  color: var(--links-color);
+}
 
 section#forms p a:visited {
-        color: var(--links-color);
-      }
+  color: var(--links-color);
+}
 
 section#forms p a:active {
-        color: var(--links-color);
-      }
+  color: var(--links-color);
+}
 
 section#forms p a:hover {
-        color: var(--links-hover-color);
-      }
+  color: var(--links-hover-color);
+}
 
 /* separator styling*/
 
@@ -841,26 +905,26 @@ div.separator {
   display: -ms-flexbox;
   display: flex;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   position: relative;
 }
 
 div.separator hr {
-    width: 100%;
-    height: 1px;
-    border-color: var(--container-border-color);
-    margin: 1rem 0;
-  }
+  width: 100%;
+  height: 1px;
+  border-color: var(--container-border-color);
+  margin: 1rem 0;
+}
 
 div.separator p {
-    position: absolute;
-    background-color: var(--container-background-color);
-    padding-inline: 0.3rem;
-  }
+  position: absolute;
+  background-color: var(--container-background-color);
+  padding-inline: 0.3rem;
+}
 
 @property --mask-animation-start {
   syntax: "<percentage>";
@@ -888,8 +952,8 @@ div.separator p {
 }
 
 [dir="rtl"] #login-form aside.shown {
-    translate: +100%;
-  }
+  translate: +100%;
+}
 
 @media (max-width: 48rem) {
   .top-nav-bar {
@@ -899,81 +963,102 @@ div.separator p {
     border-bottom: 1px solid var(--container-border-color);
   }
 
-    .top-nav-bar .login-top-logo {
-      background-color: transparent;
-      -webkit-box-shadow: none;
-              box-shadow: none;
-      padding: 0 !important;
-      padding: initial !important;
-    }
+  .top-nav-bar .login-top-logo {
+    background-color: transparent;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    padding: 0 !important;
+    padding: initial !important;
+  }
   main {
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
     -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
     width: 100%;
     -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
   }
 
-    main #space-reserver {
-      width: 100%;
-      height: 0;
-    }
-      main #space-reserver.shown {
-        height: 40rem;
-      }
-        main #space-reserver.shown + div {
-          -ms-flex-preferred-size: 50%;
-              flex-basis: 50%;
-        }
-    main #login-form {
-      width: 100% !important;
-      border-radius: 0;
-      border-radius: initial;
-      padding: 1rem;
-      -webkit-box-flex: 1;
-          -ms-flex-positive: 1;
-              flex-grow: 1;
-      border: none;
-    }
+  main #space-reserver {
+    width: 100%;
+    height: 0;
+  }
+  main #space-reserver.shown {
+    height: 40rem;
+  }
+  main #space-reserver.shown + div {
+    -ms-flex-preferred-size: 50%;
+    flex-basis: 50%;
+  }
+  main #login-form {
+    width: 100% !important;
+    border-radius: 0;
+    border-radius: initial;
+    padding: 1rem;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    border: none;
+  }
 
-      main #login-form aside {
-        border: medium none currentcolor;
-        border: initial;
-        border-radius: 0;
-        border-radius: initial;
-      }
-        main #login-form aside.shown {
-          translate: 0 -100% !important;
-        }
-        main #login-form div.user-name-container > div:first-child {
-          width: 100%;
-          display: -webkit-box;
-          display: -ms-flexbox;
-          display: flex;
-          -webkit-box-orient: horizontal;
-          -webkit-box-direction: normal;
-              -ms-flex-direction: row;
-                  flex-direction: row;
-          gap: calc(1rem / 2) !important;
-          gap: calc(var(--form-gap) / 2) !important;
-        }
-          main #login-form div.user-name-container > div:first-child > div {
-            -ms-flex-preferred-size: 50%;
-                flex-basis: 50%;
-          }
-    main #login-form:has(.shown) {
-      padding-bottom: 3rem;
-    }
+  main #login-form > header {
+    max-width: 40rem;
+    translate: -50%;
+  }
+
+  main #login-form > .separator {
+    max-width: 40rem;
+    translate: -50%;
+  }
+
+  main #login-form > .provider-container {
+    max-width: 40rem;
+    translate: -50%;
+  }
+
+  main #login-form > section {
+    max-width: 40rem;
+    translate: -50%;
+  }
+
+  main #login-form aside {
+    border: medium none currentcolor;
+    border: initial;
+    border-radius: 0;
+    border-radius: initial;
+  }
+  main #login-form aside.shown {
+    translate: 0 -100% !important;
+  }
+  main #login-form div.user-name-container > div:first-child {
+    width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    gap: calc(1rem / 2) !important;
+    gap: calc(var(--form-gap) / 2) !important;
+  }
+  main #login-form div.user-name-container > div:first-child > div {
+    -ms-flex-preferred-size: 50%;
+    flex-basis: 50%;
+  }
+  main #login-form:has(.shown) {
+    padding-bottom: 3rem;
+  }
 }
 
 @media (max-width: 28.0625rem) {
-      .top-nav-bar .lang-toggle-btn span,.top-nav-bar .home-link-btn span {
-        display: none;
-      }
+  .top-nav-bar .lang-toggle-btn span,
+  .top-nav-bar .home-link-btn span {
+    display: none;
+  }
 }
