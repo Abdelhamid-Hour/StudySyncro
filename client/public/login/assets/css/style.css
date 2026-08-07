@@ -1007,23 +1007,27 @@ div.separator p {
   }
 
   main #login-form > header {
+    width: 100%;
     max-width: 40rem;
-    translate: -50%;
+    margin-inline: auto;
   }
 
   main #login-form > .separator {
+    width: 100%;
     max-width: 40rem;
-    translate: -50%;
+    margin-inline: auto;
   }
 
   main #login-form > .provider-container {
+    width: 100%;
     max-width: 40rem;
-    translate: -50%;
+    margin-inline: auto;
   }
 
   main #login-form > section {
+    width: 100%;
     max-width: 40rem;
-    translate: -50%;
+    margin-inline: auto;
   }
 
   main #login-form aside {
