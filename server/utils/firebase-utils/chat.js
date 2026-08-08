@@ -248,7 +248,8 @@ const startChildAddedListener = (roomId, query) => {
     } catch (error) {
       console.error("Error in onChildAdded:", error);
       const errEntry = STREAM_MAP.get(roomId);
-      if (errEntry) broadcastMessage(roomId, { message: "api:server_error" }, true);
+      if (errEntry)
+        broadcastMessage(roomId, { message: "api:server_error" }, true);
       try {
         query.off("child_added", onChildAdded);
       } catch (e) {
@@ -280,6 +281,16 @@ const broadcastMessage = (roomId, messageData, error = false) => {
   const resMap = streamEntry.resMap;
   if (!resMap) return;
   resMap.forEach((res, userId) => {
+    console.log("broadcast msg to: ", res.userFullName);
+    console.log(
+      "messageData: ",
+      messageData,
+      "\nmessageData.sender.id: ",
+      messageData.sender.id,
+      "\nuserId: ",
+      userId,
+    );
+
     try {
       res.roomId = roomId;
       if (messageData && messageData.sender.id === userId) return; // don't send the message to the sender
@@ -289,6 +300,8 @@ const broadcastMessage = (roomId, messageData, error = false) => {
           error ? { message: "api:db_listener_error" } : messageData,
         )}\n\n`,
       );
+      if (res.flush) res.flush();
+      console.log("msg send to: ", res.userFullName)
     } catch (err) {
       // broken socket — remove it and continue
       console.warn(
@@ -421,7 +434,7 @@ const getUserGroupChatStateHelper = async (userId, groupId) => {
     if (!snap.exists()) {
       return {
         success: true,
-        data: {}
+        data: {},
       };
     }
     return { success: true, data: snap.val() };
@@ -506,7 +519,6 @@ const startRecentMessagesListener = (userId, query) => {
   };
 
   const onChildRemoved = (snapshot) => {
-    console.log("onChildRemoved");
     try {
       const data = snapshot.val() || {};
       const groupId = snapshot.key || data.groupId;

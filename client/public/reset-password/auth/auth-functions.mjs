@@ -20,7 +20,6 @@ import { passwordField } from "../assets/js/dom-variables.mjs";
 const oobCode = splitUrlParams("oobCode");
 
 export const verifyOobCode = async () => {
-  debugger;
   try {
     await verifyPasswordResetCode(auth, oobCode);
   } catch (error) {

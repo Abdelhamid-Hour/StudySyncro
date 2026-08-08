@@ -133,7 +133,6 @@ export const loadNamespaces = async (namespaces = ["common"]) => {
  * @returns {string} - Translated and interpolated string
  */
 export const t = (key, params = {}) => {
-  if (key.includes("messages.verification_invalid")) debugger;
   if (!key || typeof key !== "string") return "";
 
   const lang = getLang();

@@ -26,7 +26,6 @@ const sendPushNotification = async (uid, payload) => {
 
     const promises = [];
     subscriptionsSnapshot.forEach((doc) => {
-      console.log("doc sub : ", doc);
 
       const subscription = doc.data();
 

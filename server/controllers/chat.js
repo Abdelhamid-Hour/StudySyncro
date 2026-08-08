@@ -35,7 +35,9 @@ const sendMessageHandler = async (req, res) => {
     (!message || typeof message !== "string" || message.trim().length === 0)
   ) {
     return res.status(400).json({
-      message: res.locals.t("api:cannot_send_an_empty_message_without_an_attachment"),
+      message: res.locals.t(
+        "api:cannot_send_an_empty_message_without_an_attachment",
+      ),
       isNative: true,
       type: "warning",
     });
@@ -53,9 +55,10 @@ const sendMessageHandler = async (req, res) => {
   );
 
   if (result.success) {
-    return res
-      .status(200)
-      .json({ message: res.locals.t("api:message_sent_successfully"), ...result.data });
+    return res.status(200).json({
+      message: res.locals.t("api:message_sent_successfully"),
+      ...result.data,
+    });
   }
   return res.status(500).json({
     message: res.locals.t(result.message) || "Failed to send message",
@@ -71,14 +74,12 @@ const chatStreamHandler = async (req, res) => {
   const groupSnap = await db.collection("groups").doc(groupId).get();
 
   if (!groupSnap.exists)
-    return res
-      .status(404)
-      .json({
-        message: res.locals.t("api:group_not_found"),
-        error: res.locals.t("api:group_not_found"),
-        isNative: false,
-        type: "error",
-      });
+    return res.status(404).json({
+      message: res.locals.t("api:group_not_found"),
+      error: res.locals.t("api:group_not_found"),
+      isNative: false,
+      type: "error",
+    });
 
   const joinedToGroup = await db
     .collection("users")
@@ -88,33 +89,30 @@ const chatStreamHandler = async (req, res) => {
     .get();
 
   if (!joinedToGroup.exists)
-    return res
-      .status(403)
-      .json({
-        message: res.locals.t("api:access_denied_to_this_group_chat"),
-        error: res.locals.t("api:access_denied_to_this_group_chat"),
-        isNative: true,
-        type: "warning",
-      });
+    return res.status(403).json({
+      message: res.locals.t("api:access_denied_to_this_group_chat"),
+      error: res.locals.t("api:access_denied_to_this_group_chat"),
+      isNative: true,
+      type: "warning",
+    });
 
   if (sessionId && req.user.currentSession !== sessionId)
-    return res
-      .status(403)
-      .json({
-        message: res.locals.t("api:access_denied_to_this_session_chat"),
-        error: res.locals.t("api:access_denied_to_this_session_chat"),
-        isNative: true,
-        type: "warning",
-      });
+    return res.status(403).json({
+      message: res.locals.t("api:access_denied_to_this_session_chat"),
+      error: res.locals.t("api:access_denied_to_this_session_chat"),
+      isNative: true,
+      type: "warning",
+    });
 
   res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders && res.flushHeaders(); // flush the headers to establish SSE with client
   const roomId = sessionId || groupId;
   const path = sessionId ? `sessions/${roomId}/chat` : `groups/${roomId}/chat`;
   const timestamp = Date.now();
   const query = rDb.ref(path).orderByChild("timestamp").startAt(timestamp);
+  res.userFullName = req.user.fullName;
   if (STREAM_MAP.has(roomId)) {
     STREAM_MAP.get(roomId).resMap.set(req.user.uid, res);
   } else {
@@ -127,9 +125,12 @@ const chatStreamHandler = async (req, res) => {
     startChildAddedListener(roomId, query);
   }
 
+  console.log("stream started for user: ", req.user.fullName);
+
   const heartbeat = setInterval(() => {
     try {
       res.write(":\n\n");
+      if (res.flush) res.flush();
     } catch (e) {
       clearInterval(heartbeat);
       cleanUpClient(res, req.user.uid);
@@ -138,6 +139,8 @@ const chatStreamHandler = async (req, res) => {
 
   req.on("close", () => {
     try {
+      console.log("conection closed for user: ", req.user.fullName);
+
       clearInterval(heartbeat);
       cleanUpClient(res, req.user.uid);
     } catch (error) {
@@ -195,9 +198,11 @@ const cleanUpRecentMessagesClient = (res, userId) => {
 const markGroupAsReadHandler = async (req, res) => {
   const { groupId, messageId, timestamp } = req.body;
   if (!groupId)
-    return res
-      .status(400)
-      .json({ message: res.locals.t("api:groupid_is_required"), isNative: false, type: "error" });
+    return res.status(400).json({
+      message: res.locals.t("api:groupid_is_required"),
+      isNative: false,
+      type: "error",
+    });
   const result = await markGroupAsReadHelper(
     req.user.uid,
     groupId,
@@ -205,7 +210,9 @@ const markGroupAsReadHandler = async (req, res) => {
     timestamp,
   );
   if (result.success) {
-    return res.status(200).json({ message: res.locals.t("api:marked_as_read") });
+    return res
+      .status(200)
+      .json({ message: res.locals.t("api:marked_as_read") });
   }
   return res.status(500).json({
     message: res.locals.t(result.message) || "Failed to mark as read",
@@ -217,9 +224,11 @@ const markGroupAsReadHandler = async (req, res) => {
 const getUserGroupChatStateHandler = async (req, res) => {
   const { groupId } = req.params;
   if (!groupId)
-    return res
-      .status(400)
-      .json({ message: res.locals.t("api:groupid_is_required"), isNative: false, type: "error" });
+    return res.status(400).json({
+      message: res.locals.t("api:groupid_is_required"),
+      isNative: false,
+      type: "error",
+    });
   const result = await getUserGroupChatStateHelper(req.user.uid, groupId);
   if (result.success) {
     return res.status(200).json(result.data);

@@ -78,7 +78,7 @@ export class Loader {
     if (this.io) {
       this.io.disconnect();
     }
-    clearLoadersBoxes();
+    this.clearLoadersBoxes();
     this.sentinel = null;
     this.container.innerHTML = "";
     this.creteria = this.getCriteria();
@@ -123,7 +123,14 @@ export class Loader {
     }
     if (this.append) this.container.appendChild(frag);
     else this.container.prepend(frag);
-    this.sentinel = document.querySelector(".first-loading-card");
+    this.sentinel = this.container.querySelector(".first-loading-card");
+  }
+
+  clearLoadersBoxes() {
+    const loaders = this.container.querySelectorAll(".loading-card");
+    loaders.forEach((loader) => {
+      loader.remove();
+    });
   }
 
   async loadMore(isFirstLoad = false) {
@@ -145,9 +152,21 @@ export class Loader {
 
       this.lastVisible = lastVisible;
 
+      if (isFirstLoad) {
+        let res;
+        if (isAsync(this.firstLoadFunc)) {
+          res = await this.firstLoadFunc(cards);
+        } else {
+          res = this.firstLoadFunc(cards);
+        }
+        if (res && res.cards) cards = res.cards;
+        if (res && res.lastVisible)
+          lastVisible = res.lastVisible || lastVisible;
+      }
+
       if (!cards.length || cards[0]?.length === 0) {
         this.io.unobserve(this.sentinel);
-        clearLoadersBoxes();
+        this.clearLoadersBoxes();
         this.checkEmptyState();
         this.loading = false;
         return;
@@ -156,13 +175,6 @@ export class Loader {
       const frag = document.createDocumentFragment();
 
       const initialHeight = this.container.scrollHeight;
-
-      if (isFirstLoad) {
-        const res = this.firstLoadFunc(cards);
-        if (res && res.cards) cards = res.cards;
-        if (res && res.lastVisible)
-          lastVisible = res.lastVisible || lastVisible;
-      }
 
       let cardElements;
       if (isAsync(this.createCard)) {
@@ -216,7 +228,7 @@ export class Loader {
       this.afterAppendRes({ cards, lastVisible, initialHeight, isFirstLoad });
       if (!lastVisible) {
         this.io.unobserve(this.sentinel);
-        clearLoadersBoxes();
+        this.clearLoadersBoxes();
         this.checkEmptyState();
       }
     } catch (error) {
@@ -282,12 +294,6 @@ export class Loader {
   }
 }
 
-const clearLoadersBoxes = () => {
-  const loaders = document.querySelectorAll(".loading-card");
-  loaders.forEach((loader) => {
-    loader.remove();
-  });
-};
 
 export const initFiltersInputListener = (loader, container) => {
   const resetLoader = getDebounceFunc(() => loader.reset(), 300);

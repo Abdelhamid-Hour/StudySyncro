@@ -70,8 +70,6 @@ const requireAuthForPages = async (req, res, next) => {
       const data = await response.json();
 
       if (!response.ok) {
-        console.log(data);
-
         let errCode = "failed";
         if (data.error && data.error.message) {
           if (data.error.message === "EXPIRED_OOB_CODE") errCode = "expired";

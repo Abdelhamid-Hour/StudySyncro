@@ -34,7 +34,6 @@ export const init = async () => {
     btn.addEventListener("click", saveQuiz);
   });
 
-  debugger;
   setUpDragAndDrop(".questions-list", ".question", handleEditorListDragEnd);
 
   questionsPanelList?.addEventListener("click", handleQuestionsPanelListClick);

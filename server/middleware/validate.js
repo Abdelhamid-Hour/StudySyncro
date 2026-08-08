@@ -5,7 +5,6 @@ const { ZodError } = require("zod");
  * Returns standardized JSON responses with root `message` and structured details when validation fails.
  */
 const validate = (schemas) => async (req, res, next) => {
-  console.log(" validate req : ", req.body, req.query, req.params);
 
   try {
     if (schemas.body) {

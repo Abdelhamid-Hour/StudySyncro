@@ -1418,7 +1418,7 @@ const handleDragLeave = (e) => {
   }
 };
 
-const openChatStream = (groupId, sessionId) => {
+const openChatStream = (groupId, sessionId) => {  
   const route = `/api/chat-stream?sessionId=${sessionId}&groupId=${groupId}`;
   const eventSource = new EventSource(route, {
     withCredentials: true,
@@ -1426,6 +1426,7 @@ const openChatStream = (groupId, sessionId) => {
 
   eventSource.addEventListener("message", (e) => {
     const message = JSON.parse(e.data);
+    console.log(message);
     const file = message.content.text
       ? null
       : {

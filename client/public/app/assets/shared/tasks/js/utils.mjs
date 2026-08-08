@@ -282,7 +282,6 @@ export const setUpDragAndDrop = (
   draggableSelector,
   afterDragEndCallback,
 ) => {
-  debugger;
   container = document.querySelector(ContainerSelector);
   draggableElSelector = draggableSelector;
   MAX_SCROLL = 0;
