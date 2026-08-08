@@ -78,5 +78,10 @@
     "title_length": "يجب أن يتراوح العنوان بين {min} و {max} حرفاً",
     "enter_description": "يرجى إدخال وصف",
     "task_duration_range": "يجب أن تكون مدة المهمة رقماً بين {min} و {max} دقيقة"
+  },
+  "sidebar_info": {
+    "creation_date": "تاريخ الإنشاء",
+    "search_members_placeholder": "البحث باسم العضو أو معرفه",
+    "search_quizzes_placeholder": "البحث بالعنوان"
   }
 }

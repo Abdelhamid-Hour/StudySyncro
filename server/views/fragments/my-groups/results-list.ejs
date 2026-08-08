@@ -13,7 +13,15 @@
       <i class="bi bi-x-lg"></i>
     </button>
   </header>
-  <% if (results.length > 0) { %>
+  
+  <div class="users-search header-container" style="width: 100%;">
+    <div class="search-icon-container">
+      <i class="bi bi-search"></i>
+    </div>
+    <input type="search" class="results-search-input" placeholder="<%= t('groups:members_list.search_placeholder') %>" id="search">
+  </div>
+
+  <% if (cards.length > 0) { %>
   <div class="table-div">
     <table>
       <thead>
@@ -57,9 +65,9 @@
         </tr>
       </thead>
       <tbody class="results-list" data-last-visible="<%= lastVisible || '' %>">
-        <% results.forEach(result => { %>
+        <% cards.forEach(result => { %>
         <tr class="card-item">
-          <td>
+          <td data-label="<%= t('quizzes:results_overlay.table.profile') %>">
             <div class="avatar-cover">
               <% if (result.user.photoURL) { %>
               <img src="<%= result.user.photoURL %>" alt="" width="32" height="32"/>
@@ -68,13 +76,13 @@
               <% } %>
             </div>
           </td>
-          <td><%= result.user.fullName %></td>
-          <td><%= result.resultDetails.submittedAt %></td>
-          <td><%= result.resultDetails.submittedCount %></td>
-          <td class="<%= getScoreClass(result.score) %>">
+          <td data-label="<%= t('common:shared_terms.full_name') %>"><%= result.user.fullName %></td>
+          <td data-label="<%= t('common:shared_terms.submitted_at') %>"><%= result.resultDetails.submittedAt %></td>
+          <td data-label="<%= t('quizzes:results_overlay.table.answered_questions') %>"><%= result.resultDetails.submittedCount %></td>
+          <td data-label="<%= t('common:shared_terms.score') %>" class="<%= getScoreClass(result.score) %>">
             <%= result.score %>
           </td>
-          <td>
+          <td data-label="<%= t('quizzes:results_overlay.table.actions') %>">
             <button
               class="small-btn show-result-btn"
               data-user-id="<%= result.resultDetails.userId %>"

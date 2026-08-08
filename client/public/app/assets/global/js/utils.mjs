@@ -2974,3 +2974,372 @@ export const initMobileSearch = () => {
     }
   });
 };
+
+
+export const getSidebarSkeleton = (route) => {
+  switch (route) {
+    case "/group-info":
+      return `
+        <div class="group-info fade-in-template">
+          <div class="group-name-info-box info-box loading-animation">
+            <div class="group-name-container info-container">
+              <span class="label">
+                <span class="group-info-icon icon-box">
+                  <i class="bi bi-people"></i>
+                  <i class="bi bi-info-circle"></i>
+                </span>
+                ${t("common:quiz_card.group_name")}
+              </span>
+              <span class="group-name-value value content loading-opacity-animation" style="width: 60%; height: 1.2rem; display: inline-block; margin-inline: auto;"></span>
+            </div>
+          </div>
+          <div class="group-description-info-box info-box loading-animation">
+            <div class="group-description-container info-container">
+              <span class="label">
+                <span class="group-description-icon icon-box">
+                  <i class="bi bi-people"></i>
+                  <i class="bi bi-info-circle"></i>
+                </span>
+                ${t("group-chat:info.group_description")}
+              </span>
+              <div class="loading-opacity-animation" style="width: 100%; height: 1rem; margin-bottom: 0.5rem; border-radius: 0.3rem;"></div>
+              <div class="loading-opacity-animation" style="width: 70%; height: 1rem; border-radius: 0.3rem;"></div>
+            </div>
+          </div>
+          <div class="subject-level dual-box">
+            <div class="subject-info-box info-box loading-animation">
+              <div class="subject-container info-container">
+                <span class="label">
+                  <span class="subject-icon icon-box">
+                    <i class="bi bi-journal-text"></i>
+                  </span>
+                  ${t("common:quiz_card.subject")}
+                </span>
+                <span class="subject-value value content loading-opacity-animation" style="width: 50%; height: 1.2rem; display: inline-block; margin-inline: auto;"></span>
+              </div>
+            </div>
+            <div class="level-info-box info-box loading-animation">
+              <div class="level-container info-container">
+                <span class="label">
+                  <span class="level-icon icon-box">
+                    <i class="bi bi-graph-up"></i>
+                  </span>
+                  ${t("common:filters.level")}
+                </span>
+                <span class="level-value value content loading-opacity-animation" style="width: 50%; height: 1.2rem; display: inline-block; margin-inline: auto;"></span>
+              </div>
+            </div>
+          </div>
+          <div class="visibility-max-members dual-box">
+            <div class="visibility-info-box info-box loading-animation">
+              <div class="visibility-container info-container">
+                <span class="label">
+                  <span class="visibility-icon icon-box">
+                    <i class="bi bi-eye"></i>
+                  </span>
+                  ${t("common:filters.visibility")}
+                </span>
+                <span class="visibility-value value content loading-opacity-animation" style="width: 50%; height: 1.2rem; display: inline-block; margin-inline: auto;"></span>
+              </div>
+            </div>
+            <div class="max-members-info-box info-box loading-animation">
+              <div class="max-members-container info-container">
+                <span class="label">
+                  <span class="max-members-icon icon-box">
+                    <i class="bi bi-person-plus"></i>
+                  </span>
+                  ${t("common:shared_terms.max_members")}
+                </span>
+                <span class="max-members-value value content loading-opacity-animation" style="width: 30%; height: 1.2rem; display: inline-block; margin-inline: auto;"></span>
+              </div>
+            </div>
+          </div>
+          <div class="creation-date-admin dual-box">
+            <div class="creation-date-info-box info-box loading-animation">
+              <div class="creation-date-container info-container">
+                <span class="label">
+                  <span class="creation-date-icon icon-box">
+                    <i class="bi bi-calendar"></i>
+                  </span>
+                  ${t("group-chat:sidebar_info.creation_date")}
+                </span>
+                <span class="creation-date-value value content loading-opacity-animation" style="width: 70%; height: 1.2rem; display: inline-block; margin-inline: auto;"></span>
+              </div>
+            </div>
+            <div class="admin-info-box info-box loading-animation">
+              <div class="admin-container info-container">
+                <span class="label">
+                  <span class="admin-icon icon-box">
+                    <i class="bi bi-person-gear"></i>
+                  </span>
+                  ${t("common:filters.admin")}
+                </span>
+                <span class="admin-value value content" style="display: flex; align-items: center;">
+                  <div class="avatar loading-opacity-animation" style="width: 2rem; height: 2rem; border-radius: 50%;"></div>
+                  <span class="loading-opacity-animation" style="width: 60%; height: 1.2rem; display: inline-block; margin-inline-start: 10px;"></span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="members info-box loading-animation">
+            <div class="members-container info-container">
+              <span class="label">
+                <span class="members-icon icon-box">
+                  <i class="bi bi-people"></i>
+                </span>
+                ${t("common:shared_terms.members")}
+                <span class="count badge simple-badge loading-opacity-animation" style="width: 2rem; height: 1.2rem;"></span>
+              </span>
+              <div class="members-list">
+                ${Array(4).fill(0).map(() => `
+                <div class="member">
+                  <div class="avatar loading-opacity-animation" style="width: 2.5rem; height: 2.5rem; border-radius: 50%;"></div>
+                  <span class="loading-opacity-animation" style="width: 60px; height: 1rem; border-radius: 0.3rem;"></span>
+                </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+          <div class="action-btns loading-animation" style="margin-top: 1rem; width: 50%; margin-inline: auto;">
+            <button class="red-btn leave-group-btn loading-opacity-animation" style="pointer-events: none; width: 100%; border: none; height: 2.5rem;"></button>
+          </div>
+        </div>
+      `;
+    case "/session-info":
+      return `
+        <div class="session-info fade-in-template">
+          <div class="session-name-info-box info-box loading-animation">
+            <div class="session-name-container info-container">
+              <span class="label">
+                <span class="session-info-icon icon-box">
+                  <i class="bi bi-clock-history"></i>
+                </span>
+                ${t("common:quiz_card.session_name")}
+              </span>
+              <span class="session-name-value value content loading-opacity-animation" style="width: 60%; height: 1.2rem; display: inline-block; margin-inline: auto;"></span>
+            </div>
+          </div>
+          <div class="session-description-info-box info-box loading-animation">
+            <div class="session-description-container info-container">
+              <span class="label">
+                <span class="session-description-icon icon-box">
+                  <i class="bi bi-journal-text"></i>
+                </span>
+                ${t("group-chat:modals.session_description_placeholder")}
+              </span>
+              <div class="loading-opacity-animation" style="width: 100%; height: 1rem; margin-bottom: 0.5rem; border-radius: 0.3rem; margin-inline: auto;"></div>
+              <div class="loading-opacity-animation" style="width: 70%; height: 1rem; border-radius: 0.3rem; margin-inline: auto;"></div>
+            </div>
+          </div>
+          <div class="quiz-info-box info-box loading-animation">
+            <div class="quiz-container info-container">
+              <span class="label">
+                <span class="quiz-icon icon-box">
+                  <i class="bi bi-question-circle"></i>
+                </span>
+                ${t("common:shared_terms.quiz")}
+              </span>
+              <span class="quiz-value value content loading-opacity-animation" style="width: 50%; height: 1.2rem; display: inline-block; margin-inline: auto;"></span>
+            </div>
+          </div>
+          <div class="timing-metrics dual-box">
+            <div class="start-info-box info-box loading-animation">
+              <div class="start-container info-container">
+                <span class="label">
+                  <span class="start-icon icon-box">
+                    <i class="bi bi-play-circle"></i>
+                  </span>
+                  ${t("common:shared_terms.start")}
+                </span>
+                <span class="start-value value content loading-opacity-animation" style="width: 70%; height: 1.2rem; display: inline-block; margin-inline: auto;"></span>
+              </div>
+            </div>
+            <div class="end-info-box info-box loading-animation">
+              <div class="end-container info-container">
+                <span class="label">
+                  <span class="end-icon icon-box">
+                    <i class="bi bi-stopwatch"></i>
+                  </span>
+                  ${t("common:shared_terms.end")}
+                </span>
+                <span class="end-value value content loading-opacity-animation" style="width: 70%; height: 1.2rem; display: inline-block; margin-inline: auto;"></span>
+              </div>
+            </div>
+          </div>
+          <div class="timing-metrics dual-box">
+            <div class="duration-info-box info-box loading-animation">
+              <div class="duration-container info-container">
+                <span class="label">
+                  <span class="duration-icon icon-box">
+                    <i class="bi bi-clock"></i>
+                  </span>
+                  ${t("common:shared_terms.duration")}
+                </span>
+                <span class="duration-value value content loading-opacity-animation" style="width: 50%; height: 1.2rem; display: inline-block; margin-inline: auto;"></span>
+              </div>
+            </div>
+            <div class="joined-count-info-box info-box loading-animation">
+              <div class="joined-count-container info-container">
+                <span class="label">
+                  <span class="joined-count-icon icon-box">
+                    <i class="bi bi-people-fill"></i>
+                  </span>
+                  ${t("common:shared_terms.joined_count")}
+                </span>
+                <span class="joined-count-value value content loading-opacity-animation" style="width: 40%; height: 1.2rem; display: inline-block; margin-inline: auto;"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    case "/members-list":
+    case "/demandes-list":
+      return `
+        <div class="${route === "/members-list" ? "members-view" : "demandes-view"} fade-in-template">
+          <header class="loading-animation">
+            <div class="${route === "/members-list" ? "members-search" : "demandes-search"} users-search">
+              <div class="search-icon-container">
+                <i class="bi bi-person-fill"></i>
+              </div>
+              <input type="search" placeholder="${route === "/members-list" ? t('group-chat:sidebar_info.search_members_placeholder') : t('group-chat:sidebar_info.search_members_placeholder')}" disabled style="background-color: transparent;" />
+            </div>
+          </header>
+          <div class="${route === "/members-list" ? "members-list" : "demandes-list"}">
+            ${Array(3).fill(0).map(() => `
+            <div class="member card-item loading-animation" style="pointer-events: none;">
+              <div class="avatar loading-opacity-animation" style="border-radius: 50%;"></div>
+              <span class="username loading-opacity-animation" style="width: 150px; height: 1.2rem; border-radius: 0.3rem;"></span>
+              <div class="action-btns">
+                <button class="red-btn small-btn loading-opacity-animation" style="width: 4rem; height: 1.8rem; border: none;"></button>
+                <button class="orange-btn small-btn loading-opacity-animation" style="width: 6rem; height: 1.8rem; border: none;"></button>
+              </div>
+            </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    case "/quizzes-list":
+      return `
+        <div class="quizzes-view fade-in-template">
+          <header class="loading-animation">
+            <div class="quizzes-search search">
+              <div class="search-icon-container">
+                <i class="bi bi-clipboard-check-fill"></i>
+              </div>
+              <label class="date-label should-fill">
+                <i class="bi bi-calendar"></i>
+                <input type="date" disabled style="background-color: transparent;" />
+              </label>
+              <input type="search" placeholder="${t('group-chat:sidebar_info.search_quizzes_placeholder')}" disabled style="background-color: transparent;" />
+            </div>
+            <label class="sort-button button exclude-btn">
+              <i class="bi bi-sort-down"></i>
+            </label>
+          </header>
+          <div class="quizzes-list">
+            ${Array(getLoadersCount()).fill(0).map(() => `
+            <div class="quiz-card card-item loading-animation" style="pointer-events: none;">
+              <div class="quiz-title-container info-container">
+                <label class="quiz-title-label">
+                  <span class="icon-box"><i class="bi bi-question-circle"></i></span>
+                  ${t("common:shared_terms.quiz_title")}
+                </label>
+                <div class="quiz-title content loading-opacity-animation" style="width: 60%; height: 1.2rem; border-radius: 0.3rem; margin-inline: auto;"></div>
+              </div>
+              <div class="session-name-container info-container">
+                <label class="session-name-label">
+                  <span class="icon-box"><i class="bi bi-clock-history"></i><i class="bi bi-info-circle"></i></span>
+                  ${t("common:quiz_card.session_name")}
+                </label>
+                <div class="session-name content loading-opacity-animation" style="width: 50%; height: 1.2rem; border-radius: 0.3rem; margin-inline: auto;"></div>
+              </div>
+              <div class="questions-container info-container small-container">
+                <label class="questions-label">
+                  <span class="icon-box"><i class="bi bi-question-circle"></i></span>
+                  ${t("common:quiz_card.questions")}
+                </label>
+                <div class="questions content loading-opacity-animation" style="width: 2rem; height: 1.2rem; border-radius: 0.3rem; margin-inline: auto;"></div>
+              </div>
+              <div class="quiz-date-container info-container small-container">
+                <label class="quiz-date-label">
+                  <span class="icon-box"><i class="bi bi-calendar-event"></i></span>
+                  ${t("common:quiz_card.submitted_at")}
+                </label>
+                <div class="quiz-date content loading-opacity-animation" style="width: 6rem; height: 1.2rem; border-radius: 0.3rem; margin-inline: auto;"></div>
+              </div>
+              <div class="action-btns">
+                <button class="view-results-btn should-fill loading-opacity-animation" style="width: 8rem; height: 2rem; border: none;"></button>
+              </div>
+            </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    default:
+      return getLoader();
+  }
+};
+
+export const getQuizResultsOverlaySkeleton = () => {
+  return `
+    <div class="results-list-overlay overlay-model fade-in-template" style="pointer-events: none;">
+      <header class="list-header loading-animation">
+        <h3 class="label">
+          <i class="bi bi-people-fill"></i>
+          ${t("common:results_overlay.title")}
+        </h3>
+        <div class="quiz-title">
+          <span class="title-label">${t("common:quiz_card.quiz_title")}</span>
+          <h3 class="quiz-title loading-opacity-animation" style="width: 10rem; height: 1.5rem; display: inline-block; margin-inline-start: 10px;"></h3>
+        </div>
+        <button type="button" class="close-results-overlay-btn exclude-btn">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </header>
+      <div class="header-container loading-animation" style="padding: 0 var(--primary-gap) var(--primary-gap) var(--primary-gap);">
+        <div class="search">
+          <i class="bi bi-search"></i>
+          <input type="text" class="results-search-input" placeholder="${t('common:actions.search')}" disabled style="background-color: transparent;" />
+        </div>
+      </div>
+      <div class="table-div">
+        <table>
+          <thead>
+            <tr>
+              <th><div><i class="bi bi-person-circle"></i> ${t("common:results_overlay.table.profile")}</div></th>
+              <th><div><i class="bi bi-person"></i> ${t("common:shared_terms.full_name")}</div></th>
+              <th><div><i class="bi bi-calendar-event"></i> ${t("common:quiz_card.submitted_at")}</div></th>
+              <th><div><i class="bi bi-list-ol"></i> ${t("common:results_overlay.table.answered_questions")}</div></th>
+              <th><div><i class="bi bi-bar-chart-line"></i> ${t("common:quiz_card.score")}</div></th>
+              <th><div><i class="bi bi-gear"></i> ${t("common:results_overlay.table.actions")}</div></th>
+            </tr>
+          </thead>
+          <tbody class="results-list">
+            ${Array(5).fill(0).map(() => `
+            <tr class="card-item loading-animation">
+              <td data-label="${t('common:results_overlay.table.profile')}">
+                <div class="avatar-cover loading-opacity-animation" style="width: 32px; height: 32px; border-radius: 50%; margin: auto;"></div>
+              </td>
+              <td data-label="${t('common:shared_terms.full_name')}">
+                <div class="loading-opacity-animation" style="width: 100px; height: 1.2rem; margin: auto; border-radius: 0.3rem;"></div>
+              </td>
+              <td data-label="${t('common:quiz_card.submitted_at')}">
+                <div class="loading-opacity-animation" style="width: 80px; height: 1.2rem; margin: auto; border-radius: 0.3rem;"></div>
+              </td>
+              <td data-label="${t('common:results_overlay.table.answered_questions')}">
+                <div class="loading-opacity-animation" style="width: 40px; height: 1.2rem; margin: auto; border-radius: 0.3rem;"></div>
+              </td>
+              <td data-label="${t('common:quiz_card.score')}">
+                <div class="loading-opacity-animation" style="width: 50px; height: 1.2rem; margin: auto; border-radius: 0.3rem;"></div>
+              </td>
+              <td data-label="${t('common:results_overlay.table.actions')}">
+                <button class="small-btn show-result-btn loading-opacity-animation" style="width: 80px; height: 2rem; border: none; margin: auto;"></button>
+              </td>
+            </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+};

@@ -14,6 +14,14 @@ class QuizResult {
   }
 
   static async create(resultDetails) {
+    if (resultDetails.userFullName) {
+      const userMock = {
+        fullName: resultDetails.userFullName,
+        photoURL: resultDetails.photoURL || null,
+      };
+      return new QuizResult(resultDetails, userMock);
+    }
+
     const userSnap = await db
       .collection("users")
       .doc(resultDetails.userId)
@@ -1088,6 +1096,8 @@ const addQuizResult = async (userId, quizResult) => {
 
       const newResult = {
         userId,
+        userFullName: userData.fullName,
+        photoURL: userData.photoURL || null,
         ...quizResult,
         submittedCount,
         sessionName: session.name,
@@ -1174,10 +1184,20 @@ const getQuizResultsByGroup = async (
   userId,
   limit = INITIALE_LOADERS_COUNT,
   lastVisible = null,
+  searchTerm = "",
+  oldResults = []
 ) => {
   try {
-    const quizSnap = await db.collection("quizzes").doc(quizId).get();
+    let accumulatedResults = [...oldResults];
+    if (accumulatedResults.length >= limit) {
+      return {
+        success: true,
+        cards: accumulatedResults.slice(0, limit),
+        lastVisible,
+      };
+    }
 
+    const quizSnap = await db.collection("quizzes").doc(quizId).get();
     const groupSnap = await db.collection("groups").doc(groupId).get();
 
     if (!quizSnap.exists)
@@ -1212,7 +1232,7 @@ const getQuizResultsByGroup = async (
       .where("groupId", "==", groupId)
       .orderBy(admin.firestore.FieldPath.documentId());
 
-    if (lastVisible) {
+    if (typeof lastVisible === "string" && lastVisible.trim() !== "") {
       const lastVisibleDoc = await db
         .collection("quizResults")
         .doc(lastVisible)
@@ -1220,30 +1240,71 @@ const getQuizResultsByGroup = async (
       if (lastVisibleDoc.exists) {
         query = query.startAfter(lastVisibleDoc);
       }
+    } else if (lastVisible) {
+      query = query.startAfter(lastVisible);
     }
 
-    const quizResults = await query.limit(Number(limit)).get();
+    const need = limit - accumulatedResults.length;
+    const batchSize = Math.max(need * 2, 20);
+    const quizResults = await query.limit(batchSize).get();
+
+    if (quizResults.empty && accumulatedResults.length === 0) {
+      return {
+        success: true,
+        cards: [],
+        lastVisible: null,
+        quizTitle: quiz.title,
+      };
+    }
+
+    let filteredDocs = quizResults.docs;
+    
+    if (searchTerm.trim() !== "") {
+      const term = searchTerm.toLowerCase().trim();
+      filteredDocs = quizResults.docs.filter((doc) => {
+        const data = doc.data();
+        const matchesName = data.userFullName && data.userFullName.toLowerCase().includes(term);
+        const matchesUid = data.userId && data.userId.toLowerCase().includes(term);
+        return matchesName || matchesUid;
+      });
+    }
 
     const results = await Promise.all(
-      quizResults.docs.map((doc) => QuizResult.create(doc.data())),
+      filteredDocs.map((doc) => QuizResult.create(doc.data())),
     );
 
-    const newLastVisible =
-      quizResults.docs.length === Number(limit)
-        ? quizResults.docs[quizResults.docs.length - 1].id
-        : null;
+    accumulatedResults = accumulatedResults.concat(results);
 
-    return {
-      success: true,
-      results,
-      lastVisible: newLastVisible,
-      quizTitle: quiz.title,
-    };
+    const newLastVisible = quizResults.docs[quizResults.docs.length - 1];
+    const isLastBatch = quizResults.docs.length < batchSize;
+    const hasEnough = accumulatedResults.length >= limit;
+
+    if (hasEnough || isLastBatch) {
+      return {
+        success: true,
+        results: accumulatedResults.slice(0, limit),
+        lastVisible:
+          isLastBatch || accumulatedResults.length <= limit
+            ? null
+            : newLastVisible.id,
+        quizTitle: quiz.title,
+      };
+    }
+
+    return await getQuizResultsByGroup(
+      quizId,
+      groupId,
+      userId,
+      limit,
+      newLastVisible.id,
+      searchTerm,
+      accumulatedResults
+    );
   } catch (error) {
-    console.error("Error fetching quiz results:", error);
+    console.error("Error getting quiz results:", error);
     return {
       success: false,
-      message: "api:failed_to_fetch_quiz_results",
+      message: "api:failed_to_get_quiz_results",
       isNative: false,
       type: "error",
     };

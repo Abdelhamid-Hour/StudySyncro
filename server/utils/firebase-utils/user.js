@@ -3,6 +3,8 @@ const { uploadFileToStorage } = require("./shared");
 
 const updateProfile = async (fullName, avatar, user) => {
   try {
+    let newPhotoUrl = null;
+
     if (fullName) {
       await admin.auth().updateUser(user.uid, { displayName: fullName });
       await db.collection("users").doc(user.uid).update({ fullName });
@@ -23,11 +25,41 @@ const updateProfile = async (fullName, avatar, user) => {
           isNative: result.isNative ?? false,
           type: result.type ?? "error",
         };
-      await admin.auth().updateUser(user.uid, { photoURL: result.URL });
+      
+      newPhotoUrl = result.URL;
+      await admin.auth().updateUser(user.uid, { photoURL: newPhotoUrl });
       await db
         .collection("users")
         .doc(user.uid)
-        .update({ photoURL: result.URL });
+        .update({ photoURL: newPhotoUrl });
+    }
+
+    if (fullName || newPhotoUrl) {
+      const quizResultsSnap = await db
+        .collection("quizResults")
+        .where("userId", "==", user.uid)
+        .get();
+
+      if (!quizResultsSnap.empty) {
+        let batch = db.batch();
+        let count = 0;
+        const updates = {};
+        if (fullName) updates.userFullName = fullName;
+        if (newPhotoUrl) updates.photoURL = newPhotoUrl;
+
+        for (const doc of quizResultsSnap.docs) {
+          batch.update(doc.ref, updates);
+          count++;
+          if (count === 500) {
+            await batch.commit();
+            batch = db.batch();
+            count = 0;
+          }
+        }
+        if (count > 0) {
+          await batch.commit();
+        }
+      }
     }
     return { success: true };
   } catch (error) {

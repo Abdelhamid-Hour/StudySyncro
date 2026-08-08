@@ -3,6 +3,7 @@ import {
   dashedToCamelCase,
   fetchData,
   getLoader,
+  getSidebarSkeleton,
   handleApiAction,
   millisecondsToHMFormat,
   navigateTo,
@@ -181,7 +182,7 @@ export const openGroupLeftSideBar = async (route) => {
     "/quizzes-list": t("common:titles.quizzes"),
   };
   groupLeftSideBarTitle.textContent = SIDEBAR_TITLES[route] || "";
-  groupLeftSideBarContent.innerHTML = getLoader();
+  groupLeftSideBarContent.innerHTML = getSidebarSkeleton(route);
   groupLeftSideBar.classList.remove("close");
 
   showInfoBtn
@@ -1431,7 +1432,7 @@ const createQuizItem = (quiz) => {
       </div>
     </div>
     ${
-      quiz.passed
+      quiz.passed || quiz.isAdmin
         ? `<div class="action-btns">
       <button
         type="button"

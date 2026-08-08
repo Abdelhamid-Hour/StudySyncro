@@ -1,15 +1,18 @@
 // const { get } = require("../routes/api-routes");
 const { db } = require("../firebase/firebaseAdmin");
-const {
-  getDemandesByGroupId,
-} = require("./firebase-utils/demandes");
+const { getDemandesByGroupId } = require("./firebase-utils/demandes");
 const {
   getQuizzesByGroupId,
+  getQuizResultsByGroup,
 } = require("./firebase-utils/examen");
 const { getGroupInfo, getChatContext } = require("./firebase-utils/group");
 const { getMembers } = require("./firebase-utils/members");
 const { getSessionInformations } = require("./firebase-utils/session");
-const { millisecondsToHMFormat } = require("./global");
+const {
+  millisecondsToHMFormat,
+  INITIALE_LOADERS_COUNT,
+  getScoreClass,
+} = require("./global");
 const GroupFragmentRoutes = [
   { route: "/group-info", title: "common:shared_terms.group_info" },
   {
@@ -22,6 +25,7 @@ const GroupFragmentRoutes = [
     title: "common:shared_terms.join_requests",
   },
   { route: "/quizzes-list", title: "common:titles.quizzes" },
+  { route: "/results-list", title: "common:results_overlay.title" },
 ];
 
 const getGroupChatContext = async (userId, groupId) => {
@@ -110,12 +114,34 @@ const getDemandesListContext = async (groupId) => {
   };
 };
 
+const getResultsListContext = async (quizId, groupId, userId) => {
+  const result = await getQuizResultsByGroup(
+    quizId,
+    groupId,
+    userId,
+    INITIALE_LOADERS_COUNT,
+    null,
+    "",
+  );
+
+  return {
+    success: result.success,
+    context: {
+      cards: result.results,
+      lastVisible: result.lastVisible,
+      quizTitle: result.quizTitle,
+      getScoreClass,
+    },
+  };
+};
+
 module.exports = {
   GroupFragmentRoutes,
   getSessionInfoContext,
   getMembersListContext,
   getQuizzesListContext,
   getDemandesListContext,
+  getResultsListContext,
   getGroupInfoContext,
   getGroupChatContext,
 };

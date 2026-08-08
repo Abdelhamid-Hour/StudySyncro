@@ -245,6 +245,7 @@ const quizzesListMenuQuerySchema = z.object({
 const resultsListQuerySchema = z.object({
   quizId: safeString(LIMITS.ID_MIN_LENGTH, LIMITS.ID_MAX_LENGTH, "Quiz ID"),
   groupId: safeString(LIMITS.ID_MIN_LENGTH, LIMITS.ID_MAX_LENGTH, "Group ID"),
+  searchTerm: safeOptionalString(0, 100, "Search Term").default(""),
 });
 
 // Matches GET /examen-result query

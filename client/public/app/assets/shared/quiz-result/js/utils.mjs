@@ -1,6 +1,7 @@
 import {
   fetchData,
   openOverlayModal,
+  getQuizResultsOverlaySkeleton,
   scrollToView,
   t,
 } from "../../../global/js/utils.mjs";
@@ -277,7 +278,7 @@ export const openQuizResultOverlay = async ({
   );
 };
 
-import { Loader } from "../../loader/js/utils.mjs";
+import { Loader, initFiltersInputListener } from "../../loader/js/utils.mjs";
 
 const getScoreClass = (score) => {
   if (score >= 80) return "excellent";
@@ -295,16 +296,16 @@ const createResultCard = (result) => {
     : `<h4>${result.user.fullName.charAt(0).toUpperCase()}</h4>`;
 
   tr.innerHTML = `
-    <td>
+    <td data-label="${t("common:results_overlay.table.profile")}">
       <div class="avatar-cover">
         ${avatarHtml}
       </div>
     </td>
-    <td>${result.user.fullName}</td>
-    <td>${result.resultDetails.submittedAt}</td>
-    <td>${result.resultDetails.submittedCount}</td>
-    <td class="${getScoreClass(result.score)}">${result.score}</td>
-    <td>
+    <td data-label="${t("common:shared_terms.full_name")}">${result.user.fullName}</td>
+    <td data-label="${t("common:quiz_card.submitted_at")}">${result.resultDetails.submittedAt}</td>
+    <td data-label="${t("common:results_overlay.table.answered_questions")}">${result.resultDetails.submittedCount}</td>
+    <td data-label="${t("common:quiz_card.score")}" class="${getScoreClass(result.score)}">${result.score}</td>
+    <td data-label="${t("common:results_overlay.table.actions")}">
       <button
         class="small-btn show-result-btn"
         data-user-id="${result.resultDetails.userId}"
@@ -317,95 +318,56 @@ const createResultCard = (result) => {
   return tr;
 };
 
-const getQuizResultsListSkeleton = () => {
-  return `
-  <div class="results-list-overlay overlay-model" style="pointer-events: none;">
-    <header class="list-header">
-      <h3 class="label">
-        <i class="bi bi-people-fill"></i>
-        ${t("common:results_overlay.title")}
-      </h3>
-      <div class="quiz-title">
-        <span class="title-label">${t("common:quiz_card.quiz_title")}</span>
-        <div class="loading-opacity-animation" style="width: 15rem; height: 1.8rem;"></div>
-      </div>
-      <button type="button" class="close-results-overlay-btn exclude-btn" disabled>
-        <i class="bi bi-x-lg"></i>
-      </button>
-    </header>
-    <div class="table-div">
-      <table>
-        <thead>
-          <tr>
-            <th>
-              <div><i class="bi bi-person-circle"></i> ${t("common:results_overlay.table.profile")}</div>
-            </th>
-            <th>
-              <div><i class="bi bi-person"></i> ${t("common:shared_terms.full_name")}</div>
-            </th>
-            <th>
-              <div><i class="bi bi-calendar-event"></i> ${t("common:quiz_card.submitted_at")}</div>
-            </th>
-            <th>
-              <div><i class="bi bi-list-ol"></i> ${t("common:results_overlay.table.answered_questions")}</div>
-            </th>
-            <th>
-              <div><i class="bi bi-bar-chart-line"></i> ${t("common:quiz_card.score")}</div>
-            </th>
-            <th>
-              <div><i class="bi bi-eye"></i> ${t("common:shared_terms.view_result")}</div>
-            </th>
-          </tr>
-        </thead>
-        <tbody class="results-list">
-          ${Array(5)
-            .fill(
-              `
-          <tr class="card-item loading-card">
-            <td><div class="avatar-cover loading-opacity-animation" style="width: 32px; height: 32px;"></div></td>
-            <td><div class="loading-opacity-animation" style="width: 70%; height: 1.2rem;"></div></td>
-            <td><div class="loading-opacity-animation" style="width: 60%; height: 1.2rem;"></div></td>
-            <td><div class="loading-opacity-animation" style="width: 40%; height: 1.2rem;"></div></td>
-            <td><div class="loading-opacity-animation" style="width: 50%; height: 1.2rem;"></div></td>
-            <td><div class="loading-opacity-animation" style="width: 80%; height: 2rem;"></div></td>
-          </tr>
-          `,
-            )
-            .join("")}
-        </tbody>
-      </table>
-    </div>
-  </div>
-  `;
-};
-
 export const openQuizResultsOverlay = async (quizId, groupId) => {
   openOverlayModal(
     "results-list-overlay",
     [".close-results-overlay-btn"],
     async () => {
-      const { overlay } = await fetchData(
-        `/results-list?quizId=${quizId}&groupId=${groupId}`,
+      const { template } = await fetchData(
+        `/results-list/${groupId}?quizId=${quizId}`,
       );
-      return overlay;
+      return template;
     },
     (backDrop) => {
       const tbody = backDrop.querySelector(".results-list");
+      const headerContainer = backDrop.querySelector(".header-container");
+      const searchInput = headerContainer?.querySelector(
+        ".results-search-input",
+      );
       if (tbody) {
         const loadingBox = document.createElement("tr");
-        loadingBox.className = "loading-card";
+        loadingBox.className = "card-item loading-card";
         loadingBox.innerHTML = `
-          <td colspan="6" style="text-align: center; padding: 1rem;">
-            <div class="loader-spinner"></div>
+          <td data-label="${t("common:results_overlay.table.profile")}">
+            <div class="avatar-cover loading-opacity-animation" style="width: 32px; height: 32px; border-radius: 50%; margin-inline: auto;"></div>
+          </td>
+          <td data-label="${t("common:shared_terms.full_name")}">
+             <div class="loading-opacity-animation" style="width: 70%; height: 1.2rem; margin-inline: auto;"></div>
+          </td>
+          <td data-label="${t("common:quiz_card.submitted_at")}">
+             <div class="loading-opacity-animation" style="width: 60%; height: 1.2rem; margin-inline: auto;"></div>
+          </td>
+          <td data-label="${t("common:results_overlay.table.answered_questions")}">
+             <div class="loading-opacity-animation" style="width: 40%; height: 1.2rem; margin-inline: auto;"></div>
+          </td>
+          <td data-label="${t("common:quiz_card.score")}">
+             <div class="loading-opacity-animation" style="width: 50%; height: 1.2rem; margin-inline: auto;"></div>
+          </td>
+          <td data-label="${t("common:results_overlay.table.actions")}">
+             <div class="loading-opacity-animation" style="width: 100%; height: 2rem; margin-inline: auto;"></div>
           </td>
         `;
 
-        new Loader(
+        const loader = new Loader(
           tbody,
           createResultCard,
           `/results-list?quizId=${quizId}&groupId=${groupId}&`,
           loadingBox,
           {
+            getCriteria: () =>
+              searchInput?.value?.trim()
+                ? `searchTerm=${searchInput.value.trim()}`
+                : "",
             emptyState: {
               noFilter: {
                 icon: "bi-bar-chart-line",
@@ -415,6 +377,10 @@ export const openQuizResultsOverlay = async (quizId, groupId) => {
             },
           },
         );
+
+        if (headerContainer) {
+          initFiltersInputListener(loader, headerContainer);
+        }
       }
 
       backDrop.addEventListener("click", (e) => {
@@ -425,6 +391,6 @@ export const openQuizResultsOverlay = async (quizId, groupId) => {
         }
       });
     },
-    getQuizResultsListSkeleton(),
+    getQuizResultsOverlaySkeleton(),
   );
 };

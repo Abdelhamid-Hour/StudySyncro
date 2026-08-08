@@ -4,6 +4,7 @@ const {
   getMembersListContext,
   getQuizzesListContext,
   getDemandesListContext,
+  getResultsListContext,
 } = require("../utils/groups");
 
 const generateTemplateContext = async (req, res, next) => {
@@ -25,6 +26,9 @@ const generateTemplateContext = async (req, res, next) => {
       break;
     case originalUrl.includes("/demandes-list"):
       res.payload = await getDemandesListContext(req.params.id);
+      break;
+    case originalUrl.includes("/results-list"):
+      res.payload = await getResultsListContext(req.query.quizId, req.params.id, req.user.uid);
       break;
     default:
       res.payload = {};

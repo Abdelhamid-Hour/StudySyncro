@@ -78,5 +78,10 @@
     "title_length": "Title should be between {min} and {max} characters",
     "enter_description": "Please enter a description",
     "task_duration_range": "Task duration should be a number between {min} and {max} minutes"
+  },
+  "sidebar_info": {
+    "creation_date": "Creation date",
+    "search_members_placeholder": "Search By Member Name or ID",
+    "search_quizzes_placeholder": "Search By Title"
   }
 }

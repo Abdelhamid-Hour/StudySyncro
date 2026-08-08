@@ -95,13 +95,14 @@ const patchQuizHandler = async (req, res) => {
 const { INITIALE_LOADERS_COUNT } = require("../utils/global");
 
 const getResultsListHandler = async (req, res) => {
-  const { quizId, groupId, lastVisible = null, count = INITIALE_LOADERS_COUNT } = req.query;
+  const { quizId, groupId, lastVisible = null, count = INITIALE_LOADERS_COUNT, searchTerm = "" } = req.query;
   const result = await getQuizResultsByGroup(
     quizId,
     groupId,
     req.user.uid,
     count,
-    lastVisible
+    lastVisible,
+    searchTerm
   );
 
   if (!result.success)
@@ -111,33 +112,7 @@ const getResultsListHandler = async (req, res) => {
       type: result.type ?? "error",
     });
 
-  if (lastVisible) {
-    return res.status(200).json({ cards: result.results, lastVisible: result.lastVisible });
-  }
-
-  return res.render(
-    "fragments/resullts-list",
-    {
-      results: result.results,
-      quizTitle: result.quizTitle,
-      lastVisible: result.lastVisible,
-      getScoreClass,
-    },
-    (err, html) => {
-      if (err) {
-        console.error(err);
-
-        return res
-          .status(500)
-          .json({
-            message: res.locals.t("api:error_rendering_results_list"),
-            isNative: false,
-            type: "error",
-          });
-      }
-      return res.status(200).json({ overlay: html });
-    },
-  );
+  return res.status(200).json({ cards: result.results, lastVisible: result.lastVisible });
 };
 
 const getQuizDetailsHandler = async (req, res) => {
