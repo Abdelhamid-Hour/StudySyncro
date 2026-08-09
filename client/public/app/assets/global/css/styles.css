@@ -3006,6 +3006,11 @@ nav.mobile-bottomnav {
   translate: 30%;
 }
 
+input::placeholder,
+input {
+  font-size: var(--medium-font-size);
+}
+
 @media (max-width: 48rem) {
   .overlay-model {
     max-height: 100% !important;
