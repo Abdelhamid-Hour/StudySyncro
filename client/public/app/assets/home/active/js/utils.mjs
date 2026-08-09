@@ -749,9 +749,6 @@ export class Session {
     });
   }
 
-  // !! implement this method
-  sendMessage({ message, file }) {}
-  // !! implement this
   async onComplete() {
     try {
       await sendData("/api/end-session", { sessionId: Session.id });

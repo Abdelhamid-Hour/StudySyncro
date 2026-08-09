@@ -1,21 +1,20 @@
 import { handleApiAction, navigateTo, t } from "../../../global/js/utils.mjs";
 
 export const endSession = (btn, sessionId, onSuccess) => {
-  handleApiAction(
-    "/end-session",
-    { sessionId },
-    btn,
-    onSuccess ? { onSuccess } : undefined,
-  );
+  handleApiAction("/end-session", { sessionId }, btn, {
+    onSuccess: () => {
+      if (onSuccess) onSuccess();
+      navigateTo("/home");
+    },
+  });
 };
 
-export const leaveSession = (
-  btn,
-  sessionId,
-  onSuccess = () => navigateTo(route),
-) => {
+export const leaveSession = (btn, sessionId, onSuccess) => {
   handleApiAction("/leave-session", { sessionId }, btn, {
-    onSuccess,
+    onSuccess: () => {
+      if (onSuccess) onSuccess();
+      navigateTo("/home");
+    },
     successMsg: t("common:alerts.left_session_success"),
   });
 };
