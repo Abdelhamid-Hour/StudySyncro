@@ -152,7 +152,7 @@ const createGroupSession = async (sessionData, userId) => {
 
     const startDateStr = new Date().toISOString();
     const durationMs = (duration || 0) * 60 * 1000;
-    
+
     const newSessionData = {
       name: name || "",
       description: description || "",
@@ -539,17 +539,10 @@ const leavSession = async (userId) => {
   }
 };
 
-const getCurrentSessionInfo = async (userId, t) => {
+const getCurrentSessionInfo = async (user, t) => {
   try {
+    const userId = user.uid;
     const userRef = db.collection("users").doc(userId);
-    const userSnap = await userRef.get();
-
-    if (!userSnap.exists) {
-      console.warn(`User with ID ${userId} not found.`);
-      return null;
-    }
-
-    const user = userSnap.data();
 
     if (!user || !user.currentSession) {
       return null;
@@ -796,13 +789,9 @@ const getSessionInformations = async (sessionID, t) => {
   }
 };
 
-const getActiveSession = async (userId) => {
+const getActiveSession = async (user) => {
   try {
-    const userRef = db.collection("users").doc(userId);
-    const userSnap = await userRef.get();
-
-    const user = userSnap.data();
-
+    const userId = user.uid;
     const tasks = await getTasks(user.currentSession);
 
     if (!user || !user.currentSession || user.currentSession === "") {
@@ -887,27 +876,20 @@ const getActiveSession = async (userId) => {
   }
 };
 
-const joinSession = async (sessionId, userId) => {
+const joinSession = async (sessionId, user) => {
   try {
+    const userId = user.uid;
     const ref = db.collection("sessions").doc(sessionId);
     const userRef = db.collection("users").doc(userId);
 
     // --- Transaction: atomically verify & update join state ---
     const txResult = await db.runTransaction(async (t) => {
-      const [snap, usSnap] = await Promise.all([t.get(ref), t.get(userRef)]);
+      const snap = await t.get(ref);
 
       if (!snap.exists) {
         return {
           abort: true,
           message: "api:session_not_found_1",
-          isNative: true,
-          type: "info",
-        };
-      }
-      if (!usSnap.exists) {
-        return {
-          abort: true,
-          message: "api:user_not_found_1",
           isNative: true,
           type: "info",
         };

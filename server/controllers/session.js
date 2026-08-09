@@ -47,7 +47,7 @@ const endSessionHandler = async (req, res) => {
 
 const joinSessionHandler = async (req, res) => {
   const { sessionId } = req.body;
-  const result = await joinSession(sessionId, req.user.uid);
+  const result = await joinSession(sessionId, req.user);
   if (result.success) {
     return res.status(200).json({ message: res.locals.t(result.message) });
   } else {
@@ -76,7 +76,7 @@ const createSessionHandler = async (req, res) => {
 };
 
 const getActiveSessionHandler = async (req, res) => {
-  const result = await getActiveSession(req.user.uid);
+  const result = await getActiveSession(req.user);
 
   if (result.success) {
     return res.status(200).json({ ...result.sessionData });

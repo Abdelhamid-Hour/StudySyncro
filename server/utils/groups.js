@@ -37,7 +37,7 @@ const getGroupInfoContext = async (groupId, user) => {
   return groupInfo;
 };
 
-const getSessionInfoContext = async (groupId, userId) => {
+const getSessionInfoContext = async (groupId, user) => {
   const groupSnap = await db.collection("groups").doc(groupId).get();
   const groupData = groupSnap.data();
 
@@ -65,10 +65,10 @@ const getSessionInfoContext = async (groupId, userId) => {
     context: {
       ...res.session,
       count: res.session.joinedCount,
-      isAdmin: groupData.creator === userId,
+      isAdmin: groupData.creator === user.uid,
       isJoined:
-        res.session.joinedUsers.includes(userId) ||
-        groupData.creator === userId,
+        groupData.currentSession === user.currentSession ||
+        groupData.creator === user.uid,
       millisecondsToHMFormat: millisecondsToHMFormat,
     },
   };

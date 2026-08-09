@@ -25,7 +25,7 @@ const createGroup = async (groupData, userData) => {
 
     const txResult = await db.runTransaction(async (t) => {
       const snapshot = await t.get(
-        groupRef.where("name", "==", groupData["group-name"])
+        groupRef.where("name", "==", groupData["group-name"]),
       );
 
       if (!snapshot.empty) {
@@ -370,26 +370,35 @@ const getJoinedGroups = async (
  * [2, 4, 6]
  */
 
-const leaveGroup = async (groupId, userId) => {
+const leaveGroup = async (groupId, user) => {
   try {
+    const userId = user.uid;
     const groupRef = db.collection("groups").doc(groupId);
     const memberDocRef = groupRef.collection("members").doc(userId);
-    const userRef = db.collection("users").doc(userId);
     const userGroupRef = userRef.collection("userGroups").doc(groupId);
 
     // --- Transaction: atomically verify & remove member ---
     const txResult = await db.runTransaction(async (t) => {
-      const [groupSnap, memberSnap, userSnap] = await Promise.all([
+      const [groupSnap, memberSnap] = await Promise.all([
         t.get(groupRef),
-        t.get(memberDocRef),
-        t.get(userRef),
+        t.get(memberDocRef)
       ]);
 
       if (!groupSnap.exists) {
-        return { abort: true, message: "api:group_not_found", isNative: true, type: "info" };
+        return {
+          abort: true,
+          message: "api:group_not_found",
+          isNative: true,
+          type: "info",
+        };
       }
       if (!memberSnap.exists) {
-        return { abort: true, message: "api:user_not_found", isNative: true, type: "info" };
+        return {
+          abort: true,
+          message: "api:user_not_found",
+          isNative: true,
+          type: "info",
+        };
       }
 
       const groupData = groupSnap.data();
@@ -409,8 +418,7 @@ const leaveGroup = async (groupId, userId) => {
       return {
         abort: false,
         groupData,
-        updateData,
-        userSnap,
+        updateData
       };
     });
 
@@ -424,7 +432,7 @@ const leaveGroup = async (groupId, userId) => {
     }
 
     // --- Post-transaction side effects ---
-    const { groupData, updateData, userSnap } = txResult;
+    const { groupData, updateData } = txResult;
 
     await syncUserGroupSnapshot(groupId, updateData);
     await refillSampleMembersIfNeeded(groupRef);
@@ -436,16 +444,15 @@ const leaveGroup = async (groupId, userId) => {
         .delete();
 
       if (
-        userSnap.exists &&
-        userSnap.data().currentSession === groupData.currentSession
+        user.currentSession === groupData.currentSession
       ) {
         const { leavSession } = require("./session");
         await leavSession(userId);
       }
-      
+
       await markSessionStartedNotificationsEnded(
         [userId],
-        groupData.currentSession
+        groupData.currentSession,
       );
     }
     await rDb
@@ -471,11 +478,16 @@ const leaveGroup = async (groupId, userId) => {
 const modifyGroup = async (userId, groupId, formData) => {
   try {
     const groupRef = db.collection("groups").doc(groupId);
-    
+
     const txResult = await db.runTransaction(async (t) => {
       const snapshot = await t.get(groupRef);
       if (!snapshot.exists) {
-        return { abort: true, message: "api:group_not_found", isNative: true, type: "warning" };
+        return {
+          abort: true,
+          message: "api:group_not_found",
+          isNative: true,
+          type: "warning",
+        };
       }
 
       const group = snapshot.data();
@@ -490,7 +502,7 @@ const modifyGroup = async (userId, groupId, formData) => {
 
       const fieldName = formData.fieldName;
       const value = formData.value;
-      
+
       let updateData = null;
       let message = "";
 
@@ -555,7 +567,12 @@ const updateGroupProperty = async (groupId, property, newValue) => {
     const txResult = await db.runTransaction(async (t) => {
       const groupDoc = await t.get(groupRef);
       if (!groupDoc.exists) {
-        return { abort: true, message: "api:group_not_found", isNative: true, type: "info" };
+        return {
+          abort: true,
+          message: "api:group_not_found",
+          isNative: true,
+          type: "info",
+        };
       }
 
       // Map of valid properties, their Firestore field name, and verification/sanitization logic
@@ -564,13 +581,18 @@ const updateGroupProperty = async (groupId, property, newValue) => {
           field: "name",
           validate: async (val) => {
             if (typeof val !== "string" || val.trim() === "") {
-              return { valid: false, message: "api:group_name_cannot_be_empty" };
+              return {
+                valid: false,
+                message: "api:group_name_cannot_be_empty",
+              };
             }
             const cleaned = val.trim();
             const snapshot = await t.get(
-              db.collection("groups").where("name", "==", cleaned).limit(2)
+              db.collection("groups").where("name", "==", cleaned).limit(2),
             );
-            const isDuplicated = snapshot.docs.some((doc) => doc.id !== groupId);
+            const isDuplicated = snapshot.docs.some(
+              (doc) => doc.id !== groupId,
+            );
             if (isDuplicated) {
               return {
                 valid: false,
@@ -584,7 +606,10 @@ const updateGroupProperty = async (groupId, property, newValue) => {
           field: "description",
           validate: (val) => {
             if (typeof val !== "string" || val.trim() === "") {
-              return { valid: false, message: "api:description_cannot_be_empty" };
+              return {
+                valid: false,
+                message: "api:description_cannot_be_empty",
+              };
             }
             return { valid: true, value: val.trim() };
           },
@@ -593,7 +618,10 @@ const updateGroupProperty = async (groupId, property, newValue) => {
           field: "creator",
           validate: (val) => {
             if (typeof val !== "string" || val.trim() === "") {
-              return { valid: false, message: "api:creator_id_cannot_be_empty" };
+              return {
+                valid: false,
+                message: "api:creator_id_cannot_be_empty",
+              };
             }
             return { valid: true, value: val.trim() };
           },
@@ -620,7 +648,10 @@ const updateGroupProperty = async (groupId, property, newValue) => {
           field: "visibility",
           validate: (val) => {
             if (typeof val !== "string" || val.trim() === "") {
-              return { valid: false, message: "api:visibility_cannot_be_empty" };
+              return {
+                valid: false,
+                message: "api:visibility_cannot_be_empty",
+              };
             }
             return { valid: true, value: val.trim() };
           },
@@ -629,7 +660,10 @@ const updateGroupProperty = async (groupId, property, newValue) => {
           field: "maxMembers",
           validate: (val) => {
             if (val === null || val === undefined || val === "") {
-              return { valid: false, message: "api:max_members_cannot_be_empty" };
+              return {
+                valid: false,
+                message: "api:max_members_cannot_be_empty",
+              };
             }
             const num = Number(val);
             if (isNaN(num) || num <= 0) {
@@ -650,7 +684,10 @@ const updateGroupProperty = async (groupId, property, newValue) => {
             } else if (typeof val === "string") {
               boolValue = val.toLowerCase() === "true";
             } else {
-              return { valid: false, message: "api:invalid_value_for_showinsearch" };
+              return {
+                valid: false,
+                message: "api:invalid_value_for_showinsearch",
+              };
             }
             return { valid: true, value: boolValue };
           },
@@ -659,12 +696,22 @@ const updateGroupProperty = async (groupId, property, newValue) => {
 
       const propConfig = propertyMap[property];
       if (!propConfig) {
-        return { abort: true, message: "api:invalid_property_type", isNative: true, type: "warning" };
+        return {
+          abort: true,
+          message: "api:invalid_property_type",
+          isNative: true,
+          type: "warning",
+        };
       }
 
       const validation = await propConfig.validate(newValue);
       if (!validation.valid) {
-        return { abort: true, message: validation.message, isNative: true, type: "warning" };
+        return {
+          abort: true,
+          message: validation.message,
+          isNative: true,
+          type: "warning",
+        };
       }
 
       t.update(groupRef, {
@@ -727,7 +774,12 @@ const deleteGroup = async (groupId) => {
     const txResult = await db.runTransaction(async (t) => {
       const groupDoc = await t.get(groupRef);
       if (!groupDoc.exists) {
-        return { abort: true, message: "api:group_not_found", isNative: true, type: "info" };
+        return {
+          abort: true,
+          message: "api:group_not_found",
+          isNative: true,
+          type: "info",
+        };
       }
 
       const group = groupDoc.data();
@@ -759,12 +811,12 @@ const deleteGroup = async (groupId) => {
 
     await syncUserGroupRemoval(groupId);
     await notifyGroupDeleted(memberIds, groupId, txResult.groupName);
-    
+
     await rDb
       .ref(`groups/${groupId}/chat`)
       .remove()
       .catch((e) => console.error(e));
-      
+
     for (const memberId of memberIds) {
       await rDb
         .ref(`userGroupChats/${memberId}/${groupId}`)
@@ -916,7 +968,7 @@ const joinGroup = async (groupId, userData, isInvite = false) => {
 
     if (group.visibility === "Public" || isInvite) {
       // Directly add member for public groups or when joining via invitation
-      const result = await addMember(groupRef, userData.uid);
+      const result = await addMember(groupRef, userData);
       if (result.success) {
         await updateJoinInviteNotificationStatus(
           userData.uid,

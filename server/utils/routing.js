@@ -73,7 +73,7 @@ const fetchData = async (pathName, user, t) => {
   let templateContext = {};
   switch (pathName) {
     case "/home":
-      const payload = await fetchHomeData(user.uid, t);
+      const payload = await fetchHomeData(user, t);
       payload.payload.extraData = {
         fullName: user.fullName,
         hasActiveSession: payload.payload.hasActiveSession || false,

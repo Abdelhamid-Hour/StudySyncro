@@ -16,7 +16,7 @@ const generateTemplateContext = async (req, res, next) => {
       res.payload = await getGroupInfoContext(req.params.id, req.user);
       break;
     case originalUrl.includes("/session-info"):
-      res.payload = await getSessionInfoContext(req.params.id, req.user.uid);
+      res.payload = await getSessionInfoContext(req.params.id, req.user);
       break;
     case originalUrl.includes("/members-list"):
       res.payload = await getMembersListContext(req.params.id, req.user);

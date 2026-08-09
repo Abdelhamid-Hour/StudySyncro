@@ -1,22 +1,22 @@
-const { getMessages, getRecentMessagesHelper } = require("./firebase-utils/chat");
+const {
+  getMessages,
+  getRecentMessagesHelper,
+} = require("./firebase-utils/chat");
 const {
   getCurrentSessionInfo,
   getSessionInformations,
   fetchActiveSessions,
 } = require("./firebase-utils/session");
-const {
-  formatHoursMinutes,
-  formatTimeAgo,
-  pathNames,
-} = require("./global");
+const { formatHoursMinutes, formatTimeAgo, pathNames } = require("./global");
 
 const getSessionDetails = async (sessionId) => {
   const result = await getSessionInformations(sessionId);
   return result;
 };
 
-const fetchHomeData = async (userId, t) => {
-  const session = await getCurrentSessionInfo(userId, t); // or null
+const fetchHomeData = async (user, t) => {
+  const userId = user.uid;
+  const session = await getCurrentSessionInfo(user, t); // or null
 
   if (session) {
     const result = await getMessages(session.id, session.groupId, userId);
@@ -29,7 +29,7 @@ const fetchHomeData = async (userId, t) => {
           lastVisible: result.success ? result.lastVisible : null,
           formatHoursMinutes,
         },
-        hasActiveSession: true
+        hasActiveSession: true,
       },
     };
   }
@@ -43,7 +43,9 @@ const fetchHomeData = async (userId, t) => {
       templateContext: {
         availableSessions: result.sessions,
         recentMessages: messagesResult.success ? messagesResult.data.cards : [],
-        lastVisible: messagesResult.success ? messagesResult.data.lastVisible : null,
+        lastVisible: messagesResult.success
+          ? messagesResult.data.lastVisible
+          : null,
         formatTimeAgo,
       },
     },

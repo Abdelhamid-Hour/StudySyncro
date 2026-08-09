@@ -372,7 +372,7 @@ const createQuiz = async (examenData, userId) => {
       const snapshot = await t.get(
         quizzesRef
           .where("title", "==", cleanedTitle)
-          .where("creator", "==", userId)
+          .where("creator", "==", userId),
       );
 
       if (!snapshot.empty) {
@@ -500,7 +500,12 @@ const updateQuizTitle = async (title, id, userId) => {
     const txResult = await db.runTransaction(async (t) => {
       const snapShot = await t.get(ref);
       if (!snapShot.exists || snapShot.data().creator !== userId) {
-        return { abort: true, message: "api:quiz_id_is_not_valid", isNative: true, type: "warning" };
+        return {
+          abort: true,
+          message: "api:quiz_id_is_not_valid",
+          isNative: true,
+          type: "warning",
+        };
       }
 
       t.update(ref, { title: title });
@@ -537,7 +542,12 @@ const updateQuizSubject = async (subject, id, userId) => {
     const txResult = await db.runTransaction(async (t) => {
       const snapShot = await t.get(ref);
       if (!snapShot.exists || snapShot.data().creator !== userId) {
-        return { abort: true, message: "api:quiz_id_is_not_valid", isNative: true, type: "warning" };
+        return {
+          abort: true,
+          message: "api:quiz_id_is_not_valid",
+          isNative: true,
+          type: "warning",
+        };
       }
 
       t.update(ref, { subject: subject });
@@ -892,7 +902,12 @@ const modifyQuizQuestions = async (
       const quizSnap = await t.get(quizzRef);
 
       if (!quizSnap.exists) {
-        return { abort: true, message: "api:quiz_not_found", isNative: true, type: "info" };
+        return {
+          abort: true,
+          message: "api:quiz_not_found",
+          isNative: true,
+          type: "info",
+        };
       }
 
       const quizz = quizSnap.data();
@@ -935,7 +950,7 @@ const modifyQuizQuestions = async (
           type: "warning",
         };
       }
-      
+
       const updates = { questionsCount: newSize };
       if (quizz.status === "draft" && newSize > 0) {
         updates.status = "published";
@@ -1044,50 +1059,73 @@ const getQuizResult = async (reqUserId, quizId, groupId, userId) => {
   }
 };
 
-const addQuizResult = async (userId, quizResult) => {
+const addQuizResult = async (user, quizResult) => {
   try {
-    const userRef = db.collection("users").doc(userId);
+    const userId = user.uid;
     const quizResultRef = db.collection("quizResults");
 
     // --- Transaction: atomically check for existing result & add new one ---
     const txResult = await db.runTransaction(async (t) => {
-      const userSnap = await t.get(userRef);
-      const userData = userSnap.data();
+      const userData = user;
 
       const quizSnap = await t.get(
-        db.collection("quizzes").doc(quizResult.quizId)
+        db.collection("quizzes").doc(quizResult.quizId),
       );
 
       if (!quizSnap.exists) {
-        return { abort: true, message: "api:quiz_not_found", isNative: true, type: "info" };
+        return {
+          abort: true,
+          message: "api:quiz_not_found",
+          isNative: true,
+          type: "info",
+        };
       }
 
       if (!userData.currentSession) {
-        return { abort: true, message: "api:you_are_not_in_a_session", isNative: true, type: "warning" };
+        return {
+          abort: true,
+          message: "api:you_are_not_in_a_session",
+          isNative: true,
+          type: "warning",
+        };
       }
 
       const sessionRef = db.collection("sessions").doc(userData.currentSession);
       const sessionSnap = await t.get(sessionRef);
 
       if (!sessionSnap.exists) {
-        return { abort: true, message: "api:session_not_found", isNative: true, type: "info" };
+        return {
+          abort: true,
+          message: "api:session_not_found",
+          isNative: true,
+          type: "info",
+        };
       }
 
       const session = sessionSnap.data();
 
       if (!session.quizId || session.quizId != quizResult.quizId) {
-        return { abort: true, message: "api:you_are_not_in_a_session_with_this_quiz", isNative: true, type: "warning" };
+        return {
+          abort: true,
+          message: "api:you_are_not_in_a_session_with_this_quiz",
+          isNative: true,
+          type: "warning",
+        };
       }
 
       // Check for existing result transactionally
       const existingResult = await t.get(
         quizResultRef
           .where("userId", "==", userId)
-          .where("quizId", "==", quizResult.quizId)
+          .where("quizId", "==", quizResult.quizId),
       );
 
       if (!existingResult.empty) {
-        return { abort: true, message: "api:you_have_already_submitted_this_quiz", isAlreadySubmitted: true };
+        return {
+          abort: true,
+          message: "api:you_have_already_submitted_this_quiz",
+          isAlreadySubmitted: true,
+        };
       }
 
       const quizTitle = quizSnap.data().title;
@@ -1135,7 +1173,7 @@ const addQuizResult = async (userId, quizResult) => {
 
     // --- Post-transaction side effects ---
     const { session } = txResult;
-    
+
     // Get questionsCount from session safely outside transaction
     const sessionRef = db.collection("sessions").doc(txResult.currentSession);
     const questionsCount = (
@@ -1185,7 +1223,7 @@ const getQuizResultsByGroup = async (
   limit = INITIALE_LOADERS_COUNT,
   lastVisible = null,
   searchTerm = "",
-  oldResults = []
+  oldResults = [],
 ) => {
   try {
     let accumulatedResults = [...oldResults];
@@ -1258,13 +1296,15 @@ const getQuizResultsByGroup = async (
     }
 
     let filteredDocs = quizResults.docs;
-    
+
     if (searchTerm.trim() !== "") {
       const term = searchTerm.toLowerCase().trim();
       filteredDocs = quizResults.docs.filter((doc) => {
         const data = doc.data();
-        const matchesName = data.userFullName && data.userFullName.toLowerCase().includes(term);
-        const matchesUid = data.userId && data.userId.toLowerCase().includes(term);
+        const matchesName =
+          data.userFullName && data.userFullName.toLowerCase().includes(term);
+        const matchesUid =
+          data.userId && data.userId.toLowerCase().includes(term);
         return matchesName || matchesUid;
       });
     }
@@ -1298,7 +1338,7 @@ const getQuizResultsByGroup = async (
       limit,
       newLastVisible.id,
       searchTerm,
-      accumulatedResults
+      accumulatedResults,
     );
   } catch (error) {
     console.error("Error getting quiz results:", error);
@@ -1329,7 +1369,12 @@ const duplicateQuiz = async (quizId, userId, title) => {
       const quizSnap = await t.get(quizDocRef);
 
       if (!quizSnap.exists) {
-        return { abort: true, message: "api:quiz_not_found", isNative: true, type: "info" };
+        return {
+          abort: true,
+          message: "api:quiz_not_found",
+          isNative: true,
+          type: "info",
+        };
       }
 
       const quiz = quizSnap.data();
@@ -1349,7 +1394,7 @@ const duplicateQuiz = async (quizId, userId, title) => {
         quizzesRef
           .where("title", "==", cleanedTitle)
           .where("creator", "==", userId)
-          .limit(1)
+          .limit(1),
       );
 
       if (!titleCheckSnap.empty) {
@@ -1384,13 +1429,15 @@ const duplicateQuiz = async (quizId, userId, title) => {
 
     // add also the questions subcollection to the new quiz (outside tx to avoid write limits)
     const questionsSnap = await quizDocRef.collection("questions").get();
-    const newQuestionsRef = quizzesRef.doc(txResult.newQuizId).collection("questions");
-    
+    const newQuestionsRef = quizzesRef
+      .doc(txResult.newQuizId)
+      .collection("questions");
+
     await Promise.all(
       questionsSnap.docs.map((doc) => {
         const questionData = doc.data();
         return newQuestionsRef.doc(doc.id).set(questionData);
-      })
+      }),
     );
 
     return {

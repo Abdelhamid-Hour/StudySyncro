@@ -252,7 +252,7 @@ const kickMemberHandler = async (req, res) => {
 
 const leaveGroupHandler = async (req, res) => {
   const { groupId } = req.body;
-  const result = await leaveGroup(groupId, req.user.uid);
+  const result = await leaveGroup(groupId, req.user);
 
   if (result.success) {
     return res.status(200).json({ message: res.locals.t(result.message) });

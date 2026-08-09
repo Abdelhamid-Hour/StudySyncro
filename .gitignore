@@ -5,3 +5,4 @@ client/public/package.json
 server/.env
 server/firebase/firebaseConfig.json
 Todo.txt
+e2e

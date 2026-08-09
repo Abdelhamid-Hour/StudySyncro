@@ -149,7 +149,7 @@ const getQuizzesListHandler = async (req, res) => {
 const addQuizResultHandler = async (req, res) => {
   const quizResult = req.body.quizResult;
   const userId = req.user.uid;
-  const result = await addQuizResult(userId, quizResult);
+  const result = await addQuizResult(req.user, quizResult);
 
   if (result.success) {
     return res.status(200).json({ message: res.locals.t(result.message) });
