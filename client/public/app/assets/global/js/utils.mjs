@@ -2274,7 +2274,7 @@ export const getGroupChatSkeleton = () => {
             </button>
           </div>
         </div>
-        <div class="chat-messages" style="padding-block: var(--primary-gap); padding-inline: 15%;">
+        <div class="chat-messages skeleton" style="padding-block: var(--primary-gap); padding-inline: 15%;">
           <div>
             <div style="display: flex; flex-direction: column">
               <div class="message-sent">

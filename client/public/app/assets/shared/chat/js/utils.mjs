@@ -161,7 +161,7 @@ const initDOMVariables = () => {
   imageInput = document.getElementById("image-upload");
   fileInput = document.getElementById("file-upload");
   sendBtn = document.querySelector(".send-btn");
-  messagesContainer = document.querySelector(".chat-messages");
+  messagesContainer = document.querySelector(".chat-messages:not(.skeleton)");
   inputChatContainer = document.querySelector(".input-message-container");
   emojiList = document.querySelector(".emoji-list");
   emojiesSearch = document.querySelector(".emojis-search-input");
