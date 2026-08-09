@@ -6,7 +6,6 @@ const {
   cancelSession,
   leavSession,
   fetchActiveSessions,
-  formatSessions,
 } = require("../utils/firebase-utils/session");
 
 const { changeTaskStatus } = require("../utils/firebase-utils/tache");
@@ -133,7 +132,7 @@ const sessionStreamHandler = async (req, res) => {
   const { lastQueryTime } = req.query;
 
   res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders && res.flushHeaders(); // flush the headers to establish SSE with client
 
@@ -175,16 +174,18 @@ const sessionStreamHandler = async (req, res) => {
             new Date(sessionData.startDate) > new Date(lastQueryTime)
           ) {
             res.write(`data: ${JSON.stringify({ newSession: session })}\n\n`);
-          } else {
+            if (res.flush) res.flush();
           }
         } else if (change.type === "modified") {
           res.write(
             `data: ${JSON.stringify({ modifiedSession: session })}\n\n`,
           );
+          if (res.flush) res.flush();
         } else if (change.type === "removed") {
           res.write(
             `data: ${JSON.stringify({ removedSession: sessionId })}\n\n`,
           );
+          if (res.flush) res.flush();
         }
       });
     },
@@ -197,6 +198,7 @@ const sessionStreamHandler = async (req, res) => {
   const heartbeat = setInterval(() => {
     try {
       res.write(":\n\n");
+      if (res.flush) res.flush();
     } catch (e) {
       console.log("error in hear: ", e);
 
@@ -237,7 +239,7 @@ const streamSingleSessionHandler = async (req, res) => {
     });
 
   res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Cache-Control", "no-cache, no-transform");
   res.setHeader("Connection", "keep-alive");
   res.flushHeaders && res.flushHeaders();
 
@@ -252,6 +254,7 @@ const streamSingleSessionHandler = async (req, res) => {
       } else {
         res.write(`data: ${JSON.stringify({ removed: true })}\n\n`);
       }
+      if (res.flush) res.flush();
     },
     (error) => {
       console.error("Error streaming single session:", error);
@@ -262,6 +265,7 @@ const streamSingleSessionHandler = async (req, res) => {
   const heartbeat = setInterval(() => {
     try {
       res.write(":\n\n");
+      if (res.flush) res.flush();
     } catch (e) {
       clearInterval(heartbeat);
       unSubscribe();

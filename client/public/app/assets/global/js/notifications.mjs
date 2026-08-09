@@ -77,7 +77,6 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
     }
   });
 
-  let anyUnread = false;
   const idsToMark = new Set();
   if (notifId) idsToMark.add(notifId);
 
@@ -641,11 +640,8 @@ const initRealtimeNotifications = () => {
           }
         });
       }
-
-      if (
-        notif.changeType === "added" &&
-        (!notif.read || notif.read === "false" || notif.read === false)
-      ) {
+      
+      if (notif.changeType === "added" && !notif.read) {
         if (window.Notification && Notification.permission === "granted") {
           new Notification(notif.title || "StudySyncro Notification", {
             body: notif.message || "",

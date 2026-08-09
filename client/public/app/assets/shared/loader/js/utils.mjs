@@ -171,7 +171,6 @@ export class Loader {
         this.loading = false;
         return;
       }
-
       const frag = document.createDocumentFragment();
 
       const initialHeight = this.container.scrollHeight;
@@ -293,7 +292,6 @@ export class Loader {
     }
   }
 }
-
 
 export const initFiltersInputListener = (loader, container) => {
   const resetLoader = getDebounceFunc(() => loader.reset(), 300);

@@ -648,6 +648,9 @@ class ChatMessage {
       }
     }
 
+    const iconWrapper = this.chatContainer.querySelector(".icon-wrapper");
+    if (iconWrapper) iconWrapper.remove();
+
     if (this.attachments.length > 0) {
       this.renderAttachments();
     }
@@ -1153,16 +1156,12 @@ export const initAndDiplayErrorTooltip = (inputContainer, message) => {
   clearTooltipWithTimeOut(inputContainer);
 };
 
-export const handleEnterKeyWithTooltip = function (e) {
-  if (e.key === "Enter" && !e.ctrlKey) {
+const handleEnterKey = (e) => {
+  const isMobile = window.matchMedia("(max-width: 48rem)").matches;
+
+  if (e.key === "Enter" && !e.shiftKey && !isMobile) {
     e.preventDefault();
     sendBtn.click();
-  }
-
-  if (e.key === "Enter" && e.ctrlKey) {
-    e.preventDefault();
-    this.value += "\n";
-    this.scrollTop = this.scrollHeight;
   }
 };
 
@@ -1418,7 +1417,7 @@ const handleDragLeave = (e) => {
   }
 };
 
-const openChatStream = (groupId, sessionId) => {  
+const openChatStream = (groupId, sessionId) => {
   const route = `/api/chat-stream?sessionId=${sessionId}&groupId=${groupId}`;
   const eventSource = new EventSource(route, {
     withCredentials: true,
@@ -1603,29 +1602,6 @@ const getMessagesIds = () => {
   return messageIds;
 };
 
-const firstLoadFunc = (cards, groupId, sessionId) => {
-  openChatStream(groupId, sessionId);
-  const messageIds = getMessagesIds();
-
-  // Remove cards that already exist in the chat container based on messageId
-  cards = cards.filter((card) => !messageIds.includes(card.id));
-
-  let lastVisible;
-  // if the chat stream add new messages that are already in the chat container and > cards.length, that mean we need to update the lastVisible variable
-  if (cards.length === 0) {
-    const lastVisibleMessage = messagesContainer.querySelector(
-      ".message-sent-text[data-message-id], .first-message-sent-text[data-message-id], .message-received-text[data-message-id], .first-message-received-text[data-message-id]",
-    );
-    lastVisible = lastVisibleMessage
-      ? lastVisibleMessage.dataset.messageId
-      : "";
-  }
-  return {
-    cards: [cards],
-    lastVisible,
-  };
-};
-
 let lastSeenMsg = null;
 
 const handleInitialUnreadBannerAndScroll = async (
@@ -1716,6 +1692,29 @@ const afterAppendRes = (data, groupId, sessionId = "") => {
   );
 };
 
+const firstLoadFunc = (cards, groupId, sessionId) => {
+  openChatStream(groupId, sessionId);
+  const messageIds = getMessagesIds();
+
+  // Remove cards that already exist in the chat container based on messageId
+  cards = cards.filter((card) => !messageIds.includes(card.id));
+
+  let lastVisible;
+  // if the chat stream add new messages that are already in the chat container and > cards.length, that mean we need to update the lastVisible variable
+  if (cards.length === 0) {
+    const lastVisibleMessage = messagesContainer.querySelector(
+      ".message-sent-text[data-message-id], .first-message-sent-text[data-message-id], .message-received-text[data-message-id], .first-message-received-text[data-message-id]",
+    );
+    lastVisible = lastVisibleMessage
+      ? lastVisibleMessage.dataset.messageId
+      : "";
+  }
+  return {
+    cards: [cards],
+    lastVisible,
+  };
+};
+
 const initChatLoader = async (groupId, sessionId) => {
   const loader = new Loader(
     messagesContainer,
@@ -1755,7 +1754,7 @@ export const iniChat = (groupId = "", sessionId = "") => {
 
   sendBtn.addEventListener("click", () => handleChatInput(sessionId, groupId));
 
-  inputMessage.addEventListener("keydown", handleEnterKeyWithTooltip);
+  inputMessage.addEventListener("keydown", handleEnterKey);
 
   setupChatFileInputListeners({ imageInput, fileInput });
 

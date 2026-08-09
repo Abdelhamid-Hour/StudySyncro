@@ -1435,6 +1435,10 @@ html[lang="ar"] .first-message-received-text::before,
 }
 
 @media (max-width: 48rem) {
+  .newline-hint{
+    display: none !important;
+  }
+
   .media-message {
     width: 68vw !important;
   }

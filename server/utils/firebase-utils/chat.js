@@ -281,16 +281,6 @@ const broadcastMessage = (roomId, messageData, error = false) => {
   const resMap = streamEntry.resMap;
   if (!resMap) return;
   resMap.forEach((res, userId) => {
-    console.log("broadcast msg to: ", res.userFullName);
-    console.log(
-      "messageData: ",
-      messageData,
-      "\nmessageData.sender.id: ",
-      messageData.sender.id,
-      "\nuserId: ",
-      userId,
-    );
-
     try {
       res.roomId = roomId;
       if (messageData && messageData.sender.id === userId) return; // don't send the message to the sender
@@ -301,7 +291,6 @@ const broadcastMessage = (roomId, messageData, error = false) => {
         )}\n\n`,
       );
       if (res.flush) res.flush();
-      console.log("msg send to: ", res.userFullName)
     } catch (err) {
       // broken socket — remove it and continue
       console.warn(
@@ -399,10 +388,7 @@ const markGroupAsReadHelper = async (
     const snap = await ref.once("value");
     if (!snap.exists()) {
       return {
-        success: false,
-        message: "api:group_chat_state_not_found",
-        isNative: true,
-        type: "info",
+        success: true,
       };
     }
     const now = Date.now();
@@ -549,6 +535,7 @@ const broadcastRecentMessage = (userId, data) => {
   try {
     res.write(`event: message\n`);
     res.write(`data: ${JSON.stringify(data)}\n\n`);
+    if (res.flush) res.flush();
   } catch (err) {
     console.warn(`Failed to write to recent messages client ${userId}:`, err);
     try {

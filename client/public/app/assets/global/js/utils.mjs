@@ -2275,7 +2275,7 @@ export const getGroupChatSkeleton = () => {
           </div>
         </div>
         <div class="chat-messages" style="padding-block: var(--primary-gap); padding-inline: 15%;">
-          <div class="loading-card first-loading-card">
+          <div>
             <div style="display: flex; flex-direction: column">
               <div class="message-sent">
                 <div class="messages">

@@ -680,7 +680,8 @@ const ensureSharedRecentMessagesReplyBox = () => {
 
   sendBtn.addEventListener("click", sendSharedReply);
   textarea.addEventListener("keydown", (evt) => {
-    if (evt.key === "Enter" && !evt.shiftKey) {
+    const isMobile = window.matchMedia("(max-width: 48rem)").matches;
+    if (evt.key === "Enter" && !evt.shiftKey && !isMobile) {
       evt.preventDefault();
       sendSharedReply();
     }
