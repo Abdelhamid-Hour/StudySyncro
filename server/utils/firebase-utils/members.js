@@ -135,7 +135,7 @@ const getMembers = async (
   }
 };
 
-const addMember = async (groupRef) => {
+const addMember = async (groupRef, user) => {
   try {
     const userId = user.uid;
     const memberDocRef = groupRef.collection("members").doc(userId);
