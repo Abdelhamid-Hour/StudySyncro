@@ -2944,7 +2944,7 @@ nav.mobile-bottomnav {
 [dir="rtl"] .bi-arrow-right,
 [dir="rtl"] .bi-arrow-right-circle-fill,
 [dir="rtl"] .bi-send,
-.bi-send-fill,
+[dir="rtl"] .bi-send-fill,
 [dir="rtl"] .bi-box-arrow-in-right,
 [dir="rtl"] .bi-box-arrow-in-left,
 [dir="rtl"] .bi-box-arrow-right,
