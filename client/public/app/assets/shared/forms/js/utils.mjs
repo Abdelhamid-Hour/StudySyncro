@@ -103,9 +103,16 @@ const HandleSelection = (e, selectButtonValue, isGlobalSelect, onSelect) => {
   const selectedValue = selectedItem?.dataset.value;
   if (checkSubject(selectedValue) || isGlobalSelect) {
     if (onSelect) {
-      onSelect(selectButtonValue, selectedItem, selectedValue);
+      onSelect(
+        selectButtonValue,
+        selectedItem,
+        t(`common:subjects.${selectedValue}`, { defaultValue: selectedValue }),
+      );
     } else {
-      setSelectValue(selectButtonValue, selectedValue);
+      setSelectValue(
+        selectButtonValue,
+        t(`common:subjects.${selectedValue}`, { defaultValue: selectedValue }),
+      );
     }
   } else {
     showMessageBlock(t("common:alerts.select_subject_error"), "error");
