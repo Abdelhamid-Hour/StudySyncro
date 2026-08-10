@@ -3204,6 +3204,9 @@ export const getSidebarSkeleton = (route) => {
       `;
     case "/members-list":
     case "/demandes-list":
+      const isAdmin = document.querySelector(
+        ".top-bar .create-session, .top-bar .end-session",
+      );
       return `
         <div class="${route === "/members-list" ? "members-view" : "demandes-view"} fade-in-template">
           <header class="loading-animation">
@@ -3222,10 +3225,15 @@ export const getSidebarSkeleton = (route) => {
             <div class="member card-item loading-animation" style="pointer-events: none;">
               <div class="avatar loading-opacity-animation" style="border-radius: 50%;"></div>
               <span class="username loading-opacity-animation" style="width: 150px; height: 1.2rem; border-radius: 0.3rem;"></span>
+              ${
+                isAdmin
+                  ? `
               <div class="action-btns">
                 <button class="red-btn small-btn loading-opacity-animation" style="width: 4rem; height: 1.8rem; border: none;"></button>
                 <button class="orange-btn small-btn loading-opacity-animation" style="width: 6rem; height: 1.8rem; border: none;"></button>
-              </div>
+              </div>`
+                  : ""
+              }
             </div>
             `,
               )
