@@ -233,17 +233,17 @@ const createGroupSession = async (sessionData, userId) => {
     };
 
     membersSnap.docs.forEach((memberDoc) => {
+      console.log("memberDoc.id: ", memberDoc.id, "userId: ", userId);
+
       const activeSessionRef = db
         .collection("users")
         .doc(memberDoc.id)
         .collection("activeSessions")
         .doc(newSessionId);
-      if (memberDoc.id === userId) {
-        activeSessionCardData.isAdmin = true;
-      } else {
-        activeSessionCardData.isAdmin = false;
-      }
-      currentBatch.set(activeSessionRef, activeSessionCardData);
+      currentBatch.set(activeSessionRef, {
+        ...activeSessionCardData,
+        isAdmin: memberDoc.id === userId,
+      });
       batchCount++;
       if (batchCount === 500) {
         fanoutBatches.push(currentBatch.commit());

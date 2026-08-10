@@ -31,8 +31,11 @@ const getUsersEmails = async (userIds) => {
     const uniqueIds = [...new Set(userIds)];
     for (let i = 0; i < uniqueIds.length; i += 30) {
       const chunk = uniqueIds.slice(i, i + 30);
-      const snap = await db.collection("users").where(admin.firestore.FieldPath.documentId(), "in", chunk).get();
-      snap.docs.forEach(doc => {
+      const snap = await db
+        .collection("users")
+        .where(admin.firestore.FieldPath.documentId(), "in", chunk)
+        .get();
+      snap.docs.forEach((doc) => {
         if (doc.data().email) emails.push(doc.data().email);
       });
     }
@@ -54,7 +57,7 @@ const addNotification = async (userId, notification) => {
       timestamp: Date.now(),
       read: false,
     });
-    
+
     // Trigger web push
     sendPushNotification(userId, notification).catch(console.error);
   } catch (error) {
@@ -95,7 +98,7 @@ const addNotificationsToUsers = async (userIds = [], notification) => {
     await Promise.all(fanoutBatches);
 
     // Trigger web push for all users asynchronously
-    userIds.forEach(userId => {
+    userIds.forEach((userId) => {
       if (userId) {
         sendPushNotification(userId, notification).catch(console.error);
       }
@@ -298,7 +301,9 @@ const notifyJoinRequest = async (
   // Send Email
   const adminEmail = await getUserEmail(adminId);
   const applicantName = applicantUser.fullName || "A user";
-  emailService.sendAdminJoinRequestEmail(adminEmail, applicantName, groupName, groupId).catch(console.error);
+  emailService
+    .sendAdminJoinRequestEmail(adminEmail, applicantName, groupName, groupId)
+    .catch(console.error);
 };
 
 const notifyJoinResult = async (
@@ -316,7 +321,9 @@ const notifyJoinResult = async (
 
   // Send Email
   const applicantEmail = await getUserEmail(applicantId);
-  emailService.sendJoinResultEmail(applicantEmail, groupName, isAccepted, groupId).catch(console.error);
+  emailService
+    .sendJoinResultEmail(applicantEmail, groupName, isAccepted, groupId)
+    .catch(console.error);
 };
 
 const notifyGroupInvite = async (
@@ -362,8 +369,9 @@ const notifyGroupInvite = async (
     // Send Email
     const invitedEmail = await getUserEmail(invitedUserId);
     const senderName = senderUser.fullName || "Admin";
-    emailService.sendGroupInviteEmail(invitedEmail, groupName, senderName, groupId).catch(console.error);
-
+    emailService
+      .sendGroupInviteEmail(invitedEmail, groupName, senderName, groupId)
+      .catch(console.error);
   } catch (error) {
     console.error("Error in notifyGroupInvite:", error);
   }
@@ -419,6 +427,7 @@ const notifySessionStatus = async (
     if (!userId) continue;
     const isAdmin = Boolean(creatorId && userId === creatorId);
     const joined = isAdmin;
+    if (isAdmin) continue;
     const notifRef = db
       .collection("notifications")
       .doc(userId)
@@ -440,7 +449,7 @@ const notifySessionStatus = async (
       timestamp: now,
       read: false,
     });
-    
+
     // Trigger web push
     sendPushNotification(userId, {
       type: isStarted ? "session_started" : "session_ended",
@@ -461,9 +470,16 @@ const notifySessionStatus = async (
 
   // Send Email if session started
   if (isStarted) {
-    const studentIds = members.filter(uid => uid !== creatorId); // exclude admin from the email blast
+    const studentIds = members.filter((uid) => uid !== creatorId); // exclude admin from the email blast
     const studentEmails = await getUsersEmails(studentIds);
-    emailService.sendSessionStartedEmail(studentEmails, { sessionName, groupName }, groupId, sessionId).catch(console.error);
+    emailService
+      .sendSessionStartedEmail(
+        studentEmails,
+        { sessionName, groupName },
+        groupId,
+        sessionId,
+      )
+      .catch(console.error);
   }
 };
 

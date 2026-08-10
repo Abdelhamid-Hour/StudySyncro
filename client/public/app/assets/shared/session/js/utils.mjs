@@ -4,7 +4,7 @@ export const endSession = (btn, sessionId, onSuccess) => {
   handleApiAction("/end-session", { sessionId }, btn, {
     onSuccess: () => {
       if (onSuccess) onSuccess();
-      navigateTo("/home");
+      if (location.pathname.includes("/app/home")) navigateTo("/home");
     },
   });
 };
