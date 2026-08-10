@@ -77,6 +77,7 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
     }
   });
 
+  let anyUnread = false;
   const idsToMark = new Set();
   if (notifId) idsToMark.add(notifId);
 
