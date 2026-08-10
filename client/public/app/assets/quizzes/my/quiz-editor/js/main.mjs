@@ -28,7 +28,7 @@ export const init = async () => {
   await loadNamespaces(["quizzes", "quiz-edit"]);
   initDomVariables();
 
-  initializeInitialData();
+  await initializeInitialData();
 
   document.querySelectorAll(".save-quiz-btn").forEach((btn) => {
     btn.addEventListener("click", saveQuiz);
@@ -66,7 +66,7 @@ export const init = async () => {
     const saveSubjectBtn = e.target.closest(".save-subject-btn");
     if (saveSubjectBtn) handleSaveBtn("subject", saveSubjectBtn);
   });
-  
+
   registerPageListener(window, "resize", initMobileTabs);
   initMobileTabs();
 };

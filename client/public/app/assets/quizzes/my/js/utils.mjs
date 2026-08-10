@@ -347,6 +347,9 @@ const getcreateQuizCardFunc = (quiz = {}) => {
                 <i class="bi bi-pencil-square"></i>
                 ${t("common:shared_terms.edit")}
               </button>
+              ${
+                status === "published"
+                  ? `
               <button
                 type="button"
                 class="drop-down-item exclude-btn preview-quiz-menu-btn"
@@ -354,7 +357,9 @@ const getcreateQuizCardFunc = (quiz = {}) => {
               >
                 <i class="bi bi-eye"></i>
                 ${t("quizzes:preview")}
-              </button>
+              </button>`
+                  : ""
+              }
               <button
                 type="button"
                 class="drop-down-item exclude-btn duplicate-quiz-menu-btn"

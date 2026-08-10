@@ -942,6 +942,7 @@ const modifyQuizQuestions = async (
 
       const sizeDelta = newQuestions.length - deletedQuestions.length;
       const newSize = (quizz.questionsCount || 0) + sizeDelta;
+
       if (newSize > MAX_QUIZ_QUESTIONS) {
         return {
           abort: true,
@@ -954,6 +955,10 @@ const modifyQuizQuestions = async (
       const updates = { questionsCount: newSize };
       if (quizz.status === "draft" && newSize > 0) {
         updates.status = "published";
+      }
+
+      if (quizz.status === "published" && newSize <= 0) {
+        updates.status = "draft";
       }
 
       t.update(quizzRef, updates);
