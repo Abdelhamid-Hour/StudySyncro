@@ -991,7 +991,8 @@ const createSaveQuizBtn = (isMobile = false) => {
   const saveQuizBtn = document.createElement("button");
   saveQuizBtn.type = "button";
   if (isMobile) {
-    saveQuizBtn.className = "save-quiz-btn exclude-btn mobile-icon-btn should-fill";
+    saveQuizBtn.className =
+      "save-quiz-btn exclude-btn mobile-icon-btn should-fill";
     saveQuizBtn.title = t("common:actions.save");
     saveQuizBtn.style.color = "var(--color-blue)";
     saveQuizBtn.style.fontSize = "1.25rem";
@@ -1044,9 +1045,14 @@ const pageConfig = (key) => {
       additional: () => {
         const saveQuizBtn = createSaveQuizBtn();
         topSideBarFooter.prepend(saveQuizBtn);
-        
-        const mobileTopbarRight = document.querySelector(".mobile-topbar-right");
-        if (mobileTopbarRight && !mobileTopbarRight.querySelector(".save-quiz-btn")) {
+
+        const mobileTopbarRight = document.querySelector(
+          ".mobile-topbar-right",
+        );
+        if (
+          mobileTopbarRight &&
+          !mobileTopbarRight.querySelector(".save-quiz-btn")
+        ) {
           const mobileSaveQuizBtn = createSaveQuizBtn(true);
           mobileTopbarRight.prepend(mobileSaveQuizBtn);
         }
@@ -1089,7 +1095,6 @@ const updateTopSideBar = (pathName, extraData) => {
   ) {
     normalizedPath = "/home";
   }
-
   const {
     title: headerTitle = "",
     middle: makeMiddle = () => document.createDocumentFragment(),
@@ -1352,7 +1357,7 @@ export const updateMain = async (path, isTabLinks) => {
     if (thisNav !== navCounter) {
       return;
     }
-
+\
     clearAllTimeOuts();
     closeAllEventSources();
     clearAllPageListeners();
@@ -1389,6 +1394,7 @@ export const updateMain = async (path, isTabLinks) => {
         window.lastExtraData || extraData,
       );
     }
+    topSideBarMiddle?.querySelector(".loading-opacity-animation")?.remove();
   } catch (error) {
     const isNative = error.isNative || error.data?.isNative;
     const notifType =
@@ -2621,7 +2627,7 @@ export const getQuizPlaySkeleton = () => {
                   <label class="choice" style="pointer-events: none;">
                     <input type="radio" disabled />
                     <span class="choice-label">${String.fromCharCode(65 + idx)}</span>
-                    <span class="choice-text loading-opacity-animation" style="width: ${60 - idx * 10}%; height: 1.2rem; border-radius: 0.3rem; display: inline-block;"></span>
+                    <span class="choice-text loading-opacity-animation" style="width: ${60 - idx * 10}%; height: 1.2rem; border-radius: 0.3rem; display: inline-block; margin-left: .8rem;"></span>
                   </label>
                 `,
                   )
@@ -2975,7 +2981,6 @@ export const initMobileSearch = () => {
   });
 };
 
-
 export const getSidebarSkeleton = (route) => {
   switch (route) {
     case "/group-info":
@@ -3091,12 +3096,17 @@ export const getSidebarSkeleton = (route) => {
                 <span class="count badge simple-badge loading-opacity-animation" style="width: 2rem; height: 1.2rem;"></span>
               </span>
               <div class="members-list">
-                ${Array(4).fill(0).map(() => `
+                ${Array(4)
+                  .fill(0)
+                  .map(
+                    () => `
                 <div class="member">
                   <div class="avatar loading-opacity-animation" style="width: 2.5rem; height: 2.5rem; border-radius: 50%;"></div>
                   <span class="loading-opacity-animation" style="width: 60px; height: 1rem; border-radius: 0.3rem;"></span>
                 </div>
-                `).join('')}
+                `,
+                  )
+                  .join("")}
               </div>
             </div>
           </div>
@@ -3201,11 +3211,14 @@ export const getSidebarSkeleton = (route) => {
               <div class="search-icon-container">
                 <i class="bi bi-person-fill"></i>
               </div>
-              <input type="search" placeholder="${route === "/members-list" ? t('group-chat:sidebar_info.search_members_placeholder') : t('group-chat:sidebar_info.search_members_placeholder')}" disabled style="background-color: transparent;" />
+              <input type="search" placeholder="${route === "/members-list" ? t("group-chat:sidebar_info.search_members_placeholder") : t("group-chat:sidebar_info.search_members_placeholder")}" disabled style="background-color: transparent;" />
             </div>
           </header>
           <div class="${route === "/members-list" ? "members-list" : "demandes-list"}">
-            ${Array(3).fill(0).map(() => `
+            ${Array(3)
+              .fill(0)
+              .map(
+                () => `
             <div class="member card-item loading-animation" style="pointer-events: none;">
               <div class="avatar loading-opacity-animation" style="border-radius: 50%;"></div>
               <span class="username loading-opacity-animation" style="width: 150px; height: 1.2rem; border-radius: 0.3rem;"></span>
@@ -3214,7 +3227,9 @@ export const getSidebarSkeleton = (route) => {
                 <button class="orange-btn small-btn loading-opacity-animation" style="width: 6rem; height: 1.8rem; border: none;"></button>
               </div>
             </div>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
         </div>
       `;
@@ -3230,14 +3245,17 @@ export const getSidebarSkeleton = (route) => {
                 <i class="bi bi-calendar"></i>
                 <input type="date" disabled style="background-color: transparent;" />
               </label>
-              <input type="search" placeholder="${t('group-chat:sidebar_info.search_quizzes_placeholder')}" disabled style="background-color: transparent;" />
+              <input type="search" placeholder="${t("group-chat:sidebar_info.search_quizzes_placeholder")}" disabled style="background-color: transparent;" />
             </div>
             <label class="sort-button button exclude-btn">
               <i class="bi bi-sort-down"></i>
             </label>
           </header>
           <div class="quizzes-list">
-            ${Array(getLoadersCount()).fill(0).map(() => `
+            ${Array(getLoadersCount())
+              .fill(0)
+              .map(
+                () => `
             <div class="quiz-card card-item loading-animation" style="pointer-events: none;">
               <div class="quiz-title-container info-container">
                 <label class="quiz-title-label">
@@ -3271,7 +3289,9 @@ export const getSidebarSkeleton = (route) => {
                 <button class="view-results-btn should-fill loading-opacity-animation" style="width: 8rem; height: 2rem; border: none;"></button>
               </div>
             </div>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </div>
         </div>
       `;
@@ -3299,7 +3319,7 @@ export const getQuizResultsOverlaySkeleton = () => {
       <div class="header-container loading-animation" style="padding: 0 var(--primary-gap) var(--primary-gap) var(--primary-gap);">
         <div class="search">
           <i class="bi bi-search"></i>
-          <input type="text" class="results-search-input" placeholder="${t('common:actions.search')}" disabled style="background-color: transparent;" />
+          <input type="text" class="results-search-input" placeholder="${t("common:actions.search")}" disabled style="background-color: transparent;" />
         </div>
       </div>
       <div class="table-div">
@@ -3315,31 +3335,41 @@ export const getQuizResultsOverlaySkeleton = () => {
             </tr>
           </thead>
           <tbody class="results-list">
-            ${Array(5).fill(0).map(() => `
+            ${Array(5)
+              .fill(0)
+              .map(
+                () => `
             <tr class="card-item loading-animation">
-              <td data-label="${t('common:results_overlay.table.profile')}">
+              <td data-label="${t("common:results_overlay.table.profile")}">
                 <div class="avatar-cover loading-opacity-animation" style="width: 32px; height: 32px; border-radius: 50%; margin: auto;"></div>
               </td>
-              <td data-label="${t('common:shared_terms.full_name')}">
+              <td data-label="${t("common:shared_terms.full_name")}">
                 <div class="loading-opacity-animation" style="width: 100px; height: 1.2rem; margin: auto; border-radius: 0.3rem;"></div>
               </td>
-              <td data-label="${t('common:quiz_card.submitted_at')}">
+              <td data-label="${t("common:quiz_card.submitted_at")}">
                 <div class="loading-opacity-animation" style="width: 80px; height: 1.2rem; margin: auto; border-radius: 0.3rem;"></div>
               </td>
-              <td data-label="${t('common:results_overlay.table.answered_questions')}">
+              <td data-label="${t("common:results_overlay.table.answered_questions")}">
                 <div class="loading-opacity-animation" style="width: 40px; height: 1.2rem; margin: auto; border-radius: 0.3rem;"></div>
               </td>
-              <td data-label="${t('common:quiz_card.score')}">
+              <td data-label="${t("common:quiz_card.score")}">
                 <div class="loading-opacity-animation" style="width: 50px; height: 1.2rem; margin: auto; border-radius: 0.3rem;"></div>
               </td>
-              <td data-label="${t('common:results_overlay.table.actions')}">
+              <td data-label="${t("common:results_overlay.table.actions")}">
                 <button class="small-btn show-result-btn loading-opacity-animation" style="width: 80px; height: 2rem; border: none; margin: auto;"></button>
               </td>
             </tr>
-            `).join('')}
+            `,
+              )
+              .join("")}
           </tbody>
         </table>
       </div>
     </div>
   `;
+};
+
+export const handleBackErrBtn = (e) => {
+  const errBackBtn = e.target.closest(".back-err-btn");
+  if (errBackBtn) history.back();
 };

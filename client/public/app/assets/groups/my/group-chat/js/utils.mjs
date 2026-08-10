@@ -185,7 +185,6 @@ export const openGroupLeftSideBar = async (route) => {
   groupLeftSideBarContent.innerHTML = getSidebarSkeleton(route);
   groupLeftSideBar.classList.remove("close");
 
-  debugger;
   showInfoBtn
     .querySelector("i")
     .classList.replace("bi-info-circle", "bi-x-circle");

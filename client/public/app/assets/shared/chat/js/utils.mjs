@@ -1716,7 +1716,6 @@ const firstLoadFunc = (cards, groupId, sessionId) => {
 };
 
 const initChatLoader = async (groupId, sessionId) => {
-  debugger;
   const loader = new Loader(
     messagesContainer,
     createChatFrag,

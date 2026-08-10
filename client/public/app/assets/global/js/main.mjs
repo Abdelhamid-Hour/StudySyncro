@@ -20,6 +20,7 @@ import {
   preventDragOver,
   tooltipSetup,
   updateOfflineStatusIndicator,
+  handleBackErrBtn,
 } from "./utils.mjs";
 import { closeLeftSideBarIcon } from "./variables.mjs";
 
@@ -40,6 +41,7 @@ document.addEventListener("mouseout", handleIconsHoverLeave);
 document.addEventListener("click", openOverlayHandler);
 document.addEventListener("click", handleOverlayClose);
 document.addEventListener("click", handleNavigation);
+document.addEventListener("click", handleBackErrBtn);
 
 initThemeToggle();
 initMobileDrawer();

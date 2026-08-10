@@ -161,7 +161,7 @@ export const resetRouteController = () => {
   currentRouteController = new AbortController();
 };
 
-const fetchStructure = async (url, method, options, extraHeaders) => {
+const fetchStructure = async (url, method, options, extraHeaders, isAppReq) => {
   const csrfToken = getCookie("csrfToken");
 
   let response;
@@ -183,8 +183,14 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
     if (err.name === "AbortError") return FROZEN_PROMISE;
     throw err;
   }
-
   if (!response.ok) {
+    // if the responce is for redirection
+    if (response.status === 301) {
+      history.back();
+    }
+
+    if (isAppReq) return response.json();
+
     if (response.status === 429) {
       const error = new Error(t("shared:auth_errors.TOO_MANY_REQUESTS"));
       error.isNative = true;
@@ -201,11 +207,6 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
       return;
     }
 
-    // if the responce is for redirection
-    if (response.status === 301) {
-      history.back();
-    }
-
     const responseData = await response
       .json()
       .catch(() => ({ message: t("shared:alerts.error_occurred") }));
@@ -215,7 +216,8 @@ const fetchStructure = async (url, method, options, extraHeaders) => {
     error.data = responseData;
     error.status = response.status;
     error.isNative = responseData.isNative;
-    error.type = responseData.type || (isNative ? "info" : "error");
+    error.type =
+      responseData.type || (responseData.isNative ? "info" : "error");
     throw error;
   }
   return response.json();
@@ -244,6 +246,7 @@ export const fetchTemplate = async (url) => {
     "GET",
     {},
     { "x-requested-with": "fetch" },
+    true,
   );
   return response;
 };
