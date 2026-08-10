@@ -1357,7 +1357,7 @@ export const updateMain = async (path, isTabLinks) => {
     if (thisNav !== navCounter) {
       return;
     }
-\
+
     clearAllTimeOuts();
     closeAllEventSources();
     clearAllPageListeners();
