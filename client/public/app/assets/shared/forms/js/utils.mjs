@@ -106,12 +106,20 @@ const HandleSelection = (e, selectButtonValue, isGlobalSelect, onSelect) => {
       onSelect(
         selectButtonValue,
         selectedItem,
-        t(`common:subjects.${selectedValue}`, { defaultValue: selectedValue }),
+        !isGlobalSelect
+          ? t(`common:subjects.${selectedValue}`, {
+              defaultValue: selectedValue,
+            })
+          : selectedValue,
       );
     } else {
       setSelectValue(
         selectButtonValue,
-        t(`common:subjects.${selectedValue}`, { defaultValue: selectedValue }),
+        !isGlobalSelect
+          ? t(`common:subjects.${selectedValue}`, {
+              defaultValue: selectedValue,
+            })
+          : selectedValue,
       );
     }
   } else {

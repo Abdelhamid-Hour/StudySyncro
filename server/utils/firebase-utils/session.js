@@ -117,6 +117,7 @@ const createGroupSession = async (sessionData, userId) => {
 
     if (sessionData.sessionQuiz && sessionData.sessionQuiz.UID) {
       quizId = sessionData.sessionQuiz.UID || "";
+      console.log(quizId, "quizId");
       const quizRef = db.collection("quizzes").doc(quizId);
       const quizSnap = await db.collection("quizzes").doc(quizId).get();
       const existingQuizInGroup = await groupRef
