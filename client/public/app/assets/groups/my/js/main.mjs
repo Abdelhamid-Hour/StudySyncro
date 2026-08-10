@@ -13,5 +13,3 @@ export const init = async () => {
     btn.addEventListener("click", handleGroupCreateClick);
   });
 };
-
-init();

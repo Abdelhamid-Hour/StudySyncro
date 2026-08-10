@@ -10,5 +10,3 @@ export const init = async () => {
   const lazyLoadingLoader = initLazyLoadingLoader(false);
   registerPageListener(document, "click", JoinGroupButtonHandler);
 };
-
-init();

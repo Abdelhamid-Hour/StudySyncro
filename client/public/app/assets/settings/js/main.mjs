@@ -32,5 +32,3 @@ export const init = async () => {
 
   setUpFileInputListeners(avatarContainer);
 };
-
-init();

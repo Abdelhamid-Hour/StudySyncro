@@ -778,9 +778,11 @@
       data-dynamic=""
       type="module"
       nonce="<%= nonce %>"
-      src="/app/assets<%- resourcesRoute %>js/main.mjs"
       crossorigin="anonymous"
-    ></script>
+    >
+      const main = await import("/app/assets<%- resourcesRoute %>js/main.mjs");      
+      if (main.init) main.init();
+    </script>
   </body>
 </html>
 

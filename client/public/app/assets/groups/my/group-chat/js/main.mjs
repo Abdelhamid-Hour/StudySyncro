@@ -29,5 +29,3 @@ export const init = async () => {
     handleGroupLeftSideBarContent,
   );
 };
-
-init();

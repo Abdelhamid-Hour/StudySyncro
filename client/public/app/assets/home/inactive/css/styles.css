@@ -402,7 +402,7 @@
           flex-direction: column;
   gap: var(--primary-gap);
   background-color: var(--container-background-color);
-  border-radius: calc(var(--primary-radius) * 2);
+  border-radius: var(--primary-radius);
   padding: var(--primary-gap);
   border: var(--primary-border-style);
   -webkit-box-shadow: var(--primary-shadow);

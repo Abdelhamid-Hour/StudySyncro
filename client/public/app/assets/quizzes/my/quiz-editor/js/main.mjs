@@ -66,9 +66,7 @@ export const init = async () => {
     const saveSubjectBtn = e.target.closest(".save-subject-btn");
     if (saveSubjectBtn) handleSaveBtn("subject", saveSubjectBtn);
   });
+  
+  registerPageListener(window, "resize", initMobileTabs);
   initMobileTabs();
 };
-
-registerPageListener(window, "resize", initMobileTabs);
-
-init();

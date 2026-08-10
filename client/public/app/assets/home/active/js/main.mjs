@@ -20,6 +20,7 @@ import {
 } from "./utils.mjs";
 
 export const init = async () => {
+  registerPageListener(window, "resize", initMobileTabs);
   await loadNamespaces(["home", "group-chat"]);
   initMobileTabs();
   initDomVariables();
@@ -48,7 +49,3 @@ export const init = async () => {
 
   iniChat(Session.groupId, Session.id);
 };
-
-registerPageListener(window, "resize", initMobileTabs);
-
-init();

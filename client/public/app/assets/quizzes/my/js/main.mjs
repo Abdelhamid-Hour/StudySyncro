@@ -16,5 +16,3 @@ export const init = async () => {
   });
   quizzesListContainer?.addEventListener("click", handleQuizCardBtns);
 };
-
-init();

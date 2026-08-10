@@ -469,7 +469,7 @@ export const initDomVariables = () => {
   manageDemanesMenuBtn = document.querySelector(".manage-demanes-menu-btn");
   copyUIDMenuBtn = document.querySelector(".copy-uid-menu-btn");
   groupLeftSideBar = document.querySelector(".group-left-side-bar");
-  showInfoBtn = document.querySelector(".show-info-btn");
+  showInfoBtn = document.querySelector(".top-bar .show-info-btn");
   createSessionBtn = document.querySelector(".create-session");
   groupLeftSideBarContent = document.querySelector(".left-side-bar-content");
   groupLeftSideBarTitle = groupLeftSideBar.querySelector(".side-bar-title");

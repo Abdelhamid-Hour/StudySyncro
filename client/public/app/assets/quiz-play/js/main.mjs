@@ -32,5 +32,3 @@ export const init = async () => {
     history.back();
   });
 };
-
-init();

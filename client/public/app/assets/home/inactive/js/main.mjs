@@ -36,9 +36,7 @@ export const init = async () => {
 
   initSessionsLoader();
   initRecentMessagesLoader();
+  registerPageListener(window, "resize", initMobileTabs);
   initMobileTabs();
 };
 
-registerPageListener(window, "resize", initMobileTabs);
-
-init();

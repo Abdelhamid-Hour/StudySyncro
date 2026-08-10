@@ -12,5 +12,3 @@ export const init = async () => {
   setUpDatePicker(topSideBarMiddle);
   quizzesListContainer?.addEventListener("click", handlePassedQuizCardBtns);
 };
-
-init();
