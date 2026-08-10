@@ -103,24 +103,9 @@ const HandleSelection = (e, selectButtonValue, isGlobalSelect, onSelect) => {
   const selectedValue = selectedItem?.dataset.value;
   if (checkSubject(selectedValue) || isGlobalSelect) {
     if (onSelect) {
-      onSelect(
-        selectButtonValue,
-        selectedItem,
-        !isGlobalSelect
-          ? t(`common:subjects.${selectedValue}`, {
-              defaultValue: selectedValue,
-            })
-          : selectedValue,
-      );
+      onSelect(selectButtonValue, selectedItem, !isGlobalSelect, selectedValue);
     } else {
-      setSelectValue(
-        selectButtonValue,
-        !isGlobalSelect
-          ? t(`common:subjects.${selectedValue}`, {
-              defaultValue: selectedValue,
-            })
-          : selectedValue,
-      );
+      setSelectValue(selectButtonValue, selectedItem, selectedValue);
     }
   } else {
     showMessageBlock(t("common:alerts.select_subject_error"), "error");
@@ -165,10 +150,10 @@ const createSubjectSelectMenuGroup = (group, subjects) => {
     groupHtml += `<input type="text" id="other-subject-input" class="other-subject-input" placeholder="${t("common:forms.specify_and_enter")}" />`;
   } else {
     groupHtml += subjects
-      .map(
-        (subject) =>
-          `<div class="select-item drop-down-item" data-value="${subject}">${t("common:subjects." + subject, { defaultValue: subject })}</div>`,
-      )
+      .map((subject) => {
+        if (subject.includes("Node")) debugger;
+        return `<div class="select-item drop-down-item" data-value="${subject}">${t("common:subjects." + subject, { defaultValue: subject })}</div>`;
+      })
       .join("");
   }
 
@@ -189,12 +174,12 @@ const handleOtherSubjectInputKeydown = (e, selectButtonValue, selectMenu) => {
   }
 };
 
-const setSelectValue = (selectButtonValue, value) => {
-  selectButtonValue.textContent = value;
+const setSelectValue = (selectButtonValue, selectedItem, selectedValue) => {
+  selectButtonValue.textContent = selectedItem?.textContent || selectedValue;
   if (selectButtonValue.nextElementSibling.matches('input[type="hidden"]')) {
-    selectButtonValue.nextElementSibling.value = value;
+    selectButtonValue.nextElementSibling.value = selectedValue;
   } else {
-    selectButtonValue.dataset.value = value;
+    selectButtonValue.dataset.value = selectedValue;
   }
 };
 
