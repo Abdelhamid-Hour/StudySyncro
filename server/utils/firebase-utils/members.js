@@ -214,6 +214,7 @@ const addMember = async (groupRef, user) => {
         .get();
       if (sessionSnap.exists) {
         const sData = sessionSnap.data();
+        const userRef = db.collection("users").doc(userId);
         await userRef
           .collection("activeSessions")
           .doc(group.currentSession)

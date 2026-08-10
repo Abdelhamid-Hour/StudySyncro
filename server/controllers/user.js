@@ -5,6 +5,7 @@ const {
   updatePassword,
   closeAccount,
   addPassword,
+  addEmail,
 } = require("../utils/firebase-utils/user");
 const { clearCookies } = require("../middleware/clearCookies");
 

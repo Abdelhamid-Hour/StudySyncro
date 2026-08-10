@@ -1128,7 +1128,7 @@ const handleChatInput = async (sessionId, groupId) => {
   }
 };
 
-const handleDragEnter = (e) => {
+const handleDragEnter = () => {
   // ? relatedTarget will reference the element that the drag operation
   // ? is leaving as it enters a new element.
   if (dragLeaveTimer) {

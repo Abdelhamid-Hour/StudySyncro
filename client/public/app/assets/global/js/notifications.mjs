@@ -77,7 +77,6 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
     }
   });
 
-  let anyUnread = false;
   const idsToMark = new Set();
   if (notifId) idsToMark.add(notifId);
 
@@ -86,7 +85,6 @@ const markSingleCardReadAndRemoveActions = (card, actionType = null) => {
     if (cId) idsToMark.add(cId);
 
     if (c.classList && c.classList.contains("unread")) {
-      anyUnread = true;
       c.classList.remove("unread");
     }
 

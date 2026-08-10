@@ -807,7 +807,7 @@ const insertCardInOrder = (card) => {
 
 export const initRecentMessagesLoader = () => {
   if (!messagesContainer) return;
-  const loader = new Loader(
+  new Loader(
     messagesContainer,
     createRecentMessageCard,
     "/recent-messages?",

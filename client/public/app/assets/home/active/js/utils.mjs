@@ -439,7 +439,7 @@ export class Session {
       this.ongoingTasks[0].durationInMins <=
         Math.floor(this.timeLeft / 1000 / 60) -
           this.completedTasks.reduce((acc, task) => {
-            return (acc += task.durationInMins);
+            return acc + task.durationInMins;
           }, 0)
     );
   }
@@ -461,8 +461,7 @@ export class Session {
   initTimer() {
     const notStartedTasksDuration = this.ongoingTasks.reduce(
       (acc, task, index) => {
-        if (index !== 0) return (acc += task.durationInMins * 60 * 1000);
-        return acc;
+        return index !== 0 ? acc + task.durationInMins * 60 * 1000 : acc;
       },
       0,
     );
@@ -666,12 +665,11 @@ export class Session {
         if (task.isQuiz) {
           quizPassed = true;
         }
-        if (!quizPassed) {
-          if (index === 0)
-            return (acc += this.activeTaskRemainingTime / 1000 / 60);
-          return (acc += task.durationInMins);
-        }
-        return acc;
+        return !quizPassed
+          ? index === 0
+            ? acc + this.activeTaskRemainingTime / 1000 / 60
+            : acc + task.durationInMins
+          : acc;
       }, 0);
     else return 0;
 

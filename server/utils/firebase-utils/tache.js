@@ -1,6 +1,4 @@
-const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
-const tacheRef = db.collection("tache");
 
 const getTasks = async (sessionId) => {
   const taskRef = db.collection("tasks");

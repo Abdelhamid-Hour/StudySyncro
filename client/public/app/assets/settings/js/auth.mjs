@@ -23,17 +23,19 @@ export const getFreshTokenId = async (password) => {
       return { idToken: await credentials.user.getIdToken(true) };
     }
     switch (provider) {
-      case "facebook":
+      case "facebook": {
         showMessageBlock(t("settings:alerts.fb_login_info"), "info");
         const fbProvider = new FacebookAuthProvider();
         credentials = await signInWithPopup(auth, fbProvider);
         return { idToken: await credentials.user.getIdToken(true) };
+      }
 
-      default:
+      default: {
         showMessageBlock(t("settings:alerts.google_login_info"), "info");
         const googleProvider = new GoogleAuthProvider();
         credentials = await signInWithPopup(auth, googleProvider);
         return { idToken: await credentials.user.getIdToken(true) };
+      }
     }
   } catch (error) {
     // if the error is auth/invalid-credential show a specific message

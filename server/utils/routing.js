@@ -9,8 +9,6 @@ const {
   getAvailableGroups,
 } = require("./firebase-utils/group");
 const { fetchHomeData } = require("./home");
-
-const {} = require("./firebase-utils/group");
 const { getUserQuizzes, getPassedQuizzes } = require("./firebase-utils/examen");
 const { INITIALE_LOADERS_COUNT } = require("./global");
 const { getSettingsContext } = require("./firebase-utils/settings");

@@ -22,14 +22,7 @@ let quizResult = {};
 
 let currentQuestionIndex = 0;
 
-const drawArc = (
-  canvas,
-  ctx,
-  percentage = 1,
-  color = "red",
-  step = 0.1,
-  angle = 0,
-) => {
+const drawArc = (canvas, ctx, percentage = 1, color = "red") => {
   ctx.lineCap = "round"; // Make the arc ends rounded
   ctx.lineWidth = 0.01 * innerWidth; // Set line width relative to canvas size
   ctx.strokeStyle = "gray";

@@ -9,8 +9,7 @@ import {
 export const init = async () => {
   initDomVariables();
   await loadNamespace("quizzes");
-
-  const loader = initLazyLoadingLoader();
+  initLazyLoadingLoader();
   document.querySelectorAll(".create-quiz-btn").forEach((btn) => {
     btn.addEventListener("click", handleQuizCreateClick);
   });

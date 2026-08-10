@@ -7,7 +7,7 @@ export const init = async () => {
   initDomVariables();
   await loadNamespace("groups");
 
-  const loader = initLazyLoadingLoader(true);
+  initLazyLoadingLoader(true);
 
   document.querySelectorAll(".create-group-btn").forEach((btn) => {
     btn.addEventListener("click", handleGroupCreateClick);

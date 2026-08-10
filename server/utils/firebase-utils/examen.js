@@ -1,4 +1,4 @@
-const { FieldValue, FieldPath } = require("firebase-admin/firestore");
+const { FieldPath } = require("firebase-admin/firestore");
 const { db, admin } = require("../../firebase/firebaseAdmin");
 const { getQuestions, getQuizDuration } = require("./question");
 const { toReadableDate } = require("../global");
@@ -1188,7 +1188,9 @@ const addQuizResult = async (user, quizResult) => {
     const groupRes = await getGroupById(session.groupId);
     if (groupRes.success) {
       const group = groupRes.group;
-      await userRef
+      await db
+        .collection("users")
+        .doc(userId)
         .collection("passedQuizzes")
         .doc(quizResult.groupId)
         .collection("passedQuizzesRecords")

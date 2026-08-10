@@ -1,4 +1,4 @@
-const { FieldValue, FieldPath } = require("firebase-admin/firestore");
+const { FieldValue } = require("firebase-admin/firestore");
 const { db, rDb } = require("../../firebase/firebaseAdmin");
 const { getFormattedMembers, addMember } = require("./members");
 const {
@@ -375,13 +375,14 @@ const leaveGroup = async (groupId, user) => {
     const userId = user.uid;
     const groupRef = db.collection("groups").doc(groupId);
     const memberDocRef = groupRef.collection("members").doc(userId);
+    const userRef = db.collection("users").doc(userId);
     const userGroupRef = userRef.collection("userGroups").doc(groupId);
 
     // --- Transaction: atomically verify & remove member ---
     const txResult = await db.runTransaction(async (t) => {
       const [groupSnap, memberSnap] = await Promise.all([
         t.get(groupRef),
-        t.get(memberDocRef)
+        t.get(memberDocRef),
       ]);
 
       if (!groupSnap.exists) {
@@ -418,7 +419,7 @@ const leaveGroup = async (groupId, user) => {
       return {
         abort: false,
         groupData,
-        updateData
+        updateData,
       };
     });
 
@@ -443,9 +444,7 @@ const leaveGroup = async (groupId, user) => {
         .doc(groupData.currentSession)
         .delete();
 
-      if (
-        user.currentSession === groupData.currentSession
-      ) {
+      if (user.currentSession === groupData.currentSession) {
         const { leavSession } = require("./session");
         await leavSession(userId);
       }

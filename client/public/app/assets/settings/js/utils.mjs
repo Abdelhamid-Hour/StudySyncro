@@ -11,6 +11,7 @@ import {
   EMAIL_MIN_LENGTH,
   emailRegex,
   globalTooltip,
+  MAX_AVATAR_SIZE,
   NAME_TITLE_MAX_LENGTH,
   NAME_TITLE_MIN_LENGTH,
   PASSWORD_MAX_LENGTH,
@@ -89,7 +90,7 @@ export const enableProfileEditMode = (profileModifyBtn, e) => {
       `;
   profileModifyBtn.before(cancelBtn);
   toSubmitBtn(profileModifyBtn);
-  cancelBtn.addEventListener("click", (e) => {
+  cancelBtn.addEventListener("click", () => {
     disableProfileMode(profileModifyBtn);
     fullNameInput.value = oldValues.fullName;
     avatarInput.value = "";
@@ -200,7 +201,7 @@ const enableEmailEditMode = (emailModifyBtn, e) => {
       `;
   emailModifyBtn.before(cancelBtn);
   toSubmitBtn(emailModifyBtn);
-  cancelBtn.addEventListener("click", (e) => {
+  cancelBtn.addEventListener("click", () => {
     disableEmailEditMode(emailModifyBtn);
     emailInput.value = oldValues.email;
   });

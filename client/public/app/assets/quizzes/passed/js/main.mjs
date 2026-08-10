@@ -7,8 +7,7 @@ import { handlePassedQuizCardBtns, initLazyLoadingLoader } from "./utils.mjs";
 export const init = async () => {
   initDomVariables();
   await loadNamespace("quizzes");
-
-  const loader = initLazyLoadingLoader();
+  initLazyLoadingLoader();
   setUpDatePicker(topSideBarMiddle);
   quizzesListContainer?.addEventListener("click", handlePassedQuizCardBtns);
 };

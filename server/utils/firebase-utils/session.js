@@ -947,6 +947,5 @@ module.exports = {
   fetchActiveSessions,
   joinSession,
   getSessionInformations,
-  fetchActiveSessions,
   formatSessions,
 };

@@ -7,6 +7,6 @@ import { JoinGroupButtonHandler } from "./utils.mjs";
 
 export const init = async () => {
   await loadNamespace("groups");
-  const lazyLoadingLoader = initLazyLoadingLoader(false);
+  initLazyLoadingLoader(false);
   registerPageListener(document, "click", JoinGroupButtonHandler);
 };

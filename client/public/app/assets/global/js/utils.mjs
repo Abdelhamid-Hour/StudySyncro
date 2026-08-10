@@ -1459,12 +1459,10 @@ export const toggleActiveLink = (pathName, tabLink) => {
 };
 
 export const showErrorTooltip = (error, input, parentClassName) => {
-  let inputContainer = null;
-  if (parentClassName) {
-    inputContainer = input.closest(`.${parentClassName}`);
-  } else {
-    inputContainer = input.closest(".field-container, .choice");
-  }
+  const inputContainer = parentClassName
+    ? input.closest(`.${parentClassName}`)
+    : input.closest(".field-container, .choice");
+
   initAndDiplayErrorTooltip(inputContainer, error);
 };
 
@@ -2680,7 +2678,7 @@ export const showConfirmationBox = async (
   cancelButtonText = t("common:modals.cancel"),
   confirmButtonText = t("common:modals.confirm"),
 ) => {
-  const promise = new Promise((res, rej) => {
+  const promise = new Promise((res) => {
     openOverlayModal(
       "confirmation-box",
       [".confirmation-box-btn-cancel", ".confirmation-box-btn-confirm"],
@@ -3203,7 +3201,7 @@ export const getSidebarSkeleton = (route) => {
         </div>
       `;
     case "/members-list":
-    case "/demandes-list":
+    case "/demandes-list": {
       const isAdmin = document.querySelector(
         ".top-bar .create-session, .top-bar .end-session",
       );
@@ -3241,6 +3239,7 @@ export const getSidebarSkeleton = (route) => {
           </div>
         </div>
       `;
+    }
     case "/quizzes-list":
       return `
         <div class="quizzes-view fade-in-template">

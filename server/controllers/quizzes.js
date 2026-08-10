@@ -12,7 +12,6 @@ const {
   duplicateQuiz,
   deleteQuiz,
 } = require("../utils/firebase-utils/examen");
-const { getScoreClass } = require("../utils/global");
 
 const createQuizHandler = async (req, res) => {
   const quizData = req.body.quizData;
@@ -148,7 +147,6 @@ const getQuizzesListHandler = async (req, res) => {
 
 const addQuizResultHandler = async (req, res) => {
   const quizResult = req.body.quizResult;
-  const userId = req.user.uid;
   const result = await addQuizResult(req.user, quizResult);
 
   if (result.success) {

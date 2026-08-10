@@ -1,4 +1,3 @@
-const { FieldValue } = require("firebase-admin/firestore");
 const { db } = require("../../firebase/firebaseAdmin");
 
 const getQuestions = async (quizId) => {
