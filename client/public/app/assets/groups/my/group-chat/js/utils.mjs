@@ -766,7 +766,6 @@ const shouldAddOrUpdateQuiz = (data, sessionData) => {
 };
 
 const addOrUpdateQuizTask = (data, sessionStore, wrapper) => {
-  debugger;
   const sessionData = sessionStore.sessionData;
   sessionData.sessionQuiz = {
     quiz: new Task({

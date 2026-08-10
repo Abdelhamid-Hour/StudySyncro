@@ -866,7 +866,6 @@ export const saveQuiz = async () => {
 };
 
 export const handleSidebarTitleLinkClick = async (e) => {
-  debugger;
   // Prevent multiple triggers and ensure leave property is only set on Element
   if (typeof e.target.leave === "undefined") e.target.leave = false;
   if (e.target.leave) return;
