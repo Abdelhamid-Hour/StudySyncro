@@ -1280,6 +1280,7 @@ export const updateDocumentTitle = (path) => {
     cleanPath === "/" ||
     cleanPath === "/app"
   ) {
+    debugger;
     document.title = `StudySyncro — ${t("common:titles.home", { defaultValue: "Home" })}`;
   } else if (cleanPath.includes("/groups/my/group-chat")) {
     document.title = `StudySyncro — ${t("common:group_chat", { defaultValue: "Group Chat" })}`;
