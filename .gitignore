@@ -6,5 +6,3 @@ server/.env
 server/firebase/firebaseConfig.json
 Todo.txt
 e2e
-package-lock.json
-package.json
