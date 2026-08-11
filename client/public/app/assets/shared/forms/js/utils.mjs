@@ -103,7 +103,7 @@ const HandleSelection = (e, selectButtonValue, isGlobalSelect, onSelect) => {
   const selectedValue = selectedItem?.dataset.value;
   if (checkSubject(selectedValue) || isGlobalSelect) {
     if (onSelect) {
-      onSelect(selectButtonValue, selectedItem, !isGlobalSelect, selectedValue);
+      onSelect(selectButtonValue, selectedItem, selectedValue);
     } else {
       setSelectValue(selectButtonValue, selectedItem, selectedValue);
     }

@@ -756,6 +756,7 @@ const getTasksListContainer = (
       </div>`;
 
 const shouldAddOrUpdateQuiz = (data, sessionData) => {
+  debugger;
   return (
     data["session-quiz-title"] &&
     data["session-quiz-id"] &&
@@ -826,6 +827,7 @@ const setUpSessionForm = (wrapper, sessionStore) => {
   `,
     true,
     (selectButtonValue, selectedItem, selectedValue) => {
+      debugger
       if (!selectedValue) {
         selectButtonValue.textContent = t(
           "group-chat:modals.quiz_title_optional",
