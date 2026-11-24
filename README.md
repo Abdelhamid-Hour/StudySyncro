@@ -57,7 +57,7 @@ Connect with students, manage interactive study sessions, host live quizzes, and
 ## 📂 Project Structure
 
 ```text
-D:\PFE\
+D:\StudySyncro\
 ├── client/                     # Frontend Static Assets & Scripts
 │   └── public/
 │       ├── app/                # Main dashboard app assets (CSS/JS for sessions, groups, etc.)
@@ -94,8 +94,8 @@ D:\PFE\
 Clone the repository and install the backend dependencies:
 
 ```bash
-git clone https://github.com/Abdelhamid-Hour/PFE.git
-cd PFE/server
+git clone https://github.com/Abdelhamid-Hour/StudySyncro.git
+cd StudySyncro/server
 npm install
 ```
 
